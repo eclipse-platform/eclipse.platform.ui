@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Observable;
@@ -109,7 +110,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		OutputStreamWriter osw = null;
 		try {
 			fos = new FileOutputStream(fileName);
-			osw = new OutputStreamWriter(fos, "UTF8"); //$NON-NLS-1$
+			osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
 			PrintWriter writer = new PrintWriter(osw);
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			writer.println("<engines>"); //$NON-NLS-1$
@@ -225,7 +226,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		if (!file.exists()) return;
 		FileInputStream stream = new FileInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				stream, "utf-8"));//$NON-NLS-1$
+				stream, StandardCharsets.UTF_8));
 		load(reader);
 		reader.close();
 	}

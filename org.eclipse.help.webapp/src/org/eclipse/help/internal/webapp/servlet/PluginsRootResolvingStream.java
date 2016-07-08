@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +39,6 @@ public class PluginsRootResolvingStream extends OutputStream {
 	private static final int  MAY_BE_INCLUDE = 4;
 	private static final int  IN_METATAG = 5;
 	private static final String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
-	private static final String UTF8 = "UTF8"; //$NON-NLS-1$
 	private static final String INSERT_CHILD_LINKS = "<!--INSERT_CHILD_LINKS-->"; //$NON-NLS-1$
 	private static final String INSERT_CHILD_LINK_STYLE = "<!--INSERT_CHILD_LINK_STYLE-->"; //$NON-NLS-1$
 	private final String[] keywords = { INSERT_CHILD_LINKS, INSERT_CHILD_LINK_STYLE };
@@ -200,12 +200,12 @@ public class PluginsRootResolvingStream extends OutputStream {
 	}
 
 	private void flushPluginsRootCharacters() throws IOException {
-		out.write(PLUGINS_ROOT.substring(0, charsMatched).getBytes(UTF8));
+		out.write(PLUGINS_ROOT.substring(0, charsMatched).getBytes(StandardCharsets.UTF_8));
 	}
 
 	private void flushKeywordCharacters() throws IOException {
 		String matchingCharacters = keywords[lastKeywordMatch].substring(0, charsMatched);
-		out.write(matchingCharacters.getBytes(UTF8));
+		out.write(matchingCharacters.getBytes(StandardCharsets.UTF_8));
 	}
 
 

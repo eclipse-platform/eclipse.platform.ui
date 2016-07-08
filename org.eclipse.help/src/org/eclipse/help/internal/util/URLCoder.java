@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,32 +11,20 @@
 package org.eclipse.help.internal.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public class URLCoder {
 
 	public static String encode(String s) {
-		try {
-			return urlEncode(s.getBytes("UTF8"), true); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return null;
-		}
+		return urlEncode(s.getBytes(StandardCharsets.UTF_8), true);
 	}
 
 	public static String compactEncode(String s) {
-		try {
-			return urlEncode(s.getBytes("UTF8"), false); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return null;
-		}
+		return urlEncode(s.getBytes(StandardCharsets.UTF_8), false);
 	}
 
 	public static String decode(String s) {
-		try {
-			return new String(urlDecode(s), "UTF8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return null;
-		}
+		return new String(urlDecode(s), StandardCharsets.UTF_8);
 	}
 
 	private static String urlEncode(byte[] data, boolean encodeAllCharacters) {

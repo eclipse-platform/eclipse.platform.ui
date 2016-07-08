@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
 package org.eclipse.ui.internal.intro.impl.model.url;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -198,32 +198,28 @@ public class IntroURLParser {
     /*
 	 * Note: This was copied and adapted from org.eclipse.help.internal.util.URLCoder
 	 */
-    private static String urlDecode(String encodedURL) {
+	private static String urlDecode(String encodedURL) {
 		int len = encodedURL.length();
 		ByteArrayOutputStream os = new ByteArrayOutputStream(len);
 
-		try {
-			for (int i = 0; i < len;) {
-				switch (encodedURL.charAt(i)) {
-				case '%':
-					if (len >= i + 3) {
-						os.write(Integer.parseInt(encodedURL.substring(i + 1, i + 3), 16));
-					}
-					i += 3;
-					break;
-				case '+': // exception from standard
-					os.write(' ');
-					i++;
-					break;
-				default:
-					os.write(encodedURL.charAt(i++));
-					break;
+		for (int i = 0; i < len;) {
+			switch (encodedURL.charAt(i)) {
+			case '%':
+				if (len >= i + 3) {
+					os.write(Integer.parseInt(encodedURL.substring(i + 1, i + 3), 16));
 				}
+				i += 3;
+				break;
+			case '+': // exception from standard
+				os.write(' ');
+				i++;
+				break;
+			default:
+				os.write(encodedURL.charAt(i++));
+				break;
 			}
-			return new String(os.toByteArray(), "UTF8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException ex) {
-			return null;
 		}
+		return new String(os.toByteArray(), StandardCharsets.UTF_8);
 	}
 
 }

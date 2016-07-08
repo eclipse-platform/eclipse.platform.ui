@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.help.internal.webapp.servlet;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +30,6 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 public class ChildLinkInserter {
 
-	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private HttpServletRequest req;
 	private OutputStream out;
 	private static final String NO_CHILDREN = "no_child_topics"; //$NON-NLS-1$
@@ -77,7 +77,7 @@ public class ChildLinkInserter {
 			if (encoding != null) {
 			    out.write(linkString.getBytes(encoding));
 			} else {
-			    out.write(linkString.getBytes("UTF8")); //$NON-NLS-1$
+			    out.write(linkString.getBytes(StandardCharsets.UTF_8));
 			}
 		} catch (UnsupportedEncodingException e) {
 			out.write(linkString.getBytes());
@@ -114,16 +114,16 @@ public class ChildLinkInserter {
 		return buf.toString();
 	}
 
-	public void addStyle() throws UnsupportedEncodingException, IOException {
+	public void addStyle() throws IOException {
 		ITopic[] subtopics = getSubtopics();
 		for (ITopic subtopic : subtopics) {
 			if (ScopeUtils.showInTree(subtopic, scope)) {
-				out.write(HAS_CHILDREN.getBytes(UTF_8));
+				out.write(HAS_CHILDREN.getBytes(StandardCharsets.UTF_8));
 				return;
 			}
 		}
 
-		out.write(NO_CHILDREN.getBytes(UTF_8));
+		out.write(NO_CHILDREN.getBytes(StandardCharsets.UTF_8));
 	}
 
 }

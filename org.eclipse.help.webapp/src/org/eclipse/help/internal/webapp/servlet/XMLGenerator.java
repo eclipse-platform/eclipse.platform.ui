@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.webapp.*;
@@ -49,7 +50,7 @@ public class XMLGenerator {
 		this.outFile = outFile;
 		try {
 			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(outFile), "UTF8")), //$NON-NLS-1$
+					new FileOutputStream(outFile), StandardCharsets.UTF_8)),
 					false /* no aotoFlush */
 			);
 			println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$

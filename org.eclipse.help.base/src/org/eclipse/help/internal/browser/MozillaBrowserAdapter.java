@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.browser;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
@@ -134,7 +135,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		try {
 			outFile.getParentFile().mkdirs();
 			try (PrintWriter writer = new PrintWriter(
-					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF8")), //$NON-NLS-1$
+					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8)),
 					false)) {
 				writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"); //$NON-NLS-1$
 				writer.println("<html><head>"); //$NON-NLS-1$

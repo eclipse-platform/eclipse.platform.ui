@@ -21,6 +21,7 @@ import java.io.Writer;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import javax.servlet.ServletContext;
@@ -180,7 +181,7 @@ public class EclipseConnector {
 				message.append("</pre>"); //$NON-NLS-1$
 				message.append(errorPageEnd);
 
-				is = new ByteArrayInputStream(message.toString().getBytes("UTF8")); //$NON-NLS-1$
+				is = new ByteArrayInputStream(message.toString().getBytes(StandardCharsets.UTF_8));
 			}
 
 			OutputStream out = resp.getOutputStream();
