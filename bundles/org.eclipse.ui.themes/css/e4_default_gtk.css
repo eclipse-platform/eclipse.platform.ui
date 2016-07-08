@@ -93,7 +93,7 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
 
 #PerspectiveSwitcher {
 	background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
-	eclipse-perspective-keyline-color: #B4B4B4 #B4B4B4;
+	eclipse-perspective-keyline-color: #E2E2E2 #B4B4B4;
 }
 
 #org-eclipse-ui-editorss {
