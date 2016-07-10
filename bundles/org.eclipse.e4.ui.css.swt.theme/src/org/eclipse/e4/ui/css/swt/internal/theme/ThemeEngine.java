@@ -61,20 +61,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class ThemeEngine implements IThemeEngine {
-	private List<Theme> themes = new ArrayList<Theme>();
-	private List<CSSEngine> cssEngines = new ArrayList<CSSEngine>();
+	private List<Theme> themes = new ArrayList<>();
+	private List<CSSEngine> cssEngines = new ArrayList<>();
 
 	// kept for theme notifications only
 	private Display display;
 
 	private ITheme currentTheme;
 
-	private List<String> globalStyles = new ArrayList<String>();
-	private List<IResourceLocator> globalSourceLocators = new ArrayList<IResourceLocator>();
+	private List<String> globalStyles = new ArrayList<>();
+	private List<IResourceLocator> globalSourceLocators = new ArrayList<>();
 
-	private HashMap<String, List<String>> stylesheets = new HashMap<String, List<String>>();
-	private HashMap<String, List<String>> modifiedStylesheets = new HashMap<String, List<String>>();
-	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<String, List<IResourceLocator>>();
+	private HashMap<String, List<String>> stylesheets = new HashMap<>();
+	private HashMap<String, List<String>> modifiedStylesheets = new HashMap<>();
+	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<>();
 
 	private static final String THEMEID_KEY = "themeid";
 
@@ -160,7 +160,7 @@ public class ThemeEngine implements IThemeEngine {
 									String modifiedFileName = modifiedFile.getName();
 									if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
 										//								modifiedStylesheets
-										ArrayList<String> styleSheets = new ArrayList<String>();
+										ArrayList<String> styleSheets = new ArrayList<>();
 										styleSheets.add(modifiedFile.toURI().toString());
 										modifiedStylesheets.put(themeId, styleSheets);
 									}
@@ -273,7 +273,7 @@ public class ThemeEngine implements IThemeEngine {
 			for (String t : themes) {
 				List<IResourceLocator> list = sourceLocators.get(t);
 				if (list == null) {
-					list = new ArrayList<IResourceLocator>();
+					list = new ArrayList<>();
 					sourceLocators.put(t, list);
 				}
 				list.add(locator);
@@ -284,7 +284,7 @@ public class ThemeEngine implements IThemeEngine {
 	private void registerStyle(String id, String stylesheet) {
 		List<String> s = stylesheets.get(id);
 		if (s == null) {
-			s = new ArrayList<String>();
+			s = new ArrayList<>();
 			stylesheets.put(id, s);
 		}
 		s.add(stylesheet);
@@ -294,7 +294,7 @@ public class ThemeEngine implements IThemeEngine {
 		// check for any modifications first
 		List<String> m = modifiedStylesheets.get(id);
 		if (m != null) {
-			m = new ArrayList<String>(m);
+			m = new ArrayList<>(m);
 			m.addAll(globalStyles);
 			return m;
 		}
@@ -304,14 +304,14 @@ public class ThemeEngine implements IThemeEngine {
 			s = Collections.emptyList();
 		}
 
-		s = new ArrayList<String>(s);
+		s = new ArrayList<>(s);
 		s.addAll(globalStyles);
 		return s;
 
 	}
 
 	private List<IResourceLocator> getResourceLocators(String id) {
-		List<IResourceLocator> list = new ArrayList<IResourceLocator>(
+		List<IResourceLocator> list = new ArrayList<>(
 				globalSourceLocators);
 		List<IResourceLocator> s = sourceLocators.get(id);
 		if (s != null) {
@@ -335,7 +335,7 @@ public class ThemeEngine implements IThemeEngine {
 		String osname = bundle.getBundleContext().getProperty("osgi.os");
 		// TODO: Need to differentiate win32 versions
 		String wsname = bundle.getBundleContext().getProperty("osgi.ws");
-		ArrayList<IConfigurationElement> matchingElements = new ArrayList<IConfigurationElement>();
+		ArrayList<IConfigurationElement> matchingElements = new ArrayList<>();
 		for (IConfigurationElement element : elements) {
 			String elementOs = element.getAttribute("os");
 			String elementWs = element.getAttribute("ws");
@@ -478,7 +478,7 @@ public class ThemeEngine implements IThemeEngine {
 		if (eventAdmin == null) {
 			return;
 		}
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put(IThemeEngine.Events.THEME_ENGINE, this);
 		data.put(IThemeEngine.Events.THEME, currentTheme);
 		data.put(IThemeEngine.Events.DEVICE, display);
@@ -590,7 +590,7 @@ public class ThemeEngine implements IThemeEngine {
 
 	public List<String> getStylesheets(ITheme selection) {
 		List<String> ss  = stylesheets.get(selection.getId());
-		return ss == null ? new ArrayList<String>() : ss;
+		return ss == null ? new ArrayList<>() : ss;
 	}
 
 	public void themeModified(ITheme theme, List<String> paths) {
@@ -606,7 +606,7 @@ public class ThemeEngine implements IThemeEngine {
 
 	public List<String> getModifiedStylesheets(ITheme selection) {
 		List<String> ss  = modifiedStylesheets.get(selection.getId());
-		return ss == null ? new ArrayList<String>() : ss;
+		return ss == null ? new ArrayList<>() : ss;
 	}
 
 	public void resetModifiedStylesheets(ITheme selection) {
