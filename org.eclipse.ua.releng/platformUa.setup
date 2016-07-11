@@ -44,12 +44,11 @@
     <targlet
         name="Platform UA"
         activeRepositoryList="${eclipse.target.platform}"
-        includeAllPlatforms="true">
+        includeAllRequirements="false">
       <requirement
           name="*"/>
       <sourceLocator
-          rootFolder="${git.clone.platform.ua.location}"
-          locateNestedProjects="true"/>
+          rootFolder="${git.clone.platform.ua.location}"/>
     </targlet>
   </setupTask>
   <setupTask
@@ -98,7 +97,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="eclipse.target.platform"
-        value="Neon"
+        value="Oxygen"
         storageURI="scope://Workspace"/>
   </stream>
   <logicalProjectContainer
