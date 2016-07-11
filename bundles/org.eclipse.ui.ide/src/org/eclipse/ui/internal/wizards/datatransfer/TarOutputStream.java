@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.wizards.datatransfer;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Output stream for writing ustar archive files (tar) compatible
@@ -99,7 +100,7 @@ public class TarOutputStream extends FilterOutputStream {
 		int pos, i;
 
 		/* Split filename into name and prefix if necessary. */
-		byte[] filenameBytes = filename.getBytes("UTF8"); //$NON-NLS-1$
+		byte[] filenameBytes = filename.getBytes(StandardCharsets.UTF_8);
 		if (filenameBytes.length > 99) {
 			int seppos = filename.lastIndexOf('/');
 			if(seppos == -1) {
@@ -107,7 +108,7 @@ public class TarOutputStream extends FilterOutputStream {
 			}
 			prefix = filename.substring(0, seppos);
 			filename = filename.substring(seppos + 1);
-			filenameBytes = filename.getBytes("UTF8"); //$NON-NLS-1$
+			filenameBytes = filename.getBytes(StandardCharsets.UTF_8);
 			if (filenameBytes.length > 99) {
 				throw new IOException("filename too long"); //$NON-NLS-1$
 			}
@@ -194,7 +195,7 @@ public class TarOutputStream extends FilterOutputStream {
 
 		/* File prefix. */
 		if(prefix != null) {
-			byte[] prefixBytes = prefix.getBytes("UTF8"); //$NON-NLS-1$
+			byte[] prefixBytes = prefix.getBytes(StandardCharsets.UTF_8);
 			if (prefixBytes.length > 155) {
 				throw new IOException("prefix too large"); //$NON-NLS-1$
 			}

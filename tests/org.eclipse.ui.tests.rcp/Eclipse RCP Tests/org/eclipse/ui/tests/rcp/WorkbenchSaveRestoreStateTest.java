@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -310,11 +310,9 @@ public class WorkbenchSaveRestoreStateTest {
 
 						OutputStreamWriter writer = null;
 						try {
-							writer = new OutputStreamWriter(new FileOutputStream(stateFileName), "UTF-8");
+							writer = new OutputStreamWriter(new FileOutputStream(stateFileName),
+									StandardCharsets.UTF_8);
 
-						} catch (UnsupportedEncodingException e1) {
-							// not possible, UTF-8 is required to be implemented
-							// by all JVMs
 						} catch (FileNotFoundException e1) {
 							// creating a new file, won't happen unless the path
 							// eclipse
@@ -361,13 +359,12 @@ public class WorkbenchSaveRestoreStateTest {
 
 				IMemento memento = null;
 				try {
-					memento = XMLMemento.createReadRoot(new InputStreamReader(new FileInputStream(stateFile), "UTF-8"));
+					memento = XMLMemento.createReadRoot(
+							new InputStreamReader(new FileInputStream(stateFile), StandardCharsets.UTF_8));
 				} catch (WorkbenchException e) {
 					e.printStackTrace();
 				} catch (FileNotFoundException e) {
 					// won't happen because we already checked it exists
-				} catch (UnsupportedEncodingException e) {
-					// not possible - UTF8 is required
 				}
 
 				assertNotNull(memento);

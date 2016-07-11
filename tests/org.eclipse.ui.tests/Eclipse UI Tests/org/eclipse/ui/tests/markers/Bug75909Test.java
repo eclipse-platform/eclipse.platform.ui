@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -27,6 +25,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.tests.internal.TestMemento;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Testing for https://bugs.eclipse.org/bugs/show_bug.cgi?id=75909 .
@@ -204,7 +205,7 @@ public class Bug75909Test extends TestCase {
 		try {
 			io = getClass().getResourceAsStream(resource);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					io, "utf-8"));
+					io, StandardCharsets.UTF_8));
 			settings.load(reader);
 		} finally {
 			if (io != null) {

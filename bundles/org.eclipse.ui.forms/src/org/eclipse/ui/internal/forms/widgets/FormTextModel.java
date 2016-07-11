@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.forms.widgets;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -108,13 +108,8 @@ public class FormTextModel {
 			reset();
 			return;
 		}
-		try {
-			InputStream stream = new ByteArrayInputStream(taggedText
-					.getBytes("UTF8")); //$NON-NLS-1$
-			parseInputStream(stream, expandURLs);
-		} catch (UnsupportedEncodingException e) {
-			SWT.error(SWT.ERROR_UNSUPPORTED_FORMAT, e);
-		}
+		InputStream stream = new ByteArrayInputStream(taggedText.getBytes(StandardCharsets.UTF_8));
+		parseInputStream(stream, expandURLs);
 	}
 
 	public void parseInputStream(InputStream is, boolean expandURLs) {

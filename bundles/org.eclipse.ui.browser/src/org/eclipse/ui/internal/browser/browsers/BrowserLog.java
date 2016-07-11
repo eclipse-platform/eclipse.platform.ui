@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.browsers;
 
-import java.io.*;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 /**
  * Log for messages output by external browser processes.
  */
@@ -58,7 +64,7 @@ public class BrowserLog {
 		Writer outWriter = null;
 		try {
 			outWriter = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(logFileName, true), "UTF-8")); //$NON-NLS-1$
+					new FileOutputStream(logFileName, true), StandardCharsets.UTF_8));
 			if (newSession) {
 				newSession = false;
 				outWriter.write(LN + formatter.format(new Date())

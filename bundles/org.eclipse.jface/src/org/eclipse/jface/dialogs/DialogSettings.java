@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -281,7 +282,7 @@ public class DialogSettings implements IDialogSettings {
 	public void load(String fileName) throws IOException {
         FileInputStream stream = new FileInputStream(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-                stream, "utf-8"));//$NON-NLS-1$
+				stream, StandardCharsets.UTF_8));
         load(reader);
         reader.close();
     }
@@ -432,7 +433,7 @@ public class DialogSettings implements IDialogSettings {
     	 * @throws IOException
     	 */
     	public XMLWriter(OutputStream output) throws IOException {
-    		this(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
+			this(new OutputStreamWriter(output, StandardCharsets.UTF_8));
     	}
 
     	/**

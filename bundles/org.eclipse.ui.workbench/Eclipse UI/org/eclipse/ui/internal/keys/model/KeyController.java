@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -529,7 +530,7 @@ public class KeyController {
 				Writer fileWriter = null;
 				try {
 					fileWriter = new BufferedWriter(new OutputStreamWriter(
-							new FileOutputStream(filePath), "UTF-8")); //$NON-NLS-1$
+							new FileOutputStream(filePath), StandardCharsets.UTF_8));
 					final Object[] bindingElements = bindingModel.getBindings()
 							.toArray();
 					for (int i = 0; i < bindingElements.length; i++) {

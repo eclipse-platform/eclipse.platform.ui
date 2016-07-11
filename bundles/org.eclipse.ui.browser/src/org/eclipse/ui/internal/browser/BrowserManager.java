@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,10 +22,10 @@ import java.util.Observable;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 /**
@@ -98,8 +99,8 @@ public class BrowserManager extends Observable {
 			browsers = new ArrayList<>();
 
 			try {
-				ByteArrayInputStream in = new ByteArrayInputStream(xmlString.getBytes("utf-8")); //$NON-NLS-1$
-				Reader reader = new InputStreamReader(in, "utf-8"); //$NON-NLS-1$
+				ByteArrayInputStream in = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
+				Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
 				IMemento memento = XMLMemento.createReadRoot(reader);
 
 				IMemento system = memento.getChild("system"); //$NON-NLS-1$

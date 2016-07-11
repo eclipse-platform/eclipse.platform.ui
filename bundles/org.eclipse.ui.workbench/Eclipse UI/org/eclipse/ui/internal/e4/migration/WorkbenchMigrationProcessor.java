@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -101,7 +102,8 @@ public class WorkbenchMigrationProcessor {
 		BufferedReader reader = null;
 		IMemento memento = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(legacyWorkbenchFile), "utf-8")); //$NON-NLS-1$
+			reader = new BufferedReader(
+					new InputStreamReader(new FileInputStream(legacyWorkbenchFile), StandardCharsets.UTF_8));
 			memento = XMLMemento.createReadRoot(reader);
 		} catch (IOException e) {
 			WorkbenchPlugin.log("Failed to load " + legacyWorkbenchFile.getAbsolutePath(), e); //$NON-NLS-1$
