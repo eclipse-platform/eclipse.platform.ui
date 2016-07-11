@@ -45,14 +45,6 @@
     <description>Platform Resources</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.resources/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.tests.resources/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform Resources"
@@ -90,7 +82,7 @@
             project="org.eclipse.core.resources"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.5/@workingSets.1"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets.1"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -111,7 +103,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="eclipse.target.platform"
-        value="Neon"
+        value="Oxygen"
         storageURI="scope://Workspace"/>
   </stream>
   <logicalProjectContainer
