@@ -12,6 +12,7 @@ package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
@@ -135,12 +136,16 @@ public abstract class ViewerTestCase extends TestCase {
 	    fModel = fRootElement.getModel();
 	}
 
-	void sleep(int d) {
-	    processEvents();
-        try {
-			Thread.sleep(d * 1000);
+	/**
+	 * Pauses execution of the current thread
+	 *
+	 * @param millis
+	 */
+	protected static void sleep(long millis) {
+		try {
+			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+			return;
 		}
 	}
 
@@ -159,4 +164,29 @@ public abstract class ViewerTestCase extends TestCase {
 	    fModel = null;
 	}
 
+	/**
+	 * Utility for waiting until the execution of jobs of any family has
+	 * finished or timeout is reached. If no jobs are running, the method waits
+	 * given minimum wait time. While this method is waiting for jobs, UI events
+	 * are processed.
+	 *
+	 * @param minTimeMs
+	 *            minimum wait time in milliseconds
+	 * @param maxTimeMs
+	 *            maximum wait time in milliseconds
+	 */
+	public void waitForJobs(long minTimeMs, long maxTimeMs) {
+		if (maxTimeMs < minTimeMs) {
+			throw new IllegalArgumentException("Max time is smaller as min time!");
+		}
+		final long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start < minTimeMs) {
+			processEvents();
+			sleep(10);
+		}
+		while (!Job.getJobManager().isIdle() && System.currentTimeMillis() - start < maxTimeMs) {
+			processEvents();
+			sleep(10);
+		}
+	}
 }
