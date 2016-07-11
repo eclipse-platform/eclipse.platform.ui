@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,12 +30,12 @@ public abstract class AbstractSelectionService implements ISelectionService {
     /**
      * The list of selection listeners (not per-part).
      */
-    private ListenerList listeners = new ListenerList();
+	private ListenerList<ISelectionListener> listeners = new ListenerList<>();
 
     /**
      * The list of post selection listeners (not per-part).
      */
-    private ListenerList postListeners = new ListenerList();
+	private ListenerList<ISelectionListener> postListeners = new ListenerList<>();
 
     /**
      * The currently active part.
@@ -130,12 +129,8 @@ public abstract class AbstractSelectionService implements ISelectionService {
      * @param sel the selection or <code>null</code> if no active selection
      */
     protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
-        Object[] array = listeners.getListeners();
-        for (int i = 0; i < array.length; i++) {
-            final ISelectionListener l = (ISelectionListener) array[i];
-            if ((part != null && sel != null)
-                    || l instanceof INullSelectionListener) {
-
+		for (final ISelectionListener l : listeners) {
+			if ((part != null && sel != null) || l instanceof INullSelectionListener) {
                 try {
                     l.selectionChanged(part, sel);
                 } catch (Exception e) {
@@ -153,12 +148,8 @@ public abstract class AbstractSelectionService implements ISelectionService {
      */
     protected void firePostSelection(final IWorkbenchPart part,
             final ISelection sel) {
-        Object[] array = postListeners.getListeners();
-        for (int i = 0; i < array.length; i++) {
-            final ISelectionListener l = (ISelectionListener) array[i];
-            if ((part != null && sel != null)
-                    || l instanceof INullSelectionListener) {
-
+		for (final ISelectionListener l : postListeners) {
+			if ((part != null && sel != null) || l instanceof INullSelectionListener) {
                 try {
                     l.selectionChanged(part, sel);
                 } catch (Exception e) {

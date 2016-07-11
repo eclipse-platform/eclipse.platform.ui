@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,18 +129,18 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * with this object. Returns <code>null</code> if no such object can be
      * found.
      */
-    @Override
-	public Object getAdapter(Class adapter) {
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
         if (adapter == IWorkbenchAdapter.class
                 || adapter == IWorkbenchAdapter2.class
                 || adapter == IWorkbenchAdapter3.class) {
-            return this;
+			return adapter.cast(this);
         }
         else if (adapter == IPluginContribution.class) {
-        	return this;
+			return adapter.cast(this);
         }
         else if (adapter == IConfigurationElement.class) {
-        	return configurationElement;
+			return adapter.cast(configurationElement);
         }
         return Platform.getAdapterManager().getAdapter(this, adapter);
     }

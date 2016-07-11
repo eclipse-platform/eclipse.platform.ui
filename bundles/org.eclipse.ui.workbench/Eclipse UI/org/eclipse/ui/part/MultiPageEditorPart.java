@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,7 +148,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	private IServiceLocator pageContainerSite;
 
-	private ListenerList pageChangeListeners = new ListenerList(
+	private ListenerList<IPageChangedListener> pageChangeListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
 
 	/**
@@ -1303,9 +1303,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	}
 
 	private void firePageChanged(final PageChangedEvent event) {
-		Object[] listeners = pageChangeListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final IPageChangedListener l = (IPageChangedListener) listeners[i];
+		for (final IPageChangedListener l : pageChangeListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				@Override
 				public void run() {

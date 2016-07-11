@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public abstract class WorkbenchPart extends EventManager implements
 
     private String contentDescription = ""; //$NON-NLS-1$
 
-    private ListenerList partChangeListeners = new ListenerList();
+	private ListenerList<IPropertyChangeListener> partChangeListeners = new ListenerList<>();
 
     /**
      * Creates a new workbench part.
@@ -468,10 +468,9 @@ public abstract class WorkbenchPart extends EventManager implements
 	 */
     protected void firePartPropertyChanged(String key, String oldValue, String newValue) {
     	final PropertyChangeEvent event = new PropertyChangeEvent(this, key, oldValue, newValue);
-    	Object[] l = partChangeListeners.getListeners();
-    	for (int i = 0; i < l.length; i++) {
+		for (IPropertyChangeListener l : partChangeListeners) {
 			try {
-				((IPropertyChangeListener)l[i]).propertyChange(event);
+				l.propertyChange(event);
 			} catch (RuntimeException e) {
 				WorkbenchPlugin.log(e);
 			}

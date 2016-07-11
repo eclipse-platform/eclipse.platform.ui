@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * A collection of objects listening to changes to this manager. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private transient ListenerList listenerList = null;
+	private transient ListenerList<IHandlerListener> listenerList = null;
 
 	/**
 	 * The image style to use when selecting the images to display for this
@@ -226,7 +226,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	@Override
 	public final void addHandlerListener(final IHandlerListener handlerListener) {
 		if (listenerList == null) {
-			listenerList = new ListenerList(ListenerList.IDENTITY);
+			listenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		listenerList.add(handlerListener);

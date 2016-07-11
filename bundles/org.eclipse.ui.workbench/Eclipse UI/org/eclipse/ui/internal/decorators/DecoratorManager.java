@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class DecoratorManager implements ILabelProviderListener,
 	private LightweightDecoratorManager lightweightManager;
 
 	// Hold onto the list of listeners to be told if a change has occured
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 	// The full definitions read from the registry.
 	// Initalize to an empty collection as this is rarely used now.
@@ -384,9 +384,7 @@ public class DecoratorManager implements ILabelProviderListener,
 	 *            the event with the update details
 	 */
 	void fireListeners(final LabelProviderChangedEvent event) {
-		Object[] array = listeners.getListeners();
-		for (int i = 0; i < array.length; i++) {
-			final ILabelProviderListener l = (ILabelProviderListener) array[i];
+		for (final ILabelProviderListener l : listeners) {
 			SafeRunner.run(new SafeRunnable() {
 				@Override
 				public void run() {

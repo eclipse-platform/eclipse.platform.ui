@@ -65,7 +65,7 @@ public class KeyController {
 	 */
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(KeysPreferencePage.class.getName());
-	private ListenerList eventManager = null;
+	private ListenerList<IPropertyChangeListener> eventManager = null;
 	private BindingManager fBindingManager;
 	private ContextModel contextModel;
 	private SchemeModel fSchemeModel;
@@ -74,9 +74,9 @@ public class KeyController {
 	private ConflictModel conflictModel;
 	private IServiceLocator serviceLocator;
 
-	private ListenerList getEventManager() {
+	private ListenerList<IPropertyChangeListener> getEventManager() {
 		if (eventManager == null) {
-			eventManager = new ListenerList(ListenerList.IDENTITY);
+			eventManager = new ListenerList<>(ListenerList.IDENTITY);
 		}
 		return eventManager;
 	}
@@ -98,11 +98,10 @@ public class KeyController {
 			return;
 		}
 
-		Object[] listeners = getEventManager().getListeners();
 		PropertyChangeEvent event = new PropertyChangeEvent(source, propId,
 				oldVal, newVal);
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		for (IPropertyChangeListener listener : getEventManager()) {
+			listener.propertyChange(event);
 		}
 	}
 

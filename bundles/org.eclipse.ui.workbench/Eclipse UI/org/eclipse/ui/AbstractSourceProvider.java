@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	 * The listeners to this source provider. This value is never
 	 * <code>null</code>.
 	 */
-	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<ISourceProviderListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
 
 
 	@Override
@@ -66,9 +66,8 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	 */
 	protected final void fireSourceChanged(final int sourcePriority,
 			final String sourceName, final Object sourceValue) {
-		for (Object listener : listeners.getListeners()) {
-			((ISourceProviderListener) listener).sourceChanged(sourcePriority, sourceName,
-					sourceValue);
+		for (ISourceProviderListener listener : listeners) {
+			listener.sourceChanged(sourcePriority, sourceName, sourceValue);
 		}
 	}
 
@@ -86,8 +85,8 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	protected final void fireSourceChanged(final int sourcePriority,
 			final Map sourceValuesByName) {
 
-		for (Object listener : listeners.getListeners()) {
-			((ISourceProviderListener) listener).sourceChanged(sourcePriority, sourceValuesByName);
+		for (ISourceProviderListener listener : listeners) {
+			listener.sourceChanged(sourcePriority, sourceValuesByName);
 		}
 	}
 

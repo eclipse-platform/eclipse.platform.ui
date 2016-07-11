@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,10 +78,10 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	 * 	or IPersistableElement.
 	 */
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 	    if (adapter == IWorkingSet.class
 	            || adapter == IPersistableElement.class) {
-	        return this;
+			return adapter.cast(this);
 	    }
 	    return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

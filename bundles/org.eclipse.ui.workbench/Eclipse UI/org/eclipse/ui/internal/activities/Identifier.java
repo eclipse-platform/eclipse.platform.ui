@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ final class Identifier implements IIdentifier {
 
     private String id;
 
-	private ListenerList identifierListeners;
+	private ListenerList<IIdentifierListener> identifierListeners;
 
     private transient String string;
 
@@ -58,7 +58,7 @@ final class Identifier implements IIdentifier {
 		}
 
         if (identifierListeners == null) {
-			identifierListeners = new ListenerList(ListenerList.IDENTITY);
+			identifierListeners = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		identifierListeners.add(identifierListener);
@@ -106,10 +106,8 @@ final class Identifier implements IIdentifier {
 		}
 
         if (identifierListeners != null) {
-			Object[] listeners = identifierListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				Object listener = listeners[i];
-				((IIdentifierListener) listener).identifierChanged(identifierEvent);
+			for (IIdentifierListener listener : identifierListeners) {
+				listener.identifierChanged(identifierEvent);
 			}
 		}
     }
