@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Marc-Andre Laperle (Ericsson) - Bug 413278
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497618
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -59,7 +60,7 @@ public class WorkbookEditorsHandler extends AbstractHandler {
 			if (activeStack.getRenderer() instanceof StackRenderer
 					&& activeStack.getWidget() instanceof CTabFolder) {
 				StackRenderer stackRenderer = (StackRenderer) activeStack.getRenderer();
-				stackRenderer.showAvailableItems(activeStack, (CTabFolder) activeStack.getWidget());
+				stackRenderer.showAvailableItems(activeStack, (CTabFolder) activeStack.getWidget(), true);
 			}
 		}
 		return null;
