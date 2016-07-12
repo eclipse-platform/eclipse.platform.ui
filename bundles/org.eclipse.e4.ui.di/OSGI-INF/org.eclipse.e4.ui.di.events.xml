@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.ui.di.events">
+   <property name="dependency.injection.annotation" value="org.eclipse.e4.ui.di.UIEventTopic"/>
+   <service>
+      <provide interface="org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier"/>
+   </service>
+   <reference bind="setEventAdmin" cardinality="1..1" interface="org.osgi.service.event.EventAdmin" name="EventAdmin" policy="static" unbind="unsetEventAdmin"/>
+   <implementation class="org.eclipse.e4.ui.internal.di.UIEventObjectSupplier"/>
+</scr:component>
