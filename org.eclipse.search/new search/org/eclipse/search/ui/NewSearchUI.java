@@ -254,7 +254,7 @@ public class NewSearchUI {
 
 	/**
 	 * Removes the given search query.
-	 * 
+	 *
 	 * @param query the query to be removed
 	 * @since 3.5
 	 */

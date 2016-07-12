@@ -362,7 +362,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Creates the Search plugin standard groups in a context menu.
-	 * 
+	 *
 	 * @param menu the menu to create in
 	 * @deprecated old search
 	 */

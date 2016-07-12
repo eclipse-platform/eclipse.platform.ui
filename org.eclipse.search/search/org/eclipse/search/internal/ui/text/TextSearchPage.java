@@ -141,7 +141,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 */
 	private String[] fPreviousExtensions;
 
-	
+
 	private static class SearchPatternData {
 		public final boolean isCaseSensitive;
 		public final boolean isRegExSearch;
@@ -774,10 +774,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		});
 		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1));
 		fSearchDerivedCheckbox.setFont(searchInGroup.getFont());
-		
+
 		fSearchBinaryCheckbox= new Button(searchInGroup, SWT.CHECK);
 		fSearchBinaryCheckbox.setText(SearchMessages.TextSearchPage_searchBinary_label);
-		
+
 		fSearchBinaryCheckbox.setSelection(fSearchBinaries);
 		fSearchBinaryCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override

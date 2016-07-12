@@ -151,12 +151,12 @@ public class TextSearchVisitor {
 		private final int fEnd;
 		private final Map<IFile, IDocument> fDocumentsInEditors;
 		private FileCharSequenceProvider fileCharSequenceProvider;
-		
+
 		private IPath previousLocationFromFile;
 		// occurences need to be passed to FileSearchResultCollector with growing offset
 		private List<TextSearchMatchAccess> occurencesForPreviousLocation;
 		private CharSequence charsequenceForPreviousLocation;
-		
+
 
 		/**
 		 * Searches for matches in a set of files.

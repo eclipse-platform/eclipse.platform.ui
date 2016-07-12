@@ -85,7 +85,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 
 	/**
 	 * Adds an file name pattern to the scope.
-	 * 
+	 *
 	 * @param pattern the pattern
 	 */
 	public void addFileNamePattern(String pattern) {

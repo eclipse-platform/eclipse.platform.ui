@@ -37,7 +37,7 @@ public class PatternConstructor {
 	/**
 	 * Creates a pattern element from the pattern string which is either a reg-ex expression or in
 	 * our old 'StringMatcher' format.
-	 * 
+	 *
 	 * @param pattern The search pattern
 	 * @param isRegex <code>true</code> if the passed string already is a reg-ex pattern
 	 * @param isStringMatcher <code>true</code> if the passed string is in the StringMatcher format.
@@ -75,7 +75,7 @@ public class PatternConstructor {
 
 	/**
 	 * Copied from {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}' to support '\R'
-	 * 
+	 *
 	 * @param findString the string to substitute
 	 * @return the new string
 	 * @throws PatternSyntaxException if "\R" is at an illegal position
@@ -159,7 +159,7 @@ public class PatternConstructor {
 
 	/**
 	 * Creates a pattern element from an array of patterns in the old 'StringMatcher' format.
-	 * 
+	 *
 	 * @param patterns The search patterns
 	 * @param isCaseSensitive Set to <code>true</code> to create a case insensitive pattern
 	 * @return The created pattern

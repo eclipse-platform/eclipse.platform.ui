@@ -434,7 +434,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * front; otherwise, a new editor is opened. If <code>activate == true</code> the editor will be
 	 * activated.
 	 * <p>
-	 * 
+	 *
 	 * @param page the workbench page in which the editor will be opened
 	 * @param file the file to open
 	 * @param offset the offset to select in the editor
@@ -456,7 +456,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * front; otherwise, a new editor is opened. If <code>activate == true</code> the editor will be
 	 * activated.
 	 * <p>
-	 * 
+	 *
 	 * @param page the workbench page in which the editor will be opened
 	 * @param file the file to open
 	 * @param activate if <code>true</code> the editor will be activated

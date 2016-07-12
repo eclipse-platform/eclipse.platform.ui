@@ -21,7 +21,7 @@ class ShowSearchAction extends Action {
 
 	/**
 	 * Create a new instance of this class.
-	 * 
+	 *
 	 * @param search the search
 	 */
 	public ShowSearchAction(Search search) {

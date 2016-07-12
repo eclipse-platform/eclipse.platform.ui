@@ -63,9 +63,9 @@ public abstract class TextSearchQueryProvider {
 		/**
 		 * Returns whether to require a word boundary at the beginning and end of the pattern,
 		 * excluding matches that only match part of a word.
-		 * 
+		 *
 		 * This implementation returns <code>false</code>, subclasses can override.
-		 * 
+		 *
 		 * @return <code>true</code> if the pattern should match only whole words. <code>true</code>
 		 *         is not allowed if {@link #isRegExSearch()} returns <code>true</code>. In this
 		 *         case, clients can either ignore this option or throw an
@@ -78,9 +78,9 @@ public abstract class TextSearchQueryProvider {
 
 		/**
 		 * Returns whether binary files are searched.
-		 * 
+		 *
 		 * This implementation returns <code>false</code>, subclasses can override.
-		 * 
+		 *
 		 * @return <code>true</code> if binary files are searched
 		 * @since 3.11
 		 */

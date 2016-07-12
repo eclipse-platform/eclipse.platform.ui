@@ -652,7 +652,7 @@ public class SearchResultViewer extends TableViewer {
 
 	/**
 	 * Handle an update of an entry.
-	 * 
+	 *
 	 * @param entry the entry
 	 * @param matchRemoved <code>true</code> if a match got removed
 	 */

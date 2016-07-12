@@ -91,7 +91,7 @@ public abstract class TextSearchEngine {
 
 	/**
 	 * Creates a pattern for the given search string and the given options.
-	 * 
+	 *
 	 * @param pattern the search pattern. If <code>isRegex</code> is:
 	 *            <ul>
 	 *            <li><code>false</code>: a string including '*' and '?' wildcards and '\' for

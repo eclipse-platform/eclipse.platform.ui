@@ -110,7 +110,7 @@ public interface ISearchPageContainer {
 	/**
 	 * Tells this container whether the active editor can provide the selection for the scope and
 	 * hence the {@link #SELECTION_SCOPE} can be enabled if the active part is an editor.
-	 * 
+	 *
 	 * @param state <code>true</code> if the active editor can provide the selection,
 	 *            <code>false</code> otherwise
 	 * @since 3.7
@@ -119,7 +119,7 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Returns the editor input of the active editor.
-	 * 
+	 *
 	 * @return the editor input or <code>null</code> if the active part is not an editor
 	 * @since 3.7
 	 */

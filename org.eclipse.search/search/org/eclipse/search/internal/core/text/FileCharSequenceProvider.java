@@ -154,7 +154,7 @@ public class FileCharSequenceProvider {
 
 		/**
 		 * Fills the buffer by reading from the given reader.
-		 * 
+		 *
 		 * @param reader the reader to read from
 		 * @param pos the offset of the reader in the file
 		 * @return returns true if the end of the file has been reached

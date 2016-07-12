@@ -279,7 +279,7 @@ public class ReplaceRefactoring extends Refactoring {
 	/**
 	 * Checks whether the match should be included. Also collects ignored matches whose
 	 * file is linked to an already collected match.
-	 * 
+	 *
 	 * @param match the match
 	 * @return <code>true</code> iff the match should be included
 	 * @since 3.7

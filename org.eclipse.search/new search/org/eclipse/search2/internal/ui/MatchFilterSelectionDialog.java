@@ -69,7 +69,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 	/**
 	 * Creates a {@link MatchFilterSelectionDialog}.
-	 * 
+	 *
 	 * @param shell the parent shell
 	 * @param enableMatchFilterConfiguration <code>true</code> if match filter configuration should
 	 *            be enabled

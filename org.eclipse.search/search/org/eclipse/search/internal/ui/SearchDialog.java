@@ -94,7 +94,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	// Dialog store id constants
 	private static final String DIALOG_NAME= "SearchDialog"; //$NON-NLS-1$
-	private static final String STORE_PREVIOUS_PAGE= "PREVIOUS_PAGE"; //$NON-NLS-1$	
+	private static final String STORE_PREVIOUS_PAGE= "PREVIOUS_PAGE"; //$NON-NLS-1$
 	private static final String STORE_IS_OPEN_PREVIOUS_PAGE= "IS_OPEN_PREVIOUS_PAGE"; //$NON-NLS-1$
 
 
@@ -282,7 +282,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	/**
 	 * Tells whether the given part is the old ('classic') search view.
-	 * 
+	 *
 	 * @param part the part to test
 	 * @return <code>true</code> if the given part is the old search view
 	 * @deprecated old ('classic') search is deprecated
@@ -337,7 +337,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ArrayContentProvider(), labelProvider, message) {
 			Button fLastUsedPageButton;
-			
+
 			@Override
 			public void create() {
 				super.create();
@@ -367,7 +367,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				fLastUsedPageButton.setSelection(fDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE));
 				return control;
 			}
-			
+
 			@Override
 			protected void okPressed() {
 				fDialogSettings.put(STORE_IS_OPEN_PREVIOUS_PAGE, fLastUsedPageButton.getSelection());
@@ -572,7 +572,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		SearchPageDescriptor descriptor= (SearchPageDescriptor) item.getData("descriptor"); //$NON-NLS-1$
 
-		
+
 		if (item.getControl() == null) {
 			item.setControl(createPageControl(folder, descriptor));
 		}
