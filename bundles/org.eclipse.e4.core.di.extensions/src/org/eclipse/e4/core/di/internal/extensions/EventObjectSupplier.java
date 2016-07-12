@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,15 +33,17 @@ import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
 /**
- * This class is instantiated and wired by declarative services, in
- * OSGI-INF/events.xml
+ * This class is instantiated and wired by declarative services.
  */
+@Component(service = ExtendedObjectSupplier.class, immediate = true, name = "org.eclipse.e4.core.services.events", property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.EventTopic")
 public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 	private EventAdmin eventAdmin;
@@ -50,8 +52,14 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		return eventAdmin;
 	}
 
+	@Reference
 	public void setEventAdmin(EventAdmin eventAdmin) {
 		this.eventAdmin = eventAdmin;
+	}
+
+	// can be removed after Bug 492726 is fixed
+	protected void unsetEventAdmin(EventAdmin ea) {
+		this.eventAdmin = null;
 	}
 
 	protected Map<String, Event> currentEvents = new HashMap<>();

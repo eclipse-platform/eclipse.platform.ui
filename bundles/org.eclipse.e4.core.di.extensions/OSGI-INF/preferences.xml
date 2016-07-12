@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" deactivate="removeAllListeners" immediate="true" name="org.eclipse.e4.core.services.preferences">
-   <implementation class="org.eclipse.e4.core.di.internal.extensions.PreferencesObjectSupplier"/>
-   <service>
-      <provide interface="org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier"/>
-   </service>
-   <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.core.di.extensions.Preference"/>
-   <reference bind="setPreferencesService" cardinality="1..1" interface="org.eclipse.core.runtime.preferences.IPreferencesService" name="IPreferencesService" policy="static"/>
-</scr:component>

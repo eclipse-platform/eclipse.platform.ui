@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,11 +30,15 @@ import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Note: we do not support byte arrays in preferences at this time. This class
- * is instantiated and wired by declarative services, in OSGI-INF/preference.xml
+ * is instantiated and wired by declarative services.
  */
+@Component(service = ExtendedObjectSupplier.class, immediate = true, name = "org.eclipse.e4.core.services.preferences", property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.Preference")
 public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 	private IPreferencesService preferencesService;
@@ -43,8 +47,14 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		return preferencesService;
 	}
 
+	@Reference(name = "IPreferencesService")
 	public void setPreferencesService(IPreferencesService preferenceService) {
 		this.preferencesService = preferenceService;
+	}
+
+	// can be removed after Bug 492726 is fixed
+	public void unsetPreferencesService(IPreferencesService preferenceService) {
+		this.preferencesService = null;
 	}
 
 	static private class PrefInjectionListener implements IPreferenceChangeListener {
@@ -199,6 +209,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		}
 	}
 
+	@Deactivate
 	public void removeAllListeners() {
 		synchronized (listenerCache) {
 			for (HashMap<String, List<PrefInjectionListener>> map : listenerCache.values()) {
