@@ -100,7 +100,7 @@ public interface IPresentationEngine {
 	 * {@link MPartSashContainer} allowing the different parts to be
 	 * minimized/maximized separately.
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 */
 	public static String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = "MinMaximizeableChildrenArea"; //$NON-NLS-1$
 
