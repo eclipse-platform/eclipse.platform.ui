@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,10 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
@@ -53,7 +56,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see ProfileLastAction
  * @since 3.8
  */
-public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
+public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
 	private class Listener implements IPreferenceChangeListener {
 		/* (non-Javadoc)
@@ -94,21 +97,57 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	/**
+	 * @since 3.12
+	 */
+	@Override
+	public void init(IAction action) {
+		initialize(action);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if (prefs != null) {
+			prefs.addPreferenceChangeListener(fListener);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run(IAction action){		
+	public void run(IAction action) {
+		runInternal(false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IActionDelegate2#runwithEvent(org.eclipse.jface.action.
+	 * IAction, org.eclipse.swt.widgets.Event)
+	 */
+
+	/**
+	 * @since 3.12
+	 */
+	@Override
+	public void runWithEvent(IAction action, Event event) {
+		runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
+	}
+
+	private void runInternal(boolean isShift) {
 		if(LaunchingResourceManager.isContextLaunchEnabled()) {
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupId());
-			ContextRunner.getDefault().launch(group);
+			ContextRunner.getDefault().launch(group, isShift);
 			return;
 		}
 		try {
 			final ILaunchConfiguration configuration = getLastLaunch();
 			if (configuration != null) {
 				if (configuration.supportsMode(getMode())) {
-					DebugUITools.launch(configuration, getMode());
+					DebugUITools.launch(configuration, getMode(), isShift);
 				} else {
 					String configName = configuration.getName();
 					String title = ActionMessages.RelaunchLastAction_Cannot_relaunch_1; 
@@ -124,7 +163,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			DebugUIPlugin.errorDialog(getShell(), ActionMessages.RelaunchLastAction_Error_relaunching_3, ActionMessages.RelaunchLastAction_Error_encountered_attempting_to_relaunch_4, ce); // 
 		}
 	}
-	
+
 	/**
 	 * Open the launch configuration dialog, passing in the current workbench selection.
 	 */

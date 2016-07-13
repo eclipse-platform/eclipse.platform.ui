@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class LaunchShortcutAction extends Action {
 	private String fMode;
 	private LaunchShortcutExtension fShortcut; 
 
+
 	/**
 	 * Constructor
 	 * @param groupid the id of the launch group
@@ -65,12 +66,20 @@ public class LaunchShortcutAction extends Action {
 	 */
 	@Override
 	public void run() {
+		runInternal(false);
+	}
+
+	private void runInternal(boolean isShift) {
 		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		Object o = ss.getFirstElement();
+		// store if Shift was pressed to toggle terminate before launch
+		// preference
 		if(o instanceof IEditorPart) {
+			DebugUITools.storeLaunchToggleTerminate(o, isShift);
 			fShortcut.launch((IEditorPart) o, fMode);
 		}
 		else {
+			DebugUITools.storeLaunchToggleTerminate(ss, isShift);
 			fShortcut.launch(ss, fMode);
 		}
 	}
@@ -120,7 +129,7 @@ public class LaunchShortcutAction extends Action {
 			}
 		}
 		else {
-			run();
+			runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
 		}
 	}
 	

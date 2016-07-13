@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.debug.ui;
 
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -19,10 +21,8 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,12 +31,14 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -47,6 +49,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
@@ -60,7 +63,6 @@ import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextManager;
@@ -68,18 +70,20 @@ import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -754,19 +758,157 @@ public class DebugUITools {
 	}	
 	
 	/**
-	 * Saves and builds the workspace according to current preference settings, and
-	 * launches the given launch configuration in the specified mode.
+	 * Saves and builds the workspace according to current preference settings,
+	 * and launches the given launch configuration in the specified mode. It
+	 * terminates the current launch for the same configuration if it was
+	 * specified via Preferences or toggled by Shift.
 	 * <p>
 	 * This method must be called in the UI thread.
 	 * </p>
+	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @since 2.1
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
-		boolean launchInBackground= true;
+		launch(configuration, mode, DebugUITools.findTogglelaunchForConfig(configuration));
+	}
+
+	private static HashMap<Object, Boolean> fgLaunchToggleTerminateMap = new HashMap<>();
+
+	/**
+	 * Stores the toggle data for launch in a Map to be used while launching to
+	 * decide if previous launch for same configuration can be terminated.
+	 * 
+	 * @param data the editor or selected tree node
+	 * @param isShift is Shift pressed (use <code>false</code> if no support for
+	 *            Shift)
+	 * @since 3.12
+	 */
+	public static void storeLaunchToggleTerminate(Object data, Boolean isShift) {
+		synchronized (fgLaunchToggleTerminateMap) {
+			fgLaunchToggleTerminateMap.put(data, isShift);
+		}
+	}
+
+	/**
+	 * @since 3.12
+	 */
+	private static boolean getAndRemoveLaunchToggleTerminate(Object data) {
+
+		Boolean isShift;
+		synchronized (fgLaunchToggleTerminateMap) {
+			isShift = fgLaunchToggleTerminateMap.get(data);
+		}
+		if (isShift != null) {
+			synchronized (fgLaunchToggleTerminateMap) {
+				fgLaunchToggleTerminateMap.remove(data);
+			}
+			return isShift.booleanValue();
+		}
+		return Boolean.FALSE;
+	}
+
+	/**
+	 * @since 3.12
+	 */
+	private static boolean findTogglelaunchForConfig(ILaunchConfiguration configuration) {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		for (ILaunch iLaunch : launches) {
+			if (configuration.contentsEqual(iLaunch.getLaunchConfiguration())) {
+				try {
+					IResource[] configResource = iLaunch.getLaunchConfiguration().getMappedResources();
+					if (configResource != null && configResource.length == 1) {
+						for (Iterator<Object> iter = fgLaunchToggleTerminateMap.keySet().iterator(); iter.hasNext();) {
+							Object key = iter.next();
+							if (key instanceof IEditorPart) {
+								IEditorInput input = ((IEditorPart) key).getEditorInput();
+								if (input.getAdapter(IResource.class).equals(configResource[0])) {
+									return getAndRemoveLaunchToggleTerminate(key);
+								}
+							} else if (key instanceof TreeSelection) {
+								TreeSelection selection = (TreeSelection) key;
+								TreePath[] treePath = selection.getPaths();
+								if (treePath != null && treePath.length == 1) {
+									Object lastSegmentObj = treePath[0].getLastSegment();
+									IResource selectedResource = ((IAdaptable) lastSegmentObj).getAdapter(IResource.class);
+									if (selectedResource!= null && selectedResource.equals(configResource[0])) {
+										return getAndRemoveLaunchToggleTerminate(key);
+									}
+								}
+							}
+						}
+					}
+
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+
+	}
+	
+	/**
+	 * Saves and builds the workspace according to current preference settings,
+	 * and launches the given launch configuration in the specified mode.
+	 * <p>
+	 * This method must be called in the UI thread.
+	 * </p>
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode - run or debug
+	 * @since 3.12
+	 */
+	public static void reLaunch(final ILaunchConfiguration configuration, final String mode) {
+		boolean launchInBackground = true;
 		try {
-			launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
+			launchInBackground = configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		if (launchInBackground) {
+			DebugUIPlugin.launchInBackground(configuration, mode);
+		} else {
+			DebugUIPlugin.launchInForeground(configuration, mode);
+		}
+
+	}
+
+
+	/**
+	 * Saves and builds the workspace according to current preference settings,
+	 * and launches the given launch configuration in the specified mode. It
+	 * terminates the current launch for the same configuration if it was
+	 * specified via Preferences or toggled by Shift
+	 * <p>
+	 * This method must be called in the UI thread.
+	 * </p>
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode - run or debug
+	 * @param isShift is Shift pressed (use <code>false</code> if no support for
+	 *            Shift)
+	 * @since 3.12
+	 */
+	public static void launch(final ILaunchConfiguration configuration, final String mode, boolean isShift) {
+		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION) != isShift) {
+			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+			ILaunch[] launches = launchManager.getLaunches();
+			for (ILaunch iLaunch : launches) {
+				if (configuration.contentsEqual(iLaunch.getLaunchConfiguration())) {
+					try {
+						iLaunch.terminate();
+					} catch (DebugException e) {
+						DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), NLS.bind(ActionMessages.TerminateAndLaunchFailure, iLaunch.getLaunchConfiguration().getName()), e));
+					}
+				}
+			}
+		}
+		boolean launchInBackground = true;
+		try {
+			launchInBackground = configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
@@ -776,7 +918,6 @@ public class DebugUITools {
 			DebugUIPlugin.launchInForeground(configuration, mode);
 		}
 	}
-	
 
 	
 	/**

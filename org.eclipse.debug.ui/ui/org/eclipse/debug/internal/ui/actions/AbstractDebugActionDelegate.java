@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -59,9 +60,14 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	private boolean fInitialized = false;
 	
 	/**
-	 * It's crucial that delegate actions have a zero-argument constructor so that
-	 * they can be reflected into existence when referenced in an action set
-	 * in the plugin's plugin.xml file.
+	 * Whether this delegate was started with Shift pressed
+	 */
+	private boolean fIsShift = false;
+
+	/**
+	 * It's crucial that delegate actions have a zero-argument constructor so
+	 * that they can be reflected into existence when referenced in an action
+	 * set in the plugin's plugin.xml file.
 	 */
 	public AbstractDebugActionDelegate() {}
 	
@@ -83,7 +89,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 			// disable the action so it cannot be run again until an event or selection change
 			// updates the enablement
 			action.setEnabled(false);
-			runInForeground(selection);
+			runInForeground(selection, false);
 	    }
 	}
 	
@@ -91,7 +97,8 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * Runs this action in the UI thread.
 	 * @param selection the current selection
 	 */
-	private void runInForeground(final IStructuredSelection selection) {
+	private void runInForeground(final IStructuredSelection selection, boolean isShift) {
+		fIsShift = isShift;
 	    final MultiStatus status= 
 			new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null); 	    
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
@@ -320,12 +327,27 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		return true;
 	}
 
+	/**
+	 * Returns if this action is started with Shift pressed
+	 * @return true if it is, false otherwise
+	 */
+	protected boolean isShift() {
+		return fIsShift;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
-		run(action);
+		if (action.isEnabled()) {
+			IStructuredSelection selection = getSelection();
+			// disable the action so it cannot be run again until an event or
+			// selection change
+			// updates the enablement
+			action.setEnabled(false);
+			runInForeground(selection, ((event.stateMask & SWT.SHIFT) > 0) ? true : false);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,17 +77,22 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 */
 	@Override
 	public void run(IAction action) {
+		runInternal(action, false);
+	}
+
+	@Override
+	protected void runInternal(IAction action, boolean isShift) {
 		//always ignore external tools during context launching
 		if(LaunchingResourceManager.isContextLaunchEnabled(getLaunchGroupIdentifier())) {
-			ContextRunner.getDefault().launch(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
+			ContextRunner.getDefault().launch(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()), isShift);
 		}
 		else {
 			ILaunchConfiguration configuration = getLastLaunch();
 			if (configuration == null) {
 				DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(), getLaunchGroupIdentifier());
 			} else {
-				DebugUITools.launch(configuration, getMode());
+				DebugUITools.launch(configuration, getMode(), isShift);
 			}
 		}
-	}	
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,19 +30,31 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 */
 	@Override
 	protected void doAction(Object object) {
-		ILaunch launch= DebugUIPlugin.getLaunch(object);
-        if (launch != null) {
-            relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
-        }
+		ILaunch launch = DebugUIPlugin.getLaunch(object);
+		if (launch != null) {
+			relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode(), isShift());
+		}
 	}
-	
+
 	/**
 	 * Re-launches the given configuration in the specified mode.
+	 * 
 	 */
 	public static void relaunch(ILaunchConfiguration config, String mode) {
-		DebugUITools.launch(config, mode);		
+		DebugUITools.launch(config, mode);
 	}
-	
+
+	/**
+	 * Re-launches the given configuration in the specified mode after
+	 * terminating the previous if Preferred.
+	 * 
+	 * @param isShift is Shift pressed (use <code>false</code> if no support for
+	 *            Shift)
+	 */
+	public static void relaunch(ILaunchConfiguration config, String mode, boolean isShift) {
+		DebugUITools.launch(config, mode, isShift);
+	}
+
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */

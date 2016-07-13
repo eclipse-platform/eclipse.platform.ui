@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -68,6 +68,8 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -78,6 +80,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -161,6 +165,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
 	
+	private boolean fIsShift = false;
+
 	/**
 	 * dialog settings
 	 */
@@ -420,7 +426,20 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return composite;
 	}
 
-	
+	/**
+	 * 
+	 * @param buttonId
+	 */
+	protected void launchButtonPressed(int buttonId) {
+		if (buttonId == ID_LAUNCH_BUTTON) {
+			handleLaunchPressed();
+		} else if (buttonId == ID_CLOSE_BUTTON) {
+			handleClosePressed();
+		} else {
+			super.buttonPressed(buttonId);
+		}
+	}
+
 	
 	/**
 	 * A launch configuration dialog overrides this method
@@ -434,6 +453,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void createButtonsForButtonBar(Composite parent) {
 		Button button = createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
         button.setEnabled(false);
+		Listener[] listeners = button.getListeners(SWT.Selection);
+		for (Listener listener : listeners) {
+			button.removeListener(SWT.Selection, listener);
+		}
+		listeners = button.getListeners(SWT.DefaultSelection);
+		for (Listener listener : listeners) {
+			button.removeListener(SWT.DefaultSelection, listener);
+		}
+
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				setShift(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
+				handleLaunchPressed();
+			}
+		});
 		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);
 	}
 	
@@ -490,6 +525,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
     
+	protected void setShift(boolean isShift) {
+		fIsShift = isShift;
+	}
 	/**
 	 * Creates the launch configuration selection area of the dialog.
 	 * This area displays a tree of launch configurations that the user
@@ -532,10 +570,20 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fDoubleClickAction = new Action() {
 			@Override
 			public void run() {
+				runInternal(false);
+			}
+
+			@Override
+			public void runWithEvent(Event event) {
+				runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
+			}
+
+			void runInternal(boolean isShift) {
 				IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
 				Object target = selection.getFirstElement();
 				if (target instanceof ILaunchConfiguration) {
 					if (fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates()) {
+						setShift(isShift);
 						handleLaunchPressed();
 					}
 				} else {
@@ -974,8 +1022,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
   	}
  	
 	/**
-	 * Notification the 'launch' button has been pressed.
-	 * Save and launch.
+	 * Notification the 'launch' button has been pressed. Save and launch.
+	 * 
 	 */
 	protected void handleLaunchPressed() {
 		ILaunchConfiguration config = fTabViewer.getOriginal();
@@ -984,8 +1032,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		if(config != null) {
 			close();
-			DebugUITools.launch(config, getMode());
+			DebugUITools.launch(config, getMode(), fIsShift);
 		}
+		setShift(false);
 	}
 
 	/**

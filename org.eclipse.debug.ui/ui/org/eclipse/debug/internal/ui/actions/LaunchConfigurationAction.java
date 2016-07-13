@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class LaunchConfigurationAction extends Action {
 	 */
 	@Override
 	public void run() {
-		DebugUITools.launch(fConfig, fMode);
+		runInternal(false);
 	}
 	
 	/* (non-Javadoc)
@@ -75,13 +75,17 @@ public class LaunchConfigurationAction extends Action {
 					DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(fConfig), group.getIdentifier());
 				}
 				else {
-					run();
+					runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
 				}
 			}
 			catch(CoreException ce) {}
 		}
 		else {
-			run();
+			runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
 		}
+	}
+
+	private void runInternal(boolean isShift) {
+		DebugUITools.launch(fConfig, fMode, isShift);
 	}
 }
