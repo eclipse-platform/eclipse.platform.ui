@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sopot Cela <sopotcela@gmail.com> - Bug 391961
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 485840, 474320
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 485840, 474320, 497634
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 380233
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 485829
  ******************************************************************************/
@@ -313,17 +313,6 @@ public class PerspectiveSwitcher {
 			}
 		});
 		toolParent = ((Control) toolControl.getParent().getWidget());
-		toolParent.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (borderColor != null && !(borderColor.isDisposed())) {
-					e.gc.setForeground(borderColor);
-					Rectangle bounds = ((Control) e.widget).getBounds();
-					e.gc.drawLine(0, bounds.height - 1, bounds.width, bounds.height - 1);
-				}
-			}
-		});
 
 		comp.addDisposeListener(new DisposeListener() {
 			@Override
