@@ -48,10 +48,6 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 			return false;
 		}
 
-		/*
-		 * Returns Object#hashCode.
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return super.hashCode();
