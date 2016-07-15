@@ -504,18 +504,11 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		layout.numColumns++;
 
-		super.createButtonsForButtonBar(composite);  // cancel button
-
-		/*
-		 * Replace button now uses the GridData layout data that has exclusion flags so
-		 * the layout will ignore the widget when hidden, leaving no empty space between Cancel and Search buttons.
-		 */
 		fReplaceButton= createActionButton(composite, REPLACE_ID, SearchMessages.SearchDialog_replaceAction, true);
-		GridData fReplaceButtonData = new GridData();
-		fReplaceButtonData.exclude = false;
-		fReplaceButton.setLayoutData(fReplaceButtonData);
+		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 		Button searchButton= createActionButton(composite, SEARCH_ID, SearchMessages.SearchDialog_searchAction, true);
 		searchButton.setEnabled(fDescriptors.size() > 0);
+		super.createButtonsForButtonBar(composite);  // cancel button
 
 		return composite;
 	}
@@ -606,12 +599,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			if (pageControl instanceof Composite)
 				((Composite)pageControl).layout(false, true);
 		}
-
-		// set visibility of replace button using its GridData.exclude to hide/show the button without empty space
-		GridData fReplaceButtonDataPrev = (GridData) fReplaceButton.getLayoutData();
-		fReplaceButtonDataPrev.exclude = !(fCurrentPage instanceof IReplacePage);
-		fReplaceButton.setVisible(!fReplaceButtonDataPrev.exclude);
-		fReplaceButton.getParent().layout(false);
+		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 		notifyPageChanged();
 	}
 
