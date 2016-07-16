@@ -110,23 +110,23 @@ CTabFolder Canvas {
 }
 
 Form, FormHeading {
-	background-color: #fafafc;
-	background: #fafafc;
-	background-image: #fafafc;
+	background-color: #ffffff;
+	background: #ffffff;
+	background-image: #ffffff;
 	color: #505050;
 }
 
 Form {
 	/* Bug 465148: Additional styling for the Form */
-	text-background-color: #fafafc;
-	
+	text-background-color: #ffffff;
+
 	tb-toggle-hover-color: #505050;
 	tb-toggle-color: #505050;
 	h-hover-full-color: #505050;
 	h-hover-light-color: #505050;
 	h-bottom-keyline-2-color: #eaeaea;
 	h-bottom-keyline-1-color: #eaeaea;
-	
+
 	/* We also have to force the background mode (the
    * Label/ToolBar in the heading should inherit it).
    */
@@ -136,9 +136,9 @@ Form {
 
 
 Section {
-	background-color: #fafafc;
-  	color: #505050;		  	
-  	background-color-titlebar: #eaeaea;		 
-  	background-color-gradient-titlebar: #eaeaea;		  	
-  	border-color-titlebar: #fafafc;		  
+	background-color: #ffffff;
+  	color: #505050;
+  	background-color-titlebar: #eaeaea;
+  	background-color-gradient-titlebar: #eaeaea;
+  	border-color-titlebar: #ffffff;
 }
