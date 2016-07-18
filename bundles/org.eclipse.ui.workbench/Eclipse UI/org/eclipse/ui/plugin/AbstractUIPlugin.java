@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 481319, 481318
+ *     Philipp Kunz <philipp.kunz@paratix.ch> - Bug 297922
  *******************************************************************************/
 package org.eclipse.ui.plugin;
 
@@ -590,17 +591,20 @@ public abstract class AbstractUIPlugin extends Plugin {
                     if (event.getType() == BundleEvent.STARTED) {
                         // We're getting notified that the bundle has been started.
                         // Make sure it's still active.  It may have been shut down between
-                        // the time this event was queued and now.
+                        // the time this event was dispatched and now.
                         if (getBundle().getState() == Bundle.ACTIVE) {
                             refreshPluginActions();
                         }
-                        fc.removeBundleListener(this);
+                        try {
+                            fc.removeBundleListener(this);
+                        } catch (IllegalStateException ex) {
+                            // bundleListener is removed in stop(BundleContext)
+                        }
                     }
                 }
             }
         };
         context.addBundleListener(bundleListener);
-        // bundleListener is removed in stop(BundleContext)
     }
 
     /**
