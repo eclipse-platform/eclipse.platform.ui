@@ -1393,20 +1393,12 @@
          <markerTypeReference
                id="org.eclipse.core.resources.problemmarker">
          </markerTypeReference>
-         <markerFieldConfiguration
-               enabled="false"
-               id="org.eclipse.ui.ide.errorsFilter"
-               name="%MarkerFilterGrouping.AllErrors"
-               scope="ON_ANY"
-               values="org.eclipse.ui.internal.views.markers.AllErrorsParameters">
-         </markerFieldConfiguration>
-
-         <markerFieldConfiguration
-               enabled="false"
-               id="org.eclipse.ui.ide.selectedWarningsGrouping"
-               name="%MarkerFilterGrouping.SelectedWarnings"
-               scope="ON_SELECTED_AND_CHILDREN"
-               values="org.eclipse.ui.internal.views.markers.SelectedWarningsParameters">
+          <markerFieldConfiguration
+               enabled="true"
+               id="org.eclipse.ui.ide.projectErrorsWarningsGrouping"
+               name="%MarkerFilterGrouping.ProjectErrorsWarnings"
+               scope="ON_ANY_IN_SAME_CONTAINER"
+               values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
          </markerFieldConfiguration>
 
          <markerFieldConfiguration
@@ -1416,12 +1408,20 @@
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
          </markerFieldConfiguration>
-          <markerFieldConfiguration
+
+         <markerFieldConfiguration
                enabled="false"
-               id="org.eclipse.ui.ide.projectErrorsWarningsGrouping"
-               name="%MarkerFilterGrouping.ProjectErrorsWarnings"
-               scope="ON_ANY_IN_SAME_CONTAINER"
-               values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
+               id="org.eclipse.ui.ide.selectedWarningsGrouping"
+               name="%MarkerFilterGrouping.SelectedWarnings"
+               scope="ON_SELECTED_AND_CHILDREN"
+               values="org.eclipse.ui.internal.views.markers.SelectedWarningsParameters">
+         </markerFieldConfiguration>
+         <markerFieldConfiguration
+               enabled="false"
+               id="org.eclipse.ui.ide.errorsFilter"
+               name="%MarkerFilterGrouping.AllErrors"
+               scope="ON_ANY"
+               values="org.eclipse.ui.internal.views.markers.AllErrorsParameters">
          </markerFieldConfiguration>
 
          <markerFieldReference
