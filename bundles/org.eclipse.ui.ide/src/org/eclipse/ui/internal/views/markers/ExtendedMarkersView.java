@@ -197,8 +197,8 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 
 		MarkerSupportItem[] children = markerItem.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			addAllConcreteItems(children[i], allMarkers);
+		for (MarkerSupportItem element : children) {
+			addAllConcreteItems(element, allMarkers);
 		}
 
 	}
@@ -224,8 +224,8 @@ public class ExtendedMarkersView extends ViewPart {
 		if (markerItem.getMarker() != null)
 			allMarkers.add(markerItem.getMarker());
 		MarkerSupportItem[] children = markerItem.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			addMarkers(children[i], allMarkers);
+		for (MarkerSupportItem element : children) {
+			addMarkers(element, allMarkers);
 
 		}
 
@@ -349,9 +349,9 @@ public class ExtendedMarkersView extends ViewPart {
 
 		if (considerUIWidths) {
 			TreeColumn[] columns= tree.getColumns();
-			for (int i= 0; i < columns.length; i++) {
-				if (markerField.equals(columns[i].getData(MARKER_FIELD))) {
-					return columns[i].getWidth();
+			for (TreeColumn column : columns) {
+				if (markerField.equals(column.getData(MARKER_FIELD))) {
+					return column.getWidth();
 				}
 			}
 		}
@@ -598,8 +598,8 @@ public class ExtendedMarkersView extends ViewPart {
 	MarkerSupportItem[] getAllConcreteItems() {
 		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
 		Collection<MarkerSupportItem> allMarkers = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			addAllConcreteItems(elements[i], allMarkers);
+		for (MarkerSupportItem element : elements) {
+			addAllConcreteItems(element, allMarkers);
 		}
 		MarkerSupportItem[] markers = new MarkerSupportItem[allMarkers.size()];
 		allMarkers.toArray(markers);
@@ -623,8 +623,8 @@ public class ExtendedMarkersView extends ViewPart {
 	IMarker[] getAllMarkers() {
 		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
 		Collection<IMarker> allMarkers = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			addMarkers(elements[i], allMarkers);
+		for (MarkerSupportItem element : elements) {
+			addMarkers(element, allMarkers);
 
 		}
 		IMarker[] markers = new IMarker[allMarkers.size()];
@@ -655,10 +655,10 @@ public class ExtendedMarkersView extends ViewPart {
 					IMemento[] mementoCategories = expanded.getChildren(TAG_CATEGORY);
 					MarkerCategory[] markerCategories =getActiveViewerInputClone().getCategories();
 					if (markerCategories != null) {
-						for (int i = 0; i < markerCategories.length; i++) {
-							for (int j = 0; j < mementoCategories.length; j++) {
-								if (markerCategories[i].getName().equals(mementoCategories[j].getID())) {
-									categoriesToExpand.add(markerCategories[i].getName());
+						for (MarkerCategory markerCategorie : markerCategories) {
+							for (IMemento mementoCategorie : mementoCategories) {
+								if (markerCategorie.getName().equals(mementoCategorie.getID())) {
+									categoriesToExpand.add(markerCategorie.getName());
 								}
 							}
 						}
@@ -844,8 +844,8 @@ public class ExtendedMarkersView extends ViewPart {
 					lastCategory = (MarkerCategory) next;
 					final MarkerEntry[] children = (MarkerEntry[]) lastCategory.getChildren();
 
-					for(int j = 0; j < children.length; j++) {
-						result.add(children[j].getMarker());
+					for (MarkerEntry element : children) {
+						result.add(element.getMarker());
 					}
 				}
 			}
@@ -881,9 +881,9 @@ public class ExtendedMarkersView extends ViewPart {
 		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
 
-			for (int i = 0; i < categories.length; i++) {
+			for (MarkerSupportItem categorie : categories) {
 
-				int childCount = categories[i].getChildrenCount();
+				int childCount = categorie.getChildrenCount();
 				if (markerLimitsEnabled) {
 					childCount = Math.min(childCount, markerLimit);
 				}
@@ -1112,9 +1112,9 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void openSelectedMarkers() {
 		IMarker[] markers = getOpenableMarkers();
-		for (int i = 0; i < markers.length; i++) {
+		for (IMarker marker : markers) {
 			IWorkbenchPage page = getSite().getPage();
-			openMarkerInEditor(markers[i], page);
+			openMarkerInEditor(marker, page);
 		}
 	}
 
@@ -1234,9 +1234,8 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void setPrimarySortField(MarkerField field) {
 		TreeColumn[] columns = viewer.getTree().getColumns();
-		for (int i = 0; i < columns.length; i++) {
-			TreeColumn treeColumn = columns[i];
-			if (columns[i].getData(MARKER_FIELD).equals(field)) {
+		for (TreeColumn treeColumn : columns) {
+			if (treeColumn.getData(MARKER_FIELD).equals(field)) {
 				setPrimarySortField(field, treeColumn);
 				return;
 			}
@@ -1654,8 +1653,7 @@ public class ExtendedMarkersView extends ViewPart {
 			// try to adapt them in resources and add it to the
 			// selectedElements
 			List<Object> selectedElements = new ArrayList<>();
-			for (Iterator<Object> iterator = objectsToAdapt.iterator(); iterator.hasNext();) {
-				Object object = iterator.next();
+			for (Object object : objectsToAdapt) {
 				Object resElement = MarkerResourceUtil.adapt2ResourceElement(object);
 				if (resElement != null) {
 					selectedElements.add(resElement);
