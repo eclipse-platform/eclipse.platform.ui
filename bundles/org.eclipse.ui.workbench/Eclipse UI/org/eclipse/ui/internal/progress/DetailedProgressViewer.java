@@ -173,8 +173,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 */
 	private void updateForShowingProgress() {
 		if (control.getChildren().length > 0) {
+			updateSize();
 			scrolled.setContent(control);
 		} else {
+			scrolled.setMinSize(null);
 			scrolled.setContent(noEntryArea);
 		}
 	}
@@ -314,7 +316,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	protected void inputChanged(Object input, Object oldInput) {
 		super.inputChanged(input, oldInput);
 		refreshAll();
-		updateForShowingProgress();
 	}
 
 	@Override
@@ -334,12 +335,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 		((ProgressInfoItem) widget).refresh();
 
-		// Update the minimum size
-		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		size.x += IDialogConstants.HORIZONTAL_SPACING;
-		size.y += IDialogConstants.VERTICAL_SPACING;
-
-		scrolled.setMinSize(size);
+		updateSize();
 	}
 
 	@Override
@@ -431,7 +427,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		control.layout(true);
 		updateForShowingProgress();
-
 	}
 
 	/**
@@ -445,8 +440,18 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		for (int i = 0; i < children.length; i++) {
 			ProgressInfoItem item = (ProgressInfoItem) children[i];
 			item.setDisplayed(top, bottom);
-
 		}
+	}
+
+	/**
+	 * Update the minimum size for scrolled composite.
+	 */
+	private void updateSize() {
+		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		size.x += IDialogConstants.HORIZONTAL_SPACING;
+		size.y += IDialogConstants.VERTICAL_SPACING;
+
+		scrolled.setMinSize(size);
 	}
 
 	public ProgressInfoItem[] getProgressInfoItems() {
