@@ -160,9 +160,6 @@ public class ExtendedMarkersView extends ViewPart {
 	private ISelectionListener pageSelectionListener;
 	private IPartListener2 partListener;
 	private Clipboard clipboard;
-
-	// private IPropertyChangeListener preferenceListener;
-
 	private IMemento memento;
 	private String[] defaultGeneratorIds = new String[0];
 
@@ -183,27 +180,6 @@ public class ExtendedMarkersView extends ViewPart {
 		super();
 		defaultGeneratorIds = new String[] { contentGeneratorId };
 	}
-
-	/**
-	 * Create a preference listener for any preference updates.
-	 */
-	// TODO: this is not needed as the preference dialog will refresh anyway
-//	private void initializePreferenceListener() {
-//		preferenceListener = new IPropertyChangeListener() {
-//			public void propertyChange(PropertyChangeEvent event) {
-//				String propertyName = event.getProperty();
-//				if (propertyName
-//						.equals(IDEInternalPreferences.USE_MARKER_LIMITS)
-//						|| propertyName
-//								.equals(IDEInternalPreferences.MARKER_LIMITS_VALUE)) {
-//					viewer.refresh();
-//					updateTitle();
-//				}
-//			}
-//		};
-//		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-//				.addPropertyChangeListener(preferenceListener);
-//	}
 
 
 	/**
@@ -604,11 +580,6 @@ public class ExtendedMarkersView extends ViewPart {
 			instanceCount--;
 		if (clipboard != null)
 			clipboard.dispose();
-
-		/*
-		 * IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-		 * .removePropertyChangeListener(preferenceListener);
-		 */
 
 		getSite().getPage().removePostSelectionListener(pageSelectionListener);
 		getSite().getPage().removePartListener(partListener);
