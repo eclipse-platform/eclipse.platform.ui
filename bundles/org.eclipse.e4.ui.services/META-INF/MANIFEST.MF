@@ -10,6 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
  org.osgi.framework;version="1.3.0",
+ org.osgi.service.component.annotations;version="1.2.0";resolution:=optional,
  org.osgi.service.event;resolution:=optional,
  org.w3c.dom.css
 Require-Bundle: org.eclipse.core.commands;bundle-version="[3.4.0,4.0.0)",
@@ -24,4 +25,4 @@ Export-Package: org.eclipse.e4.ui.internal.services;x-friends:="org.eclipse.e4.u
  org.eclipse.e4.ui.services.help;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.services.internal.events;x-internal:=true
 Bundle-Activator: org.eclipse.e4.ui.internal.services.Activator
-Service-Component: OSGI-INF/eventBroker.xml
+Service-Component: OSGI-INF/org.eclipse.e4.ui.services.events.EventBrokerFactory.xml
