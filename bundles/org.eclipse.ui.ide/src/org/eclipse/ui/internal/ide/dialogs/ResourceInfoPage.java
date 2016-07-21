@@ -308,7 +308,6 @@ public class ResourceInfoPage extends PropertyPage {
 				Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
 				locationTitle.setText(LOCATION_TITLE);
 				gd = new GridData();
-				gd.verticalAlignment = SWT.TOP;
 				locationTitle.setLayoutData(gd);
 
 				Text locationValue = new Text(basicInfoComposite, SWT.WRAP
@@ -317,14 +316,15 @@ public class ResourceInfoPage extends PropertyPage {
 						.getLocationText(resource));
 				locationValue.setText(locationStr);
 				gd = new GridData();
-				gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
-				gd.grabExcessHorizontalSpace = true;
 				gd.horizontalAlignment = GridData.FILL;
 				locationValue.setLayoutData(gd);
 				locationValue.setBackground(locationValue.getDisplay()
 						.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
 				Button goToLocationButton = new Button(basicInfoComposite, SWT.PUSH);
+				gd = new GridData();
+				gd.verticalAlignment = SWT.TOP;
+				goToLocationButton.setLayoutData(gd);
 				ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources(),
 						goToLocationButton);
 				Bundle bundle = FrameworkUtil.getBundle(getClass());
