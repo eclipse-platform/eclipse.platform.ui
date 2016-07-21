@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 498086
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -419,7 +418,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * @param elements the list of checked elements (element type: <code>Object</code>)
      * @see #getCheckedElements
      */
-	public void setCheckedElements(Object... elements) {
+    public void setCheckedElements(Object[] elements) {
         assertElementsNotNull(elements);
         CustomHashtable set = newHashtable(elements.length * 2 + 1);
         for (int i = 0; i < elements.length; ++i) {
@@ -473,7 +472,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      *
      * @see #getGrayedElements
      */
-	public void setGrayedElements(Object... elements) {
+    public void setGrayedElements(Object[] elements) {
         assertElementsNotNull(elements);
         CustomHashtable set = newHashtable(elements.length * 2 + 1);
         for (int i = 0; i < elements.length; ++i) {
