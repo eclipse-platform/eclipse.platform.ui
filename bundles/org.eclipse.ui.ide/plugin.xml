@@ -1394,7 +1394,7 @@
                id="org.eclipse.core.resources.problemmarker">
          </markerTypeReference>
           <markerFieldConfiguration
-               enabled="true"
+               enabled="false"
                id="org.eclipse.ui.ide.projectErrorsWarningsGrouping"
                name="%MarkerFilterGrouping.ProjectErrorsWarnings"
                scope="ON_ANY_IN_SAME_CONTAINER"
