@@ -158,6 +158,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 
 	private Action columnsAction;
 
+	private ISelectionChangedListener selectionChangeListener;
+
     /**
      * Creates a new property sheet page.
      */
@@ -183,13 +185,13 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         }
         viewer.setRootEntry(rootEntry);
         viewer.addActivationListener(getCellEditorActivationListener());
-        // add a listener to track when the entry selection changes
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		selectionChangeListener = new ISelectionChangedListener() {
             @Override
 			public void selectionChanged(SelectionChangedEvent event) {
                 handleEntrySelection(event.getSelection());
             }
-        });
+		};
+		viewer.addSelectionChangedListener(selectionChangeListener);
         initDragAndDrop();
         makeActions();
 
@@ -281,6 +283,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         super.dispose();
         if (sourcePart != null) {
         	sourcePart.getSite().getPage().removePartListener(partListener);
+			sourcePart = null;
+			partListener = null;
         }
         if (rootEntry != null) {
             rootEntry.dispose();
@@ -290,6 +294,33 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
             clipboard.dispose();
             clipboard = null;
         }
+		if (viewer != null) {
+			if (selectionChangeListener != null) {
+				viewer.removeSelectionChangedListener(selectionChangeListener);
+				selectionChangeListener = null;
+			}
+			viewer.dispose();
+			cellEditorActivationListener = null;
+			viewer = null;
+		}
+		if (defaultsAction != null) {
+			defaultsAction.viewer = null;
+			defaultsAction = null;
+		}
+		if (filterAction != null) {
+			filterAction.viewer = null;
+			filterAction = null;
+		}
+		if (categoriesAction != null) {
+			categoriesAction.viewer = null;
+			categoriesAction = null;
+		}
+		if (copyAction != null) {
+			copyAction.viewer = null;
+			copyAction = null;
+		}
+		sorter = null;
+		provider = null;
     }
 
     /**
