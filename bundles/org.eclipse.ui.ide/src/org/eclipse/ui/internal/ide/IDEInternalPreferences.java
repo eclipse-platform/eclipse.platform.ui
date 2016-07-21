@@ -69,12 +69,6 @@ public interface IDEInternalPreferences {
     //problem limits
     public static final String PROBLEMS_LIMIT = "PROBLEMS_LIMIT"; //$NON-NLS-1$
 
-    //Whether or not to limit tasks
-    public static final String LIMIT_TASKS = "LIMIT_TASKS"; //$NON-NLS-1$
-
-    //tasks limits
-    public static final String TASKS_LIMIT = "TASKS_LIMIT"; //$NON-NLS-1$
-
     //The list of defined tasks filters
     public static final String TASKS_FILTERS = "TASKS_FILTERS"; //$NON-NLS-1$
 
