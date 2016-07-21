@@ -17,6 +17,7 @@ package org.eclipse.ui.wizards.datatransfer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -292,11 +293,11 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * Creates the folders that appear in the specified resource path.
-	 * These folders are created relative to the destination container.
+	 * Creates the folders that appear in the specified resource path. These folders
+	 * are created relative to the destination container.
 	 *
 	 * @param path the relative path of the resource
-	 * @return the container resource coresponding to the given path
+	 * @return the container resource corresponding to the given path
 	 * @exception CoreException if this method failed
 	 */
 	IContainer createContainersFor(IPath path) throws CoreException {
@@ -529,13 +530,13 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 		InputStream contentStream = provider.getContents(fileObject);
 		if (contentStream == null) {
-			errorTable
-					.add(new Status(
-							IStatus.ERROR,
-							PlatformUI.PLUGIN_ID,
-							0,
-							NLS.bind(DataTransferMessages.ImportOperation_openStreamError, fileObjectPath),
-							null));
+			if (isNotReadableFile(fileObject)) {
+				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+						NLS.bind(DataTransferMessages.ImportOperation_cannotReadError, fileObjectPath), null));
+			} else {
+				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+						NLS.bind(DataTransferMessages.ImportOperation_openStreamError, fileObjectPath), null));
+			}
 			return;
 		}
 
@@ -579,7 +580,29 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
+	 * Test if a file exists but has no read permissions.
+	 *
+	 * @param file the File object
+	 * @return <code>true</code> if the file exists but is not readable,
+	 *         <code>false</code> otherwise; <code>false</code> if other objects are
+	 *         passed or when the File object is a directory.
+	 */
+	private boolean isNotReadableFile(Object file) {
+		if (!(file instanceof File)) {
+			return false;
+		}
+		// File.canRead does not properly work on Windows 7
+		// see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6203387
+		// java.nio works properly on all OSes
+		java.nio.file.Path path = ((File) file).toPath();
+		boolean readable = Files.isReadable(path);
+		boolean regular = Files.isRegularFile(path);
+		return regular && !readable;
+	}
+
+	/**
 	 * Reuse the file attributes set in the import.
+	 *
 	 * @param targetResource
 	 * @param fileObject
 	 */

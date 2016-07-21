@@ -47,6 +47,7 @@ public class DataTransferMessages extends NLS {
 	public static String ImportOperation_coreImportError;
 	public static String ImportOperation_targetSameAsSourceError;
 	public static String ImportPage_filterSelections;
+	public static String ImportOperation_cannotReadError;
 
 	public static String FileImport_selectSource;
 	public static String FileImport_selectSourceTitle;
