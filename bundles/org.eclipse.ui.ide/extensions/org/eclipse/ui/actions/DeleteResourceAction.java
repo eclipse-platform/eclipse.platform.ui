@@ -285,19 +285,20 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 *         phantom resources
 	 */
 	private boolean canDelete(List<? extends IResource> resources) {
+		if (resources.isEmpty()) {
+			return false;
+		}
+
 		// allow only projects or only non-projects to be selected;
 		// note that the selection may contain multiple types of resource
 		if (!(containsOnlyProjects(resources) || containsOnlyNonProjects(resources))) {
 			return false;
 		}
 
-		if (resources.isEmpty()) {
-			return false;
-		}
-		// Return true if everything in the selection exists.
-		for (int i = 0; i < resources.size(); i++) {
-			IResource resource = resources.get(i);
-			if (resource.isPhantom()) {
+		// Return false if at least one element is not existing or workspace
+		// root
+		for (IResource resource : resources) {
+			if (resource.isPhantom() || resource.getType() == IResource.ROOT) {
 				return false;
 			}
 		}
@@ -440,6 +441,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	@Override
 	public void run() {
 		final List<? extends IResource> resources = getSelectedResources();
+		if (resources.isEmpty()) {
+			return;
+		}
 
 		if (!fTestingMode) {
 			if (LTKLauncher.openDeleteWizard(getStructuredSelection())) {
