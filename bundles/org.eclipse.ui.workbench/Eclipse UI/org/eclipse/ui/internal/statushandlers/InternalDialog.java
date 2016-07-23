@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 473973
+ *     Friederike Schertel <friederike@schertel.org> - Bug 478336
  ******************************************************************************/
 package org.eclipse.ui.internal.statushandlers;
 
@@ -468,7 +469,6 @@ public class InternalDialog extends TrayDialog {
 
 	@Override
 	public Point getInitialLocation(Point initialSize) {
-		// TODO Auto-generated method stub
 		return super.getInitialLocation(initialSize);
 	}
 

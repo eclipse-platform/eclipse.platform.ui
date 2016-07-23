@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Friederike Schertel <friederike@schertel.org> - Bug 478336
  *******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
@@ -234,8 +235,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	@Override
 	public void addState(String id, State state) {
-		// TODO Auto-generated method stub
-
 	}
 
 
@@ -421,13 +420,11 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	@Override
 	public State getState(String stateId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String[] getStateIds() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -665,8 +662,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	@Override
 	public void removeState(String stateId) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private final void selectionChanged(final ISelection selection) {

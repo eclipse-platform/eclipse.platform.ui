@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 487418
+ *     Friederike Schertel <friederike@schertel.org> - Bug 478336
  ******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
@@ -230,14 +231,10 @@ public class LegacyHandlerService implements IHandlerService {
 
 	@Override
 	public void addSourceProvider(ISourceProvider provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void removeSourceProvider(ISourceProvider provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

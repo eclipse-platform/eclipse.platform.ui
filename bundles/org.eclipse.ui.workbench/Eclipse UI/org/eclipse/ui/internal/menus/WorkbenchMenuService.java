@@ -89,14 +89,12 @@ public class WorkbenchMenuService implements IMenuService {
 
 	@Override
 	public void addSourceProvider(ISourceProvider provider) {
-		// TODO Auto-generated method 
+		// TODO Auto-generated method
 
 	}
 
 	@Override
 	public void removeSourceProvider(ISourceProvider provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
