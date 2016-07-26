@@ -43,6 +43,7 @@ public class SplitFeedbackOverlay {
 
 		feedbackShell = new Shell(dragShell, SWT.NO_TRIM | SWT.ON_TOP);
 		feedbackShell.setBounds(dragShell.getBounds());
+		feedbackShell.setData(DragAndDropUtil.IGNORE_AS_DROP_TARGET, DragAndDropUtil.IGNORE_AS_DROP_TARGET);
 
 		MWindow winModel = (MWindow) dragShell.getData(AbstractPartRenderer.OWNING_ME);
 		stylingEngine = winModel.getContext().get(IStylingEngine.class);
