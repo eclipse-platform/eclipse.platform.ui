@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.editors">
+<schema targetNamespace="org.eclipse.ui.editors" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui.editors" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
@@ -23,6 +23,11 @@ Annotation preference types that extend another annotation preference are allowe
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="specification" minOccurs="1" maxOccurs="unbounded"/>
@@ -123,7 +128,7 @@ since: 3.0
          <attribute name="presentationLayer" type="string">
             <annotation>
                <documentation>
-                  the default value for the layer in which the marker annotation will be drawn
+                  the default value for the layer in which the marker annotation will be drawn. Annotations are considered being located at layers and will be painted starting with layer 0 upwards. Thus an annotation at layer 5 will be drawn on top of all co-located annotations at the layers 4 - 0.
                </documentation>
             </annotation>
          </attribute>
@@ -312,39 +317,15 @@ since: 3.0 (DASHED_BOX since 3.3, PROBLEM_UNDERLINE: since 3.4)
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2016 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
