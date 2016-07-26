@@ -597,7 +597,7 @@
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.info"
             textPreferenceKey="infoIndication"
-            presentationLayer="4"
+            presentationLayer="1"
             highlightPreferenceValue="false"
             showInNextPrevDropdownToolbarAction="true"
             textPreferenceValue="true"
@@ -614,7 +614,7 @@
             isGoToPreviousNavigationTarget="true"
             verticalRulerPreferenceKey="infoIndicationInVerticalRuler"
             contributesToHeader="false"
-            colorPreferenceValue="0,128,255"
+            colorPreferenceValue="130,160,190"
             overviewRulerPreferenceValue="true"
             quickFixIcon="$nl$/icons/full/obj16/quick_fix_info_obj.png"
             textStylePreferenceKey="infoTextStyle"
