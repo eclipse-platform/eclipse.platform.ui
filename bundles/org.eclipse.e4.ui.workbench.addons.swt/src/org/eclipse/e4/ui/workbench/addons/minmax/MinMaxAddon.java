@@ -163,7 +163,8 @@ public class MinMaxAddon {
 			while (parentElement != null && !(parentElement instanceof MArea))
 				parentElement = parentElement.getParent();
 
-			if (MinMaxAddonUtil.isMinMaxChildrenAreaWithMultipleVisibleChildren(parentElement)) {
+			if (parentElement != null
+					&& MinMaxAddonUtil.isMinMaxChildrenAreaWithMultipleVisibleChildren(parentElement)) {
 				return element;
 			}
 
