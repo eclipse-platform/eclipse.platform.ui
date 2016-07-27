@@ -50,7 +50,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -59,12 +58,13 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+/**
+ * A window-based {@link EPartService}.
+ */
 public class PartServiceImpl implements EPartService {
 
 	/**
@@ -818,35 +818,10 @@ public class PartServiceImpl implements EPartService {
 		return activePart;
 	}
 
-	private MPart createPart(MPartDescriptor descriptor) {
-		if (descriptor == null) {
-			return null;
-		}
-		MPart part = modelService.createModelElement(MPart.class);
-		part.setElementId(descriptor.getElementId());
-		part.getMenus().addAll(EcoreUtil.copyAll(descriptor.getMenus()));
-		if (descriptor.getToolbar() != null) {
-			part.setToolbar((MToolBar) EcoreUtil.copy((EObject) descriptor.getToolbar()));
-		}
-		part.setContributorURI(descriptor.getContributorURI());
-		part.setCloseable(descriptor.isCloseable());
-		part.setContributionURI(descriptor.getContributionURI());
-		part.setLabel(descriptor.getLabel());
-		part.setIconURI(descriptor.getIconURI());
-		part.setTooltip(descriptor.getTooltip());
-		part.getHandlers().addAll(EcoreUtil.copyAll(descriptor.getHandlers()));
-		part.getTags().addAll(descriptor.getTags());
-		part.getVariables().addAll(descriptor.getVariables());
-		part.getProperties().putAll(descriptor.getProperties());
-		part.getPersistedState().putAll(descriptor.getPersistedState());
-		part.getBindingContexts().addAll(descriptor.getBindingContexts());
-		return part;
-	}
-
 	@Override
 	public MPart createPart(String id) {
 		MPartDescriptor descriptor = modelService.getPartDescriptor(id);
-		return createPart(descriptor);
+		return modelService.createPart(descriptor);
 	}
 
 	@Override
@@ -872,7 +847,7 @@ public class PartServiceImpl implements EPartService {
 
 		if (sharedPart == null) {
 			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
-			sharedPart = createPart(descriptor);
+			sharedPart = modelService.createPart(descriptor);
 			if (sharedPart == null) {
 				return null;
 			}
@@ -1180,7 +1155,7 @@ public class PartServiceImpl implements EPartService {
 		MPart part = findPart(id);
 		if (part == null) {
 			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
-			part = createPart(descriptor);
+			part = modelService.createPart(descriptor);
 			if (part == null) {
 				return null;
 			}

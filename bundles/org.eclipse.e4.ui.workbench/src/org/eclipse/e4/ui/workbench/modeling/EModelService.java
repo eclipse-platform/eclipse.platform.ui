@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
@@ -506,6 +507,17 @@ public interface EModelService {
 	 * @return The descriptor matching the id or <code>null</code> if none exists
 	 */
 	public MPartDescriptor getPartDescriptor(String id);
+
+	/**
+	 * Creates a new part from the given descriptor.
+	 *
+	 * @param descriptor
+	 *            a part descriptor, must not be <code>null</code>
+	 * @return a new part
+	 * @see EPartService#createPart(String)
+	 * @since 1.5
+	 */
+	public MPart createPart(MPartDescriptor descriptor);
 
 	/**
 	 * This method ensures that there will never be two placeholders for the same referenced element
