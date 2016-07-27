@@ -134,7 +134,7 @@ public class PropertySheet extends PageBookView
 	/**
 	 * Set of workbench parts, which should not be used as a source for PropertySheet
 	 */
-	private HashSet ignoredViews;
+	private HashSet<String> ignoredViews;
 
 	private boolean wasHidden;
 
@@ -536,10 +536,11 @@ public class PropertySheet extends PageBookView
 	 *
 	 * @since 3.2
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Object getViewAdapter(Class key) {
+	protected <T> T getViewAdapter(Class<T> key) {
 		if (ISaveablePart.class.equals(key)) {
-			return getSaveablePart();
+			return (T) getSaveablePart();
 		}
 		return super.getViewAdapter(key);
 	}
@@ -604,9 +605,9 @@ public class PropertySheet extends PageBookView
 		updateContentDescription();
 	}
 
-	private HashSet getIgnoredViews() {
+	private HashSet<String> getIgnoredViews() {
 		if (ignoredViews == null) {
-			ignoredViews = new HashSet();
+			ignoredViews = new HashSet<>();
 	        IExtensionRegistry registry = RegistryFactory.getRegistry();
 	        IExtensionPoint ep = registry.getExtensionPoint(EXT_POINT);
 			if (ep != null) {

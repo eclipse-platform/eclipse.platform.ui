@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import java.util.List;
 /*package*/class PropertySheetCategory {
     private String categoryName;
 
-    private List entries = new ArrayList();
+	private List<IPropertySheetEntry> entries = new ArrayList<>();
 
     private boolean shouldAutoExpand = true;
 
@@ -75,8 +75,7 @@ import java.util.List;
      * @return the entries in this category
      */
     public IPropertySheetEntry[] getChildEntries() {
-        return (IPropertySheetEntry[]) entries
-                .toArray(new IPropertySheetEntry[entries.size()]);
+		return entries.toArray(new IPropertySheetEntry[entries.size()]);
     }
 
     /**
@@ -84,6 +83,6 @@ import java.util.List;
      * Doing so allows us to reuse this category entry.
      */
     public void removeAllEntries() {
-        entries = new ArrayList();
+		entries = new ArrayList<>();
     }
 }
