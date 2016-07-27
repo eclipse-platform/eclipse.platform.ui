@@ -1415,7 +1415,7 @@ STATUS_LINE_ID, model);
 			if (globalAction instanceof CommandAction) {
 				final String actionId = globalAction.getId();
 				if (actionId != null) {
-					final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
+					final IActionCommandMappingService mappingService = serviceLocator
 							.getService(IActionCommandMappingService.class);
 					mappingService.map(actionId, commandId);
 				}
@@ -1442,7 +1442,7 @@ STATUS_LINE_ID, model);
 	 * </p>
 	 */
 	void submitGlobalActions() {
-		final IHandlerService handlerService = (IHandlerService) getService(IHandlerService.class);
+		final IHandlerService handlerService = getService(IHandlerService.class);
 
 		/*
 		 * Mash the action sets and global actions together, with global actions
@@ -2264,7 +2264,7 @@ STATUS_LINE_ID, model);
 		}
 		EvaluationReference[] refs = menuRestrictions
 				.toArray(new EvaluationReference[menuRestrictions.size()]);
-		IEvaluationService es = (IEvaluationService) serviceLocator
+		IEvaluationService es = serviceLocator
 				.getService(IEvaluationService.class);
 		IEvaluationContext currentState = es.getCurrentState();
 		for (int i = 0; i < refs.length; i++) {
@@ -2777,12 +2777,12 @@ STATUS_LINE_ID, model);
 	}
 
 	@Override
-	public final Object getService(final Class key) {
+	public final <T> T getService(final Class<T> key) {
 		return serviceLocator.getService(key);
 	}
 
 	@Override
-	public final boolean hasService(final Class key) {
+	public final boolean hasService(final Class<?> key) {
 		return serviceLocator.hasService(key);
 	}
 
@@ -2805,7 +2805,7 @@ STATUS_LINE_ID, model);
 		if (getWindowConfigurer().getShowPerspectiveBar()) {
 			setPerspectiveBarVisible(!perspectivebarVisible);
 		}
-		ICommandService commandService = (ICommandService) getService(ICommandService.class);
+		ICommandService commandService = getService(ICommandService.class);
 		Map<String, WorkbenchWindow> filter = new HashMap<>();
 		filter.put(IServiceScopes.WINDOW_SCOPE, this);
 		commandService.refreshElements(COMMAND_ID_TOGGLE_COOLBAR, filter);

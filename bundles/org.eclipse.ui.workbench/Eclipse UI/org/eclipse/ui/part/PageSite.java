@@ -203,8 +203,8 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	@Override
-	public final Object getService(final Class key) {
-		Object service = serviceLocator.getService(key);
+	public final <T> T getService(final Class<T> key) {
+		T service = serviceLocator.getService(key);
 		if (active && service instanceof INestable) {
 			((INestable) service).activate();
 		}
@@ -222,7 +222,7 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	@Override
-	public final boolean hasService(final Class key) {
+	public final boolean hasService(final Class<?> key) {
 		return serviceLocator.hasService(key);
 	}
 

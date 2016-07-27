@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -89,7 +88,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	 *            flags to use for creation of the progress bar
 	 */
 	ProgressAnimationItem(ProgressRegion region, int flags) {
-		super((WorkbenchWindow) region.workbenchWindow);
+		super(region.workbenchWindow);
 		this.flags = flags;
 		FinishedJobs.getInstance().addListener(this);
 

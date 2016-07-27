@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -75,12 +74,12 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	 */
 	public static final IServiceLocator GLOBAL_PARENT = new IServiceLocator() {
 		@Override
-		public Object getService(Class api) {
+		public <T> T getService(Class<T> api) {
 			return null;
 		}
 
 		@Override
-		public boolean hasService(Class api) {
+		public boolean hasService(Class<?> api) {
 			return false;
 		}
 	};
@@ -254,11 +253,11 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 					public int compare(Object o1, Object o2) {
 						ServiceLocator loc1 = (ServiceLocator) o1;
 						ServiceLocator loc2 = (ServiceLocator) o2;
-						int l1 = ((IWorkbenchLocationService) loc1
-								.getService(IWorkbenchLocationService.class))
+						int l1 = loc1
+								.getService(IWorkbenchLocationService.class)
 								.getServiceLevel();
-						int l2 = ((IWorkbenchLocationService) loc2
-								.getService(IWorkbenchLocationService.class))
+						int l2 = loc2
+								.getService(IWorkbenchLocationService.class)
 								.getServiceLevel();
 						return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 					}

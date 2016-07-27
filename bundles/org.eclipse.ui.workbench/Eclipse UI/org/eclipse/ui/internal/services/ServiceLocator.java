@@ -36,23 +36,24 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 	private static class ParentLocator implements IServiceLocator {
 		private IServiceLocator locator;
-		private Class key;
+		private Class<?> key;
 
-		public ParentLocator(IServiceLocator parent, Class serviceInterface) {
+		public ParentLocator(IServiceLocator parent, Class<?> serviceInterface) {
 			locator = parent;
 			key = serviceInterface;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public Object getService(Class api) {
+		public <T> T getService(Class<T> api) {
 			if (key.equals(api)) {
-				return locator.getService(key);
+				return (T) locator.getService(key);
 			}
 			return null;
 		}
 
 		@Override
-		public boolean hasService(Class api) {
+		public boolean hasService(Class<?> api) {
 			if (key.equals(api)) {
 				return true;
 			}
@@ -159,12 +160,13 @@ public final class ServiceLocator implements IDisposable, INestable,
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public final Object getService(final Class key) {
+	public final <T> T getService(final Class<T> key) {
 		if (disposed) {
 			return null;
 		} else if (IEclipseContext.class.equals(key)) {
-			return e4Context;
+			return (T) e4Context;
 		}
 
 		Object service = e4Context.get(key.getName());
@@ -200,11 +202,11 @@ public final class ServiceLocator implements IDisposable, INestable,
 				registerService(key, service, true);
 			}
 		}
-		return service;
+		return (T) service;
 	}
 
 	@Override
-	public final boolean hasService(final Class key) {
+	public final boolean hasService(final Class<?> key) {
 		if (disposed) {
 			return false;
 		}

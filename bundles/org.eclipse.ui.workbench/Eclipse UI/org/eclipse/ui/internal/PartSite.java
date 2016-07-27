@@ -614,12 +614,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	}
 
 	@Override
-	public final Object getService(final Class key) {
+	public final <T> T getService(final Class<T> key) {
 		return serviceLocator.getService(key);
 	}
 
 	@Override
-	public final boolean hasService(final Class key) {
+	public final boolean hasService(final Class<?> key) {
 		return serviceLocator.hasService(key);
 	}
 

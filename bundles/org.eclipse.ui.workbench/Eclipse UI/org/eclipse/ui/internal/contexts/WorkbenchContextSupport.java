@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,8 +78,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	public WorkbenchContextSupport(final Workbench workbenchToSupport,
 			final ContextManager contextManager) {
 		workbench = workbenchToSupport;
-		contextService = (IContextService) workbench.getService(IContextService.class);
-		bindingService = (IBindingService) workbench.getService(IBindingService.class);
+		contextService = workbench.getService(IContextService.class);
+		bindingService = workbench.getService(IBindingService.class);
 		contextManagerWrapper = ContextManagerFactory
 				.getContextManagerWrapper(contextManager);
 	}

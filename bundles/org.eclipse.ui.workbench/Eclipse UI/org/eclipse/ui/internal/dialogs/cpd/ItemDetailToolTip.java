@@ -214,7 +214,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		// Show key binding info
 		if (showKeyBindings && CustomizePerspectiveDialog.getCommandID(item) != null) {
 			// See if there is a command associated with the command id
-			ICommandService commandService = (ICommandService) dialog.window
+			ICommandService commandService = dialog.window
 					.getService(ICommandService.class);
 			Command command = commandService.getCommand(CustomizePerspectiveDialog.getCommandID(item));
 
@@ -389,8 +389,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 	 * Gets the keybindings associated with a ContributionItem.
 	 */
 	static Binding[] getKeyBindings(WorkbenchWindow window, DisplayItem item) {
-		IBindingService bindingService = (IBindingService) window
-				.getService(IBindingService.class);
+		IBindingService bindingService = window.getService(IBindingService.class);
 
 		if (!(bindingService instanceof BindingService)) {
 			return new Binding[0];

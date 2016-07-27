@@ -2318,7 +2318,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
-		final IEvaluationService evaluationService = (IEvaluationService) serviceLocator
+		final IEvaluationService evaluationService = serviceLocator
 				.getService(IEvaluationService.class);
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
@@ -2519,7 +2519,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 					return;
 				}
 
-				final IHandlerService handlerService = (IHandlerService) getService(IHandlerService.class);
+				final IHandlerService handlerService = getService(IHandlerService.class);
 
 				try {
 					handlerService.executeCommand(commandId, event);
@@ -3533,12 +3533,12 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 
 	@Override
-	public final Object getService(final Class key) {
+	public final <T> T getService(final Class<T> key) {
 		return serviceLocator.getService(key);
 	}
 
 	@Override
-	public final boolean hasService(final Class key) {
+	public final boolean hasService(final Class<?> key) {
 		return serviceLocator.hasService(key);
 	}
 

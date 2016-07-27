@@ -1323,7 +1323,7 @@ getPreferenceStore(),
     @Override
 	public void init(IWorkbench aWorkbench) {
         this.workbench = (Workbench) aWorkbench;
-		themeEngine = (IThemeEngine) workbench.getService(IThemeEngine.class);
+		themeEngine = workbench.getService(IThemeEngine.class);
         setPreferenceStore(PrefUtil.getInternalPreferenceStore());
 
         final IThemeManager themeManager = aWorkbench.getThemeManager();
@@ -1342,7 +1342,7 @@ getPreferenceStore(),
 
         updateThemeInfo(themeManager);
 
-        eventBroker = (IEventBroker) workbench.getService(IEventBroker.class);
+		eventBroker = workbench.getService(IEventBroker.class);
 		eventBroker.subscribe(WorkbenchThemeManager.Events.THEME_REGISTRY_RESTYLED,
 				themeRegistryRestyledHandler);
     }

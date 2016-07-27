@@ -335,7 +335,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private void updateActionSets(Perspective oldPersp, Perspective newPersp) {
 		// Update action sets
 
-		IContextService service = (IContextService) legacyWindow.getService(IContextService.class);
+		IContextService service = legacyWindow.getService(IContextService.class);
 		try {
 			service.deferUpdates(true);
 			if (newPersp != null) {
@@ -813,7 +813,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				return false;
 			}
 
-			IContextService service = (IContextService) legacyWindow
+			IContextService service = legacyWindow
 					.getService(IContextService.class);
 			try {
 				service.deferUpdates(true);
