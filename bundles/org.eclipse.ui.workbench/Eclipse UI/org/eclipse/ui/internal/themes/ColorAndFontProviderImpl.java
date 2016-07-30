@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,13 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.themes.ITheme;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @since 3.5
  *
  */
+@Component
 public class ColorAndFontProviderImpl implements IColorAndFontProvider {
 
 	@Override

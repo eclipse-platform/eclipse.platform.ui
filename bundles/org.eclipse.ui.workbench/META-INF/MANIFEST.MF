@@ -126,9 +126,10 @@ Import-Package: com.ibm.icu.text,
  org.eclipse.emf.common.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.util,
+ org.osgi.service.component.annotations;version="1.2.0";resolution:=optional,
  org.osgi.service.event;version="1.2.0",
  org.w3c.dom,
  org.w3c.dom.css,
  org.xml.sax
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Service-Component: OSGI-INF/ColorAndFontProvider.xml
+Service-Component: OSGI-INF/org.eclipse.ui.internal.themes.ColorAndFontProviderImpl.xml
