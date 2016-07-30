@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.ui.internal.workbench.swt.E4Testable">
+   <service>
+      <provide interface="org.eclipse.ui.testing.TestableObject"/>
+   </service>
+   <implementation class="org.eclipse.e4.ui.internal.workbench.swt.E4Testable"/>
+</scr:component>
