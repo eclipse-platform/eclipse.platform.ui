@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440149, 472654
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 496319
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 496319, 498301
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -47,13 +47,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -69,12 +66,14 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  * Displays information about the product.
  */
 public class AboutDialog extends TrayDialog {
-    private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
+	/**
+	 *
+	 */
+	private static final String COPY_BUILD_ID_COMMAND = "org.eclipse.ui.ide.copyBuildIdCommand"; //$NON-NLS-1$
+
+	private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
 
     private final static int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
-
-	/** Id for the context associated to this dialog */
-	private static final String ID_CONTEXT = "org.eclipse.ui.contexts.aboutDialog"; //$NON-NLS-1$
 
     private String productName;
 
@@ -89,9 +88,6 @@ public class AboutDialog extends TrayDialog {
     private StyledText text;
 
     private AboutTextManager aboutTextManager;
-
-	// represents the activated context
-	private IContextActivation contextActivation;
 
     /**
      * Create an instance of the AboutDialog for the given window.
@@ -159,26 +155,6 @@ public class AboutDialog extends TrayDialog {
         newShell.setText(NLS.bind(WorkbenchMessages.AboutDialog_shellTitle,productName ));
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				IWorkbenchHelpContextIds.ABOUT_DIALOG);
-
-		final IContextService contextService = PlatformUI.getWorkbench().getService(IContextService.class);
-		// Listens to activate/deactivate events, setting context id accordingly
-		final Listener listener = e -> {
-			if (SWT.Activate == e.type) {
-				// activate context
-				contextActivation = contextService.activateContext(ID_CONTEXT);
-			} else if (SWT.Deactivate == e.type) {
-				// deactivate context
-				contextService.deactivateContext(contextActivation);
-			}
-		};
-		newShell.addListener(SWT.Activate, listener);
-		newShell.addListener(SWT.Deactivate, listener);
-		newShell.addListener(SWT.Dispose, e -> {
-			// deactivate context and remove listeners
-			contextService.deactivateContext(contextActivation);
-			newShell.removeListener(SWT.Activate, listener);
-			newShell.removeListener(SWT.Deactivate, listener);
-		});
     }
 
     /**
@@ -426,6 +402,8 @@ public class AboutDialog extends TrayDialog {
 						CommandContributionItem.STYLE_PUSH)));
 		textManager.add(new CommandContributionItem(
 				new CommandContributionItemParameter(PlatformUI
+						.getWorkbench(), null, COPY_BUILD_ID_COMMAND, CommandContributionItem.STYLE_PUSH)));
+		textManager.add(new CommandContributionItem(new CommandContributionItemParameter(PlatformUI
 						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_SELECT_ALL,
 						CommandContributionItem.STYLE_PUSH)));
 		text.setMenu(textManager.createContextMenu(text));

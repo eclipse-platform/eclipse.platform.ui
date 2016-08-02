@@ -98,12 +98,6 @@
             id="org.eclipse.ui.contexts.workbenchMenu"
             name="%context.workbenchMenu.name">
       </context>
-      <context
-            description="%context.about.dialog.description"
-            id="org.eclipse.ui.contexts.aboutDialog"
-            name="%context.about.dialog.name"
-            parentId="org.eclipse.ui.contexts.dialog">
-      </context>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
@@ -799,12 +793,6 @@
                id="Splitter.isHorizontal"
                value="false">
          </parameter>
-      </key>
-      <key
-            commandId="org.eclipse.ui.ide.copyBuildIdCommand"
-            contextId="org.eclipse.ui.contexts.aboutDialog"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+C">
       </key>
 
    </extension>
