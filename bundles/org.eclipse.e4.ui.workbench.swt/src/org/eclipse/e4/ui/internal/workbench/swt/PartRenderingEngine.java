@@ -1114,6 +1114,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 						}
 					};
 				}
+				final IEventLoopAdvisor finalAdvisor = advisor;
+				display.setErrorHandler(e -> {
+					// If e is one of the exception types that are generally
+					// recoverable, hand it to the event loop advisor
+					if (e instanceof LinkageError || e instanceof AssertionError) {
+						handle(e, finalAdvisor);
+					} else {
+						// Otherwise, rethrow it
+						throw e;
+					}
+				});
+				display.setRuntimeExceptionHandler(e -> handle(e, finalAdvisor));
 				// Spin the event loop until someone disposes the display
 				while (((testShell != null && !testShell.isDisposed()) || (theApp != null && someAreVisible(theApp
 						.getChildren()))) && !display.isDisposed()) {
