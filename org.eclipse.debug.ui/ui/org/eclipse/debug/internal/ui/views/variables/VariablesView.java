@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -1606,5 +1607,21 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	@Override
 	public int promptToSaveOnClose() {
 		return ISaveablePart2.YES;
+	}
+
+	/**
+	 * Stores the default value for the generated String that can be used as a
+	 * key into a preference store based on the specified action.
+	 *
+	 * @param action the action to store a default value
+	 * @param value the default value for action
+	 *
+	 */
+	void storeDefaultPreference(Action action, Object value) {
+		if (value instanceof Boolean) {
+			getPreferenceStore().setDefault(generatePreferenceKey(action), (Boolean)value);
+		} else if (value instanceof String) {
+			getPreferenceStore().setDefault(generatePreferenceKey(action), (String) value);
+		}
 	}
 }

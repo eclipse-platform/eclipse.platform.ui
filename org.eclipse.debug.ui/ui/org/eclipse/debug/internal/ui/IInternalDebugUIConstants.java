@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,6 +192,11 @@ public interface IInternalDebugUIConstants {
      * Transparent overlay image identifier.
      */
     public static final String IMG_OVR_TRANSPARENT = "IMG_OVR_TRANSPARENT";  //$NON-NLS-1$
+
+	/**
+	 * Logical Structure overlay image identifier.
+	 */
+	public static final String IMG_OVR_SHOW_LOGICAL_STRUCTURE = "IMG_OVR_SHOW_LOGICAL_STRUCTURE"; //$NON-NLS-1$
 
     /**
      * Editor Id for the "Source Not Found" editor

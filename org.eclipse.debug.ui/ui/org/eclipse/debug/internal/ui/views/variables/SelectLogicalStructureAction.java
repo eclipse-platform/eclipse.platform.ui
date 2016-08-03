@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,12 @@ public class SelectLogicalStructureAction extends Action {
                 // Checking this action sets the type to fType, unchecking it sets the type
                 // to null ("none selected")
                 ILogicalStructureType type= null;
+				IAction action = getView().getAction("ToggleContentProviders"); //$NON-NLS-1$
                 if (isChecked()) {
                     type= fType;
+					action.setChecked(true);
                 }
+				action.run();
                 DebugPlugin.setDefaultStructureType(fAvailableTypes, type);
 				getView().getViewer().refresh();
 			}

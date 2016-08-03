@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 public class ToggleLogicalStructureAction extends Action {
 
 	private VariablesView fView;
+	public static String ID = DebugUIPlugin.getUniqueIdentifier() + ".ToggleObjectBrowsersAction"; //$NON-NLS-1$
 
 	public ToggleLogicalStructureAction(VariablesView view) {
 		super(null, IAction.AS_CHECK_BOX);
@@ -36,7 +37,8 @@ public class ToggleLogicalStructureAction extends Action {
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_SHOW_LOGICAL_STRUCTURE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_SHOW_LOGICAL_STRUCTURE));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_SHOW_LOGICAL_STRUCTURE));
-		setId(DebugUIPlugin.getUniqueIdentifier() + ".ToggleObjectBrowsersAction"); //$NON-NLS-1$
+		setId(ID);
+		view.storeDefaultPreference(this, Boolean.TRUE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VARIABLES_CONTENT_PROVIDERS_ACTION);
 	}
 

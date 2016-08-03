@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -236,6 +236,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.png"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_SKIP_BREAKPOINT, OVR + "skip_breakpoint_ov.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_SHOW_LOGICAL_STRUCTURE, OVR + "var_cntnt_prvdr_ov.png"); //$NON-NLS-1$
 
 		//source location
 		declareRegistryImage(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU, ELCL + "edtsrclkup_co.png"); //$NON-NLS-1$
