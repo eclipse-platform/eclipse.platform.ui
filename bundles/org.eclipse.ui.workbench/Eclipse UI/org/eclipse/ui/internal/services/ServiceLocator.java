@@ -14,11 +14,13 @@
 
 package org.eclipse.ui.internal.services;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -61,22 +63,22 @@ public final class ServiceLocator implements IDisposable, INestable,
 		}
 	}
 
-	private AbstractServiceFactory factory;
+	private final AbstractServiceFactory factory;
 
 	/**
 	 * The parent for this service locator. If a service can't be found in this
 	 * locator, then the parent is asked. This value may be <code>null</code> if
 	 * there is no parent.
 	 */
-	private IServiceLocator parent;
+	private final IServiceLocator parent;
 
-	private boolean disposed;
+	private volatile boolean disposed;
 
 	private IDisposable owner;
 
-	private IEclipseContext e4Context;
+	private volatile IEclipseContext e4Context;
 
-	private Map<Class<?>, Object> servicesToDispose = new HashMap<>();
+	private final Map<Class<?>, Object> services = new ConcurrentHashMap<>();
 
 	/**
 	 * Constructs a service locator with no parent.
@@ -106,10 +108,21 @@ public final class ServiceLocator implements IDisposable, INestable,
 	public final void activate() {
 		activated = true;
 
-		for (Object service : servicesToDispose.values()) {
-			if (service instanceof INestable) {
-				((INestable) service).activate();
+		for (Object service : services.values()) {
+			if (!(service instanceof INestable)) {
+				continue;
 			}
+			SafeRunner.run(new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					((INestable) service).activate();
+				}
+
+				@Override
+				public void handleException(Throwable ex) {
+					WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.ERROR, "Error while activating: " + service, ex)); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
@@ -117,66 +130,91 @@ public final class ServiceLocator implements IDisposable, INestable,
 	public final void deactivate() {
 		activated = false;
 
-		for (Object service : servicesToDispose.values()) {
-			if (service instanceof INestable) {
-				((INestable) service).deactivate();
+		for (Object service : services.values()) {
+			if (!(service instanceof INestable)) {
+				continue;
 			}
+			SafeRunner.run(new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					((INestable) service).deactivate();
+				}
+
+				@Override
+				public void handleException(Throwable ex) {
+					WorkbenchPlugin
+							.log(StatusUtil.newStatus(IStatus.ERROR, "Error while deactivating: " + service, ex)); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
 	@Override
 	public final void dispose() {
 		disposeServices();
-		if (servicesToDispose.size() > 0) {
+		if (services.size() > 0) {
 			// If someone registered during shutdown, dispose of it too.
 			// See: Bug 459833 - ConcurrentModificationException in
 			// ServiceLocator.dispose
 			disposeServices();
-
-			// Check if there was some other leftover and warn about it.
-			if (servicesToDispose.size() > 0) {
-				WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING,
-						String.format(
-								"Services: %s register themselves while disposing (skipping dispose of such services).", //$NON-NLS-1$
-								servicesToDispose),
-						null));
-			}
 		}
-		servicesToDispose.clear();
-		e4Context = null;
+		// Check if there was some other leftover and warn about it.
+		if (services.size() > 0) {
+			WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING,
+					String.format(
+							"Services: %s register themselves while disposing (skipping dispose of such services).", //$NON-NLS-1$
+							services),
+					null));
+		}
+		services.clear();
 		disposed = true;
+		e4Context = null;
 		owner = null;
 	}
 
 	private void disposeServices() {
-		HashMap<Class<?>, Object> copy = new HashMap<>(servicesToDispose);
-		Set<Entry<Class<?>, Object>> entrySet = copy.entrySet();
-		for (Entry<Class<?>, Object> entry : entrySet) {
+		Iterator<Entry<Class<?>, Object>> iterator = services.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<Class<?>, Object> entry = iterator.next();
 			if (entry.getValue() instanceof IDisposable) {
 				IDisposable iDisposable = (IDisposable) entry.getValue();
-				iDisposable.dispose();
+				SafeRunner.run(new ISafeRunnable() {
+					@Override
+					public void run() throws Exception {
+						iDisposable.dispose();
+					}
+
+					@Override
+					public void handleException(Throwable ex) {
+						WorkbenchPlugin
+								.log(StatusUtil.newStatus(IStatus.ERROR,
+										"Error while disposing: " + iDisposable.getClass().getName(), ex)); //$NON-NLS-1$
+					}
+				});
 			}
-			servicesToDispose.remove(entry.getKey());
+			iterator.remove();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final <T> T getService(final Class<T> key) {
-		if (disposed) {
+		IEclipseContext context = e4Context;
+		if (context == null) {
 			return null;
-		} else if (IEclipseContext.class.equals(key)) {
-			return (T) e4Context;
+		}
+		if (IEclipseContext.class.equals(key)) {
+			return (T) context;
 		}
 
-		Object service = e4Context.get(key.getName());
+		Object service = context.get(key.getName());
 		if (service == null) {
 			// this scenario can happen when we dispose the service locator
 			// after the window has been removed, in that case the window's
 			// context has been destroyed so we should check our own local cache
 			// of services first before checking the registry
-			service = servicesToDispose.get(key);
-		} else if (service == e4Context.getLocal(key.getName())) {
+			service = services.get(key);
+		} else if (service == context.getLocal(key.getName())) {
 			// store this service retrieved from the context in the map only if
 			// it is a local service for this context, as otherwise we do not
 			// want to dispose it when this service locator gets disposed
@@ -207,10 +245,11 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 	@Override
 	public final boolean hasService(final Class<?> key) {
-		if (disposed) {
+		IEclipseContext context = e4Context;
+		if (context == null) {
 			return false;
 		}
-		return e4Context.containsKey(key.getName());
+		return context.containsKey(key.getName());
 	}
 
 	/**
@@ -238,15 +277,25 @@ public final class ServiceLocator implements IDisposable, INestable,
 			throw new IllegalArgumentException(
 					"The service does not implement the given interface"); //$NON-NLS-1$
 		}
+		if (isDisposed()) {
+			IllegalStateException ex = new IllegalStateException("An attempt was made to register service " + service //$NON-NLS-1$
+					+ " with implementation class " + api + " on a disposed service locator"); //$NON-NLS-1$//$NON-NLS-2$
+			WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.ERROR, ex.getMessage(), ex));
+			return;
+		}
 
 		if (service instanceof INestable && activated) {
 			((INestable) service).activate();
 		}
 
-		servicesToDispose.put(api, service);
+		services.put(api, service);
 
 		if (saveInContext) {
-			e4Context.set(api.getName(), service);
+			IEclipseContext context = e4Context;
+			if (context == null) {
+				return;
+			}
+			context.set(api.getName(), service);
 		}
 	}
 
