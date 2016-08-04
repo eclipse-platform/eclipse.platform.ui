@@ -72,6 +72,9 @@ public class SaveAllHandler extends AbstractSaveHandler {
 		// look if any such saveables exist and are dirty.
 		SaveablesList saveablesList = (SaveablesList) window.getWorkbench().getService(
 				ISaveablesLifecycleListener.class);
+		if (saveablesList == null) {
+			return EvaluationResult.FALSE;
+		}
 		ISaveablesSource[] nonPartSources = saveablesList.getNonPartSources();
 		for (int i = 0; i < nonPartSources.length; i++) {
 			Saveable[] saveables = nonPartSources[i].getSaveables();
