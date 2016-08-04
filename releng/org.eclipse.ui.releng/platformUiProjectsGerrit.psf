@@ -60,6 +60,7 @@
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.ui.tests.navigator"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.ui.tests.performance"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.ui.tests.views.properties.tabbed"/>
+<project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.ui.themes"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.ui.views"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.ui.views.properties.tabbed"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.ui.workbench"/>
