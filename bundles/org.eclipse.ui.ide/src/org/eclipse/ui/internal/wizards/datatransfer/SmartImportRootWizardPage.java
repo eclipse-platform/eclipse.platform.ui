@@ -26,6 +26,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -675,9 +676,12 @@ public class SmartImportRootWizardPage extends WizardPage {
 								potentialProjects.keySet());
 						SmartImportRootWizardPage.this.alreadyExistingProjects = new HashSet<>();
 						for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-							SmartImportRootWizardPage.this.notAlreadyExistingProjects
-									.remove(project.getLocation().toFile());
-							SmartImportRootWizardPage.this.alreadyExistingProjects.add(project.getLocation().toFile());
+							IPath location = project.getLocation();
+							if (location == null) {
+								continue;
+							}
+							SmartImportRootWizardPage.this.notAlreadyExistingProjects.remove(location.toFile());
+							SmartImportRootWizardPage.this.alreadyExistingProjects.add(location.toFile());
 						}
 					}
 				});
