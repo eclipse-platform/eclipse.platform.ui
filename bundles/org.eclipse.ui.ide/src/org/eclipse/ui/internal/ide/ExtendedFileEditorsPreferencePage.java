@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.ide;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,7 +33,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage;
 
@@ -50,7 +54,9 @@ public class ExtendedFileEditorsPreferencePage extends FileEditorsPreferencePage
 		final UnassociatedEditorStrategyRegistry registry = IDEWorkbenchPlugin.getDefault()
 				.getUnassociatedEditorStrategyRegistry();
 		Composite defaultStrategyComposite = new Composite(res, SWT.NONE);
-		defaultStrategyComposite.moveAbove(null);
+		// Gets the first and only Link in the parent page
+		Optional<Control> cLink = Stream.of(res.getChildren()).filter(c -> c instanceof Link).findFirst();
+		defaultStrategyComposite.moveBelow(cLink.get());
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
 		defaultStrategyComposite.setLayout(layout);
