@@ -285,10 +285,8 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		 * @since 3.4
 		 */
 		public String getProjectLabel() {
-			String path = projectSystemFile == null ? structureProvider
-					.getLabel(parent) : projectSystemFile
-					.getParent();
-
+			String path = projectSystemFile == null ? structureProvider.getFullPath(parent)
+					: projectSystemFile.getParent();
 			return NLS.bind(
 					DataTransferMessages.WizardProjectsImportPage_projectLabel,
 					projectName, path);
