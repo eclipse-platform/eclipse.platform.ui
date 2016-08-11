@@ -78,11 +78,6 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  */
 public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
-	/*
-	 * Id for the last separator is the file menu
-	 */
-	private static final String ID_FILE_MENU_LAST_SEPARATOR = "menu.file.separator.last"; //$NON-NLS-1$
-
     private final IWorkbenchWindow window;
 
     // generic actions
@@ -512,11 +507,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator());
 
 		menu.add(openWorkspaceAction);
-		// as for quit, last separator is not visible on Mac.
-		Separator lastSep = new Separator();
-		lastSep.setId(ID_FILE_MENU_LAST_SEPARATOR);
-		menu.add(lastSep);
-		lastSep.setVisible(!Util.isMac());
 
         // If we're on OS X we shouldn't show this command in the File menu. It
 		// should be invisible to the user. However, we should not remove it -

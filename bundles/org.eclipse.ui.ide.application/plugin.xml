@@ -51,7 +51,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:file?before=menu.file.separator.last">
+            locationURI="menu:file?before=quit">
          <command
                commandId="org.eclipse.ui.file.restartWorkbench"
                id="org.eclipse.ui.file.restartWorkbench"
