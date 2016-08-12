@@ -68,18 +68,30 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     }
 
     /**
-     * Gets the name.
-     * @return Returns a String
-     */
+	 * Gets the name.
+	 *
+	 * @return Returns the label attribute from the decorator contribution, or
+	 *         null if the underlined definition is not valid anymore
+	 */
     public String getName() {
+		if (!definingElement.isValid()) {
+			crashDisable();
+			return null;
+		}
         return definingElement.getAttribute(ATT_LABEL);
     }
 
     /**
-     * Returns the description.
-     * @return String
-     */
+	 * Returns the description
+	 *
+	 * @return Returns the label attribute from the decorator contribution, or
+	 *         null if the underlined definition is not valid anymore
+	 */
     public String getDescription() {
+		if (!definingElement.isValid()) {
+			crashDisable();
+			return null;
+		}
         return RegistryReader.getDescription(definingElement);
     }
 
@@ -136,6 +148,10 @@ public abstract class DecoratorDefinition implements IPluginContribution {
      * applied to adapted types
      */
     public boolean isAdaptable() {
+		if (!definingElement.isValid()) {
+			crashDisable();
+			return false;
+		}
     	return Boolean.valueOf(definingElement.getAttribute(ATT_ADAPTABLE)).booleanValue();
     }
 
@@ -174,6 +190,10 @@ public abstract class DecoratorDefinition implements IPluginContribution {
      * Initialize the enablement expression for this decorator
      */
     protected void initializeEnablement() {
+		if (!definingElement.isValid()) {
+			crashDisable();
+			return;
+		}
         IConfigurationElement[] elements = definingElement.getChildren(CHILD_ENABLEMENT);
         if (elements.length == 0) {
             String className = definingElement.getAttribute(ATT_OBJECT_CLASS);
@@ -281,7 +301,8 @@ public abstract class DecoratorDefinition implements IPluginContribution {
     		if(expression != null) {
 				return expression.isEnabledFor(element);
 			}
-    		return true;//Always on if no expression
+			// Always on if no expression and is still enabled
+			return isEnabled();
     	}
     	return false;
 
@@ -289,7 +310,12 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	@Override
 	public String getPluginId() {
-		return getConfigurationElement().getContributor().getName();
+		IConfigurationElement element = getConfigurationElement();
+		if (!element.isValid()) {
+			crashDisable();
+			return null;
+		}
+		return element.getContributor().getName();
 	}
 
 	@Override
