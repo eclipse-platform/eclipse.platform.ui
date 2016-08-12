@@ -13,6 +13,7 @@ package org.eclipse.debug.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -898,12 +899,20 @@ public class DebugUITools {
 			ILaunch[] launches = launchManager.getLaunches();
 			for (ILaunch iLaunch : launches) {
 				if (configuration.contentsEqual(iLaunch.getLaunchConfiguration())) {
-					try {
-						iLaunch.terminate();
-					} catch (DebugException e) {
-						DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), NLS.bind(ActionMessages.TerminateAndLaunchFailure, iLaunch.getLaunchConfiguration().getName()), e));
+					synchronized (fgLaunchList) {
+						fgLaunchList.add(iLaunch);
 					}
 				}
+			}
+		}
+		if (!fgLaunchList.isEmpty()) {
+			Thread t = new Thread(fgLaunchTerminate);
+			t.start();
+			try {
+				t.join();
+			} catch (InterruptedException e1) {
+				DebugUIPlugin.log(e1);
+				return;
 			}
 		}
 		boolean launchInBackground = true;
@@ -918,6 +927,29 @@ public class DebugUITools {
 			DebugUIPlugin.launchInForeground(configuration, mode);
 		}
 	}
+
+
+	private static Set<ILaunch> fgLaunchList = new LinkedHashSet<>();
+	private static Runnable fgLaunchTerminate = new Runnable() {
+		@Override
+		public void run() {
+			String launchConfigName = null;
+			Set<ILaunch> launchList;
+			try {
+				synchronized (fgLaunchList) {
+					launchList = new LinkedHashSet<>(fgLaunchList);
+					fgLaunchList.clear();
+				}
+				for (ILaunch iLaunch : launchList) {
+					launchConfigName = iLaunch.getLaunchConfiguration().getName();
+					iLaunch.terminate();
+				}
+
+			} catch (DebugException e) {
+				DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), NLS.bind(ActionMessages.TerminateAndLaunchFailure, launchConfigName), e));
+			}
+		}
+	};
 
 	
 	/**
