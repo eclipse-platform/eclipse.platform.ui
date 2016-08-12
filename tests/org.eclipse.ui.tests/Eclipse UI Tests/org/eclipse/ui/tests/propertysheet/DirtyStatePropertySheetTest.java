@@ -76,7 +76,7 @@ public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
         };
         adapterFactory = new MockAdapterFactory();
         propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
-		saveableView = (AdaptingSaveableView) activePage.showView(AdaptingSaveableView.ID_ADAPTING_SAVEABLE);
+        saveableView = (AdaptingSaveableView) activePage.showView(AdaptingSaveableView.ID);
 
         // some basic checks
         assertEquals(activePage.getActivePart(), saveableView);

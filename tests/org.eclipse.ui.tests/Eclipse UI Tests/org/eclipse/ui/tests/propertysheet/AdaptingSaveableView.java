@@ -26,7 +26,8 @@ import org.eclipse.ui.tests.api.MockViewPart;
  */
 public class AdaptingSaveableView extends MockViewPart implements ISaveablePart {
 
-	public static final String ID_ADAPTING_SAVEABLE = AdaptingSaveableView.class.getName();
+	@SuppressWarnings("hiding")
+	public static final String ID = AdaptingSaveableView.class.getName();
 
 	private Map<Object, Object> adaptersMap;
 
