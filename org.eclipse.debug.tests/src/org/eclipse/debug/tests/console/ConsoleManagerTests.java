@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -81,6 +80,7 @@ public class ConsoleManagerTests extends TestCase {
 		manager.showConsoleView(firstConsole);
 		waitForJobs();
 		processUIEvents(100);
+		ConsoleMock.allShownConsoles.set(0);
 	}
 
 	@Override
@@ -129,13 +129,8 @@ public class ConsoleManagerTests extends TestCase {
 
 		executorService.shutdown();
 		executorService.awaitTermination(1, TimeUnit.MINUTES);
-		List<ConsoleMock> shown = new ArrayList<>();
-		for (ConsoleMock console : consoles) {
-			if (console.showCalled > 0) {
-				shown.add(console);
-			}
-		}
-		assertEquals("Only " + shown.size() + " consoles were shown from " + count, count, shown.size()); //$NON-NLS-1$ //$NON-NLS-2$
+		int shown = ConsoleMock.allShownConsoles.intValue();
+		assertEquals("Only " + shown + " consoles were shown from " + count, count, shown); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void processUIEvents(final long millis) {
@@ -185,11 +180,13 @@ public class ConsoleManagerTests extends TestCase {
 	 */
 	static final class ConsoleMock implements IConsole {
 		MessagePage page;
-		volatile int showCalled;
+		final AtomicInteger showCalled;
 		final int number;
+		final static AtomicInteger allShownConsoles = new AtomicInteger();
 
 		public ConsoleMock(int number) {
 			this.number = number;
+			showCalled = new AtomicInteger();
 		}
 
 		@Override
@@ -229,8 +226,11 @@ public class ConsoleManagerTests extends TestCase {
 					getControl().addListener(SWT.Show, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
-							showCalled++;
-							System.out.println("Shown: " + ConsoleMock.this); //$NON-NLS-1$
+							int count = showCalled.incrementAndGet();
+							if (count == 1) {
+								count = allShownConsoles.incrementAndGet();
+								System.out.println("Shown: " + ConsoleMock.this + ", overall: " + count); //$NON-NLS-1$ //$NON-NLS-2$
+							}
 						}
 					});
 				}
