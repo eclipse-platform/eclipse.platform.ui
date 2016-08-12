@@ -153,11 +153,10 @@ public class MockPart extends EventManager implements IExecutableExtension {
         callTrace.add("setFocus");
     }
 
-	/**
-	 * @param adapter
-	 * @see IAdaptable#getAdapter(Class)
-	 */
-	public <T> T getAdapter(Class<T> adapter) {
+    /**
+     * @see IAdaptable#getAdapter(Class)
+     */
+    public Object getAdapter(Class arg0) {
         return null;
     }
 

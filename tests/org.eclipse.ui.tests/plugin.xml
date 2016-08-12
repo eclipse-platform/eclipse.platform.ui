@@ -493,11 +493,6 @@
             name="Text Control view"
             restorable="true">
       </view>
-      <view
-            class="org.eclipse.ui.tests.propertysheet.AdaptingSaveableView"
-            id="org.eclipse.ui.tests.propertysheet.AdaptingSaveableView"
-            name="AdaptingSaveableView">
-      </view>
 
    </extension>
    <extension

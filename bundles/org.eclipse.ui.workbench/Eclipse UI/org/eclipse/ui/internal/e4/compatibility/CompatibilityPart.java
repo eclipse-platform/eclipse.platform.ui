@@ -351,7 +351,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		}
 
 		ISaveablePart saveable = SaveableHelper.getSaveable(wrapped);
-		if (saveable != null && SaveableHelper.isDirtyStateSupported(wrapped)) {
+		if (saveable != null) {
 			part.setDirty(saveable.isDirty());
 		}
 
@@ -373,11 +373,6 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 					}
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
-					boolean supportsDirtyState = SaveableHelper.isDirtyStateSupported(wrapped);
-					if (!supportsDirtyState) {
-						part.setDirty(false);
-						return;
-					}
 					ISaveablePart saveable = SaveableHelper.getSaveable(wrapped);
 					if (saveable != null) {
 						part.setDirty(saveable.isDirty());
@@ -393,7 +388,6 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 					break;
 				}
 			}
-
 		});
 	}
 
