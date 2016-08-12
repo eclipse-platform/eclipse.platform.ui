@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.views" version="2">
-    <resource path="src/org/eclipse/ui/views/properties/PropertySheet.java" type="org.eclipse.ui.views.properties.PropertySheet">
-        <filter comment="See bug 495567" id="576725006">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="see bug 495567 comment  68 and bug 499164" id="924844039">
             <message_arguments>
-                <message_argument value="ISecondarySaveableSource"/>
-                <message_argument value="PropertySheet"/>
+                <message_argument value="3.8.101"/>
+                <message_argument value="3.8.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/properties/PropertySheet.java" type="org.eclipse.ui.views.properties.PropertySheet">
+        <filter comment="see bug 495567 comment  68 and bug 499164" id="1141899266">
+            <message_arguments>
+                <message_argument value="3.9"/>
+                <message_argument value="3.8"/>
+                <message_argument value="isDirtyStateSupported()"/>
             </message_arguments>
         </filter>
     </resource>

@@ -38,6 +38,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.ISecondarySaveableSource;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -51,7 +52,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.internal.DefaultSaveable;
-import org.eclipse.ui.internal.ISecondarySaveableSource;
 import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.IContributedContentsView;
@@ -504,7 +504,8 @@ public class PropertySheet extends PageBookView
 	 * {@link IAdaptable} and return adapter to
 	 * {@link ISecondarySaveableSource}.
 	 *
-	 * @return returns {@code false} by default.
+	 * @return returns {@code false} if the dirty state indication behavior is
+	 *         not desired.
 	 * @since 3.9
 	 */
 	@Override
