@@ -9,10 +9,9 @@
  *     Andrey Loskutov <loskutov@gmx.de> - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal;
+package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.ISaveablePart;
 
 /**
  * Interface for parts providing an adapter to {@link ISaveablePart} objects
@@ -35,6 +34,7 @@ import org.eclipse.ui.ISaveablePart;
  * <p>
  * Per default, dirty state of "secondary" parts is ignored by the framework.
  *
+ * @since 3.109
  */
 public interface ISecondarySaveableSource {
 

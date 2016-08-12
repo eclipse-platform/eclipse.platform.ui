@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISaveablePart;
-import org.eclipse.ui.internal.ISecondarySaveableSource;
+import org.eclipse.ui.ISecondarySaveableSource;
 import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.junit.Test;
