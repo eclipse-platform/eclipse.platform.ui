@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926, 459989
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
@@ -40,6 +40,7 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccessContents_NoMatchingResults;
 	public static String QuickAccessContents_PressKeyToLimitResults;
 	public static String QuickAccessContents_QuickAccess;
+	public static String QuickAccessContents_SearchInHelpLabel;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, QuickAccessMessages.class);
