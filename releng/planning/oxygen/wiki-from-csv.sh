@@ -72,6 +72,10 @@ create_wiki_section "4.6.1" 4.6.1
 echo "= Work targeting Eclipse 4.7 ="
 echo ""
 
+create_wiki_section "4.7 M1" 4.7%20M1
+create_wiki_section "4.7 M2" 4.7%20M2
+create_wiki_section "4.7 M3" 4.7%20M3
+create_wiki_section "4.7 M4" 4.7%20M4
 create_wiki_section "4.7" 4.7
 
 
