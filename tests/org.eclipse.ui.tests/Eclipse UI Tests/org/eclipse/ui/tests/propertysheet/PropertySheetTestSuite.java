@@ -39,5 +39,6 @@ public class PropertySheetTestSuite extends TestSuite {
         addTest(new TestSuite(NewPropertySheetHandlerTest.class));
         addTest(new TestSuite(PropertySheetAuto.class));
         addTest(new TestSuite(ComboBoxPropertyDescriptorTest.class));
+        addTest(new TestSuite(DirtyStatePropertySheetTest.class));
     }
 }
