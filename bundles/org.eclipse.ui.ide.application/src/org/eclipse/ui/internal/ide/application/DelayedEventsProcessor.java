@@ -232,7 +232,8 @@ public class DelayedEventsProcessor implements Listener {
 			// in matching. For example, we're trying to open /tmp/foo:3:3
 			// and there is an actual file named /tmp/foo:3
 			Pattern lPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)$"); //$NON-NLS-1$
-			Pattern lcPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+):(?<column>\\d+)$"); //$NON-NLS-1$
+                        Pattern lcPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)[:+](?<column>\\d+)$"); //$NON-NLS-1$ 
+
 			Matcher m = lPattern.matcher(path);
 			if (m.matches()) {
 				try {
