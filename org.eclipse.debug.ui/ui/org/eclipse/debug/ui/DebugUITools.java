@@ -11,9 +11,11 @@
 package org.eclipse.debug.ui;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -52,14 +54,17 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.TerminateToggleValue;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
+import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
@@ -772,10 +777,10 @@ public class DebugUITools {
 	 * @since 2.1
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
-		launch(configuration, mode, DebugUITools.findTogglelaunchForConfig(configuration));
+		launch(configuration, mode, DebugUITools.findToggleLaunchForConfig(configuration, mode));
 	}
 
-	private static HashMap<Object, Boolean> fgLaunchToggleTerminateMap = new HashMap<>();
+	private static HashMap<Object, Object> fgLaunchToggleTerminateMap = new HashMap<>();
 
 	/**
 	 * Stores the toggle data for launch in a Map to be used while launching to
@@ -786,26 +791,39 @@ public class DebugUITools {
 	 *            Shift)
 	 * @since 3.12
 	 */
-	public static void storeLaunchToggleTerminate(Object data, Boolean isShift) {
+	public static void storeLaunchToggleTerminate(Object data, Object isShift) {
 		synchronized (fgLaunchToggleTerminateMap) {
 			fgLaunchToggleTerminateMap.put(data, isShift);
 		}
 	}
 
 	/**
+	 * Stores the toggle data for launch in a Map to be used while launching to
+	 * decide if previous launch for same configuration can be terminated.
+	 * 
+	 * @param data the editor or selected tree node
 	 * @since 3.12
 	 */
-	private static boolean getAndRemoveLaunchToggleTerminate(Object data) {
-
-		Boolean isShift;
+	public static void removeLaunchToggleTerminate(Object data) {
 		synchronized (fgLaunchToggleTerminateMap) {
-			isShift = fgLaunchToggleTerminateMap.get(data);
-		}
-		if (isShift != null) {
-			synchronized (fgLaunchToggleTerminateMap) {
+			if (fgLaunchToggleTerminateMap.containsKey(data)) {
 				fgLaunchToggleTerminateMap.remove(data);
 			}
-			return isShift.booleanValue();
+		}
+	}
+
+	/**
+	 * @since 3.12
+	 */
+	private static boolean isShiftTerminateLaunch(Object data) {
+		Object value;
+		synchronized (fgLaunchToggleTerminateMap) {
+			value = fgLaunchToggleTerminateMap.get(data);
+		}
+		if (value instanceof TerminateToggleValue) {
+			return ((TerminateToggleValue) value).isShift();
+		} else if (value instanceof Boolean) {
+			return ((Boolean) value).booleanValue();
 		}
 		return Boolean.FALSE;
 	}
@@ -813,7 +831,19 @@ public class DebugUITools {
 	/**
 	 * @since 3.12
 	 */
-	private static boolean findTogglelaunchForConfig(ILaunchConfiguration configuration) {
+
+	private static Object getToggleTerminateValue(Object data) {
+		Object value;
+		synchronized (fgLaunchToggleTerminateMap) {
+			value = fgLaunchToggleTerminateMap.get(data);
+		}
+		return value;
+	}
+
+	/**
+	 * @since 3.12
+	 */
+	private static boolean findToggleLaunchForConfig(ILaunchConfiguration configuration, String mode) {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches = launchManager.getLaunches();
 		for (ILaunch iLaunch : launches) {
@@ -826,7 +856,7 @@ public class DebugUITools {
 							if (key instanceof IEditorPart) {
 								IEditorInput input = ((IEditorPart) key).getEditorInput();
 								if (input.getAdapter(IResource.class).equals(configResource[0])) {
-									return getAndRemoveLaunchToggleTerminate(key);
+									return isShiftTerminateLaunch(key);
 								}
 							} else if (key instanceof TreeSelection) {
 								TreeSelection selection = (TreeSelection) key;
@@ -835,7 +865,28 @@ public class DebugUITools {
 									Object lastSegmentObj = treePath[0].getLastSegment();
 									IResource selectedResource = ((IAdaptable) lastSegmentObj).getAdapter(IResource.class);
 									if (selectedResource!= null && selectedResource.equals(configResource[0])) {
-										return getAndRemoveLaunchToggleTerminate(key);
+										return isShiftTerminateLaunch(key);
+									}
+								}
+							}
+						}
+					} else {
+						for (Iterator<Object> iter = fgLaunchToggleTerminateMap.keySet().iterator(); iter.hasNext();) {
+							Object key = iter.next();
+							if (key instanceof IStructuredSelection) {
+								Object toggleValue = getToggleTerminateValue(key);
+								if (toggleValue instanceof TerminateToggleValue) {
+									LaunchingResourceManager lrm = DebugUIPlugin.getDefault().getLaunchingResourceManager();
+									ArrayList<LaunchShortcutExtension> shortcuts = new ArrayList<LaunchShortcutExtension>();
+									LaunchShortcutExtension shortcut = ((TerminateToggleValue) toggleValue).getShortcut();
+									shortcuts.add(shortcut);
+									IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+									if (resource == null) {
+										resource = lrm.getLaunchableResource(shortcuts, (IStructuredSelection) key);
+									}
+									List<ILaunchConfiguration> configs = lrm.getParticipatingLaunchConfigurations((IStructuredSelection) key, resource, shortcuts, mode);
+									if (configs.contains(configuration)) {
+										return ((TerminateToggleValue) toggleValue).isShift();
 									}
 								}
 							}
@@ -843,7 +894,7 @@ public class DebugUITools {
 					}
 
 				} catch (CoreException e) {
-					e.printStackTrace();
+					DebugUIPlugin.log(e);
 				}
 			}
 		}

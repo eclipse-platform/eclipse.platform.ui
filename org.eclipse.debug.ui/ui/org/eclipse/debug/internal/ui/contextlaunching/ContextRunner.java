@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.TerminateToggleValue;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationSelectionDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
@@ -257,10 +258,12 @@ public final class ContextRunner {
 		if(o instanceof IEditorPart) {
 			DebugUITools.storeLaunchToggleTerminate(o, isShift);
 			shortcut.launch((IEditorPart) o, mode);
+			DebugUITools.removeLaunchToggleTerminate(o);
 		}
 		else {
-			DebugUITools.storeLaunchToggleTerminate(selection, isShift);
+			DebugUITools.storeLaunchToggleTerminate(selection, new TerminateToggleValue(isShift, shortcut));
 			shortcut.launch(selection, mode);
+			DebugUITools.removeLaunchToggleTerminate(selection);
 		}
 	}
 	

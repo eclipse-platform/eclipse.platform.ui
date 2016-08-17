@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.TerminateToggleValue;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
@@ -77,10 +78,12 @@ public class LaunchShortcutAction extends Action {
 		if(o instanceof IEditorPart) {
 			DebugUITools.storeLaunchToggleTerminate(o, isShift);
 			fShortcut.launch((IEditorPart) o, fMode);
+			DebugUITools.removeLaunchToggleTerminate(o);
 		}
 		else {
-			DebugUITools.storeLaunchToggleTerminate(ss, isShift);
+			DebugUITools.storeLaunchToggleTerminate(ss, new TerminateToggleValue(isShift, fShortcut));
 			fShortcut.launch(ss, fMode);
+			DebugUITools.removeLaunchToggleTerminate(ss);
 		}
 	}
 	
