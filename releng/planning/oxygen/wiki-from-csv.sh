@@ -6,6 +6,7 @@ echo ""
 echo "'''This list is generated automatically, please do not update manually'''"
 echo ""
 echo "This list is your planning backlog for the Eclipse 4.6 release. The list will be refreshed in order to better adjust the priorities of the bugs during the release."
+echo ""
 }
 
 create_wiki_section () {
@@ -67,6 +68,7 @@ create_wiki_header
 echo "= Work targeting Eclipse 4.6.1 and 4.6.2 ="
 
 create_wiki_section "4.6.1" 4.6.1
+create_wiki_section "4.6.2" 4.6.2
 
 
 echo "= Work targeting Eclipse 4.7 ="
