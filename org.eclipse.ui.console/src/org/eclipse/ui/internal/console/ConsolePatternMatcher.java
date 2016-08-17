@@ -31,7 +31,7 @@ import org.eclipse.ui.console.TextConsole;
 
 public class ConsolePatternMatcher implements IDocumentListener {
 
-    private MatchJob fMatchJob = new MatchJob();
+	private MatchJob fMatchJob;
 
     /**
      * Collection of compiled pattern match listeners
@@ -46,12 +46,14 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
     public ConsolePatternMatcher(TextConsole console) {
         fConsole = console;
+		fMatchJob = new MatchJob();
     }
 
     private class MatchJob extends Job {
         MatchJob() {
             super("Match Job"); //$NON-NLS-1$
             setSystem(true);
+			setRule(fConsole.getSchedulingRule());
         }
 
         /*

@@ -17,9 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -627,14 +625,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
          */
         @Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-            IJobManager jobManager = Job.getJobManager();
-            try {
-                jobManager.join(console, monitor);
-            } catch (OperationCanceledException e1) {
-                return Status.CANCEL_STATUS;
-            } catch (InterruptedException e1) {
-                return Status.CANCEL_STATUS;
-            }
         	if (document == null) {
         		return Status.OK_STATUS;
         	}
