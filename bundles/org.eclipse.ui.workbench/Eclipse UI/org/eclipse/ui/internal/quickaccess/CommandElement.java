@@ -86,7 +86,7 @@ public class CommandElement extends QuickAccessElement {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		ICommandImageService imgService = PlatformUI.getWorkbench().getService(ICommandImageService.class);
+		ICommandImageService imgService = ((CommandProvider) getProvider()).getCommandImageService();
 		return (imgService == null) ? null : imgService.getImageDescriptor(getId());
 	}
 
