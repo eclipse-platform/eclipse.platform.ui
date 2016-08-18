@@ -29,6 +29,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerDescriptor;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.osgi.framework.BundleContext;
 
 /**
  * <p>
@@ -141,6 +142,12 @@ public class StatusManager {
 		if (statusHandler != null) {
 			return statusHandler;
 		}
+		BundleContext bundleContext = WorkbenchPlugin.getDefault().getBundle().getBundleContext();
+		if (bundleContext == null) {
+			// bundle is not in the STARTING, ACTIVE, or STOPPING state: we
+			// should not do anything, most likely we are going to shut down
+			return null;
+		}
 
 		StatusHandlerDescriptor defaultHandlerDescriptor = StatusHandlerRegistry.getDefault()
 				.getDefaultHandlerDescriptor();
@@ -201,18 +208,25 @@ public class StatusManager {
 			}
 
 			// delegates the problem to workbench handler
-			getStatusHandler().handle(statusAdapter, style);
+			AbstractStatusHandler handler = getStatusHandler();
+			if (handler != null) {
+				handler.handle(statusAdapter, style);
+			} else if (style != StatusManager.NONE) {
+				logError(statusAdapter.getStatus());
+			}
 
 			// if attached status handler is not able to notify StatusManager
 			// about particular event, use the default policy and fake the
 			// notification
-			if (!getStatusHandler().supportsNotification(
+			if (handler == null || !handler.supportsNotification(
 					INotificationTypes.HANDLED)) {
 				generateFakeNotification(statusAdapter, style);
 			}
 		} catch (Throwable ex) {
 			// The used status handler failed
-			logError(statusAdapter.getStatus());
+			if (statusAdapter != null) {
+				logError(statusAdapter.getStatus());
+			}
 			logError("Error occurred during status handling", ex); //$NON-NLS-1$
 		}
 	}
@@ -335,7 +349,8 @@ public class StatusManager {
 	 * @since 3.5
 	 */
 	public void fireNotification(int type, StatusAdapter[] adapters){
-		if(getStatusHandler().supportsNotification(type)){
+		AbstractStatusHandler handler = getStatusHandler();
+		if (handler != null && handler.supportsNotification(type)) {
 			doFireNotification(type, adapters);
 		}
 	}
