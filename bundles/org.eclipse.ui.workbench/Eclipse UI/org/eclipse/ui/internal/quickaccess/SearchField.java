@@ -12,7 +12,7 @@
  *     Brian de Alwis - Fix size computation to account for trim
  *     Markus Kuppe <bugs.eclipse.org@lemmster.de> - Bug 449485: [QuickAccess] "Widget is disposed" exception in errorlog during shutdown due to quickaccess.SearchField.storeDialog
  *     Elena Laskavaia <elaskavaia.cdt@gmail.com> - Bug 433746: [QuickAccess] SWTException on closing quick access shell
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926, 491278, 491291, 491312, 491293, 476045
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926, 491278, 491291, 491312, 491293, 476045, 436788
  ******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
@@ -198,6 +198,11 @@ public class SearchField {
 					addPreviousPick(string, element);
 					txtQuickAccess.setText(""); //$NON-NLS-1$
 					element.execute();
+
+					// after execution, the search box might be disposed
+					if (txtQuickAccess.isDisposed()) {
+						return;
+					}
 
 					/*
 					 * By design, attempting to activate a part that is already
