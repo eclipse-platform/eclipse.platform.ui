@@ -31,8 +31,11 @@ public class FormattedHTMLElement extends HTMLElement {
 		super(name);
 		this.indentLevel = indentLevel;
 		this.spanMultipleLines = spanMultipleLines;
-		// default
-		endTagRequired = true;
+		// void tags do not have close tags
+		boolean isVoidTag = IIntroHTMLConstants.ELEMENT_META.equalsIgnoreCase(name)
+				|| IIntroHTMLConstants.ELEMENT_BASE.equalsIgnoreCase(name)
+				|| IIntroHTMLConstants.ELEMENT_LINK.equalsIgnoreCase(name);
+		endTagRequired = !isVoidTag;
 	}
 	public FormattedHTMLElement(String name, int indentLevel,
 			boolean spanMultipleLines, boolean endTagRequired) {

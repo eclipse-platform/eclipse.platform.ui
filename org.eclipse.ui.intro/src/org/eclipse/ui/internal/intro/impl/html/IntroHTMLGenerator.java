@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.util.ProductPreferences;
@@ -80,7 +81,7 @@ public class IntroHTMLGenerator {
 		// Internet Explorer <= 9 doesn't properly handle background-size
 		backgroundSizeWorks = true;
 		try {
-			if (getBrowser() != null && "ie".equals(getBrowser().getBrowserType())) { //$NON-NLS-1$
+			if (isIE()) {
 				Class<?> ieClass = Class.forName("org.eclipse.swt.browser.IE"); //$NON-NLS-1$
 				Field field = ieClass.getDeclaredField("IEVersion"); //$NON-NLS-1$
 				field.setAccessible(true);
@@ -91,6 +92,10 @@ public class IntroHTMLGenerator {
 		} catch(Exception e) {
 			// IE not found
 		}
+	}
+
+	private boolean isIE() {
+		return getBrowser() != null && "ie".equals(getBrowser().getBrowserType()); //$NON-NLS-1$
 	}
 
 	/**
@@ -163,9 +168,10 @@ public class IntroHTMLGenerator {
 	 */
 	private HTMLElement generateHeadElement(int indentLevel) {
 		HTMLElement head = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_HEAD, indentLevel, true);
+		addBrowserRenderingDirectives(head, indentLevel + 1);
 		// add the title
 		head.addContent(generateTitleElement(introPage.getTitle(), indentLevel + 1));
-		head.addContent(generateUTF8CharsetElement());
+		head.addContent(generateUTF8CharsetElement(indentLevel + 1));
 		// create the BASE element
 		String basePath = BundleUtil.getResolvedResourceLocation(introPage.getBase(), introPage.getBundle());
 		HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
@@ -220,8 +226,36 @@ public class IntroHTMLGenerator {
 		return head;
 	}
 
-	private HTMLElement generateUTF8CharsetElement() {
-		HTMLElement meta = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_META, 0, false);
+	/**
+	 * Add any browser-specific rendering quirks
+	 * 
+	 * @param indentLevel
+	 */
+	private void addBrowserRenderingDirectives(HTMLElement head, int indentLevel) {
+		/* IE renders intranet content in Compat View by default */
+		if (isIE() && "html5".equals(getThemeProperty("standardSupport"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			// "Edge mode tells Internet Explorer to display content in the highest mode available"
+			HTMLElement meta = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_META, indentLevel, true);
+			meta.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HTTP_EQUIV, "X-UA-Compatible"); //$NON-NLS-1$
+			meta.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CONTENT, "IE=edge"); //$NON-NLS-1$
+			head.addContent(meta);
+		}
+	}
+
+	private String getThemeProperty(String key) {
+		IntroTheme theme = introPage.getModelRoot().getTheme();
+		if (theme == null) {
+			return null;
+		}
+		Map<String, String> properties = theme.getProperties();
+		if (properties == null) {
+			return null;
+		}
+		return properties.get(key);
+	}
+
+	private HTMLElement generateUTF8CharsetElement(int indentLevel) {
+		HTMLElement meta = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_META, indentLevel, false);
 		meta.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HTTP_EQUIV, IIntroHTMLConstants.CONTENT_TYPE);
 		meta.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CONTENT, IIntroHTMLConstants.TYPE_HTML_UTF_8);
 		return meta;

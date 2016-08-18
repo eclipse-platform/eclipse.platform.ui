@@ -330,7 +330,9 @@ public class BrowserIntroPartImplementation extends
             		if (props!=null) {
             			String value = (String)props.get("standardSupport"); //$NON-NLS-1$
             			String doctype=null;
-            			if ("strict".equalsIgnoreCase(value)) //$NON-NLS-1$
+						if ("html5".equalsIgnoreCase(value)) //$NON-NLS-1$
+							doctype = "<!DOCTYPE html>\n"; //$NON-NLS-1$
+						else if ("strict".equalsIgnoreCase(value)) //$NON-NLS-1$
             				doctype = generateDoctype(true);
             			else if ("loose".equalsIgnoreCase(value)) //$NON-NLS-1$
             				doctype = generateDoctype(false);

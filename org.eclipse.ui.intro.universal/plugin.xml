@@ -250,6 +250,8 @@
             path="$nl$/themes/solstice"
             previewImage="$nl$/themes/solstice/preview.png"
             scalable="true">
+            <property name="standardSupport"
+            		value="html5"/>
             <property name="workbenchAsRootLink"
             		value="false"/>
             <property name="launchbarOverviewIcon"
