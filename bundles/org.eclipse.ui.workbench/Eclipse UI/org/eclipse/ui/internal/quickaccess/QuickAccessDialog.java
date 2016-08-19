@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *     René Brandstetter - Bug 433778
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491410, 476045
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491410
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -91,14 +91,13 @@ public class QuickAccessDialog extends PopupDialog {
 
 					@Override
 					public void run() {
-						MApplication application = model.getContext().get(MApplication.class);
-						final CommandProvider commandProvider = new CommandProvider(application.getContext());
+						final CommandProvider commandProvider = new CommandProvider();
 						commandProvider.setSnapshot(new ExpressionContext(model.getContext()
 								.getActiveLeaf()));
 						QuickAccessProvider[] providers = new QuickAccessProvider[] {
 								new PreviousPicksProvider(previousPicksList),
 								new EditorProvider(),
-								new ViewProvider(application, model),
+								new ViewProvider(model.getContext().get(MApplication.class), model),
 								new PerspectiveProvider(), commandProvider, new ActionProvider(),
 								new WizardProvider(), new PreferenceProvider(),
 								new PropertiesProvider() };
