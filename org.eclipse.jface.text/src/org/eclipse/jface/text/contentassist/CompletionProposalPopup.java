@@ -556,6 +556,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			proposals= fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
 		} else {
 			proposals= fContentAssistant.computeCompletionProposals(fViewer, offset);
+			if (proposals == null)
+				return new ICompletionProposal[] {};
 		}
 		if (fSorter != null) {
 			sortProposals(proposals);
