@@ -1882,7 +1882,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset a document offset
-	 * @return an array of completion proposals
+	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 * @since 3.0
 	 */
