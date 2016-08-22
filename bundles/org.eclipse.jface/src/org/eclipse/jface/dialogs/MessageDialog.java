@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -496,8 +496,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * @param message
      *            the message
      */
-    public static void openInformation(Shell parent, String title,
-            String message) {
+	public static void openInformation(Shell parent, String title, String message) {
         open(INFORMATION, parent, title, message, SWT.NONE);
     }
 
@@ -513,8 +512,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * @return <code>true</code> if the user presses the Yes button,
      *         <code>false</code> otherwise
      */
-    public static boolean openQuestion(Shell parent, String title,
-            String message) {
+	public static boolean openQuestion(Shell parent, String title, String message) {
         return open(QUESTION, parent, title, message, SWT.NONE);
     }
 
@@ -532,13 +530,8 @@ public class MessageDialog extends IconAndMessageDialog {
         open(WARNING, parent, title, message, SWT.NONE);
     }
 
-    /*
-     * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite,
-     *      int, java.lang.String, boolean)
-     */
     @Override
-	protected Button createButton(Composite parent, int id, String label,
-            boolean defaultButton) {
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
         Button button = super.createButton(parent, id, label, defaultButton);
         //Be sure to set the focus if the custom area cannot so as not
         //to lose the defaultButton.
