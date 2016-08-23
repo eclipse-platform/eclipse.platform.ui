@@ -128,8 +128,7 @@ public class ExtensionResolver {
 	 */
 	private Node[] getContent(String bundleId, String relativePath, String nodeId) throws IOException, SAXException, ParserConfigurationException {
 		String href = '/' + bundleId + '/' + relativePath;
-		InputStream in = HelpSystem.getHelpContent(href, locale);
-		try {
+		try (InputStream in = HelpSystem.getHelpContent(href, locale)) {
 			if (nodeId != null) {
 				Element element = findElement(in, nodeId);
 				processor.process(new UAElement(element), href);
@@ -146,12 +145,6 @@ public class ExtensionResolver {
 				node = node.getNextSibling();
 			}
 			return children.toArray(new Node[children.size()]);
-		}
-		finally {
-			try {
-				in.close();
-			}
-			catch (IOException e) {}
 		}
 	}
 

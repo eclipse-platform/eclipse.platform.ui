@@ -58,9 +58,9 @@ public class ContextManager {
 		int index = contextId.lastIndexOf('.');
 		if (index != -1) {
 			String pluginId = contextId.substring(0, index);
-			Iterator iter = getContextProviders(pluginId).iterator();
+			Iterator<AbstractContextProvider> iter = getContextProviders(pluginId).iterator();
 			while (iter.hasNext()) {
-				AbstractContextProvider provider = (AbstractContextProvider)iter.next();
+				AbstractContextProvider provider = iter.next();
 				try {
 					IContext context = provider.getContext(contextId, locale);
 					if (context != null) {

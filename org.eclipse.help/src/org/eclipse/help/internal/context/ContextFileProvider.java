@@ -192,21 +192,14 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 * (shortContextId -> Context).
 	 */
 	private Map<String, Context> loadContexts(ContextFile descriptor, String locale) {
-		try {
-			// load the file
-			InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale);
+		// load the file
+		try (InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale)) {
 	    	if (in != null) {
-				try {
-					return loadContextsFromInputStream(descriptor, locale, in);
-				} finally {
-					in.close();
-				}
-	    	}
-	    	else {
+				return loadContextsFromInputStream(descriptor, locale, in);
+			} else {
 	    		throw new FileNotFoundException();
 	    	}
-		}
-		catch (Throwable t) {
+		} catch (Throwable t) {
 			String msg = "Error reading context-sensitive help file /\"" + getErrorPath(descriptor, locale) + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
 			HelpPlugin.logError(msg, t);
 		}

@@ -189,7 +189,7 @@ public class ProductPreferences {
 	 * but not present are skipped, and items present but not ordered are added
 	 * at the end.
 	 */
-	public static List getOrderedList(List<String> items, List<String> order) {
+	public static List<String> getOrderedList(List<String> items, List<String> order) {
 		return getOrderedList(items, order, null, null);
 	}
 
@@ -338,26 +338,13 @@ public class ProductPreferences {
 		if (bundle != null) {
 			URL url = bundle.getEntry(path);
 			if (url != null) {
-				InputStream in = null;
-				try {
-					in = url.openStream();
+				try (InputStream in = url.openStream()) {
 					Properties properties = new Properties();
 					properties.load(in);
 					return properties;
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					// log the fact that it couldn't load it
 					HelpPlugin.logError("Error opening product's plugin customization file: " + bundleId + "/" + path, e); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				finally {
-					if (in != null) {
-						try {
-							in.close();
-						}
-						catch (IOException e) {
-							// nothing we can do here
-						}
-					}
 				}
 			}
 		}

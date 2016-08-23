@@ -230,7 +230,7 @@ public class SequenceResolver<T> {
 			candidateItems.add(candidates[i].item);
 		}
 		for (int i=0;i<candidates.length;++i) {
-			Candidate c = candidates[i];
+			Candidate<T> c = candidates[i];
 			for (int j=0;j<candidates.length;++j) {
 				c.rank += countPrecedingItems(c.item, candidates[j].src, candidateItems);
 			}
@@ -241,9 +241,9 @@ public class SequenceResolver<T> {
 	 * Counts the number of elements from the given set that come before
 	 * the given item in the given list.
 	 */
-	private int countPrecedingItems(Object item, List list, Set set) {
+	private int countPrecedingItems(Object item, List<?> list, Set<?> set) {
 		int count = 0;
-		Iterator iter = list.iterator();
+		Iterator<?> iter = list.iterator();
 		while (iter.hasNext()) {
 			Object next = iter.next();
 			if (next.equals(item)) {
@@ -291,7 +291,7 @@ public class SequenceResolver<T> {
 		public T item;
 		public boolean isPrimary;
 		public int rank;
-		public List src;
+		public List<?> src;
 
 		@Override
 		public boolean equals(Object obj) {

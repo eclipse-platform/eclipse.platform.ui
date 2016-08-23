@@ -201,7 +201,7 @@ public class ResourceLocator {
 
 	private static ProducerDescriptor findContentProducer(IConfigurationElement [] elements, String refId) {
 		// try existing ones
-		for (Iterator iter = contentProducers.values().iterator(); iter.hasNext();) {
+		for (Iterator<Object> iter = contentProducers.values().iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof ProducerDescriptor) {
 				ProducerDescriptor desc = (ProducerDescriptor) obj;
@@ -284,7 +284,7 @@ public class ResourceLocator {
 
 		String pluginID = pluginDesc.getSymbolicName();
 		Map<String, Object> cache = zipCache;
-		ArrayList pathPrefix = getPathPrefix(locale);
+		ArrayList<String> pathPrefix = getPathPrefix(locale);
 
 		for (int i = 0; i < pathPrefix.size(); i++) {
 
@@ -344,7 +344,7 @@ public class ResourceLocator {
 	 */
 	public static InputStream openFromPlugin(Bundle pluginDesc, String file, String locale) {
 
-		ArrayList pathPrefix = getPathPrefix(locale);
+		ArrayList<String> pathPrefix = getPathPrefix(locale);
 		URL flatFileURL = find(pluginDesc, new Path(file), pathPrefix);
 		if (flatFileURL != null)
 			try {
@@ -361,11 +361,11 @@ public class ResourceLocator {
 	 * Search the ws, os then nl for a resource. Platform.find can't be used directly with $nl$,
 	 * $os$ or $ws$ becuase the root directory will be searched too early.
 	 */
-	public static URL find(Bundle pluginDesc, IPath flatFilePath, ArrayList pathPrefix) {
+	public static URL find(Bundle pluginDesc, IPath flatFilePath, ArrayList<String> pathPrefix) {
 
 		// try to find the actual file.
 		for (int i = 0; i < pathPrefix.size(); i++) {
-			URL url = FileLocator.find(pluginDesc, new Path((String) pathPrefix.get(i) + flatFilePath), null);
+			URL url = FileLocator.find(pluginDesc, new Path(pathPrefix.get(i) + flatFilePath), null);
 			if (url != null)
 				return url;
 		}
@@ -383,7 +383,7 @@ public class ResourceLocator {
 	 * @return an ArrayList that has path prefixes that need to be search. The returned ArrayList
 	 * will have an entry for the root of the plugin.
 	 */
-	public static ArrayList getPathPrefix(String locale) {
+	public static ArrayList<String> getPathPrefix(String locale) {
 		ArrayList<String> pathPrefix = new ArrayList<>(5);
 		// TODO add override for ws and os similar to how it's done with locale
 		// now
@@ -438,15 +438,15 @@ public class ResourceLocator {
 	private static void findTopicPaths(Bundle pluginDesc, String directory, String locale, Set<String> paths) {
 		if (directory.endsWith("/")) //$NON-NLS-1$
 			directory = directory.substring(0, directory.length() - 1);
-		ArrayList pathPrefix = getPathPrefix(locale);
+		ArrayList<String> pathPrefix = getPathPrefix(locale);
 		for (int i = 0; i < pathPrefix.size(); i++) {
 			String path = pathPrefix.get(i) + directory;
 			if (path.length() == 0)
 				path = "/"; //$NON-NLS-1$
-			Enumeration entries = pluginDesc.getEntryPaths(path);
+			Enumeration<String> entries = pluginDesc.getEntryPaths(path);
 			if (entries != null) {
 				while (entries.hasMoreElements()) {
-					String topicPath = (String) entries.nextElement();
+					String topicPath = entries.nextElement();
 					if (topicPath.endsWith("/")) { //$NON-NLS-1$
 						findTopicPaths(pluginDesc, topicPath, locale, paths);
 					} else {
@@ -466,7 +466,7 @@ public class ResourceLocator {
 	public static String getErrorPath(String pluginId, String file, String locale)  {
 		String resolvedPath = pluginId + '/' + file;
 		try {
-			ArrayList pathPrefix = ResourceLocator.getPathPrefix(locale);
+			ArrayList<String> pathPrefix = ResourceLocator.getPathPrefix(locale);
 			Bundle bundle = Platform.getBundle(pluginId);
 			URL rawURL = ResourceLocator.find(bundle, new Path(file), pathPrefix);
 			URL resolvedURL = FileLocator.resolve(rawURL);

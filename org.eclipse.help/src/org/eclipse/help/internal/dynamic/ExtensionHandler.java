@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
+import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.UAElementFactory;
-import org.eclipse.help.internal.extension.ContentExtension;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -41,10 +41,10 @@ public class ExtensionHandler extends ProcessorHandler {
 	@Override
 	public short handle(UAElement element, String path) {
 		if (element instanceof Anchor) {
-			return handleExtension(element, path, ContentExtension.CONTRIBUTION);
+			return handleExtension(element, path, IContentExtension.CONTRIBUTION);
 		}
 		if (element.getAttribute(ATTRIBUTE_ID) != null) {
-			return handleExtension(element, path, ContentExtension.REPLACEMENT);
+			return handleExtension(element, path, IContentExtension.REPLACEMENT);
 		}
 		return UNHANDLED;
 	}
@@ -80,7 +80,7 @@ public class ExtensionHandler extends ProcessorHandler {
 			}
 		}
 		// always remove anchors, even invalid ones
-		if (type == ContentExtension.CONTRIBUTION) {
+		if (type == IContentExtension.CONTRIBUTION) {
 			uaElement.getParentElement().removeChild(uaElement);
 			return HANDLED_SKIP;
 		}

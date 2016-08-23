@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,20 +42,18 @@ public class CachedEntityResolver implements EntityResolver {
         	if (!cachedCopy.exists()) {
 				try {
 					URL system = new URL(systemId);
-			        URLConnection sc = system.openConnection();
-			        BufferedReader in = new BufferedReader(
-			                                new InputStreamReader(
-			                                sc.getInputStream()));
-			        String inputLine;
-			        BufferedWriter out = new BufferedWriter(new FileWriter(cachedCopy));
-			        while ((inputLine = in.readLine()) != null) {
-			            out.write(inputLine);
-			        	out.newLine();
-			        }
-			        in.close();
-			        out.flush();
-			        out.close();
-				} catch (IOException e) {}
+					URLConnection sc = system.openConnection();
+					String inputLine;
+					try (BufferedReader in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
+							BufferedWriter out = new BufferedWriter(new FileWriter(cachedCopy))) {
+						while ((inputLine = in.readLine()) != null) {
+							out.write(inputLine);
+							out.newLine();
+						}
+						out.flush();
+					}
+				} catch (IOException e) {
+				}
         	}
 	        try {
 	        	InputSource is = new InputSource(new FileReader(cachedCopy));

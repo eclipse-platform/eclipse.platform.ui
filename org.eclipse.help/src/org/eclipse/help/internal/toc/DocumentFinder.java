@@ -64,10 +64,10 @@ public class DocumentFinder {
 		}
 
 		// Find topics in plugin
-		Set paths = ResourceLocator.findTopicPaths(pluginDesc, directory,
+		Set<String> paths = ResourceLocator.findTopicPaths(pluginDesc, directory,
 				locale);
-		for (Iterator it = paths.iterator(); it.hasNext();) {
-			String href = "/" + pluginID + "/" + (String) it.next();  //$NON-NLS-1$//$NON-NLS-2$
+		for (Iterator<String> it = paths.iterator(); it.hasNext();) {
+			String href = "/" + pluginID + "/" + it.next();  //$NON-NLS-1$//$NON-NLS-2$
 			href = HrefUtil.normalizeDirectoryPath(href);
 			result.add(href);
 		}
@@ -89,11 +89,8 @@ public class DocumentFinder {
 					+ url.toString() + ".", ioe); //$NON-NLS-1$
 			return result;
 		}
-		ZipFile zipFile;
-		try {
-			zipFile = new ZipFile(realZipURL.getFile());
+		try (ZipFile zipFile = new ZipFile(realZipURL.getFile())) {
 			result = createExtraTopicsFromZipFile(pluginID, zipFile, directory);
-			zipFile.close();
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
 					"IOException occurred, when accessing Zip file " //$NON-NLS-1$
@@ -108,8 +105,8 @@ public class DocumentFinder {
 			String directory) {
 		String constantHrefSegment = "/" + pluginID + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 		List<String> result = new ArrayList<>();
-		for (Enumeration entriesEnum = zipFile.entries(); entriesEnum.hasMoreElements();) {
-			ZipEntry zEntry = (ZipEntry) entriesEnum.nextElement();
+		for (Enumeration<? extends ZipEntry> entriesEnum = zipFile.entries(); entriesEnum.hasMoreElements();) {
+			ZipEntry zEntry = entriesEnum.nextElement();
 			if (zEntry.isDirectory()) {
 				continue;
 			}

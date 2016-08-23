@@ -68,7 +68,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
 		}
     }
 
-	private Map getRequiredAttributes() {
+	private Map<String, String[]> getRequiredAttributes() {
 		if (requiredAttributes == null) {
 			requiredAttributes = new HashMap<>();
 			requiredAttributes.put(ContentExtension.NAME_CONTRIBUTION, new String[] { ContentExtension.ATTRIBUTE_CONTENT, ContentExtension.ATTRIBUTE_PATH });
@@ -79,7 +79,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
 		return requiredAttributes;
 	}
 
-	private Map getDeprecatedElements() {
+	private Map<String, String> getDeprecatedElements() {
 		if (deprecatedElements == null) {
 			deprecatedElements = new HashMap<>();
 			deprecatedElements.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, ContentExtension.NAME_CONTRIBUTION);

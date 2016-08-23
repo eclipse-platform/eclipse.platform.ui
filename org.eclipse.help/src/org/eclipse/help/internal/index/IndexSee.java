@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 
 import com.ibm.icu.text.Collator;
 
-public class IndexSee extends UAElement implements IIndexSee, Comparable  {
+public class IndexSee extends UAElement implements IIndexSee, Comparable<Object> {
 
 	public static final String NAME = "see"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_KEYWORD = "keyword"; //$NON-NLS-1$

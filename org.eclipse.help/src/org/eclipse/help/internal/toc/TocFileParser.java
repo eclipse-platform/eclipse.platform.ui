@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,8 @@ public class TocFileParser extends DefaultHandler {
 		if (reader == null) {
 			reader = new DocumentReader();
 		}
-		InputStream in = tocFile.getInputStream();
-    	if (in != null) {
-			try {
+		try (InputStream in = tocFile.getInputStream()) {
+			if (in != null) {
 				Toc toc = (Toc) reader.read(in);
 				TocContribution contribution = new TocContribution();
 				contribution.setCategoryId(tocFile.getCategory());
@@ -41,12 +40,9 @@ public class TocFileParser extends DefaultHandler {
 				contribution.setToc(toc);
 				contribution.setPrimary(tocFile.isPrimary());
 				return contribution;
-			} finally {
-				in.close();
+			} else {
+				throw new FileNotFoundException();
 			}
-    	}
-    	else {
-    		throw new FileNotFoundException();
-    	}
+		}
     }
 }

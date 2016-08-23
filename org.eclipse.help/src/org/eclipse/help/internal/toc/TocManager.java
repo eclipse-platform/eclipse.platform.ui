@@ -64,7 +64,7 @@ public class TocManager {
 			if (HelpPlugin.DEBUG_TOC) {
 			    System.out.println("Start to build toc for locale " + locale); //$NON-NLS-1$
 			}
-			Set tocsToFilter = getIgnoredTocContributions();
+			Set<String> tocsToFilter = getIgnoredTocContributions();
 			TocContribution[] raw = getRootTocContributions(locale, tocsToFilter);
 			TocContribution[] filtered = filterTocContributions(raw, tocsToFilter);
 			ITocContribution[] ordered = new TocSorter().orderTocContributions(filtered);
@@ -292,7 +292,7 @@ public class TocManager {
 	 * either the contribution's id or its category's id is listed in the
 	 * ignoredTocs, filter the contribution.
 	 */
-	private TocContribution[] filterTocContributions(TocContribution[] unfiltered, Set tocsToFilter) {
+	private TocContribution[] filterTocContributions(TocContribution[] unfiltered, Set<String> tocsToFilter) {
 		List<TocContribution> filtered = new ArrayList<>();
 		for (int i=0;i<unfiltered.length;++i) {
 			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
@@ -303,7 +303,7 @@ public class TocManager {
 		return filtered.toArray(new TocContribution[filtered.size()]);
 	}
 
-	private TocContribution[] getRootTocContributions(String locale, Set tocsToFilter) {
+	private TocContribution[] getRootTocContributions(String locale, Set<String> tocsToFilter) {
 		TocContribution[] contributions = getTocContributionsForToc(locale);
 		List<TocContribution> unassembled = new ArrayList<>(Arrays.asList(contributions));
 		TocAssembler assembler = new TocAssembler(tocsToFilter);

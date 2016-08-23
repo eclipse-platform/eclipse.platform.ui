@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,21 +30,17 @@ public class IndexFileParser {
 		if (reader == null) {
 			reader = new IndexDocumentReader();
 		}
-		InputStream in = indexFile.getInputStream();
-		if (in != null) {
-			try {
-				Index index = (Index)reader.read(in);
+		try (InputStream in = indexFile.getInputStream()) {
+			if (in != null) {
+				Index index = (Index) reader.read(in);
 				IndexContribution contrib = new IndexContribution();
-		    	contrib.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
+				contrib.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
 				contrib.setIndex(index);
 				contrib.setLocale(indexFile.getLocale());
 				return contrib;
-			} finally {
-				in.close();
+			} else {
+				throw new FileNotFoundException();
 			}
 		}
-    	else {
-    		throw new FileNotFoundException();
-    	}
     }
 }

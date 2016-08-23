@@ -310,5 +310,5 @@ public class IndexAssembler {
 			}
 			return null;
 		}
-	};
+	}
 }

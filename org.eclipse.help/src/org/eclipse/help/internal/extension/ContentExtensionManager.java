@@ -66,7 +66,7 @@ public class ContentExtensionManager {
 		if (extensionsByPath == null) {
 			loadExtensions(locale);
 		}
-		Map<String, List<ContentExtension>> map = (type == ContentExtension.CONTRIBUTION ? extensionsByPath
+		Map<String, List<ContentExtension>> map = (type == IContentExtension.CONTRIBUTION ? extensionsByPath
 				: replacesByPath);
 		List<ContentExtension> extensions = map.get(path);
 		if (extensions != null) {

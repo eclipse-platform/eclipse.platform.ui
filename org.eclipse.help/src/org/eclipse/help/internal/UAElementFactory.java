@@ -52,7 +52,7 @@ import org.w3c.dom.Element;
  */
 public class UAElementFactory {
 
-	private static final Class[][] interfaceTable = new Class[][] {
+	private static final Class<?>[][] interfaceTable = new Class[][] {
 		{ ITopic.class, Topic.class },
 		{ IIndexEntry.class, IndexEntry.class },
 		{ IContext.class, Context.class },
@@ -71,10 +71,10 @@ public class UAElementFactory {
 		{ ICriterionValueDefinition.class, CriterionValueDefinition.class },
 	};
 
-	private static final Map<String, Class> classByElementName;
+	private static final Map<String, Class<?>> classByElementName;
 
 	static {
-		classByElementName = Collections.synchronizedMap(new HashMap<String, Class>());
+		classByElementName = Collections.synchronizedMap(new HashMap<String, Class<?>>());
 		classByElementName.put(Anchor.NAME, Anchor.class);
 		classByElementName.put(Include.NAME, Include.class);
 		classByElementName.put(Toc.NAME, Toc.class);
@@ -118,7 +118,7 @@ public class UAElementFactory {
 			Class<?> clazz = interfaceTable[i][1];
 			if (interfaze.isAssignableFrom(src.getClass())) {
 				try {
-					Constructor constructor = clazz.getConstructor(interfaze);
+					Constructor<?> constructor = clazz.getConstructor(interfaze);
 					return (UAElement) constructor.newInstance(src);
 				}
 				catch (Exception e) {
