@@ -14,8 +14,10 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 
 /**
  *
@@ -38,6 +40,17 @@ public class ActivePartLookupFunction extends ContextFunction {
 		if (current == null) {
 			return null;
 		}
-		return current.getActiveLeaf().get(MPart.class);
+		MPart part = current.getActiveLeaf().get(MPart.class);
+		if (part == null)
+			return null;
+		MUIElement parent = part.getCurSharedRef() != null ? part.getCurSharedRef().getParent() : part.getParent();
+		if (parent == null)
+			return part;
+		if (parent.getTags().contains(IPresentationEngine.MINIMIZED)
+				&& !part.getTags().contains(IPresentationEngine.ACTIVE)) {
+			return null;
+		}
+		return part;
+
 	}
 }
