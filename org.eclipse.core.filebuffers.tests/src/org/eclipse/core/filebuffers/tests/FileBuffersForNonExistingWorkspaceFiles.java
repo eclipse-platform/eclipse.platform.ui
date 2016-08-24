@@ -50,7 +50,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 		IPath filePath= folder.getLocation().append("NonExistingWorkspaceFile");
 		return filePath.makeAbsolute();
 	}
-	
+
 	@Test
 	public void testBug118199() throws Exception {
 		IFile file= getProject().getWorkspace().getRoot().getFile(getPath());

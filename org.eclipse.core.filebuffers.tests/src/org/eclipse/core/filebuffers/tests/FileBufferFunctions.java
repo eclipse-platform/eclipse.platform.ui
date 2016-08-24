@@ -867,7 +867,7 @@ public abstract class FileBufferFunctions {
 						buf.append("listener.count: " + listener.count + " (expected: 1)\n");
 						if (newLocation.equals(listener.newLocation))
 							buf.append("newLocation identical: true\n");
-						else { 
+						else {
 							buf.append("listener.newLocation: " + listener.newLocation + "\n");
 							buf.append("newLocation: " + newLocation + "\n");
 						}
@@ -1231,7 +1231,7 @@ public abstract class FileBufferFunctions {
 		assertEquals(2, notifyCounter1.notifyCount);
 		assertEquals(2, notifyCounter2.notifyCount);
 	}
-	
+
 	@Test
 	public void testGetBufferForDocument() throws Exception {
 		fManager.connect(fPath, LocationKind.NORMALIZE, null);

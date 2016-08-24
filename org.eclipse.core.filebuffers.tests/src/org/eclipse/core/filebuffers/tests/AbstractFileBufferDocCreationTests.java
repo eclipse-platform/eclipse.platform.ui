@@ -43,7 +43,7 @@ public abstract class AbstractFileBufferDocCreationTests {
 	public void testCreateDocumentPartipants_FileExt() {
 		assertParticipantsInvoked("anything.111foo", new Class[] {TestDSP1.class, TestDSP3.class});
 	}
-	
+
 	@Test
 	public void testCreateDocumentPartipants_Name() {
 		assertParticipantsInvoked("111fooname", new Class[] {TestDSP2.class, TestDSP3.class});
