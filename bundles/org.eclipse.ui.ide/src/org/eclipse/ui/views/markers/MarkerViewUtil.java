@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,38 +97,9 @@ public class MarkerViewUtil {
 			if (view != null)
 				returnValue = MarkerSupportInternalUtilities.showMarker(view,
 						marker);
-
-			// If we have already shown the new one do not open another one
-			viewId = getLegacyViewId(marker);
-			if (viewId != null) {
-				if (returnValue)
-					view = page.findView(viewId);
-				else
-					view = showView ? page.showView(viewId) : page
-							.findView(viewId);
-			}
 		} catch (CoreException e) {
 			Policy.handle(e);
 		}
 		return returnValue;
 	}
-
-	/**
-	 * Returns the id of the view used to show markers of the same type as the
-	 * given marker using.legacy support
-	 *
-	 * @param marker
-	 *            the marker
-	 * @return the view id or <code>null</code> if no appropriate view could
-	 *         be determined
-	 * @throws CoreException
-	 *             if an exception occurs testing the type of the marker
-	 */
-	private static String getLegacyViewId(IMarker marker) throws CoreException {
-		String viewId = getViewId(marker);
-		if (viewId == null)
-			return null;
-		return viewId + MarkerSupportInternalUtilities.LEGACY_SUFFIX;
-	}
-
 }
