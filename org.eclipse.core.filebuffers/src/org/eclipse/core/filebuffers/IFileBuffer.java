@@ -169,7 +169,7 @@ public interface IFileBuffer {
 	 * Validates the state of this file buffer and tries to bring the buffer's underlying file into
 	 * a state in which it can be modified. If state validation is not supported this operation does
 	 * nothing.
-	 * 
+	 *
 	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not
 	 *            desired
 	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell

@@ -22,7 +22,7 @@ package org.eclipse.core.filebuffers;
  * This interface can be implemented by clients. Clients use
  * {@link org.eclipse.core.filebuffers.IFileBufferManager#setSynchronizationContext(ISynchronizationContext)}
  * to install a particular synchronization context with a file buffer manager.
- * 
+ *
  * @since 3.0
  */
 public interface ISynchronizationContext {

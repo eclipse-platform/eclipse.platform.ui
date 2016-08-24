@@ -47,7 +47,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.1, replaced by
 	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
 	 */

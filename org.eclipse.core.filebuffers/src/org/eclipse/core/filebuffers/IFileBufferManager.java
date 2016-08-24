@@ -253,7 +253,7 @@ public interface IFileBufferManager {
 	 * @since 3.5
 	 */
 	public void execute(Runnable runnable);
-	
+
 	/**
 	 * The caller requests that the synchronization context is used to
 	 * synchronize the given location with its file buffer. This call as no
@@ -315,7 +315,7 @@ public interface IFileBufferManager {
 	 * In case of a single file buffer, {@link IFileBuffer#validateState(IProgressMonitor, Object)}
 	 * should be used.
 	 * </p>
-	 * 
+	 *
 	 * @param fileBuffers the file buffers to validate
 	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not
 	 *            desired

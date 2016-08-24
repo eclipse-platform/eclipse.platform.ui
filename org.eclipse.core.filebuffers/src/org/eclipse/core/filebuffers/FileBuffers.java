@@ -98,7 +98,7 @@ public final class FileBuffers {
 
 	/**
 	 * Returns the workspace file at the given location if such a file exists.
-	 * 
+	 *
 	 * @param location the location
 	 * @return the workspace file at the location or <code>null</code> if no such file exists or if
 	 *         the location is not a valid location
@@ -109,7 +109,7 @@ public final class FileBuffers {
 
 	/**
 	 * Returns the workspace file at the given location if such a file exists.
-	 * 
+	 *
 	 * @param location the location
 	 * @param isNormalized <code>true</code> if the given location is already normalized
 	 * @return the workspace file at the location or <code>null</code> if no such file exists or if
