@@ -45,12 +45,17 @@ public abstract class EventManager {
 
 	/**
 	 * Adds a listener to this manager that will be notified when this manager's
-	 * state changes.
+	 * state changes. This method has no effect if the same listener is already
+	 * registered.
 	 *
 	 * @param listener
 	 *            The listener to be added; must not be <code>null</code>.
 	 */
 	protected synchronized final void addListenerObject(final Object listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException();
+		}
+
 		if (listenerList == null) {
 			listenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
