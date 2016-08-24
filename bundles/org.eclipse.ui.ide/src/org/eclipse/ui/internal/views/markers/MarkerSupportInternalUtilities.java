@@ -358,8 +358,23 @@ public class MarkerSupportInternalUtilities {
 	 * @return <code>true</code> if the marker is shown
 	 */
 	public static boolean showMarker(IViewPart view, IMarker marker) {
+		return showMarkers(view, new IMarker[] { marker });
+	}
+
+	/**
+	 * Show the markers in view if possible.
+	 *
+	 * @param view
+	 *            view where to show the markers
+	 * @param markers
+	 *            markers to be shown
+	 *
+	 * @return <code>true</code> if the markers are shown, <code>false</code>
+	 *         otherwise
+	 */
+	public static boolean showMarkers(IViewPart view, IMarker[] markers) {
 		if (view instanceof ExtendedMarkersView) {
-			StructuredSelection selection = new StructuredSelection(marker);
+			StructuredSelection selection = new StructuredSelection(markers);
 			ExtendedMarkersView markerView = (ExtendedMarkersView) view;
 			markerView.setSelection(selection, true);
 			return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.ui.tests.markers.MarkerSortUtilTest;
 import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
 import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
+import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 
 import junit.framework.Test;
@@ -52,6 +53,7 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(MarkerSupportRegistryTests.class));
         addTest(new TestSuite(MarkerSortUtilTest.class));
         addTest(new TestSuite(MarkerViewTests.class));
+		addTest(new TestSuite(MarkerViewUtilTest.class));
         addTest(Bug99858Test.suite());
         addTest(new TestSuite(WorkbenchWindowSubordinateSourcesTests.class));
         addTest(new TestSuite(ReopenMenuTest.class));
