@@ -68,7 +68,12 @@ public abstract class EventManager {
 	}
 
 	/**
-	 * Returns the listeners attached to this event manager.
+	 * Returns an array containing all the listeners attached to this event
+	 * manager. The resulting array is unaffected by subsequent adds or removes.
+	 * If there are no listeners registered, the result is an empty array. Use
+	 * this method when notifying listeners, so that any modifications to the
+	 * listener list during the notification will have no effect on the
+	 * notification itself.
 	 * <p>
 	 * Note: Callers of this method <b>must not</b> modify the returned array.
 	 * </p>
