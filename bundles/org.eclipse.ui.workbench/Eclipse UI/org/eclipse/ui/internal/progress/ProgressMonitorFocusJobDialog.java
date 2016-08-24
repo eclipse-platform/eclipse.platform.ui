@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.ProgressMonitorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.progress.ProgressManager.JobMonitor;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -149,146 +151,6 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		};
 	}
 
-	/**
-	 * Return the ProgressMonitorWithBlocking for the receiver.
-	 *
-	 * @return IProgressMonitorWithBlocking
-	 */
-	private IProgressMonitorWithBlocking getBlockingProgressMonitor() {
-		return new IProgressMonitorWithBlocking() {
-			@Override
-			public void beginTask(String name, int totalWork) {
-				final String finalName = name;
-				final int finalWork = totalWork;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().beginTask(finalName, finalWork);
-					}
-				});
-			}
-
-			@Override
-			public void clearBlocked() {
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						((IProgressMonitorWithBlocking) getProgressMonitor())
-								.clearBlocked();
-					}
-				});
-			}
-
-			@Override
-			public void done() {
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().done();
-					}
-				});
-			}
-
-			@Override
-			public void internalWorked(double work) {
-				final double finalWork = work;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().internalWorked(finalWork);
-					}
-				});
-			}
-
-			@Override
-			public boolean isCanceled() {
-				return getProgressMonitor().isCanceled();
-			}
-
-			/**
-			 * Run the runnable as an asyncExec if we are already open.
-			 *
-			 * @param runnable
-			 */
-			private void runAsync(final Runnable runnable) {
-
-				if (alreadyClosed) {
-					return;
-				}
-				Shell currentShell = getShell();
-
-				Display display;
-				if (currentShell == null) {
-					display = Display.getDefault();
-				} else {
-					if (currentShell.isDisposed())// Don't bother if it has
-						// been closed
-						return;
-					display = currentShell.getDisplay();
-				}
-
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (alreadyClosed) {
-							return;// Check again as the async may come too
-							// late
-						}
-						Shell shell = getShell();
-						if (shell != null && shell.isDisposed())
-							return;
-
-						runnable.run();
-					}
-				});
-			}
-
-			@Override
-			public void setBlocked(IStatus reason) {
-				final IStatus finalReason = reason;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						((IProgressMonitorWithBlocking) getProgressMonitor())
-								.setBlocked(finalReason);
-					}
-				});
-			}
-
-			@Override
-			public void setCanceled(boolean value) {
-				// Just a listener - doesn't matter.
-			}
-
-			@Override
-			public void setTaskName(String name) {
-				final String finalName = name;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().setTaskName(finalName);
-					}
-				});
-			}
-
-			@Override
-			public void subTask(String name) {
-				final String finalName = name;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().subTask(finalName);
-					}
-				});
-			}
-
-			@Override
-			public void worked(int work) {
-				internalWorked(work);
-			}
-		};
-	}
-
 	@Override
 	public int open() {
 		int result = super.open();
@@ -319,9 +181,6 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		job = jobToWatch;
 		// after the dialog is opened we can get access to its monitor
 		job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.TRUE);
-
-		ProgressManager.getInstance().progressFor(job).addProgressListener(
-				getBlockingProgressMonitor());
 
 		setOpenOnRun(false);
 		aboutToRun();
@@ -380,6 +239,11 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					return Status.CANCEL_STATUS;
 				}
 
+				JobMonitor jobMonitor = ProgressManager.getInstance().progressFor(job);
+				Display d = Display.getCurrent();
+				IProgressMonitorWithBlocking wrapper = ProgressMonitorUtil
+						.createAccumulatingProgressMonitor(getProgressMonitor(), d);
+				jobMonitor.addProgressListener(wrapper);
 				open();
 
 				return Status.OK_STATUS;
