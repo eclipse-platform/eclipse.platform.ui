@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.sourcelookup;
 
-import junit.framework.TestCase;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
+
+import junit.framework.TestCase;
 
 /**
  * Tests {@link SourceLookupFacility}
@@ -285,6 +290,48 @@ public class SourceLookupFacilityTests extends TestCase {
 			assertTrue("The result artifact should be a String", result.getArtifact() instanceof IStackFrame); //$NON-NLS-1$
 			assertTrue("The result source element should be a String", result.getSourceElement() instanceof String); //$NON-NLS-1$
 			assertNotSame("The results should not be equal", value, result.getSourceElement()); //$NON-NLS-1$
+		} finally {
+			SourceLookupFacility.shutdown();
+		}
+	}
+
+	public void testLRU() throws Exception {
+		try {
+			final int MAX_LRU_SIZE = 10;
+
+			// Get the original map
+			Field field = SourceLookupFacility.class.getDeclaredField("fLookupResults"); //$NON-NLS-1$
+			field.setAccessible(true);
+			HashMap<?, ?> map = (HashMap<?, ?>) field.get(null);
+			LinkedHashMap<String, ISourceLookupResult> cached = new LinkedHashMap<>();
+
+			// fill the LRU with one element overflow
+			for (int i = 0; i < MAX_LRU_SIZE + 1; i++) {
+				String artifact = "" + i; //$NON-NLS-1$
+				ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(artifact, fTestLocator, false);
+				assertNotNull("There should be a result", result); //$NON-NLS-1$
+				assertFalse(cached.containsKey(result));
+				cached.put(artifact, result);
+
+				result = SourceLookupFacility.getDefault().lookup(artifact, fTestLocator, false);
+				assertTrue(cached.containsValue(result));
+				assertTrue(map.size() <= MAX_LRU_SIZE);
+			}
+			assertEquals(MAX_LRU_SIZE, map.size());
+
+
+			// The LRU cache is full now, and the very first element should be
+			// *not* in the LRU cache anymore
+			assertFalse(map.containsValue(cached.values().iterator().next()));
+
+			// If we lookup for the first element again, we should get new one
+			String artifact = "" + 0; //$NON-NLS-1$
+			SourceLookupResult result = SourceLookupFacility.getDefault().lookup(artifact, fTestLocator, false);
+			assertNotNull("There should be a result", result); //$NON-NLS-1$
+			assertFalse(cached.containsValue(result));
+
+			// Check: the LRU map size should not grow
+			assertEquals(MAX_LRU_SIZE, map.size());
 		} finally {
 			SourceLookupFacility.shutdown();
 		}

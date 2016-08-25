@@ -116,7 +116,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		@Override
 		public SourceLookupResult remove(Object key) {
 			SourceLookupResult oldResult = super.remove(key);
-			fEntryStack.remove(oldResult);
+			fEntryStack.remove(key);
 			return oldResult;
 		}
 
