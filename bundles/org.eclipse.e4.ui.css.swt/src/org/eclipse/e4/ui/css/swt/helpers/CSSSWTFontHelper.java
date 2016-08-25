@@ -147,7 +147,7 @@ public class CSSSWTFontHelper {
 	 * Return FontData from {@link CSS2FontProperties}.
 	 *
 	 * @param fontProperties
-	 * @param control
+	 * @param oldFontData
 	 * @return
 	 */
 	public static FontData getFontData(CSS2FontProperties fontProperties,
@@ -173,13 +173,17 @@ public class CSSSWTFontHelper {
 			newFontData.setName(oldFontData.getName());
 		}
 
-		// Style
+		// Style (bold and italic)
 		int style = getSWTStyle(fontProperties, oldFontData);
-		if (fontDefinitionAsFamily && fontDataByDefinition.length > 0 && style == SWT.NORMAL) {
-			newFontData.setStyle(fontDataByDefinition[0].getStyle());
-		} else {
-			newFontData.setStyle(style);
+		if (fontDefinitionAsFamily && fontDataByDefinition.length > 0) {
+			// Style cannot be overridden with 'normal', because we don't know
+			// if the style in the fontProperties is actually from a CSS
+			// specification or from getCSS2FontProperties(). Therefore we
+			// cannot decide if the font definition overwrites the default or is
+			// overridden in CSS. As best effort we keep all set styles.
+			style |= fontDataByDefinition[0].getStyle();
 		}
+		newFontData.setStyle(style);
 
 		// Height
 		CSSPrimitiveValue cssFontSize = fontProperties.getSize();
@@ -227,16 +231,17 @@ public class CSSSWTFontHelper {
 	 * Return SWT style Font from {@link CSS2FontProperties}.
 	 *
 	 * @param fontProperties
-	 * @param control
+	 * @param fontData
 	 * @return
 	 */
 	public static int getSWTStyle(CSS2FontProperties fontProperties,
 			FontData fontData) {
-		if (fontData == null) {
-			return SWT.NONE;
+
+		int fontStyle = SWT.NONE;
+		if (fontData != null) {
+			fontStyle = fontData.getStyle();
 		}
 
-		int fontStyle = fontData.getStyle();
 		// CSS2 font-style
 		CSSPrimitiveValue cssFontStyle = fontProperties.getStyle();
 		if (cssFontStyle != null) {

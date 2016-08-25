@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
 import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
@@ -27,8 +28,11 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public abstract class CSSSWTHelperTestCase {
+	protected static final String CSS_ITALIC = CSS2FontHelper.getFontStyle(true);
+	protected static final String CSS_BOLD = CSS2FontHelper.getFontWeight(true);
+
 	protected void registerFontProviderWith(String expectedSymbolicName,
- String family, int size, int style) {
+			String family, int size, int style) {
 		IColorAndFontProvider provider = mock(IColorAndFontProvider.class);
 		doReturn(new FontData[] { new FontData(family, size, style) }).when(
 				provider).getFont(expectedSymbolicName);
@@ -58,11 +62,11 @@ public abstract class CSSSWTHelperTestCase {
 	}
 
 	protected CSS2FontProperties fontProperties(String family) {
-		return fontProperties(family, null, null);
+		return fontProperties(family, null, null, null);
 	}
 
 	protected CSS2FontProperties fontProperties(String family, Object size,
-			Object style) {
+			Object style, Object weight) {
 		CSS2FontProperties result = mock(CSS2FontProperties.class);
 		doReturn(valueImpl(family)).when(result).getFamily();
 		if (size != null) {
@@ -70,6 +74,9 @@ public abstract class CSSSWTHelperTestCase {
 		}
 		if (style != null) {
 			doReturn(valueImpl(style)).when(result).getStyle();
+		}
+		if (weight != null) {
+			doReturn(valueImpl(weight)).when(result).getWeight();
 		}
 		return result;
 	}
