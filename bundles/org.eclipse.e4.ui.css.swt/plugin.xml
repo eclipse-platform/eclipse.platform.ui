@@ -588,6 +588,7 @@
        	 <property-name name="font-family"/>
          <property-name name="font-size"/>       
          <property-name name="font-style"/>
+         <property-name name="font-weight"/>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.definition.ColorDefinitionElement"
