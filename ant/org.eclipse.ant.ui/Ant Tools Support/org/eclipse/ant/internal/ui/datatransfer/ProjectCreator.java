@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Javac;
@@ -35,6 +34,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class ProjectCreator {
 
@@ -79,7 +80,8 @@ public class ProjectCreator {
 			}
 		}
 		catch (BuildException be) {
-			IStatus status = new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, MessageFormat.format(DataTransferMessages.ProjectCreator_0, new Object[] { be.getLocalizedMessage() }), null);
+			IStatus status = new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, MessageFormat.format(DataTransferMessages.ProjectCreator_0, new Object[] {
+					be.getLocalizedMessage() }), be);
 			throw new CoreException(status);
 		}
 	}

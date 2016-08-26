@@ -27,4 +27,16 @@ public class ParseError extends Exception {
 	public ParseError(String msg) {
 		super(msg);
 	}
+
+	/**
+	 * Constructor for ParseError.
+	 * 
+	 * @param msg
+	 *            Message
+	 * @param cause
+	 *            Cause
+	 */
+	public ParseError(String msg, Throwable cause) {
+		super(msg, cause);
+	}
 }

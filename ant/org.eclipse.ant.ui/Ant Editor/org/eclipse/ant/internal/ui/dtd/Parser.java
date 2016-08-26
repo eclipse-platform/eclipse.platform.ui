@@ -77,10 +77,10 @@ public class Parser {
 			parser.parse(inputSource);
 		}
 		catch (SAXNotRecognizedException e) {
-			throw new ParseError(NOT_SUPPORTED);
+			throw new ParseError(NOT_SUPPORTED, e);
 		}
 		catch (SAXNotSupportedException e) {
-			throw new ParseError(NOT_SUPPORTED);
+			throw new ParseError(NOT_SUPPORTED, e);
 		}
 		catch (SAXException e) {
 			// Don't care about errors in XML, so just fall thru.
@@ -99,10 +99,10 @@ public class Parser {
 			return parser.getXMLReader();
 		}
 		catch (ParserConfigurationException e) {
-			throw new ParseError(e.getMessage());
+			throw new ParseError(e.getMessage(), e);
 		}
 		catch (SAXException e) {
-			throw new ParseError(e.getMessage());
+			throw new ParseError(e.getMessage(), e);
 		}
 	}
 

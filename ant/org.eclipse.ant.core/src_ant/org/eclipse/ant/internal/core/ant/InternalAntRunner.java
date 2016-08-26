@@ -237,7 +237,8 @@ public class InternalAntRunner {
 			}
 		}
 		catch (ClassCastException e) {
-			String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_not_an_instance_of_apache_ant_BuildListener, new Object[] { className });
+			String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_not_an_instance_of_apache_ant_BuildListener, new Object[] {
+					className });
 			if (log) {
 				logMessage(null, message, Project.MSG_ERR);
 			}
@@ -323,7 +324,8 @@ public class InternalAntRunner {
 							project.checkTaskClass(taskClass);
 						}
 						catch (BuildException e) {
-							IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.InternalAntRunner_Error_setting_Ant_task, new Object[] { task.getTaskName() }), e);
+							IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.InternalAntRunner_Error_setting_Ant_task, new Object[] {
+									task.getTaskName() }), e);
 							AntCorePlugin.getPlugin().getLog().log(status);
 							continue;
 						}
@@ -373,10 +375,12 @@ public class InternalAntRunner {
 	protected void parseBuildFile(Project project) {
 		File buildFile = new File(getBuildFileLocation());
 		if (!buildFile.exists()) {
-			throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Buildfile_does_not_exist, new Object[] { buildFile.getAbsolutePath() }));
+			throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Buildfile_does_not_exist, new Object[] {
+					buildFile.getAbsolutePath() }));
 		}
 		if (!buildFile.isFile()) {
-			throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Buildfile_is_not_a_file, new Object[] { buildFile.getAbsolutePath() }));
+			throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Buildfile_is_not_a_file, new Object[] {
+					buildFile.getAbsolutePath() }));
 		}
 
 		if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
@@ -448,8 +452,8 @@ public class InternalAntRunner {
 			}
 			if (!defaultFound) {
 				// default target must exist
-				throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Default_target_does_not_exist, new Object[] {
-						"'", defaultTarget, "'" })); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Default_target_does_not_exist, new Object[] { "'", //$NON-NLS-1$
+						defaultTarget, "'" })); //$NON-NLS-1$
 			}
 			return infos;
 		}
@@ -569,7 +573,8 @@ public class InternalAntRunner {
 	}
 
 	/**
-	 * Attempts to run the given list of command line arguments. Note that the list passed to this method must support {@link List#remove(Object)}. <br>
+	 * Attempts to run the given list of command line arguments. Note that the list passed to this method must support {@link List#remove(Object)}.
+	 * <br>
 	 * <br>
 	 * This method directly processes the following arguments:
 	 * <ul>
@@ -664,7 +669,8 @@ public class InternalAntRunner {
 			}
 
 			if (!projectHelp) {
-				logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file, new Object[] { getBuildFileLocation() }), Project.MSG_INFO);
+				logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file, new Object[] {
+						getBuildFileLocation() }), Project.MSG_INFO);
 
 				setTasks(getCurrentProject());
 				setTypes(getCurrentProject());
@@ -794,12 +800,14 @@ public class InternalAntRunner {
 				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			}
 			catch (ClassCastException e) {
-				String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_not_an_instance_of_apache_ant_BuildLogger, new Object[] { loggerClassname });
+				String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_not_an_instance_of_apache_ant_BuildLogger, new Object[] {
+						loggerClassname });
 				logMessage(null, message, Project.MSG_ERR);
 				throw new BuildException(message, e);
 			}
 			catch (Exception e) {
-				String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_Unable_to_instantiate_logger, new Object[] { loggerClassname });
+				String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_Unable_to_instantiate_logger, new Object[] {
+						loggerClassname });
 				logMessage(null, message, Project.MSG_ERR);
 				throw new BuildException(message, e);
 			}
@@ -992,10 +1000,12 @@ public class InternalAntRunner {
 				antVersionNumber = versionNumber;
 			}
 			catch (IOException ioe) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_load_the_version_information, new Object[] { ioe.getMessage() }));
+				throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_load_the_version_information, new Object[] {
+						ioe.getMessage() }), ioe);
 			}
 			catch (NullPointerException npe) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_load_the_version_information, new Object[] { npe.getMessage() }));
+				throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_load_the_version_information, new Object[] {
+						npe.getMessage() }), npe);
 			}
 		}
 		return antVersionNumber;
@@ -1162,7 +1172,8 @@ public class InternalAntRunner {
 			}
 			catch (IOException e) {
 				// just log message and ignore exception
-				logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_write_to_log_file, new Object[] { arg }), Project.MSG_ERR);
+				logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_write_to_log_file, new Object[] {
+						arg }), Project.MSG_ERR);
 				return false;
 			}
 
@@ -1297,7 +1308,8 @@ public class InternalAntRunner {
 		// this stream is closed in the finally block of run(list)
 		out = new PrintStream(new FileOutputStream(logFile));
 		err = out;
-		logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Using_file_as_build_log, new Object[] { logFile.getCanonicalPath() }), Project.MSG_INFO);
+		logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Using_file_as_build_log, new Object[] {
+				logFile.getCanonicalPath() }), Project.MSG_INFO);
 		if (buildLogger != null) {
 			buildLogger.setErrorPrintStream(err);
 			buildLogger.setOutputPrintStream(out);
@@ -1435,7 +1447,8 @@ public class InternalAntRunner {
 			}
 		}
 		catch (IOException e) {
-			fEarlyErrorMessage = MessageFormat.format(InternalAntMessages.InternalAntRunner_could_not_load_property_file, new Object[] { e.getMessage() });
+			fEarlyErrorMessage = MessageFormat.format(InternalAntMessages.InternalAntRunner_could_not_load_property_file, new Object[] {
+					e.getMessage() });
 		}
 	}
 

@@ -180,7 +180,8 @@ public class XmlFormatter {
 						doc.addPosition(POS_CATEGORY, positions[i]);
 					}
 					catch (BadLocationException e) {
-						throw new IllegalArgumentException("Position outside of string. offset: " + positions[i].offset + ", length: " + positions[i].length + ", string size: " + string.length()); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+						throw new IllegalArgumentException("Position outside of string. offset: " + positions[i].offset + ", length: " //$NON-NLS-1$//$NON-NLS-2$
+								+ positions[i].length + ", string size: " + string.length(), e); //$NON-NLS-1$
 					}
 				}
 			}

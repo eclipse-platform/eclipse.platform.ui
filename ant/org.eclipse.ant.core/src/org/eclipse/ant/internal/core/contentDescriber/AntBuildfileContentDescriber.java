@@ -60,7 +60,7 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
 			String message = "Internal Error: XML parser configuration error during content description for Ant buildfiles"; //$NON-NLS-1$
-			throw new RuntimeException(message);
+			throw new RuntimeException(message, e);
 		}
 		// Check to see if we matched our criteria.
 		if (antHandler.hasRootProjectElement()) {
