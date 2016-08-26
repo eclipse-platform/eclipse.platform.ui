@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Remy Chi Jian Suen and others.
+ * Copyright (c) 2009, 2016 Remy Chi Jian Suen and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,12 +45,8 @@ public class PerspectiveSwitcherTest extends UITestCase {
 	protected void doTearDown() throws Exception {
 		// reset values so we don't screw any assumptions up for other tests
 		// down the line
-		apiPreferenceStore.setValue(
-				IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR,
-				originalShowOpenValue);
-		apiPreferenceStore.setValue(
-				IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
-				originalPerspectiveBarPosition);
+		apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR, originalShowOpenValue);
+		apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, originalPerspectiveBarPosition);
 
 		super.doTearDown();
 	}
@@ -65,46 +61,36 @@ public class PerspectiveSwitcherTest extends UITestCase {
 		// be recreated, TOP_RIGHT and TOP_LEFT should switch to LEFT, LEFT
 		// should switch to TOP_RIGHT or TOP_LEFT
 		String targetDockPosition = null;
-		if (IWorkbenchPreferenceConstants.TOP_RIGHT
-				.equals(originalPerspectiveBarPosition)
-				|| IWorkbenchPreferenceConstants.TOP_LEFT
-						.equals(originalPerspectiveBarPosition)) {
+		if (IWorkbenchPreferenceConstants.TOP_RIGHT.equals(originalPerspectiveBarPosition)
+				|| IWorkbenchPreferenceConstants.TOP_LEFT.equals(originalPerspectiveBarPosition)) {
 			targetDockPosition = IWorkbenchPreferenceConstants.LEFT;
-		} else if (IWorkbenchPreferenceConstants.LEFT
-				.equals(originalPerspectiveBarPosition)) {
+		} else if (IWorkbenchPreferenceConstants.LEFT.equals(originalPerspectiveBarPosition)) {
 			targetDockPosition = IWorkbenchPreferenceConstants.TOP_RIGHT;
 		} else {
-			throw new IllegalStateException(
-					"The current perspective bar position is unknown: " //$NON-NLS-1$
-							+ originalPerspectiveBarPosition);
+			throw new IllegalStateException("The current perspective bar position is unknown: " //$NON-NLS-1$
+					+ originalPerspectiveBarPosition);
 		}
 
-		WorkbenchWindow window = (WorkbenchWindow) fWorkbench
-				.getActiveWorkbenchWindow();
+		WorkbenchWindow window = (WorkbenchWindow) fWorkbench.getActiveWorkbenchWindow();
 		assertNotNull("We should have a perspective bar in the beginning", //$NON-NLS-1$
 				getPerspectiveSwitcher(window));
 
 		// turn off the 'Open Perspective' item
-		apiPreferenceStore.setValue(
-				IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR,
-				false);
+		apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR, false);
 
 		// now we dock the perspective bar on the other end
-		apiPreferenceStore.setValue(
-				IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
-				targetDockPosition);
+		apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, targetDockPosition);
 
 		// check that we have a perspective bar, the setValue(String, String)
 		// method does not throw an exception because the perspective bar
 		// creation code is wrapped around a SafeRunner so the exception does
 		// not get propagated, hence, we need to check here
-		assertNotNull(
-				"The perspective bar should have been created successfully", //$NON-NLS-1$
+		assertNotNull("The perspective bar should have been created successfully", //$NON-NLS-1$
 				getPerspectiveSwitcher(window));
 	}
 
 	private static Object getPerspectiveSwitcher(WorkbenchWindow window) {
-		EModelService modelService = (EModelService) window.getService(EModelService.class);
+		EModelService modelService = window.getService(EModelService.class);
 		return modelService.find("PerspectiveSwitcher", window.getModel());
 	}
 }

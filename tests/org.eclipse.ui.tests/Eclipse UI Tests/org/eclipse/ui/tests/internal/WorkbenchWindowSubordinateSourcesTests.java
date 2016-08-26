@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 	}
 
 	public void testIsCoolbarVisible() {
-		IEvaluationService service = (IEvaluationService) window
-				.getService(IEvaluationService.class);
+		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
 
 		WithExpression with = new WithExpression(
@@ -76,15 +75,13 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 	}
 
 	public void testIsStatusLineVisible() {
-		IEvaluationService service = (IEvaluationService) window
-				.getService(IEvaluationService.class);
+		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
 
 		WithExpression with = new WithExpression(
 				ISources.ACTIVE_WORKBENCH_WINDOW_NAME + ".isStatusLineVisible");
 		boolean current = window.getStatusLineVisible();
-		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE
-				: Boolean.FALSE);
+		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE : Boolean.FALSE);
 		with.add(test);
 
 		try {
@@ -102,15 +99,13 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 	}
 
 	public void testIsPerspectiveBarVisible() {
-		IEvaluationService service = (IEvaluationService) window
-				.getService(IEvaluationService.class);
+		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
 
 		WithExpression with = new WithExpression(
 				ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME);
 		boolean current = window.getPerspectiveBarVisible();
-		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE
-				: Boolean.FALSE);
+		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE : Boolean.FALSE);
 		with.add(test);
 
 		try {
@@ -137,22 +132,18 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 	}
 
 	public void testPerspectiveId() throws Exception {
-		IEvaluationService service = (IEvaluationService) window
-				.getService(IEvaluationService.class);
-		WithExpression with = new WithExpression(
-				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
+		IEvaluationService service = window.getService(IEvaluationService.class);
+		WithExpression with = new WithExpression(ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
 		IPerspectiveDescriptor currentPerspective = window.getActivePage().getPerspective();
 		String id = currentPerspective.getId();
 		EqualsExpression test = new EqualsExpression(id);
 		with.add(test);
 		PerspectiveL listener = new PerspectiveL();
-		service.addEvaluationListener(with, listener,
-				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
+		service.addEvaluationListener(with, listener, ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
 		assertEquals(Boolean.TRUE, listener.val);
 		listener.val = null;
 
-		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
-				.getPerspectiveRegistry();
+		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 		final IPerspectiveDescriptor perspective1 = registry
 				.findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective");
 		window.getActivePage().setPerspective(perspective1);
