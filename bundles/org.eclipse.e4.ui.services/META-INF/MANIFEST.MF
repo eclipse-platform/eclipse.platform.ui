@@ -26,3 +26,8 @@ Export-Package: org.eclipse.e4.ui.internal.services;x-friends:="org.eclipse.e4.u
  org.eclipse.e4.ui.services.internal.events;x-internal:=true
 Bundle-Activator: org.eclipse.e4.ui.internal.services.Activator
 Service-Component: OSGI-INF/org.eclipse.e4.ui.services.events.EventBrokerFactory.xml
+Require-Capability: osgi.extender;
+  filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))",
+ osgi.service;
+  filter:="(objectClass=org.osgi.service.event.EventAdmin)";
+  effective:="active"

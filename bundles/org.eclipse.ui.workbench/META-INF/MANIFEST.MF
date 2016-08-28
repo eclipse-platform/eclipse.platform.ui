@@ -133,3 +133,5 @@ Import-Package: com.ibm.icu.text,
  org.xml.sax
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/org.eclipse.ui.internal.themes.ColorAndFontProviderImpl.xml
+Require-Capability: osgi.extender;
+  filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
