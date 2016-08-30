@@ -10,6 +10,7 @@
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 473063
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500420
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -111,7 +112,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	private void createDescriptor(MPerspective perspective) {
 		String label = perspective.getLocalizedLabel();
-		String originalId = getOriginalId(perspective.getElementId());
+		String originalId = getOriginalId(perspective);
 		PerspectiveDescriptor originalDescriptor = descriptors.get(originalId);
 		String id = perspective.getElementId();
 		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(id, label, originalDescriptor);
@@ -319,10 +320,17 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		return originalDescriptor.getOriginalId() + '.' + label;
 	}
 
-	private String getOriginalId(String id) {
+	private String getOriginalId(MPerspective p) {
+		String id = p.getElementId();
+		String label = p.getLabel();
 		int index = id.lastIndexOf('.');
-		if (index == -1)
+		// Custom perspectives store the user defined names in their labels
+		if (id.endsWith(label)) {
+			index = id.lastIndexOf(label) - 1;
+		}
+		if (index == -1) {
 			return id;
+		}
 		return id.substring(0, index);
 	}
 }
