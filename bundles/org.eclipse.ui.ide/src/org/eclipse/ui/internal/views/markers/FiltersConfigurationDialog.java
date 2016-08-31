@@ -151,7 +151,6 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 		configComposite.setLayout(new GridLayout(3, false));
 		GridData configData = new GridData(GridData.FILL_BOTH);
-		configData.horizontalIndent = 20;
 		configComposite.setLayoutData(configData);
 		configComposite.setBackground(composite.getBackground());
 
