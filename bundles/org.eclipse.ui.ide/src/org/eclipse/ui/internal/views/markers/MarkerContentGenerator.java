@@ -191,18 +191,18 @@ public class MarkerContentGenerator {
 		MarkerField[] visible = getVisibleFields();
 
 		Collection<MarkerField> hidden = new HashSet<>();
-		for (int i = 0; i < all.length; i++) {
-			hidden.add(all[i]);
+		for (MarkerField element : all) {
+			hidden.add(element);
 		}
-		for (int i = 0; i < visible.length; i++) {
-			hidden.remove(visible[i]);
+		for (MarkerField element : visible) {
+			hidden.remove(element);
 		}
 		return hidden.toArray();
 	}
 
 	void saveState(IMemento memento, MarkerField[] displayedFields) {
-		for (int i = 0; i < displayedFields.length; i++) {
-			memento.createChild(TAG_COLUMN_VISIBILITY, displayedFields[i]
+		for (MarkerField displayedField : displayedFields) {
+			memento.createChild(TAG_COLUMN_VISIBILITY, displayedField
 					.getConfigurationElement().getAttribute(
 							MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 		}
@@ -231,13 +231,13 @@ public class MarkerContentGenerator {
 			MarkerField[] all = getAllFields();
 			Hashtable<String, MarkerField> allTable = new Hashtable<>();
 
-			for (int i = 0; i < all.length; i++) {
-				allTable.put(all[i].getConfigurationElement().getAttribute(
-						MarkerSupportInternalUtilities.ATTRIBUTE_ID), all[i]);
+			for (MarkerField element : all) {
+				allTable.put(element.getConfigurationElement().getAttribute(
+						MarkerSupportInternalUtilities.ATTRIBUTE_ID), element);
 			}
 
-			for (int i = 0; i < visible.length; i++) {
-				String key = visible[i].getID();
+			for (IMemento element : visible) {
+				String key = element.getID();
 				if (allTable.containsKey(key)) {
 					newVisible.add(allTable.get(key));
 				}
@@ -266,9 +266,9 @@ public class MarkerContentGenerator {
 	 */
 	Collection<FilterConfigurationArea> createFilterConfigurationFields() {
 		Collection<FilterConfigurationArea> result = new ArrayList<>();
-		for (int i = 0; i < visibleFields.length; i++) {
+		for (MarkerField visibleField : visibleFields) {
 			FilterConfigurationArea area = MarkerSupportInternalUtilities
-					.generateFilterArea(visibleFields[i]);
+					.generateFilterArea(visibleField);
 			if (area != null)
 				result.add(area);
 
@@ -424,8 +424,8 @@ public class MarkerContentGenerator {
 	Collection<MarkerFieldFilterGroup> getDeclaredFilters() {
 		List<MarkerFieldFilterGroup> filterList = new ArrayList<>();
 		IConfigurationElement[] filterReferences = generatorDescriptor.getFilterReferences();
-		for (int i = 0; i < filterReferences.length; i++) {
-			filterList.add(new MarkerFieldFilterGroup(filterReferences[i], this));
+		for (IConfigurationElement filterReference : filterReferences) {
+			filterList.add(new MarkerFieldFilterGroup(filterReference, this));
 		}
 
 		// Honour the deprecated problemFilters
@@ -487,8 +487,8 @@ public class MarkerContentGenerator {
 		}
 		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
 
-		for (int i = 0; i < children.length; i++) {
-			IMemento child = children[i];
+		for (IMemento element : children) {
+			IMemento child = element;
 			String id = child.getString(IMemento.TAG_ID);
 			if (id == null) {
 				continue;
@@ -619,8 +619,7 @@ public class MarkerContentGenerator {
 			sections = memento.getChildren(TAG_LEGACY_FILTER_ENTRY);
 		}
 
-		for (int i = 0; i < sections.length; i++) {
-			IMemento child = sections[i];
+		for (IMemento child : sections) {
 			String id = child.getString(IMemento.TAG_ID);
 			if (id == null)
 				continue;
@@ -832,11 +831,11 @@ public class MarkerContentGenerator {
 	 */
 	void internalUpdateSelectedElements(Object[] elements) {
 		Collection<IResource> resourceCollection = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof IResource) {
-				resourceCollection.add((IResource) elements[i]);
+		for (Object element : elements) {
+			if (element instanceof IResource) {
+				resourceCollection.add((IResource) element);
 			} else {
-				MarkerResourceUtil.addResources(resourceCollection, ((ResourceMapping) elements[i]));
+				MarkerResourceUtil.addResources(resourceCollection, ((ResourceMapping) element));
 			}
 		}
 		IResource[] newSelection = new IResource[resourceCollection.size()];
@@ -1038,15 +1037,15 @@ public class MarkerContentGenerator {
 				if (monitor.isCanceled()) {
 					return false;
 				}
-				for (int i = 0; i < superTypes.length; i++) {
-					boolean success = internalGatherMarkers(resources, superTypes[i], includeSubTypes, result, monitor);
+				for (String superType : superTypes) {
+					boolean success = internalGatherMarkers(resources, superType, includeSubTypes, result, monitor);
 					if (!success || monitor.isCanceled()) {
 						return false;
 					}
 				}
 			} else {
-				for (int i = 0; i < typeIds.length; i++) {
-					boolean success = internalGatherMarkers(resources, typeIds[i], includeSubTypes, result, monitor);
+				for (String typeId : typeIds) {
+					boolean success = internalGatherMarkers(resources, typeId, includeSubTypes, result, monitor);
 					if (!success || monitor.isCanceled()) {
 						return false;
 					}
