@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430873
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 364735
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -43,6 +44,9 @@ import org.eclipse.jface.util.Policy;
  * @since 3.2
  */
 public class ViewerComparator {
+
+	private static final boolean DISABLE_FIX_FOR_364735 = Boolean.getBoolean("eclipse.disable.fix.for.bug364735"); //$NON-NLS-1$
+
 	/**
 	 * The comparator to use to sort a viewer's contents.
 	 */
@@ -145,6 +149,14 @@ public class ViewerComparator {
 					.getLabelProvider();
 			if (prov instanceof ILabelProvider) {
 				ILabelProvider lprov = (ILabelProvider) prov;
+				if (lprov instanceof DecoratingLabelProvider && !DISABLE_FIX_FOR_364735) {
+					// Bug 364735: use the real label provider to avoid unstable
+					// sort behavior if the decoration is running while sorting.
+					// decorations are usually visual aids to the user and
+					// shouldn't be used in ordering.
+					DecoratingLabelProvider dprov = (DecoratingLabelProvider) lprov;
+					lprov = dprov.getLabelProvider();
+				}
 				name1 = lprov.getText(e1);
 			} else {
 				name1 = e1.toString();
