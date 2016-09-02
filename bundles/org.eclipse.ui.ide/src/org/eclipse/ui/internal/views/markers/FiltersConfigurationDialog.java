@@ -253,32 +253,31 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * @param parent
 	 */
 	private void createMarkerLimits(Composite parent) {
-		limitButton = new Button(parent, SWT.CHECK);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		composite.setLayout(layout);
+
+		limitButton = new Button(composite, SWT.CHECK);
 		limitButton.setText(MarkerMessages.MarkerPreferences_MarkerLimits);
 		limitButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				limitsLabel.setEnabled(limitButton.getSelection());
 				limitText.setEnabled(limitButton.getSelection());
 			}
 		});
 
 		GridData limitData = new GridData();
-		limitData.verticalIndent = 5;
 		limitButton.setLayoutData(limitData);
-
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		GridData compositeData = new GridData(GridData.FILL_HORIZONTAL);
-		compositeData.horizontalIndent = 20;
-		composite.setLayoutData(compositeData);
 
 		limitsLabel = new Label(composite, SWT.NONE);
 		limitsLabel.setText(MarkerMessages.MarkerPreferences_VisibleItems);
+
+		GridData limitsLabelData = new GridData();
+		limitsLabelData.verticalAlignment = SWT.TOP;
+		limitsLabelData.horizontalIndent = 10;
+		limitsLabelData.verticalIndent = 5;
+		limitsLabel.setLayoutData(limitsLabelData);
 
 		limitText = new Text(composite, SWT.BORDER);
 		GridData textData = new GridData();
