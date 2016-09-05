@@ -278,7 +278,7 @@ public class Bug_026294 extends ResourceTest {
 	 * TODO: enable this test once bug 48321 is fixed.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX)))
 			return;
 
 		IProject project = null;
@@ -410,7 +410,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX)))
 			return;
 
 		IProject project = null;

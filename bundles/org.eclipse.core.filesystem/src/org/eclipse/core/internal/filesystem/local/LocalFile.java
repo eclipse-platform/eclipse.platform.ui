@@ -11,13 +11,13 @@
  * 	   Martin Lippert (VMware) - [394607] Poor performance when using findFilesForLocationURI
  * 	   Sergey Prigogin (Google) - [433061] Deletion of project follows symbolic links
  *                                [464072] Refresh on Access ignored during text search
+ * 	   Andrey Loskutov (loskutov@gmx.de) - [500306] Read-only files, and projects containing them, cannot be deleted
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
 import java.io.*;
 import java.net.URI;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
+import java.nio.file.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
@@ -25,6 +25,7 @@ import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -54,7 +55,7 @@ public class LocalFile extends FileStore {
 
 	/**
 	 * Creates a new local file.
-	 * 
+	 *
 	 * @param file The file this local file represents
 	 */
 	public LocalFile(File file) {
@@ -66,7 +67,7 @@ public class LocalFile extends FileStore {
 	 * This method is called after a failure to modify a file or directory.
 	 * Check to see if the parent is read-only and if so then
 	 * throw an exception with a more specific message and error code.
-	 * 
+	 *
 	 * @param target The file that we failed to modify
 	 * @param exception The low level exception that occurred, or <code>null</code>
 	 * @throws CoreException A more specific exception if the parent is read-only
@@ -83,7 +84,7 @@ public class LocalFile extends FileStore {
 	 * This method is called after a failure to modify a directory.
 	 * Check to see if the target is not writable (e.g. device doesn't not exist) and if so then
 	 * throw an exception with a more specific message and error code.
-	 * 
+	 *
 	 * @param target The directory that we failed to modify
 	 * @param exception The low level exception that occurred, or <code>null</code>
 	 * @throws CoreException A more specific exception if the target is not writable
@@ -214,9 +215,18 @@ public class LocalFile extends FileStore {
 			throw new OperationCanceledException();
 		}
 		try {
-			// First try to delete - this should succeed for files and symbolic links to directories.
-			Files.deleteIfExists(target.toPath());
-			return true;
+			try {
+				// First try to delete - this should succeed for files and symbolic links to directories.
+				Files.deleteIfExists(target.toPath());
+				return true;
+			} catch (AccessDeniedException e) {
+				// If the file is read only, it can't be deleted via Files.deleteIfExists()
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=500306
+				if (target.delete()) {
+					return true;
+				}
+				throw e;
+			}
 		} catch (DirectoryNotEmptyException e) {
 			monitor.subTask(NLS.bind(Messages.deleting, target));
 			String[] list = target.list();

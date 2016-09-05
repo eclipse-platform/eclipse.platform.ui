@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
+import java.io.File;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
@@ -51,5 +52,26 @@ public class DeleteTest extends FileSystemTest {
 			fail("1.99", e);
 		}
 		assertTrue("1.1", !dir.fetchInfo().exists());
+	}
+
+	public void testDeleteReadOnlyFile() throws Exception {
+		ensureExists(localFileBaseStore, true);
+		IFileStore file = localFileBaseStore.getChild("child");
+		ensureExists(file, false);
+		assertTrue("1.0", file.fetchInfo().exists());
+		ensureReadOnlyLocal(file);
+		file.delete(EFS.NONE, getMonitor());
+		// success: we expect that read-only files can be removed
+		assertTrue("1.1", !file.fetchInfo().exists());
+	}
+
+	/**
+	 * Ensures that the provided store is read-only
+	 */
+	protected void ensureReadOnlyLocal(IFileStore store) throws Exception {
+		File localFile = store.toLocalFile(0, getMonitor());
+		boolean readOnly = localFile.setReadOnly();
+		assertTrue("1.0", readOnly);
+		assertFalse("1.1", localFile.canWrite());
 	}
 }
