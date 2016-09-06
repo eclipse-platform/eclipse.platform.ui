@@ -365,22 +365,37 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	/**
 	 * Creates a map with unique WorkspaceNames for the
-	 * RecentWorkspacesComposite.
-	 *
+	 * RecentWorkspacesComposite. The values are full absolute paths of recently
+	 * used workspaces, the keys are unique segments somehow made from the
+	 * values.
 	 */
 	private Map<String, String> createUniqueWorkspaceNameMap() {
 		final String fileSeparator = File.separator;
 		Map<String, String> uniqueWorkspaceNameMap = new HashMap<>();
+
+		// Convert workspace paths to arrays of single path segments
 		List<String[]> splittedWorkspaceNames = Arrays.asList(launchData.getRecentWorkspaces()).stream()
 				.filter(s -> s != null && !s.isEmpty()).map(s -> s.split(Pattern.quote(fileSeparator)))
 				.collect(Collectors.toList());
+
+		// create and collect unique workspace keys produced from arrays,
+		// try to generate unique keys starting with the last segment of the
+		// workspace path, increasing number of segments if no unique names
+		// could be generated,
+		// loop until all array values are removed from array list
 		for (int i = 1; !splittedWorkspaceNames.isEmpty(); i++) {
 			final int c = i;
+
+			// Function which flattens arrays to (hopefully unique) keys
 			Function<String[], String> stringArraytoName = s -> String.join(fileSeparator,
-					Arrays.copyOfRange(s, s.length - c, s.length));
+					s.length < c ? s : Arrays.copyOfRange(s, s.length - c, s.length));
+
+			// list of found unique keys
 			List<String> uniqueNames = splittedWorkspaceNames.stream().map(stringArraytoName)
 					.collect(Collectors.groupingBy(s -> s, Collectors.counting())).entrySet().stream()
 					.filter(e -> e.getValue() == 1).map(e -> e.getKey()).collect(Collectors.toList());
+
+			// remove paths for which we have found unique keys
 			splittedWorkspaceNames.removeIf(a -> {
 				String joined = stringArraytoName.apply(a);
 				if (uniqueNames.contains(joined)) {
