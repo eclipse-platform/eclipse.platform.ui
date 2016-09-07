@@ -20,11 +20,11 @@
   </parent>
   <groupId>org.eclipse.jface</groupId>
   <artifactId>org.eclipse.jface</artifactId>
-  <version>3.12.0-SNAPSHOT</version>
+  <version>3.12.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  
+
   <properties>
     <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
-  </properties> 
-  
+  </properties>
+
 </project>
