@@ -74,14 +74,19 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 			public int compare(Viewer viewer, Object o1, Object o2) {
 				IProject project1 = ((Entry<IProject, List<ProjectConfigurator>>) o1).getKey();
 				IProject project2 = ((Entry<IProject, List<ProjectConfigurator>>) o2).getKey();
-				return project1.getLocation().toString().compareTo(project2.getLocation().toString());
+				return toString(project1).compareTo(toString(project2));
+			}
+
+			private String toString(IProject p) {
+				IPath location = p.getLocation();
+				return location == null ? "" : location.toString(); //$NON-NLS-1$
 			}
 		});
 		nestedProjectsTable.setFilters(new ViewerFilter[] { new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				Entry<IProject, List<ProjectConfigurator>> entry = (Entry<IProject, List<ProjectConfigurator>>) element;
-				return entry.getKey().getLocation().toFile().getAbsolutePath().startsWith(job.getRoot().getAbsolutePath());
+				return SmartImportWizard.toAbsolutePath(entry.getKey()).startsWith(job.getRoot().getAbsolutePath());
 			}
 		} });
 		nestedProjectsTable.getTable().setHeaderVisible(true);
@@ -125,6 +130,9 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 			public String getText(Object element) {
 				IProject project = ((Entry<IProject, List<ProjectConfigurator>>)element).getKey();
 				IPath projectLocation = project.getLocation();
+				if (projectLocation == null) {
+					return "?"; //$NON-NLS-1$
+				}
 				return projectLocation.toFile().getAbsolutePath().substring(job.getRoot().getAbsolutePath().length());
 			}
 		});

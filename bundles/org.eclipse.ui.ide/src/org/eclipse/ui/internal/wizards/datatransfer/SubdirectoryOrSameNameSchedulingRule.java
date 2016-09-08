@@ -27,14 +27,20 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  */
 public class SubdirectoryOrSameNameSchedulingRule implements ISchedulingRule {
 
-	private File directory;
+	private final String path;
+	private final String name;
+
+	private SubdirectoryOrSameNameSchedulingRule(String path, String name) {
+		this.path = path;
+		this.name = name;
+	}
 
 	public SubdirectoryOrSameNameSchedulingRule(File directory) {
-		this.directory = directory;
+		this(directory.getAbsolutePath(), directory.getName());
 	}
 
 	public SubdirectoryOrSameNameSchedulingRule(IResource resource) {
-		this(resource.getLocation().toFile());
+		this(SmartImportWizard.toAbsolutePath(resource), resource.getName());
 	}
 
 	@Override
@@ -56,8 +62,7 @@ public class SubdirectoryOrSameNameSchedulingRule implements ISchedulingRule {
 		if (rule instanceof SubdirectoryOrSameNameSchedulingRule) {
 			SubdirectoryOrSameNameSchedulingRule otherRule = (SubdirectoryOrSameNameSchedulingRule)rule;
 			return
-				otherRule.directory.getAbsolutePath().startsWith(this.directory.getAbsolutePath()) ||
-				otherRule.directory.getName().equals(this.directory.getName());
+			otherRule.path.startsWith(this.path) || otherRule.name.equals(this.name);
 		} else if (rule instanceof IResource) {
 			return true;
 		}  else if (rule instanceof MultiRule) {

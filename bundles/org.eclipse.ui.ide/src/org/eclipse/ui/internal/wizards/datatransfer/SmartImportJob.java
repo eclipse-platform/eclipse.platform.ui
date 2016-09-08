@@ -317,10 +317,15 @@ public class SmartImportJob extends Job {
 		}
 	}
 
-	private Set<IProject> searchAndImportChildrenProjectsRecursively(IContainer parentContainer, Set<IPath> directoriesToExclude, final IProgressMonitor progressMonitor) throws Exception {
+	private Set<IProject> searchAndImportChildrenProjectsRecursively(final IContainer parentContainer,
+			Set<IPath> directoriesToExclude, final IProgressMonitor progressMonitor) throws Exception {
 		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, parentContainer.members().length);
+		IPath parentLocation = parentContainer.getLocation();
+		if (parentLocation == null) {
+			return Collections.emptySet();
+		}
 		for (IProject processedProjects : Collections.synchronizedSet(this.report.keySet())) {
-			if (processedProjects.getLocation().equals(parentContainer.getLocation())) {
+			if (parentLocation.equals(processedProjects.getLocation())) {
 				return Collections.emptySet();
 			}
 		}
@@ -329,10 +334,14 @@ public class SmartImportJob extends Job {
 		final Set<IProject> res = Collections.synchronizedSet(new HashSet<IProject>());
 		for (IResource childResource : parentContainer.members()) {
 			if (childResource.getType() == IResource.FOLDER && !childResource.isDerived()) {
+				IPath location = childResource.getLocation();
+				if (location == null) {
+					continue;
+				}
 				boolean excluded = false;
 				if (directoriesToExclude != null) {
 					for (IPath excludedPath : directoriesToExclude) {
-						if (!excludedPath.isPrefixOf(parentContainer.getLocation()) && excludedPath.isPrefixOf(childResource.getLocation())) {
+						if (!excludedPath.isPrefixOf(parentLocation) && excludedPath.isPrefixOf(location)) {
 							excluded = true;
 						}
 					}
@@ -346,7 +355,8 @@ public class SmartImportJob extends Job {
 		Set<CrawlFolderJob> jobs = new HashSet<>();
 		for (final IFolder childFolder : childrenToProcess) {
 			CrawlFolderJob crawlerJob = new CrawlFolderJob(
-					NLS.bind(DataTransferMessages.SmartImportJob_crawling, childFolder.getLocation().toString()),
+					NLS.bind(DataTransferMessages.SmartImportJob_crawling,
+							SmartImportWizard.toAbsolutePath(childFolder)),
 					childFolder, res);
 			if (crawlerJobGroup.getMaxThreads() == 0 || crawlerJobGroup.getActiveJobs().size() < crawlerJobGroup.getMaxThreads()) {
 				crawlerJob.setJobGroup(crawlerJobGroup);
@@ -364,14 +374,18 @@ public class SmartImportJob extends Job {
 		return res;
 	}
 
-	private Set<IProject> importProjectAndChildrenRecursively(IContainer container, boolean forceFullProjectCheck,
+	private Set<IProject> importProjectAndChildrenRecursively(final IContainer container, boolean forceFullProjectCheck,
 			IProgressMonitor progressMonitor) throws Exception {
+		Set<IProject> projectFromCurrentContainer = new HashSet<>();
+		final IPath containerLocation = container.getLocation();
+		if (containerLocation == null) {
+			return projectFromCurrentContainer;
+		}
 		int allWork = 30 + ProjectConfiguratorExtensionManager.getAllExtensionLabels().size() * 5;
 		SubMonitor subMonitor = SubMonitor.convert(progressMonitor,
 				NLS.bind(DataTransferMessages.SmartImportJob_inspecting,
-						container.getLocation().toFile().getAbsolutePath()),
+						SmartImportWizard.toAbsolutePath(container)),
 				allWork);
-		Set<IProject> projectFromCurrentContainer = new HashSet<>();
 		boolean isAlreadyAnEclipseProject = false;
 		Set<ProjectConfigurator> mainProjectConfigurators = new HashSet<>();
 		Set<IPath> excludedPaths = new HashSet<>();
@@ -404,12 +418,12 @@ public class SmartImportJob extends Job {
 				if (project == null) {
 					// Create project
 					try {
-						project = toExistingOrNewProject(container.getLocation().toFile(), subMonitor.split(1),
+						project = toExistingOrNewProject(containerLocation.toFile(), subMonitor.split(1),
 								IResource.BACKGROUND_REFRESH);
 					} catch (CouldNotImportProjectException ex) {
-						this.errors.put(container.getLocation(), ex);
+						this.errors.put(containerLocation, ex);
 						if (this.listener != null) {
-							this.listener.errorHappened(container.getLocation(), ex);
+							this.listener.errorHappened(containerLocation, ex);
 						}
 						return projectFromCurrentContainer;
 					}
@@ -447,12 +461,12 @@ public class SmartImportJob extends Job {
 			if (project == null) {
 				// Create project
 				try {
-					project = toExistingOrNewProject(container.getLocation().toFile(), subMonitor.split(1),
+					project = toExistingOrNewProject(containerLocation.toFile(), subMonitor.split(1),
 							IResource.BACKGROUND_REFRESH);
 				} catch (CouldNotImportProjectException ex) {
-					this.errors.put(container.getLocation(), ex);
+					this.errors.put(containerLocation, ex);
 					if (this.listener != null) {
-						this.listener.errorHappened(container.getLocation(), ex);
+						this.listener.errorHappened(containerLocation, ex);
 					}
 					return projectFromCurrentContainer;
 				}
@@ -484,7 +498,10 @@ public class SmartImportJob extends Job {
 		}
 		Set<IPath> res = new HashSet<>();
 		for (IContainer container : resources) {
-			res.add(container.getLocation());
+			IPath location = container.getLocation();
+			if (location != null) {
+				res.add(location);
+			}
 		}
 		return res;
 	}
@@ -522,11 +539,11 @@ public class SmartImportJob extends Job {
 
 	private IProject projectAlreadyExistsInWorkspace(File directory) {
 		for (IProject project : workspaceRoot.getProjects()) {
-			IPath location = project.getLocation();
-			if (location == null) {
+			File file = SmartImportWizard.toFile(project);
+			if (file == null) {
 				continue;
 			}
-			if (location.toFile().getAbsoluteFile().equals(directory.getAbsoluteFile())) {
+			if (file.getAbsoluteFile().equals(directory.getAbsoluteFile())) {
 				return project;
 			}
 		}
@@ -541,7 +558,7 @@ public class SmartImportJob extends Job {
 			String expectedName = desc.getName();
 			IProject projectWithSameName = this.workspaceRoot.getProject(expectedName);
 			if (projectWithSameName.exists()) {
-				if (projectWithSameName.getLocation().toFile().equals(directory)) {
+				if (directory.equals(SmartImportWizard.toFile(projectWithSameName))) {
 					// project seems already there
 					return projectWithSameName;
 				}

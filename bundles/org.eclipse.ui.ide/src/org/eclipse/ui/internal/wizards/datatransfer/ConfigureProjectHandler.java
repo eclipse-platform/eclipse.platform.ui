@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,9 +44,13 @@ public class ConfigureProjectHandler extends AbstractHandler {
 		if (project == null) {
 			return null;
 		}
+		File file = SmartImportWizard.toFile(project);
+		if (file == null) {
+			return null;
+		}
 
 		SmartImportWizard wizard = new SmartImportWizard();
-		wizard.setInitialImportSource(project.getLocation().toFile());
+		wizard.setInitialImportSource(file);
 		// inherit workingSets
 		Set<IWorkingSet> workingSets = new HashSet<>();
 		for (IWorkingSet workingSet : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
