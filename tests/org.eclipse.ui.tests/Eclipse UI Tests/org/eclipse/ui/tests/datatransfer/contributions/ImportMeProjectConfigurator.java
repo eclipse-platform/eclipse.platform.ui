@@ -40,7 +40,10 @@ public class ImportMeProjectConfigurator implements org.eclipse.ui.wizards.datat
 				res.add(current);
 			}
 			if (current.isDirectory()) {
-				queue.addAll(Arrays.asList(current.listFiles()));
+				File[] files = current.listFiles();
+				if (files != null) {
+					queue.addAll(Arrays.asList(files));
+				}
 			}
 		}
 		return res;
