@@ -20,6 +20,14 @@ Contributions to Platform UI are most welcome. There are many ways to contribute
 from entering high quality bug reports, to contributing code or documentation changes.
 For a complete guide, see the [Platform UI - How to contribute wiki page] [2] page on the team wiki.
 
+How to build on the command line
+--------------------------------
+
+You need Maven 3.3.1 installed. After this you can run the build via the following command:
+
+mvn clean verify -Pbuild-individual-bundles
+
+
 Developer resources:
 --------------------
 
