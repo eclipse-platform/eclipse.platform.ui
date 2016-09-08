@@ -80,13 +80,15 @@ public class HasFileRecursivelyExpression extends Expression {
 				File currentDirectory = directoriesToVisit.pop();
 				if (new File(currentDirectory, this.filename).exists()) {
 					return EvaluationResult.TRUE;
-				} else {
-					directoriesToVisit.addAll(Arrays.asList(currentDirectory.listFiles(new FileFilter() {
-						@Override
-						public boolean accept(File child) {
-							return child.isDirectory();
-						}
-					})));
+				}
+				File[] files = currentDirectory.listFiles(new FileFilter() {
+					@Override
+					public boolean accept(File child) {
+						return child.isDirectory();
+					}
+				});
+				if (files != null) {
+					directoriesToVisit.addAll(Arrays.asList(files));
 				}
 			}
 		}
