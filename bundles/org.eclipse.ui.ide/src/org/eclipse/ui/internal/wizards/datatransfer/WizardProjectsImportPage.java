@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,8 +90,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
 import org.eclipse.ui.dialogs.WorkingSetGroup;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -433,8 +437,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * @param workArea
 	 */
 	private void createWorkingSetGroup(Composite workArea) {
-		String[] workingSetIds = new String[] {"org.eclipse.ui.resourceWorkingSetPage",  //$NON-NLS-1$
-				"org.eclipse.jdt.ui.JavaWorkingSetPage"};  //$NON-NLS-1$
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		String[] workingSetIds = Arrays.stream(registry.getNewPageWorkingSetDescriptors())
+				.map(WorkingSetDescriptor::getId).toArray(String[]::new);
 		workingSetGroup = new WorkingSetGroup(workArea, currentSelection, workingSetIds);
 	}
 
