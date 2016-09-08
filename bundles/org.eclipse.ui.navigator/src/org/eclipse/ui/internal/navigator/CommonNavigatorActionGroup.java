@@ -126,7 +126,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 		if (!hideLinkWithEditorAction) {
 			toggleLinkingAction = new LinkEditorAction(commonNavigator,
 					commonViewer, linkHelperService);
-			ImageDescriptor syncIcon = getImageDescriptor("elcl16/synced.gif"); //$NON-NLS-1$
+			ImageDescriptor syncIcon = getImageDescriptor("elcl16/synced.png"); //$NON-NLS-1$
 			toggleLinkingAction.setImageDescriptor(syncIcon);
 			toggleLinkingAction.setHoverImageDescriptor(syncIcon);
 			service.activateHandler(toggleLinkingAction.getActionDefinitionId(),
@@ -137,7 +137,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_COLLAPSE_ALL_ACTION);
 		if (!hideCollapseAllAction) {
 			collapseAllAction = new CollapseAllAction(commonViewer);
-			ImageDescriptor collapseAllIcon = getImageDescriptor("elcl16/collapseall.gif"); //$NON-NLS-1$
+			ImageDescriptor collapseAllIcon = getImageDescriptor("elcl16/collapseall.png"); //$NON-NLS-1$
 			collapseAllAction.setImageDescriptor(collapseAllIcon);
 			collapseAllAction.setHoverImageDescriptor(collapseAllIcon);
 			collapseAllHandler = new CollapseAllHandler(commonViewer);

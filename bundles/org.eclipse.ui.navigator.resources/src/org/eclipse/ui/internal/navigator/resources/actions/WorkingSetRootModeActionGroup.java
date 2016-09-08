@@ -189,7 +189,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 				.setText(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Working_Set_);
 		workingSetsAction.setImageDescriptor(WorkbenchNavigatorPlugin
 				.getDefault().getImageRegistry().getDescriptor(
-						"full/obj16/workingsets.gif")); //$NON-NLS-1$
+						"full/obj16/workingsets.png")); //$NON-NLS-1$
 
 		return new IAction[] { projectsAction, workingSetsAction };
 	}

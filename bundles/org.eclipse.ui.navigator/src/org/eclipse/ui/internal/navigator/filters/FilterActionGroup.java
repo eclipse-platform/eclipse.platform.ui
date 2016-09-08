@@ -96,7 +96,7 @@ public class FilterActionGroup extends ActionGroup {
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG);
 		if (!hideAvailableCustomizationsDialog) {
 			selectFiltersAction = new SelectFiltersAction(commonViewer, this);
-			ImageDescriptor selectFiltersIcon = NavigatorPlugin.getImageDescriptor("icons/full/elcl16/filter_ps.gif"); //$NON-NLS-1$
+			ImageDescriptor selectFiltersIcon = NavigatorPlugin.getImageDescriptor("icons/full/elcl16/filter_ps.png"); //$NON-NLS-1$
 			selectFiltersAction.setImageDescriptor(selectFiltersIcon);
 			selectFiltersAction.setHoverImageDescriptor(selectFiltersIcon);
 		}
