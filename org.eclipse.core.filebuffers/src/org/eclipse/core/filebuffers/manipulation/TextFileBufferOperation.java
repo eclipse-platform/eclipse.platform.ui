@@ -13,14 +13,13 @@ package org.eclipse.core.filebuffers.manipulation;
 import java.util.Map;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
-import org.eclipse.core.internal.filebuffers.Progress;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
@@ -90,24 +89,15 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 			ITextFileBuffer textFileBuffer= (ITextFileBuffer) fileBuffer;
 			IPath path= textFileBuffer.getLocation();
 			String taskName= path == null ? getOperationName() : path.lastSegment();
-			progressMonitor= Progress.getMonitor(progressMonitor);
-			progressMonitor.beginTask(taskName, 100);
-			try {
-				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 10);
-				MultiTextEditWithProgress edit= computeTextEdit(textFileBuffer, subMonitor);
-				subMonitor.done();
-				if (edit != null) {
-					Map<String, IDocumentPartitioner> stateData= startRewriteSession(textFileBuffer);
-					try {
-						subMonitor= Progress.getSubMonitor(progressMonitor, 90);
-						applyTextEdit(textFileBuffer, edit, subMonitor);
-						subMonitor.done();
-					} finally {
-						stopRewriteSession(textFileBuffer, stateData);
-					}
+			SubMonitor subMonitor= SubMonitor.convert(progressMonitor, taskName, 100);
+			MultiTextEditWithProgress edit= computeTextEdit(textFileBuffer, subMonitor.split(10));
+			if (edit != null) {
+				Map<String, IDocumentPartitioner> stateData= startRewriteSession(textFileBuffer);
+				try {
+					applyTextEdit(textFileBuffer, edit, subMonitor.split(90));
+				} finally {
+					stopRewriteSession(textFileBuffer, stateData);
 				}
-			} finally {
-				progressMonitor.done();
 			}
 		}
 	}

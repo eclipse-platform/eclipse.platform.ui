@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -384,26 +384,17 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 
 		} else {
+			SubMonitor subMonitor= SubMonitor.convert(monitor, FileBuffersMessages.ResourceTextFileBuffer_task_saving, 2);
+			ContainerCreator creator= new ContainerCreator(fFile.getWorkspace(), fFile.getParent().getFullPath());
+			creator.createContainer(subMonitor.split(1));
 
-			monitor= Progress.getMonitor(monitor);
-			try {
-				monitor.beginTask(FileBuffersMessages.ResourceTextFileBuffer_task_saving, 2);
-				ContainerCreator creator = new ContainerCreator(fFile.getWorkspace(), fFile.getParent().getFullPath());
-				IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
-				creator.createContainer(subMonitor);
-				subMonitor.done();
+			fFile.create(stream, false, subMonitor.split(1));
 
-				subMonitor= new SubProgressMonitor(monitor, 1);
-				fFile.create(stream, false, subMonitor);
-				subMonitor.done();
-
-			} finally {
-				monitor.done();
-			}
 
 			// set synchronization stamp to know whether the file synchronizer must become active
 			fSynchronizationStamp= fFile.getModificationStamp();
 
+			subMonitor.step(1);
 			// TODO commit persistable annotation model
 		}
 

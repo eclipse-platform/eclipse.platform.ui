@@ -11,13 +11,11 @@
 package org.eclipse.core.filebuffers.manipulation;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
-import org.eclipse.core.internal.filebuffers.Progress;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -55,30 +53,24 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 		IDocument document= fileBuffer.getDocument();
 		int lineCount= document.getNumberOfLines();
 
-		progressMonitor= Progress.getMonitor(progressMonitor);
-		progressMonitor.beginTask(FileBuffersMessages.ConvertLineDelimitersOperation_task_generatingChanges, lineCount);
+		SubMonitor subMonitor= SubMonitor.convert(progressMonitor, FileBuffersMessages.ConvertLineDelimitersOperation_task_generatingChanges, lineCount);
 		try {
 
 			MultiTextEditWithProgress multiEdit= new MultiTextEditWithProgress(FileBuffersMessages.ConvertLineDelimitersOperation_task_applyingChanges);
 
 			for (int i= 0; i < lineCount; i++) {
-				if (progressMonitor.isCanceled())
-					throw new OperationCanceledException();
-
 				final String delimiter= document.getLineDelimiter(i);
 				if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(fLineDelimiter)) {
 					IRegion region= document.getLineInformation(i);
 					multiEdit.addChild(new ReplaceEdit(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter));
 				}
-				progressMonitor.worked(1);
+				subMonitor.step(1);
 			}
 
 			return multiEdit.getChildrenSize() <= 0 ? null : multiEdit;
 
 		} catch (BadLocationException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, "", x)); //$NON-NLS-1$
-		} finally {
-			progressMonitor.done();
 		}
 	}
 
