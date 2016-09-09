@@ -325,14 +325,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		String label = p.getLabel();
 		int index = id.lastIndexOf('.');
 		// Custom perspectives store the user defined names in their labels
-		String trimE4 = label.trim();
-		String trimE3 = label.replace(' ', '_').trim();
 		if (id.endsWith(label)) {
 			index = id.lastIndexOf(label) - 1;
-		} else if (id.endsWith(trimE4)) {
-			index = id.lastIndexOf(trimE4) - 1;
-		} else if (id.endsWith(trimE3)) {
-			index = id.lastIndexOf(trimE4) - 1;
 		}
 		if (index == -1) {
 			return id;
