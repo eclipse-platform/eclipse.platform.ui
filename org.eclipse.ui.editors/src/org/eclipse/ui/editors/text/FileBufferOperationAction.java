@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
@@ -172,23 +172,19 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 				try {
 
 					int ticks= 100;
-					monitor.beginTask(fFileBufferOperation.getOperationName(), ticks);
-					try {
-						IPath[] locations;
-						if (files != null) {
-							ticks -= 30;
-							locations= generateLocations(files, new SubProgressMonitor(monitor, 30));
-						} else
-							locations= new IPath[] { location };
+					SubMonitor subMonitor= SubMonitor.convert(monitor, fFileBufferOperation.getOperationName(), ticks);
+					IPath[] locations;
+					if (files != null) {
+						ticks-= 30;
+						locations= generateLocations(files, subMonitor.split(30));
+					} else
+						locations= new IPath[] { location };
 
-						if (locations != null && locations.length > 0) {
-							FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
-							runner.execute(locations, fileBufferOperation, new SubProgressMonitor(monitor, ticks));
-						}
-						status= Status.OK_STATUS;
-					} finally {
-						monitor.done();
+					if (locations != null && locations.length > 0) {
+						FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
+						runner.execute(locations, fileBufferOperation, subMonitor.split(ticks));
 					}
+					status= Status.OK_STATUS;
 
 				} catch (OperationCanceledException e) {
 					status= new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
