@@ -35,7 +35,7 @@
 		<imageprovider 
 			id="org.eclipse.ui.searchMarkerProvider"
 			markertype="org.eclipse.search.searchmarker"
-			icon="$nl$/icons/full/obj16/searchm_obj.gif">
+			icon="$nl$/icons/full/obj16/searchm_obj.png">
 		</imageprovider>
 	</extension>
 	
@@ -57,7 +57,7 @@
 		<imageprovider 
 			id="org.eclipse.ui.filteredSearchMarkerProvider"
 			markertype="org.eclipse.search.filteredsearchmarker"
-			icon="$nl$/icons/full/obj16/searchm_obj.gif">
+			icon="$nl$/icons/full/obj16/searchm_obj.png">
 		</imageprovider>
 	</extension>
 	
@@ -194,14 +194,14 @@
 				definitionId="org.eclipse.search.ui.openFileSearchPage"
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openFileSearchPageAction.label"
-				icon="$nl$/icons/full/elcl16/tsearch_obj.gif"
+				icon="$nl$/icons/full/elcl16/tsearch_obj.png"
 				helpContextId="file_search_action_context"
 				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 	        
 	       <action
                class="org.eclipse.search.internal.ui.OpenSearchDialogPageAction"
                helpContextId="open_search_dialog_action_context"
-               icon="$nl$/icons/full/etool16/search.gif"
+               icon="$nl$/icons/full/etool16/search.png"
                id="org.eclipse.search.OpenSearchDialogPage"
                label="%openSearchDialogAction.label"
                tooltip="%openSearchDialogAction.tooltip"
@@ -213,7 +213,7 @@
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openSearchDialogAction.label"
 				tooltip="%openSearchDialogAction.tooltip"
-				icon="$nl$/icons/full/etool16/search.gif"
+				icon="$nl$/icons/full/etool16/search.png"
 				helpContextId="open_search_dialog_action_context"
 				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
         		
@@ -267,11 +267,11 @@
 		   name="%searchResultViewName"
 		   category="org.eclipse.ui"
 		   class="org.eclipse.search.internal.ui.SearchResultView"
-		   icon="$nl$/icons/full/eview16/searchres.gif">
+		   icon="$nl$/icons/full/eview16/searchres.png">
 		</view>
       	<view
             name="%newSearchResultViewName"
-            icon="$nl$/icons/full/eview16/searchres.gif"
+            icon="$nl$/icons/full/eview16/searchres.png"
             category="org.eclipse.ui"
             class="org.eclipse.search2.internal.ui.SearchView"
             allowMultiple="true"
@@ -295,7 +295,7 @@
 		<page
 			id="org.eclipse.search.internal.ui.text.TextSearchPage"
 			label="%fileSearch"
-			icon="$nl$/icons/full/elcl16/tsearch_obj.gif"
+			icon="$nl$/icons/full/elcl16/tsearch_obj.png"
 			sizeHint="250,160"
 			tabPosition="1"
 			extensions="*:1"
@@ -335,7 +335,7 @@
 	     <specification
 	      		annotationType="org.eclipse.search.results"
 	            label="%SearchMarkerPreference.label"
-	            icon="$nl$/icons/full/obj16/searchm_obj.gif"
+	            icon="$nl$/icons/full/obj16/searchm_obj.png"
 	            textPreferenceKey="searchResultIndication"
 	            textPreferenceValue="false"
 	            highlightPreferenceKey="searchResultHighlighting"
@@ -359,7 +359,7 @@
 	     <specification
 	      		annotationType="org.eclipse.search.filteredResults"
 	            label="%FilteredSearchMarkerPreference.label"
-	            icon="$nl$/icons/full/obj16/searchm_obj.gif"
+	            icon="$nl$/icons/full/obj16/searchm_obj.png"
 	            textPreferenceKey="filteredSearchResultIndication"
 	            textPreferenceValue="false"
 	            highlightPreferenceKey="filteredSearchResultHighlighting"

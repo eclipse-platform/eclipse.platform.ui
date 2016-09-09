@@ -45,33 +45,33 @@ public class SearchPluginImages {
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 
 	// Define image names
-	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.png"; //$NON-NLS-1$
 
-	public static final String IMG_LCL_REFRESH= NAME_PREFIX + "refresh.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_PIN_VIEW= NAME_PREFIX + "pin_view.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_REFRESH= NAME_PREFIX + "refresh.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_PIN_VIEW= NAME_PREFIX + "pin_view.png"; //$NON-NLS-1$
 
-	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_PREV= NAME_PREFIX + "search_prev.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_FLAT_LAYOUT= NAME_PREFIX + "flatLayout.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT= NAME_PREFIX + "hierarchicalLayout.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_HORIZONTAL_ORIENTATION= NAME_PREFIX + "horizontalOrientation.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_VERTICAL_ORIENTATION= NAME_PREFIX + "verticalOrientation.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_AUTOMATIC_ORIENTATION= NAME_PREFIX + "automaticOrientation.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_SINGLE_ORIENTATION= NAME_PREFIX + "singleOrientation.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_CANCEL= NAME_PREFIX + "stop.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_EXPAND_ALL= NAME_PREFIX + "expandall.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SEARCH_FILTER= NAME_PREFIX + "filter_ps.gif"; //$NON-NLS-1$
-	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_REM_ALL= NAME_PREFIX + "search_remall.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_NEXT= NAME_PREFIX + "search_next.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_PREV= NAME_PREFIX + "search_prev.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_FLAT_LAYOUT= NAME_PREFIX + "flatLayout.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT= NAME_PREFIX + "hierarchicalLayout.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_HORIZONTAL_ORIENTATION= NAME_PREFIX + "horizontalOrientation.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_VERTICAL_ORIENTATION= NAME_PREFIX + "verticalOrientation.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_AUTOMATIC_ORIENTATION= NAME_PREFIX + "automaticOrientation.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_SINGLE_ORIENTATION= NAME_PREFIX + "singleOrientation.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_CANCEL= NAME_PREFIX + "stop.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_COLLAPSE_ALL= NAME_PREFIX + "collapseall.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_EXPAND_ALL= NAME_PREFIX + "expandall.png"; //$NON-NLS-1$
+	public static final String IMG_LCL_SEARCH_FILTER= NAME_PREFIX + "filter_ps.png"; //$NON-NLS-1$
+	public static final String IMG_VIEW_SEARCHRES= NAME_PREFIX + "searchres.png"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJ_TEXT_SEARCH_LINE= NAME_PREFIX + "line_match.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJ_TSEARCH_DPDN= NAME_PREFIX + "tsearch_dpdn_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_SEARCHMARKER= NAME_PREFIX + "searchm_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_TEXT_SEARCH_LINE= NAME_PREFIX + "line_match.png"; //$NON-NLS-1$
 
 	// Define images
 	public static final ImageDescriptor DESC_OBJ_TSEARCH_DPDN= createManaged(T_OBJ, IMG_OBJ_TSEARCH_DPDN);
