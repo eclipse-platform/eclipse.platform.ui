@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.harness;
 
 import junit.framework.AssertionFailedError;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -87,9 +86,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		assertTrue("ProgressMonitor not used up", Math.round(workedSoFar) >= totalWork);
 	}
 
-	/**
-	 * @see IProgressMonitor#beginTask
-	 */
 	@Override
 	public void beginTask(String name, int newTotalWork) {
 		//if (beginTaskCalled && doneCalls > 0) {
@@ -105,9 +101,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		beginTime = System.currentTimeMillis();
 	}
 
-	/**
-	 * @see IProgressMonitor#done
-	 */
 	@Override
 	public void done() {
 		assertTrue("done must be called after beginTask", beginTaskCalled);
@@ -129,9 +122,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		assertTrue("worked " + (workedSoFar - totalWork) + " more than totalWork", totalWork == UNKNOWN || workedSoFar <= totalWork + (totalWork * EPS_FACTOR));
 	}
 
-	/**
-	 * @see IProgressMonitor#isCanceled
-	 */
 	@Override
 	public boolean isCanceled() {
 		return canceled;
@@ -168,9 +158,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		assertTrue("done has not been called on ProgressMonitor", hasFailed || !beginTaskCalled || doneCalls > 0);
 	}
 
-	/**
-	 * @see IProgressMonitor#setCanceled
-	 */
 	@Override
 	public void setCanceled(boolean b) {
 		boolean wasCanceled = isCanceled();
@@ -180,25 +167,16 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		}
 	}
 
-	/**
-	 * @see IProgressMonitor#setTaskName
-	 */
 	@Override
 	public void setTaskName(String name) {
 		taskName = name;
 	}
 
-	/**
-	 * @see IProgressMonitor#subTask
-	 */
 	@Override
 	public void subTask(String name) {
 		// do nothing
 	}
 
-	/**
-	 * @see IProgressMonitor#worked
-	 */
 	@Override
 	public void worked(int work) {
 		internalWorked(work);
