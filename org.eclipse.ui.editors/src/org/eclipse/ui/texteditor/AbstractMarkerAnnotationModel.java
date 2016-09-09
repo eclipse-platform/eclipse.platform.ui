@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.Bundle;
 
@@ -70,7 +71,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 public abstract class AbstractMarkerAnnotationModel extends AnnotationModel implements IPersistableAnnotationModel {
 
 	/** List of annotations whose text range became invalid because of document changes */
-	private List<Annotation> fDeletedAnnotations= new ArrayList<>(2);
+	private List<Annotation> fDeletedAnnotations= new CopyOnWriteArrayList<>();
 	/** List of registered and instantiated marker updaters */
 	private List<IMarkerUpdater> fInstantiatedMarkerUpdaters= null;
 	/** List of registered but not yet instantiated marker updaters */
