@@ -373,7 +373,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	private Image getDefaultCueImage() {
 		if (fCachedDefaultCueImage == null) {
-			ImageDescriptor cueID= ImageDescriptor.createFromFile(AbstractControlContentAssistSubjectAdapter.class, "images/content_assist_cue.gif"); //$NON-NLS-1$
+			ImageDescriptor cueID= ImageDescriptor.createFromFile(AbstractControlContentAssistSubjectAdapter.class, "images/content_assist_cue.png"); //$NON-NLS-1$
 			fCachedDefaultCueImage= cueID.createImage(getControl().getDisplay());
 		}
 		return fCachedDefaultCueImage;
