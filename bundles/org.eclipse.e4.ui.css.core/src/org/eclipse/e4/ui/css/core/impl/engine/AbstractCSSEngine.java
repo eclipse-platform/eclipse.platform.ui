@@ -13,6 +13,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 428715
  *     Brian de Alwis (MTI) - Performance tweaks (Bug 430829)
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 479896
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500402
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
@@ -92,6 +93,11 @@ import org.w3c.dom.stylesheets.StyleSheet;
  *
  */
 public abstract class AbstractCSSEngine implements CSSEngine {
+
+	/**
+	 * Archives are deliberately identified by exclamation mark in URLs
+	 */
+	private static final String ARCHIVE_IDENTIFIER = "!";
 
 	/**
 	 * Default {@link IResourcesLocatorManager} used to get InputStream, Reader
@@ -193,11 +199,11 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			} else {
 				Path p = new Path(source.getURI());
 				IPath trim = p.removeLastSegments(1);
-
+				boolean isArchive = source.getURI().contains(ARCHIVE_IDENTIFIER);
 				url = FileLocator.resolve(new URL(trim.addTrailingSeparator()
 						.toString() + ((CSSImportRule) rule).getHref()));
 				File testFile = new File(url.getFile());
-				if (!testFile.exists()) {
+				if (!isArchive&&!testFile.exists()) {
 					// look in platform default
 					String path = getResourcesLocatorManager().resolve(
 							(importRule).getHref());
