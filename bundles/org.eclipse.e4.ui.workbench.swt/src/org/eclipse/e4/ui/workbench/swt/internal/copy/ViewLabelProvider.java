@@ -45,7 +45,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	static {
 		Bundle bundle = org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator
 				.getDefault().getBundle();
-		IPath path = new Path("$nl$/icons/full/obj16/fldr_obj.gif");
+		IPath path = new Path("$nl$/icons/full/obj16/fldr_obj.png");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor enabledDesc = ImageDescriptor.createFromURL(url);
 		if (enabledDesc != null)
