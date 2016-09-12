@@ -40,6 +40,6 @@ public interface IBreakpointManagerListener {
 	 * @param triggerBreakpoint new trigger breakpoint or <code>null<code>
 	 * @since 3.11
 	 */
-	default public void breakpointManagerTriggerPointChanged(IBreakpoint triggerBreakpoint) {
+	public default void breakpointManagerTriggerPointChanged(IBreakpoint triggerBreakpoint) {
 	}
 }

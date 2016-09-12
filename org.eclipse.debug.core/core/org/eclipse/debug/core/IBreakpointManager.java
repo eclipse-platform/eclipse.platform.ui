@@ -269,7 +269,7 @@ public interface IBreakpointManager {
 	 *         <code>null</code> if none exists
 	 * @since 3.11
 	 */
-	default public IBreakpoint[] getTriggerBreakpoints() {
+	public default IBreakpoint[] getTriggerBreakpoints() {
 		return null;
 	}
 
@@ -289,7 +289,7 @@ public interface IBreakpointManager {
 	 *                </ul>
 	 * @since 3.11
 	 */
-	default public void addTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
+	public default void addTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
 	}
 
 	/**
@@ -308,7 +308,7 @@ public interface IBreakpointManager {
 	 *                </ul>
 	 * @since 3.11
 	 */
-	default public void removeTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
+	public default void removeTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
 	}
 
 	/**
@@ -318,7 +318,7 @@ public interface IBreakpointManager {
 	 *                underlying marker.
 	 * @since 3.11
 	 */
-	default public void removeAllTriggerpoints() throws CoreException {
+	public default void removeAllTriggerpoints() throws CoreException {
 	}
 
 	/**
@@ -327,7 +327,7 @@ public interface IBreakpointManager {
 	 * @return return <code>true</code> if a breakpoint can suspend
 	 * @since 3.11
 	 */
-	default public boolean canSupendOnBreakpoint() {
+	public default boolean canSupendOnBreakpoint() {
 		return true;
 	}
 
@@ -338,7 +338,7 @@ public interface IBreakpointManager {
 	 *            <code>null<code> to deactivate all trigger points
 	 * @since 3.11
 	 */
-	default public void deActivateTriggerpoints(IBreakpoint[] triggerointList) {
+	public default void deActivateTriggerpoints(IBreakpoint[] triggerointList) {
 	}
 
 	/**
@@ -346,7 +346,7 @@ public interface IBreakpointManager {
 	 *
 	 * @since 3.11
 	 */
-	default public void refreshTriggerpointDisplay() {
+	public default void refreshTriggerpointDisplay() {
 
 	}
 

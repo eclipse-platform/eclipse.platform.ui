@@ -226,7 +226,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *                this breakpoint's underlying marker
 	 * @since 3.11
 	 */
-	default public boolean isTriggerPoint() throws CoreException {
+	public default boolean isTriggerPoint() throws CoreException {
 		return false;
 	}
 
@@ -241,7 +241,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *                this breakpoint's underlying marker.
 	 * @since 3.11
 	 */
-	default public void setTriggerPoint(boolean trigger) throws CoreException {
+	public default void setTriggerPoint(boolean trigger) throws CoreException {
 	}
 
 	/**
@@ -255,7 +255,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *                this breakpoint's underlying marker.
 	 * @since 3.11
 	 */
-	default public void setTriggerPointActive(boolean active) throws CoreException {
+	public default void setTriggerPointActive(boolean active) throws CoreException {
 	}
 
 	/**
@@ -266,7 +266,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *                this breakpoint's underlying marker
 	 * @since 3.11
 	 */
-	default public boolean isTriggerPointActive() throws CoreException {
+	public default boolean isTriggerPointActive() throws CoreException {
 		return false;
 	}
 
