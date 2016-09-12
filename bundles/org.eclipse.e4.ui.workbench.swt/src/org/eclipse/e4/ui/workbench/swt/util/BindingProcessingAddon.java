@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,8 +148,7 @@ public class BindingProcessingAddon {
 	}
 
 	private void defineBindingTables() {
-		Activator.trace(Policy.DEBUG_CMDS,
-				"Initialize binding tables from model", null); //$NON-NLS-1$
+		Activator.trace(Policy.DEBUG_CMDS, "Initialize binding tables from model", null); //$NON-NLS-1$
 		for (MBindingTable bindingTable : application.getBindingTables()) {
 			defineBindingTable(bindingTable);
 		}
@@ -164,10 +163,8 @@ public class BindingProcessingAddon {
 				"Binding context referred to by the binding table \"" + bindingTable.getElementId() + "\""); //$NON-NLS-1$
 		Assert.isNotNull(bindingTable.getBindingContext().getElementId(),
 				"Element ID of binding table \"" + bindingTable.getElementId() + "\"."); //$NON-NLS-1$
-		final Context bindingContext = contextManager.getContext(bindingTable
-				.getBindingContext().getElementId());
-		BindingTable table = bindingTables.getTable(bindingTable
-				.getBindingContext().getElementId());
+		final Context bindingContext = contextManager.getContext(bindingTable.getBindingContext().getElementId());
+		BindingTable table = bindingTables.getTable(bindingTable.getBindingContext().getElementId());
 		if (table == null) {
 			table = new BindingTable(bindingContext);
 			bindingTables.addTable(table);
@@ -181,31 +178,26 @@ public class BindingProcessingAddon {
 	 * @param bindingTable
 	 * @param binding
 	 */
-	private void defineBinding(BindingTable bindingTable,
-			Context bindingContext, MKeyBinding binding) {
+	private void defineBinding(BindingTable bindingTable, Context bindingContext, MKeyBinding binding) {
 		Binding keyBinding = createBinding(bindingContext,
 				binding.getCommand(), binding.getParameters(),
 				binding.getKeySequence(), binding);
-		if (keyBinding != null
-				&& !binding.getTags().contains(
-						EBindingService.DELETED_BINDING_TAG)) {
+		if (keyBinding != null && !binding.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
 			bindingTable.addBinding(keyBinding);
 		}
 	}
 
-	private Binding createBinding(Context bindingContext, MCommand cmdModel,
-			List<MParameter> modelParms, String keySequence, MKeyBinding binding) {
+	private Binding createBinding(Context bindingContext, MCommand cmdModel, List<MParameter> modelParms,
+			String keySequence, MKeyBinding binding) {
 		Binding keyBinding = null;
 
-		if (binding.getTransientData()
-				.get(EBindingService.MODEL_TO_BINDING_KEY) != null) {
+		if (binding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY) != null) {
 			try {
-				keyBinding = (Binding) binding.getTransientData().get(
-						EBindingService.MODEL_TO_BINDING_KEY);
+				keyBinding = (Binding) binding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY);
 				return keyBinding;
 			} catch (ClassCastException cce) {
-				System.err
-						.println("Invalid type stored in transient data with the key "
+				System.err.println(
+						"Invalid type stored in transient data with the key "
 								+ EBindingService.MODEL_TO_BINDING_KEY);
 				return null;
 			}
@@ -222,14 +214,12 @@ public class BindingProcessingAddon {
 				parameters.put(mParm.getName(), mParm.getValue());
 			}
 		}
-		ParameterizedCommand cmd = commandService.createCommand(
-				cmdModel.getElementId(), parameters);
+		ParameterizedCommand cmd = commandService.createCommand(cmdModel.getElementId(), parameters);
 		TriggerSequence sequence = null;
 		sequence = bindingService.createSequence(keySequence);
 
 		if (cmd == null) {
-			System.err
-					.println("Failed to find command for binding: " + binding); //$NON-NLS-1$
+			System.err.println("Failed to find command for binding: " + binding); //$NON-NLS-1$
 		} else if (sequence == null) {
 			System.err.println("Failed to map binding: " + binding); //$NON-NLS-1$
 		} else {
@@ -248,8 +238,7 @@ public class BindingProcessingAddon {
 					} else if (tag.startsWith(EBindingService.LOCALE_ATTR_TAG)) {
 						locale = tag.substring(7);
 						attrs.put(EBindingService.LOCALE_ATTR_TAG, locale);
-					} else if (tag
-							.startsWith(EBindingService.PLATFORM_ATTR_TAG)) {
+					} else if (tag.startsWith(EBindingService.PLATFORM_ATTR_TAG)) {
 						platform = tag.substring(9);
 						attrs.put(EBindingService.PLATFORM_ATTR_TAG, platform);
 					} else if (tag.startsWith(EBindingService.TYPE_ATTR_TAG)) {
@@ -257,13 +246,10 @@ public class BindingProcessingAddon {
 						attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 					}
 				}
-				keyBinding = bindingService.createBinding(sequence, cmd,
-						bindingContext.getId(), attrs);
-				binding.getTransientData().put(
-						EBindingService.MODEL_TO_BINDING_KEY, keyBinding);
+				keyBinding = bindingService.createBinding(sequence, cmd, bindingContext.getId(), attrs);
+				binding.getTransientData().put(EBindingService.MODEL_TO_BINDING_KEY, keyBinding);
 			} catch (IllegalArgumentException e) {
-				Activator.trace(Policy.DEBUG_MENUS,
-						"failed to create: " + binding, e); //$NON-NLS-1$
+				Activator.trace(Policy.DEBUG_MENUS, "failed to create: " + binding, e); //$NON-NLS-1$
 				return null;
 			}
 
@@ -285,16 +271,14 @@ public class BindingProcessingAddon {
 		}
 
 		MBindingTable bt = (MBindingTable) parentObj;
-		final Context bindingContext = contextManager.getContext(bt
-				.getBindingContext().getElementId());
+		final Context bindingContext = contextManager.getContext(bt.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingContext.getId());
 		if (table == null) {
 			Activator.log(IStatus.ERROR, "Trying to create \'" + binding //$NON-NLS-1$
 					+ "\' without binding table " + bindingContext.getId()); //$NON-NLS-1$
 			return;
 		}
-		Binding keyBinding = createBinding(bindingContext,
-				binding.getCommand(), binding.getParameters(),
+		Binding keyBinding = createBinding(bindingContext, binding.getCommand(), binding.getParameters(),
 				binding.getKeySequence(), binding);
 		if (keyBinding != null) {
 			if (add) {
@@ -307,7 +291,7 @@ public class BindingProcessingAddon {
 
 	@PreDestroy
 	public void dispose() {
-		unregsiterModelListeners();
+		unregisterModelListeners();
 	}
 
 	private void registerModelListeners() {
@@ -442,24 +426,19 @@ public class BindingProcessingAddon {
 				}
 			}
 		};
-		broker.subscribe(UIEvents.BindingTableContainer.TOPIC_BINDINGTABLES,
-				additionHandler);
+		broker.subscribe(UIEvents.BindingTableContainer.TOPIC_BINDINGTABLES, additionHandler);
 		broker.subscribe(UIEvents.BindingTable.TOPIC_BINDINGS, additionHandler);
 		broker.subscribe(UIEvents.KeyBinding.TOPIC_COMMAND, additionHandler);
 		broker.subscribe(UIEvents.KeyBinding.TOPIC_PARAMETERS, additionHandler);
-		broker.subscribe(UIEvents.KeySequence.TOPIC_KEYSEQUENCE,
-				additionHandler);
-		broker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS,
-				additionHandler);
+		broker.subscribe(UIEvents.KeySequence.TOPIC_KEYSEQUENCE, additionHandler);
+		broker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, additionHandler);
 
 		contextHandler = new EventHandler() {
 			@Override
 			public void handleEvent(Event event) {
-				Object elementObj = event
-						.getProperty(UIEvents.EventTags.ELEMENT);
+				Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 				Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (UIEvents.EventTypes.SET.equals(event
-						.getProperty(UIEvents.EventTags.TYPE))
+				if (UIEvents.EventTypes.SET.equals(event.getProperty(UIEvents.EventTags.TYPE))
 						&& newObj instanceof IEclipseContext) {
 					activateContexts(elementObj);
 				}
@@ -468,7 +447,7 @@ public class BindingProcessingAddon {
 		broker.subscribe(UIEvents.Context.TOPIC_CONTEXT, contextHandler);
 	}
 
-	private void unregsiterModelListeners() {
+	private void unregisterModelListeners() {
 		broker.unsubscribe(additionHandler);
 		broker.unsubscribe(additionHandler);
 		broker.unsubscribe(additionHandler);
