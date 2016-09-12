@@ -99,7 +99,7 @@ public class DefineCommandsTest {
 		assertNotNull("command1", cs.defineCommand(TEST_ID1, "ID1", null, category, null));
 		assertNotNull("command2", cs.defineCommand(TEST_ID2, "ID2", null, category, null));
 
-		cs = (ECommandService) workbenchContext.get(ECommandService.class.getName());
+		cs = workbenchContext.get(ECommandService.class);
 		Command cmd1 = cs.getCommand(TEST_ID1);
 		assertNotNull("get command1", cmd1);
 		try {
