@@ -52,7 +52,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 			JFaceResources.getImageRegistry().put(FOLDER_ICON, enabledDesc);
 	}
 
-	private Map<String, Image> imageMap = new HashMap<String, Image>();
+	private Map<String, Image> imageMap = new HashMap<>();
 
 	private IEclipseContext context;
 

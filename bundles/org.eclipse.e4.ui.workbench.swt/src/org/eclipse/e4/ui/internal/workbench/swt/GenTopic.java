@@ -51,7 +51,7 @@ public class GenTopic implements IApplication {
 	private void processLiterals(Class<?> literals)
 			throws IllegalArgumentException, IllegalAccessException {
 		Field[] fields = literals.getFields();
-		Map<String, EClass> classes = new TreeMap<String, EClass>();
+		Map<String, EClass> classes = new TreeMap<>();
 		for (int i = 0; i < fields.length; i++) {
 			Object value = fields[i].get(null);
 			if (value instanceof EClass) {
@@ -84,7 +84,7 @@ public class GenTopic implements IApplication {
 		System.out
 				.print(String.format(topicAllDeclaration, pkgName, className));
 
-		Set<String> names = new TreeSet<String>();
+		Set<String> names = new TreeSet<>();
 		for (EStructuralFeature feature : features) {
 			names.add(feature.getName());
 		}

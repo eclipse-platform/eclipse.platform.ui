@@ -54,7 +54,7 @@ public class CSSRenderingUtils {
 
 	// NOTE: The CSS engine 'owns' the image it returns (it caches it)
 	// so we have to cache any rotated versions to match
-	private Map<Image, Image> rotatedImageMap = new HashMap<Image, Image>();
+	private Map<Image, Image> rotatedImageMap = new HashMap<>();
 
 	public Control frameMeIfPossible(Control toFrame, String classId,
 			boolean vertical, boolean draggable) {
