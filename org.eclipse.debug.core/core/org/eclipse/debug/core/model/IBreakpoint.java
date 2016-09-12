@@ -219,7 +219,7 @@ public interface IBreakpoint extends IAdaptable {
 
 	/**
 	 * Returns whether this breakpoint is defined as the trigger point in the
-	 * workspace
+	 * workspace.
 	 *
 	 * @return whether this breakpoint is a trigger point
 	 * @exception CoreException if unable to access the associated attribute on
@@ -232,8 +232,8 @@ public interface IBreakpoint extends IAdaptable {
 
 	/**
 	 * Sets whether this breakpoint is to be treated as a trigger point for the
-	 * workspace. If it is a trigger point <code>TRIGGERPOINT</code> attribute
-	 * on this breakpoint's marker is set to <code>true</code>.
+	 * workspace. If it is a trigger point, then the <code>TRIGGERPOINT</code>
+	 * attribute on this breakpoint's marker is set to <code>true</code>.
 	 *
 	 * @param trigger whether this breakpoint is to be treated as trigger point
 	 *            for the workspace
@@ -249,7 +249,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * is active <code>TRIGGERPOINTACTIVE</code> attribute on this breakpoint's
 	 * marker is set to <code>true</code>.
 	 *
-	 * @param trigger whether this breakpoint is to be treated as trigger point
+	 * @param active whether this breakpoint is to be treated as trigger point
 	 *            for the workspace
 	 * @exception CoreException if unable to set the associated attribute on
 	 *                this breakpoint's underlying marker.
