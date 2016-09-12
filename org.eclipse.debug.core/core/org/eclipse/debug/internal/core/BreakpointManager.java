@@ -1412,7 +1412,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		if (fTriggerPointBreakpointList.isEmpty()) {
 			return true;
 		}
-		int i = 0;
 		for (IBreakpoint iBreakpoint : fTriggerPointBreakpointList) {
 			try {
 				if (iBreakpoint.isTriggerPointActive()) {
