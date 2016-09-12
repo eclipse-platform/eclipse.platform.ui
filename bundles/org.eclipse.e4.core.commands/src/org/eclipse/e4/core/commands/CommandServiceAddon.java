@@ -12,7 +12,6 @@
 
 package org.eclipse.e4.core.commands;
 
-import java.lang.reflect.Field;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.eclipse.core.commands.CommandManager;
@@ -53,17 +52,4 @@ public class CommandServiceAddon {
 		HandlerServiceImpl.pop();
 	}
 
-	/**
-	 * @param manager
-	 * @param b
-	 */
-	void setCommandFireEvents(CommandManager manager, boolean b) {
-		try {
-			Field f = CommandManager.class.getDeclaredField("shouldCommandFireEvents"); //$NON-NLS-1$
-			f.setAccessible(true);
-			f.set(manager, Boolean.valueOf(b));
-		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException| IllegalAccessException  e) {
-			e.printStackTrace();
-		}
-	}
 }
