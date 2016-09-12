@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2012, 2015s Eclipse Foundation and others.
+  Copyright (c) 2012, 2016 Eclipse Foundation and others.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
 
   Contributors:
      Igor Fedorenko - initial implementation
-     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474544
+     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474544, 501288
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -19,12 +19,7 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.ui.bindings.tests</artifactId>
-  <version>0.10.0-SNAPSHOT</version>
+  <version>0.10.100-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
-
-  <properties>
-  	<!-- Test not ready for Surefire -->
-  	<skipTests>true</skipTests>
-  </properties>
 
 </project>

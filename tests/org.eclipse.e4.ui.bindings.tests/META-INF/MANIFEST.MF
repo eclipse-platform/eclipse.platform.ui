@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: UI Bindings Tests
 Bundle-SymbolicName: org.eclipse.e4.ui.bindings.tests
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.10.100.qualifier
 Bundle-Activator: org.eclipse.e4.ui.bindings.tests.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
