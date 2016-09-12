@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,18 +90,18 @@ public class KeyDispatcherTest {
 	private CallHandler twoStrokeHandler;
 
 	private void defineCommands(IEclipseContext context) {
-		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
+		ECommandService cs = workbenchContext
+				.get(ECommandService.class);
 		Category category = cs.defineCategory(TEST_CAT1, "CAT1", null);
 		cs.defineCommand(TEST_ID1, "ID1", null, category, null);
 		cs.defineCommand(TEST_ID2, "ID2", null, category, null);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
-		EHandlerService hs = (EHandlerService) workbenchContext
-				.get(EHandlerService.class.getName());
+		EHandlerService hs = workbenchContext
+				.get(EHandlerService.class);
 		handler = new CallHandler();
 		hs.activateHandler(TEST_ID1, handler);
-		EBindingService bs = (EBindingService) workbenchContext
-				.get(EBindingService.class.getName());
+		EBindingService bs = workbenchContext
+				.get(EBindingService.class);
 		TriggerSequence seq = bs.createSequence("CTRL+A");
 		Binding db = createDefaultBinding(bs, seq, cmd);
 		bs.activateBinding(db);
@@ -143,8 +143,8 @@ public class KeyDispatcherTest {
 			c.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
 		}
 
-		EContextService cs = (EContextService) context
-				.get(EContextService.class.getName());
+		EContextService cs = context
+				.get(EContextService.class);
 		cs.activateContext(ID_DIALOG_AND_WINDOW);
 		cs.activateContext(ID_WINDOW);
 	}

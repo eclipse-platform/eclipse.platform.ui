@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -58,10 +58,8 @@ public class BindingCreateTest {
 	}
 
 	public void setupTestVars() {
-		ECommandService cs = (ECommandService) workbenchContext
-				.get(ECommandService.class.getName());
-		bs = (EBindingService) workbenchContext
-				.get(EBindingService.class.getName());
+		ECommandService cs = workbenchContext.get(ECommandService.class);
+		bs = workbenchContext.get(EBindingService.class);
 
 		cmd = cs.createCommand(TEST_ID1, null);
 		emptySeq = bs.createSequence("");
