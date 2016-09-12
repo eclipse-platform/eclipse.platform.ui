@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,11 +33,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -51,6 +56,7 @@ import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -58,26 +64,32 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.progress.ProgressManager.JobMonitor;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 
@@ -92,14 +104,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	static final String IMPORTED_SOURCES = SmartImportRootWizardPage.class.getName() + ".knownSources"; //$NON-NLS-1$
 
+	// Root
 	private File selection;
-	private boolean detectNestedProjects = true;
-	private boolean configureProjects = true;
-	private Set<IWorkingSet> workingSets;
-	private ControlDecoration rootDirectoryTextDecorator;
-	private WorkingSetConfigurationBlock workingSetsBlock;
-
 	private Combo rootDirectoryText;
+	private ControlDecoration rootDirectoryTextDecorator;
 	// Proposal part
 	private CheckboxTreeViewer tree;
 	private ControlDecoration proposalSelectionDecorator;
@@ -107,6 +115,45 @@ public class SmartImportRootWizardPage extends WizardPage {
 	private Set<File> notAlreadyExistingProjects;
 	private Label selectionSummary;
 	protected Map<File, List<ProjectConfigurator>> potentialProjects = Collections.emptyMap();
+	// Configuration part
+	private boolean detectNestedProjects = true;
+	private boolean configureProjects = true;
+	// Working sets
+	private Set<IWorkingSet> workingSets;
+	private WorkingSetConfigurationBlock workingSetsBlock;
+	// Progress monitor
+	protected Supplier<ProgressMonitorPart> wizardProgressMonitor = new Supplier<ProgressMonitorPart>() {
+		private ProgressMonitorPart progressMonitorPart;
+		@Override
+		public ProgressMonitorPart get() {
+			if (progressMonitorPart == null) {
+				try {
+					getWizard().getContainer().run(false, true, monitor -> {
+						if (monitor instanceof ProgressMonitorPart) {
+							progressMonitorPart = (ProgressMonitorPart) monitor;
+						}
+					});
+				} catch (InvocationTargetException ite) {
+					IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+							DataTransferMessages.SmartImportWizardPage_scanProjectsFailed, ite.getCause());
+					StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+				} catch (InterruptedException operationCanceled) {
+					Thread.interrupted();
+				}
+			}
+			return progressMonitorPart;
+		}
+	};
+
+	private Job refreshProposalsJob;
+	private JobMonitor jobMonitor;
+	private DelegateProgressMonitorInUIThreadAndPreservingFocus delegateMonitor;
+	private SelectionListener cancelWorkListener = new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			stopAndDisconnectCurrentWork();
+		}
+	};
 
 	private class FolderForProjectsLabelProvider extends CellLabelProvider implements IColorProvider {
 		public String getText(Object o) {
@@ -225,11 +272,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		createInputSelectionOptions(res);
 
-
-		Composite proposalParent = new Composite(res, SWT.NONE);
-		proposalParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
-		proposalParent.setLayout(new FillLayout());
-		createProposalsGroup(proposalParent);
+		GridData proposalsGroupLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		proposalsGroupLayoutData.verticalIndent = 12;
+		createProposalsGroup(res).setLayoutData(proposalsGroupLayoutData);
 
 		createConfigurationOptions(res);
 
@@ -283,6 +328,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 						expandSelectedArchive();
 					}
 				}
+				validatePage();
 				refreshProposals();
 			}
 
@@ -423,7 +469,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	/**
 	 * @param res
 	 */
-	private void createProposalsGroup(Composite parent) {
+	private Composite createProposalsGroup(Composite parent) {
 		Composite res = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(res);
 		PatternFilter patternFilter = new PatternFilter();
@@ -568,6 +614,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 		});
 		tree.setInput(Collections.emptyMap());
+
+		return res;
 	}
 
 	protected void validatePage() {
@@ -587,7 +635,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 			setErrorMessage(this.rootDirectoryTextDecorator.getDescriptionText());
 		} else {
 			this.rootDirectoryTextDecorator.hide();
-			setErrorMessage(null);
 		}
 		setPageComplete(isPageComplete());
 	}
@@ -619,6 +666,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	public void setInitialImportRoot(File directoryOrArchive) {
 		this.selection = directoryOrArchive;
 		this.rootDirectoryText.setText(directoryOrArchive.getAbsolutePath());
+		refreshProposals();
 	}
 
 	/**
@@ -686,49 +734,135 @@ public class SmartImportRootWizardPage extends WizardPage {
 	}
 
 	private void refreshProposals() {
-		try {
-			if (sourceIsValid()) {
-				Point initialSelection = rootDirectoryText.getSelection();
-				getContainer().run(true, true, new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						SmartImportRootWizardPage.this.potentialProjects = getWizard().getImportJob()
-								.getImportProposals(monitor);
-						if (!potentialProjects.containsKey(getWizard().getImportJob().getRoot())) {
-							potentialProjects.put(getWizard().getImportJob().getRoot(), Collections.emptyList());
-						}
-
-						SmartImportRootWizardPage.this.notAlreadyExistingProjects = new HashSet<>(
-								potentialProjects.keySet());
-						SmartImportRootWizardPage.this.alreadyExistingProjects = new HashSet<>();
-						for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-							IPath location = project.getLocation();
-							if (location == null) {
-								continue;
-							}
-							SmartImportRootWizardPage.this.notAlreadyExistingProjects.remove(location.toFile());
-							SmartImportRootWizardPage.this.alreadyExistingProjects.add(location.toFile());
-						}
+		stopAndDisconnectCurrentWork();
+		SmartImportRootWizardPage.this.potentialProjects = Collections.emptyMap();
+		SmartImportRootWizardPage.this.notAlreadyExistingProjects = Collections.emptySet();
+		SmartImportRootWizardPage.this.alreadyExistingProjects = Collections.emptySet();
+		proposalsUpdated();
+		// compute new state
+		if (sourceIsValid()) {
+			tree.getControl().setEnabled(false);
+			TreeItem computingItem = new TreeItem(tree.getTree(), SWT.DEFAULT);
+			computingItem
+					.setText(NLS.bind(DataTransferMessages.SmartImportJob_inspecting, selection.getAbsolutePath()));
+			final SmartImportJob importJob = getWizard().getImportJob();
+			refreshProposalsJob = new Job(
+					NLS.bind(DataTransferMessages.SmartImportJob_inspecting, selection.getAbsolutePath())) {
+				@Override
+				public IStatus run(IProgressMonitor monitor) {
+					SmartImportRootWizardPage.this.potentialProjects = importJob.getImportProposals(monitor);
+					if (monitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
 					}
-				});
-				// restore selection as getContainer().run(...) looses it
-				rootDirectoryText.setSelection(initialSelection);
-			} else {
-				SmartImportRootWizardPage.this.potentialProjects = Collections.emptyMap();
-				SmartImportRootWizardPage.this.notAlreadyExistingProjects = Collections.emptySet();
-				SmartImportRootWizardPage.this.alreadyExistingProjects = Collections.emptySet();
+					if (!potentialProjects.containsKey(importJob.getRoot())) {
+						potentialProjects.put(importJob.getRoot(), Collections.emptyList());
+					}
+
+					SmartImportRootWizardPage.this.notAlreadyExistingProjects = new HashSet<>(
+							potentialProjects.keySet());
+					SmartImportRootWizardPage.this.alreadyExistingProjects = new HashSet<>();
+					for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+						IPath location = project.getLocation();
+						if (location == null) {
+							continue;
+						}
+						SmartImportRootWizardPage.this.notAlreadyExistingProjects.remove(location.toFile());
+						SmartImportRootWizardPage.this.alreadyExistingProjects.add(location.toFile());
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			Control previousFocusControl = tree.getControl().getDisplay().getFocusControl();
+			if (previousFocusControl == null) {
+				previousFocusControl = rootDirectoryText;
 			}
-			tree.setInput(potentialProjects);
-			tree.setCheckedElements(this.notAlreadyExistingProjects.toArray());
-		} catch (InvocationTargetException ite) {
-			this.selection = null;
-			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, DataTransferMessages.SmartImportWizardPage_scanProjectsFailed,
-					ite.getCause());
-			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
-		} catch (InterruptedException operationCanceled) {
+			Point initialSelection = rootDirectoryText.getSelection();
+			wizardProgressMonitor.get().attachToCancelComponent(null);
+			wizardProgressMonitor.get().setVisible(true);
+			// restore focus and selection because IWizardDialog.run(...) and
+			// attachToCancelComponent take them
+			previousFocusControl.setFocus();
+			rootDirectoryText.setSelection(initialSelection);
+			ToolItem stopButton = getStopButton(wizardProgressMonitor.get());
+			stopButton.addSelectionListener(this.cancelWorkListener);
+			jobMonitor = ProgressManager.getInstance().progressFor(refreshProposalsJob);
+			delegateMonitor = new DelegateProgressMonitorInUIThreadAndPreservingFocus(wizardProgressMonitor.get());
+			jobMonitor.addProgressListener(delegateMonitor);
+			refreshProposalsJob.setPriority(Job.INTERACTIVE);
+			refreshProposalsJob.setUser(true);
+			refreshProposalsJob.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					Control control = tree.getControl();
+					if (!control.isDisposed()) {
+						control.getDisplay().asyncExec(() -> {
+							IStatus result = event.getResult();
+							if (!control.isDisposed() && result.isOK()) {
+								computingItem.dispose();
+								if (sourceIsValid() && getWizard().getImportJob() == importJob) {
+									proposalsUpdated();
+								}
+								tree.getTree().setEnabled(true);
+							} else if (result.getCode() == IStatus.CANCEL) {
+								computingItem.setText(DataTransferMessages.SmartImportProposals_inspecitionCanceled);
+							} else if (result.getCode() == IStatus.ERROR) {
+								computingItem.setText(
+										NLS.bind(DataTransferMessages.SmartImportProposals_errorWhileInspecting,
+												result.getMessage()));
+							}
+							if (!wizardProgressMonitor.get().isDisposed()
+									&& refreshProposalsJob.getState() == Job.NONE) {
+								wizardProgressMonitor.get().setVisible(false);
+							}
+						});
+					}
+				}
+			});
+			refreshProposalsJob.schedule(0);
 		}
+	}
+
+	private static ToolItem getStopButton(ProgressMonitorPart part) {
+		for (Control control : part.getChildren()) {
+			if (control instanceof ToolBar) {
+				for (ToolItem item : ((ToolBar) control).getItems()) {
+					if (item.getToolTipText().equals(JFaceResources.getString("ProgressMonitorPart.cancelToolTip"))) { //$NON-NLS-1$ ))
+						return item;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private void stopAndDisconnectCurrentWork() {
+		if (refreshProposalsJob != null) {
+			refreshProposalsJob.cancel();
+		}
+	}
+
+	private void proposalsUpdated() {
+		tree.setInput(potentialProjects);
+		tree.setCheckedElements(this.notAlreadyExistingProjects.toArray());
 		proposalsSelectionChanged();
-		SmartImportRootWizardPage.this.validatePage();
+		validatePage();
+	}
+
+	@Override
+	public void dispose() {
+		stopAndDisconnectCurrentWork();
+		getStopButton(wizardProgressMonitor.get()).removeSelectionListener(this.cancelWorkListener);
+		super.dispose();
+	}
+
+	/**
+	 * Only made public for testing purpose
+	 *
+	 * @return the Wizard progress monitor
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public ProgressMonitorPart getWizardProgressMonitor() {
+		return this.wizardProgressMonitor.get();
 	}
 
 }

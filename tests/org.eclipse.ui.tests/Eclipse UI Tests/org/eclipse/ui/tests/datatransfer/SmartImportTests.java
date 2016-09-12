@@ -23,12 +23,20 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
 
 /**
  * @since 3.12
@@ -116,6 +124,7 @@ public class SmartImportTests extends UITestCase {
 		return null;
 	}
 
+	@Test
 	public void testImport6Projects() throws IOException, OperationCanceledException, InterruptedException {
 		URL url = FileLocator
 				.toFileURL(getClass().getResource("/data/org.eclipse.datatransferArchives/ProjectsArchive.zip"));
@@ -124,6 +133,7 @@ public class SmartImportTests extends UITestCase {
 		assertEquals(6, ResourcesPlugin.getWorkspace().getRoot().getProjects().length);
 	}
 
+	@Test
 	public void testImportModularProjectsWithSameName()
 			throws IOException, OperationCanceledException, InterruptedException {
 		URL url = FileLocator
@@ -142,5 +152,53 @@ public class SmartImportTests extends UITestCase {
 		assertTrue(implProjectNames.contains("impl"));
 		assertTrue(implProjectNames.contains("module2_impl"));
 		assertTrue(implProjectNames.contains("module3_impl"));
+	}
+
+	@Test
+	public void testCancelWizardCancelsJob() {
+		SmartImportWizard wizard = new SmartImportWizard();
+		wizard.setInitialImportSource(File.listRoots()[0]);
+		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		dialog.setBlockOnOpen(false);
+		dialog.open();
+		SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
+		ProgressMonitorPart wizardProgressMonitor = page.getWizardProgressMonitor();
+		assertNotNull("Wizard should have a progress monitor", wizardProgressMonitor);
+		ToolItem stopButton = getStopButton(wizardProgressMonitor);
+		processEventsUntil(new Condition() {
+			@Override
+			public boolean compute() {
+				return stopButton.isEnabled();
+			}
+		}, 10000);
+		assertTrue("Wizard should show progress monitor", wizardProgressMonitor.isVisible());
+		assertTrue("Stop button should be enabled", stopButton.isEnabled());
+		Event clickButtonEvent = new Event();
+		clickButtonEvent.widget = stopButton;
+		clickButtonEvent.item = stopButton;
+		clickButtonEvent.type = SWT.Selection;
+		clickButtonEvent.doit = true;
+		clickButtonEvent.stateMask = SWT.BUTTON1;
+		stopButton.notifyListeners(SWT.Selection, clickButtonEvent);
+		processEventsUntil(new Condition() {
+			@Override
+			public boolean compute() {
+				return !wizardProgressMonitor.isVisible();
+			}
+		}, 10000);
+		assertFalse("Progress monitor should be hidden within 10 seconds", wizardProgressMonitor.isVisible());
+	}
+
+	private static ToolItem getStopButton(ProgressMonitorPart part) {
+		for (Control control : part.getChildren()) {
+			if (control instanceof ToolBar) {
+				for (ToolItem item : ((ToolBar) control).getItems()) {
+					if (item.getToolTipText().equals(JFaceResources.getString("ProgressMonitorPart.cancelToolTip"))) { //$NON-NLS-1$ ))
+						return item;
+					}
+				}
+			}
+		}
+		return null;
 	}
 }
