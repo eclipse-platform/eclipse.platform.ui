@@ -16,9 +16,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ DefineCommandsTest.class, HandlerTest.class })
-public class CommandTestSuite {
+@SuiteClasses({
+	DefineCommandsTest.class,
+	HandlerTest.class })
 
-	public CommandTestSuite() {
-	}
+public class CommandTestSuite {
 }
