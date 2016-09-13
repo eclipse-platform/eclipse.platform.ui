@@ -457,11 +457,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	static class ClassMultiValidator extends MultiValidator {
 
 		private final JavaClass javaClass;
-		private final IObservableValue observedPackage;
-		private final IObservableValue observedClass;
+		private final IObservableValue<String> observedPackage;
+		private final IObservableValue<String> observedClass;
 
-		public ClassMultiValidator(JavaClass javaClass, final IObservableValue observedPackage,
-				final IObservableValue observedClass) {
+		public ClassMultiValidator(JavaClass javaClass, final IObservableValue<String> observedPackage,
+				final IObservableValue<String> observedClass) {
 			this.javaClass = javaClass;
 			this.observedPackage = observedPackage;
 			this.observedClass = observedClass;
@@ -474,8 +474,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		 */
 		@Override
 		protected IStatus validate() {
-			final String classPackage = (String) observedPackage.getValue();
-			final String className = (String) observedClass.getValue();
+			final String classPackage = observedPackage.getValue();
+			final String className = observedClass.getValue();
 
 			final IPackageFragment packageFragment = javaClass.getFragmentRoot().getPackageFragment(classPackage);
 
