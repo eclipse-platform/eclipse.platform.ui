@@ -520,6 +520,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				fMarkersToBreakpoints.remove(breakpoint.getMarker());
 			}
 			fireUpdate(remove, null, REMOVED);
+			refreshTriggerpointDisplay();
 			IWorkspaceRunnable r = new IWorkspaceRunnable() {
 				@Override
 				public void run(IProgressMonitor montitor) throws CoreException {
