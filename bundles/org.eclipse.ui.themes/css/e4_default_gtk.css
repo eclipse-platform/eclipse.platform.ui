@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *     Mickael Istria <mistria@redhat.com> - 325937
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501250
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
@@ -127,10 +128,6 @@ Form {
 	h-bottom-keyline-2-color: #eaeaea;
 	h-bottom-keyline-1-color: #eaeaea;
 
-	/* We also have to force the background mode (the
-   * Label/ToolBar in the heading should inherit it).
-   */
-	swt-background-mode: 'force';
 }
 
 
