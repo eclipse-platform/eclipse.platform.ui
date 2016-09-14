@@ -55,17 +55,6 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	private static final String TRIGGEREPOINT = "org.eclipse.debug.core.triggerpoint"; //$NON-NLS-1$
 
 	/**
-	 * Persisted breakpoint marker attribute (value
-	 * <code>"org.eclipse.debug.core.triggerpointactive"</code>). The attribute
-	 * is a <code>boolean</code> corresponding to whether the trigger breakpoint
-	 * is active or not.
-	 *
-	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
-	 * @since 3.11
-	 */
-	private static final String TRIGGEREPOINTACTIVE = "org.eclipse.debug.core.triggerpointactive"; //$NON-NLS-1$
-
-	/**
 	 * Creates a breakpoint.
 	 *
 	 * @since 3.8
@@ -115,6 +104,9 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	public void setEnabled(boolean enabled) throws CoreException {
 		if (enabled != isEnabled()) {
 			setAttribute(ENABLED, enabled);
+			if (isTriggerPoint()) {
+				DebugPlugin.getDefault().getBreakpointManager().refreshTriggerpointDisplay();
+			}
 		}
 	}
 
@@ -211,26 +203,6 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 			}
 		}
 
-	}
-
-	/**
-	 * @see IBreakpoint#isTriggerPointActive()
-	 * @since 3.11
-	 */
-	@Override
-	public boolean isTriggerPointActive() throws CoreException {
-		return getMarker().getAttribute(TRIGGEREPOINTACTIVE, false);
-	}
-
-	/**
-	 * @see IBreakpoint#setTriggerPointActive(boolean)
-	 * @since 3.11
-	 */
-	@Override
-	public void setTriggerPointActive(boolean triggerPointActive) throws CoreException {
-		if (isTriggerPointActive() != triggerPointActive) {
-			setAttribute(TRIGGEREPOINTACTIVE, triggerPointActive);
-		}
 	}
 
 	/**
@@ -428,12 +400,5 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
     		throw new DebugException(e.getStatus());
     	}
     }
-
-	/**
-	 * @since 3.11
-	 */
-	protected static String getTriggerActivePropertyString() {
-		return TRIGGEREPOINTACTIVE;
-	}
 
 }

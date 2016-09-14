@@ -1403,7 +1403,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		IBreakpoint[] triggerPointBreakpointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
 		for (IBreakpoint iBreakpoint : triggerPointBreakpointList) {
 			iBreakpoint.setTriggerPoint(false);
-			iBreakpoint.setTriggerPointActive(false);
 		}
 		refreshTriggerpointDisplay();
 	}
@@ -1415,7 +1414,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		for (IBreakpoint iBreakpoint : fTriggerPointBreakpointList) {
 			try {
-				if (iBreakpoint.isTriggerPointActive()) {
+				if (iBreakpoint.isEnabled()) {
 					return false;
 				}
 			} catch (CoreException e) {
@@ -1425,27 +1424,22 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		return true;
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#revisitTriggerpoints()
-	 * This version of implementation deactivate all the active trigger points
-	 */
 	@Override
-	public void deActivateTriggerpoints(IBreakpoint[] triggerointList) {
-		if (triggerointList == null) {
-			triggerointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+	public void enableTriggerpoints(IBreakpoint[] triggerpoints, boolean enable) {
+		IBreakpoint[] triggerpointList = triggerpoints;
+		if (triggerpoints == null) {
+			triggerpointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
 		}
-		for (IBreakpoint iBreakpoint : triggerointList) {
+		for (IBreakpoint iBreakpoint : triggerpointList) {
 			try {
-				if (iBreakpoint.isTriggerPointActive()) {
-					iBreakpoint.setTriggerPointActive(false);
+				IMarker m = iBreakpoint.getMarker();
+				if (m != null && m.exists()) {
+					iBreakpoint.setEnabled(enable);
 				}
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
-		refreshTriggerpointDisplay();
 	}
 
 	@Override

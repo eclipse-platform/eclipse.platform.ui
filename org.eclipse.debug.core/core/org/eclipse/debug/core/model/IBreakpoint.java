@@ -244,33 +244,6 @@ public interface IBreakpoint extends IAdaptable {
 	public default void setTriggerPoint(boolean trigger) throws CoreException {
 	}
 
-	/**
-	 * Sets if the breakpoint is a trigger point and is active. If trigger point
-	 * is active <code>TRIGGERPOINTACTIVE</code> attribute on this breakpoint's
-	 * marker is set to <code>true</code>.
-	 *
-	 * @param active whether this breakpoint is to be treated as trigger point
-	 *            for the workspace
-	 * @exception CoreException if unable to set the associated attribute on
-	 *                this breakpoint's underlying marker.
-	 * @since 3.11
-	 */
-	public default void setTriggerPointActive(boolean active) throws CoreException {
-	}
-
-	/**
-	 * Returns whether this breakpoint is a trigger point and is active.
-	 *
-	 * @return whether this breakpoint is a trigger point and it is active
-	 * @exception CoreException if unable to access the associated attribute on
-	 *                this breakpoint's underlying marker
-	 * @since 3.11
-	 */
-	public default boolean isTriggerPointActive() throws CoreException {
-		return false;
-	}
-
-
 }
 
 
