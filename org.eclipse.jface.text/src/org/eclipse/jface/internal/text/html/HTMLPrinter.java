@@ -166,7 +166,7 @@ public class HTMLPrinter {
 
 		pageProlog.append("<html>"); //$NON-NLS-1$
 
-		appendStyleSheet(pageProlog, styleSheet, fgRGB, bgRGB);
+		appendStyleSheet(pageProlog, styleSheet);
 
 		appendColors(pageProlog, fgRGB, bgRGB);
 
@@ -223,16 +223,16 @@ public class HTMLPrinter {
 		}
 	}
 
-	private static void appendStyleSheet(StringBuffer buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
+	private static void appendStyleSheet(StringBuffer buffer, String styleSheet) {
 		if (styleSheet == null)
 			return;
 		
 		// workaround for https://bugs.eclipse.org/318243
 		StringBuffer fg= new StringBuffer();
-		appendColor(fg, fgRGB);
+		appendColor(fg, FG_COLOR_RGB);
 		styleSheet= styleSheet.replaceAll("InfoText", fg.toString()); //$NON-NLS-1$
 		StringBuffer bg= new StringBuffer();
-		appendColor(bg, bgRGB);
+		appendColor(bg, BG_COLOR_RGB);
 		styleSheet= styleSheet.replaceAll("InfoBackground", bg.toString()); //$NON-NLS-1$
 
 		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
