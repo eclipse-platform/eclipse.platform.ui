@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497591
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497591, 501250
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
@@ -108,11 +108,6 @@ Form {
 	h-hover-light-color: #505050;
 	h-bottom-keyline-2-color: #eaeaea;
 	h-bottom-keyline-1-color: #eaeaea;
-
-	/* We also have to force the background mode (the
-   * Label/ToolBar in the heading should inherit it).
-   */
-	swt-background-mode: 'force';
 }
 
 
