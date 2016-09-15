@@ -22,8 +22,6 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyShadowVisibleSWTHandler extends AbstractCSSPropertySWTHandler {
 
 
-	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyShadowVisibleSWTHandler();
-
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {

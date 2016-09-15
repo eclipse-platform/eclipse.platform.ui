@@ -17,8 +17,6 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyTabMarginOffsetHandler extends
 		AbstractCSSPropertySWTHandler {
 
-	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyTabMarginOffsetHandler();
-
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {

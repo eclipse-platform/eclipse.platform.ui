@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyInnerKeylineSWTHandler extends AbstractCSSPropertySWTHandler {
-	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyInnerKeylineSWTHandler();
 
 	@Override
 	protected void applyCSSProperty(Control control, String property,

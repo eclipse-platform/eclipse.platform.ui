@@ -26,8 +26,6 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSPropertyHandler {
 
-	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyShowCloseHandler();
-
 	private static final String CSS_CTABITEM_SELECTED_SHOW_CLOSE_LISTENER_KEY = "CSS_CTABFOLDER_SELECTED_SHOW_CLOSE_LISTENER_KEY"; //$NON-NLS-1$
 
 	@Override

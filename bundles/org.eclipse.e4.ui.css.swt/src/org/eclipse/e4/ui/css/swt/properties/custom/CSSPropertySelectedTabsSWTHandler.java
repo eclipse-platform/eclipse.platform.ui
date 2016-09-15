@@ -21,8 +21,6 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertySelectedTabsSWTHandler extends AbstractCSSPropertySWTHandler {
 
 
-	public static final ICSSPropertyHandler INSTANCE = new CSSPropertySelectedTabsSWTHandler();
-
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {

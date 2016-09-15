@@ -18,8 +18,6 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyUnselectedImageVisibleSWTHandler extends
 		AbstractCSSPropertySWTHandler {
 
-	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyUnselectedImageVisibleSWTHandler();
-
 	@Override
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
