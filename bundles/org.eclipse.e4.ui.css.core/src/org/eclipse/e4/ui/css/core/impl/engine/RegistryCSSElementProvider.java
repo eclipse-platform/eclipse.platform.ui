@@ -21,7 +21,6 @@ import java.util.WeakHashMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.Element;
@@ -42,10 +41,6 @@ public class RegistryCSSElementProvider implements IElementProvider {
 	private Map<Class<?>, IElementProvider> providerCache = Collections
 			.synchronizedMap(new WeakHashMap<Class<?>, IElementProvider>());
 
-	public RegistryCSSElementProvider() {
-		this(RegistryFactory.getRegistry());
-	}
-
 	public RegistryCSSElementProvider(IExtensionRegistry registry) {
 		// FIXME: add a registry listener to refresh caches; but would need to
 		// add a dispose() to IElementProvider
@@ -64,8 +59,7 @@ public class RegistryCSSElementProvider implements IElementProvider {
 		for (Class<?> type : computeElementTypeLookup(o.getClass())) {
 			String typeName = type.getName();
 			for (String extpt : extpts) {
-				for (IConfigurationElement ce : registry
-						.getConfigurationElementsFor(extpt)) {
+				for (IConfigurationElement ce : registry.getConfigurationElementsFor(extpt)) {
 					if ("provider".equals(ce.getName())) {
 						for (IConfigurationElement ce2 : ce.getChildren()) {
 							if (typeName.equals(ce2.getAttribute("class"))) {
