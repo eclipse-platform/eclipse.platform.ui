@@ -24,8 +24,9 @@ public class CSSPropertyTabHeightHandler extends
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (! (control instanceof CTabFolder))
+		if (! (control instanceof CTabFolder)) {
 			return;
+		}
 
 		if ((value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) &&
 				( ((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) ) {

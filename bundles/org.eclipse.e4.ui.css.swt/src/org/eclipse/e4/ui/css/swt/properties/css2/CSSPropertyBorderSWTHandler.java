@@ -37,8 +37,9 @@ public class CSSPropertyBorderSWTHandler extends
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
 			Composite parent = control.getParent();
-			if (parent == null)
+			if (parent == null) {
 				return true;
+			}
 			CSSBorderProperties border = (CSSBorderProperties) control
 					.getData(CSSSWTConstants.CONTROL_CSS2BORDER_KEY);
 			if (border == null) {
@@ -75,8 +76,9 @@ public class CSSPropertyBorderSWTHandler extends
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
 			Composite parent = control.getParent();
-			if (parent != null)
+			if (parent != null) {
 				parent.redraw();
+			}
 		}
 	}
 

@@ -38,7 +38,9 @@ public class TextElement extends ControlElement {
 	public void initialize() {
 		super.initialize();
 
-		if (!dynamicEnabled) return;
+		if (!dynamicEnabled) {
+			return;
+		}
 
 		Text text = getText();
 		text.addModifyListener(modifyListener);
@@ -48,7 +50,9 @@ public class TextElement extends ControlElement {
 	public void dispose() {
 		super.dispose();
 
-		if (!dynamicEnabled) return;
+		if (!dynamicEnabled) {
+			return;
+		}
 
 		Text text = getText();
 		if (!text.isDisposed()) {

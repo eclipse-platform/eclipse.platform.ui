@@ -344,7 +344,9 @@ public final class URI
     for (int i = 0, len = chars.length(); i < len; i++)
     {
       char c = chars.charAt(i);
-      if (c < 64) result |= (1L << c);
+      if (c < 64) {
+		result |= (1L << c);
+	}
     }
     return result;
   }
@@ -357,7 +359,9 @@ public final class URI
     for (int i = 0, len = chars.length(); i < len; i++)
     {
       char c = chars.charAt(i);
-      if (c >= 64 && c < 128) result |= (1L << (c - 64));
+      if (c >= 64 && c < 128) {
+		result |= (1L << (c - 64));
+	}
     }
     return result;
   }
@@ -366,7 +370,9 @@ public final class URI
   // bitmask.
   private static boolean matches(char c, long highBitmask, long lowBitmask)
   {
-    if (c >= 128) return false;
+    if (c >= 128) {
+		return false;
+	}
     return c < 64 ?
       ((1L << c) & lowBitmask) != 0 :
       ((1L << (c - 64)) & highBitmask) != 0;
@@ -730,7 +736,9 @@ public final class URI
     {
       hierarchical = false;
       j = uri.indexOf(FRAGMENT_SEPARATOR, i);
-      if (j == -1) j = uri.length();
+      if (j == -1) {
+		j = uri.length();
+	}
       authority = uri.substring(i, j);
       i = j;
     }
@@ -765,7 +773,9 @@ public final class URI
 
         if (i < uri.length() && uri.charAt(i) == SEGMENT_SEPARATOR)
         {
-          if (!segmentsRemain(uri, ++i)) segmentList.add(SEGMENT_EMPTY);
+          if (!segmentsRemain(uri, ++i)) {
+			segmentList.add(SEGMENT_EMPTY);
+		}
         }
       }
       segments = new String[segmentList.size()];
@@ -775,7 +785,9 @@ public final class URI
     if (i < uri.length() && uri.charAt(i) == QUERY_SEPARATOR)
     {
       j = uri.indexOf(FRAGMENT_SEPARATOR, ++i);
-      if (j == -1) j = uri.length();
+      if (j == -1) {
+		j = uri.length();
+	}
       query = uri.substring(i, j);
       i = j;
     }
@@ -805,11 +817,15 @@ public final class URI
   private static int find(String s, int i, long highBitmask, long lowBitmask)
   {
     int len = s.length();
-    if (i >= len) return len;
+    if (i >= len) {
+		return len;
+	}
 
     for (i = i > 0 ? i : 0; i < len; i++)
     {
-      if (matches(s.charAt(i), highBitmask, lowBitmask)) break;
+      if (matches(s.charAt(i), highBitmask, lowBitmask)) {
+		break;
+	}
     }
     return i;
   }
@@ -1217,7 +1233,9 @@ public final class URI
    */
   public static boolean validDevice(String value)
   {
-    if (value == null) return true;
+    if (value == null) {
+		return true;
+	}
     int len = value.length();
     return len > 0 && value.charAt(len - 1) == DEVICE_IDENTIFIER &&
       !contains(value, SEGMENT_END_HI, SEGMENT_END_LO);
@@ -1249,10 +1267,14 @@ public final class URI
    */
   public static boolean validSegments(String[] value)
   {
-    if (value == null) return false;
+    if (value == null) {
+		return false;
+	}
     for (int i = 0, len = value.length; i < len; i++)
     {
-      if (!validSegment(value[i])) return false;
+      if (!validSegment(value[i])) {
+		return false;
+	}
     }
     return true;
   }
@@ -1262,10 +1284,14 @@ public final class URI
   // segment.
   private static String firstInvalidSegment(String[] value)
   {
-    if (value == null) return null;
+    if (value == null) {
+		return null;
+	}
     for (int i = 0, len = value.length; i < len; i++)
     {
-      if (!validSegment(value[i])) return value[i];
+      if (!validSegment(value[i])) {
+		return value[i];
+	}
     }
     return null;
   }
@@ -1307,7 +1333,9 @@ public final class URI
   {
     for (int i = 0, len = s.length(); i < len; i++)
     {
-      if (matches(s.charAt(i), highBitmask, lowBitmask)) return true;
+      if (matches(s.charAt(i), highBitmask, lowBitmask)) {
+		return true;
+	}
     }
     return false;
   }
@@ -1576,8 +1604,12 @@ public final class URI
   @Override
   public boolean equals(Object object)
   {
-    if (this == object) return true;
-    if (!(object instanceof URI)) return false;
+    if (this == object) {
+		return true;
+	}
+    if (!(object instanceof URI)) {
+		return false;
+	}
     URI uri = (URI) object;
 
     return hashCode == uri.hashCode() &&
@@ -1593,10 +1625,14 @@ public final class URI
   // given uri.
   private boolean segmentsEqual(URI uri)
   {
-    if (segments.length != uri.segmentCount()) return false;
+    if (segments.length != uri.segmentCount()) {
+		return false;
+	}
     for (int i = 0, len = segments.length; i < len; i++)
     {
-      if (!segments[i].equals(uri.segment(i))) return false;
+      if (!segments[i].equals(uri.segment(i))) {
+		return false;
+	}
     }
     return true;
   }
@@ -1649,7 +1685,9 @@ public final class URI
    */
   public String userInfo()
   {
-    if (!hasAuthority()) return null;
+    if (!hasAuthority()) {
+		return null;
+	}
 
     int i = authority.indexOf(USER_INFO_SEPARATOR);
     return i < 0 ? null : authority.substring(0, i);
@@ -1661,7 +1699,9 @@ public final class URI
    */
   public String host()
   {
-    if (!hasAuthority()) return null;
+    if (!hasAuthority()) {
+		return null;
+	}
 
     int i = authority.indexOf(USER_INFO_SEPARATOR);
     int j = authority.indexOf(PORT_SEPARATOR);
@@ -1674,7 +1714,9 @@ public final class URI
    */
   public String port()
   {
-    if (!hasAuthority()) return null;
+    if (!hasAuthority()) {
+		return null;
+	}
 
     int i = authority.indexOf(PORT_SEPARATOR);
     return i < 0 ? null : authority.substring(i + 1);
@@ -1737,7 +1779,9 @@ public final class URI
   public String lastSegment()
   {
     int len = segments.length;
-    if (len == 0) return null;
+    if (len == 0) {
+		return null;
+	}
     return segments[len - 1];
   }
 
@@ -1751,14 +1795,20 @@ public final class URI
    */
   public String path()
   {
-    if (!hasPath()) return null;
+    if (!hasPath()) {
+		return null;
+	}
 
     StringBuffer result = new StringBuffer();
-    if (hasAbsolutePath()) result.append(SEGMENT_SEPARATOR);
+    if (hasAbsolutePath()) {
+		result.append(SEGMENT_SEPARATOR);
+	}
 
     for (int i = 0, len = segments.length; i < len; i++)
     {
-      if (i != 0) result.append(SEGMENT_SEPARATOR);
+      if (i != 0) {
+		result.append(SEGMENT_SEPARATOR);
+	}
       result.append(segments[i]);
     }
     return result.toString();
@@ -1784,24 +1834,36 @@ public final class URI
    */
   public String devicePath()
   {
-    if (!hasPath()) return null;
+    if (!hasPath()) {
+		return null;
+	}
 
     StringBuffer result = new StringBuffer();
 
     if (hasAuthority())
     {
-      if (!isArchive()) result.append(AUTHORITY_SEPARATOR);
+      if (!isArchive()) {
+		result.append(AUTHORITY_SEPARATOR);
+	}
       result.append(authority);
 
-      if (hasDevice()) result.append(SEGMENT_SEPARATOR);
+      if (hasDevice()) {
+		result.append(SEGMENT_SEPARATOR);
+	}
     }
 
-    if (hasDevice()) result.append(device);
-    if (hasAbsolutePath()) result.append(SEGMENT_SEPARATOR);
+    if (hasDevice()) {
+		result.append(device);
+	}
+    if (hasAbsolutePath()) {
+		result.append(SEGMENT_SEPARATOR);
+	}
 
     for (int i = 0, len = segments.length; i < len; i++)
     {
-      if (i != 0) result.append(SEGMENT_SEPARATOR);
+      if (i != 0) {
+		result.append(SEGMENT_SEPARATOR);
+	}
       result.append(segments[i]);
     }
     return result.toString();
@@ -1952,7 +2014,9 @@ public final class URI
     }
 
     // an absolute URI needs no resolving
-    if (!isRelative()) return this;
+    if (!isRelative()) {
+		return this;
+	}
 
     // note: isRelative() -> hierarchical
 
@@ -2062,14 +2126,19 @@ public final class URI
       {
         // special care must be taken for a root's parent reference: it is
         // either ignored or the symbolic reference itself is pushed
-        if (preserveRootParents) stack[sp++] = segment;
+        if (preserveRootParents) {
+			stack[sp++] = segment;
+		}
       }
       else
       {
         // unless we're already accumulating root parent references,
         // parent references simply pop the last segment descended
-        if (SEGMENT_PARENT.equals(stack[sp - 1])) stack[sp++] = segment;
-        else sp--;
+        if (SEGMENT_PARENT.equals(stack[sp - 1])) {
+			stack[sp++] = segment;
+		} else {
+			sp--;
+		}
       }
     }
     else if (!SEGMENT_EMPTY.equals(segment) && !SEGMENT_SELF.equals(segment))
@@ -2115,20 +2184,28 @@ public final class URI
   public URI deresolve(URI base, boolean preserveRootParents,
                        boolean anyRelPath, boolean shorterRelPath)
   {
-    if (!base.isHierarchical() || base.isRelative()) return this;
+    if (!base.isHierarchical() || base.isRelative()) {
+		return this;
+	}
 
-    if (isRelative()) return this;
+    if (isRelative()) {
+		return this;
+	}
 
     // note: these assertions imply that neither this nor the base URI has a
     // relative path; thus, both have either an absolute path or no path
 
     // different scheme: need complete, absolute URI
-    if (!scheme.equalsIgnoreCase(base.scheme())) return this;
+    if (!scheme.equalsIgnoreCase(base.scheme())) {
+		return this;
+	}
 
     // since base must be hierarchical, and since a non-hierarchical URI
     // must have both scheme and opaque part, the complete absolute URI is
     // needed to resolve to a non-hierarchical URI
-    if (!isHierarchical()) return this;
+    if (!isHierarchical()) {
+		return this;
+	}
 
     String newAuthority = authority;
     String newDevice = device;
@@ -2276,7 +2353,9 @@ public final class URI
     // query, to distinguish it from a current document reference
     if (upCount + downCount == 0)
     {
-      if (query == null) return new String[] { SEGMENT_SELF };
+      if (query == null) {
+		return new String[] { SEGMENT_SELF };
+	}
       return NO_SEGMENTS;
     }
 
@@ -2297,7 +2376,9 @@ public final class URI
       throw new IllegalStateException("collapse relative path");
     }
 
-    if (!hasCollapsableSegments(preserveRootParents)) return segments();
+    if (!hasCollapsableSegments(preserveRootParents)) {
+		return segments();
+	}
 
     // use a stack to accumulate segments
     int segmentCount = segments.length;
@@ -2355,7 +2436,9 @@ public final class URI
       {
         if (hasAuthority())
         {
-          if (!isArchive()) result.append(AUTHORITY_SEPARATOR);
+          if (!isArchive()) {
+			result.append(AUTHORITY_SEPARATOR);
+		}
           result.append(authority);
         }
 
@@ -2365,11 +2448,15 @@ public final class URI
           result.append(device);
         }
 
-        if (hasAbsolutePath()) result.append(SEGMENT_SEPARATOR);
+        if (hasAbsolutePath()) {
+			result.append(SEGMENT_SEPARATOR);
+		}
 
         for (int i = 0, len = segments.length; i < len; i++)
         {
-          if (i != 0) result.append(SEGMENT_SEPARATOR);
+          if (i != 0) {
+			result.append(SEGMENT_SEPARATOR);
+		}
           result.append(segments[i]);
         }
 
@@ -2399,7 +2486,9 @@ public final class URI
   String toString(boolean includeSimpleForm)
   {
     StringBuffer result = new StringBuffer();
-    if (includeSimpleForm) result.append(toString());
+    if (includeSimpleForm) {
+		result.append(toString());
+	}
     result.append("\n hierarchical: ");
     result.append(isHierarchical());
     result.append("\n       scheme: ");
@@ -2411,10 +2500,14 @@ public final class URI
     result.append("\n absolutePath: ");
     result.append(hasAbsolutePath());
     result.append("\n     segments: ");
-    if (segments.length == 0) result.append("<empty>");
+    if (segments.length == 0) {
+		result.append("<empty>");
+	}
     for (int i = 0, len = segments.length; i < len; i++)
     {
-      if (i > 0) result.append("\n               ");
+      if (i > 0) {
+		result.append("\n               ");
+	}
       result.append(segments[i]);
     }
     result.append("\n        query: ");
@@ -2442,7 +2535,9 @@ public final class URI
    */
   public String toFileString()
   {
-    if (!isFile()) return null;
+    if (!isFile()) {
+		return null;
+	}
 
     StringBuffer result = new StringBuffer();
     char separator = File.separatorChar;
@@ -2453,15 +2548,23 @@ public final class URI
       result.append(separator);
       result.append(authority);
 
-      if (hasDevice()) result.append(separator);
+      if (hasDevice()) {
+		result.append(separator);
+	}
     }
 
-    if (hasDevice()) result.append(device);
-    if (hasAbsolutePath()) result.append(separator);
+    if (hasDevice()) {
+		result.append(device);
+	}
+    if (hasAbsolutePath()) {
+		result.append(separator);
+	}
 
     for (int i = 0, len = segments.length; i < len; i++)
     {
-      if (i != 0) result.append(separator);
+      if (i != 0) {
+		result.append(separator);
+	}
       result.append(segments[i]);
     }
 
@@ -2506,7 +2609,9 @@ public final class URI
       throw new IllegalArgumentException("invalid segment: " + segment);
     }
 
-    if (!isHierarchical()) return this;
+    if (!isHierarchical()) {
+		return this;
+	}
 
     // absolute path or no path -> absolute path
     boolean newAbsolutePath = !hasRelativePath();
@@ -2543,7 +2648,9 @@ public final class URI
       throw new IllegalArgumentException(s);
     }
 
-    if (!isHierarchical()) return this;
+    if (!isHierarchical()) {
+		return this;
+	}
 
     // absolute path or no path -> absolute path
     boolean newAbsolutePath = !hasRelativePath();
@@ -2574,7 +2681,9 @@ public final class URI
    */
   public URI trimSegments(int i)
   {
-    if (!isHierarchical() || i < 1) return this;
+    if (!isHierarchical() || i < 1) {
+		return this;
+	}
 
     String[] newSegments = NO_SEGMENTS;
     int len = segments.length - i;
@@ -2613,7 +2722,9 @@ public final class URI
   public String fileExtension()
   {
     int len = segments.length;
-    if (len == 0) return null;
+    if (len == 0) {
+		return null;
+	}
 
     String lastSegment = segments[len - 1];
     int i = lastSegment.lastIndexOf(FILE_EXTENSION_SEPARATOR);
@@ -2642,10 +2753,14 @@ public final class URI
     }
 
     int len = segments.length;
-    if (len == 0) return this;
+    if (len == 0) {
+		return this;
+	}
 
     String lastSegment = segments[len - 1];
-    if (SEGMENT_EMPTY.equals(lastSegment)) return this;
+    if (SEGMENT_EMPTY.equals(lastSegment)) {
+		return this;
+	}
     StringBuffer newLastSegment = new StringBuffer(lastSegment);
     newLastSegment.append(FILE_EXTENSION_SEPARATOR);
     newLastSegment.append(fileExtension);
@@ -2666,11 +2781,15 @@ public final class URI
   public URI trimFileExtension()
   {
     int len = segments.length;
-    if (len == 0) return this;
+    if (len == 0) {
+		return this;
+	}
 
     String lastSegment = segments[len - 1];
     int i = lastSegment.lastIndexOf(FILE_EXTENSION_SEPARATOR);
-    if (i < 0) return this;
+    if (i < 0) {
+		return this;
+	}
 
     String newLastSegment = lastSegment.substring(0, i);
     String[] newSegments = new String[len];
@@ -2718,7 +2837,9 @@ public final class URI
 
     // Get what's left of the segments after trimming the prefix.
     String[] tailSegments = getTailSegments(oldPrefix);
-    if (tailSegments == null) return null;
+    if (tailSegments == null) {
+		return null;
+	}
 
     // If the new prefix has segments, it is not the root absolute path,
     // and we need to drop the trailing empty segment and append the tail
@@ -2767,18 +2888,24 @@ public final class URI
 
     // If the prefix has no segments, then it is the root absolute path, and
     // we know this is an absolute path, too.
-    if (prefix.segmentCount() == 0) return segments;
+    if (prefix.segmentCount() == 0) {
+		return segments;
+	}
 
     // This must have no fewer segments than the prefix.  Since the prefix
     // is not the root absolute path, its last segment is empty; all others
     // must match.
     int i = 0;
     int segmentsToCompare = prefix.segmentCount() - 1;
-    if (segments.length <= segmentsToCompare) return null;
+    if (segments.length <= segmentsToCompare) {
+		return null;
+	}
 
     for (; i < segmentsToCompare; i++)
     {
-      if (!segments[i].equals(prefix.segment(i))) return null;
+      if (!segments[i].equals(prefix.segment(i))) {
+		return null;
+	}
     }
 
     // The prefix really is a prefix of this.  If this has just one more,
@@ -2881,7 +3008,9 @@ public final class URI
   // the first or # as a fragment separator, or encode them all.
   private static String encodeURI(String uri, boolean ignoreEscaped, int fragmentLocationStyle)
   {
-    if (uri == null) return null;
+    if (uri == null) {
+		return null;
+	}
 
     StringBuffer result = new StringBuffer();
 
@@ -2922,7 +3051,9 @@ public final class URI
   // iff it already begins a valid escape sequence.
   private static String encode(String value, long highBitmask, long lowBitmask, boolean ignoreEscaped)
   {
-    if (value == null) return null;
+    if (value == null) {
+		return null;
+	}
 
     StringBuffer result = null;
 
@@ -2978,7 +3109,9 @@ public final class URI
    */
   public static String decode(String value)
   {
-    if (value == null) return null;
+    if (value == null) {
+		return null;
+	}
 
     int i = value.indexOf('%');
     if (i < 0)

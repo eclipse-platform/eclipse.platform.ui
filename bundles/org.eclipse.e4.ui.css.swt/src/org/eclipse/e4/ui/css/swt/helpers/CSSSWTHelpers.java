@@ -65,16 +65,19 @@ public class CSSSWTHelpers {
 			public void paintControl(PaintEvent e) {
 				CSSBorderProperties border = (CSSBorderProperties) control
 						.getData(CSSSWTConstants.CONTROL_CSS2BORDER_KEY);
-				if (border == null)
+				if (border == null) {
 					return;
+				}
 				int width = border.getWidth();
 				GC gc = e.gc;
 				CSSPrimitiveValue value = border.getColor();
-				if (value == null)
+				if (value == null) {
 					return;
+				}
 				Color color = convert(value);
-				if (color != null)
+				if (color != null) {
 					gc.setForeground(color);
+				}
 				Rectangle rect = control.getBounds();
 				if (width == 0) {
 					Rectangle rect1 = new Rectangle(rect.x - width, rect.y
@@ -109,8 +112,9 @@ public class CSSSWTHelpers {
 	}
 
 	public static int getLineStyle(String borderStyle) {
-		if (borderStyle == null)
+		if (borderStyle == null) {
 			return SWT.LINE_SOLID;
+		}
 		// one hidden dotted dashed solid double groove ridge inset outset
 		if ("dashed".equals(borderStyle)) {
 			return SWT.LINE_DASH;

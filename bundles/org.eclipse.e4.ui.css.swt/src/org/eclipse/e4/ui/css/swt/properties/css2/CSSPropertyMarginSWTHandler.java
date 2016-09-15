@@ -60,8 +60,9 @@ public class CSSPropertyMarginSWTHandler extends
 			CSSValueList valueList = (CSSValueList) value;
 			int length = valueList.getLength();
 
-			if(length < 2 || length > 4)
+			if(length < 2 || length > 4) {
 				throw new CSSException("Invalid margin property list length");
+			}
 
 			switch (length) {
 			case 4:
@@ -149,33 +150,40 @@ public class CSSPropertyMarginSWTHandler extends
 	}
 
 	private GridLayout getLayout(Control control) {
-		if (control == null)
+		if (control == null) {
 			return null;
+		}
 		Composite parent = control.getParent();
-		if (parent == null)
+		if (parent == null) {
 			return null;
-		if(parent.getData(CSSSWTConstants.MARGIN_WRAPPER_KEY) == null)
+		}
+		if(parent.getData(CSSSWTConstants.MARGIN_WRAPPER_KEY) == null) {
 			return null;
+		}
 
 		Layout layout = parent.getLayout();
-		if (layout == null || ! (layout instanceof GridLayout))
+		if (layout == null || ! (layout instanceof GridLayout)) {
 			return null;
+		}
 		return (GridLayout) layout;
 	}
 
 	private void setMargin(Object element, int side, CSSValue value, String pseudo) {
-		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
+		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return;
+		}
 		int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
 
 		Widget widget = SWTElementHelpers.getWidget(element);
 
-		if(! (widget instanceof Control))
+		if(! (widget instanceof Control)) {
 			return;
+		}
 
 		GridLayout layout = getLayout((Control) widget);
-		if(layout == null)
+		if(layout == null) {
 			return;
+		}
 		switch (side) {
 		case TOP:
 			layout.marginTop = pixelValue;

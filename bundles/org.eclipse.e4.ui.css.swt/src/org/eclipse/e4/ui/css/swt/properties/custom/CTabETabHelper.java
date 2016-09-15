@@ -33,8 +33,9 @@ public class CTabETabHelper {
 	}
 
 	public static void setShowClose(Item item, boolean bool) {
-		if(item instanceof CTabItem)
+		if(item instanceof CTabItem) {
 			((CTabItem) item).setShowClose(bool);
+		}
 	}
 
 	public static Control getParent(Widget widget) {
