@@ -294,22 +294,21 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	List<String> getVariables();
 
 	/**
-	 * Returns the value of the '<em><b>Properties</b></em>' map. The key is of
-	 * type {@link java.lang.String}, and the value is of type
-	 * {@link java.lang.String}, <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * Returns the value of the '<em><b>Properties</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>: Add more detailed documentation by editing
-	 * this comment in org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
-	 * 
 	 * @return the value of the '<em>Properties</em>' map.
-	 * @model mapType=
-	 *        "org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
 	 * @generated
-	 * @since 1.2
 	 */
 	Map<String, String> getProperties();
 
