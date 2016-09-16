@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 501590
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -17,7 +18,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablesSource;
 
@@ -46,9 +46,9 @@ import org.eclipse.ui.ISaveablesSource;
  * service, then the extension is <i>visible</i>. Visible extensions may only
  * be configured through <b>viewerContentBinding</b>s. </li>
  *
- * <li><a name="active"><i>active</i>: The active state may be set to a default using the
- * <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users may
- * toggle the <i>active</i> state through the "Available customizations"
+ * <li><a name="active"><i>active</i>: The active state may be set to a default
+ * using the <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users
+ * may toggle the <i>active</i> state through the "Filters and Customization"
  * dialog. Clients may also configure the active extensions using
  * {@link INavigatorActivationService#activateExtensions(String[], boolean)} or
  * {@link INavigatorActivationService#deactivateExtensions(String[], boolean)}

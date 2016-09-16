@@ -806,7 +806,7 @@ their containing content extension is also bound to the viewer
 The following example demonstrates both approaches. The &quot;TestNestedActionProvider&quot; will be 
 given an opporunity to contribute to the menu and &lt;code&gt;org.eclipse.ui.IActionBars&lt;/code&gt; only
 when the &quot;org.eclipse.ui.tests.navigator.testContent&quot; extension is &lt;i&gt;visible&lt;/i&gt; and &lt;i&gt;active&lt;/i&gt;.
-If the user deactivates the test extension from the &quot;Available customizations&quot; dialog, then the
+If the user deactivates the test extension from the &quot;Filters and Customization&quot; dialog, then the
 nested action provider will no longer be given the opportunity to contribute. 
 &lt;pre&gt;
 &lt;extension  

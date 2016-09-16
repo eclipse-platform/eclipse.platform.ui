@@ -9,7 +9,7 @@
          &lt;p&gt;
 The &lt;b&gt;viewer&lt;/b&gt; element defines the configuration for a common viewer. The extension
 may provide a custom popup menu id, override whether the viewer provides link with
-editor support, provides a filter dialog, and/or provides an &quot;Available customizations&quot; 
+editor support, provides a filter dialog, and/or provides an &quot;Filters and Customization&quot; 
 dialog. In addition, nested configuration elements give full control over the structure
 and behavior of the popup context menu.
 &lt;p&gt;
@@ -592,12 +592,12 @@ The following example demonstrates the standard properties available to the view
             popupMenuId=&quot;org.eclipse.ui.tests.navigator.TestView#PopupMenu&quot;
             viewerId=&quot;org.eclipse.ui.tests.navigator.TestView&quot;&gt;
          &lt;options&gt; 
-            &lt;!-- Hide the &quot;Available Extensions&quot; tab in the &quot;Available Customizations&quot; 
+            &lt;!-- Hide the &quot;Available Extensions&quot; tab in the &quot;Filters and Customization&quot; 
                  dialog (available from the &quot;Filters&quot; action --&gt;
             &lt;property
                   name=&quot;org.eclipse.ui.navigator.hideAvailableExtensionsTab&quot;
                   value=&quot;true&quot;/&gt;
-            &lt;!-- Hide the &quot;Available Customizations&quot; dialog completely. This includes hiding the 
+            &lt;!-- Hide the &quot;Filters and Customization&quot; dialog completely. This includes hiding the 
               filters and the available content extensions. --&gt;
             &lt;property
                   name=&quot;org.eclipse.ui.navigator.hideAvailableCustomizationsDialog&quot;

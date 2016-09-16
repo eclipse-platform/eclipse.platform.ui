@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501590
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -25,17 +26,16 @@ import org.eclipse.jface.action.Separator;
 public interface INavigatorViewerDescriptor {
 
 	/**
-	 * {@value} (boolean): True indicates the
-	 * "Available Extensions" tab in the "Available Customizations" dialog
-	 * should not be available for the user (defaults to <b>false</b>).
+	 * {@value} (boolean): True indicates the "Available Extensions" tab in the
+	 * "Filters and Customization" dialog should not be available for the user
+	 * (defaults to <b>false</b>).
 	 *
 	 */
 	String PROP_HIDE_AVAILABLE_EXT_TAB = "org.eclipse.ui.navigator.hideAvailableExtensionsTab"; //$NON-NLS-1$
 
 	/**
-	 * {@value} (boolean): True
-	 * indicates the entire "Available Customizations" dialog should not be
-	 * available for the user (defaults to <b>false</b>).
+	 * {@value} (boolean): True indicates the entire "Filters and Customization"
+	 * dialog should not be available for the user (defaults to <b>false</b>).
 	 */
 	String PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG = "org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"; //$NON-NLS-1$
 
