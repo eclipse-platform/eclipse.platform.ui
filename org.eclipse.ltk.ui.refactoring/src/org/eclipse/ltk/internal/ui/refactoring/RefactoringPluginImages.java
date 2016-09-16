@@ -51,27 +51,27 @@ public class RefactoringPluginImages {
 	/** @since 3.2 */
 	public static final ImageDescriptor DESC_WIZBAN_CREATE_SCRIPT= createUnManaged(T_WIZBAN, "create_rescript_wiz.png"); 			//$NON-NLS-1$
 
-	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.gif"; 	//$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.png"; 	//$NON-NLS-1$
 
 	/** @since 3.2 */
-	public static final String IMG_OBJS_REFACTORING_DATE= NAME_PREFIX + "date_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_DATE= NAME_PREFIX + "date_obj.png"; //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final String IMG_OBJS_REFACTORING_TIME= NAME_PREFIX + "time_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_TIME= NAME_PREFIX + "time_obj.png"; //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_ELCL_FILTER= createUnManaged(T_ELCL, "filter_ps.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DLCL_FILTER= createUnManaged(T_DLCL, "filter_ps.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_FILTER= createUnManaged(T_ELCL, "filter_ps.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DLCL_FILTER= createUnManaged(T_DLCL, "filter_ps.png"); //$NON-NLS-1$
 
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_ELCL_SORT_PROJECT= createUnManaged(T_ELCL, "prj_mode.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_SORT_PROJECT= createUnManaged(T_ELCL, "prj_mode.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_DLCL_SORT_PROJECT= createUnManaged(T_DLCL, "prj_mode.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DLCL_SORT_PROJECT= createUnManaged(T_DLCL, "prj_mode.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_ELCL_SORT_DATE= createUnManaged(T_ELCL, "date_mode.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_SORT_DATE= createUnManaged(T_ELCL, "date_mode.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_DLCL_SORT_DATE= createUnManaged(T_DLCL, "date_mode.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DLCL_SORT_DATE= createUnManaged(T_DLCL, "date_mode.png"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_FATAL= createManaged(T_OBJ, IMG_OBJS_REFACTORING_FATAL);
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_ERROR= createManaged(T_OBJ, IMG_OBJS_REFACTORING_ERROR);
@@ -79,20 +79,20 @@ public class RefactoringPluginImages {
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_INFO= createManaged(T_OBJ, IMG_OBJS_REFACTORING_INFO);
 
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_OBJS_REFACTORING_DATE= createUnManaged(T_OBJ, "date_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_REFACTORING_DATE= createUnManaged(T_OBJ, "date_obj.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_OBJS_REFACTORING_TIME= createUnManaged(T_OBJ, "time_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_REFACTORING_TIME= createUnManaged(T_OBJ, "time_obj.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_OBJS_REFACTORING= createUnManaged(T_OBJ, "refactoring_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_REFACTORING= createUnManaged(T_OBJ, "refactoring_obj.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_OBJS_REFACTORING_COLL= createUnManaged(T_OBJ, "refactorings_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_REFACTORING_COLL= createUnManaged(T_OBJ, "refactorings_obj.png"); //$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_OVR_WORKSPACE= createUnManaged(T_OVR, "workspace_ovr.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_WORKSPACE= createUnManaged(T_OVR, "workspace_ovr.png"); //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= createUnManaged(T_OBJ, "change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= createUnManaged(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= createUnManaged(T_OBJ, "file_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= createUnManaged(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= createUnManaged(T_OBJ, "change.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= createUnManaged(T_OBJ, "composite_change.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= createUnManaged(T_OBJ, "file_change.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= createUnManaged(T_OBJ, "text_edit.png"); //$NON-NLS-1$
 
 	/**
 	 * Returns the image managed under the given key in this registry.
