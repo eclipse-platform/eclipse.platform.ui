@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -64,6 +65,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getWindows <em>Windows</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getTrimBars <em>Trim Bars</em>}</li>
  * </ul>
  *
  * @generated
@@ -218,6 +220,16 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @ordered
 	 */
 	protected EList<MWindow> windows;
+
+	/**
+	 * The cached value of the '{@link #getTrimBars() <em>Trim Bars</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTrimBars()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MTrimBar> trimBars;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -410,6 +422,18 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<MTrimBar> getTrimBars() {
+		if (trimBars == null) {
+			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this, AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS);
+		}
+		return trimBars;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 */
 	@Override
 	public void updateLocalization() {
@@ -451,6 +475,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
 				return ((InternalEList<?>)getWindows()).basicRemove(otherEnd, msgs);
+			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+				return ((InternalEList<?>)getTrimBars()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -486,6 +512,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return getBindingContexts();
 			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
 				return getWindows();
+			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+				return getTrimBars();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -530,6 +558,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				getWindows().clear();
 				getWindows().addAll((Collection<? extends MWindow>)newValue);
 				return;
+			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+				getTrimBars().clear();
+				getTrimBars().addAll((Collection<? extends MTrimBar>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -569,6 +601,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
 				getWindows().clear();
 				return;
+			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+				getTrimBars().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -603,6 +638,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return bindingContexts != null && !bindingContexts.isEmpty();
 			case AdvancedPackageImpl.PERSPECTIVE__WINDOWS:
 				return windows != null && !windows.isEmpty();
+			case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
+				return trimBars != null && !trimBars.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -547,13 +547,22 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
+	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__TRIM_BARS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+
+	/**
 	 * The number of structural features of the '<em>Perspective</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+	public static final int PERSPECTIVE_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
 	 * The operation id for the '<em>Update Localization</em>' operation.
@@ -1200,6 +1209,20 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#getTrimBars <em>Trim Bars</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Trim Bars</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#getTrimBars()
+	 * @see #getPerspective()
+	 * @generated
+	 */
+	public EReference getPerspective_TrimBars() {
+		return (EReference)perspectiveEClass.getEStructuralFeatures().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack <em>Perspective Stack</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1259,6 +1282,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 		perspectiveEClass = createEClass(PERSPECTIVE);
 		createEReference(perspectiveEClass, PERSPECTIVE__WINDOWS);
+		createEReference(perspectiveEClass, PERSPECTIVE__TRIM_BARS);
 
 		perspectiveStackEClass = createEClass(PERSPECTIVE_STACK);
 
@@ -1333,6 +1357,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 		initEClass(perspectiveEClass, MPerspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPerspective_Windows(), theBasicPackage.getWindow(), null, "windows", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getPerspective_TrimBars(), theBasicPackage.getTrimBar(), null, "trimBars", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -1395,6 +1420,14 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference PERSPECTIVE__WINDOWS = eINSTANCE.getPerspective_Windows();
+
+		/**
+		 * The meta object literal for the '<em><b>Trim Bars</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference PERSPECTIVE__TRIM_BARS = eINSTANCE.getPerspective_TrimBars();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.

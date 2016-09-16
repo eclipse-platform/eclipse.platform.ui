@@ -503,13 +503,22 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__LOCALIZED_DESCRIPTION = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
+	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__TRIM_BARS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 18;
+
+	/**
 	 * The number of structural features of the '<em>Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 18;
+	public static final int PART_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The operation id for the '<em>Update Localization</em>' operation.
@@ -844,6 +853,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int COMPOSITE_PART__LOCALIZED_DESCRIPTION = PART__LOCALIZED_DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMPOSITE_PART__TRIM_BARS = PART__TRIM_BARS;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1204,6 +1222,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__LOCALIZED_DESCRIPTION = PART__LOCALIZED_DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__TRIM_BARS = PART__TRIM_BARS;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -4212,6 +4239,20 @@ public class BasicPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getTrimBars <em>Trim Bars</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Trim Bars</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPart#getTrimBars()
+	 * @see #getPart()
+	 * @generated
+	 */
+	public EReference getPart_TrimBars() {
+		return (EReference)partEClass.getEStructuralFeatures().get(5);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MCompositePart <em>Composite Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4526,6 +4567,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(partEClass, PART__CLOSEABLE);
 		createEAttribute(partEClass, PART__DESCRIPTION);
 		createEAttribute(partEClass, PART__LOCALIZED_DESCRIPTION);
+		createEReference(partEClass, PART__TRIM_BARS);
 
 		compositePartEClass = createEClass(COMPOSITE_PART);
 
@@ -4666,6 +4708,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getPart_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEAttribute(getPart_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPart_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MPart.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getPart_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(compositePartEClass, MCompositePart.class, "CompositePart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -4765,6 +4808,14 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute PART__LOCALIZED_DESCRIPTION = eINSTANCE.getPart_LocalizedDescription();
+
+		/**
+		 * The meta object literal for the '<em><b>Trim Bars</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference PART__TRIM_BARS = eINSTANCE.getPart_TrimBars();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl <em>Composite Part</em>}' class.
