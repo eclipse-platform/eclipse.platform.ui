@@ -1,12 +1,13 @@
 /**
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016  IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
+ *      vogella GmbH - ongoing maintenance
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -20,13 +21,13 @@ import java.util.Map;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This is the root element for all UI Model elements, defining attribtues common
+ * This is the root element for all UI Model elements, defining common attributes
  * to every element; the element's id as well as three general storage elements:
  * <ul>
- * <li>Tags: This is a set of strings which can be used to stereotype a particular
- * element. Tags may be specified in element searches and can also be referred
+ * <li>Tags: This is a set of strings which can be used to classify a particular
+ * element. Tags can be specified in element searches and can also be referred
  * to in the CSS styling definition.</li>
- * <li>PersistedState: A string to string map used to store information that nneds
+ * <li>PersistedState: A string to string map used to store information that needs
  * to be persisted between sessions.</li>
  * <li>TransientData: A string to object map which can be used to store runtime data
  * relevant to a particular model element.</li>
@@ -88,8 +89,8 @@ public interface MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This is a Strimg to String map that can be used to persist information avout model
-	 * elements across program sessions. The format of the 'value' string is defined by
+	 * This is a String to String map that can be used to persist information about model
+	 * elements across program restarts. The format of the 'value' string is defined by
 	 * the code setting the value into the map. Information stored in this map is part of
 	 * the model and will be persisted and restored as such.
 	 * </p>
