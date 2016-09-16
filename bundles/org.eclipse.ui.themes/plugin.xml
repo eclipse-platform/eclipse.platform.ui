@@ -57,7 +57,7 @@
          os="solaris">
    </theme>
       <theme
-            basestylesheeturi="css/e4_default_win7.css"
+            basestylesheeturi="css/e4_default_win.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
             label="%theme.win"
             os="win32"
