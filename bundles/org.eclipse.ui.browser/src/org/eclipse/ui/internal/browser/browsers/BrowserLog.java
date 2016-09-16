@@ -61,10 +61,9 @@ public class BrowserLog {
 		if (logFileName == null) {
 			return;
 		}
-		Writer outWriter = null;
-		try {
-			outWriter = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(logFileName, true), StandardCharsets.UTF_8));
+		try (Writer outWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(logFileName, true), StandardCharsets.UTF_8))) {
+
 			if (newSession) {
 				newSession = false;
 				outWriter.write(LN + formatter.format(new Date())
@@ -72,15 +71,7 @@ public class BrowserLog {
 			}
 			outWriter.write(formatter.format(new Date()) + " " + message + LN); //$NON-NLS-1$
 			outWriter.flush();
-			outWriter.close();
-		} catch (Exception e) {
-			if (outWriter != null) {
-				try {
-					outWriter.close();
-				} catch (IOException ioe) {
-					// ignore
-				}
-			}
+		} catch (IOException e) {
 		}
 	}
 }
