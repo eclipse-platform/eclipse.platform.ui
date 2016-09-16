@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [266030] Allow "others" working set
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.workingsets;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -53,6 +59,18 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
+	/**
+	 * A key used by the Extension State Model to keep track of whether the
+	 * "Others" working set
+	 */
+	public static final String SHOW_OTHERS_WORKING_SET = EXTENSION_ID + ".showOthersWorkingSet"; //$NON-NLS-1$
+
+	/**
+	 * An object representing the "Others" working set, showing unassigned
+	 * content
+	 */
+	public static final Object OTHERS_WORKING_SET = new Object();
+
 	private WorkingSetHelper helper;
 	private IAggregateWorkingSet workingSetRoot;
 	private IExtensionStateModel extensionStateModel;
@@ -69,7 +87,6 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		}
 
 	};
-
 
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
@@ -100,12 +117,24 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			if (workingSet.isAggregateWorkingSet() && projectExplorer != null) {
 				switch (projectExplorer.getRootMode()) {
 					case ProjectExplorer.WORKING_SETS :
-						return ((IAggregateWorkingSet) workingSet).getComponents();
-					case ProjectExplorer.PROJECTS :
+						IWorkingSet[] activeWorkingSets = ((IAggregateWorkingSet) workingSet).getComponents();
+					Object[] res;
+					if (extensionStateModel.getBooleanProperty(SHOW_OTHERS_WORKING_SET)) {
+							res = new Object[activeWorkingSets.length + 1];
+							System.arraycopy(activeWorkingSets, 0, res, 0, activeWorkingSets.length);
+							res[activeWorkingSets.length] = OTHERS_WORKING_SET;
+						} else {
+							res = activeWorkingSets;
+						}
+					return res;
+				case ProjectExplorer.PROJECTS:
 						return getWorkingSetElements(workingSet);
 				}
 			}
 			return getWorkingSetElements(workingSet);
+		} else if (parentElement == OTHERS_WORKING_SET) {
+			Set<IProject> res = helper.getUnassignedProjects();
+			return res.toArray(new Object[res.size()]);
 		}
 		return NO_CHILDREN;
 	}
@@ -128,8 +157,11 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	}
 
 	@Override
-	public boolean hasChildren(Object element) {
-		return true;
+	public boolean hasChildren(Object parentElement) {
+		// since getChildren is a low-cost operation, we can use it
+		// to compute hasChildren. That should prevent the expand arrow
+		// to be shown when there's no content.
+		return getChildren(parentElement).length > 0;
 	}
 
 	@Override
@@ -165,6 +197,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 		private final IWorkingSet workingSet;
 		private final Map<IAdaptable, IAdaptable> parents = new WeakHashMap<IAdaptable, IAdaptable>();
+		private Set<IProject> unassignedProjects;
 
 		/**
 		 * Create a Helper class for the given working set
@@ -196,6 +229,18 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 					parents.put(elements[elementsIndex], workingSet);
 				}
 			}
+
+			unassignedProjects = new HashSet<>(Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects()));
+			for (Entry<IAdaptable, IAdaptable> tree : parents.entrySet()) {
+				unassignedProjects.remove(tree.getKey().getAdapter(IProject.class));
+			}
+		}
+
+		/**
+		 * @return projects that aren't part of a selected working set
+		 */
+		public Set<IProject> getUnassignedProjects() {
+			return unassignedProjects;
 		}
 
 		/**

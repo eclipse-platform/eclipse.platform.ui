@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Mickael Istria (Red Hat Inc.) - [266030] Allow "others" working set
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.plugin;
 
@@ -48,6 +49,7 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String WorkingSetRootModeActionGroup_Top_Level_Element_;
 	public static String WorkingSetRootModeActionGroup_Project_;
 	public static String WorkingSetRootModeActionGroup_Working_Set_;
+	public static String WorkingSetRootModeActionGroup_Show_Others_working_set;
 	public static String WorkingSetActionProvider_multipleWorkingSets;
 
 	public static String CopyAction_Cop_;
@@ -69,6 +71,8 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String OpenProjectAction_OpenExistingProject_desc;
 
 	public static String SelectProjectForFolderAction_SelectProject;
+
+	public static String workingSet_others;
 
 
 	static {

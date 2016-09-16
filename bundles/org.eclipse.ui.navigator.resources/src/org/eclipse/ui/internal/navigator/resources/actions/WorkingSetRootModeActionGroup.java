@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [266030] Allow "others" working set
  *******************************************************************************/
 
 package org.eclipse.ui.internal.navigator.resources.actions;
@@ -18,6 +19,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,9 +56,11 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	private boolean hasContributedToViewMenu = false;
 	private IAction workingSetsAction = null;
 	private IAction projectsAction = null;
+	private IAction othersWorkingSetAction = null;
 	private IAction[] actions;
-	private int currentSelection;
+	private int currentRadioSelection;
 	private MenuItem[] items;
+	private MenuItem othersWorkingSetItem;
 
 	private class TopLevelContentAction extends Action  {
 
@@ -131,45 +135,59 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 
 		for (int i = 0; i < actions.length; i++) {
 			final int j = i;
-
-			viewMenu.add(new ContributionItem() {
+			final IAction action = actions[i];
+			ContributionItem item = new ContributionItem() {
 
 				@Override
 				public void fill(Menu menu, int index) {
 
 					int style = SWT.CHECK;
-					if ((actions[j].getStyle() & IAction.AS_RADIO_BUTTON) != 0)
+					if ((action.getStyle() & IAction.AS_RADIO_BUTTON) != 0)
 						style = SWT.RADIO;
 
 					final MenuItem mi = new MenuItem(menu, style, index);
 					items[j] = mi;
-					mi.setText(actions[j].getText());
-					mi.setSelection(currentSelection == j);
-					mi.addSelectionListener(new SelectionAdapter() {
+					mi.setText(action.getText());
+					mi.setSelection(currentRadioSelection == j);
+					if (style == SWT.RADIO) {
+						mi.addSelectionListener(new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							if (currentSelection == j) {
-								items[currentSelection].setSelection(true);
-								return;
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								if (currentRadioSelection == j) {
+									items[currentRadioSelection].setSelection(true);
+									return;
+								}
+								actions[j].run();
+
+								// Update checked state
+								items[currentRadioSelection].setSelection(false);
+								currentRadioSelection = j;
+								items[currentRadioSelection].setSelection(true);
+								othersWorkingSetItem.setEnabled(othersWorkingSetAction.isEnabled());
 							}
-							actions[j].run();
+						});
+					} else {
+						mi.addSelectionListener(new SelectionAdapter() {
 
-							// Update checked state
-							items[currentSelection].setSelection(false);
-							currentSelection = j;
-							items[currentSelection].setSelection(true);
-						}
-
-					});
-
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								action.run();
+							}
+						});
+					}
+					if (action == othersWorkingSetAction) {
+						othersWorkingSetItem = mi;
+					}
+					mi.setEnabled(action.isEnabled());
 				}
 
 				@Override
 				public boolean isDynamic() {
 					return false;
 				}
-			});
+			};
+			viewMenu.add(item);
 		}
 	}
 
@@ -191,7 +209,31 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 				.getDefault().getImageRegistry().getDescriptor(
 						"full/obj16/workingsets.png")); //$NON-NLS-1$
 
-		return new IAction[] { projectsAction, workingSetsAction };
+		othersWorkingSetAction = new Action() {
+			@Override
+			public void run() {
+				stateModel.setBooleanProperty(
+						WorkingSetsContentProvider.SHOW_OTHERS_WORKING_SET,
+						!stateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_OTHERS_WORKING_SET));
+
+				structuredViewer.getControl().setRedraw(false);
+				try {
+					structuredViewer.refresh();
+				} finally {
+					structuredViewer.getControl().setRedraw(true);
+				}
+			}
+
+			@Override
+			public boolean isEnabled() {
+				return stateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
+			}
+		};
+		othersWorkingSetAction
+				.setText(NLS.bind(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Show_Others_working_set,
+						WorkbenchNavigatorMessages.workingSet_others));
+
+		return new IAction[] { projectsAction, workingSetsAction, othersWorkingSetAction };
 	}
 
 	/**
@@ -204,7 +246,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		if (actions == null)
 			actions = createActions();
 
-		currentSelection = showTopLevelWorkingSets ? 1 : 0;
+		currentRadioSelection = showTopLevelWorkingSets ? 1 : 0;
 		workingSetsAction.setChecked(showTopLevelWorkingSets);
 		projectsAction.setChecked(!showTopLevelWorkingSets);
 
