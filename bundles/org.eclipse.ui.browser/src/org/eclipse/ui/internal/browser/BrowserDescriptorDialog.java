@@ -18,12 +18,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -85,16 +81,13 @@ public class BrowserDescriptorDialog extends Dialog {
 		}
 		final Text text = new Text(comp, style);
 		if (multiLine) {
-			text.addTraverseListener(new TraverseListener() {
-				@Override
-				public void keyTraversed(TraverseEvent event) {
-					switch (event.detail) {
-					case SWT.TRAVERSE_RETURN:
-					case SWT.TRAVERSE_TAB_NEXT:
-					case SWT.TRAVERSE_TAB_PREVIOUS:
-						event.doit = true;
-						break;
-					}
+			text.addTraverseListener(event -> {
+				switch (event.detail) {
+				case SWT.TRAVERSE_RETURN:
+				case SWT.TRAVERSE_TAB_NEXT:
+				case SWT.TRAVERSE_TAB_PREVIOUS:
+					event.doit = true;
+					break;
 				}
 			});
 		}
@@ -113,12 +106,7 @@ public class BrowserDescriptorDialog extends Dialog {
 
 		text.setLayoutData(data);
 		if (listener != null)
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					listener.valueChanged(text.getText());
-				}
-			});
+			text.addModifyListener(e -> listener.valueChanged(text.getText()));
 		return text;
 	}
 
@@ -132,24 +120,18 @@ public class BrowserDescriptorDialog extends Dialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER_DIALOG);
 
 		SWTUtil.createLabel(composite, Messages.name).setFont(font);
-		browserNameTextfield = createText(composite, browser.getName(), new StringModifyListener() {
-			@Override
-			public void valueChanged(String s) {
-				browser.setName(s);
-				validateFields();
-			}
+		browserNameTextfield = createText(composite, browser.getName(), s -> {
+			browser.setName(s);
+			validateFields();
 		}, false);
 		browserNameTextfield.setFont(font);
 
 		new Label(composite, SWT.NONE);
 
 		SWTUtil.createLabel(composite, Messages.location).setFont(font);
-		browserLocationTextfield = createText(composite, browser.getLocation(), new StringModifyListener() {
-			@Override
-			public void valueChanged(String s) {
-				browser.setLocation(s);
-				validateFields();
-			}
+		browserLocationTextfield = createText(composite, browser.getLocation(), s -> {
+			browser.setLocation(s);
+			validateFields();
 		}, false);
 		browserLocationTextfield.setFont(font);
 
@@ -172,12 +154,8 @@ public class BrowserDescriptorDialog extends Dialog {
 		});
 
 		SWTUtil.createLabel(composite, Messages.parameters).setFont(font);
-		browserParametersTextfield = createText(composite, browser.getParameters(), new StringModifyListener() {
-			@Override
-			public void valueChanged(String s) {
-				browser.setParameters(s);
-			}
-		}, true);
+		browserParametersTextfield = createText(composite, browser.getParameters(), s -> browser.setParameters(s),
+				true);
 		browserParametersTextfield.setFont(font);
 
 		new Label(composite, SWT.NONE);

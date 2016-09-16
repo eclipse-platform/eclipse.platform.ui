@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,22 +52,20 @@ public class OpenBrowserHandler extends AbstractHandler {
 		final String tooltip = event.getParameter(PARAM_ID_TOOLTIP);
 
 		// Can be simplified once Bug 400932 is addressed
-		HandlerUtil.getActiveShellChecked(event).getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
-					IWebBrowser browser = browserSupport.createBrowser(
-							IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR, browserId,
-							name, tooltip);
-					browser.openURL(url); // Must open browser on UI thread
-				} catch (PartInitException ex) {
-					// Ideally, we would leave reporting this error to whoever executed the command.
-					// Alas, we cannot simply throw an ExecutionException, as opening the browser has to happen on the UI thread.
-					// Hence, this handler reports its own errors.
-					WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, url));
-				}
+		HandlerUtil.getActiveShellChecked(event).getDisplay().asyncExec(() -> {
+			try {
+				IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+				IWebBrowser browser = browserSupport.createBrowser(
+						IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR, browserId,
+						name, tooltip);
+				browser.openURL(url); // Must open browser on UI thread
+			} catch (PartInitException ex) {
+				// Ideally, we would leave reporting this error to whoever
+				// executed the command.
+				// Alas, we cannot simply throw an ExecutionException, as
+				// opening the browser has to happen on the UI thread.
+				// Hence, this handler reports its own errors.
+				WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, url));
 			}
 		});
 

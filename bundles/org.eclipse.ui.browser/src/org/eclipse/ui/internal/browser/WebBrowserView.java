@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -103,13 +102,7 @@ public class WebBrowserView extends ViewPart implements
 		if (listener != null)
 			return;
 
-		listener = new ISelectionListener() {
-			@Override
-			public void selectionChanged(IWorkbenchPart part,
-					ISelection selection) {
-				onSelectionChange(selection);
-			}
-		};
+		listener = (part, selection) -> onSelectionChange(selection);
 		getSite().getWorkbenchWindow().getSelectionService()
 				.addPostSelectionListener(listener);
 	}

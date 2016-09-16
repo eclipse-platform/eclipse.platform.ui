@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,16 +28,12 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -219,20 +215,17 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		// uncheck any other elements that might be checked and leave only the
 		// element checked to remain checked since one can only chose one
 		// brower at a time to be current.
-		tableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent e) {
-				checkNewDefaultBrowser(e.getElement());
-				checkedBrowser = (IBrowserDescriptor) e.getElement();
+		tableViewer.addCheckStateListener(e -> {
+			checkNewDefaultBrowser(e.getElement());
+			checkedBrowser = (IBrowserDescriptor) e.getElement();
 
-				// if no other browsers are checked, don't allow the single one
-				// currently checked to become unchecked, and lose a current
-				// browser. That is, don't permit unchecking if no other item
-				// is checked which is supposed to be the case.
-				Object[] obj = tableViewer.getCheckedElements();
-				if (obj.length == 0)
-					tableViewer.setChecked(e.getElement(), true);
-			}
+			// if no other browsers are checked, don't allow the single one
+			// currently checked to become unchecked, and lose a current
+			// browser. That is, don't permit unchecking if no other item
+			// is checked which is supposed to be the case.
+			Object[] obj = tableViewer.getCheckedElements();
+			if (obj.length == 0)
+				tableViewer.setChecked(e.getElement(), true);
 		});
 
 		// set a default, checked browser based on the current browser. If there
@@ -249,37 +242,26 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		}
 
 		tableViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						IStructuredSelection sele = ((IStructuredSelection) tableViewer
-								.getSelection());
-						boolean sel = sele.getFirstElement() != null &&
-								!(sele.getFirstElement() instanceof SystemBrowserDescriptor);
-						remove.setEnabled(sel);
-						edit.setEnabled(sel);
-					}
+				.addSelectionChangedListener(event -> {
+					IStructuredSelection sele = ((IStructuredSelection) tableViewer.getSelection());
+					boolean sel = sele.getFirstElement() != null
+							&& !(sele.getFirstElement() instanceof SystemBrowserDescriptor);
+					remove.setEnabled(sel);
+					edit.setEnabled(sel);
 				});
 
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection sel = ((IStructuredSelection) tableViewer
-						.getSelection());
-				Object firstElem = sel.getFirstElement();
-				if (firstElem != null && !(firstElem instanceof SystemBrowserDescriptor)) {
-					IBrowserDescriptor browser2 = (IBrowserDescriptor) sel
-							.getFirstElement();
-					IBrowserDescriptorWorkingCopy wc = browser2
-							.getWorkingCopy();
-					BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(
-							getShell(), wc);
-					if (dialog.open() != Window.CANCEL) {
-						try {
-							tableViewer.refresh(wc.save());
-						} catch (Exception ex) {
-							// ignore
-						}
+		tableViewer.addDoubleClickListener(event -> {
+			IStructuredSelection sel = ((IStructuredSelection) tableViewer.getSelection());
+			Object firstElem = sel.getFirstElement();
+			if (firstElem != null && !(firstElem instanceof SystemBrowserDescriptor)) {
+				IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
+				IBrowserDescriptorWorkingCopy wc = browser2.getWorkingCopy();
+				BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell(), wc);
+				if (dialog.open() != Window.CANCEL) {
+					try {
+						tableViewer.refresh(wc.save());
+					} catch (Exception ex) {
+						// ignore
 					}
 				}
 			}
@@ -425,14 +407,10 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				final File rootDir = new File(path);
 				ProgressMonitorDialog pm = new ProgressMonitorDialog(getShell());
 
-				IRunnableWithProgress r = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						monitor.beginTask(Messages.searchingTaskName,
-								IProgressMonitor.UNKNOWN);
-						search(rootDir, existingPaths, foundBrowsers, new HashSet<String>(), monitor);
-						monitor.done();
-					}
+				IRunnableWithProgress r = monitor -> {
+					monitor.beginTask(Messages.searchingTaskName, IProgressMonitor.UNKNOWN);
+					search(rootDir, existingPaths, foundBrowsers, new HashSet<String>(), monitor);
+					monitor.done();
 				};
 
 				try {

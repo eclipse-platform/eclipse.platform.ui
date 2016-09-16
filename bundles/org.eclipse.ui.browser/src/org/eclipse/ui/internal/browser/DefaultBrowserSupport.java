@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal.browser;
 
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -36,16 +34,10 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	public DefaultBrowserSupport() {
 		// do nothing
 		instance = this;
-		BrowserManager.getInstance().addObserver(new Observer() {
-			@Override
-			public void update(Observable o, Object arg) {
-				// TODO I am not sure what we should do here
-				// The preferences have changed so maybe we should
-				// close the opened browsers in addition to clearing
-				// the table
-				browserIdMap.clear();
-			}
-		});
+		// TODO I am not sure what we should do here
+		// The preferences have changed so maybe we should close the opened
+		// browsers in addition to clearing the table
+		BrowserManager.getInstance().addObserver((o, arg) -> browserIdMap.clear());
 	}
 
 	protected static DefaultBrowserSupport getInstance() {

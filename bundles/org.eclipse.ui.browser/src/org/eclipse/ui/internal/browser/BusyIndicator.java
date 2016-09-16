@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.browser;
 
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -39,12 +38,7 @@ public class BusyIndicator extends Canvas {
 
 		images = ImageResource.getBusyImages();
 
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				onPaint(event);
-			}
-		});
+		addPaintListener(event -> onPaint(event));
 
 		image = images[0];
 	}
@@ -69,16 +63,13 @@ public class BusyIndicator extends Canvas {
 				try {
 					count = 1;
 					while (!stop) {
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								if (!stop) {
-									if (count < 13)
-										setImage(images[count]);
-									count++;
-									if (count > 12)
-										count = 1;
-								}
+						Display.getDefault().syncExec(() -> {
+							if (!stop) {
+								if (count < 13)
+									setImage(images[count]);
+								count++;
+								if (count > 12)
+									count = 1;
 							}
 						});
 						try {
