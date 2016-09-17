@@ -183,15 +183,11 @@ public class AccumulatingProgressMonitorTest extends UITestCase {
 	 */
 	@Test
 	public void testAccumulatingMonitorInUIThread() throws Exception {
-		Semaphore uiSemaphore = new Semaphore(1);
-		Semaphore backgroundSemaphore = new Semaphore(1);
+		Semaphore uiSemaphore = new Semaphore(0);
+		Semaphore backgroundSemaphore = new Semaphore(0);
 
 		final Throwable[] death = new Throwable[1];
 		final UIThreadAsserterMonitor[] mon2 = new UIThreadAsserterMonitor[1];
-
-		// Have UI thread claim rights to both semaphores
-		uiSemaphore.acquire();
-		backgroundSemaphore.acquire();
 
 		Thread t = new Thread("Test Accumulating Monitor") {
 			@Override
