@@ -45,6 +45,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -345,5 +346,10 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	    } else {
 	        return super.getEnableStateForSelection(selection);
 	    }
+	}
+
+	@Override
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 }

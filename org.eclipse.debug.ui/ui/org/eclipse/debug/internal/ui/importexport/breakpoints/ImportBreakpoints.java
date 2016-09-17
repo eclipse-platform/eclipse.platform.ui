@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * This class provides the aciton event for both the context menu in breakpoints view
@@ -58,5 +59,10 @@ public class ImportBreakpoints extends AbstractDebugActionDelegate {
 	@Override
 	protected void update(IAction action, ISelection s) {
 		getAction().setEnabled(true);
+	}
+
+	@Override
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 }

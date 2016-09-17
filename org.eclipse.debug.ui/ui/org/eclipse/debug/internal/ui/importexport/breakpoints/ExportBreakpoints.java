@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IViewPart;
 
 /**
@@ -65,4 +66,9 @@ public class ExportBreakpoints extends AbstractDebugActionDelegate {
 	 */
 	@Override
 	protected void doAction(Object element) throws DebugException {}
+
+	@Override
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
+	}
 }
