@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,18 +93,14 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			if (selectedElement instanceof IAdaptable) {
 				final IAdaptable adaptable = (IAdaptable) selectedElement;
 
-				jelem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+				jelem = adaptable.getAdapter(IJavaElement.class);
 				if (jelem == null || !jelem.exists()) {
 					jelem = null;
-					IResource resource = (IResource) adaptable
-						.getAdapter(IResource.class);
-					if (resource != null
-						&& resource.getType() != IResource.ROOT) {
-						while (jelem == null
-							&& resource.getType() != IResource.PROJECT) {
+					IResource resource = adaptable.getAdapter(IResource.class);
+					if (resource != null && resource.getType() != IResource.ROOT) {
+						while (jelem == null && resource.getType() != IResource.PROJECT) {
 							resource = resource.getParent();
-							jelem = (IJavaElement) resource
-								.getAdapter(IJavaElement.class);
+							jelem = resource.getAdapter(IJavaElement.class);
 						}
 						if (jelem == null) {
 							jelem = JavaCore.create(resource); // java project
@@ -120,17 +116,14 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	protected IPackageFragmentRoot getFragmentRoot(IJavaElement elem) {
 		IPackageFragmentRoot initRoot = null;
 		if (elem != null) {
-			initRoot = (IPackageFragmentRoot) elem
-				.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+			initRoot = (IPackageFragmentRoot) elem.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
 			try {
-				if (initRoot == null
-					|| initRoot.getKind() != IPackageFragmentRoot.K_SOURCE) {
+				if (initRoot == null || initRoot.getKind() != IPackageFragmentRoot.K_SOURCE) {
 					final IJavaProject jproject = elem.getJavaProject();
 					if (jproject != null) {
 						initRoot = null;
 						if (jproject.exists()) {
-							final IPackageFragmentRoot[] roots = jproject
-								.getPackageFragmentRoots();
+							final IPackageFragmentRoot[] roots = jproject.getPackageFragmentRoots();
 							for (int i = 0; i < roots.length; i++) {
 								if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 									initRoot = roots[i];
@@ -139,8 +132,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 							}
 						}
 						if (initRoot == null) {
-							initRoot = jproject.getPackageFragmentRoot(jproject
-								.getResource());
+							initRoot = jproject.getPackageFragmentRoot(jproject.getResource());
 						}
 					}
 				}
@@ -285,11 +277,10 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			file = (IFile) resource;
 			try {
 				if (!file.exists()) {
-					file.create(new ByteArrayInputStream(content.getBytes()),
-						true, null);
+					file.create(new ByteArrayInputStream(content.getBytes()), true, null);
 				} else {
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
-						IResource.FORCE | IResource.KEEP_HISTORY, null);
+							IResource.FORCE | IResource.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 				// unit.open(null);
@@ -303,11 +294,10 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			file = p.getFile(cuName);
 			try {
 				if (!file.exists()) {
-					file.create(new ByteArrayInputStream(content.getBytes()),
-						true, null);
+					file.create(new ByteArrayInputStream(content.getBytes()), true, null);
 				} else {
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
-						IResource.FORCE | IResource.KEEP_HISTORY, null);
+							IResource.FORCE | IResource.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 			} catch (final CoreException e) {
