@@ -161,7 +161,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		for (int i = 0; i < totalSize; i++) {
 			ProgressInfoItem item = createNewItem(infos[i]);
-			item.setColor(i);
+			item.setColor();
 		}
 
 		control.layout(true);
@@ -368,7 +368,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
 			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
-			item.setColor(i);
+			item.setColor();
 		}
 		control.layout(true);
 		updateForShowingProgress();
@@ -422,7 +422,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		// Create new ones if required
 		for (int i = 0; i < maxLength; i++) {
 			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
-			item.setColor(i);
+			item.setColor();
 		}
 
 		control.layout(true);
