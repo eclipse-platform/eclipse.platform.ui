@@ -298,6 +298,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		final ISWTObservableValue obsPackage = WidgetProperties.text(SWT.Modify).observe(tClassPackage);
 		final ISWTObservableValue obsClass = WidgetProperties.text(SWT.Modify).observe(tClassName);
+		@SuppressWarnings("unchecked")
 		final ClassMultiValidator multiValidator = new ClassMultiValidator(clazz, obsPackage, obsClass);
 		dbc.addValidationStatusProvider(multiValidator);
 
