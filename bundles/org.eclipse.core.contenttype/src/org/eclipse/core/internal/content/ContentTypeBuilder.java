@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import org.eclipse.core.runtime.QualifiedName;
-
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
@@ -74,10 +72,10 @@ public class ContentTypeBuilder {
 	}
 
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
-		String[] fileNames = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
+		String[] fileNames = Util.parseItems(fileAssociationElement.getAttribute("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
 			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
-		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
+		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttribute("file-extensions")); //$NON-NLS-1$
 		for (int i = 0; i < fileExtensions.length; i++)
 			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
@@ -125,7 +123,7 @@ public class ContentTypeBuilder {
 	 */
 	private ContentType createContentType(IConfigurationElement contentTypeCE) throws CoreException {
 		String namespace = contentTypeCE.getContributor().getName();
-		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
+		String simpleId = contentTypeCE.getAttribute("id"); //$NON-NLS-1$
 		String name = contentTypeCE.getAttribute("name"); //$NON-NLS-1$
 
 		if (simpleId == null)
@@ -138,21 +136,21 @@ public class ContentTypeBuilder {
 		if (name == null)
 			missingMandatoryAttribute(ContentMessages.content_missingName, uniqueId);
 
-		byte priority = parsePriority(contentTypeCE.getAttributeAsIs("priority")); //$NON-NLS-1$);
-		String[] fileNames = Util.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
-		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
-		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
-		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("alias-for")); //$NON-NLS-1$
+		byte priority = parsePriority(contentTypeCE.getAttribute("priority")); //$NON-NLS-1$ );
+		String[] fileNames = Util.parseItems(contentTypeCE.getAttribute("file-names")); //$NON-NLS-1$
+		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttribute("file-extensions")); //$NON-NLS-1$
+		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttribute("base-type")); //$NON-NLS-1$
+		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttribute("alias-for")); //$NON-NLS-1$
 		IConfigurationElement[] propertyCEs = null;
 		Map<QualifiedName, String> defaultProperties = null;
 		if ((propertyCEs = contentTypeCE.getChildren("property")).length > 0) { //$NON-NLS-1$
 			defaultProperties = new HashMap<>();
 			for (int i = 0; i < propertyCEs.length; i++) {
-				String defaultValue = propertyCEs[i].getAttributeAsIs("default"); //$NON-NLS-1$
+				String defaultValue = propertyCEs[i].getAttribute("default"); //$NON-NLS-1$
 				if (defaultValue == null)
 					// empty string means: default value is null
 					defaultValue = ""; //$NON-NLS-1$
-				String propertyKey = propertyCEs[i].getAttributeAsIs("name"); //$NON-NLS-1$
+				String propertyKey = propertyCEs[i].getAttribute("name"); //$NON-NLS-1$
 				QualifiedName qualifiedKey = parseQualifiedName(namespace, propertyKey);
 				if (qualifiedKey == null) {
 					if (ContentTypeManager.DEBUGGING) {
@@ -164,7 +162,7 @@ public class ContentTypeBuilder {
 				defaultProperties.put(qualifiedKey, defaultValue);
 			}
 		}
-		String defaultCharset = contentTypeCE.getAttributeAsIs("default-charset"); //$NON-NLS-1$
+		String defaultCharset = contentTypeCE.getAttribute("default-charset"); //$NON-NLS-1$
 		if (defaultCharset != null)
 			if (defaultProperties == null)
 				defaultProperties = Collections.singletonMap(IContentDescription.CHARSET, defaultCharset);

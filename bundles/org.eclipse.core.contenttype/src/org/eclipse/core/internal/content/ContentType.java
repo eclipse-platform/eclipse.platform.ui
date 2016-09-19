@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import org.eclipse.core.runtime.QualifiedName;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
@@ -256,7 +255,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 					return baseType.getDescriber();
 				return (NO_DESCRIBER == tmpDescriber) ? null : (IContentDescriber) tmpDescriber;
 			}
-			final String describerValue = contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT);
+			final String describerValue = contentTypeElement.getAttribute(DESCRIBER_ELEMENT);
 			if (describerValue != null || contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0)
 				try {
 					if ("".equals(describerValue)) { //$NON-NLS-1$

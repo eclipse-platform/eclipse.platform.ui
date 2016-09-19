@@ -206,6 +206,7 @@ public final class ContentTypeCatalog {
 		return valid;
 	}
 
+	@SuppressWarnings("deprecation")
 	int describe(ContentType type, ILazySource contents, ContentDescription description, Map<String, Object> properties) throws IOException {
 		IContentDescriber describer = type.getDescriber();
 		try {
