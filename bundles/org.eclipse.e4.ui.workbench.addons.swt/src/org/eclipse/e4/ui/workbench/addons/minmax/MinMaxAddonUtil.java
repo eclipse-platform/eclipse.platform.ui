@@ -49,15 +49,19 @@ public class MinMaxAddonUtil {
 	 *         minimized children, false otherwise
 	 */
 	public static boolean isMinMaxChildrenAreaWithMultipleVisibleChildren(MUIElement element) {
-		if (!element.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG))
+		if (!element.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 			return false;
-		if (!(element instanceof MArea))
+		}
+		if (!(element instanceof MArea)) {
 			return false;
+		}
 		MArea area = (MArea) element;
-		if (area.getChildren().isEmpty())
+		if (area.getChildren().isEmpty()) {
 			return false;
-		if (!hasMoreThenOneVisibleRenderableChild(area.getChildren().get(0)))
+		}
+		if (!hasMoreThenOneVisibleRenderableChild(area.getChildren().get(0))) {
 			return false;
+		}
 		return true;
 	}
 
@@ -71,11 +75,13 @@ public class MinMaxAddonUtil {
 				if (hasMinimizeableChild) {
 					return true;
 				}
-				if (isVisible(part))
+				if (isVisible(part)) {
 					partsToRender++;
+				}
 			}
-			if (partsToRender > 1)
+			if (partsToRender > 1) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -140,16 +146,20 @@ public class MinMaxAddonUtil {
 				MPlaceholder.class, null, EModelService.PRESENTATION);
 
 		for (MPlaceholder placeholder : areas) {
-			if (placeholder == element)
+			if (placeholder == element) {
 				continue;
-			if (win != getWindowFor(placeholder))
+			}
+			if (win != getWindowFor(placeholder)) {
 				continue;
-			if (!placeholder.getRef().getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG))
+			}
+			if (!placeholder.getRef().getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 				continue;
+			}
 			List<MPartStack> partStacks = modelService.findElements(placeholder, null, MPartStack.class,
 					null);
-			if (partStacks.contains(element))
+			if (partStacks.contains(element)) {
 				continue;
+			}
 			for (MPartStack partStack : partStacks) {
 				elementsToRestore.remove(partStack);
 			}
@@ -237,19 +247,24 @@ public class MinMaxAddonUtil {
 				MPlaceholder.class, null, EModelService.ANYWHERE);
 		boolean foundRelevantArea = false;
 		for (MPlaceholder placeholder : areas) {
-			if (placeholder == element)
+			if (placeholder == element) {
 				continue;
-			if (win != getWindowFor(placeholder))
+			}
+			if (win != getWindowFor(placeholder)) {
 				continue;
-			if (modelService.find(element.getElementId(), placeholder) == null)
+			}
+			if (modelService.find(element.getElementId(), placeholder) == null) {
 				continue;
-			if (placeholder.getRef().getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG))
+			}
+			if (placeholder.getRef().getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 				foundRelevantArea = true;
+			}
 			List<MPartStack> partStacks = modelService.findElements(placeholder, null, MPartStack.class,
 					null);
 			for (MPartStack partStack : partStacks) {
-				if (partStack == element)
+				if (partStack == element) {
 					continue;
+				}
 				elementsToMinimize.add(partStack);
 			}
 		}
@@ -258,8 +273,9 @@ public class MinMaxAddonUtil {
 			for (MUIElement element2 : elementsToMinimize) {
 				List<Object> findElements = modelService.findElements(element2, element.getElementId(),
 						null, null);
-				if (findElements != null && findElements.size() != 0)
+				if (findElements != null && findElements.size() != 0) {
 					elementsToRemove.add(element2);
+				}
 			}
 			elementsToMinimize.removeAll(elementsToRemove);
 		}
@@ -301,8 +317,9 @@ public class MinMaxAddonUtil {
 	public static boolean isPartOfMinMaxChildrenArea(MUIElement element) {
 		if (element instanceof MPartStack) {
 			MArea area = getAreaFor((MPartStack) element);
-			if (area != null && area.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG))
+			if (area != null && area.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -318,8 +335,9 @@ public class MinMaxAddonUtil {
 	public static MArea getAreaFor(MPartStack stack) {
 		MUIElement parent = stack.getParent();
 		while (parent != null) {
-			if (parent instanceof MArea)
+			if (parent instanceof MArea) {
 				return (MArea) parent;
+			}
 			parent = parent.getParent();
 		}
 		return null;
@@ -341,10 +359,11 @@ public class MinMaxAddonUtil {
 		// We rely here on the fact that a DW's 'getParent' will return
 		// null since it's not in the 'children' hierarchy
 		while (parent != null && !(parent instanceof MWindow)) {
-			if (parent.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG) && parent instanceof MArea)
+			if (parent.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG) && parent instanceof MArea) {
 				parent = ((MArea) parent).getCurSharedRef();
-			else
+			} else {
 				parent = parent.getParent();
+			}
 		}
 
 		// A detached window will end up with getParent() == null

@@ -72,8 +72,9 @@ class DragHost {
 	private MWindow getWindow() {
 		MUIElement pe = originalParent;
 		while (pe != null && !(pe instanceof MApplication)) {
-			if (((Object) pe) instanceof MWindow)
+			if (((Object) pe) instanceof MWindow) {
 				return (MWindow) pe;
+			}
 			pe = pe.getParent();
 		}
 
@@ -116,12 +117,14 @@ class DragHost {
 	}
 
 	public void drop(MElementContainer<MUIElement> newContainer, int itemIndex) {
-		if (dragElement.getParent() != null)
+		if (dragElement.getParent() != null) {
 			dragElement.getParent().getChildren().remove(dragElement);
-		if (itemIndex >= 0)
+		}
+		if (itemIndex >= 0) {
 			newContainer.getChildren().add(itemIndex, dragElement);
-		else
+		} else {
 			newContainer.getChildren().add(dragElement);
+		}
 
 		newContainer.setSelectedElement(dragElement);
 		if (dragElement.getWidget() instanceof ToolItem) {
@@ -136,8 +139,9 @@ class DragHost {
 
 		newContainer.setSelectedElement(dragElement);
 
-		if (getShell() != null)
+		if (getShell() != null) {
 			getShell().dispose();
+		}
 	}
 
 	public void cancel() {

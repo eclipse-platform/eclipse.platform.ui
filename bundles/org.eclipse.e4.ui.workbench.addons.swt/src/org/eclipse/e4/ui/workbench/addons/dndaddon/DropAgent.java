@@ -37,12 +37,14 @@ abstract class DropAgent {
 
 	public void reactivatePart(MUIElement dragElement) {
 		IEclipseContext context = dndManager.getModelService().getContainingContext(dragElement);
-		if (context == null)
+		if (context == null) {
 			return;
+		}
 
 		EPartService ps = context.get(EPartService.class);
-		if (ps == null)
+		if (ps == null) {
 			return;
+		}
 
 		MPart partToActivate = null;
 		if (dragElement instanceof MPart) {

@@ -85,12 +85,13 @@ abstract class DragAgent {
 		// cache a placeholder where the element started (NOTE: this also prevents the parent from
 		// being auto-removed by going 'empty'
 		if (dragElement.getParent() != null) {
-			if (dragElement instanceof MStackElement)
+			if (dragElement instanceof MStackElement) {
 				dragPH = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
-			else if (dragElement instanceof MPartStack)
+			} else if (dragElement instanceof MPartStack) {
 				dragPH = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
-			else if (dragElement instanceof MTrimElement)
+			} else if (dragElement instanceof MTrimElement) {
 				dragPH = MenuFactoryImpl.eINSTANCE.createToolControl();
+			}
 
 			dragPH.setElementId(DRAG_PLACEHOLDER_ID);
 			dragPH.setToBeRendered(false);
@@ -100,8 +101,9 @@ abstract class DragAgent {
 		}
 
 		dropAgent = dndManager.getDropAgent(dragElement, info);
-		if (dropAgent != null)
+		if (dropAgent != null) {
 			dropAgent.dragEnter(dragElement, info);
+		}
 	}
 
 	public void track(DnDInfo info) {
@@ -115,9 +117,9 @@ abstract class DragAgent {
 				dropAgent.dragLeave(dragElement, info);
 			}
 			dropAgent = newDropAgent;
-			if (dropAgent != null)
+			if (dropAgent != null) {
 				dropAgent.dragEnter(dragElement, info);
-			else {
+			} else {
 				dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
 			}
 		}
@@ -128,15 +130,17 @@ abstract class DragAgent {
 	 * original location in the model.
 	 */
 	public void cancelDrag() {
-		if (dragPH == null)
+		if (dragPH == null) {
 			return;
+		}
 
 		// if the dragElement is *not* directly after the placeholder we have to return it there
 		List<MUIElement> phParentsKids = dragPH.getParent().getChildren();
 		if (phParentsKids.indexOf(dragElement) != phParentsKids.indexOf(dragPH) + 1) {
 			dragElement.setToBeRendered(false);
-			if (dragElement.getParent() != null)
+			if (dragElement.getParent() != null) {
 				dragElement.getParent().getChildren().remove(dragElement);
+			}
 			phParentsKids.add(phParentsKids.indexOf(dragPH) + 1, dragElement);
 			dragElement.setVisible(true);
 			dragElement.setToBeRendered(true);
@@ -158,11 +162,13 @@ abstract class DragAgent {
 			cancelDrag();
 		}
 
-		if (dropAgent != null)
+		if (dropAgent != null) {
 			dropAgent.dragLeave(dragElement, info);
+		}
 
-		if (dragPH == null)
+		if (dragPH == null) {
 			return;
+		}
 
 		if (dragPH != null) {
 			dragPH.getParent().getChildren().remove(dragPH);

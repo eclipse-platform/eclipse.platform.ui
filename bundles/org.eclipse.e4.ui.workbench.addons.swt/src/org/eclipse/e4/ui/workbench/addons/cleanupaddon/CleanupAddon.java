@@ -168,8 +168,9 @@ public class CleanupAddon {
 	private void subscribeVisibilityChanged(
 			@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
 		MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (changedObj instanceof MTrimBar || ((Object) changedObj.getParent()) instanceof MToolBar)
+		if (changedObj instanceof MTrimBar || ((Object) changedObj.getParent()) instanceof MToolBar) {
 			return;
+		}
 
 		if (changedObj.getWidget() instanceof Shell) {
 			((Shell) changedObj.getWidget()).setVisible(changedObj.isVisible());
@@ -181,8 +182,9 @@ public class CleanupAddon {
 
 			if (changedObj.isVisible()) {
 				// Make all the parents visible
-				if (!parent.isVisible())
+				if (!parent.isVisible()) {
 					parent.setVisible(true);
+				}
 			} else {
 				// If there are no more 'visible' children then make the parent go away too
 				boolean makeInvisible = true;
@@ -192,8 +194,9 @@ public class CleanupAddon {
 						break;
 					}
 				}
-				if (makeInvisible)
+				if (makeInvisible) {
 					parent.setVisible(false);
+				}
 			}
 		} else if (changedObj.getWidget() instanceof Control) {
 			Control ctrl = (Control) changedObj.getWidget();
@@ -212,16 +215,18 @@ public class CleanupAddon {
 
 						Control prevControl = null;
 						for (MUIElement childME : parent.getChildren()) {
-							if (childME == changedObj)
+							if (childME == changedObj) {
 								break;
+							}
 							if (childME.getWidget() instanceof Control && childME.isVisible()) {
 								prevControl = (Control) childME.getWidget();
 							}
 						}
-						if (prevControl != null)
+						if (prevControl != null) {
 							ctrl.moveBelow(prevControl);
-						else
+						} else {
 							ctrl.moveAbove(null);
+						}
 						ctrl.requestLayout();
 					}
 
@@ -230,8 +235,9 @@ public class CleanupAddon {
 					}
 
 					// Check if the parent is visible
-					if (!parent.isVisible())
+					if (!parent.isVisible()) {
 						parent.setVisible(true);
+					}
 				}
 			} else {
 				Shell limbo = (Shell) app.getContext().get("limbo");
@@ -242,8 +248,9 @@ public class CleanupAddon {
 				curParent.requestLayout();
 
 				// Always leave Window's in the presentation
-				if ((Object) parent instanceof MWindow)
+				if ((Object) parent instanceof MWindow) {
 					return;
+				}
 
 				// If there are no more 'visible' children then make the parent go away too
 				boolean makeParentInvisible = true;
@@ -264,8 +271,9 @@ public class CleanupAddon {
 
 				// Special check: If a perspective goes invisibe we need to make its
 				// PerspectiveStack invisible as well...see bug 369528
-				if (makeParentInvisible)
+				if (makeParentInvisible) {
 					parent.setVisible(false);
+				}
 			}
 		}
 	}
@@ -276,10 +284,11 @@ public class CleanupAddon {
 			@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
 			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 			MElementContainer<MUIElement> container = null;
-			if (changedObj.getCurSharedRef() != null)
+			if (changedObj.getCurSharedRef() != null) {
 				container = changedObj.getCurSharedRef().getParent();
-			else
+			} else {
 				container = changedObj.getParent();
+			}
 
 			// this can happen for shared parts that aren't attached to any placeholders
 			if (container == null) {
@@ -294,17 +303,20 @@ public class CleanupAddon {
 
 			// These elements should neither be shown nor hidden based on their containment state
 			if (isLastEditorStack(containerElement) || containerElement instanceof MPerspective
-					|| containerElement instanceof MPerspectiveStack)
+					|| containerElement instanceof MPerspectiveStack) {
 				return;
+			}
 
 			Boolean toBeRendered = (Boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			if (toBeRendered) {
 				// Bring the container back if one of its children goes visible
-				if (!container.isToBeRendered())
+				if (!container.isToBeRendered()) {
 					container.setToBeRendered(true);
+				}
 				if (!container.isVisible()
-						&& !container.getTags().contains(IPresentationEngine.MINIMIZED))
+						&& !container.getTags().contains(IPresentationEngine.MINIMIZED)) {
 					container.setVisible(true);
+				}
 			} else {
 				// Never hide the container marked as no_close
 				if (container.getTags().contains(IPresentationEngine.NO_AUTO_COLLAPSE)) {
@@ -321,8 +333,9 @@ public class CleanupAddon {
 						@Override
 						public void run() {
 							int visCount = modelService.countRenderableChildren(theContainer);
-							if (!isLastEditorStack(theContainer) && visCount == 0)
+							if (!isLastEditorStack(theContainer) && visCount == 0) {
 								theContainer.setToBeRendered(false);
+							}
 						}
 					});
 				} else {
@@ -332,8 +345,9 @@ public class CleanupAddon {
 
 					// OK, we have rendered children, are they 'visible' ?
 					for (MUIElement kid : container.getChildren()) {
-						if (!kid.isToBeRendered())
+						if (!kid.isToBeRendered()) {
 							continue;
+						}
 						if (kid.isVisible()) {
 							makeInvisible = false;
 							break;

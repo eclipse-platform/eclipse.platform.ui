@@ -32,8 +32,9 @@ public class DnDAddon {
 	@Optional
 	void subscribeTopicWidget(@UIEventTopic(UIEvents.UIElement.TOPIC_WIDGET) Event event) {
 		MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-		if (!(changedElement instanceof MWindow))
+		if (!(changedElement instanceof MWindow)) {
 			return;
+		}
 
 		Widget widget = (Widget) event.getProperty(EventTags.NEW_VALUE);
 		if (widget instanceof Shell && !widget.isDisposed()) {

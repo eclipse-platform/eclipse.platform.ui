@@ -30,16 +30,18 @@ public class PartDragAgent extends DragAgent {
 
 	@Override
 	public MUIElement getElementToDrag(DnDInfo info) {
-		if (!(info.curElement instanceof MPartStack))
+		if (!(info.curElement instanceof MPartStack)) {
 			return null;
+		}
 
 		MPartStack stack = (MPartStack) info.curElement;
 
 		// Drag a part that is in a stack
 		if (info.itemElement instanceof MStackElement) {
 			// Prevent dragging 'No Move' parts
-			if (info.itemElement.getTags().contains(IPresentationEngine.NO_MOVE))
+			if (info.itemElement.getTags().contains(IPresentationEngine.NO_MOVE)) {
 				return null;
+			}
 
 			// If it's an MPart only drag the part itself
 			if (info.itemElement instanceof MPart) {
@@ -56,22 +58,26 @@ public class PartDragAgent extends DragAgent {
 
 		// Drag a complete stack
 		// Only allow a drag to start if we're a CTabFolder
-		if (!(stack.getWidget() instanceof CTabFolder))
+		if (!(stack.getWidget() instanceof CTabFolder)) {
 			return null;
+		}
 
 		// Only allow a drag to start if we're inside the 'tab area' of the CTF
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		Point ctfPos = ctf.getDisplay().map(null, ctf, info.cursorPos);
-		if (ctfPos.y > ctf.getTabHeight())
+		if (ctfPos.y > ctf.getTabHeight()) {
 			return null;
+		}
 
 		// Prevent dragging 'No Move' stacks
-		if (stack.getTags().contains(IPresentationEngine.NO_MOVE))
+		if (stack.getTags().contains(IPresentationEngine.NO_MOVE)) {
 			return null;
+		}
 
 		// Prevent dragging the last stack out of the shared area
-		if (dndManager.getModelService().isLastEditorStack(stack))
+		if (dndManager.getModelService().isLastEditorStack(stack)) {
 			return null;
+		}
 
 		dragElement = info.curElement;
 		return info.curElement;
@@ -80,8 +86,9 @@ public class PartDragAgent extends DragAgent {
 	@Override
 	public void dragStart(DnDInfo info) {
 		super.dragStart(info);
-		if (dndManager.getFeedbackStyle() != DnDManager.SIMPLE)
+		if (dndManager.getFeedbackStyle() != DnDManager.SIMPLE) {
 			dndManager.hostElement(dragElement, 16, 10);
+		}
 	}
 
 	@Override
