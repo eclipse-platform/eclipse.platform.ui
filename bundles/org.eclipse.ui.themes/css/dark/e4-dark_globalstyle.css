@@ -248,9 +248,10 @@ DrillDownComposite > ToolBar {
 }
 
 ProgressInfoItem,
+ProgressInfoItem > *,
 CompareViewerPane,
 CompareViewerPane > * {
-    background-color: #333;
+    background-color: #262626;
     color: #eeeeee;
 }
 
