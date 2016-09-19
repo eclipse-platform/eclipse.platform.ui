@@ -1,0 +1,5 @@
+requires.0.namespace = osgi.extender
+requires.0.name = osgi.component
+requires.0.version = 1.2.0
+requires.1.namespace = osgi.service
+requires.1.name = org.osgi.service.event.EventAdmin

@@ -19,3 +19,5 @@ Service-Component: OSGI-INF/org.eclipse.e4.core.services.events.xml,
 Export-Package: org.eclipse.e4.core.di.extensions;x-internal:=true,
  org.eclipse.e4.core.di.internal.extensions;x-friends:="org.eclipse.e4.ui.di"
 Bundle-Localization: fragment
+Require-Capability: osgi.extender;
+  filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"

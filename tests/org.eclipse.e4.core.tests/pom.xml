@@ -26,26 +26,4 @@
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.e4.core.tests.CoreTestSuite</testClass>
   </properties>
-  
-  <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.eclipse.tycho</groupId>
-  			<artifactId>target-platform-configuration</artifactId>
-  			<version>${tycho.version}</version>
-  			<configuration>
-  				<!-- Wouldn't it make sense to have those in MANIFEST -->
-  				<dependency-resolution>
-  					<extraRequirements>
-  						<requirement>
-  							<id>org.eclipse.equinox.event</id>
-  							<type>p2-installable-unit</type>
-  							<versionRange>0.0.0</versionRange>
-  						</requirement>
-  					</extraRequirements>
-  				</dependency-resolution>
-  			</configuration>
-  		</plugin>
-  	</plugins>
-  </build>
 </project>
