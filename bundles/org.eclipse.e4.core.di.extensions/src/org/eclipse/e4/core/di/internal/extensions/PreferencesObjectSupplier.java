@@ -52,11 +52,6 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		this.preferencesService = preferenceService;
 	}
 
-	// can be removed after Bug 492726 is fixed
-	public void unsetPreferencesService(IPreferencesService preferenceService) {
-		this.preferencesService = null;
-	}
-
 	static private class PrefInjectionListener implements IPreferenceChangeListener {
 
 		final private IRequestor requestor;

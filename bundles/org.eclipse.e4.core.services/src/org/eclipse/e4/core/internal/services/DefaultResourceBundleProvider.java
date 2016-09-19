@@ -47,18 +47,4 @@ public class DefaultResourceBundleProvider implements ResourceBundleProvider {
 		this.localization = localization;
 	}
 
-	/**
-	 * Method called by DS to unset the {@link BundleLocalization} from this
-	 * {@link ResourceBundleProvider}.
-	 *
-	 * @param localization
-	 *            The {@link BundleLocalization} to remove from this {@link ResourceBundleProvider}.
-	 *            If the given {@link BundleLocalization} is not the same that is already set,
-	 *            nothing will happen.
-	 */
-	void unsetBundleLocalization(BundleLocalization localization) {
-		if (this.localization == localization) {
-			this.localization = null;
-		}
-	}
 }

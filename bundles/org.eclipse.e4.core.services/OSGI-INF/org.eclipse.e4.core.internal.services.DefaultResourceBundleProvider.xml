@@ -3,6 +3,6 @@
    <service>
       <provide interface="org.eclipse.e4.core.services.translation.ResourceBundleProvider"/>
    </service>
-   <reference bind="setBundleLocalization" cardinality="1..1" interface="org.eclipse.osgi.service.localization.BundleLocalization" name="BundleLocalization" policy="static" unbind="unsetBundleLocalization"/>
+   <reference bind="setBundleLocalization" cardinality="1..1" interface="org.eclipse.osgi.service.localization.BundleLocalization" name="BundleLocalization" policy="static"/>
    <implementation class="org.eclipse.e4.core.internal.services.DefaultResourceBundleProvider"/>
 </scr:component>

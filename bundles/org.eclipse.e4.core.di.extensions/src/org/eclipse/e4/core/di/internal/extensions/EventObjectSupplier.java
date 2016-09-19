@@ -57,11 +57,6 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		this.eventAdmin = eventAdmin;
 	}
 
-	// can be removed after Bug 492726 is fixed
-	protected void unsetEventAdmin(EventAdmin ea) {
-		this.eventAdmin = null;
-	}
-
 	protected Map<String, Event> currentEvents = new HashMap<>();
 
 	class DIEventHandler implements EventHandler {
