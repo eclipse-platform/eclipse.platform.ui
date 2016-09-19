@@ -50,6 +50,8 @@ public class ProgressMessages extends NLS {
 	public static String ProgressContentProvider_UpdateProgressJob;
 	public static String ProgressManager_openJobName;
 	public static String ProgressManager_showInDialogName;
+	public static String ProgressManager_listenersRefreshRejected;
+	public static String ProgressManager_rejectedRefreshException;
 	public static String ProgressMonitorJobsDialog_DetailsTitle;
 	public static String ProgressMonitorJobsDialog_HideTitle;
 	public static String AnimationManager_AnimationStart;
