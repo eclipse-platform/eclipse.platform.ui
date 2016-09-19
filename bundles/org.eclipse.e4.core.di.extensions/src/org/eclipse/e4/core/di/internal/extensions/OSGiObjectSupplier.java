@@ -24,9 +24,10 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-@Component(service = ExtendedObjectSupplier.class, name = "org.eclipse.e4.core.di.extensions.bundleContext", property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.OSGiBundle")
+@Component(service = ExtendedObjectSupplier.class, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.OSGiBundle")
 public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 
 	/**
@@ -34,7 +35,12 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 	 */
 	private final Map<IRequestor, BundleListener> requestor2listener = new HashMap<>();
 
-	private final BundleContext localBundleContext = FrameworkUtil.getBundle(OSGiObjectSupplier.class).getBundleContext();
+	private BundleContext localBundleContext;
+
+	@Activate
+	void activate(BundleContext context) {
+		this.localBundleContext = context;
+	}
 
 	@Override
 	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {

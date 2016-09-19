@@ -38,7 +38,7 @@ import org.osgi.service.component.annotations.Reference;
  * Note: we do not support byte arrays in preferences at this time. This class
  * is instantiated and wired by declarative services.
  */
-@Component(service = ExtendedObjectSupplier.class, immediate = true, name = "org.eclipse.e4.core.services.preferences", property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.Preference")
+@Component(service = ExtendedObjectSupplier.class, immediate = true, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.Preference")
 public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 	private IPreferencesService preferencesService;
@@ -47,7 +47,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		return preferencesService;
 	}
 
-	@Reference(name = "IPreferencesService")
+	@Reference
 	public void setPreferencesService(IPreferencesService preferenceService) {
 		this.preferencesService = preferenceService;
 	}

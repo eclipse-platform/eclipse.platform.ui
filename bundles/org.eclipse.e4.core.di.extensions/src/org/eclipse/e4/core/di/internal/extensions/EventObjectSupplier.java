@@ -43,7 +43,7 @@ import org.osgi.service.event.EventHandler;
 /**
  * This class is instantiated and wired by declarative services.
  */
-@Component(service = ExtendedObjectSupplier.class, immediate = true, name = "org.eclipse.e4.core.services.events", property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.EventTopic")
+@Component(service = ExtendedObjectSupplier.class, immediate = true, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.EventTopic")
 public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 	private EventAdmin eventAdmin;
