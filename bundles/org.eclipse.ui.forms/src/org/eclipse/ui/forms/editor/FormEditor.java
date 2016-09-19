@@ -646,12 +646,9 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 */
 	public void close(final boolean save) {
 		Display display = getSite().getShell().getDisplay();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (toolkit != null) {
-					getSite().getPage().closeEditor(FormEditor.this, save);
-				}
+		display.asyncExec(() -> {
+			if (toolkit != null) {
+				getSite().getPage().closeEditor(FormEditor.this, save);
 			}
 		});
 	}

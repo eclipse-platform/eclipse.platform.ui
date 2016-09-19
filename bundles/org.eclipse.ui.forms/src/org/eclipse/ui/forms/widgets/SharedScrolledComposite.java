@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,8 +20,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
@@ -61,12 +59,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 */
 	public SharedScrolledComposite(Composite parent, int style) {
 		super(parent, style);
-		addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				if (!ignoreResizes) {
-					scheduleReflow(false);
-				}
+		addListener(SWT.Resize, e -> {
+			if (!ignoreResizes) {
+				scheduleReflow(false);
 			}
 		});
 		initializeScrollBars();
@@ -225,13 +220,10 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 				return;
 			}
 			reflowPending = true;
-			getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					reflowPending = false;
-					if (!isDisposed())
-						reflow(flushCache);
-				}
+			getDisplay().asyncExec(() -> {
+				reflowPending = false;
+				if (!isDisposed())
+					reflow(flushCache);
 			});
 		} else
 			reflow(flushCache);

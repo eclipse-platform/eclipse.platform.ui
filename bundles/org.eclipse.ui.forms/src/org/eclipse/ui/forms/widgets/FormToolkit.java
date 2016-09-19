@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,9 +38,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -327,19 +325,15 @@ public class FormToolkit {
 	 */
 	public Composite createCompositeSeparator(Composite parent) {
 		final Composite composite = new Composite(parent, orientation);
-		composite.addListener(SWT.Paint, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				if (composite.isDisposed())
-					return;
-				Rectangle bounds = composite.getBounds();
-				GC gc = e.gc;
-				gc.setForeground(colors.getColor(IFormColors.SEPARATOR));
-				if (colors.getBackground() != null)
-					gc.setBackground(colors.getBackground());
-				gc.fillGradientRectangle(0, 0, bounds.width, bounds.height,
-						false);
-			}
+		composite.addListener(SWT.Paint, e -> {
+			if (composite.isDisposed())
+				return;
+			Rectangle bounds = composite.getBounds();
+			GC gc = e.gc;
+			gc.setForeground(colors.getColor(IFormColors.SEPARATOR));
+			if (colors.getBackground() != null)
+				gc.setBackground(colors.getBackground());
+			gc.fillGradientRectangle(0, 0, bounds.width, bounds.height, false);
 		});
 		if (parent instanceof Section)
 			((Section) parent).setSeparatorControl(composite);

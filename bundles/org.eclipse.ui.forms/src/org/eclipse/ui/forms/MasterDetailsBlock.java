@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,25 +72,22 @@ public abstract class MasterDetailsBlock {
 
 	class MDSashForm extends SashForm {
 		ArrayList<Sash> sashes = new ArrayList<>();
-		Listener listener = new Listener () {
-			@Override
-			public void handleEvent(Event e) {
-				switch (e.type) {
-				case SWT.MouseEnter:
-					e.widget.setData("hover", Boolean.TRUE); //$NON-NLS-1$
-					((Control)e.widget).redraw();
-					break;
-				case SWT.MouseExit:
-					e.widget.setData("hover", null); //$NON-NLS-1$
-					((Control)e.widget).redraw();
-					break;
-				case SWT.Paint:
-					onSashPaint(e);
+		Listener listener = e -> {
+			switch (e.type) {
+			case SWT.MouseEnter:
+				e.widget.setData("hover", Boolean.TRUE); //$NON-NLS-1$
+				((Control) e.widget).redraw();
 				break;
-				case SWT.Resize:
-					hookSashListeners();
+			case SWT.MouseExit:
+				e.widget.setData("hover", null); //$NON-NLS-1$
+				((Control) e.widget).redraw();
 				break;
-				}
+			case SWT.Paint:
+				onSashPaint(e);
+				break;
+			case SWT.Resize:
+				hookSashListeners();
+				break;
 			}
 		};
 		public MDSashForm(Composite parent, int style) {

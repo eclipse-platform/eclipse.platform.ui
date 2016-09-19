@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.forms.editor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IFormPart;
@@ -131,23 +130,21 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 
 	private void installActivationListener() {
 		if (activationListener == null) {
-			activationListener = new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					boolean wasHeaderActive = event.widget != getContainer();
+			activationListener = event -> {
+				boolean wasHeaderActive = event.widget != getContainer();
 
-					int activePage = getActivePage();
-					if (SharedHeaderFormEditor.this.wasHeaderActive != wasHeaderActive && activePage != -1 && pages.get(activePage) instanceof IEditorPart) {
+				int activePage = getActivePage();
+				if (SharedHeaderFormEditor.this.wasHeaderActive != wasHeaderActive && activePage != -1
+						&& pages.get(activePage) instanceof IEditorPart) {
 
-						if (wasHeaderActive) {
-							deactivateSite(true, true);
-						} else {
-							activateSite();
-						}
+					if (wasHeaderActive) {
+						deactivateSite(true, true);
+					} else {
+						activateSite();
 					}
-
-					SharedHeaderFormEditor.this.wasHeaderActive = wasHeaderActive;
 				}
+
+				SharedHeaderFormEditor.this.wasHeaderActive = wasHeaderActive;
 			};
 			getContainer().addListener(SWT.Activate, activationListener);
 			getHeaderForm().getForm().getForm().getHead().addListener(SWT.Activate, activationListener);

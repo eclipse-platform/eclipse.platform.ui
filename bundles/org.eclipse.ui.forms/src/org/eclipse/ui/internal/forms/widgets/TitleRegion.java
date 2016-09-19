@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -36,10 +35,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
@@ -246,13 +243,10 @@ public class TitleRegion extends Canvas {
 		titleCache = new SizeCache();
 		super.setLayout(new TitleRegionLayout());
 		hookHoverListeners();
-		addListener(SWT.Dispose, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				if (dragImage != null) {
-					dragImage.dispose();
-					dragImage = null;
-				}
+		addListener(SWT.Dispose, e -> {
+			if (dragImage != null) {
+				dragImage.dispose();
+				dragImage = null;
 			}
 		});
 	}
@@ -272,12 +266,7 @@ public class TitleRegion extends Canvas {
 		addMouseMoveListener(listener);
 		titleLabel.addMouseTrackListener(listener);
 		titleLabel.addMouseMoveListener(listener);
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				onPaint(e);
-			}
-		});
+		addPaintListener(e -> onPaint(e));
 	}
 
 	private void onPaint(PaintEvent e) {

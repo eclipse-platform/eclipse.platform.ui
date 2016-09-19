@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -69,12 +67,9 @@ public class ScrolledForm extends SharedScrolledComposite {
 		content = new Form(this, SWT.NULL);
 		super.setContent(content);
 		content.setMenu(getMenu());
-		addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (!customMenu)
-					setMenu(null);
-			}
+		addDisposeListener(e -> {
+			if (!customMenu)
+				setMenu(null);
 		});
 	}
 
