@@ -10,12 +10,20 @@
 @rem ***************************************************************************
 REM build JNI header file
 cd ..\bin
-d:\vm\sun141\bin\javah org.eclipse.core.internal.resources.refresh.win32.ref
-move org_eclipse_core_internal_resources_refresh_win32_ref.h ..\a\ref.h
+"C:\Program Files\Java\jdk1.8.0_65\bin\javah.exe" org.eclipse.core.internal.resources.refresh.win32.Win32Natives
+move org_eclipse_core_internal_resources_refresh_win32_Win32Natives.h ..\natives\ref2.h
 
 REM compile and link
-cd ..\a
-set win_include=k:\dev\products\msvc60\vc98\include
-set jdk_include="d:\vm\sun141\include"
+cd ..\natives
+set win_include="C:\Program Files\Microsoft Visual Studio 14.0\VC\include"
+set jdk_include="C:\Program Files\Java\jdk1.8.0_65\include"
+
 set dll_name=win32refresh.dll
-cl -I%win_include% -I%jdk_include% -I%jdk_include%\win32 -LD ref.c -Fe%dll_name%
+
+call "c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64_x86
+"c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64_x86\cl.exe" -I%win_include% -I%jdk_include% -I%jdk_include%\win32 -LD ref.c -Fe%dll_name%
+move %dll_name% ..\..\org.eclipse.core.resources.win32.x86\os\win32\x86\%dll_name%
+
+call "c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+"c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\cl.exe" -I%win_include% -I%jdk_include% -I%jdk_include%\win32 -LD ref.c -Fe%dll_name%
+move %dll_name% ..\..\org.eclipse.core.resources.win32.x86_64\os\win32\x86_64\%dll_name%
