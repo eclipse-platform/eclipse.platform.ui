@@ -217,33 +217,6 @@ public interface IBreakpoint extends IAdaptable {
 	 */
 	public void setPersisted(boolean registered) throws CoreException;
 
-	/**
-	 * Returns whether this breakpoint is defined as the trigger point in the
-	 * workspace.
-	 *
-	 * @return whether this breakpoint is a trigger point
-	 * @exception CoreException if unable to access the associated attribute on
-	 *                this breakpoint's underlying marker
-	 * @since 3.11
-	 */
-	public default boolean isTriggerPoint() throws CoreException {
-		return false;
-	}
-
-	/**
-	 * Sets whether this breakpoint is to be treated as a trigger point for the
-	 * workspace. If it is a trigger point, then the <code>TRIGGERPOINT</code>
-	 * attribute on this breakpoint's marker is set to <code>true</code>.
-	 *
-	 * @param trigger whether this breakpoint is to be treated as trigger point
-	 *            for the workspace
-	 * @exception CoreException if unable to set the associated attribute on
-	 *                this breakpoint's underlying marker.
-	 * @since 3.11
-	 */
-	public default void setTriggerPoint(boolean trigger) throws CoreException {
-	}
-
 }
 
 

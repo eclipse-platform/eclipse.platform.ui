@@ -40,19 +40,8 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * @since 2.0
  */
 
-public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
+public abstract class Breakpoint extends PlatformObject implements IBreakpoint, ITriggerPoint {
 
-	/**
-	 * Persisted breakpoint marker attribute (value
-	 * <code>"org.eclipse.debug.core.triggerpoint"</code>). The attribute is a
-	 * <code>boolean</code> corresponding to whether a breakpoint is a trigger
-	 * breakpoint for the workspace.
-	 *
-	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
-	 * @since 3.11
-	 *
-	 */
-	private static final String TRIGGEREPOINT = "org.eclipse.debug.core.triggerpoint"; //$NON-NLS-1$
 
 	/**
 	 * Creates a breakpoint.
@@ -184,22 +173,22 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 */
 	@Override
 	public boolean isTriggerPoint() throws CoreException {
-		return getMarker().getAttribute(TRIGGEREPOINT, false);
+		return getMarker().getAttribute(TRIGGERPOINT, false);
 	}
 
 	/**
-	 * @see IBreakpoint#setTriggerPoint(boolean)
+	 * @see ITriggerPoint#setTriggerPoint(boolean)
 	 * @since 3.11
 	 */
 	@Override
 	public void setTriggerPoint(boolean triggerPoint) throws CoreException {
 		if (isTriggerPoint() != triggerPoint) {
-			setAttribute(TRIGGEREPOINT, triggerPoint);
+			setAttribute(TRIGGERPOINT, triggerPoint);
 			IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 			if (triggerPoint) {
-				manager.addTriggerBreakpoint(this);
+				manager.addTriggerPoint(this);
 			} else {
-				manager.removeTriggerBreakpoint(this);
+				manager.removeTriggerPoint(this);
 			}
 		}
 

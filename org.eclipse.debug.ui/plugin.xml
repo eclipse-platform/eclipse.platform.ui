@@ -1456,7 +1456,7 @@
                label="%RemoveAllTriggerpoints.label"
                icon="$nl$/icons/full/elcl16/rem_all_triggers.png"
                helpContextId="remove_all_breakpoints_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllTriggerpointsAction"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllTriggerPointsAction"
                menubarPath="breakpointGroup"
                id="org.eclipse.debug.ui.actions.RemoveAllTriggerpoints">
          </action>

@@ -262,16 +262,14 @@ public interface IBreakpointManager {
     public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException;
 
 	/**
-	 * Returns the triggering breakpoint associated with the workspace or
+	 * Returns the triggers for the breakpoints associated with the workspace or
 	 * <code>null</code> if no such breakpoint exists
 	 *
-	 * @return the triggering breakpoint associated with the workspace or
+	 * @return the triggers breakpoint associated with the workspace or
 	 *         <code>null</code> if none exists
 	 * @since 3.11
 	 */
-	public default IBreakpoint[] getTriggerBreakpoints() {
-		return null;
-	}
+	public IBreakpoint[] getTriggerPoints();
 
 	/**
 	 * Adds the given breakpoint as the triggering breakpoint in the workspace
@@ -289,12 +287,11 @@ public interface IBreakpointManager {
 	 *                </ul>
 	 * @since 3.11
 	 */
-	public default void addTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
-	}
+	public void addTriggerPoint(IBreakpoint breakpoint) throws CoreException;
 
 	/**
-	 * Removes the given breakpoint as the triggering breakpoint in the
-	 * workspace and notifies all registered listeners.
+	 * Removes the given breakpoint as the trigger breakpoint in the workspace
+	 * and notifies all registered listeners.
 	 *
 	 * @param breakpoint the breakpoint to be removed as the trigger point
 	 *
@@ -308,8 +305,7 @@ public interface IBreakpointManager {
 	 *                </ul>
 	 * @since 3.11
 	 */
-	public default void removeTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
-	}
+	public void removeTriggerPoint(IBreakpoint breakpoint) throws CoreException;
 
 	/**
 	 * Removes all the trigger points from the breakpoint manager.
@@ -318,37 +314,33 @@ public interface IBreakpointManager {
 	 *                underlying marker.
 	 * @since 3.11
 	 */
-	public default void removeAllTriggerpoints() throws CoreException {
-	}
+	public void removeAllTriggerPoints() throws CoreException;
 
 	/**
-	 * Returns whether a breakpoint can suspend based on other trigger points
+	 * Returns whether a workspace has active TriggerPoints
 	 *
-	 * @return return <code>true</code> if a breakpoint can suspend
+	 * @return return <code>true</code> if a breakpoint has active triggers and
+	 *         cannot suspend and return <code>false> otherwise.
 	 * @since 3.11
 	 */
-	public default boolean canSupendOnBreakpoint() {
-		return true;
-	}
+	public boolean hasActiveTriggerPoints();
 
 	/**
 	 * Revisit all the trigger points to activate/deactivate trigger points.
 	 *
-	 * @param triggerpoints list of trigger points to be deactivated or
+	 * @param triggerPoints list of trigger points to be deactivated or
 	 *            <code>null<code> to deactivate all trigger points
 	 * @param enable enable if <code>true</code> or disable if <code>false</code>
 	 * @since 3.11
 	 */
-	public default void enableTriggerpoints(IBreakpoint[] triggerpoints, boolean enable) {
-	}
+	public void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable);
 
 	/**
-	 * Refreshes the trigger point display on breakpoints.
+	 * Touch and refresh the display of all breakpoints.
 	 *
 	 * @since 3.11
 	 */
-	public default void refreshTriggerpointDisplay() {
-	}
+	public void refreshTriggerpointDisplay();
 
 }
 

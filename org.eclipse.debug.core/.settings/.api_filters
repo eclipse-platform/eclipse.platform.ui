@@ -8,30 +8,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="core/org/eclipse/debug/core/model/IBreakpoint.java" type="org.eclipse.debug.core.model.IBreakpoint">
-        <filter id="404000815">
-            <message_arguments>
-                <message_argument value="org.eclipse.debug.core.model.IBreakpoint"/>
-                <message_argument value="isTriggerPoint()"/>
-            </message_arguments>
-        </filter>
-        <filter id="404000815">
-            <message_arguments>
-                <message_argument value="org.eclipse.debug.core.model.IBreakpoint"/>
-                <message_argument value="isTriggerPointActive()"/>
-            </message_arguments>
-        </filter>
-        <filter id="404000815">
-            <message_arguments>
-                <message_argument value="org.eclipse.debug.core.model.IBreakpoint"/>
-                <message_argument value="setTriggerPoint(boolean)"/>
-            </message_arguments>
-        </filter>
-        <filter id="404000815">
-            <message_arguments>
-                <message_argument value="org.eclipse.debug.core.model.IBreakpoint"/>
-                <message_argument value="setTriggerPointActive(boolean)"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>

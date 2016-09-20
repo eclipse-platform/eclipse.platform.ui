@@ -50,6 +50,7 @@ import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
+import org.eclipse.debug.core.model.ITriggerPoint;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -284,8 +285,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					added.add(breakpoint);
 
 				}
-				if (breakpoint.isTriggerPoint()) {
-					addTriggerBreakpoint(breakpoint);
+				if (breakpoint instanceof ITriggerPoint && ((ITriggerPoint) breakpoint).isTriggerPoint()) {
+					addTriggerPoint(breakpoint);
 				}
 			} catch (DebugException e) {
 				DebugPlugin.log(e);
@@ -1167,23 +1168,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public void setEnabled(final boolean enabled) {
         if (isEnabled() != enabled) {
         	Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_BREAKPOINT_MANAGER_ENABLED_STATE, enabled, null);
-            IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-                @Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-                    IBreakpoint[] breakpoints = getBreakpoints();
-                    for (int i = 0; i < breakpoints.length; i++) {
-                        IBreakpoint breakpoint = breakpoints[i];
-                        // Touch the marker (but don't actually change anything) so that the icon in
-                        // the editor ruler will be updated (editors listen to marker changes).
-                        breakpoint.getMarker().setAttribute(IBreakpoint.ENABLED, breakpoint.isEnabled());
-                    }
-                }
-            };
-            try {
-                ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE ,null);
-            } catch (CoreException e) {
-                DebugPlugin.log(e);
-            }
+			touchAllBreakpoints();
     		new BreakpointManagerNotifier().notify(enabled);
         }
 	}
@@ -1252,7 +1237,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	class BreakpointManagerTriggerPointNotifier implements ISafeRunnable {
 
 		private IBreakpointManagerListener fListener;
-		private IBreakpoint fManagerTriggerpoint;
+		private IBreakpoint fManagerTriggerPoint;
 
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -1268,7 +1253,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		@Override
 		public void run() throws Exception {
-			fListener.breakpointManagerTriggerPointChanged(fManagerTriggerpoint);
+			fListener.breakpointManagerTriggerPointChanged(fManagerTriggerPoint);
 		}
 
 		/**
@@ -1277,7 +1262,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @param triggerBreakpoint new breakpoint as trigger point
 		 */
 		public void notify(IBreakpoint triggerBreakpoint) {
-			fManagerTriggerpoint = triggerBreakpoint;
+			fManagerTriggerPoint = triggerBreakpoint;
 			for (IBreakpointManagerListener iBreakpointManagerListener : fBreakpointManagerListeners) {
 				fListener = iBreakpointManagerListener;
 				SafeRunner.run(this);
@@ -1378,59 +1363,61 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	@Override
-	public IBreakpoint[] getTriggerBreakpoints() {
+	public IBreakpoint[] getTriggerPoints() {
 		return fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
 	}
 
 	@Override
-	public void addTriggerBreakpoint(IBreakpoint triggerBreakpoint) throws CoreException {
-		if (triggerBreakpoint == null) {
+	public void addTriggerPoint(IBreakpoint triggerPoint) throws CoreException {
+		if (triggerPoint == null) {
 			return;
 		}
-		fTriggerPointBreakpointList.add(triggerBreakpoint);
-		new BreakpointManagerTriggerPointNotifier().notify(triggerBreakpoint);
+		fTriggerPointBreakpointList.add(triggerPoint);
+		new BreakpointManagerTriggerPointNotifier().notify(triggerPoint);
 	}
 
 	@Override
-	public void removeTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
+	public void removeTriggerPoint(IBreakpoint breakpoint) throws CoreException {
 		if (breakpoint != null) {
 			fTriggerPointBreakpointList.remove(breakpoint);
 		}
 	}
 
 	@Override
-	public void removeAllTriggerpoints() throws CoreException {
+	public void removeAllTriggerPoints() throws CoreException {
 		IBreakpoint[] triggerPointBreakpointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
 		for (IBreakpoint iBreakpoint : triggerPointBreakpointList) {
-			iBreakpoint.setTriggerPoint(false);
+			if (iBreakpoint instanceof ITriggerPoint) {
+				((ITriggerPoint) iBreakpoint).setTriggerPoint(false);
+			}
 		}
 		refreshTriggerpointDisplay();
 	}
 
 	@Override
-	public boolean canSupendOnBreakpoint() {
+	public boolean hasActiveTriggerPoints() {
 		if (fTriggerPointBreakpointList.isEmpty()) {
-			return true;
+			return false;
 		}
 		for (IBreakpoint iBreakpoint : fTriggerPointBreakpointList) {
 			try {
 				if (iBreakpoint.isEnabled()) {
-					return false;
+					return true;
 				}
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
-		return true;
+		return false;
 	}
 
 	@Override
-	public void enableTriggerpoints(IBreakpoint[] triggerpoints, boolean enable) {
-		IBreakpoint[] triggerpointList = triggerpoints;
-		if (triggerpoints == null) {
-			triggerpointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+	public void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable) {
+		IBreakpoint[] triggerPointList = triggerPoints;
+		if (triggerPoints == null) {
+			triggerPointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
 		}
-		for (IBreakpoint iBreakpoint : triggerpointList) {
+		for (IBreakpoint iBreakpoint : triggerPointList) {
 			try {
 				IMarker m = iBreakpoint.getMarker();
 				if (m != null && m.exists()) {
@@ -1444,6 +1431,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	@Override
 	public void refreshTriggerpointDisplay() {
+		touchAllBreakpoints();
+	}
+
+	/*
+	 * Touch and refresh display of all breakpoints
+	 */
+	private void touchAllBreakpoints() {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {

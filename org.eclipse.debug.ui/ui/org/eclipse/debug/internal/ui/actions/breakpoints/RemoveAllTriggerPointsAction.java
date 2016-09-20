@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * Removes all triggerpoints from the source (markers)
  */
-public class RemoveAllTriggerpointsAction extends AbstractRemoveAllActionDelegate implements IBreakpointsListener {
+public class RemoveAllTriggerPointsAction extends AbstractRemoveAllActionDelegate implements IBreakpointsListener {
 
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class RemoveAllTriggerpointsAction extends AbstractRemoveAllActionDelegat
 	 */
 	@Override
 	protected boolean isEnabled() {
-		return DebugPlugin.getDefault().getBreakpointManager().getTriggerBreakpoints().length > 0;
+		return DebugPlugin.getDefault().getBreakpointManager().getTriggerPoints().length > 0;
 	}	
 	
 	/* (non-Javadoc)
@@ -100,7 +100,7 @@ public class RemoveAllTriggerpointsAction extends AbstractRemoveAllActionDelegat
 		boolean prompt = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_TRIGGER_BREAKPOINTS);
 		boolean proceed = true;
 		if (prompt) {
-			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllTriggerpointsAction_0, ActionMessages.RemoveAllTriggerpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
+			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllTriggerPointsAction_0, ActionMessages.RemoveAllTriggerPointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
 			if (mdwt.getReturnCode() != IDialogConstants.YES_ID) {
 				proceed = false;
 			} else {
@@ -108,11 +108,11 @@ public class RemoveAllTriggerpointsAction extends AbstractRemoveAllActionDelegat
 			}
 		}
 		if (proceed) {
-			new Job(ActionMessages.RemoveAllTriggerpointsAction_1) {
+			new Job(ActionMessages.RemoveAllTriggerPointsAction_1) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						DebugPlugin.getDefault().getBreakpointManager().removeAllTriggerpoints();
+						DebugPlugin.getDefault().getBreakpointManager().removeAllTriggerPoints();
 					} catch (CoreException e) {
 						DebugUIPlugin.log(e);
 						return Status.CANCEL_STATUS;
