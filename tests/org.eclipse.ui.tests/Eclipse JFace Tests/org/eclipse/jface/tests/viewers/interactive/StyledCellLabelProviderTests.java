@@ -258,7 +258,7 @@ public class StyledCellLabelProviderTests {
 
 				Styler style= file.isDirectory() && useBold ? fBoldStyler: null;
 				StyledString styledString= new StyledString(file.getName(), style);
-				String decoration = MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
+				String decoration = MessageFormat.format(" ({0} bytes)", new Long(file.length())); //$NON-NLS-1$
 				styledString.append(decoration, StyledString.COUNTER_STYLER);
 
 				cell.setText(styledString.toString());

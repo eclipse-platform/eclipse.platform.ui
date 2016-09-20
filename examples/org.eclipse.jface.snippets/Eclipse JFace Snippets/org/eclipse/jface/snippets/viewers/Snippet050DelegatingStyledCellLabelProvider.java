@@ -211,7 +211,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 					styledString.append(file.getName());
 				}
 				if (file.isFile()) {
-					String decoration= MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
+					String decoration = MessageFormat.format(" ({0} bytes)", new Long(file.length())); //$NON-NLS-1$
 					styledString.append(decoration, StyledString.COUNTER_STYLER);
 				}
 			}

@@ -248,8 +248,7 @@ public class TextCellEditor extends CellEditor {
         boolean newValidState = isCorrect(typedValue);
         if (!newValidState) {
             // try to insert the current value into the error message.
-            setErrorMessage(MessageFormat.format(getErrorMessage(),
-                    new Object[] { value }));
+            setErrorMessage(MessageFormat.format(getErrorMessage(), value));
         }
         valueChanged(oldValidState, newValidState);
     }
