@@ -23,7 +23,6 @@
 
   <properties>
 	<unitTestSuite>org.eclipse.e4.ui.workbench.addons.swt.test.AllTests</unitTestSuite>
- 	<skipTests>false</skipTests>
   </properties>
 
   <build>
