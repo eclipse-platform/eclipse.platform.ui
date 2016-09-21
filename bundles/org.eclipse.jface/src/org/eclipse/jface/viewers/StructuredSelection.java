@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mikael Barbero (Eclipse Foundation) - Bug 254570
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
@@ -30,12 +32,12 @@ public class StructuredSelection implements IStructuredSelection {
     /**
      * The element that make up this structured selection.
      */
-    private Object[] elements;
+	private final Object[] elements;
 
     /**
      * The element comparer, or <code>null</code>
      */
-	private IElementComparer comparer;
+	private final IElementComparer comparer;
 
     /**
      * The canonical empty selection. This selection should be used instead of
@@ -50,6 +52,8 @@ public class StructuredSelection implements IStructuredSelection {
      * @see #EMPTY
      */
     public StructuredSelection() {
+		this.elements = null;
+		this.comparer = null;
     }
 
     /**
@@ -62,6 +66,7 @@ public class StructuredSelection implements IStructuredSelection {
     	Assert.isNotNull(elements);
         this.elements = new Object[elements.length];
         System.arraycopy(elements, 0, this.elements, 0, elements.length);
+		this.comparer = null;
     }
 
     /**
@@ -72,7 +77,8 @@ public class StructuredSelection implements IStructuredSelection {
      */
     public StructuredSelection(Object element) {
         Assert.isNotNull(element);
-        elements = new Object[] { element };
+		this.elements = new Object[] { element };
+		this.comparer = null;
     }
 
     /**
@@ -149,6 +155,25 @@ public class StructuredSelection implements IStructuredSelection {
         }
         return true;
     }
+
+	@Override
+	public int hashCode() {
+		if (isEmpty()) {
+			return Objects.hashCode(comparer);
+		}
+
+		int r;
+		if (comparer != null) {
+			r = 31 + comparer.hashCode();
+			for (Object e : elements) {
+				r = 31 * r + (e == null ? 0 : comparer.hashCode(e));
+			}
+		} else {
+			r = Arrays.hashCode(elements);
+		}
+
+		return r;
+	}
 
     @Override
 	public Object getFirstElement() {
