@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.refresh;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.refresh.*;
@@ -21,9 +21,9 @@ import org.eclipse.core.resources.refresh.*;
  * 
  */
 public class TestRefreshProvider extends RefreshProvider implements IRefreshMonitor {
-	private final ArrayList<AssertionFailedError> failures = new ArrayList<>();
-	private final HashSet<IResource> monitoredResources = new HashSet<>();
-	private static TestRefreshProvider instance;
+	private final List<AssertionFailedError> failures = new CopyOnWriteArrayList<>();
+	private final Set<Object> monitoredResources = Collections.synchronizedSet(new HashSet<>());
+	private static volatile TestRefreshProvider instance;
 
 	public static TestRefreshProvider getInstance() {
 		return instance;
@@ -72,6 +72,10 @@ public class TestRefreshProvider extends RefreshProvider implements IRefreshMoni
 	 */
 	@Override
 	public void unmonitor(IResource resource) {
+		if (resource == null) {
+			monitoredResources.clear();
+			return;
+		}
 		if (!monitoredResources.remove(resource))
 			failures.add(new AssertionFailedError("Unmonitor on resource that is not monitored: " + resource));
 	}

@@ -11,11 +11,11 @@
 package org.eclipse.core.internal.refresh;
 
 import org.eclipse.core.internal.resources.IManager;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.IRefreshResult;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
@@ -42,13 +42,15 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	/*
 	 * Starts or stops auto-refresh depending on the auto-refresh preference.
 	 */
-	protected void manageAutoRefresh(boolean enabled) {
+	protected void manageAutoRefresh(boolean enabled, IProgressMonitor progressMonitor) {
 		//do nothing if we have already shutdown
-		if (refreshJob == null)
+		if (refreshJob == null) {
 			return;
+		}
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, 1);
 		if (enabled) {
 			refreshJob.start();
-			monitors.start();
+			monitors.start(subMonitor.split(1));
 		} else {
 			refreshJob.stop();
 			monitors.stop();
@@ -70,8 +72,14 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 		String property = event.getProperty();
 		if (ResourcesPlugin.PREF_AUTO_REFRESH.equals(property)) {
 			Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
-			boolean autoRefresh = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
-			manageAutoRefresh(autoRefresh);
+			final boolean autoRefresh = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
+			String jobName = autoRefresh ? Messages.refresh_installMonitorsOnWorkspace : Messages.refresh_uninstallMonitorsOnWorkspace;
+			MonitorJob.createSystem(jobName, ResourcesPlugin.getWorkspace().getRoot(), new ICoreRunnable() {
+				@Override
+				public void run(IProgressMonitor monitor) {
+					manageAutoRefresh(autoRefresh, monitor);
+				}
+			}).schedule();
 		}
 	}
 
@@ -105,6 +113,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	 */
 	@Override
 	public void startup(IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.addPropertyChangeListener(this);
 
@@ -112,6 +121,6 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 		monitors = new MonitorManager(workspace, this);
 		boolean autoRefresh = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
 		if (autoRefresh)
-			manageAutoRefresh(autoRefresh);
+			manageAutoRefresh(autoRefresh, subMonitor.split(1));
 	}
 }

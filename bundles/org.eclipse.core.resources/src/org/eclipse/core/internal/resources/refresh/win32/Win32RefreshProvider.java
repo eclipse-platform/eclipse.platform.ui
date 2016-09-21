@@ -12,12 +12,13 @@ package org.eclipse.core.internal.resources.refresh.win32;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.refresh.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * The <code>Win32RefreshProvider</code> creates monitors that
  * can monitor drives on Win32 platforms.
  *
- * @see org.eclipse.core.resources.refresh.RefreshProvider
+ * @see RefreshProvider
  */
 public class Win32RefreshProvider extends RefreshProvider {
 	private Win32Monitor monitor;
@@ -25,10 +26,10 @@ public class Win32RefreshProvider extends RefreshProvider {
 	/**
 	 * Creates a standard Win32 monitor if the given resource is local.
 	 *
-	 * @see org.eclipse.core.resources.refresh.RefreshProvider#installMonitor(IResource,IRefreshResult)
+	 * @see RefreshProvider#installMonitor(IResource,IRefreshResult, IProgressMonitor)
 	 */
 	@Override
-	public IRefreshMonitor installMonitor(IResource resource, IRefreshResult result) {
+	public IRefreshMonitor installMonitor(IResource resource, IRefreshResult result, IProgressMonitor progressMonitor) {
 		if (resource.getLocation() == null || !resource.exists() || resource.getType() == IResource.FILE)
 			return null;
 		if (monitor == null)

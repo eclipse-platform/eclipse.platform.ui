@@ -23,6 +23,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.RefreshProvider;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Manages monitors by creating new monitors when projects are added and
@@ -37,7 +38,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 */
 	protected final PollingMonitor pollMonitor;
 	/**
-	 * The list of registered monitor factories.
+	 * The list of registered monitor factories. This field is guarded by <code>this</code> as
+	 * it may be read and written by several threads.
 	 */
 	private RefreshProvider[] providers;
 	/**
@@ -68,8 +70,10 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 *             objects or an empty array.
 	 */
 	private RefreshProvider[] getRefreshProviders() {
-		if (providers != null)
-			return providers;
+		synchronized (this) {
+			if (providers != null)
+				return providers;
+		}
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_REFRESH_PROVIDERS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		List<RefreshProvider> providerList = new ArrayList<>(infos.length);
@@ -84,8 +88,10 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			if (provider != null)
 				providerList.add(provider);
 		}
-		providers = providerList.toArray(new RefreshProvider[providerList.size()]);
-		return providers;
+		synchronized (this) {
+			providers = providerList.toArray(new RefreshProvider[providerList.size()]);
+			return providers;
+		}
 	}
 
 	/**
@@ -117,7 +123,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			case LifecycleEvent.PRE_LINK_DELETE :
 			case LifecycleEvent.PRE_PROJECT_CLOSE :
 			case LifecycleEvent.PRE_PROJECT_DELETE :
-				unmonitor(event.resource);
+				unmonitorAsync(event.resource);
 				break;
 		}
 	}
@@ -137,13 +143,14 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 * Installs a monitor on the given resource. Returns true if the polling
 	 * monitor was installed, and false if a refresh provider was installed.
 	 */
-	boolean monitor(IResource resource) {
+	boolean monitor(IResource resource, IProgressMonitor progressMonitor) {
 		if (isMonitoring(resource))
 			return false;
 		boolean pollingMonitorNeeded = true;
 		RefreshProvider[] refreshProviders = getRefreshProviders();
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, refreshProviders.length);
 		for (int i = 0; i < refreshProviders.length; i++) {
-			IRefreshMonitor monitor = safeInstallMonitor(refreshProviders[i], resource);
+			IRefreshMonitor monitor = safeInstallMonitor(refreshProviders[i], resource, subMonitor.split(1));
 			if (monitor != null) {
 				registerMonitor(monitor, resource);
 				pollingMonitorNeeded = false;
@@ -194,7 +201,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (registeredMonitors.isEmpty())
 			return;
 		String variableName = event.getVariableName();
-		Set<IResource> invalidResources = new HashSet<>();
+		final Set<IResource> invalidResources = new HashSet<>();
 		for (Iterator<List<IResource>> i = registeredMonitors.values().iterator(); i.hasNext();) {
 			for (Iterator<IResource> j = i.next().iterator(); j.hasNext();) {
 				IResource resource = j.next();
@@ -207,11 +214,20 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			}
 		}
 		if (!invalidResources.isEmpty()) {
-			for (Iterator<IResource> i = invalidResources.iterator(); i.hasNext();) {
-				IResource resource = i.next();
-				unmonitor(resource);
-				monitor(resource);
-			}
+			MonitorJob.createSystem(Messages.refresh_restoreOnInvalid, invalidResources, new ICoreRunnable() {
+				@Override
+				public void run(IProgressMonitor monitor) {
+					SubMonitor subMonitor = SubMonitor.convert(monitor, invalidResources.size() * 2);
+					for (Iterator<IResource> i = invalidResources.iterator(); i.hasNext();) {
+						IResource resource = i.next();
+						unmonitor(resource, subMonitor.split(1));
+						monitor(resource, subMonitor.split(1));
+						// Because the monitor is installed asynchronously we
+						// may have missed some changes, we need to refresh it.
+						refreshManager.refresh(resource);
+					}
+				}
+			}).schedule();
 		}
 	}
 
@@ -243,10 +259,10 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			Policy.debug(RefreshManager.DEBUG_PREFIX + " removing monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
+	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource, IProgressMonitor progressMonitor) {
 		Throwable t = null;
 		try {
-			return provider.installMonitor(resource, refreshManager);
+			return provider.installMonitor(resource, refreshManager, progressMonitor);
 		} catch (Exception e) {
 			t = e;
 		} catch (LinkageError e) {
@@ -259,11 +275,14 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 
 	/**
 	 * Start the monitoring of resources by all monitors.
+	 * @param progressMonitor
 	 */
-	public void start() {
+	public void start(IProgressMonitor progressMonitor) {
+		List<IResource> resourcesToMonitor = getResourcesToMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, resourcesToMonitor.size() + 1);
 		boolean refreshNeeded = false;
-		for (Iterator<IResource> i = getResourcesToMonitor().iterator(); i.hasNext();)
-			refreshNeeded |= !monitor(i.next());
+		for (Iterator<IResource> i = resourcesToMonitor.iterator(); i.hasNext();)
+			refreshNeeded |= !monitor(i.next(), subMonitor.split(1));
 		workspace.getPathVariableManager().addChangeListener(this);
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		//adding the lifecycle listener twice does no harm
@@ -272,8 +291,10 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			Policy.debug(RefreshManager.DEBUG_PREFIX + " starting monitor manager."); //$NON-NLS-1$
 		//If not exclusively using polling, create a polling monitor and run it once, to catch
 		//changes that occurred while the native monitor was turned off.
-		if (refreshNeeded)
+		if (refreshNeeded) {
 			new PollingMonitor(refreshManager).runOnce();
+		}
+		subMonitor.step(1);
 	}
 
 	/**
@@ -295,11 +316,14 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		pollMonitor.cancel();
 	}
 
-	void unmonitor(IResource resource) {
+	void unmonitor(IResource resource, IProgressMonitor progressMonitor) {
 		if (resource == null || !isMonitoring(resource))
 			return;
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, 100);
 		synchronized (registeredMonitors) {
+			SubMonitor loopMonitor = subMonitor.split(90).setWorkRemaining(registeredMonitors.entrySet().size());
 			for (Iterator<Entry<IRefreshMonitor, List<IResource>>> i = registeredMonitors.entrySet().iterator(); i.hasNext();) {
+				loopMonitor.worked(1);
 				Entry<IRefreshMonitor, List<IResource>> current = i.next();
 				List<IResource> resources = current.getValue();
 				if ((resources != null) && !resources.isEmpty() && resources.contains(resource)) {
@@ -309,10 +333,10 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			}
 		}
 		if (resource.getType() == IResource.PROJECT)
-			unmonitorLinkedContents((IProject) resource);
+			unmonitorLinkedContents((IProject) resource, subMonitor.split(10));
 	}
 
-	private void unmonitorLinkedContents(IProject project) {
+	private void unmonitorLinkedContents(IProject project, IProgressMonitor progressMonitor) {
 		if (!project.isAccessible())
 			return;
 		IResource[] children = null;
@@ -321,10 +345,11 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		} catch (CoreException e) {
 			Policy.log(IStatus.WARNING, Messages.refresh_refreshErr, e);
 		}
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, children.length);
 		if (children != null && children.length > 0)
 			for (int i = 0; i < children.length; i++)
 				if (children[i].isLinked())
-					unmonitor(children[i]);
+					unmonitor(children[i], subMonitor.split(1));
 	}
 
 	@Override
@@ -344,13 +369,34 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			IResource resource = delta.getResource();
 			if (resource.isLinked())
-				monitor(resource);
+				monitorAsync(resource);
 		}
 		if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
 			IProject project = (IProject) delta.getResource();
 			if (project.isAccessible())
-				monitor(project);
+				monitorAsync(project);
 		}
 		return true;
+	}
+
+	private void monitorAsync(final IResource resource) {
+		MonitorJob.createSystem(NLS.bind(Messages.refresh_installMonitor, resource), resource, new ICoreRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) {
+				monitor(resource, monitor);
+				// Because the monitor is installed asynchronously we
+				// may have missed some changes, we need to refresh it.
+				refreshManager.refresh(resource);
+			}
+		}).schedule();
+	}
+
+	private void unmonitorAsync(final IResource resource) {
+		MonitorJob.createSystem(NLS.bind(Messages.refresh_uninstallMonitor, resource), resource, new ICoreRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) {
+				unmonitor(resource, monitor);
+			}
+		}).schedule();
 	}
 }

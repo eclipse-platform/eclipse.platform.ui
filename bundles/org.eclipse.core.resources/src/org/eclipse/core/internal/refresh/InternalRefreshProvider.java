@@ -13,6 +13,8 @@ package org.eclipse.core.internal.refresh;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Internal abstract superclass of all refresh providers.  This class must not be
@@ -26,17 +28,21 @@ public class InternalRefreshProvider {
 	 * @see org.eclipse.core.resources.refresh.RefreshProvider#createPollingMonitor(IResource)
 	 */
 	protected IRefreshMonitor createPollingMonitor(IResource resource) {
-		PollingMonitor monitor = ((Workspace)resource.getWorkspace()).getRefreshManager().monitors.pollMonitor;
-		monitor.monitor(resource);
-		return monitor;
+		Workspace workspace = (Workspace) resource.getWorkspace();
+		RefreshManager refreshManager = workspace.getRefreshManager();
+		MonitorManager monitors = refreshManager.monitors;
+		PollingMonitor pollingMonitor = monitors.pollMonitor;
+		pollingMonitor.monitor(resource);
+		return pollingMonitor;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.refresh.RefreshProvider#resetMonitors(IResource)
 	 */
-	public void resetMonitors(IResource resource) {
-		MonitorManager manager = ((Workspace)resource.getWorkspace()).getRefreshManager().monitors;
-		manager.unmonitor(resource);
-		manager.monitor(resource);
+	public void resetMonitors(IResource resource, IProgressMonitor progressMonitor) {
+		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, 2);
+		MonitorManager manager = ((Workspace) resource.getWorkspace()).getRefreshManager().monitors;
+		manager.unmonitor(resource, subMonitor.split(1));
+		manager.monitor(resource, subMonitor.split(1));
 	}
 }
