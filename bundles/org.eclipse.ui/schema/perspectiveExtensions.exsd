@@ -201,7 +201,7 @@ are appended to the initial definition.
 &lt;samp&gt;relative&lt;/samp&gt;. 
 The following values are supported:
 &lt;ul&gt;
-&lt;b&gt;fast&lt;/b&gt; - the view extension will be created as a fast view.
+&lt;b&gt;fast&lt;/b&gt; - &lt;b&gt;Deprecated&lt;/b&gt; - the view extension will be created as a fast view.
 &lt;br&gt;&lt;b&gt;stack&lt;/b&gt; - the view extension will be stacked with the relative
 view in a folder.
 &lt;br&gt;&lt;b&gt;left, right, top, bottom&lt;/b&gt; - the view extension will be placed
@@ -308,6 +308,7 @@ If this attribute is not used, the view will be moveable, unless the perspective
       </complexType>
    </element>
 
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -354,7 +355,6 @@ added beside the Resource Navigator.
          The items defined within the perspective extension are contributed to the initial contents of the target perspective.  Following this, the user may remove any contribution or add others to a perspective from within the workbench user interface.
       </documentation>
    </annotation>
-
 
 
    <annotation>

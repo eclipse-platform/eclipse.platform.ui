@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
     private static final String VAL_BOTTOM = "bottom";//$NON-NLS-1$
 
     private static final String VAL_STACK = "stack";//$NON-NLS-1$
+
+	private static final String VAL_FAST = "fast";//$NON-NLS-1$
 
 	private static final String VAL_TRUE = "true";//$NON-NLS-1$
 
@@ -207,7 +209,13 @@ public class PerspectiveExtensionReader extends RegistryReader {
             logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_RELATIONSHIP);
             return false;
         }
-
+		if (!VAL_FAST.equals(relationship) && relative == null) {
+			logError(element,
+					"Attribute '" + IWorkbenchRegistryConstants.ATT_RELATIVE //$NON-NLS-1$
+							+ "' not defined.  This attribute is required when " //$NON-NLS-1$
+							+ IWorkbenchRegistryConstants.ATT_RELATIONSHIP + "=\"" + relationship + "\"."); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
         // Get the ratio.
         if (ratioString == null) {
             // The ratio has not been specified.
@@ -227,6 +235,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
         // Get relationship details.
         boolean stack = false;
         int intRelation = 0;
+		boolean fast = false;
         if (relationship.equals(VAL_LEFT)) {
 			intRelation = IPageLayout.LEFT;
 		} else if (relationship.equals(VAL_RIGHT)) {
@@ -237,6 +246,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			intRelation = IPageLayout.BOTTOM;
 		} else if (relationship.equals(VAL_STACK)) {
 			stack = true;
+		} else if (relationship.equals(VAL_FAST)) {
+			fast = true;
 		} else {
 			return false;
 		}
@@ -254,7 +265,16 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			} else {
 				pageLayout.stackView(id, relative, false);
 			}
-        } else {
+		}
+		// If the view is a fast view...
+		else if (fast) {
+			if (ratio == IPageLayout.NULL_RATIO) {
+				// The ratio has not been specified.
+				pageLayout.addFastView(id);
+			} else {
+				pageLayout.addFastView(id, ratio);
+			}
+		} else {
 
             // The view is a regular view.
             // If the ratio is not specified or is invalid, use the default ratio.
