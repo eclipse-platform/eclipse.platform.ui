@@ -55,8 +55,8 @@ import org.osgi.framework.BundleContext;
  * <li>SHOW - a style indicating that handlers should show a problem to an user
  * without blocking the calling method while awaiting user response. This is
  * generally done using a non modal {@link Dialog}</li>
- * <li>BLOCK - a style indicating that the handling should block the calling
- * method until the user has responded. This is generally done using a modal
+ * <li>BLOCK - a style indicating that the handling should block the UI
+ * until the user has responded. This is generally done using a modal
  * window such as a {@link Dialog}</li>
  * </ul>
  * </p>
@@ -103,7 +103,7 @@ public class StatusManager {
 	 * therefore likely but not required that the <code>StatusHandler</code>
 	 * would achieve this through the use of a modal dialog.
 	 * </p><p>Due to the fact
-	 * that use of <code>BLOCK</code> will block any thread, care should be
+	 * that use of <code>BLOCK</code> will block UI, care should be
 	 * taken in this use of this flag.
 	 * </p>
 	 */

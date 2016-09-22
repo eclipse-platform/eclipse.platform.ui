@@ -59,6 +59,10 @@ public class StatusDialogUtil {
 
 	public static Shell getStatusShell(){
 		UITestCase.waitForJobs(100, 1000);
+		return getStatusShellImmediately();
+	}
+
+	public static Shell getStatusShellImmediately() {
 		Shell[] shells = Display.getDefault().getShells();
 		for (int i = 0; i < shells.length; i++) {
 			if (shells[i].getText().equals("Problem Occurred")
