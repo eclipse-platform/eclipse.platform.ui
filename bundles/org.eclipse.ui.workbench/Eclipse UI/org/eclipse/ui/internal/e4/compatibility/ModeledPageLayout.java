@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -47,6 +48,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -192,11 +194,18 @@ public class ModeledPageLayout implements IPageLayout {
 	@Override
 	public void addFastView(String viewId) {
 		E4Util.unsupported("addFastView: " + viewId); //$NON-NLS-1$
+		logDeprecatedWarning(viewId);
 	}
 
 	@Override
 	public void addFastView(String viewId, float ratio) {
 		E4Util.unsupported("addFastView: " + viewId); //$NON-NLS-1$
+		logDeprecatedWarning(viewId);
+	}
+
+	private void logDeprecatedWarning(String viewId) {
+		String message = viewId + ": Deprecated relationship \"fast\" should be converted to \"stack\"."; //$NON-NLS-1$
+		WorkbenchPlugin.log(message, StatusUtil.newStatus(IStatus.WARNING, message, null));
 	}
 
 	@Override
