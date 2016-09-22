@@ -8,7 +8,7 @@
  * Contributors:
  *     Lars Vogel <Lars.Vogel@gmail.com> - initial API and implementation
  *     Andrea Guarinoni - intial color schema definition
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 466469 based on work from Miguel Cervantes
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Ongoing maintenance
  *******************************************************************************/
 
 /* ############################## Eclipse UI properties ############################## */
@@ -60,5 +60,6 @@ IEclipsePreferences#org-eclipse-ui-workbench {
 		'INCOMING_COLOR=31,179,235'
 		'OUTGOING_COLOR=238,238,238'
 		'RESOLVED_COLOR=108,210,17'
+		'org.eclipse.search.ui.match.highlight=206,92,0'
 }
 
