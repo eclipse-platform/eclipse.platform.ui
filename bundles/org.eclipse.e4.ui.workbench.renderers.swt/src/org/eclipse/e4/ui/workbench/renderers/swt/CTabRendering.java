@@ -57,10 +57,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			}
 			return RIGHT_TOP;
 		}
-
-		boolean isBottom() {
-			return this == LEFT_BOTTOM || this == RIGHT_BOTTOM;
-		}
 	}
 
 	// drop shadow constants
@@ -426,18 +422,23 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			points[index++] = selectionY1 = bottomY;
 		}
 
-		int[] ltt = drawCircleForTabs(circX, circY, radius, CirclePart.left(onBottom));
+		int[] ltt = drawCircle(circX, circY, radius, CirclePart.left(onBottom));
 		int startX = ltt[6];
+		if (!onBottom) {
+			mirrorCirclePoints(ltt);
+		}
 		System.arraycopy(ltt, 0, points, index, ltt.length);
 		index += ltt.length;
-
-		int[] rt = drawCircleForTabs(circX + width - (radius * 2), circY, radius, CirclePart.right(onBottom));
+		int[] rt = drawCircle(circX + width - (radius * 2), circY, radius, CirclePart.right(onBottom));
 		int endX = rt[rt.length - 4];
+		if (!onBottom) {
+			mirrorCirclePoints(rt);
+		}
 		System.arraycopy(rt, 0, points, index, rt.length);
 		index += rt.length;
 
 		points[index++] = selectionX2 = bounds.width + circX - radius;
-		points[index++] = selectionY2 = bounds.y + bounds.height;
+		points[index++] = selectionY2 = bottomY;
 
 		if (active) {
 			points[index++] = parent.getSize().x
@@ -539,7 +540,10 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 
 			int rightIndex = circX - 1;
 
-			int[] ltt = drawCircleForTabs(leftIndex, circY, radius, CirclePart.left(onBottom));
+			int[] ltt = drawCircle(leftIndex, circY, radius, CirclePart.left(onBottom));
+			if (!onBottom) {
+				mirrorCirclePoints(ltt);
+			}
 			System.arraycopy(ltt, 0, points, index, ltt.length);
 			index += ltt.length;
 
@@ -548,7 +552,10 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 				inactive_index += 2;
 			}
 
-			int[] rt = drawCircleForTabs(rightIndex + width - (radius * 2), circY, radius, CirclePart.right(onBottom));
+			int[] rt = drawCircle(rightIndex + width - (radius * 2), circY, radius, CirclePart.right(onBottom));
+			if (!onBottom) {
+				mirrorCirclePoints(rt);
+			}
 			System.arraycopy(rt, 0, points, index, rt.length);
 			index += rt.length;
 
@@ -609,14 +616,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			circle[i + 1] = circle[circle.length - i - 1];
 			circle[circle.length - i - 1] = tmp;
 		}
-	}
-
-	private static int[] drawCircleForTabs(int xC, int yC, int r, CirclePart circlePart) {
-		int[] circle = drawCircle(xC, yC, r, circlePart);
-		if (!circlePart.isBottom()) {
-			mirrorCirclePoints(circle);
-		}
-		return circle;
 	}
 
 	static int[] drawCircle(int xC, int yC, int r, CirclePart circlePart) {
