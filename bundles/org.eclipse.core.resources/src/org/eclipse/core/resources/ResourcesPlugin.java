@@ -327,6 +327,12 @@ public final class ResourcesPlugin extends Plugin {
 	public static final boolean DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS = false;
 
 	/**
+	 * The time in milliseconds before a warning is logged when a thread is blocked
+	 * in {@link #getWorkspace()}
+	 */
+	private static final int GET_WORKSPACE_TIMEOUT_BEFORE_WARNING_MILLIS = 20000;
+
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;
@@ -335,10 +341,15 @@ public final class ResourcesPlugin extends Plugin {
 	 * The workspace managed by the single instance of this
 	 * plug-in runtime class, or <code>null</code> is there is none.
 	 */
-	private static Workspace workspace = null;
+	private static volatile Workspace workspace = null;
 
-	private ServiceRegistration<IWorkspace> workspaceRegistration;
-	private ServiceRegistration<DebugOptionsListener> debugRegistration;
+	/**
+	 * The job that starts the workspace.
+	 */
+	private static volatile Job initWorkspaceJob;
+
+	private volatile ServiceRegistration<IWorkspace> workspaceRegistration;
+	private volatile ServiceRegistration<DebugOptionsListener> debugRegistration;
 
 	/**
 	 * Constructs an instance of this plug-in runtime class.
@@ -408,9 +419,51 @@ public final class ResourcesPlugin extends Plugin {
 	 *   plug-in class.
 	 */
 	public static IWorkspace getWorkspace() {
-		if (workspace == null)
+		Job job = initWorkspaceJob;
+		if (workspace == null && job == null) {
+			// This should only happen when running out of an OSGi framework instance
+			// or when the initialization ended with fatal error
 			throw new IllegalStateException(Messages.resources_workspaceClosed);
+		} else if (job != null && Thread.currentThread() != job.getThread()) {
+			// workspace is currently being initialized and #getWorkspace() is called from a thread
+			// different from the initialization one: we block until the init is over.
+			try {
+				while (!job.join(GET_WORKSPACE_TIMEOUT_BEFORE_WARNING_MILLIS, new NullProgressMonitor())) {
+					logLongWorkspaceInitWarning(job);
+				}
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			if (workspace == null) {
+				throw new IllegalStateException(Messages.resources_workspaceClosed);
+			}
+		}
 		return workspace;
+	}
+
+	private static void logLongWorkspaceInitWarning(Job job) {
+		class SeverityMultiStatus extends MultiStatus {
+			public SeverityMultiStatus(int severity, String pluginId, String message, Throwable exception) {
+				super(pluginId, OK, message, exception);
+				setSeverity(severity);
+			}
+		}
+		MultiStatus status = new SeverityMultiStatus(IStatus.WARNING, PI_RESOURCES, String.format("Workspace initialization takes longer than usual. Thread ''%s'' is blocked until the initialization finishes.", Thread.currentThread()), null); //$NON-NLS-1$
+		Exception exception = new Exception();
+		status.add(new Status(IStatus.INFO, PI_RESOURCES, "Sample stacktrace of the blocked thread.", exception)); //$NON-NLS-1$
+
+		try {
+			SecurityManager securityManager = System.getSecurityManager();
+			if (securityManager != null) {
+				securityManager.checkPermission(new RuntimePermission("getStackTrace")); //$NON-NLS-1$
+			}
+			exception = new Exception();
+			exception.setStackTrace(job.getThread().getStackTrace());
+			status.add(new Status(IStatus.INFO, PI_RESOURCES, "Sample stacktrace of the initialization workspace job.", exception)); //$NON-NLS-1$
+		} catch (SecurityException throwable) {
+			// do not log anything
+		}
+		getPlugin().getLog().log(status);
 	}
 
 	/**
@@ -445,26 +498,36 @@ public final class ResourcesPlugin extends Plugin {
 	 * @see BundleActivator#start(BundleContext)
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 
-		// register debug options listener
-		Hashtable<String, String> properties = new Hashtable<>(2);
-		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RESOURCES);
-		debugRegistration = context.registerService(DebugOptionsListener.class, Policy.RESOURCES_DEBUG_OPTIONS_LISTENER, properties);
+		initWorkspaceJob = Job.createSystem(Messages.resources_initWorkspace, new ICoreRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				try {
+					// register debug options listener
+					Hashtable<String, String> properties = new Hashtable<>(2);
+					properties.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RESOURCES);
+					debugRegistration = context.registerService(DebugOptionsListener.class, Policy.RESOURCES_DEBUG_OPTIONS_LISTENER, properties);
 
-		if (!new LocalMetaArea().hasSavedWorkspace()) {
-			constructWorkspace();
-		}
-		// Remember workspace before opening, to
-		// make it easier to debug cases where open() is failing.
-		workspace = new Workspace();
-		PlatformURLResourceConnection.startup(workspace.getRoot().getLocation());
-		initializePreferenceLookupOrder();
-		IStatus result = workspace.open(null);
-		if (!result.isOK())
-			getLog().log(result);
-		workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
+					if (!new LocalMetaArea().hasSavedWorkspace()) {
+						constructWorkspace();
+					}
+					// Remember workspace before opening, to
+					// make it easier to debug cases where open() is failing.
+					workspace = new Workspace();
+					PlatformURLResourceConnection.startup(workspace.getRoot().getLocation());
+					initializePreferenceLookupOrder();
+					IStatus result = workspace.open(monitor);
+					if (!result.isOK())
+						getLog().log(result);
+					workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
+				} finally {
+					initWorkspaceJob = null;
+				}
+			}
+		});
+		initWorkspaceJob.schedule();
 	}
 
 	/*

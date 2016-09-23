@@ -204,6 +204,7 @@ public class Messages extends NLS {
 	public static String resources_initHook;
 	public static String resources_initTeamHook;
 	public static String resources_initValidator;
+	public static String resources_initWorkspace;
 	public static String resources_invalidCharInName;
 	public static String resources_invalidCharInPath;
 	public static String resources_invalidName;

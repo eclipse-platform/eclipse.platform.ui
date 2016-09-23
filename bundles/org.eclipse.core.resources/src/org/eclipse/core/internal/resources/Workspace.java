@@ -2152,10 +2152,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// create root location
 		localMetaArea.locationFor(getRoot()).toFile().mkdirs();
 
-		IProgressMonitor nullMonitor = Policy.monitorFor(null);
-		startup(nullMonitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		startup(subMonitor.split(95));
 		//restart the notification manager so it is initialized with the right tree
-		notificationManager.startup(null);
+		notificationManager.startup(subMonitor.split(5));
 		openFlag = true;
 		if (crashed || refreshRequested()) {
 			try {
@@ -2376,41 +2376,42 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * Starts all the workspace manager classes.
 	 */
 	protected void startup(IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 14);
 		// ensure the tree is locked during the startup notification
 		try {
 			_workManager = new WorkManager(this);
-			_workManager.startup(null);
+			_workManager.startup(subMonitor.split(1));
 			fileSystemManager = new FileSystemResourceManager(this);
-			fileSystemManager.startup(monitor);
+			fileSystemManager.startup(subMonitor.split(1));
 			pathVariableManager = new PathVariableManager();
-			pathVariableManager.startup(null);
+			pathVariableManager.startup(subMonitor.split(1));
 			natureManager = new NatureManager();
-			natureManager.startup(null);
+			natureManager.startup(subMonitor.split(1));
 			filterManager = new FilterTypeManager();
-			filterManager.startup(null);
+			filterManager.startup(subMonitor.split(1));
 			buildManager = new BuildManager(this, getWorkManager().getLock());
-			buildManager.startup(null);
+			buildManager.startup(subMonitor.split(1));
 			notificationManager = new NotificationManager(this);
-			notificationManager.startup(null);
+			notificationManager.startup(subMonitor.split(1));
 			markerManager = new MarkerManager(this);
-			markerManager.startup(null);
+			markerManager.startup(subMonitor.split(1));
 			synchronizer = new Synchronizer(this);
 			saveManager = new SaveManager(this);
-			saveManager.startup(null);
+			saveManager.startup(subMonitor.split(1));
 			propertyManager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
-			propertyManager.startup(monitor);
+			propertyManager.startup(subMonitor.split(1));
 			charsetManager = new CharsetManager(this);
-			charsetManager.startup(null);
+			charsetManager.startup(subMonitor.split(1));
 			contentDescriptionManager = new ContentDescriptionManager();
-			contentDescriptionManager.startup(null);
+			contentDescriptionManager.startup(subMonitor.split(1));
 			//must start after save manager, because (read) access to tree is needed
 			//must start after other managers to avoid potential cyclic dependency on uninitialized managers (see bug 316182)
 			//must start before alias manager (see bug 94829)
 			refreshManager = new RefreshManager(this);
-			refreshManager.startup(null);
+			refreshManager.startup(subMonitor.split(1));
 			//must start at the end to avoid potential cyclic dependency on other uninitialized managers (see bug 369177)
 			aliasManager = new AliasManager(this);
-			aliasManager.startup(null);
+			aliasManager.startup(subMonitor.split(1));
 		} finally {
 			//unlock tree even in case of failure, otherwise shutdown will also fail
 			treeLocked = null;
