@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Eric Rizzo
  *
  */
-public class Snippet62TextAndDialogCellEditor {
+public class Snippet062TextAndDialogCellEditor {
 
 	public class Person {
 		public String givenname;
@@ -79,7 +79,7 @@ public class Snippet62TextAndDialogCellEditor {
 		protected abstract void doSetValue(Object element, Object value);
 	}
 
-	public Snippet62TextAndDialogCellEditor(Shell shell) {
+	public Snippet062TextAndDialogCellEditor(Shell shell) {
 		TableViewer v = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		v.setContentProvider(ArrayContentProvider.getInstance());
 
@@ -196,7 +196,7 @@ public class Snippet62TextAndDialogCellEditor {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet62TextAndDialogCellEditor(shell);
+		new Snippet062TextAndDialogCellEditor(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
