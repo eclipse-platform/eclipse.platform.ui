@@ -126,7 +126,7 @@ public interface IWorkbench {
 	 * }
 	 * </pre>
 	 *
-	 * @since 1.4
+	 * @since 1.5
 	 */
 	public static final String ON_TOP = "elementOnTop"; //$NON-NLS-1$
 
