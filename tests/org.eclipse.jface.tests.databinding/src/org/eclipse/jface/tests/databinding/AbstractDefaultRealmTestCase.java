@@ -23,7 +23,7 @@ import junit.framework.TestCase;
  *
  * @since 3.3
  */
-public class AbstractDefaultRealmTestCase extends TestCase {
+public abstract class AbstractDefaultRealmTestCase extends TestCase {
 	private Realm previousRealm;
 
 	/**

@@ -19,10 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -34,10 +30,20 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 /**
  * @since 3.2
  */
 public class WritableListTest extends TestCase {
+
+	@Override
+	protected void setUp() throws Exception {
+		RealmTester.setDefault(new CurrentRealm(true));
+	}
+
 	@Override
 	protected void tearDown() throws Exception {
 		RealmTester.setDefault(null);
