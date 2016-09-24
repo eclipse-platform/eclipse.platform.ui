@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -33,12 +35,14 @@ public class ViewerUpdaterTest extends AbstractSWTTestCase {
 	String[] elements = new String[] { "one", "two", "three" };
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		elementsList = new WritableList<>(Arrays.asList(elements), String.class);
 	}
 
+	@Test
 	public void testTableViewer_ReplacingSelectedItemSelectsNewItem() {
 		TableViewer tableViewer = new TableViewer(getShell());
 		// only with sorter the TableViewerUpdater.replace method delegates to
@@ -54,6 +58,7 @@ public class ViewerUpdaterTest extends AbstractSWTTestCase {
 		Assert.assertTrue(selection.toList().contains("foo"));
 	}
 
+	@Test
 	public void testTreeViewer_ReplacingSelectedItemSelectsNewItem() {
 		TreeViewer treeViewer = new TreeViewer(getShell());
 		Object input = new Object();

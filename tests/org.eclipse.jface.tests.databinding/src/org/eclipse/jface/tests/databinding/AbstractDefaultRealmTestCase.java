@@ -15,25 +15,26 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 
 /**
  * Base class that sets the default realm to be the SWT realm.
  *
  * @since 3.3
  */
-public abstract class AbstractDefaultRealmTestCase extends TestCase {
+public abstract class AbstractDefaultRealmTestCase {
 	private Realm previousRealm;
+
+	@Rule
+	public BindingTestSetup testSetup = new BindingTestSetup();
 
 	/**
 	 * Sets the default realm to be the realm for the default display.
-	 *
-	 * @see junit.framework.TestCase#setUp()
 	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 
 		previousRealm = Realm.getDefault();
 
@@ -56,9 +57,8 @@ public abstract class AbstractDefaultRealmTestCase extends TestCase {
 	/**
 	 * Removes the default realm.
 	 */
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 
 		RealmTester.setDefault(previousRealm);
 	}

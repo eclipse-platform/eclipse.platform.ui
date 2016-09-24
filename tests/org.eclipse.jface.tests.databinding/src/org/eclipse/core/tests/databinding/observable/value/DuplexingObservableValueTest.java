@@ -12,6 +12,9 @@
 
 package org.eclipse.core.tests.databinding.observable.value;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,6 +22,8 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.DuplexingObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 1.0
@@ -28,12 +33,13 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 	private IObservableList list;
 	private DuplexingObservableValue observable;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		list = new WritableList(new ArrayList(), String.class);
 	}
 
+	@Test
 	public void testValueType_InheritFromTargetList() throws Exception {
 		observable = new DuplexingObservableValue(list) {
 			@Override
@@ -46,6 +52,7 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 				String.class, observable.getValueType());
 	}
 
+	@Test
 	public void testValueType_ProvidedInConstructor() throws Exception {
 		observable = new DuplexingObservableValue(list, Object.class) {
 			@Override
@@ -57,6 +64,7 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 				Object.class, observable.getValueType());
 	}
 
+	@Test
 	public void test_getValue() throws Exception {
 		observable = DuplexingObservableValue.withDefaults(list, null,
 				"<Multiple Values>");

@@ -11,26 +11,30 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.ibm.icu.text.NumberFormat;
-
-import junit.framework.TestCase;
 
 /**
  * @since 1.1
  */
-public class StringToByteConverterTest extends TestCase {
+public class StringToByteConverterTest {
 	private NumberFormat numberFormat;
 	private StringToByteConverter converter;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		numberFormat = NumberFormat.getIntegerInstance();
 		converter = StringToByteConverter.toByte(numberFormat, false);
 	}
 
+	@Test
 	public void testConvertsToByte() throws Exception {
 		Byte value = Byte.valueOf((byte) 1);
 		Byte result = (Byte) converter.convert(numberFormat.format(value));
@@ -38,6 +42,7 @@ public class StringToByteConverterTest extends TestCase {
 		assertEquals(value, result);
 	}
 
+	@Test
 	public void testConvertsToBytePrimitive() throws Exception {
 		converter = StringToByteConverter.toByte(numberFormat, true);
 		Byte value = Byte.valueOf((byte) 1);
@@ -45,23 +50,28 @@ public class StringToByteConverterTest extends TestCase {
 		assertEquals(value, result);
 	}
 
+	@Test
 	public void testFromTypeIsString() throws Exception {
 		assertEquals(String.class, converter.getFromType());
 	}
 
+	@Test
 	public void testToTypeIsShort() throws Exception {
 		assertEquals(Byte.class, converter.getToType());
 	}
 
+	@Test
 	public void testToTypeIsBytePrimitive() throws Exception {
 		converter = StringToByteConverter.toByte(true);
 		assertEquals(Byte.TYPE, converter.getToType());
 	}
 
+	@Test
 	public void testReturnsNullBoxedTypeForEmptyString() throws Exception {
 		assertNull(converter.convert(""));
 	}
 
+	@Test
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
 			throws Exception {
 		try {

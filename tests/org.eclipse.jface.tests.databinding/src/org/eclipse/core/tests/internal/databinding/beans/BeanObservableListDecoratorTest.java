@@ -12,11 +12,9 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
-import java.beans.PropertyDescriptor;
+import static org.junit.Assert.assertSame;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -29,19 +27,22 @@ import org.eclipse.jface.databinding.conformance.MutableObservableListContractTe
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.3
  */
-public class BeanObservableListDecoratorTest extends TestCase {
+public class BeanObservableListDecoratorTest {
 	private Bean bean;
 	private PropertyDescriptor propertyDescriptor;
 	private IObservableList observableList;
 	private BeanObservableListDecorator decorator;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 
 		bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor(
@@ -51,23 +52,23 @@ public class BeanObservableListDecoratorTest extends TestCase {
 		decorator = new BeanObservableListDecorator(observableList, propertyDescriptor);
 	}
 
+	@Test
 	public void testGetDelegate() throws Exception {
 		assertSame(observableList, decorator.getDecorated());
 	}
 
+	@Test
 	public void testGetObserved() throws Exception {
 		assertSame(bean, decorator.getObserved());
 	}
 
+	@Test
 	public void testGetPropertyDescriptor() throws Exception {
 		assertSame(propertyDescriptor, decorator.getPropertyDescriptor());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(BeanObservableListDecoratorTest.class.getName());
-		suite.addTestSuite(BeanObservableListDecoratorTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

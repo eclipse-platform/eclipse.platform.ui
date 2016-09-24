@@ -11,27 +11,31 @@
  ******************************************************************************/
 package org.eclipse.core.tests.databinding.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class PolicyTest extends TestCase {
+public class PolicyTest {
 
+	@Test
 	public void testConstructor() {
 		// cover the constructor too
 		new Policy();
 	}
 
+	@Test
 	public void testDummyLog() {
 		ILogger oldLog = Policy.getLog();
 		PrintStream oldErr = System.err;
@@ -60,6 +64,7 @@ public class PolicyTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCustomLog() {
 		ILogger oldLog = Policy.getLog();
 		try {

@@ -12,6 +12,10 @@
 
 package org.eclipse.jface.tests.databinding.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -34,6 +38,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 	private Shell shell;
@@ -46,8 +52,8 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 	private Bean bean;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		shell = getShell();
@@ -69,6 +75,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 				"value"));
 	}
 
+	@Test
 	public void testInitializeCellEditorValue_OrderOfOperations()
 			throws Exception {
 		assertEquals("precondition", 0, editingSupport.events.length());
@@ -79,6 +86,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 				editingSupport.events.toString());
 	}
 
+	@Test
 	public void testSaveCellEditorValue_UpdatesModel() throws Exception {
 		shell.open();
 
@@ -101,6 +109,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		editingSupport.text.notifyListeners(SWT.DefaultSelection, new Event());
 	}
 
+	@Test
 	public void testSaveCellEditorValue_IgnoreIfNotDirty() throws Exception {
 		String initialValue = bean.getValue();
 
@@ -115,6 +124,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		assertEquals(initialValue, bean.getValue());
 	}
 
+	@Test
 	public void testDisposesBinding() throws Exception {
 		shell.open();
 
@@ -125,6 +135,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		assertTrue(editingSupport.binding.isDisposed());
 	}
 
+	@Test
 	public void testDisposesTargetObservable() throws Exception {
 		shell.open();
 
@@ -135,6 +146,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		assertTrue(editingSupport.target.isDisposed());
 	}
 
+	@Test
 	public void testDisposesModelObservable() throws Exception {
 		shell.open();
 
@@ -145,6 +157,7 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		assertTrue(editingSupport.model.isDisposed());
 	}
 
+	@Test
 	public void testCanEdit_DefaultIsTrue() throws Exception {
 		assertTrue(editingSupport.canEdit(bean));
 	}

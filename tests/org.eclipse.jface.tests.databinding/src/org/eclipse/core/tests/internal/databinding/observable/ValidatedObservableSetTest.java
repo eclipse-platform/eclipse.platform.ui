@@ -13,8 +13,6 @@ package org.eclipse.core.tests.internal.databinding.observable;
 
 import java.util.Collections;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -29,9 +27,11 @@ import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTes
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
+import junit.framework.TestSuite;
+
 public class ValidatedObservableSetTest extends AbstractDefaultRealmTestCase {
-	public static Test suite() {
-		return MutableObservableSetContractTest.suite(new Delegate());
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

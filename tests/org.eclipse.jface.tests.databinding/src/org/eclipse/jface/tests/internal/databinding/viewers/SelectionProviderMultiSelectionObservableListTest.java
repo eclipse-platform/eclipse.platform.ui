@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,15 +31,16 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for SelectionProviderMultiSelectionObservableList.
  *
  * @since 1.2
  */
-public class SelectionProviderMultiSelectionObservableListTest extends TestCase {
+public class SelectionProviderMultiSelectionObservableListTest {
 	private IPostSelectionProvider selectionProvider;
 
 	private TableViewer viewer;
@@ -44,8 +48,8 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 	private static String[] model = new String[] { "element0", "element1",
 			"element2", "element3" };
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.MULTI);
 		viewer.setContentProvider(new ArrayContentProvider());
@@ -53,13 +57,14 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		selectionProvider = viewer;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Shell shell = viewer.getTable().getShell();
 		if (!shell.isDisposed())
 			shell.dispose();
 	}
 
+	@Test
 	public void testConstructorIllegalArgumentException() {
 		try {
 			ViewersObservables.observeMultiSelection(null);
@@ -68,10 +73,12 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		}
 	}
 
+	@Test
 	public void testAddRemove_NormalSelection() {
 		doTestAddRemove(false);
 	}
 
+	@Test
 	public void testAddRemove_PostSelection() {
 		doTestAddRemove(true);
 	}

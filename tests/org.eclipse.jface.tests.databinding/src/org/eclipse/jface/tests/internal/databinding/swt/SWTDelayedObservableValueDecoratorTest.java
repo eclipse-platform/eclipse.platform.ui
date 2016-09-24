@@ -12,8 +12,9 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -31,6 +32,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * Tests for DelayedObservableValue
@@ -47,7 +53,8 @@ public class SWTDelayedObservableValueDecoratorTest extends
 	private ISWTObservableValue delayed;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		display = Display.getCurrent();
 		shell = new Shell(display);
@@ -60,7 +67,8 @@ public class SWTDelayedObservableValueDecoratorTest extends
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		delayed.dispose();
 		target.dispose();
 		target = null;
@@ -70,6 +78,7 @@ public class SWTDelayedObservableValueDecoratorTest extends
 		super.tearDown();
 	}
 
+	@Test
 	public void testFocusOut_FiresPendingValueChange() {
 		assertFiresPendingValueChange(new Runnable() {
 			@Override
@@ -96,13 +105,8 @@ public class SWTDelayedObservableValueDecoratorTest extends
 		assertEquals(newValue, tracker.event.diff.getNewValue());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				SWTDelayedObservableValueDecoratorTest.class.getName());
-		suite.addTestSuite(SWTDelayedObservableValueDecoratorTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

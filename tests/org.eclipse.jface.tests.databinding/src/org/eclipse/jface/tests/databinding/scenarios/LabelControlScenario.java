@@ -12,12 +12,17 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -32,23 +37,24 @@ public class LabelControlScenario extends ScenariosTestCase {
 
     private Label label;
 
-    @Override
-	protected void setUp() throws Exception {
+    @Before
+	public void setUp() throws Exception {
         super.setUp();
         // do any setup work here
         label = new Label(getComposite(), SWT.NONE);
         adventure = SampleData.WINTER_HOLIDAY;
     }
 
-    @Override
-	protected void tearDown() throws Exception {
+    @After
+	public void tearDown() throws Exception {
         // do any teardown work here
         super.tearDown();
         label.dispose();
         label = null;
     }
 
-    public void testScenario01() {
+    @Test
+	public void testScenario01() {
         // Bind the adventure "name" property to a label control
         // Change the UI and verify the model and UI are the same value
         // Change the model and verify the UI changes

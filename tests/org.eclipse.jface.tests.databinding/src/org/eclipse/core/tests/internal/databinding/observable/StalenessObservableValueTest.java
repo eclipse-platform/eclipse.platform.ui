@@ -20,8 +20,6 @@ import org.eclipse.core.internal.databinding.observable.StalenessObservableValue
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -29,11 +27,9 @@ import junit.framework.TestSuite;
  *
  * @since 1.1
  */
-public class StalenessObservableValueTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(StalenessObservableValueTest.class.getName());
+public class StalenessObservableValueTest {
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(ObservableValueContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	static class ObservableStub extends AbstractObservable {

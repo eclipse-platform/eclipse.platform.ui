@@ -16,9 +16,6 @@ package org.eclipse.core.tests.databinding.observable.list;
 
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -28,16 +25,15 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 
+import junit.framework.TestSuite;
+
 /**
  * @since 3.2
  *
  */
 public class DecoratingObservableListTest {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(DecoratingObservableListTest.class
-				.getName());
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

@@ -12,9 +12,6 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -29,6 +26,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -48,7 +49,8 @@ public class TableSingleSelectionObservableValueTest extends
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		observable = (IObservableValue) getObservable();
@@ -63,6 +65,7 @@ public class TableSingleSelectionObservableValueTest extends
 				.getDefault()));
 	}
 
+	@Test
 	public void testSetValue() throws Exception {
 		// preconditions
 		assertEquals(-1, table.getSelectionIndex());
@@ -75,6 +78,7 @@ public class TableSingleSelectionObservableValueTest extends
 		assertEquals("observable value", value, observable.getValue());
 	}
 
+	@Test
 	public void testGetValue() throws Exception {
 		int value = 1;
 		table.setSelection(value);
@@ -84,13 +88,8 @@ public class TableSingleSelectionObservableValueTest extends
 				.getValue());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				TableSingleSelectionObservableValueTest.class.toString());
-		suite.addTestSuite(TableSingleSelectionObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	/* package */static class Delegate extends

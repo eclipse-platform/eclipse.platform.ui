@@ -11,12 +11,14 @@
 
 package org.eclipse.core.tests.internal.databinding.validation;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 import org.eclipse.core.runtime.IStatus;
+import org.junit.Test;
 
 /**
  * Tests for AbstractStringToNumberValidator. Most tests should be included in
@@ -24,12 +26,13 @@ import org.eclipse.core.runtime.IStatus;
  *
  * @since 3.2
  */
-public class AbstractStringToNumberValidatorTest extends TestCase {
+public class AbstractStringToNumberValidatorTest {
 	/**
 	 * Test for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=194353.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testErrorMessagesAreNotCached() throws Exception {
 		NumberFormatConverter c = StringToNumberConverter.toInteger(false);
 		ValidatorStub v = new ValidatorStub(c);

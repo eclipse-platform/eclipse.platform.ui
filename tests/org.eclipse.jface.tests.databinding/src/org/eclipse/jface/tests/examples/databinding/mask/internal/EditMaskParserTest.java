@@ -11,27 +11,33 @@
 
 package org.eclipse.jface.tests.examples.databinding.mask.internal;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class EditMaskParserTest extends TestCase {
+public class EditMaskParserTest {
 
 	private EditMaskParser parser;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		parser = new EditMaskParser("(###) ###-####");
 	}
 
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#EditMaskParser(java.lang.String)}.
 	 */
+	@Test
 	public void testEditMaskParser_validMask() {
 		new EditMaskParser("(###) ###-####");
 	}
@@ -39,6 +45,7 @@ public class EditMaskParserTest extends TestCase {
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#EditMaskParser(java.lang.String)}.
 	 */
+	@Test
 	public void testEditMaskParser_invalidMask() {
 		try {
 			new EditMaskParser("(###) ###-####\\");
@@ -51,6 +58,7 @@ public class EditMaskParserTest extends TestCase {
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#setInput(java.lang.String)}.
 	 */
+	@Test
 	public void testSetInput() {
 		parser.setInput("63a0) 5*55-1\\212abc9");
 		assertEquals("Unformatted input", "6305551212", parser.getRawResult());
@@ -60,6 +68,7 @@ public class EditMaskParserTest extends TestCase {
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#setInput(java.lang.String)}.
 	 */
+	@Test
 	public void testSetInput_incomplete() {
 		parser.setInput("6a0) 5*5-1\\12");
 		assertEquals("Unformatted input", "6055112", parser.getRawResult());
@@ -69,6 +78,7 @@ public class EditMaskParserTest extends TestCase {
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#isComplete()}.
 	 */
+	@Test
 	public void testIsComplete() {
 		parser.setInput("63a0) 5*55-1\\212");
 		assertTrue("complete", parser.isComplete());
@@ -76,6 +86,7 @@ public class EditMaskParserTest extends TestCase {
 		assertFalse("incomplete", parser.isComplete());
 	}
 
+	@Test
 	public void testSetPlaceholder() throws Exception {
 		parser.setInput("6a0) 5*5-1\\12");
 		assertEquals("Formatted input", "(605) 511-2   ", parser.getFormattedResult());
@@ -86,12 +97,14 @@ public class EditMaskParserTest extends TestCase {
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#getNextInputPosition(int)}.
 	 */
+	@Test
 	public void testGetNextInputPosition() {
 		assertEquals("Skip leading (", 1, parser.getNextInputPosition(0));
 		assertEquals("Position 1 is good", 1, parser.getNextInputPosition(1));
 		assertEquals("Skip )<space>", 6, parser.getNextInputPosition(4));
 	}
 
+	@Test
 	public void testGetFirstIncompleteInputPosition() throws Exception {
 		assertEquals("1st position incomplete", 1, parser.getFirstIncompleteInputPosition());
 		parser.setInput("6a0) 5*5-1\\12");

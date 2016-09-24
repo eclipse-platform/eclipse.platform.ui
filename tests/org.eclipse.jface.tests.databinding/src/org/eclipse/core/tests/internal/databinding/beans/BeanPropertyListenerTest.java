@@ -11,6 +11,8 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.internal.databinding.beans.BeanPropertyListener;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 1.1
@@ -34,8 +38,8 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 	private SimplePropertyListenerStub simpleListener;
 	private BeanPropertyListenerStub listener;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		property = new PropertyStub();
 		propertyDescriptor = new PropertyDescriptor("value", Bean.class);
@@ -44,6 +48,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 				simpleListener);
 	}
 
+	@Test
 	public void testPropertyChange_ExpectedPropertyName() {
 		Object source = new Object();
 		String propertyName = "value";
@@ -59,6 +64,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 				simpleListener.log);
 	}
 
+	@Test
 	public void testPropertyChange_OtherPropertyName() {
 		Object source = new Object();
 		String propertyName = "other";
@@ -70,6 +76,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(Collections.EMPTY_LIST, simpleListener.log);
 	}
 
+	@Test
 	public void testPropertyChange_NullPropertyName() {
 		Object source = new Object();
 		String propertyName = null;
@@ -84,6 +91,7 @@ public class BeanPropertyListenerTest extends AbstractDefaultRealmTestCase {
 				simpleListener.log);
 	}
 
+	@Test
 	public void testPropertyChange_NullPropertyName_IgnoreOldAndNewValues() {
 		Object source = new Object();
 		String propertyName = null;

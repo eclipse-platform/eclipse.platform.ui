@@ -15,6 +15,10 @@
 
 package org.eclipse.core.tests.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.core.databinding.DataBindingContext;
@@ -33,6 +37,8 @@ import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -42,8 +48,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	Bean model = null;
 	Class<?> elementType = null;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		elements = new Bean[] { new Bean("1"), new Bean("2"), new Bean("3") };
@@ -52,12 +58,14 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		elementType = Bean.class;
 	}
 
+	@Test
 	public void testObserveListArrayInferredElementType() throws Exception {
 		IObservableList list = BeansObservables.observeList(Realm.getDefault(),
 				model, "list", null);
 		assertEquals("element type", Object.class, list.getElementType());
 	}
 
+	@Test
 	public void testObserveListNonInferredElementType() throws Exception {
 		elementType = Object.class;
 		IObservableList list = BeansObservables.observeList(Realm.getDefault(),
@@ -65,6 +73,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		assertEquals("element type", elementType, list.getElementType());
 	}
 
+	@Test
 	public void testListFactory() throws Exception {
 		IObservableFactory factory = BeansObservables.listFactory(
 				Realm.getDefault(), "list", elementType);
@@ -76,6 +85,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		assertEquals("element type", elementType, list.getElementType());
 	}
 
+	@Test
 	public void testObserveDetailListElementType() throws Exception {
 		WritableValue parent = WritableValue.withValueType(Bean.class);
 		parent.setValue(model);
@@ -87,6 +97,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				Arrays.equals(elements, list.toArray(new Bean[list.size()])));
 	}
 
+	@Test
 	public void testObserveDetailValueIBeanObservable() throws Exception {
 		WritableValue parent = WritableValue.withValueType(Bean.class);
 		Bean bean = new Bean();
@@ -104,6 +115,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				.getName().endsWith("DetailObservableValue"));
 	}
 
+	@Test
 	public void testObserveDetailValueNullOuterElementType() throws Exception {
 		WritableValue parent = new WritableValue(new Bean(), null);
 
@@ -114,6 +126,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				((IBeanObservable) detailValue).getPropertyDescriptor());
 	}
 
+	@Test
 	public void testObservableDetailListIBeanObservable() throws Exception {
 		WritableValue parent = WritableValue.withValueType(Bean.class);
 		Bean bean = new Bean();
@@ -135,6 +148,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				.equals(detailList));
 	}
 
+	@Test
 	public void testObservableDetailListNullOuterElementType() throws Exception {
 		WritableValue parent = new WritableValue(new Bean(), null);
 
@@ -145,6 +159,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				((IBeanObservable) detailList).getPropertyDescriptor());
 	}
 
+	@Test
 	public void testObservableDetailSetIBeanObservable() throws Exception {
 		WritableValue parent = WritableValue.withValueType(Bean.class);
 		Bean bean = new Bean();
@@ -166,6 +181,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				.equals(detailSet));
 	}
 
+	@Test
 	public void testObservableDetailSetNullOuterElementType() throws Exception {
 		WritableValue parent = new WritableValue(new Bean(), null);
 
@@ -176,6 +192,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				((IBeanObservable) detailSet).getPropertyDescriptor());
 	}
 
+	@Test
 	public void testObserveSetElementType() throws Exception {
 		Bean bean = new Bean();
 		IObservableSet observableSet = BeansObservables.observeSet(
@@ -183,6 +200,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
 
+	@Test
 	public void testObserveSetNonInferredElementType() throws Exception {
 		Bean bean = new Bean();
 		IObservableSet observableSet = BeansObservables.observeSet(
@@ -195,6 +213,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	 * BeansObservables.observeList() - error when external code modifies
 	 * observed list.
 	 */
+	@Test
 	public void testHandleExternalChangeToProperty() {
 		Bean targetBean = new Bean();
 		IObservableList modelObservable = BeansObservables.observeList(
@@ -230,6 +249,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 
 	}
 
+	@Test
 	public void testObserveDetailValue_ValueType() {
 		Bean inner = new Bean("string");
 		Bean outer = new Bean(inner);

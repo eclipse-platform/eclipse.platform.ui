@@ -11,14 +11,20 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
-public abstract class NumberToNumberTestHarness extends TestCase {
+public abstract class NumberToNumberTestHarness {
 
 	/**
 	 * Invoked when a to primitive validator is needed.
@@ -51,11 +57,13 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 	 */
 	protected abstract Number doGetOutOfRangeNumber();
 
+	@Test
 	public void testFromType() throws Exception {
 		Class from = Integer.class;
 		assertEquals(from, doGetToBoxedTypeValidator(from).getFromType());
 	}
 
+	@Test
 	public void testToTypeIsPrimitive() throws Exception {
 		Class toType = doGetToType(true);
 
@@ -68,6 +76,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		assertTrue("to type was not primitive", toType.isPrimitive());
 	}
 
+	@Test
 	public void testToTypeIsBoxedType() throws Exception {
 		Class toType = doGetToType(false);
 		assertEquals(toType, doGetToBoxedTypeValidator(Integer.class)
@@ -75,6 +84,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		assertFalse(toType.isPrimitive());
 	}
 
+	@Test
 	public void testValidConversion() throws Exception {
 		Integer value = Integer.valueOf(1);
 		Number result = (Number) doGetToBoxedTypeValidator(Integer.class)
@@ -88,6 +98,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		assertEquals(value, Integer.valueOf(result.intValue()));
 	}
 
+	@Test
 	public void testOutOfRangeConversion() throws Exception {
 		Number outOfRange = doGetOutOfRangeNumber();
 
@@ -102,6 +113,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConvertNullValueForPrimitiveThrowsIllegalArgumentException()
 			throws Exception {
 		if (doGetToType(true) == null) {
@@ -117,10 +129,12 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConvertNullValueForBoxedTypeReturnsNull() throws Exception {
 		assertNull(doGetToBoxedTypeValidator(Integer.class).convert(null));
 	}
 
+	@Test
 	public void testNonNumberThrowsIllegalArgumentException() throws Exception {
 		try {
 			doGetToBoxedTypeValidator(Integer.class).convert("");

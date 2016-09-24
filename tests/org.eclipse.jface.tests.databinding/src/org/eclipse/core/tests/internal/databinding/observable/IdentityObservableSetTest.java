@@ -14,10 +14,6 @@
 
 package org.eclipse.core.tests.internal.databinding.observable;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -26,12 +22,11 @@ import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 
-public class IdentityObservableSetTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IdentityObservableSetTest.class
-				.getName());
+import junit.framework.TestSuite;
+
+public class IdentityObservableSetTest {
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	private static class Delegate extends

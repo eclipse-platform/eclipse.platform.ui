@@ -18,6 +18,8 @@ import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -28,14 +30,15 @@ public class PreferencePageSupportTest extends AbstractSWTTestCase {
 
 	// private PreferenceDialog dialog;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		page = new PreferencePageWithSupport();
 		page.setControl(getShell());
 	}
 
+	@Test
 	public void testCreateAndDestroySupport() {
 		page.createContents(getShell());
 	}

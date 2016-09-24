@@ -11,15 +11,17 @@
 
 package org.eclipse.core.tests.databinding.validation;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
-public class ValidationStatusTest extends TestCase {
+public class ValidationStatusTest {
+	@Test
 	public void testEqualsAndHashCode() throws Exception {
 		String message = "error";
 		Exception e = new IllegalArgumentException();

@@ -25,11 +25,6 @@ public class NumberToBigIntegerConverterTest extends NumberToNumberTestHarness {
 	private NumberFormat numberFormat;
 
 	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
 	protected Number doGetOutOfRangeNumber() {
 		return null;
 	}

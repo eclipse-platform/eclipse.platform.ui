@@ -12,6 +12,8 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -20,12 +22,14 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyListenerSupportTest.GenericListenerBean;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
 public class BeanValuePropertyTest extends AbstractDefaultRealmTestCase {
+	@Test
 	public void testChangeListenerIsOnlyNotifiedWhenWatchedPropertyChanges()
 			throws Exception {
 		GenericListenerBean bean = new GenericListenerBean();

@@ -25,8 +25,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
@@ -45,7 +46,8 @@ public class GroupObservableValueTest extends ObservableDelegateTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		delegate = (Delegate) getObservableContractDelegate();
@@ -59,6 +61,7 @@ public class GroupObservableValueTest extends ObservableDelegateTest {
 				DisplayRealm.getRealm(Display.getDefault()));
 	}
 
+	@Test
 	public void testSetValue() throws Exception {
 		// preconditions
 		assertEquals("", group.getText());
@@ -70,13 +73,8 @@ public class GroupObservableValueTest extends ObservableDelegateTest {
 		assertEquals("observable value", value, observable.getValue());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(GroupObservableValueTest.class
-				.toString());
-		suite.addTestSuite(GroupObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	/* package */static class Delegate extends

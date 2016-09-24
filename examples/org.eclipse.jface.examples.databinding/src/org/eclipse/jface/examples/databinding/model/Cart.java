@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
+import java.beans.PropertyChangeListener;
+
 public class Cart {
 
 	public void setAdventureDays(int i) {
@@ -22,4 +24,13 @@ public class Cart {
 		return 0;
 	}
 
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		// not really necessary, but BeansObservables.observeValue(...) expects
+		// it.
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		// not really necessary, but BeansObservables.observeValue(...) expects
+		// it.
+	}
 }

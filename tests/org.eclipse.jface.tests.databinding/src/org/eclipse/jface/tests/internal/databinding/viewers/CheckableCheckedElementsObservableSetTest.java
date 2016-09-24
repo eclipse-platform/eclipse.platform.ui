@@ -11,14 +11,18 @@
 
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
+import org.junit.Test;
 
 public class CheckableCheckedElementsObservableSetTest extends
 		AbstractDefaultRealmTestCase {
+	@Test
 	public void testClear() {
 		// init
 		ICheckable checkable = new ICheckable() {

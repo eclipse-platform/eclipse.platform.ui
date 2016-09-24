@@ -11,12 +11,18 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.DecoratingObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -26,13 +32,14 @@ public class DecoratingObservableTest extends AbstractDefaultRealmTestCase {
 	private IObservable decorated;
 	private DecoratingObservable decorator;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		decorated = new ObservableStub(Realm.getDefault());
 		decorator = new DecoratingObservable(decorated, false);
 	}
 
+	@Test
 	public void testDisposeDecorated_DisposesDecorator() {
 		DisposeEventTracker tracker = DisposeEventTracker.observe(decorator);
 		assertFalse(decorator.isDisposed());

@@ -12,14 +12,19 @@
 
 package org.eclipse.core.tests.internal.databinding.property.value;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.internal.databinding.property.value.MapSimpleValueObservableMap;
 import org.eclipse.core.internal.databinding.property.value.SelfValueProperty;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 public class MapSimpleValueObservableMapTest extends
 		AbstractDefaultRealmTestCase {
 
+	@Test
 	public void testGetKeyValueType() {
 		WritableMap masterMap = new WritableMap(String.class, Integer.class);
 		SelfValueProperty detailProperty = new SelfValueProperty(Object.class);
@@ -31,6 +36,7 @@ public class MapSimpleValueObservableMapTest extends
 		assertEquals(detailProperty.getValueType(), detailMap.getValueType());
 	}
 
+	@Test
 	public void testPut_ReplacedOldValue() {
 		// Create any simple master map and detail property.
 		WritableMap masterMap = new WritableMap(String.class, Integer.class);

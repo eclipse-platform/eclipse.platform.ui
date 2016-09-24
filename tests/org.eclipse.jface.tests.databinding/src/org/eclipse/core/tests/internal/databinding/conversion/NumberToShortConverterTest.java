@@ -13,6 +13,7 @@ package org.eclipse.core.tests.internal.databinding.conversion;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
+import org.junit.Before;
 
 import com.ibm.icu.text.NumberFormat;
 
@@ -22,10 +23,8 @@ import com.ibm.icu.text.NumberFormat;
 public class NumberToShortConverterTest extends NumberToNumberTestHarness {
 	private NumberFormat numberFormat;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		numberFormat = NumberFormat.getInstance();
 	}
 

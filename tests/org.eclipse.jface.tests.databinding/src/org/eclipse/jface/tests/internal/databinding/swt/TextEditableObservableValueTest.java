@@ -12,9 +12,6 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -25,6 +22,10 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 1.1
@@ -44,7 +45,8 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		delegate = (Delegate) getObservableContractDelegate();
@@ -57,6 +59,7 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 		return super.doCreateObservable();
 	}
 
+	@Test
 	public void testGetValue() throws Exception {
 		text.setEditable(false);
 		assertEquals(Boolean.valueOf(text.getEditable()), observable.getValue());
@@ -65,6 +68,7 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 		assertEquals(Boolean.valueOf(text.getEditable()), observable.getValue());
 	}
 
+	@Test
 	public void testSetValue() throws Exception {
 		text.setEditable(false);
 		observable.setValue(Boolean.TRUE);
@@ -74,13 +78,8 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 		assertEquals(Boolean.FALSE, Boolean.valueOf(text.getEditable()));
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(TextEditableObservableValueTest.class
-				.toString());
-		suite.addTestSuite(TextEditableObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	/* package */static class Delegate extends

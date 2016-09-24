@@ -14,6 +14,10 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
@@ -22,6 +26,8 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests to assert the inputs of the TextObservableValue constructor.
@@ -32,8 +38,8 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Text text;
 	private ValueChangeEventTracker listener;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		Shell shell = new Shell();
@@ -46,6 +52,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 * Asserts that only valid SWT event types are accepted on construction of
 	 * TextObservableValue.
 	 */
+	@Test
 	public void testConstructorUpdateEventTypes() {
 		try {
 			WidgetProperties.text(SWT.None);
@@ -70,6 +77,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {
 		IObservableValue observableValue = WidgetProperties.text(SWT.FocusOut)
 				.observe(Realm.getDefault(), text);
@@ -97,6 +105,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(b, listener.event.diff.getNewValue());
 	}
 
+	@Test
 	public void testDispose() throws Exception {
 		IObservableValue observableValue = WidgetProperties.text(SWT.Modify)
 				.observe(Realm.getDefault(), text);

@@ -13,24 +13,30 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class IdentityConverterTest extends TestCase {
+public class IdentityConverterTest {
 
 	private IdentityConverter c;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		c = new IdentityConverter(Integer.TYPE, Integer.TYPE);
 	}
 
+	@Test
 	public void testIsPrimitiveTypeMatchedWithBoxed() throws Exception {
 		assertTrue(c.isPrimitiveTypeMatchedWithBoxed(Integer.class,
 				Integer.TYPE));
@@ -66,6 +72,7 @@ public class IdentityConverterTest extends TestCase {
 				Integer.TYPE));
 	}
 
+	@Test
 	public void testConvert_NullToPrimitive() {
 		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.TYPE);
 		try {
@@ -76,21 +83,25 @@ public class IdentityConverterTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConvert_PrimitiveToBoxed() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.class);
 		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
 	}
 
+	@Test
 	public void testConvert_BoxedToPrimitive() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.class, Float.TYPE);
 		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
 	}
 
+	@Test
 	public void testConvert_PrimitiveToPrimitive() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.TYPE);
 		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
 	}
 
+	@Test
 	public void testConvert_BoxedToBoxed() throws Exception {
 		IdentityConverter p2b = new IdentityConverter(Float.class, Float.class);
 		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
@@ -104,6 +115,7 @@ public class IdentityConverterTest extends TestCase {
 		public String name = "fido";
 	}
 
+	@Test
 	public void test_Convert_ValidAssignment() throws Exception {
 		IdentityConverter pc = new IdentityConverter(Object.class, Person.class);
 		Person orig = new Person();
@@ -112,6 +124,7 @@ public class IdentityConverterTest extends TestCase {
 		assertTrue("Need correct Person", person.equals(orig));
 	}
 
+	@Test
 	public void test_Convert_ValidAssignment2() throws Exception {
 		IdentityConverter pc = new IdentityConverter(Person.class, Object.class);
 		Person orig = new Person();
@@ -120,6 +133,7 @@ public class IdentityConverterTest extends TestCase {
 		assertTrue("Need correct Person", person.equals(orig));
 	}
 
+	@Test
 	public void testConvert_InvalidAssignment() throws Exception {
 		IdentityConverter pc = new IdentityConverter(Object.class, Person.class);
 		try {

@@ -11,25 +11,30 @@
 
 package org.eclipse.core.tests.internal.databinding.validation;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.internal.databinding.validation.NumberToNumberValidator;
 import org.eclipse.core.runtime.IStatus;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
-public abstract class NumberToNumberValidatorTestHarness extends TestCase {
+public abstract class NumberToNumberValidatorTestHarness {
 	protected abstract NumberToNumberValidator doGetToPrimitiveValidator(Class fromType);
 	protected abstract NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType);
 	protected abstract Number doGetOutOfRangeNumber();
 
+	@Test
 	public void testValidateNullForBoxedTypeIsOK() throws Exception {
 		IStatus status = doGetToBoxedTypeValidator(Integer.class).validate(null);
 		assertTrue(status.isOK());
 	}
 
+	@Test
 	public void testValidateNullForPrimitiveThrowsIllegalArgumentException()
 			throws Exception {
 		IValidator validator = doGetToPrimitiveValidator(Integer.class);
@@ -47,10 +52,12 @@ public abstract class NumberToNumberValidatorTestHarness extends TestCase {
 		}
 	}
 
+	@Test
 	public void testValidReturnsOK() throws Exception {
 		assertTrue(doGetToBoxedTypeValidator(Integer.class).validate(Integer.valueOf(1)).isOK());
 	}
 
+	@Test
 	public void testOutOfRangeReturnsError() throws Exception {
 		Number number = doGetOutOfRangeNumber();
 
@@ -65,6 +72,7 @@ public abstract class NumberToNumberValidatorTestHarness extends TestCase {
 		assertTrue(status.getMessage() != null);
 	}
 
+	@Test
 	public void testValidateIncorrectTypeThrowsIllegalArgumentException() throws Exception {
 		try {
 			doGetToBoxedTypeValidator(Integer.class).validate("");

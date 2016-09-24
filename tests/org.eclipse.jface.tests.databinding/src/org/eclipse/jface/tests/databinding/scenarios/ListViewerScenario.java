@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -26,6 +28,9 @@ import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -42,8 +47,8 @@ public class ListViewerScenario extends ScenariosTestCase {
 
 	private ListViewer listViewer;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		// do any setup work here
 		list = new List(getComposite(), SWT.READ_ONLY | SWT.SINGLE);
@@ -51,14 +56,15 @@ public class ListViewerScenario extends ScenariosTestCase {
 		catalog = SampleData.CATALOG_2005; // Lodging source
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		list.dispose();
 		list = null;
 		listViewer = null;
 		super.tearDown();
 	}
 
+	@Test
 	public void testScenario01() {
 		// Bind the catalog's lodgings to the combo
 		IObservableList lodgings = BeansObservables.observeList(Realm

@@ -12,9 +12,7 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -27,20 +25,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
  *
  */
-public class CLabelObservableValueTest extends TestCase {
+public class CLabelObservableValueTest {
 	private Delegate delegate;
 	private IObservableValue observable;
 	private CLabel label;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		delegate = new Delegate();
 		delegate.setUp();
 		label = delegate.label;
@@ -48,14 +49,13 @@ public class CLabelObservableValueTest extends TestCase {
 				.getRealm(Display.getDefault()));
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() throws Exception {
 		delegate.tearDown();
 		observable.dispose();
 	}
 
+	@Test
 	public void testSetValue() throws Exception {
 		// preconditions
 		assertEquals(null, label.getText());
@@ -67,13 +67,8 @@ public class CLabelObservableValueTest extends TestCase {
 		assertEquals("observable value", value, observable.getValue());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CLabelObservableValueTest.class
-				.getName());
-		suite.addTestSuite(CLabelObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	/* package */static class Delegate extends

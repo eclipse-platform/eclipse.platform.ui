@@ -11,26 +11,30 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.ibm.icu.text.NumberFormat;
 
 /**
  * @since 1.1
  */
-public class StringToShortConverterTest extends TestCase {
+public class StringToShortConverterTest {
 	private NumberFormat numberFormat;
 	private StringToShortConverter converter;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		numberFormat = NumberFormat.getIntegerInstance();
 		converter = StringToShortConverter.toShort(numberFormat, false);
 	}
 
+	@Test
 	public void testConvertsToShort() throws Exception {
 		Short value = Short.valueOf((short) 1);
 		Short result = (Short) converter.convert(numberFormat.format(value));
@@ -38,6 +42,7 @@ public class StringToShortConverterTest extends TestCase {
 		assertEquals(value, result);
 	}
 
+	@Test
 	public void testConvertsToShortPrimitive() throws Exception {
 		converter = StringToShortConverter.toShort(numberFormat, true);
 		Short value = Short.valueOf((short) 1);
@@ -45,23 +50,28 @@ public class StringToShortConverterTest extends TestCase {
 		assertEquals(value, result);
 	}
 
+	@Test
 	public void testFromTypeIsString() throws Exception {
 		assertEquals(String.class, converter.getFromType());
 	}
 
+	@Test
 	public void testToTypeIsShort() throws Exception {
 		assertEquals(Short.class, converter.getToType());
 	}
 
+	@Test
 	public void testToTypeIsShortPrimitive() throws Exception {
 		converter = StringToShortConverter.toShort(true);
 		assertEquals(Short.TYPE, converter.getToType());
 	}
 
+	@Test
 	public void testReturnsNullBoxedTypeForEmptyString() throws Exception {
 		assertNull(converter.convert(""));
 	}
 
+	@Test
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
 			throws Exception {
 		try {

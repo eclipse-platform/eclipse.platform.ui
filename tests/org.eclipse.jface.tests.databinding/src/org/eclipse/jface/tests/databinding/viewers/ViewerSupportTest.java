@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.tests.databinding.viewers;
 
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -36,6 +38,9 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ViewerSupportTest extends AbstractSWTTestCase {
 	private ILogger oldLog;
@@ -44,8 +49,8 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	private AbstractTableViewer structuredViewer;
 	private AbstractTreeViewer treeViewer;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		oldLog = Policy.getLog();
@@ -71,8 +76,8 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 		});
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (structuredViewer != null)
 			structuredViewer.getControl().dispose();
 		if (treeViewer != null)
@@ -98,6 +103,7 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 		return treeViewer;
 	}
 
+	@Test
 	public void testBindList_Twice() {
 		StructuredViewer viewer = getStructuredViewer();
 		IObservableList input0 = WritableList.withElementType(Bean.class);
@@ -109,6 +115,7 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 		ViewerSupport.bind(viewer, input1, labelProp);
 	}
 
+	@Test
 	public void testBindSet_Twice() {
 		StructuredViewer viewer = getStructuredViewer();
 		IObservableSet input0 = WritableSet.withElementType(Bean.class);
@@ -120,6 +127,7 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 		ViewerSupport.bind(viewer, input1, labelProp);
 	}
 
+	@Test
 	public void testBindListTree_Twice() {
 		AbstractTreeViewer viewer = getTreeViewer();
 		Bean input0 = new Bean(Arrays.asList(new Bean[] { new Bean("elem0"), new Bean("elem1"), new Bean("elem2") }));
@@ -130,6 +138,7 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 		ViewerSupport.bind(viewer, input1, childrenProp, labelProp);
 	}
 
+	@Test
 	public void testBindSetTree_Twice() {
 		AbstractTreeViewer viewer = getTreeViewer();
 		Bean input0 = new Bean(new HashSet<Bean>(Arrays.asList(new Bean[] { new Bean("elem0"), new Bean("elem1"),

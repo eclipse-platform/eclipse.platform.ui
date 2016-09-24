@@ -12,12 +12,17 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -32,21 +37,22 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
     private Button button;
 
-    @Override
-	protected void setUp() throws Exception {
+    @Before
+	public void setUp() throws Exception {
         super.setUp();
         // do any setup work here
         button = new Button(getComposite(), SWT.CHECK);
         adventure = SampleData.WINTER_HOLIDAY;
     }
 
-    @Override
-	protected void tearDown() throws Exception {
+    @After
+	public void tearDown() throws Exception {
         button.dispose();
         super.tearDown();
     }
 
-    public void testScenario01() {
+    @Test
+	public void testScenario01() {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"));
@@ -71,7 +77,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
     }
 
-    public void testScenario02() {
+    @Test
+	public void testScenario02() {
         // Test with an SWT.Toggle button
         button.dispose();
         button = new Button(getComposite(), SWT.TOGGLE);
@@ -93,7 +100,8 @@ public class ButtonControlScenario extends ScenariosTestCase {
         assertEquals(newBoolean, adventure.isPetsAllowed());
     }
 
-    public void testScenario03() {
+    @Test
+	public void testScenario03() {
         // Test with an SWT.Radio button
         button.dispose();
         button = new Button(getComposite(), SWT.RADIO);

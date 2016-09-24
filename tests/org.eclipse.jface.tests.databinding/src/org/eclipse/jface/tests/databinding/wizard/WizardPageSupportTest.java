@@ -12,6 +12,11 @@
 
 package org.eclipse.jface.tests.databinding.wizard;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -35,6 +40,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.Test;
 
 /**
  * @since 1.2
@@ -44,6 +50,7 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 	/**
 	 * Bug 235195.
 	 */
+	@Test
 	public void testPageComplete() {
 		IWizardPage page = new WizardPage("Page") {
 			@Override
@@ -79,6 +86,7 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 		loadWizardPage(page);
 	}
 
+	@Test
 	public void testPageCompleteOnValidationStaleness() {
 		IWizardPage page = new WizardPage("Page") {
 			@Override
@@ -106,6 +114,7 @@ public class WizardPageSupportTest extends AbstractSWTTestCase {
 		loadWizardPage(page);
 	}
 
+	@Test
 	public void testValidationMessageProvider() {
 		IWizardPage page = new WizardPage("Page") {
 			@Override

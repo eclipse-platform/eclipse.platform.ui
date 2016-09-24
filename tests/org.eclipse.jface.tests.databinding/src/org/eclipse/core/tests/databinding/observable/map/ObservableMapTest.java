@@ -13,36 +13,41 @@
 
 package org.eclipse.core.tests.databinding.observable.map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class ObservableMapTest extends TestCase {
+public class ObservableMapTest {
 	ObservableMapStub map;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 		map = new ObservableMapStub(new HashMap());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		RealmTester.setDefault(null);
 	}
 
+	@Test
 	public void testDisposeMapChangeListeners() throws Exception {
 		MapChangeEventTracker listener = MapChangeEventTracker.observe(map);
 
@@ -61,6 +66,7 @@ public class ObservableMapTest extends TestCase {
 				listener.count);
 	}
 
+	@Test
 	public void testIsStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -70,6 +76,7 @@ public class ObservableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testSetStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -79,6 +86,7 @@ public class ObservableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testFireMapChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -88,6 +96,7 @@ public class ObservableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testEquals() {
 		assertTrue(map.equals(Collections.EMPTY_MAP));
 	}

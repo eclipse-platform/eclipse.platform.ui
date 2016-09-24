@@ -11,6 +11,10 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,6 +27,8 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -31,13 +37,14 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class ChangeSupportTest extends AbstractDefaultRealmTestCase {
 	private ChangeSupportStub changeSupport;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		changeSupport = new ChangeSupportStub(Realm.getDefault());
 	}
 
+	@Test
 	public void testAddDisposeListener_HasListenersFalse() {
 		IDisposeListener disposeListener = new IDisposeListener() {
 			@Override

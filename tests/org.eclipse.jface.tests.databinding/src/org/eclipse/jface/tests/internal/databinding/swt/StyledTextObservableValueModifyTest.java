@@ -13,10 +13,6 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -27,16 +23,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Shell;
 
+import junit.framework.TestSuite;
+
 /**
  * Tests for the Modify version of StyledTextObservableValue.
  */
-public class StyledTextObservableValueModifyTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				StyledTextObservableValueModifyTest.class.toString());
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+public class StyledTextObservableValueModifyTest {
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	/* package */static class Delegate extends

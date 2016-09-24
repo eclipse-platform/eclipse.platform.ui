@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +49,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Test;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -68,6 +76,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		return null;
 	}
 
+	@Test
 	public void testScenario01() {
 		// Displaying the catalog's list of Lodging objects in a list viewer,
 		// using their names. The name of the currently selected Lodging can
@@ -131,6 +140,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		// assertNotSame("barfoo", txtName.getText());
 	}
 
+	@Test
 	public void testScenario02() {
 		// Selecting from the list of lodgings for an adventure and editing the
 		// properties of the selected lodging in text widgets. If no lodging is
@@ -256,6 +266,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		pushButtonWithEvents(removeButton);
 	}
 
+	@Test
 	public void testScenario03() {
 		// List adventures and for the selected adventure allow its default
 		// lodging�s name and description to be changed in text controls. If

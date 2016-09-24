@@ -12,9 +12,7 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -29,32 +27,34 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
  *
  */
-public class ComboObservableValueSelectionTest extends TestCase {
+public class ComboObservableValueSelectionTest {
 	private Delegate delegate;
 
 	private Combo combo;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		delegate = new Delegate();
 		delegate.setUp();
 		combo = delegate.combo;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() throws Exception {
 		delegate.tearDown();
 	}
 
+	@Test
 	public void testSelection_NotifiesObservable() throws Exception {
 		IObservableValue observable = (IObservableValue) delegate
 				.createObservable(DisplayRealm.getRealm(Display.getDefault()));
@@ -67,13 +67,8 @@ public class ComboObservableValueSelectionTest extends TestCase {
 		assertEquals("Observable was not notified.", 1, listener.count);
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ComboObservableValueSelectionTest.class
-				.toString());
-		suite.addTestSuite(ComboObservableValueSelectionTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest
-				.suite(new Delegate()));
-		return suite;
+	public static void addConformanceTest(TestSuite suite) {
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
 	}
 
 	/* package */static class Delegate extends

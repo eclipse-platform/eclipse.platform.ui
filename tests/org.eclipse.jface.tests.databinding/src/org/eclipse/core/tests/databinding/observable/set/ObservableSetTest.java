@@ -15,10 +15,6 @@ package org.eclipse.core.tests.databinding.observable.set;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -29,14 +25,14 @@ import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 
+import junit.framework.TestSuite;
+
 /**
  * @since 1.1
  */
-public class ObservableSetTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ObservableSetTest.class.getName());
+public class ObservableSetTest {
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	private static class Delegate extends AbstractObservableCollectionContractDelegate {

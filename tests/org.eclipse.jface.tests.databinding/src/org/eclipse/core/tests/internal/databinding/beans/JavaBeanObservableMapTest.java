@@ -13,14 +13,15 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.beans.PropertyDescriptor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -36,6 +37,8 @@ import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -54,7 +57,8 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 	private IBeanObservable beanObservable;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		ThreadRealm realm = new ThreadRealm();
@@ -73,18 +77,21 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		beanObservable = (IBeanObservable) map;
 	}
 
+	@Test
 	public void testGetValue() throws Exception {
 		assertEquals(
 				"The 'value' from the map should be the value of the property of the model.",
 				model1.getValue(), map.get(model1));
 	}
 
+	@Test
 	public void testGetValue_KeyOutOfDomain() {
 		Bean model3 = new Bean("3");
 		assertFalse(map.containsKey(model3));
 		assertFalse(model3.getValue().equals(map.get(model3)));
 	}
 
+	@Test
 	public void testSetValueNotifications() throws Exception {
 		String oldValue = model1.getValue();
 		String newValue = model1.getValue() + model1.getValue();
@@ -101,6 +108,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertFalse(listener.event.diff.getRemovedKeys().contains(model1));
 	}
 
+	@Test
 	public void testPutValue() throws Exception {
 		String oldValue = model1.getValue();
 		String newValue = model1.getValue() + model1.getValue();
@@ -118,6 +126,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertFalse(listener.event.diff.getRemovedKeys().contains(model1));
 	}
 
+	@Test
 	public void testAddKey() throws Exception {
 		MapChangeEventTracker listener = new MapChangeEventTracker();
 		map.addMapChangeListener(listener);
@@ -136,6 +145,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(3, map.size());
 	}
 
+	@Test
 	public void testRemoveKey() throws Exception {
 		MapChangeEventTracker listener = new MapChangeEventTracker();
 		map.addMapChangeListener(listener);
@@ -149,14 +159,17 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, map.size());
 	}
 
+	@Test
 	public void testGetObserved() throws Exception {
 		assertEquals(set, beanObservable.getObserved());
 	}
 
+	@Test
 	public void testGetPropertyDescriptor() throws Exception {
 		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 
+	@Test
 	public void testConstructor_SkipRegisterListeners() throws Exception {
 		Realm realm = new CurrentRealm(true);
 		WritableSet set = new WritableSet(realm);
@@ -171,6 +184,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.hasListeners("value"));
 	}
 
+	@Test
 	public void testConstructor_RegistersListeners() throws Exception {
 		Realm realm = new CurrentRealm(true);
 		WritableSet set = new WritableSet(realm);
@@ -185,6 +199,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertTrue(bean.hasListeners("value"));
 	}
 
+	@Test
 	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
 		// The java bean spec allows the old and new values in a
 		// PropertyChangeEvent to be null, which indicates that an unknown
@@ -216,6 +231,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals("new", tracker.event.diff.getNewValue(bean));
 	}
 
+	@Test
 	public void testModifyObservableMap_FiresMapChange() {
 		Bean bean = new Bean(Collections.singletonMap("key", "oldValue"));
 		IObservableMap observable = BeansObservables.observeMap(bean, "map");
@@ -229,6 +245,7 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 				"oldValue"), Collections.singletonMap("key", "newValue"));
 	}
 
+	@Test
 	public void testSetBeanPropertyOutsideRealm_FiresEventInsideRealm() {
 		Bean bean = new Bean(Collections.EMPTY_MAP);
 		CurrentRealm realm = new CurrentRealm(true);
@@ -253,12 +270,5 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		diff.applyTo(oldMap);
 		assertEquals("applying diff to list did not produce expected result",
 				newMap, oldMap);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(JavaBeanObservableMapTest.class
-				.getName());
-		suite.addTestSuite(JavaBeanObservableMapTest.class);
-		return suite;
 	}
 }

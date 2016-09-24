@@ -13,6 +13,9 @@
 
 package org.eclipse.jface.tests.databinding.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,6 +31,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.3
@@ -39,8 +45,8 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 	private ObservableSetContentProvider contentProvider;
 	private IObservableSet input;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
 		viewer = new TableViewer(shell, SWT.NONE);
@@ -52,24 +58,27 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 		viewer.setInput(input);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.dispose();
 		viewer = null;
 		input = null;
 		super.tearDown();
 	}
 
+	@Test
 	public void testKnownElements_Realm() throws Exception {
 		assertSame("realm for the known elements should be the SWT realm", DisplayRealm.getRealm(Display.getDefault()),
 				contentProvider.getKnownElements().getRealm());
 	}
 
+	@Test
 	public void testRealizedElements_Realm() {
 		assertSame("realm for the realized elements should be the SWT realm",
 				DisplayRealm.getRealm(Display.getDefault()), contentProvider.getRealizedElements().getRealm());
 	}
 
+	@Test
 	public void testKnownElementsAfterSetInput() {
 		assertEquals(0, contentProvider.getKnownElements().size());
 		Set<String> newElements = new HashSet<String>(Arrays.asList(new String[] { "one", "two", "three" }));
@@ -79,6 +88,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 		assertEquals(newElements, contentProvider.getKnownElements());
 	}
 
+	@Test
 	public void testViewerUpdate_RemoveElementAfterMutation() {
 		Mutable element = new Mutable(1);
 		input.add(element);
@@ -91,6 +101,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 		assertEquals(0, viewer.getTable().getItemCount());
 	}
 
+	@Test
 	public void testInputChanged_ClearsKnownElements() {
 		Object element = new Object();
 		input.add(element);
@@ -101,6 +112,7 @@ public class ObservableSetContentProviderTest extends AbstractSWTTestCase {
 		assertEquals(Collections.EMPTY_SET, knownElements);
 	}
 
+	@Test
 	public void testInputChanged_ClearsRealizedElements() {
 		// Realized elements must be allocated before adding the element
 		// otherwise we'd have to spin the event loop to see the new element

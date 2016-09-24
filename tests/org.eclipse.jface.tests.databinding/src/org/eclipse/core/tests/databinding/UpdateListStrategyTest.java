@@ -11,17 +11,21 @@
 
 package org.eclipse.core.tests.databinding;
 
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
 public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
+	@Test
 	public void testFillDefaults_AssertSourceTypeExtendsConverterFromType() {
 		// Valid use: source type String extends converter from-type Object
 		UpdateListStrategyStub strategy = new UpdateListStrategyStub();
@@ -43,6 +47,7 @@ public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Test
 	public void testFillDefaults_AssertConverterToTypeExtendsDestinationType() {
 		// Valid use: converter to-type String extends destination type Object
 		UpdateListStrategyStub strategy = new UpdateListStrategyStub();

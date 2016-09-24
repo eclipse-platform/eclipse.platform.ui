@@ -11,16 +11,20 @@
 
 package org.eclipse.core.tests.databinding;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
 public class AggregateValidationStatusTest extends AbstractSWTTestCase {
+	@Test
 	public void testAggregateValidationStatusValueType() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
 		AggregateValidationStatus status = new AggregateValidationStatus(dbc
@@ -28,6 +32,7 @@ public class AggregateValidationStatusTest extends AbstractSWTTestCase {
 		assertEquals(IStatus.class, status.getValueType());
 	}
 
+	@Test
 	public void testConstructor_DefaultRealm() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
 		AggregateValidationStatus status = new AggregateValidationStatus(dbc

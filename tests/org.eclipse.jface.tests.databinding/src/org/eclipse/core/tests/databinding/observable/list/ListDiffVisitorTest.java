@@ -11,24 +11,26 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
-import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for ListDiffVisitor class
  *
  * @since 1.1
  */
-public class ListDiffVisitorTest extends TestCase {
+public class ListDiffVisitorTest {
 	ListDiffVisitorStub visitor;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		visitor = new ListDiffVisitorStub();
 	}
 
+	@Test
 	public void testHandleMove_DelegatesByDefault() {
 		visitor.handleMove(0, 1, "element");
 		assertEquals(
@@ -36,6 +38,7 @@ public class ListDiffVisitorTest extends TestCase {
 				"remove(0,element), add(1,element)", visitor.log);
 	}
 
+	@Test
 	public void testHandleReplace_DelegatesByDefault() {
 		visitor.handleReplace(2, "oldElement", "newElement");
 		assertEquals(

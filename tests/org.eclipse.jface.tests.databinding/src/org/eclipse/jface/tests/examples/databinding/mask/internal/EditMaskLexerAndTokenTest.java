@@ -10,19 +10,26 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.examples.databinding.mask.internal;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskLexerAndToken;
+import org.junit.Before;
+import org.junit.Test;
 
-public class EditMaskLexerAndTokenTest extends TestCase {
+public class EditMaskLexerAndTokenTest {
 
 	private EditMaskLexerAndToken token;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		token = new EditMaskLexerAndToken();
 	}
 
+	@Test
 	public void testInitWithNumeric() throws Exception {
 		token.initializeEditMask("#", 0);
 		assertTrue("Should accept a digit", token.accept("0"));
@@ -51,6 +58,7 @@ public class EditMaskLexerAndTokenTest extends TestCase {
 		assertFalse("Placeholders are not read-only", token.isReadOnly());
 	}
 
+	@Test
 	public void testInitWithLiteral() throws Exception {
 		token.initializeEditMask("(", 0);
 		assertEquals("Literals automatically set their input", "(", token.getInput());
@@ -60,28 +68,33 @@ public class EditMaskLexerAndTokenTest extends TestCase {
 		assertFalse("Literals cannot accept characters", token.canAcceptMoreCharacters());
 	}
 
+	@Test
 	public void testInitWithBackslashLiteral() throws Exception {
 		token.initializeEditMask("\\#", 0);
 		assertEquals("Should get backslash literal", "#", token.getInput());
 	}
 
+	@Test
 	public void testAcceptWithValidInputAndEmpty() throws Exception {
 		token.initializeEditMask("#", 0);
 		assertTrue("Should accept a 0", token.accept("0"));
 	}
 
+	@Test
 	public void testAcceptWhenParserCannotAcceptMoreCharacters() throws Exception {
 		token.initializeEditMask("#", 0);
 		assertTrue("Should accept a 0", token.accept("0"));
 		assertFalse("Should not accept a 0 -- input full", token.accept("0"));
 	}
 
+	@Test
 	public void testGetInput() throws Exception {
 		token.initializeEditMask("#", 0);
 		assertTrue("Should accept a #", token.accept("0"));
 		assertEquals(token.getInput(), "0");
 	}
 
+	@Test
 	public void testClear_withNonLiteral() throws Exception {
 		token.initializeEditMask("#", 0);
 		assertTrue("Should accept a 0", token.accept("0"));
@@ -90,6 +103,7 @@ public class EditMaskLexerAndTokenTest extends TestCase {
 		assertNull("Input should be null after clear", token.getInput());
 	}
 
+	@Test
 	public void testClear_withLiteral() throws Exception {
 		token.initializeEditMask("(", 0);
 		assertNotNull("Input should not be null", token.getInput());
@@ -97,6 +111,7 @@ public class EditMaskLexerAndTokenTest extends TestCase {
 		assertNotNull("Input should still not be null after clear of read-only literal", token.getInput());
 	}
 
+	@Test
 	public void testIsComplete_withNonLiteral() throws Exception {
 		token.initializeEditMask("#", 0);
 		assertFalse("should not be complete", token.isComplete());

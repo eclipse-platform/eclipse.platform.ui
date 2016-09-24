@@ -12,6 +12,10 @@
 
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,6 +31,9 @@ import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -37,21 +44,22 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 	private TreeViewer viewer;
 	ObservableListTreeContentProvider contentProvider;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
 		viewer = new TreeViewer(shell);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.dispose();
 		shell = null;
 		viewer = null;
 		super.tearDown();
 	}
 
+	@Test
 	public void testGetKnownElements_ExcludesInput() {
 		final Object input = new Object();
 		Object[] rootElements = new Object[] { "one", "two", "three" };
@@ -72,6 +80,7 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 		assertEquals(new HashSet<Object>(Arrays.asList(rootElements)), knownElements);
 	}
 
+	@Test
 	public void testGetKnownElements_DisposedWithoutModificationOnContentProviderDispose() {
 		final Object input = new Object();
 		final IObservableList rootElementList = new WritableList(Collections.singletonList("element"), null);

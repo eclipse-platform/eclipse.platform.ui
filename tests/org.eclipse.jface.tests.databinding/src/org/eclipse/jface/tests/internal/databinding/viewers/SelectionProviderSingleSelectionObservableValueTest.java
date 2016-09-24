@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -27,6 +25,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for SelectionProviderSingleSelectionObservableValue.
@@ -41,8 +44,8 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	private static String[] model = new String[] { "0", "1" };
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.NONE);
 		viewer.setContentProvider(new ArrayContentProvider());
@@ -50,13 +53,14 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		selectionProvider = viewer;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Shell shell = viewer.getTable().getShell();
 		if (!shell.isDisposed())
 			shell.dispose();
 	}
 
+	@Test
 	public void testConstructorIllegalArgumentException() {
 		try {
 			ViewersObservables.observeSingleSelection(null);
@@ -65,6 +69,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		}
 	}
 
+	@Test
 	public void testSetValue() {
 		IObservableValue observable = ViewersObservables
 				.observeSingleSelection(selectionProvider);
@@ -89,10 +94,12 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		assertEquals(3, listener.count);
 	}
 
+	@Test
 	public void testSelectionChangesTracked() {
 		doTestSelectionChangesTracked(false);
 	}
 
+	@Test
 	public void testPostSelectionChangesTracked() {
 		doTestSelectionChangesTracked(true);
 	}
@@ -144,6 +151,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 		assertEquals(null, observable.getValue());
 	}
 
+	@Test
 	public void testDispose() throws Exception {
 		IObservableValue observable = ViewersObservables
 				.observeSingleSelection(selectionProvider);

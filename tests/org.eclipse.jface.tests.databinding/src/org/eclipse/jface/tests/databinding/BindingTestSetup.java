@@ -11,63 +11,48 @@
 
 package org.eclipse.jface.tests.databinding;
 
+import static org.junit.Assert.fail;
+
 import java.util.Locale;
 
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 /**
  * @since 3.2
  *
  */
-public class BindingTestSetup extends TestSetup {
+public class BindingTestSetup extends TestWatcher {
 
 	private Locale oldLocale;
 	private ILogger oldLogger;
 	private org.eclipse.jface.util.ILogger oldJFaceLogger;
 
-	public BindingTestSetup(Test test) {
-		super(test);
-	}
-
 	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void starting(Description description) {
 		oldLocale = Locale.getDefault();
 		Locale.setDefault(Locale.US);
 		oldLogger = Policy.getLog();
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				// we are not expecting anything in the log while we test.
-				if (status.getException() != null) {
-					throw new RuntimeException(status.getException());
-				}
-				fail();
-			}
-		});
+		Policy.setLog(this::log);
 		oldJFaceLogger = org.eclipse.jface.util.Policy.getLog();
-		org.eclipse.jface.util.Policy.setLog(new org.eclipse.jface.util.ILogger(){
-			@Override
-			public void log(IStatus status) {
-				// we are not expecting anything in the log while we test.
-				if (status.getException() != null) {
-					throw new RuntimeException(status.getException());
-				}
-				fail();
-			}
-		});
+		org.eclipse.jface.util.Policy.setLog(this::log);
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	protected void finished(Description description) {
 		Locale.setDefault(oldLocale);
 		Policy.setLog(oldLogger);
 		org.eclipse.jface.util.Policy.setLog(oldJFaceLogger);
-		super.tearDown();
+	}
+
+	private void log(IStatus status) {
+		// we are not expecting anything in the log while we test.
+		if (status.getException() != null) {
+			throw new RuntimeException(status.getException());
+		}
+		fail();
 	}
 }

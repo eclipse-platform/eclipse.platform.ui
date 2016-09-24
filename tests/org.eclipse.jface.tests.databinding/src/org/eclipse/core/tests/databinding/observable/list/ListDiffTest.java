@@ -12,53 +12,61 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for ListDiff class
  *
  * @since 1.1
  */
-public class ListDiffTest extends TestCase {
+public class ListDiffTest {
 	ListDiffVisitorStub visitor;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		visitor = new ListDiffVisitorStub();
 	}
 
+	@Test
 	public void testAccept_Add() {
 		createListDiff(add(0, "element")).accept(visitor);
 		assertEquals("add(0,element)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_Remove() {
 		createListDiff(remove(0, "element")).accept(visitor);
 		assertEquals("remove(0,element)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_MoveForward_RemoveBeforeAdd() {
 		createListDiff(remove(0, "element"), add(1, "element")).accept(visitor);
 		assertEquals("move(0,1,element)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_MoveForward_AddBeforeRemove() {
 		// Add at index 2 then remove at index 0 leaves the element at index 1
 		createListDiff(add(2, "element"), remove(0, "element")).accept(visitor);
 		assertEquals("move(0,1,element)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_MoveBackward_RemoveBeforeAdd() {
 		createListDiff(remove(4, "element"), add(1, "element")).accept(visitor);
 		assertEquals("move(4,1,element)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_MoveBackward_AddBeforeRemove() {
 		// Element is originally at position 4 in this test, but we must remove
 		// it at 5 since the adding it at 1 first changes the index
@@ -66,18 +74,21 @@ public class ListDiffTest extends TestCase {
 		assertEquals("move(4,1,element)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_Replace_RemoveBeforeAdd() {
 		createListDiff(remove(0, "element0"), add(0, "element1")).accept(
 				visitor);
 		assertEquals("replace(0,element0,element1)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_Replace_AddBeforeRemove() {
 		createListDiff(add(0, "element1"), remove(1, "element0")).accept(
 				visitor);
 		assertEquals("replace(0,element0,element1)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_AllPatterns() {
 		createListDiff(new ListDiffEntry[] {
 		// Replace (remove before add)
@@ -110,6 +121,7 @@ public class ListDiffTest extends TestCase {
 						+ "add(12,element9), remove(12,element9)", visitor.log);
 	}
 
+	@Test
 	public void testAccept_MoveDetectionUsesEqualityNotSameness() {
 		Object element0 = new String("element");
 		Object element1 = new String("element");

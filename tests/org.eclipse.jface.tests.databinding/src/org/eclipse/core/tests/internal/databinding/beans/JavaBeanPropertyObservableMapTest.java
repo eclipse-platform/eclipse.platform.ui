@@ -12,6 +12,8 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -21,6 +23,7 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -28,6 +31,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
  */
 public class JavaBeanPropertyObservableMapTest extends
 		AbstractDefaultRealmTestCase {
+	@Test
 	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
 		// The java bean spec allows the old and new values in a
 		// PropertyChangeEvent to be null, which indicates that an unknown
@@ -60,6 +64,7 @@ public class JavaBeanPropertyObservableMapTest extends
 	 * Makes sure that the map set on the Bean model after changing the
 	 * observable map is modifiable (see bugs 285307 and 301774).
 	 */
+	@Test
 	public void testUpdatedBeanMapIsModifiable() {
 		Bean bean = new Bean(new ArrayList());
 		IObservableMap observable = BeansObservables.observeMap(bean, "map");
@@ -72,6 +77,7 @@ public class JavaBeanPropertyObservableMapTest extends
 	 * Makes sure that the map set on the Pojo model after changing the
 	 * observable map is modifiable (see bugs 285307 and 301774).
 	 */
+	@Test
 	public void testUpdatedPojoMapIsModifiable() {
 		Bean bean = new Bean(new ArrayList());
 		IObservableMap observable = PojoObservables.observeMap(bean, "map");

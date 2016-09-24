@@ -15,10 +15,12 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 public class ListSimpleValueObservableListTest extends
 		AbstractDefaultRealmTestCase {
 
+	@Test
 	public void testBug301410() {
 		BeanProperties.value(Bean.class, "value").observeDetail(
 				new WritableList()).dispose();

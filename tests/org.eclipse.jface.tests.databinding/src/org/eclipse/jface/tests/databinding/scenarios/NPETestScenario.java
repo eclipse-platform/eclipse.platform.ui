@@ -13,10 +13,17 @@
 
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -28,7 +35,8 @@ public class NPETestScenario extends ScenariosTestCase {
 	Person person;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		person = new Person();
 		text = new Text(getComposite(), SWT.BORDER);
@@ -38,6 +46,7 @@ public class NPETestScenario extends ScenariosTestCase {
 	 * Asserts the ability to have an initial value of <code>null</code> on the
 	 * model and to update the value by changing the value of the view.
 	 */
+	@Test
 	public void test_InitialNullValue() {
 		Person person = new Person();
 		assertNull(person.getName());
@@ -68,6 +77,16 @@ public class NPETestScenario extends ScenariosTestCase {
 		 */
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			// not really necessary, but BeansObservables.observeValue(...)
+			// expects it.
+		}
+
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			// not really necessary, but BeansObservables.observeValue(...)
+			// expects it.
 		}
 	}
 }

@@ -12,6 +12,8 @@
 
 package org.eclipse.jface.tests.databinding.swt;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
@@ -22,6 +24,9 @@ import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -31,8 +36,8 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 	protected ThreadRealm threadRealm;
 	private DataBindingContext ctx;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		threadRealm = new ThreadRealm();
 		new Thread() {
@@ -47,8 +52,8 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
         threadRealm.waitUntilBlocking();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (ctx != null) {
 			threadRealm.exec(new Runnable() {
 				@Override
@@ -66,6 +71,7 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 		super.tearDown();
 	}
 
+	@Test
 	public void testBindWidgetObservableFromNonDisplayThread() {
 		final Text text = new Text(getShell(), SWT.BORDER);
 		final Bean bean = new Bean("oldValue");

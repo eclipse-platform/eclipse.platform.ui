@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -19,10 +22,13 @@ import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.examples.databinding.model.Transportation;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import com.ibm.icu.text.NumberFormat;
 
@@ -44,7 +50,8 @@ public class TextControlScenario extends ScenariosTestCase {
     Account account;
 
     @Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
         super.setUp();
         // do any setup work here
         adventure = SampleData.WINTER_HOLIDAY;
@@ -54,13 +61,15 @@ public class TextControlScenario extends ScenariosTestCase {
     }
 
     @Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
         text.dispose();
         text = null;
         super.tearDown();
     }
 
-    public void testScenario01() {
+    @Test
+	public void testScenario01() {
         // Bind the adventure "name" property to a text field
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
@@ -78,7 +87,8 @@ public class TextControlScenario extends ScenariosTestCase {
         assertEquals("Germany", text.getText());
     }
 
-    public void testScenario02() {
+    @Test
+	public void testScenario02() {
 
         // Bind the transportation "price" property to a text field
         // This is a Double.TYPE so we check that conversion and validation
@@ -99,7 +109,8 @@ public class TextControlScenario extends ScenariosTestCase {
         assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
     }
 
-//    public void testScenario03() {
+//    @Test
+	// public void testScenario03() {
 //        // Show that the Escape key can be pressed in the middle of editing and
 //        // the value will revert
 //        // the updatePolicy for this test is TIME_LATE so it occurs when focus
@@ -136,7 +147,8 @@ public class TextControlScenario extends ScenariosTestCase {
 //
 //    }
 
-//    public void testScenario04() {
+//    @Test
+	// public void testScenario04() {
 //        // Show that the Escape key can be pressed in the middle of editing and
 //        // the value will revert
 //        // the updatePolicy for this test is TIME_EARLY so it occurs when each
@@ -178,13 +190,15 @@ public class TextControlScenario extends ScenariosTestCase {
 //    }
 
     /**
-     * public void testScenario05(){ // Show that nesting of properties works.
+     * @Test
+	public void testScenario05(){ // Show that nesting of properties works.
      * Adventure has defaultLodging and Lodging has name getDbc().bind(text,new
      * Property(adventure,"defaultLodging.name"),null); // Verify the GUI is
      * showing the model value
      * assertEquals(text.getText(),adventure.getDefaultLodging().getName()); }
      */
-    public void testScenario06() {
+    @Test
+	public void testScenario06() {
         // // Show that partial validation works for TIME_EARLY
         // // We are using TIME_EARLY to verify that invalid states are not sent
         // to the model
@@ -216,7 +230,8 @@ public class TextControlScenario extends ScenariosTestCase {
         // assertEquals(account.getPhone(),"9998887777");
     }
 
-    public void testScenario07() {
+    @Test
+	public void testScenario07() {
         // // Show that partial validation works for TIME_LATE
         // getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
         // getDbc().bind(text, new Property(account, "phone"), new BindSpec(new
@@ -248,11 +263,9 @@ public class TextControlScenario extends ScenariosTestCase {
         // assertEquals("2223334444",account.getPhone());
     }
 
-    public void testScenario08() {
-
-        if (BindingTestSuite.failingTestsDisabled(this)) {
-            return;
-        }
+    @Test
+	@Ignore
+	public void testScenario08() {
 
         // Show that the CustomBeanBindSupportFactory will automatically pick up
         // the
@@ -273,7 +286,8 @@ public class TextControlScenario extends ScenariosTestCase {
         dbc.dispose();
     }
 
-    public void testScenario09() {
+    @Test
+	public void testScenario09() {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696
         Label label = new Label(getComposite(), SWT.NONE);
@@ -289,7 +303,8 @@ public class TextControlScenario extends ScenariosTestCase {
 
     }
 
-    public void testScenario10() {
+    @Test
+	public void testScenario10() {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696 with TIME_EARLY
         Label label = new Label(getComposite(), SWT.NONE);

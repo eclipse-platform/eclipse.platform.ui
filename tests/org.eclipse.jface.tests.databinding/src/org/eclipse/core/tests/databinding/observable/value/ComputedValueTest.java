@@ -13,6 +13,12 @@
 
 package org.eclipse.core.tests.databinding.observable.value;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,13 +26,15 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 /**
  * @since 1.0
  *
  */
 public class ComputedValueTest extends AbstractDefaultRealmTestCase {
-    public void testValueType() throws Exception {
+    @Test
+	public void testValueType() throws Exception {
         ComputedValue cv = new ComputedValue(Integer.TYPE) {
             @Override
 			protected Object calculate() {
@@ -46,7 +54,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         assertNull(cv.getValueType());
     }
 
-    public void test_getValue() throws Exception {
+    @Test
+	public void test_getValue() throws Exception {
         ComputedValue cv = new ComputedValue() {
             @Override
 			protected Object calculate() {
@@ -56,7 +65,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         assertEquals("Calculated value should be 42", Integer.valueOf(42), cv.getValue());
     }
 
-    public void testDependencyValueChange() throws Exception {
+    @Test
+	public void testDependencyValueChange() throws Exception {
         final WritableValue value = new WritableValue(Integer.valueOf(42), Integer.TYPE);
 
         ComputedValue cv = new ComputedValue() {
@@ -84,7 +94,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         }
     }
 
-    public void testHookAndUnhookDependantObservables() throws Exception {
+    @Test
+	public void testHookAndUnhookDependantObservables() throws Exception {
         final List values = new ArrayList();
 
         ComputedValue cv = new ComputedValue() {
@@ -124,7 +135,8 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
         assertFalse("because value2 is not a part of the calculation the listeners should have been removed", value2.hasListeners());
     }
 
-    public void testSetValueUnsupportedOperationException() throws Exception {
+    @Test
+	public void testSetValueUnsupportedOperationException() throws Exception {
         ComputedValue cv = new ComputedValue() {
             @Override
 			protected Object calculate() {

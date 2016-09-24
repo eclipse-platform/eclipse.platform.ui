@@ -16,6 +16,11 @@ package org.eclipse.core.tests.databinding;
 import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_NEVER;
 import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_UPDATE;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +44,8 @@ import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 1.1
@@ -53,8 +60,8 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 	private List log;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		target = WritableValue.withValueType(String.class);
@@ -75,6 +82,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testNoUpdateTargetFromModel() throws Exception {
 		try {
 			new DataBindingContext().bindValue(new ObservableValueStub(),
@@ -86,6 +94,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Test
 	public void testValuePropagation() throws Exception {
 		String initialValue = "value";
 		model.setValue(initialValue);
@@ -96,18 +105,21 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		assertEquals(target.getValue(), model.getValue());
 	}
 
+	@Test
 	public void testGetTarget() throws Exception {
 		Binding binding = dbc.bindValue(target, model);
 
 		assertEquals(target, binding.getTarget());
 	}
 
+	@Test
 	public void testGetModel() throws Exception {
 		Binding binding = dbc.bindValue(target, model);
 
 		assertEquals(model, binding.getModel());
 	}
 
+	@Test
 	public void testOKStatusInValidationUpdatesModel() throws Exception {
 		Binding binding = dbc.bindValue(target, model);
 
@@ -119,6 +131,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		assertTrue(((IStatus) binding.getValidationStatus().getValue()).isOK());
 	}
 
+	@Test
 	public void testWarningStatusInValidationUpdatesModel() throws Exception {
 		Binding binding = dbc.bindValue(target, model,
 				new UpdateValueStrategy()
@@ -133,6 +146,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				.getValidationStatus().getValue()).getSeverity());
 	}
 
+	@Test
 	public void testInfoStatusInValidationUpdatesModel() throws Exception {
 		Binding binding = dbc
 				.bindValue(target, model, new UpdateValueStrategy()
@@ -147,6 +161,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				.getValidationStatus().getValue()).getSeverity());
 	}
 
+	@Test
 	public void testErrorStatusInValidationDoesNotUpdateModel()
 			throws Exception {
 		Binding binding = dbc.bindValue(target, model,
@@ -162,6 +177,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				.getValidationStatus().getValue()).getSeverity());
 	}
 
+	@Test
 	public void testCancelStatusInValidationDoesNotUpdateModel()
 			throws Exception {
 		Binding binding = dbc.bindValue(target, model,
@@ -177,6 +193,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				.getValidationStatus().getValue()).getSeverity());
 	}
 
+	@Test
 	public void testStatusesFromEveryPhaseAreReturned() throws Exception {
 		UpdateValueStrategy strategy = new UpdateValueStrategy() {
 			@Override
@@ -214,11 +231,13 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		assertEquals("doSet severity", IStatus.INFO, children[3].getSeverity());
 	}
 
+	@Test
 	public void testStatusIsInstanceOfBindingStatus() throws Exception {
 		Binding binding = dbc.bindValue(target, model);
 		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
 	}
 
+	@Test
 	public void testDiffsAreCheckedForEqualityBeforeUpdate() throws Exception {
 		class WritableValueStub extends WritableValue {
 			public WritableValueStub() {
@@ -252,6 +271,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		assertEquals("update does not occur", count, strategy.afterGetCount);
 	}
 
+	@Test
 	public void testPostInit_UpdatePolicy_UpdateToTarget_UpdateToModel() {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_UPDATE),
@@ -262,6 +282,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				"model-before-set" }), log);
 	}
 
+	@Test
 	public void testPostInit_UpdatePolicy_UpdateToTarget_ConvertToModel() {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_CONVERT),
@@ -272,6 +293,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				"model-before-set" }), log);
 	}
 
+	@Test
 	public void testPostInit_UpdatePolicy_UpdateToTarget_OnRequestToModel() {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_ON_REQUEST),
@@ -297,6 +319,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				"model-set" }), log);
 	}
 
+	@Test
 	public void testPostInit_UpdatePolicy_UpdateToTarget_NeverToModel() {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_NEVER),
@@ -318,6 +341,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		assertEquals(Collections.EMPTY_LIST, log);
 	}
 
+	@Test
 	public void testPostInit_UpdatePolicy_ConvertToTarget_UpdateToModel() {
 		bindLoggingValue(
 				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_UPDATE),
@@ -343,6 +367,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * test for bug 491678
 	 */
+	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
 		bindLoggingValue(new UpdateValueStrategy(true, POLICY_UPDATE), new UpdateValueStrategy(true, POLICY_NEVER));
 		assertEquals(model.getValue(), target.getValue());

@@ -13,15 +13,16 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -41,6 +42,10 @@ import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.3
@@ -54,7 +59,8 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 	private SetChangeEventTracker listener;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		bean = new Bean();
@@ -69,18 +75,22 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		listener = new SetChangeEventTracker();
 	}
 
+	@Test
 	public void testGetObserved() throws Exception {
 		assertEquals(bean, beanObservable.getObserved());
 	}
 
+	@Test
 	public void testGetPropertyDescriptor() throws Exception {
 		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 
+	@Test
 	public void testGetElementType() throws Exception {
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
 
+	@Test
 	public void testRegistersListenerAfterFirstListenerIsAdded()
 			throws Exception {
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
@@ -88,6 +98,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 
+	@Test
 	public void testRemovesListenerAfterLastListenerIsRemoved()
 			throws Exception {
 		observableSet.addSetChangeListener(listener);
@@ -97,6 +108,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 
+	@Test
 	public void testFiresChangeEvents() throws Exception {
 		observableSet.addSetChangeListener(listener);
 		assertEquals(0, listener.count);
@@ -104,6 +116,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, listener.count);
 	}
 
+	@Test
 	public void testConstructor_RegisterListeners() throws Exception {
 		bean = new Bean();
 		observableSet = BeansObservables.observeSet(new CurrentRealm(true),
@@ -113,6 +126,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertTrue(bean.hasListeners(propertyName));
 	}
 
+	@Test
 	public void testConstructor_SkipsRegisterListeners() throws Exception {
 		bean = new Bean();
 
@@ -123,6 +137,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.hasListeners(propertyName));
 	}
 
+	@Test
 	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
 		// The java bean spec allows the old and new values in a
 		// PropertyChangeEvent to be null, which indicates that an unknown
@@ -145,6 +160,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 				.getAdditions());
 	}
 
+	@Test
 	public void testModifyObservableSet_FiresSetChange() {
 		Bean bean = new Bean(new HashSet());
 		IObservableSet observable = BeansObservables.observeSet(bean, "set");
@@ -159,6 +175,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 				.singleton(element));
 	}
 
+	@Test
 	public void testSetBeanPropertyOutsideRealm_FiresEventInsideRealm() {
 		Bean bean = new Bean(Collections.EMPTY_SET);
 		CurrentRealm realm = new CurrentRealm(true);
@@ -181,6 +198,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 	 * Makes sure that the set set on the Bean model after changing the
 	 * observable set is modifiable (see bugs 285307 and 301774).
 	 */
+	@Test
 	public void testUpdatedBeanSetIsModifiable() {
 		Bean bean = new Bean(new ArrayList());
 		IObservableSet observable = BeansObservables.observeSet(bean, "set");
@@ -193,6 +211,7 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 	 * Makes sure that the set set on the Pojo model after changing the
 	 * observable set is modifiable (see bugs 285307 and 301774).
 	 */
+	@Test
 	public void testUpdatedPojoSetIsModifiable() {
 		Bean bean = new Bean(new ArrayList());
 		IObservableSet observable = PojoObservables.observeSet(bean, "set");
@@ -209,12 +228,8 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 				newSet, oldSet);
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(JavaBeanObservableSetTest.class
-				.getName());
-		suite.addTestSuite(JavaBeanObservableSetTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	private static class Delegate extends

@@ -12,12 +12,13 @@
 
 package org.eclipse.core.tests.databinding.observable.map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
@@ -26,22 +27,26 @@ import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class WritableMapTest extends TestCase {
-	@Override
-	protected void setUp() throws Exception {
+public class WritableMapTest {
+	@Before
+	public void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		RealmTester.setDefault(null);
 	}
 
+	@Test
 	public void testPutRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -52,6 +57,7 @@ public class WritableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testRemoveRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -68,6 +74,7 @@ public class WritableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testClearRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -78,6 +85,7 @@ public class WritableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testPutAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -88,6 +96,7 @@ public class WritableMapTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testPutWithExistingKeyMapChangeEvent() throws Exception {
 		WritableMap map = new WritableMap();
 		String key = "key";
@@ -113,6 +122,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(newValue, event.diff.getNewValue(key));
 	}
 
+	@Test
 	public void testPutSameValue_NoMapChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = new Object();
@@ -130,6 +140,7 @@ public class WritableMapTest extends TestCase {
 
 	}
 
+	@Test
 	public void testPutNullKey_SingleAdditionChangeEvent() {
 		WritableMap map = new WritableMap();
 		MapChangeEventTracker tracker = MapChangeEventTracker.observe(map);
@@ -148,6 +159,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(value, diff.getNewValue(key));
 	}
 
+	@Test
 	public void testRemoveNullKey_SingleRemovalChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = null;
@@ -166,6 +178,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(value, diff.getOldValue(key));
 	}
 
+	@Test
 	public void testPutNullValue_SingleAdditionChangeEvent() {
 		WritableMap map = new WritableMap();
 
@@ -185,6 +198,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(value, diff.getNewValue(key));
 	}
 
+	@Test
 	public void testPutNullOverNonNullValue_SingleChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = new Object();
@@ -205,6 +219,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(newValue, diff.getNewValue(key));
 	}
 
+	@Test
 	public void testPutNonNullOverNullValue_SingleChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = new Object();
@@ -225,6 +240,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(newValue, diff.getNewValue(key));
 	}
 
+	@Test
 	public void testRemoveNullValue_SingleRemovalChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = new Object();
@@ -243,6 +259,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(value, diff.getOldValue(key));
 	}
 
+	@Test
 	public void testPutAllNullValue_SingleAdditionChangeEvent() {
 		WritableMap map = new WritableMap();
 
@@ -262,6 +279,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(value, diff.getNewValue(key));
 	}
 
+	@Test
 	public void testPutAllNullValueToNonNullValue_SingleChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = new Object();
@@ -284,6 +302,7 @@ public class WritableMapTest extends TestCase {
 		assertEquals(newValue, diff.getNewValue(key));
 	}
 
+	@Test
 	public void testPutAllNonNullValueToNullValue_SingleChangeEvent() {
 		WritableMap map = new WritableMap();
 		Object key = new Object();

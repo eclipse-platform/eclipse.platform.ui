@@ -12,10 +12,6 @@
 
 package org.eclipse.core.tests.databinding.observable.set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -25,13 +21,13 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 
+import junit.framework.TestSuite;
+
 /**
  */
-public class UnionSetTest extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(UnionSetTest.class.getName());
+public class UnionSetTest {
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	private static class Delegate extends

@@ -18,6 +18,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.TableColumn;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -44,8 +47,8 @@ public class NewTableScenarios extends ScenariosTestCase {
 
 	private TableColumn fancyColumn;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		getComposite().setLayout(new FillLayout());
 		tableViewer = new TableViewer(getComposite());
@@ -69,8 +72,8 @@ public class NewTableScenarios extends ScenariosTestCase {
 				getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION), };
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		// do any teardown work here
 		super.tearDown();
 		tableViewer.getTable().dispose();
@@ -86,6 +89,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 		return text;
 	}
 
+	@Test
 	public void testScenario01() {
 //		// Factory for directly creating IObservables for beans
 //		JavaBeans javaBeans = new JavaBeans();
@@ -126,6 +130,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //		}
 	}
 
+	@Test
 	public void testScenario02() throws SecurityException,
 			IllegalArgumentException {
 //		// Show that a TableViewer with three columns can be used to update
@@ -155,6 +160,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //		assertEquals("Bill", account.getFirstName());
 	}
 
+	@Test
 	public void testScenario04() {
 //		// Show that when an item is added to a collection the table gets an
 //		// extra item
@@ -243,6 +249,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //
 	}
 
+	@Test
 	public void testScenario03() {
 //		// Show that converters work for table columns
 //		Account[] accounts = catalog.getAccounts();
@@ -278,6 +285,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //		}
 	}
 
+	@Test
 	public void testScenario05() {
 //		// Show that when the model changes then the UI refreshes to reflect
 //		// this
@@ -311,6 +319,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //
 	}
 
+	@Test
 	public void testScenario06() {
 //		// Check that explicit type means that defaulting of converters works
 //		TableViewerDescription tableViewerDescription = new TableViewerDescription(
@@ -332,6 +341,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 
 	}
 
+	@Test
 	public void testScenario07() {
 //		// Verify that even when a column's property type is not set, that it is
 //		// worked out lazily from the target type
@@ -356,6 +366,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //
 	}
 
+	@Test
 	public void testScenario08_00() {
 //		// Verify that binding to a Collection property (rather than an array)
 //		// works when specifying data type
@@ -382,6 +393,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //
 	}
 
+	@Test
 	public void testScenario08_01() {
 //		// Verify that binding to a Collection property (rather than an array)
 //		// works without specifying data type
@@ -408,6 +420,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 //
 	}
 
+	@Test
 	public void testScenario09() {
 //		// Verify that nested properties work. Catalog has adventures. Adventure
 //		// has defaultLodging. Loding has name.
@@ -419,7 +432,8 @@ public class NewTableScenarios extends ScenariosTestCase {
 //				new Property(category, "adventures"), null);
 	}
 	/**
-	 * public void testScenario10(){ // Verify that for TIME_EARLY updating
+	 * @Test
+	public void testScenario10(){ // Verify that for TIME_EARLY updating
 	 * occurs on a per key basic for a TextCellEditor // Show that converters
 	 * work for table columns Account[] accounts = catalog.getAccounts();
 	 * Account firstAccount = accounts[0];

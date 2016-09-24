@@ -11,8 +11,10 @@
 
 package org.eclipse.core.tests.internal.databinding.observable;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -28,6 +30,10 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValu
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -42,7 +48,8 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Object newValue;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		oldValue = new Object();
 		newValue = new Object();
@@ -53,6 +60,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		validated = new ValidatedObservableValue(target, validationStatus);
 	}
 
+	@Test
 	public void testConstructor_RequireObservablesOnSameRealm() {
 		CurrentRealm realm1 = new CurrentRealm(true);
 		CurrentRealm realm2 = new CurrentRealm(true);
@@ -65,6 +73,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Test
 	public void testIsStale_WhenTargetIsStale() {
 		assertFalse(target.isStale());
 		assertFalse(validated.isStale());
@@ -75,6 +84,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertTrue(validated.isStale());
 	}
 
+	@Test
 	public void testIsStale_WhileChangesPending() {
 		assertFalse(target.isStale());
 		assertFalse(validated.isStale());
@@ -96,15 +106,18 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertFalse(validated.isStale());
 	}
 
+	@Test
 	public void testGetValueType_SameAsTarget() {
 		assertEquals(target.getValueType(), validated.getValueType());
 	}
 
+	@Test
 	public void testGetValue_InitialValue() {
 		assertEquals(oldValue, target.getValue());
 		assertEquals(oldValue, validated.getValue());
 	}
 
+	@Test
 	public void testGetValue_WhileChangesPending() {
 		assertEquals(oldValue, target.getValue());
 		assertEquals(oldValue, validated.getValue());
@@ -124,6 +137,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, validated.getValue());
 	}
 
+	@Test
 	public void testSetValue_PropagatesToTarget() {
 		validated.setValue(newValue);
 
@@ -131,6 +145,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, target.getValue());
 	}
 
+	@Test
 	public void testSetValue_PropagatesToTargetWhileStatusNotOK() {
 		validationStatus.setValue(ValidationStatus.error("error"));
 
@@ -141,6 +156,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertFalse(validated.isStale());
 	}
 
+	@Test
 	public void testSetValue_CachesGetValueFromTarget() {
 		Object overrideValue = target.overrideValue = new Object();
 
@@ -155,6 +171,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(overrideValue, validated.getValue());
 	}
 
+	@Test
 	public void testSetValue_SingleValueChangeEvent() {
 		ValueChangeEventTracker tracker = ValueChangeEventTracker
 				.observe(validated);
@@ -165,6 +182,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, tracker.event.diff.getNewValue());
 	}
 
+	@Test
 	public void testSetValue_SingleValueChangeEventWhileInvalid() {
 		ValueChangeEventTracker tracker = ValueChangeEventTracker
 				.observe(validated);
@@ -176,6 +194,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, tracker.event.diff.getNewValue());
 	}
 
+	@Test
 	public void testSetValue_FiresSingleValueChangeEventWithTargetOverride() {
 		ValueChangeEventTracker tracker = ValueChangeEventTracker
 				.observe(validated);
@@ -189,6 +208,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(overrideValue, tracker.event.diff.getNewValue());
 	}
 
+	@Test
 	public void testSetValue_FiresValueChangeEvent() {
 		ValueChangeEventTracker targetTracker = ValueChangeEventTracker
 				.observe(target);
@@ -206,6 +226,7 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, validatedTracker.event.diff.getNewValue());
 	}
 
+	@Test
 	public void testIsStale_MatchTargetStaleness() {
 		target.forceStale = true;
 		target.fireStale();
@@ -262,11 +283,8 @@ public class ValidatedObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ValidatedObservableValueTest.class.getName());
-		suite.addTestSuite(ValidatedObservableValueTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

@@ -11,10 +11,16 @@
 
 package org.eclipse.core.tests.internal.databinding.validation;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.tests.databinding.BindingTestSetup;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 import com.ibm.icu.text.NumberFormat;
 
@@ -23,13 +29,15 @@ import com.ibm.icu.text.NumberFormat;
  *
  * @since 1.1
  */
-public abstract class StringToNumberValidatorTestHarness extends TestCase {
+public abstract class StringToNumberValidatorTestHarness {
 	private NumberFormat numberFormat;
 	private IValidator validator;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Rule
+	public BindingTestSetup testSetup = new BindingTestSetup();
+
+	@Before
+	public void setUp() throws Exception {
 
 		numberFormat = setupNumberFormat();
 		validator = setupValidator(numberFormat);
@@ -71,12 +79,14 @@ public abstract class StringToNumberValidatorTestHarness extends TestCase {
 	 */
 	protected abstract Number getInRangeNumber();
 
+	@Test
 	public void testInvalidValueReturnsError() throws Exception {
 		IStatus status = validator.validate(getInvalidString());
-		assertEquals("error severify", IStatus.ERROR, status.getSeverity());
+		assertEquals("error severity", IStatus.ERROR, status.getSeverity());
 		assertNotNull("message not null", status.getMessage());
 	}
 
+	@Test
 	public void testOutOfRangeValueReturnsError() throws Exception {
 		String string = numberFormat.format(getOutOfRangeNumber());
 		IStatus status = validator.validate(string);
@@ -84,6 +94,7 @@ public abstract class StringToNumberValidatorTestHarness extends TestCase {
 		assertNotNull(status.getMessage());
 	}
 
+	@Test
 	public void testValidateValidValue() throws Exception {
 		String string = numberFormat.format(getInRangeNumber());
 		assertTrue(validator.validate(string).isOK());

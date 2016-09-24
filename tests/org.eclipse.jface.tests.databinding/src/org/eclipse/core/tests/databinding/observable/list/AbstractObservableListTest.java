@@ -13,13 +13,11 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -41,24 +39,30 @@ import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
  */
-public class AbstractObservableListTest extends TestCase {
+public class AbstractObservableListTest {
 	private AbstractObservableListStub list;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 		list = new AbstractObservableListStub();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		RealmTester.setDefault(null);
 	}
 
+	@Test
 	public void testFireChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -68,6 +72,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testFireStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -77,6 +82,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testFireListChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			@Override
@@ -86,6 +92,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testMove_FiresListChanges() throws Exception {
 		list = new MutableObservableListStub();
 		final Object element = new Object();
@@ -115,6 +122,7 @@ public class AbstractObservableListTest extends TestCase {
 		assertEquals(1, entry.getPosition());
 	}
 
+	@Test
 	public void testMove_MovesElement() throws Exception {
 		list = new MutableObservableListStub();
 		final Object element0 = new Object();
@@ -128,6 +136,7 @@ public class AbstractObservableListTest extends TestCase {
 		assertEquals(element0, list.get(1));
 	}
 
+	@Test
 	public void testAddListChangeListener_AfterDispose() {
 		list.dispose();
 		list.addListChangeListener(new IListChangeListener() {
@@ -138,6 +147,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testRemoveListChangeListener_AfterDispose() {
 		list.dispose();
 		list.removeListChangeListener(new IListChangeListener() {
@@ -148,6 +158,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testAddChangeListener_AfterDispose() {
 		list.dispose();
 		list.addChangeListener(new IChangeListener() {
@@ -158,6 +169,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testRemoveChangeListener_AfterDispose() {
 		list.dispose();
 		list.removeChangeListener(new IChangeListener() {
@@ -168,6 +180,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testAddStaleListener_AfterDispose() {
 		list.dispose();
 		list.addStaleListener(new IStaleListener() {
@@ -178,6 +191,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testRemoveStaleListener_AfterDispose() {
 		list.dispose();
 		list.removeStaleListener(new IStaleListener() {
@@ -188,6 +202,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testAddDisposeListener_AfterDispose() {
 		list.dispose();
 		list.addDisposeListener(new IDisposeListener() {
@@ -198,6 +213,7 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testRemoveDisposeListener_AfterDispose() {
 		list.dispose();
 		list.removeDisposeListener(new IDisposeListener() {
@@ -208,16 +224,14 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testHasListeners_AfterDispose() {
 		list.dispose();
 		list.hasListeners();
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AbstractObservableListTest.class.getName());
-		suite.addTestSuite(AbstractObservableListTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(ObservableListContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	/* package */static class Delegate extends AbstractObservableCollectionContractDelegate {

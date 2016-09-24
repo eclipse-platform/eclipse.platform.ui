@@ -15,6 +15,8 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,6 +25,8 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DateTime;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -32,13 +36,14 @@ public class DateTimeCalendarObservableValueTest extends AbstractSWTTestCase {
 	private DateTime dateTime;
 	private IObservableValue dateObservable;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		dateTime = new DateTime(getShell(), SWT.CALENDAR);
 		dateObservable = WidgetProperties.selection().observe(dateTime);
 	}
 
+	@Test
 	public void testGetValue_ExcludesTimeComponent() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();

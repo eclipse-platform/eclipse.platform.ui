@@ -13,6 +13,10 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
@@ -28,6 +32,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
@@ -37,20 +44,23 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Shell shell;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		shell = new Shell();
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (shell != null && !shell.isDisposed()) {
 			shell.dispose();
 			shell = null;
 		}
 	}
 
+	@Test
 	public void testSetValueEnabled() throws Exception {
 		ISWTObservableValue observableValue = SWTObservables.observeEnabled(shell);
 		Boolean value = Boolean.FALSE;
@@ -58,34 +68,40 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertFalse(shell.isEnabled());
 	}
 
+	@Test
 	public void testGetValueEnabled() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeEnabled(shell);
 		shell.setEnabled(false);
 		assertEquals(Boolean.FALSE, value.getValue());
 	}
 
+	@Test
 	public void testGetValueTypeEnabled() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeEnabled(shell);
 		assertEquals(boolean.class, value.getValueType());
 	}
 
+	@Test
 	public void testSetValueVisible() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeVisible(shell);
 		value.setValue(Boolean.FALSE);
 		assertFalse(shell.isVisible());
 	}
 
+	@Test
 	public void testGetValueVisible() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeVisible(shell);
 		shell.setVisible(false);
 		assertEquals(Boolean.FALSE, value.getValue());
 	}
 
+	@Test
 	public void testGetValueTypeVisible() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeVisible(shell);
 		assertEquals(Boolean.TYPE, value.getValueType());
 	}
 
+	@Test
 	public void testSetValueForeground() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 
@@ -95,6 +111,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(color, shell.getForeground());
 	}
 
+	@Test
 	public void testGetValueForeground() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 
@@ -103,11 +120,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(color, value.getValue());
 	}
 
+	@Test
 	public void testGetValueTypeForgroundColor() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 		assertEquals(Color.class, value.getValueType());
 	}
 
+	@Test
 	public void testGetValueBackground() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 
@@ -116,6 +135,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(color, value.getValue());
 	}
 
+	@Test
 	public void testSetValueBackground() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 
@@ -125,16 +145,19 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(color, shell.getBackground());
 	}
 
+	@Test
 	public void testGetValueTypeBackgroundColor() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 		assertEquals(Color.class, value.getValueType());
 	}
 
+	@Test
 	public void testGetValueTypeTooltip() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		assertEquals(String.class, value.getValueType());
 	}
 
+	@Test
 	public void testSetValueFont() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeFont(shell);
 
@@ -144,6 +167,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(font, shell.getFont());
 	}
 
+	@Test
 	public void testGetValueFont() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeFont(shell);
 
@@ -152,11 +176,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(font, value.getValue());
 	}
 
+	@Test
 	public void testGetValueTypeFont() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeFont(shell);
 		assertEquals(Font.class, value.getValueType());
 	}
 
+	@Test
 	public void testSetValueTooltipText() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		String text = "text";
@@ -164,6 +190,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(text, shell.getToolTipText());
 	}
 
+	@Test
 	public void testGetValueTooltipText() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		String text = "text";
@@ -171,11 +198,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(text, value.getValue());
 	}
 
+	@Test
 	public void testGetValueTypeTooltipText() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		assertEquals(String.class, value.getValueType());
 	}
 
+	@Test
 	public void testObserveFocus() {
 		System.out.println("ControlObservableValueTest.testObserveFocus() start active shell: "
 				+ shell.getDisplay().getActiveShell());
@@ -209,7 +238,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		System.out.println("active shell (5): " + shell.getDisplay().getActiveShell());
 
 		System.out.println("Value (should be true): " + value.getValue());
-		Screenshots.takeScreenshot(getClass(), getName(), System.out);
+		Screenshots.takeScreenshot(getClass(), getClass().getSimpleName(), System.out);
 
 		assertEquals(Boolean.TRUE, value.getValue());
 

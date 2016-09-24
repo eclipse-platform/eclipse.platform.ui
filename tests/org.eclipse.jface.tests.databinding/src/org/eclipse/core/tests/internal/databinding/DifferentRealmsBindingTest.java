@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.databinding;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +24,11 @@ import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class DifferentRealmsBindingTest extends TestCase {
+public class DifferentRealmsBindingTest {
 
 	ThreadRealm targetAndModelRealm = new ThreadRealm();
 	ThreadRealm validationRealm = new ThreadRealm();
@@ -42,8 +45,8 @@ public class DifferentRealmsBindingTest extends TestCase {
 		}
 	};
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		errorStatusses.clear();
 		new Thread() {
 			@Override
@@ -58,11 +61,12 @@ public class DifferentRealmsBindingTest extends TestCase {
 		Policy.setLog(logger);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		dbc.dispose();
 	}
 
+	@Test
 	public void testListBindingValidationRealm() throws Throwable {
 		final ObservableList model = new WritableList(targetAndModelRealm);
 		final ObservableList target = new WritableList(targetAndModelRealm);
@@ -74,6 +78,7 @@ public class DifferentRealmsBindingTest extends TestCase {
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
 	}
 
+	@Test
 	public void testSetBindingValidationRealm() throws Throwable {
 		final ObservableSet model = new WritableSet(targetAndModelRealm);
 		final ObservableSet target = new WritableSet(targetAndModelRealm);

@@ -11,10 +11,10 @@
  ******************************************************************************/
 package org.eclipse.core.tests.databinding.observable.set;
 
-import java.util.Collections;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -24,10 +24,14 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  */
 public class WritableSetTest extends AbstractDefaultRealmTestCase {
+	@Test
 	public void testWithElementType() throws Exception {
 		Object elementType = String.class;
 		WritableSet set = WritableSet.withElementType(elementType);
@@ -36,11 +40,8 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 		assertEquals(elementType, set.getElementType());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(WritableSetTest.class.getName());
-		suite.addTestSuite(WritableSetTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	private static class Delegate extends

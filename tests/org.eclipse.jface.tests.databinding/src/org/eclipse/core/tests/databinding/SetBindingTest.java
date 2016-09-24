@@ -13,6 +13,7 @@ package org.eclipse.core.tests.databinding;
 
 import static org.eclipse.core.databinding.UpdateSetStrategy.POLICY_NEVER;
 import static org.eclipse.core.databinding.UpdateSetStrategy.POLICY_UPDATE;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.SetBinding;
@@ -23,7 +24,10 @@ import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	private IObservableSet<String> target;
@@ -31,7 +35,8 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		target = new WritableSet<>();
@@ -40,12 +45,14 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	@Override
+	@After
 	public void tearDown() throws Exception {
 		dbc.dispose();
 		model.dispose();
 		target.dispose();
 	}
 
+	@Test
 	public void testUpdateModelFromTarget() throws Exception {
 		target.add("1");
 
@@ -54,6 +61,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 		assertEquals("target != model", target, model);
 	}
 
+	@Test
 	public void testUpdateTargetFromModel() throws Exception {
 		model.add("1");
 
@@ -65,6 +73,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * test for bug 491678
 	 */
+	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
 		Policy.setLog(new ILogger() {
 			@Override
@@ -83,6 +92,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * test for bug 491678
 	 */
+	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
 		target.add("first");
 		dbc.bindSet(target, model, new UpdateSetStrategy(POLICY_UPDATE), new UpdateSetStrategy(POLICY_NEVER));

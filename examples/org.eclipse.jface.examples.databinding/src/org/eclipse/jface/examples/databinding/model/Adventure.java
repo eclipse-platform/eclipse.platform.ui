@@ -111,5 +111,4 @@ public class Adventure extends ModelObject {
 	public String getDescription() {
 		return description;
 	}
-
 }

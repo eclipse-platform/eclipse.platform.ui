@@ -11,16 +11,18 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.junit.Test;
 
 /**
  * @since 3.2
  */
-public class RealmTest extends TestCase {
+public class RealmTest {
+	@Test
 	public void testSetDefaultWithRunnable() throws Exception {
 		Realm oldRealm = new CurrentRealm(true);
 		final Realm newRealm = new CurrentRealm(true);

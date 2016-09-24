@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.jface.tests.databinding.AbstractJUnit4RealmTestCase;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @since 3.2
  */
-public class SideEffectTest extends AbstractJUnit4RealmTestCase {
+public class SideEffectTest extends AbstractDefaultRealmTestCase {
 	// TODO: Add test cases for {@link SideEffect#create(Runnable)},
 	// {@link SideEffect#create(java.util.function.Supplier,
 	// java.util.function.Consumer)}

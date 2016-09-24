@@ -11,17 +11,20 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
-public abstract class StringToNumberParserTestHarness extends TestCase {
+public abstract class StringToNumberParserTestHarness {
 
 	protected abstract Number getValidMax();
 
@@ -29,6 +32,7 @@ public abstract class StringToNumberParserTestHarness extends TestCase {
 
 	protected abstract boolean assertValid(Number number);
 
+	@Test
 	public void testRanges() throws Exception {
 		Number min = getValidMin();
 		Number max = getValidMax();

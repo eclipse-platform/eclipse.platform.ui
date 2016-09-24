@@ -12,6 +12,8 @@
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
+import static org.junit.Assert.assertSame;
+
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -20,6 +22,8 @@ import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.3
@@ -30,8 +34,8 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 	private BeanObservableValueDecorator decorator;
 	private PropertyDescriptor propertyDescriptor;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		bean = new Bean();
@@ -42,14 +46,17 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 				propertyDescriptor);
 	}
 
+	@Test
 	public void testGetDelegate() throws Exception {
 		assertSame(observableValue, decorator.getDecorated());
 	}
 
+	@Test
 	public void testGetObserved() throws Exception {
 		assertSame(bean, decorator.getObserved());
 	}
 
+	@Test
 	public void testGetPropertyDescriptor() throws Exception {
 		assertSame(propertyDescriptor, decorator.getPropertyDescriptor());
 	}

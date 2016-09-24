@@ -12,17 +12,21 @@
 
 package org.eclipse.core.tests.databinding.beans;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 /**
  * @since 1.1
  */
 public class SetOnlyJavaBeanTest extends AbstractDefaultRealmTestCase {
 
+	@Test
 	public void testValidationError() throws Exception {
 		Model model = new Model();
 		model.setString("abc");

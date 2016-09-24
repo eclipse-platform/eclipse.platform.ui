@@ -11,23 +11,29 @@
 
 package org.eclipse.core.tests.internal.databinding;
 
-import org.eclipse.core.internal.databinding.observable.Queue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import org.eclipse.core.internal.databinding.observable.Queue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class QueueTest extends TestCase {
+public class QueueTest {
 
 	private Queue queue;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		this.queue = new Queue();
 	}
 
+	@Test
 	public void testIsEmpty() {
 		assertTrue(queue.isEmpty());
 		queue.enqueue("foo");
@@ -40,6 +46,7 @@ public class QueueTest extends TestCase {
 		assertTrue(queue.isEmpty());
 	}
 
+	@Test
 	public void testEnqueueAndDequeue() {
 		try {
 			queue.dequeue();

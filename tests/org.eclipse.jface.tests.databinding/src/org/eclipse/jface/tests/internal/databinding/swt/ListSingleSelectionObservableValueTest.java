@@ -12,17 +12,21 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
 public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase {
+	@Test
 	public void testSetValue() throws Exception {
 		List list = new List(getShell(), SWT.NONE);
 		IObservableValue observableValue = SWTObservables
@@ -39,6 +43,7 @@ public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase 
 		assertEquals("observable value", value, observableValue.getValue());
 	}
 
+	@Test
 	public void testDispose() throws Exception {
 		List list = new List(getShell(), SWT.NONE);
 		IObservableValue observableValue = SWTObservables

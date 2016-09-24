@@ -11,11 +11,13 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -29,18 +31,24 @@ import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 public class MultiListTest extends AbstractDefaultRealmTestCase {
 	MultiListStub multiList;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		WritableList[] lists = new WritableList[] { new WritableList(),
 				new WritableList() };
 		multiList = new MultiListStub(Realm.getDefault(), lists);
 	}
 
+	@Test
 	public void testIsStale_FollowsSublist() {
 		assertFalse(multiList.isStale());
 		multiList.subLists[0].setStale(true);
@@ -49,6 +57,7 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 		assertFalse(multiList.isStale());
 	}
 
+	@Test
 	public void testDependency_FiresListChange() {
 		List expectedList = new ArrayList();
 		assertEquals(expectedList, multiList);
@@ -59,6 +68,7 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(expectedList, multiList);
 	}
 
+	@Test
 	public void testStaleEvent_NoFireEventIfAlreadyStale() {
 		multiList.subLists[0].setStale(true);
 		multiList.addStaleListener(new IStaleListener() {
@@ -70,6 +80,7 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 		multiList.subLists[1].setStale(true);
 	}
 
+	@Test
 	public void testModifySubList_FiresListChangeEventFromMultiList() {
 		ListChangeEventTracker tracker = ListChangeEventTracker
 				.observe(multiList);
@@ -132,11 +143,8 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(MultiListTest.class.getName());
-		suite.addTestSuite(MultiListTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(ObservableListContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

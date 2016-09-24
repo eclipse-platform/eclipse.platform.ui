@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -20,6 +22,9 @@ import org.eclipse.jface.examples.databinding.model.AggregateObservableValue;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -30,19 +35,20 @@ import org.eclipse.swt.widgets.Text;
 
 public class CustomScenarios extends ScenariosTestCase {
 
-    @Override
-	protected void setUp() throws Exception {
+    @Before
+	public void setUp() throws Exception {
         super.setUp();
         // do any setup work here
     }
 
-    @Override
-	protected void tearDown() throws Exception {
+    @After
+	public void tearDown() throws Exception {
         // do any teardown work here
         super.tearDown();
     }
 
-    public void testScenario01() {
+    @Test
+	public void testScenario01() {
 
         // Binding the name property of an Adventure object to the contents of
         // Text controls, no conversion, no validation.

@@ -12,6 +12,8 @@
 
 package org.eclipse.jface.tests.databinding.viewers;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.databinding.observable.IDecoratingObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.IPropertyObservable;
@@ -24,6 +26,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for ViewersObservables
@@ -34,16 +39,16 @@ public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {
 	TableViewer viewer;
 	Realm realm;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		realm = DisplayRealm.getRealm(Display.getCurrent());
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.NONE);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Shell shell = viewer.getTable().getShell();
 		if (!shell.isDisposed())
 			shell.dispose();
@@ -52,6 +57,7 @@ public class ViewersObservablesTest extends AbstractDefaultRealmTestCase {
 		super.tearDown();
 	}
 
+	@Test
 	public void testObserveInput_InstanceOfViewerInputObservableValue() {
 		IViewerObservableValue observable = (IViewerObservableValue) ViewersObservables
 				.observeInput(viewer);

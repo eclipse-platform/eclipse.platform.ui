@@ -14,11 +14,14 @@
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -37,6 +40,9 @@ import org.eclipse.jface.databinding.conformance.MutableObservableListContractTe
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -48,6 +54,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testElementTypeNull() throws Exception {
 		WritableValue observableValue = new WritableValue(new WritableList(
 				new ArrayList(), Object.class), null);
@@ -69,6 +76,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testElementTypeNotNull() throws Exception {
 		WritableValue observableValue = new WritableValue(new WritableList(
 				new ArrayList(), Object.class), null);
@@ -91,6 +99,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	 * Asserts that the master observable value is not disposed upon disposing
 	 * its detail observable value (bug 241318).
 	 */
+	@Test
 	public void testMasterNotDisposedWhenDetailDisposed() {
 		class OuterObservable extends WritableValue {
 			boolean disposed = false;
@@ -113,6 +122,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		assertFalse(outerObservable.disposed);
 	}
 
+	@Test
 	public void testDisposeMasterDisposesDetail() {
 		IObservableValue master = new WritableValue();
 		WritableListFactory factory = new WritableListFactory();
@@ -129,6 +139,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		assertTrue(detailObservable.isDisposed());
 	}
 
+	@Test
 	public void testDisposeWhileFiringEvents() {
 		IObservableValue master = new WritableValue();
 		WritableListFactory factory = new WritableListFactory();
@@ -158,12 +169,8 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(DetailObservableListTest.class
-				.getName());
-		suite.addTestSuite(DetailObservableListTest.class);
+	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
-		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

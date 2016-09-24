@@ -12,6 +12,11 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,8 +33,10 @@ import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
+	@Test
 	public void testRunAndMonitor_GetterCalled() throws Exception {
 		final IObservable observable = new ObservableStub();
 		IObservable[] result = ObservableTracker.runAndMonitor(new Runnable() {
@@ -42,6 +49,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertSame(observable, result[0]);
 	}
 
+	@Test
 	public void testGetterCalled_ObservableDisposed() throws Exception {
 		try {
 			IObservable observable = new ObservableStub();
@@ -54,6 +62,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Test
 	public void testGetterCalled_ObservableRealmNotCurrent() throws Exception {
 		try {
 			IObservable observable = new ObservableStub(new CurrentRealm(false));
@@ -65,6 +74,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Test
 	public void testRunAndCollect() throws Exception {
 		final IObservable[] created = new IObservable[1];
 		IObservable[] collected = ObservableTracker.runAndCollect(new Runnable() {
@@ -77,6 +87,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertSame(created[0], collected[0]);
 	}
 
+	@Test
 	public void testRunAndIgnore_RunAndMonitor() throws Exception {
 		final IObservable observable = new ObservableStub();
 		IObservable[] result = ObservableTracker.runAndMonitor(new Runnable() {
@@ -93,6 +104,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, result.length);
 	}
 
+	@Test
 	public void testRunAndIgnore_RunAndCollect() throws Exception {
 		IObservable[] result = ObservableTracker.runAndCollect(new Runnable() {
 			@Override
@@ -108,6 +120,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, result.length);
 	}
 
+	@Test
 	public void testSetIgnore_RunAndMonitor() throws Exception {
 		final IObservable observable = new ObservableStub();
 		IObservable[] result = ObservableTracker.runAndMonitor(new Runnable() {
@@ -121,6 +134,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, result.length);
 	}
 
+	@Test
 	public void testSetIgnore_RunAndCollect() throws Exception {
 		IObservable[] result = ObservableTracker.runAndCollect(new Runnable() {
 			@Override
@@ -133,6 +147,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, result.length);
 	}
 
+	@Test
 	public void testSetIgnore_Nested_RunAndCollect() throws Exception {
 		final List<ObservableStub> list = new ArrayList<ObservableStub>();
 
@@ -159,6 +174,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(expected, collected);
 	}
 
+	@Test
 	public void testSetIgnore_Nested_RunAndMonitor() throws Exception {
 		final IObservable[] observables = { new ObservableStub(), new ObservableStub(), new ObservableStub(),
 				new ObservableStub(), new ObservableStub() };
@@ -186,6 +202,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(expected, result);
 	}
 
+	@Test
 	public void testSetIgnore_RunAndMonitor_UnmatchedIgnore_LogsError() {
 		final List<IStatus> log = new ArrayList<IStatus>();
 		Policy.setLog(new ILogger() {
@@ -209,6 +226,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertTrue(status.getMessage().indexOf("setIgnore") != -1);
 	}
 
+	@Test
 	public void testSetIgnore_RunAndCollect_UnmatchedIgnore_LogsError() {
 		final List<IStatus> log = new ArrayList<IStatus>();
 		Policy.setLog(new ILogger() {
@@ -232,6 +250,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertTrue(status.getMessage().indexOf("setIgnore") != -1);
 	}
 
+	@Test
 	public void testSetIgnore_UnmatchedUnignore() {
 		try {
 			ObservableTracker.setIgnore(false);
