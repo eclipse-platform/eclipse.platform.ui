@@ -2248,9 +2248,9 @@
             commandId="org.eclipse.ui.window.openEditorDropDown">
          <enabledWhen>
             <with
-                  variable="activeEditor">
+                  variable="activePart">
                <instanceof
-                     value="org.eclipse.ui.IEditorPart">
+                     value="org.eclipse.ui.IWorkbenchPart">
                </instanceof>
             </with>
          </enabledWhen>
