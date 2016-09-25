@@ -154,7 +154,7 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/** The size of the dialogs search history. */
-	private static final int HISTORY_SIZE= 5;
+	private static final int HISTORY_SIZE= 15;
 
 	private Point fIncrementalBaseLocation;
 	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fGlobalInit, fIncrementalInit;
@@ -240,8 +240,8 @@ class FindReplaceDialog extends Dialog {
 		fTarget= null;
 
 		fDialogPositionInit= null;
-		fFindHistory= new ArrayList<>(HISTORY_SIZE - 1);
-		fReplaceHistory= new ArrayList<>(HISTORY_SIZE - 1);
+		fFindHistory= new ArrayList<>(HISTORY_SIZE);
+		fReplaceHistory= new ArrayList<>(HISTORY_SIZE);
 
 		fWrapInit= false;
 		fCaseInit= false;
@@ -1884,8 +1884,8 @@ class FindReplaceDialog extends Dialog {
 			}
 		}
 
-		while (history.size() > 8)
-			history.remove(8);
+		while (history.size() > HISTORY_SIZE)
+			history.remove(HISTORY_SIZE);
 
 		String[] names= new String[history.size()];
 		history.toArray(names);
