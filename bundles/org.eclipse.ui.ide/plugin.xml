@@ -2301,6 +2301,13 @@
                      forcePluginActivation="false"
                      property="org.eclipse.ui.ide.editable">
                </test>
+               <adapt
+                     type="org.eclipse.core.resources.IMarker">
+                  <test
+                        property="org.eclipse.ui.ide.marker.done"
+                        value="false">
+                  </test>
+               </adapt>
             </iterate>
          </enabledWhen>
       </handler>
