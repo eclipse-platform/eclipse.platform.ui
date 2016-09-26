@@ -49,7 +49,7 @@ public class ToggleFilterAction extends Action {
 	@Override
 	public void run() {
 
-		boolean toMakeActive = !isChecked();
+		boolean toMakeActive = isChecked();
 
 		filterService.setActive(descriptor.getId(), toMakeActive);
 		filterService.persistFilterActivationState();

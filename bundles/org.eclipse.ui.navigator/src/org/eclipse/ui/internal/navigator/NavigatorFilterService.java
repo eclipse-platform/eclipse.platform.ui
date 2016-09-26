@@ -294,9 +294,9 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			boolean isActive = activeFilters.contains(aFilterId);
 			if(isActive ^ toMakeActive) {
 				if(toMakeActive)
-					activeFilters.remove(aFilterId);
-				else
 					activeFilters.add(aFilterId);
+				else
+					activeFilters.remove(aFilterId);
 
 			}
 
