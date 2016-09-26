@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="presentationReconcilers" name="%ExtPoint.presentationReconciliers" schema="schema/presentationReconcilers.exsd"/>
+   <extension-point id="contentAssistProcessors" name="%ExtPoint.contentAssistProcessors" schema="schema/contentAssistProcessors.exsd"/>
+   <extension-point id="hoverProviders" name="%ExtPoint.hoverProviders" schema="schema/hoverProviders.exsd"/>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
+            default="false"
+            icon="icons/full/obj16/geneditor.png"
+            id="org.eclipse.ui.genericeditor.GenericEditor"
+            name="%genericEditor_name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.core.runtime.text">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="%findReferencesCommand_description"
+            id="org.eclipse.ui.genericeditor.findReferences"
+            name="%findReferencesCommand_name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="%context_description"
+            id="org.eclipse.ui.genericeditor.genericEditorContext"
+            name="%context_name"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.edit.text.open.hyperlink"
+            contextId="org.eclipse.ui.genericeditor.genericEditorContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F3">
+      </key>
+      <key
+            commandId="org.eclipse.ui.genericeditor.findReferences"
+            contextId="org.eclipse.ui.genericeditor.genericEditorContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+G">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:#TextEditorContext?after=additions">
+         <command
+               commandId="org.eclipse.ui.genericeditor.findReferences"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
