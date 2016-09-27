@@ -313,64 +313,53 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	}
 
 	public void copy(IResource target, IResource destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			int totalWork = ((Resource) target).countResources(IResource.DEPTH_INFINITE, false);
-			String title = NLS.bind(Messages.localstore_copying, target.getFullPath());
-			monitor.beginTask(title, totalWork);
-			IFileStore destinationStore = getStore(destination);
-			if (destinationStore.fetchInfo().exists()) {
-				String message = NLS.bind(Messages.localstore_resourceExists, destination.getFullPath());
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
-			}
-			getHistoryStore().copyHistory(target, destination, false);
-			CopyVisitor visitor = new CopyVisitor(target, destination, updateFlags, monitor);
-			UnifiedTree tree = new UnifiedTree(target);
-			tree.accept(visitor, IResource.DEPTH_INFINITE);
-			IStatus status = visitor.getStatus();
-			if (!status.isOK())
-				throw new ResourceException(status);
-		} finally {
-			monitor.done();
+		String title = NLS.bind(Messages.localstore_copying, target.getFullPath());
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, title, 100);
+		IFileStore destinationStore = getStore(destination);
+		if (destinationStore.fetchInfo().exists()) {
+			String message = NLS.bind(Messages.localstore_resourceExists, destination.getFullPath());
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
+		}
+		getHistoryStore().copyHistory(target, destination, false);
+		CopyVisitor visitor = new CopyVisitor(target, destination, updateFlags, subMonitor.split(100));
+		UnifiedTree tree = new UnifiedTree(target);
+		tree.accept(visitor, IResource.DEPTH_INFINITE);
+		IStatus status = visitor.getStatus();
+		if (!status.isOK()) {
+			throw new ResourceException(status);
 		}
 	}
 
 	public void delete(IResource target, int flags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			Resource resource = (Resource) target;
-			final int deleteWork = resource.countResources(IResource.DEPTH_INFINITE, false) * 2;
-			boolean force = (flags & IResource.FORCE) != 0;
-			int refreshWork = 0;
-			if (!force)
-				refreshWork = Math.min(deleteWork, 100);
-			String title = NLS.bind(Messages.localstore_deleting, resource.getFullPath());
-			monitor.beginTask(title, deleteWork + refreshWork);
-			monitor.subTask(""); //$NON-NLS-1$
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
-			List<Resource> skipList = null;
-			UnifiedTree tree = new UnifiedTree(target);
-			if (!force) {
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, refreshWork);
-				sub.beginTask("", 1000); //$NON-NLS-1$
-				try {
-					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.localstore_deleteProblem, sub);
-					refreshVisitor.setIgnoreLocalDeletions(true);
-					tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
-					status.merge(refreshVisitor.getSyncStatus());
-					skipList = refreshVisitor.getAffectedResources();
-				} finally {
-					sub.done();
-				}
-			}
-			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, monitor, deleteWork);
-			tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
-			status.merge(deleteVisitor.getStatus());
-			if (!status.isOK())
-				throw new ResourceException(status);
-		} finally {
-			monitor.done();
+
+		Resource resource = (Resource) target;
+		final int deleteWork = resource.countResources(IResource.DEPTH_INFINITE, false) * 2;
+		boolean force = (flags & IResource.FORCE) != 0;
+		int refreshWork = 0;
+		if (!force) {
+			refreshWork = Math.min(deleteWork, 100);
 		}
+		String title = NLS.bind(Messages.localstore_deleting, resource.getFullPath());
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, title, deleteWork + refreshWork);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
+		List<Resource> skipList = null;
+		UnifiedTree tree = new UnifiedTree(target);
+		if (!force) {
+			CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.localstore_deleteProblem, subMonitor.split(refreshWork));
+			refreshVisitor.setIgnoreLocalDeletions(true);
+			tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
+			status.merge(refreshVisitor.getSyncStatus());
+			skipList = refreshVisitor.getAffectedResources();
+		}
+		DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, subMonitor.split(deleteWork), deleteWork);
+		tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
+		status.merge(deleteVisitor.getStatus());
+		if (!status.isOK()) {
+			throw new ResourceException(status);
+		}
+
 	}
 
 	/**
@@ -670,9 +659,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			// re-read the file info in case the file attributes were modified
 			fileInfo = descriptionFileStore.fetchInfo();
 		}
+
 		//write the project description file (don't use API because scheduling rule might not match)
-		write(descriptionFile, in, fileInfo, IResource.FORCE, false, Policy.monitorFor(null));
-		workspace.getAliasManager().updateAliases(descriptionFile, getStore(descriptionFile), IResource.DEPTH_ZERO, Policy.monitorFor(null));
+		write(descriptionFile, in, fileInfo, IResource.FORCE, false, SubMonitor.convert(null));
+		workspace.getAliasManager().updateAliases(descriptionFile, getStore(descriptionFile), IResource.DEPTH_ZERO, SubMonitor.convert(null));
 
 		//update the timestamp on the project as well so we know when it has
 		//been changed from the outside
@@ -736,7 +726,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 					return true;
 				break;
 		}
-		IsSynchronizedVisitor visitor = new IsSynchronizedVisitor(Policy.monitorFor(null));
+		IsSynchronizedVisitor visitor = new IsSynchronizedVisitor(SubMonitor.convert(null));
 		UnifiedTree tree = new UnifiedTree(target);
 		try {
 			tree.accept(visitor, depth);
@@ -864,7 +854,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * description, or if the description was missing.
 	 */
 	public ProjectDescription read(IProject target, boolean creation) throws CoreException {
-		IProgressMonitor monitor = Policy.monitorFor(null);
 
 		//read the project location if this project is being created
 		URI projectLocation = null;
@@ -890,9 +879,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		ResourceException error = null;
 		InputStream in = null;
 		try {
-			in = new BufferedInputStream(descriptionStore.openInputStream(EFS.NONE, monitor));
+			in = new BufferedInputStream(descriptionStore.openInputStream(EFS.NONE, SubMonitor.convert(null)));
 			// IFileStore#openInputStream may cancel the monitor, thus the monitor state is checked
-			Policy.checkCanceled(monitor);
 			description = new ProjectDescriptionReader(target).read(new InputSource(in));
 		} catch (OperationCanceledException e) {
 			String msg = NLS.bind(Messages.resources_missingProjectMeta, target.getName());
@@ -1104,7 +1092,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * is thrown.
 	 */
 	public void write(IFile target, InputStream content, IFileInfo fileInfo, int updateFlags, boolean append, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(null);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
 		try {
 			IFileStore store = getStore(target);
 			if (fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
@@ -1155,16 +1143,20 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			boolean restoreHiddenAttribute = false;
 			if (fileInfo.exists() && fileInfo.getAttribute(EFS.ATTRIBUTE_HIDDEN) && Platform.getOS().equals(Platform.OS_WIN32)) {
 				fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, false);
-				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, Policy.monitorFor(null));
+				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, subMonitor.split(1));
 				restoreHiddenAttribute = true;
+			} else {
+				subMonitor.step(1);
 			}
 			int options = append ? EFS.APPEND : EFS.NONE;
-			OutputStream out = store.openOutputStream(options, Policy.subMonitorFor(monitor, 0));
+			OutputStream out = store.openOutputStream(options, subMonitor.split(1));
 			if (restoreHiddenAttribute) {
 				fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, true);
-				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, Policy.monitorFor(null));
+				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, subMonitor.split(1));
+			} else {
+				subMonitor.step(1);
 			}
-			FileUtil.transferStreams(content, out, store.toString(), monitor);
+			FileUtil.transferStreams(content, out, store.toString(), subMonitor.split(1));
 			// get the new last modified time and stash in the info
 			lastModified = store.fetchInfo().getLastModified();
 			ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
