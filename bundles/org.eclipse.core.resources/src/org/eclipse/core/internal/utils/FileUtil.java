@@ -397,7 +397,7 @@ public class FileUtil {
 	}
 
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		try {
 			byte[] buffer = new byte[8192];
 			while (true) {
@@ -419,7 +419,7 @@ public class FileUtil {
 					String msg = NLS.bind(Messages.localstore_couldNotWrite, path);
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), msg, e);
 				}
-				monitor.worked(1);
+				subMonitor.step(1);
 			}
 		} finally {
 			safeClose(source);
