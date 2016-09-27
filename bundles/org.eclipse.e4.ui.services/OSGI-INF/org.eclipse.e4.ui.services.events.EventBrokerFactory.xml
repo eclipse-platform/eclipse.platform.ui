@@ -4,5 +4,6 @@
    <service>
       <provide interface="org.eclipse.e4.core.contexts.IContextFunction"/>
    </service>
+   <reference bind="setEventAdmin" cardinality="1..1" interface="org.osgi.service.event.EventAdmin" name="EventAdmin" policy="static"/>
    <implementation class="org.eclipse.e4.ui.services.events.EventBrokerFactory"/>
 </scr:component>

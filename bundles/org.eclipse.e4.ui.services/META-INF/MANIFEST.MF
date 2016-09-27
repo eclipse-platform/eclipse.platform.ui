@@ -12,10 +12,10 @@ Import-Package: javax.annotation,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component.annotations;version="1.2.0";resolution:=optional,
  org.osgi.service.event;resolution:=optional,
+ org.osgi.util.tracker;version="1.5.1",
  org.w3c.dom.css
 Require-Bundle: org.eclipse.core.commands;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.e4.core.services;bundle-version="0.9.0",
- org.eclipse.osgi;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.e4.core.contexts;bundle-version="0.9.0",
  org.eclipse.e4.core.di;bundle-version="0.9.0",
  org.eclipse.e4.ui.di;bundle-version="0.9.0"
@@ -24,7 +24,6 @@ Export-Package: org.eclipse.e4.ui.internal.services;x-friends:="org.eclipse.e4.u
  org.eclipse.e4.ui.services.events;x-internal:=true,
  org.eclipse.e4.ui.services.help;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.services.internal.events;x-internal:=true
-Bundle-Activator: org.eclipse.e4.ui.internal.services.Activator
 Service-Component: OSGI-INF/org.eclipse.e4.ui.services.events.EventBrokerFactory.xml
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))",
