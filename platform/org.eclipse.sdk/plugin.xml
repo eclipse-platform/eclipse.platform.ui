@@ -260,9 +260,6 @@
       <primaryWizard
             id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
       </primaryWizard>
-      <primaryWizard
-            id="org.eclipse.ant.ui.wizards.JavaProjectWizard">
-      </primaryWizard>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
