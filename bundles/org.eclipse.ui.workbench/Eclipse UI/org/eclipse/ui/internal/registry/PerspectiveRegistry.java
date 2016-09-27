@@ -120,7 +120,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 			try {
 				ImageDescriptor img = ImageDescriptor.createFromURL(new URI(perspective.getIconURI()).toURL());
 				newDescriptor.setImageDescriptor(img);
-			} catch (MalformedURLException | URISyntaxException e) {
+			} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
 				logger.warn(e, MessageFormat.format("Error on applying configured perspective icon: {0}", //$NON-NLS-1$
 						perspective.getIconURI()));
 			}
