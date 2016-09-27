@@ -129,35 +129,32 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	}
 
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		monitor = Policy.monitorFor(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Policy.opWork + Policy.endOpWork + 1);
+		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 		try {
-			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
-			final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
+			workspace.prepareOperation(rule, subMonitor.split(1));
+			workspace.beginOperation(true);
+			final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
+			workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
+			IStatus result = Status.OK_STATUS;
 			try {
-				workspace.prepareOperation(rule, monitor);
-				workspace.beginOperation(true);
-				final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
-				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
-				IStatus result = Status.OK_STATUS;
-				try {
-					if (shouldBuild())
-						result = workspace.getBuildManager().build(workspace.getBuildOrder(), ICoreConstants.EMPTY_BUILD_CONFIG_ARRAY, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
-				} finally {
-					//always send POST_BUILD if there has been a PRE_BUILD
-					workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
-				}
-				if (!result.isOK())
-					throw new ResourceException(result);
-				buildNeeded = false;
+				if (shouldBuild())
+					result = workspace.getBuildManager().build(workspace.getBuildOrder(), ICoreConstants.EMPTY_BUILD_CONFIG_ARRAY, trigger, subMonitor.split(Policy.opWork));
 			} finally {
-				//building may close the tree, but we are still inside an
-				// operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				//always send POST_BUILD if there has been a PRE_BUILD
+				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
 			}
+			if (!result.isOK()) {
+				throw new ResourceException(result);
+			}
+			buildNeeded = false;
 		} finally {
-			monitor.done();
+			//building may close the tree, but we are still inside an
+			// operation so open it
+			if (workspace.getElementTree().isImmutable()) {
+				workspace.newWorkingTree();
+			}
+			workspace.endOperation(rule, false, subMonitor.split(Policy.endOpWork));
 		}
 	}
 
@@ -222,9 +219,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
-		//synchronized in case build starts during checkCancel
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		synchronized (this) {
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				return canceled();
 			}
 		}
@@ -232,7 +229,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		if (systemBundle.getState() == Bundle.STOPPING)
 			return Status.OK_STATUS;
 		try {
-			doBuild(monitor);
+			doBuild(subMonitor.split(1));
 			lastBuild = System.currentTimeMillis();
 			//if the build was successful then it should not be recorded as interrupted
 			setInterrupted(false);
