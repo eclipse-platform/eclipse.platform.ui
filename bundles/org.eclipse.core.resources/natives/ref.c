@@ -252,7 +252,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_resources_refresh_win32_Wi
  * Method:    WAIT_ABANDONED_0
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_resources_refresh_win32_Win32Natives_WAIT_ABANDONED_0
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_resources_refresh_win32_Win32Natives_WAIT_1ABANDONED_10
 (JNIEnv *env, jclass this) {
 	return WAIT_ABANDONED_0;
 }
