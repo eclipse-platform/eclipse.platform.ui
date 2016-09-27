@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.progress;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -76,7 +75,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 						return !progressViewer.getControl().isDisposed();
 					}
 
-
 					@Override
 					public boolean shouldRun() {
 						return !progressViewer.getControl().isDisposed();
@@ -96,8 +94,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 						if (element == null) {
 							refresh();
 						} else {
-							ProgressViewerContentProvider.this
-									.remove(new Object[] { element });
+							ProgressViewerContentProvider.this.remove(new Object[] { element });
 						}
 						return Status.OK_STATUS;
 					}

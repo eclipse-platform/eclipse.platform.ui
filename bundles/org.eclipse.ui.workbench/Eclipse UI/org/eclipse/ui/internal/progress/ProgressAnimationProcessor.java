@@ -11,9 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -37,7 +35,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
         manager = animationManager;
     }
 
-    List items = Collections.synchronizedList(new ArrayList());
+	List items = new ArrayList();
 
     public void startAnimationLoop(IProgressMonitor monitor) {
 

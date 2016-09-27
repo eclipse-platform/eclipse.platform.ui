@@ -61,6 +61,8 @@ public class ProgressAnimationItemTest {
 	public void testSingleJobRefreshOnce() throws Exception {
 		createAndScheduleJob();
 
+		waitAndReadAndDispatch();
+
 		refresh();
 
 		assertSingleAccessibleListener();
@@ -71,6 +73,8 @@ public class ProgressAnimationItemTest {
 		createAndScheduleJob();
 		createAndScheduleJob();
 
+		waitAndReadAndDispatch();
+
 		refresh();
 
 		assertSingleAccessibleListener();
@@ -80,10 +84,17 @@ public class ProgressAnimationItemTest {
 	public void testSingleJobRefreshTwice() throws Exception {
 		createAndScheduleJob();
 
+		waitAndReadAndDispatch();
+
 		refresh();
 		refresh();
 
 		assertSingleAccessibleListener();
+	}
+
+	private void waitAndReadAndDispatch() throws InterruptedException {
+		while (PlatformUI.getWorkbench().getDisplay().readAndDispatch()) {
+		}
 	}
 
 	private ProgressAnimationItem createProgressAnimationItem(Composite composite) {
