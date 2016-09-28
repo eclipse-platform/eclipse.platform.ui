@@ -27,7 +27,7 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 
 	private boolean readOnly;
 	private CSSRule parentRule;
-	private List<CSSProperty> properties = new ArrayList<CSSProperty>();
+	private List<CSSProperty> properties = new ArrayList<>();
 	private CSSPropertyList cssPropertyListView;
 
 	public CSSStyleDeclarationImpl(CSSRule parentRule) {

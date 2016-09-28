@@ -86,7 +86,7 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 	}
 
 	protected List<Selector> querySelector(CSSRuleList ruleList, int selectorType, int selectorConditionType) {
-		List<Selector> list = new ArrayList<Selector>();
+		List<Selector> list = new ArrayList<>();
 		if (selectorType == Selector.SAC_CONDITIONAL_SELECTOR) {
 			int length = ruleList.getLength();
 			for (int i = 0; i < length; i++) {

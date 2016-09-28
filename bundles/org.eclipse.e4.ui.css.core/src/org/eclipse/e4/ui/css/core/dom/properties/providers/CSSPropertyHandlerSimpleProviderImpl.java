@@ -41,15 +41,15 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 	 * Default <code>Map</code> of <code>ICSSPropertyHandler</code> stored
 	 * under a CSS property <code>name</code> key.
 	 */
-	private static Map<String, Class<? extends ICSSPropertyHandler>> defaultCSSProperties = new HashMap<String, Class<? extends ICSSPropertyHandler>>();
+	private static Map<String, Class<? extends ICSSPropertyHandler>> defaultCSSProperties = new HashMap<>();
 
-	private Map<Class<?>, List<ICSSPropertyHandler>> propertiesHandler = new HashMap<Class<?>, List<ICSSPropertyHandler>>();
+	private Map<Class<?>, List<ICSSPropertyHandler>> propertiesHandler = new HashMap<>();
 
 	/**
 	 * Custom <code>Map</code> of <code>ICSSPropertyHandler</code> stored
 	 * under a CSS property <code>name</code> key.
 	 */
-	private Map<String, Class<? extends ICSSPropertyHandler>> customCSSProperties = new HashMap<String, Class<? extends ICSSPropertyHandler>>();
+	private Map<String, Class<? extends ICSSPropertyHandler>> customCSSProperties = new HashMap<>();
 
 	/**
 	 * True if custom CSS properties is merged with default CSS Properties.
@@ -198,7 +198,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 		List<ICSSPropertyHandler> handlers = propertiesHandler.get(cl);
 		if (handlers == null) {
 			propertiesHandler.put(cl,
-					handlers = new LinkedList<ICSSPropertyHandler>());
+					handlers = new LinkedList<>());
 		}
 		handlers.add(handler);
 	}

@@ -63,7 +63,7 @@ public class CSSSerializer {
 	 * @throws IOException
 	 */
 	public void serialize(Writer writer, CSSEngine engine, Object element, boolean serializeChildNodes, CSSSerializerConfiguration configuration) throws IOException {
-		Map<String, CSSStyleDeclaration> selectors = new HashMap<String, CSSStyleDeclaration>();
+		Map<String, CSSStyleDeclaration> selectors = new HashMap<>();
 		serialize(writer, engine, element, serializeChildNodes, selectors, configuration);
 		boolean firstSelector = true;
 		for (Map.Entry<String, CSSStyleDeclaration> entry : selectors.entrySet()) {

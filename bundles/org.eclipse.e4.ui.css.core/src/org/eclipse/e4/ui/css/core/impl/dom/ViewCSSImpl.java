@@ -63,7 +63,7 @@ public class ViewCSSImpl implements ViewCSS {
 		StyleSheetList styleSheetList = documentCSS.getStyleSheets();
 		int l = styleSheetList.getLength();
 
-		List<CSSRule> combinedRuleList = new ArrayList<CSSRule>();
+		List<CSSRule> combinedRuleList = new ArrayList<>();
 		for (int i = 0; i < l; i++) {
 			CSSStyleSheet styleSheet = (CSSStyleSheet) styleSheetList.item(i);
 
@@ -109,7 +109,7 @@ public class ViewCSSImpl implements ViewCSS {
 									// There is several Style Declarations which
 									// match the current element
 									if (styleDeclarations == null) {
-										styleDeclarations = new ArrayList<StyleWrapper>();
+										styleDeclarations = new ArrayList<>();
 										styleDeclarations.add(firstStyleDeclaration);
 									}
 									styleDeclarations.add(wrapper);

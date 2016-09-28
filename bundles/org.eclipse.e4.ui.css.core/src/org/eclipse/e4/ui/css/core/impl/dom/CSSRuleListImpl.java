@@ -23,7 +23,7 @@ public class CSSRuleListImpl implements CSSRuleList {
 
 	public CSSRuleListImpl() {
 		super();
-		this.ruleList = new ArrayList<CSSRule>();
+		this.ruleList = new ArrayList<>();
 	}
 
 	// W3C CSSRuleList API methods

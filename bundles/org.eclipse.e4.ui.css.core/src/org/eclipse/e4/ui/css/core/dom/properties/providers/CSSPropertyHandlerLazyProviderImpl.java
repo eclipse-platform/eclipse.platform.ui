@@ -32,10 +32,10 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 		AbstractCSSPropertyHandlerProvider {
 
 	// List of package names containing handlers class for properties
-	private List<String> packageNames = new ArrayList<String>();
+	private List<String> packageNames = new ArrayList<>();
 
 	// Map used as a cache for properties handlers found
-	private Map<String, List<ICSSPropertyHandler>> propertyToHandlersMap = new HashMap<String, List<ICSSPropertyHandler>>();
+	private Map<String, List<ICSSPropertyHandler>> propertyToHandlersMap = new HashMap<>();
 
 	/**
 	 * Return the list of PropertiesHandler corresponding to the property name
@@ -65,7 +65,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 //								+ ", with class=" + packageName + "."
 //								+ handlerClassName);
 					if (handlers == null)
-						handlers = new ArrayList<ICSSPropertyHandler>();
+						handlers = new ArrayList<>();
 					handlers.add(handler);
 				}
 			}
@@ -94,7 +94,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 
 	protected Map<String, List<ICSSPropertyHandler>> getPropertyToHandlersMap() {
 		if (propertyToHandlersMap == null)
-			propertyToHandlersMap = new HashMap<String, List<ICSSPropertyHandler>>();
+			propertyToHandlersMap = new HashMap<>();
 		return propertyToHandlersMap;
 	}
 

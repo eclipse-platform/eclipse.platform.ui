@@ -52,7 +52,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 	private boolean hasDeprecatedProperties = false; // mild optimization for
 														// getCSSProperties()
 
-	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();;
+	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<>();;
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
 		this.registry = registry;
@@ -81,7 +81,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 		if (extensions.length == 0) {
 			return false;
 		}
-		Map<String, Map<String, ICSSPropertyHandler>> handlersMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();
+		Map<String, Map<String, ICSSPropertyHandler>> handlersMap = new HashMap<>();
 		for (IExtension e : extensions) {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				if (ce.getName().equals(ATTR_HANDLER)) {
@@ -109,7 +109,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 						if (adaptersMap == null) {
 							handlersMap
 									.put(adapter,
-											adaptersMap = new HashMap<String, ICSSPropertyHandler>());
+											adaptersMap = new HashMap<>());
 						}
 						if (!adaptersMap.containsKey(name)) {
 							Object t = ce
@@ -141,7 +141,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 	@Override
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			String property) throws Exception {
-		List<ICSSPropertyHandler> handlers = new ArrayList<ICSSPropertyHandler>();
+		List<ICSSPropertyHandler> handlers = new ArrayList<>();
 		for (Map<String, ICSSPropertyHandler> perElement : propertyHandlerMap
 				.values()) {
 			ICSSPropertyHandler h = perElement.get(property);
@@ -200,7 +200,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 	@Override
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			Object element, String property) throws Exception {
-		List<ICSSPropertyHandler> handlers = new ArrayList<ICSSPropertyHandler>();
+		List<ICSSPropertyHandler> handlers = new ArrayList<>();
 		Class<?> clazz = element.getClass();
 		while (clazz != Object.class) {
 			if (propertyHandlerMap.containsKey(clazz.getName())) {
@@ -218,7 +218,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 	@Override
 	public Collection<String> getCSSProperties(Object element) {
 		// don't include deprecated elements
-		Set<String> properties = new HashSet<String>();
+		Set<String> properties = new HashSet<>();
 		Class<?> clazz = element.getClass();
 		while (clazz != Object.class) {
 			Map<String, ICSSPropertyHandler> handlerMap = propertyHandlerMap
@@ -250,7 +250,7 @@ public class RegistryCSSPropertyHandlerProvider extends
 			ICSSPropertyHandler {
 		private ICSSPropertyHandler delegate;
 		private String message;
-		private Set<String> logged = new HashSet<String>();
+		private Set<String> logged = new HashSet<>();
 
 		DeprecatedPropertyHandlerWrapper(ICSSPropertyHandler handler,
 				String message) {

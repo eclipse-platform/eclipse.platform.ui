@@ -137,7 +137,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * An ordered list of ICSSPropertyHandlerProvider
 	 */
-	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<ICSSPropertyHandlerProvider>();
+	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<>();
 
 	private Map<String, String> currentCSSPropertiesApplyed;
 
@@ -538,7 +538,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		// Apply style
 		boolean avoidanceCacheInstalled = currentCSSPropertiesApplyed == null;
 		if (avoidanceCacheInstalled) {
-			currentCSSPropertiesApplyed = new HashMap<String, String>();
+			currentCSSPropertiesApplyed = new HashMap<>();
 		}
 		List<ICSSPropertyHandler2> handlers2 = null;
 		for (int i = 0; i < style.getLength(); i++) {
@@ -558,7 +558,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				}
 				if (propertyHandler2 != null) {
 					if (handlers2 == null) {
-						handlers2 = new ArrayList<ICSSPropertyHandler2>();
+						handlers2 = new ArrayList<>();
 					}
 					if (!handlers2.contains(propertyHandler2)) {
 						handlers2.add(propertyHandler2);
@@ -830,14 +830,14 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	protected Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			String property) throws Exception {
-		Collection<ICSSPropertyHandler> handlers = new ArrayList<ICSSPropertyHandler>();
+		Collection<ICSSPropertyHandler> handlers = new ArrayList<>();
 		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
 			Collection<ICSSPropertyHandler> h = provider
 					.getCSSPropertyHandlers(property);
 			if (handlers == null) {
 				handlers = h;
 			} else {
-				handlers = new ArrayList<ICSSPropertyHandler>(handlers);
+				handlers = new ArrayList<>(handlers);
 				handlers.addAll(h);
 			}
 		}
@@ -852,7 +852,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 */
 	@Override
 	public Collection<String> getCSSProperties(Object element) {
-		Set<String> properties = new HashSet<String>();
+		Set<String> properties = new HashSet<>();
 		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
 			properties.addAll(provider.getCSSProperties(element));
 		}
@@ -956,7 +956,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	protected Map<Object, CSSElementContext> getElementsContext() {
 		if (elementsContext == null) {
-			elementsContext = new HashMap<Object, CSSElementContext>();
+			elementsContext = new HashMap<>();
 		}
 		return elementsContext;
 	}
@@ -1084,7 +1084,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	@Override
 	public void registerCSSValueConverter(ICSSValueConverter converter) {
 		if (valueConverters == null) {
-			valueConverters = new HashMap<Object, ICSSValueConverter>();
+			valueConverters = new HashMap<>();
 		}
 		valueConverters.put(converter.getToType(), converter);
 	}
