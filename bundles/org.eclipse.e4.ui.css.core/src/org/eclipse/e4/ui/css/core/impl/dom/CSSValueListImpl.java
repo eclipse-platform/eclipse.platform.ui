@@ -61,5 +61,14 @@ public class CSSValueListImpl extends AbstractCSSNode implements CSSValueList {
 	public void setCssText(String arg0) throws DOMException {
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (CSSValue cssValue : values) {
+			sb.append(cssValue.getCssText() + "\n");
+		}
+		return sb.toString();
+	}
+
 }
