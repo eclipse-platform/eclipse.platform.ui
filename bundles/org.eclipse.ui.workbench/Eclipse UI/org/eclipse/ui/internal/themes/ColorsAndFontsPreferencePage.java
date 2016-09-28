@@ -511,19 +511,22 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             if (element instanceof IHierarchalThemeElementDefinition) {
                 IHierarchalThemeElementDefinition themeElement = (IHierarchalThemeElementDefinition) element;
 				if (themeElement.getDefaultsTo() != null) {
-                    String myCategory = ((ICategorizedThemeElementDefinition) themeElement).getCategoryId();
-                    ICategorizedThemeElementDefinition def;
-                    if (element instanceof ColorDefinition)
+					String myCategory = ((ICategorizedThemeElementDefinition) themeElement).getCategoryId();
+					ICategorizedThemeElementDefinition def;
+					if (element instanceof ColorDefinition) {
 						def = themeRegistry.findColor(themeElement.getDefaultsTo());
-					else
+					} else {
 						def = themeRegistry.findFont(themeElement.getDefaultsTo());
-
-                    if (!ColorsAndFontsPreferencePage.equals(def.getCategoryId(), myCategory)) {
-                    	if (isDefault(themeElement))
-							return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_default"), themeElement.getName(), def.getName() ); //$NON-NLS-1$
-               			return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_override"), themeElement.getName(), def.getName() ); //$NON-NLS-1$
-                    }
-                }
+					}
+					if (def != null && !ColorsAndFontsPreferencePage.equals(def.getCategoryId(), myCategory)) {
+						if (isDefault(themeElement)) {
+							return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_default"), //$NON-NLS-1$
+									themeElement.getName(), def.getName());
+						}
+						return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_override"), //$NON-NLS-1$
+								themeElement.getName(), def.getName());
+					}
+				}
             }
             return ((IThemeElementDefinition) element).getName();
         }
