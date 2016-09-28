@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,15 +27,12 @@ public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 			.compile("(.+)\\s*=\\s*(.*)");
 
 	@Override
-	public boolean applyCSSProperty(Object element, String property,
-			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!property.equals(PREFERENCES_PROP)
-				|| !(element instanceof EclipsePreferencesElement)) {
+	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine) {
+		if (!property.equals(PREFERENCES_PROP) || !(element instanceof EclipsePreferencesElement)) {
 			return false;
 		}
 
-		IEclipsePreferences preferences = (IEclipsePreferences) ((EclipsePreferencesElement) element)
-				.getNativeWidget();
+		IEclipsePreferences preferences = (IEclipsePreferences) ((EclipsePreferencesElement) element).getNativeWidget();
 
 		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			CSSValueList list = (CSSValueList) value;
@@ -49,28 +46,17 @@ public class EclipsePreferencesHandler implements ICSSPropertyHandler {
 		return true;
 	}
 
-	@Override
-	public String retrieveCSSProperty(Object element, String property,
-			String pseudo, CSSEngine engine) throws Exception {
-		return null;
-	}
-
-	protected void overrideProperty(IEclipsePreferences preferences,
-			CSSValue value) {
-		Matcher matcher = PROPERTY_NAME_AND_VALUE_PATTERN.matcher(value
-				.getCssText());
+	protected void overrideProperty(IEclipsePreferences preferences, CSSValue value) {
+		Matcher matcher = PROPERTY_NAME_AND_VALUE_PATTERN.matcher(value.getCssText());
 		if (matcher.find()) {
-			overrideProperty(preferences, matcher.group(1).trim(), matcher
-					.group(2).trim());
+			overrideProperty(preferences, matcher.group(1).trim(), matcher.group(2).trim());
 		}
 	}
 
-	protected void overrideProperty(IEclipsePreferences preferences,
-			String name, String value) {
+	protected void overrideProperty(IEclipsePreferences preferences, String name, String value) {
 		if (preferences.get(name, null) == null || EclipsePreferencesHelper.isThemeChanged()) {
 			preferences.put(name, value);
-			EclipsePreferencesHelper.appendOverriddenPropertyName(preferences,
-					name);
+			EclipsePreferencesHelper.appendOverriddenPropertyName(preferences, name);
 		}
 	}
 }

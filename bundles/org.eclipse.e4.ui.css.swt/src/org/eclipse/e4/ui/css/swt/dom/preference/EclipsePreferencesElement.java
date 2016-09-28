@@ -27,29 +27,25 @@ public class EclipsePreferencesElement extends ElementAdapter {
 
 	private String id;
 
-	public EclipsePreferencesElement(IEclipsePreferences preferences,
-			CSSEngine engine) {
+	public EclipsePreferencesElement(IEclipsePreferences preferences, CSSEngine engine) {
 		super(preferences, engine);
 	}
 
 	@Override
 	public NodeList getChildNodes() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getNamespaceURI() {
 		if (namespaceURI == null) {
-			namespaceURI = ClassUtils.getPackageName(getNativeWidget()
-					.getClass());
+			namespaceURI = ClassUtils.getPackageName(getNativeWidget().getClass());
 		}
 		return namespaceURI;
 	}
 
 	@Override
 	public Node getParentNode() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -63,13 +59,11 @@ public class EclipsePreferencesElement extends ElementAdapter {
 
 	@Override
 	public String getCSSClass() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getCSSStyle() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
