@@ -201,13 +201,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				Path p = new Path(source.getURI());
 				IPath trim = p.removeLastSegments(1);
 				boolean isArchive = source.getURI().contains(ARCHIVE_IDENTIFIER);
-				url = FileLocator.resolve(new URL(trim.addTrailingSeparator()
-						.toString() + ((CSSImportRule) rule).getHref()));
+				url = FileLocator
+						.resolve(new URL(trim.addTrailingSeparator().toString() + ((CSSImportRule) rule).getHref()));
 				File testFile = new File(url.getFile());
 				if (!isArchive&&!testFile.exists()) {
 					// look in platform default
-					String path = getResourcesLocatorManager().resolve(
-							(importRule).getHref());
+					String path = getResourcesLocatorManager().resolve((importRule).getHref());
 					testFile = new File(new URL(path).getFile());
 					if (testFile.exists()) {
 						url = new URL(path);
@@ -269,35 +268,30 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Parse style declaration -----------------*/
 
 	@Override
-	public CSSStyleDeclaration parseStyleDeclaration(String style)
-			throws IOException {
+	public CSSStyleDeclaration parseStyleDeclaration(String style) throws IOException {
 		Reader reader = new StringReader(style);
 		return parseStyleDeclaration(reader);
 	}
 
 	@Override
-	public CSSStyleDeclaration parseStyleDeclaration(Reader reader)
-			throws IOException {
+	public CSSStyleDeclaration parseStyleDeclaration(Reader reader) throws IOException {
 		InputSource source = new InputSource();
 		source.setCharacterStream(reader);
 		return parseStyleDeclaration(source);
 	}
 
 	@Override
-	public CSSStyleDeclaration parseStyleDeclaration(InputStream stream)
-			throws IOException {
+	public CSSStyleDeclaration parseStyleDeclaration(InputStream stream) throws IOException {
 		InputSource source = new InputSource();
 		source.setByteStream(stream);
 		return parseStyleDeclaration(source);
 	}
 
 	@Override
-	public CSSStyleDeclaration parseStyleDeclaration(InputSource source)
-			throws IOException {
+	public CSSStyleDeclaration parseStyleDeclaration(InputSource source) throws IOException {
 		checkInputSource(source);
 		CSSParser parser = makeCSSParser();
-		CSSStyleDeclaration styleDeclaration = parser
-				.parseStyleDeclaration(source);
+		CSSStyleDeclaration styleDeclaration = parser.parseStyleDeclaration(source);
 		return styleDeclaration;
 	}
 
@@ -368,8 +362,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	@Override
-	public void applyStyles(Object element, boolean applyStylesToChildNodes,
-			boolean computeDefaultStyle) {
+	public void applyStyles(Object element, boolean applyStylesToChildNodes, boolean computeDefaultStyle) {
 		Element elt = getElement(element);
 		if (elt != null) {
 			if (!isVisible(elt)) {
@@ -459,8 +452,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	protected boolean isVisible(Element elt) {
 		Node parentNode = elt.getParentNode();
 		if (parentNode instanceof ChildVisibilityAwareElement) {
-			NodeList l = ((ChildVisibilityAwareElement) parentNode)
-					.getVisibleChildNodes();
+			NodeList l = ((ChildVisibilityAwareElement) parentNode).getVisibleChildNodes();
 			if (l != null) {
 				for (int i = 0; i < l.getLength(); i++) {
 					if (l.item(i) == elt) {
@@ -537,8 +529,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Apply style declaration -----------------*/
 
 	@Override
-	public void applyStyleDeclaration(Object element,
-			CSSStyleDeclaration style, String pseudo) {
+	public void applyStyleDeclaration(Object element, CSSStyleDeclaration style, String pseudo) {
 		// Apply style
 		boolean avoidanceCacheInstalled = currentCSSPropertiesApplyed == null;
 		if (avoidanceCacheInstalled) {
@@ -556,8 +547,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 					propertyHandler2 = (ICSSPropertyHandler2) handler;
 				} else {
 					if (handler instanceof ICSSPropertyHandler2Delegate) {
-						propertyHandler2 = ((ICSSPropertyHandler2Delegate) handler)
-								.getCSSPropertyHandler2();
+						propertyHandler2 = ((ICSSPropertyHandler2Delegate) handler).getCSSPropertyHandler2();
 					}
 				}
 				if (propertyHandler2 != null) {
@@ -569,8 +559,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 					}
 				}
 			} catch (Exception e) {
-				if (throwError
-						|| (!throwError && !(e instanceof UnsupportedPropertyException))) {
+				if (throwError || (!throwError && !(e instanceof UnsupportedPropertyException))) {
 					handleExceptions(e);
 				}
 			}
@@ -775,8 +764,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 						return handler;
 					}
 				} catch (Exception e) {
-					if (throwError
-							|| (!throwError && !(e instanceof UnsupportedPropertyException))) {
+					if (throwError || (!throwError && !(e instanceof UnsupportedPropertyException))) {
 						handleExceptions(e);
 					}
 				}
