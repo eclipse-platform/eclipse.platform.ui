@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 169876)
  *     Matthew Hall - bug 271720
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 502228
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -65,12 +64,11 @@ public class DateTimeSelectionProperty extends WidgetValueProperty {
 
 	@Override
 	protected void doSetValue(Object source, Object value) {
-		if (value == null) {
-			// ignore null, since it cannot be applied to the DateTimeWidget
-			return;
-		}
-
 		DateTime dateTime = (DateTime) source;
+
+		if (value == null)
+			throw new IllegalArgumentException(
+					"Cannot set null selection on DateTime"); //$NON-NLS-1$
 
 		Calendar cal = (Calendar) calendar.get();
 		cal.setTime((Date) value);
