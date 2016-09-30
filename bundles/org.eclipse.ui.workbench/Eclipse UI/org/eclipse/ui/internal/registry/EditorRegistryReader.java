@@ -13,10 +13,11 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -49,11 +50,50 @@ public class EditorRegistryReader extends RegistryReader {
      */
     @Override
 	protected boolean readElement(IConfigurationElement element) {
-        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR)) {
-			return false;
+		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR)) {
+			return readEditorElement(element);
+		}
+		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR_CONTENT_TYPTE_BINDING)) {
+			return readEditorContentTypeBinding(element);
+		}
+		return false;
+    }
+
+	/**
+	 * @param element
+	 * @return
+	 */
+	private boolean readEditorContentTypeBinding(IConfigurationElement element) {
+		IEditorDescriptor descriptor = null;
+		String editorId = element.getAttribute(IWorkbenchRegistryConstants.ATT_EDITOR_ID);
+		if (editorId == null) {
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_EDITOR_ID);
+		} else {
+			descriptor = editorRegistry.findEditor(editorId);
+			if (descriptor == null) {
+				logError(element, "Unknown editor with id: " + editorId); //$NON-NLS-1$
+			}
 		}
 
-        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		IContentType contentType = null;
+		String contentTypeId = element.getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_TYPE_ID);
+		if (contentTypeId == null) {
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CONTENT_TYPE_ID);
+		} else {
+			contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
+			if (contentType == null) {
+				logError(element, "Unknown content-type with id: " + contentTypeId); //$NON-NLS-1$
+			}
+		}
+
+		if (descriptor != null && contentType != null) {
+			editorRegistry.addContentTypeBinding(contentType, descriptor, false);
+		}
+		return true;
+	}
+
+	private boolean readEditorElement(IConfigurationElement element) {
+		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id == null) {
             logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
             return true;
@@ -109,7 +149,7 @@ public class EditorRegistryReader extends RegistryReader {
         editorRegistry.addEditorFromPlugin(editor, extensionsVector,
                 filenamesVector, contentTypeVector, defaultEditor);
         return true;
-    }
+	}
 
 
     /**

@@ -769,6 +769,10 @@
             name="Bug 356116 Editor"
             id="org.eclipse.ui.tests.editor.bug356116">
       </editor>
+      <editorContentTypeBinding
+            contentTypeId="org.eclipse.ui.tests.contentType.bug502837"
+            editorId="org.eclipse.ui.tests.api.MockEditorPart1">
+      </editorContentTypeBinding>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -1128,6 +1132,12 @@
            file-extensions="bug356116"
            name="Bug 356116 B content type"
            id="org.eclipse.ui.tests.contentType.bug356116.b">
+     </content-type>
+     <content-type
+           priority="normal"
+           file-extensions="bug502837"
+           name="ContentType for bug502837"
+           id="org.eclipse.ui.tests.contentType.bug502837">
      </content-type>
    </extension>
    		

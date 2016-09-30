@@ -243,23 +243,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			if (contentTypeId != null && contentTypeId.length() > 0) {
 				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
 				if (contentType != null) {
-					IEditorDescriptor [] editorArray = contentTypeToEditorMappings.get(contentType);
-					if (editorArray == null) {
-						editorArray = new IEditorDescriptor[] {editor};
-						contentTypeToEditorMappings.put(contentType, editorArray);
-					}
-					else {
-						IEditorDescriptor [] newArray = new IEditorDescriptor[editorArray.length + 1];
-						if (bDefault) { // default editors go to the front of the line
-							newArray[0] = editor;
-							System.arraycopy(editorArray, 0, newArray, 1, editorArray.length);
-						}
-						else {
-							newArray[editorArray.length] = editor;
-							System.arraycopy(editorArray, 0, newArray, 0, editorArray.length);
-						}
-						contentTypeToEditorMappings.put(contentType, newArray);
-					}
+					addContentTypeBinding(contentType, editor, bDefault);
 				}
 			}
 		}
@@ -267,6 +251,26 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
         // Update editor map.
         mapIDtoEditor.put(editor.getId(), editor);
     }
+
+	void addContentTypeBinding(IContentType contentType, IEditorDescriptor editor, boolean bDefault) {
+		IEditorDescriptor [] editorArray = contentTypeToEditorMappings.get(contentType);
+		if (editorArray == null) {
+			editorArray = new IEditorDescriptor[] {editor};
+			contentTypeToEditorMappings.put(contentType, editorArray);
+		}
+		else {
+			IEditorDescriptor [] newArray = new IEditorDescriptor[editorArray.length + 1];
+			if (bDefault) { // default editors go to the front of the line
+				newArray[0] = editor;
+				System.arraycopy(editorArray, 0, newArray, 1, editorArray.length);
+			}
+			else {
+				newArray[editorArray.length] = editor;
+				System.arraycopy(editorArray, 0, newArray, 0, editorArray.length);
+			}
+			contentTypeToEditorMappings.put(contentType, newArray);
+		}
+	}
 
     /**
      * Add external editors to the editor mapping.

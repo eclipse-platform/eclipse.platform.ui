@@ -179,6 +179,11 @@ public interface IWorkbenchRegistryConstants {
 	public static String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
 
 	/**
+	 * Editor id attribute. Value <code>editorId</code>.
+	 */
+	public static String ATT_EDITOR_ID = "editorId"; //$NON-NLS-1$
+
+	/**
 	 * Enables-for attribute. Value <code>enablesFor</code>.
 	 */
 	public static String ATT_ENABLES_FOR = "enablesFor"; //$NON-NLS-1$
@@ -994,6 +999,11 @@ public interface IWorkbenchRegistryConstants {
 	 * Editor tag. Value <code>editor</code>.
 	 */
 	public static String TAG_EDITOR = "editor";//$NON-NLS-1$
+
+	/**
+	 * Editor tag. Value <code>editor</code>.
+	 */
+	public static String TAG_EDITOR_CONTENT_TYPTE_BINDING = "editorContentTypeBinding";//$NON-NLS-1$
 
 	/**
 	 * The name of the deprecated editorContribution element. This is used for

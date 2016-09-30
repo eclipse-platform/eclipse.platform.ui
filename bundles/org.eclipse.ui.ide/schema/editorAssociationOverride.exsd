@@ -12,7 +12,7 @@ There are many ways to find editors for a given input and to open an editor. Thi
 &lt;/p&gt;
 
 &lt;p&gt;
-&lt;strong&gt;Note:&lt;/strong&gt; This extension point should only be used in cases where a product gets assembled with conflicting editor contribtions and where there is no other way to resolve those conflicts.
+&lt;strong&gt;Note:&lt;/strong&gt; This extension point should only be used in cases where a product gets assembled with conflicting editor contribtions and where there is no other way to resolve those conflicts. In case you simply want to bind an existing editor to a content-type, consider using &lt;em&gt;org.eclipse.ui.editors/editorContentTypeBinding&lt;/em&gt; instead.
 &lt;/p&gt;
       </documentation>
    </annotation>
