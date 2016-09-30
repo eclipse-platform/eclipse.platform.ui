@@ -29,7 +29,7 @@
       <property name="data-dir" value="${eclipse-editors-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
-                value="org.eclipse.ui.genericeditor.tests.EditorsTestSuite"/>
+                value="org.eclipse.ui.genericeditor.tests.GenericEditorTestSuite"/>
     </ant>
   </target>
 
