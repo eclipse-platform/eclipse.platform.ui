@@ -13,19 +13,16 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
-import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
+import java.util.List;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.commands.ICommandService;
 
 /**
  * Shows a list of open editor and parts in the current or last active workbook.
@@ -33,46 +30,106 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @since 3.4
  *
  */
-public class WorkbookEditorsHandler extends AbstractHandler {
+public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
+
+	/**
+	 *
+	 */
+	private static final String ORG_ECLIPSE_UI_WINDOW_OPEN_EDITOR_DROP_DOWN = "org.eclipse.ui.window.openEditorDropDown"; //$NON-NLS-1$
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		MUIElement uiElement = null;
+	protected Object getInput(WorkbenchPage page) {
+		List<EditorReference> refs = page.getSortedEditorReferences();
+		return refs;
+	}
 
-		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
-		if (activePart != null) {
-			IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-			WorkbenchPage page = (WorkbenchPage) workbenchWindow.getActivePage();
-			if (page != null) {
-				IWorkbenchPartReference reference = page.getReference(activePart);
-				if (reference != null) {
-					uiElement = page.getActiveElement(reference);
+	@Override
+	protected boolean isFiltered() {
+		return true;
+	}
+
+	private SearchPattern searchPattern;
+
+	SearchPattern getMatcher() {
+		return searchPattern;
+	}
+
+	@Override
+	protected void setMatcherString(String pattern) {
+		if (pattern.length() == 0) {
+			searchPattern = null;
+		} else {
+			SearchPattern patternMatcher = new SearchPattern();
+			patternMatcher.setPattern("*" + pattern); //$NON-NLS-1$
+			searchPattern = patternMatcher;
+		}
+	}
+
+	@Override
+	protected ViewerFilter getFilter() {
+		return new ViewerFilter() {
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				SearchPattern matcher = getMatcher();
+				if (matcher == null || !(viewer instanceof TableViewer)) {
+					return true;
 				}
+				String matchName = null;
+				if (element instanceof EditorReference) {
+					matchName = ((EditorReference) element).getTitle();
+				}
+				if (matchName == null) {
+					return false;
+				}
+				return matcher.matches(matchName);
 			}
-		}
+		};
+	}
 
-		if (uiElement instanceof MPlaceholder) {
-			uiElement = ((MPlaceholder) uiElement).getRef();
-		}
-
-		MPartStack activeStack = getActiveStack(uiElement);
-		if (activeStack != null) {
-			if (activeStack.getRenderer() instanceof StackRenderer
-					&& activeStack.getWidget() instanceof CTabFolder) {
-				StackRenderer stackRenderer = (StackRenderer) activeStack.getRenderer();
-				stackRenderer.showAvailableItems(activeStack, (CTabFolder) activeStack.getWidget(), true);
+	@Override
+	protected ColumnLabelProvider getColumnLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof EditorReference) {
+					EditorReference er = ((EditorReference) element);
+					if (er.isDirty()) {
+						return "*" + er.getTitle(); //$NON-NLS-1$
+					}
+					return er.getTitle();
+				}
+				return super.getText(element);
 			}
-		}
+
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof EditorReference) {
+					return ((EditorReference) element).getTitleImage();
+				}
+				return super.getImage(element);
+			}
+
+			@Override
+			public String getToolTipText(Object element) {
+				if (element instanceof EditorReference) {
+					return ((EditorReference) element).getTitleToolTip();
+				}
+				return super.getToolTipText(element);
+			};
+		};
+	}
+
+	@Override
+	protected ParameterizedCommand getBackwardCommand() {
 		return null;
 	}
 
-	private MPartStack getActiveStack(Object element) {
-		if (element instanceof MPartStack) {
-			return (MPartStack) element;
-		} else if (element instanceof MElementContainer<?>) {
-			return getActiveStack(((MElementContainer<?>) element).getSelectedElement());
-		}
-		return null;
+	@Override
+	protected ParameterizedCommand getForwardCommand() {
+		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
+		final Command command = commandService.getCommand(ORG_ECLIPSE_UI_WINDOW_OPEN_EDITOR_DROP_DOWN);
+		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
+		return commandF;
 	}
 
 }
