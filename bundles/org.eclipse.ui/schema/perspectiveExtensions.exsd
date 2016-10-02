@@ -114,7 +114,7 @@ are appended to the initial definition.
                   the unique identifier of the view which will be added to the perspective&apos;s &quot;Show View&quot; submenu of the &quot;Window&quot; menu.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -159,7 +159,7 @@ are appended to the initial definition.
                   the unique identifier of the view which will be added to the perspective&apos;s &quot;Show In...&quot; prompter in the Navigate menu.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -174,7 +174,7 @@ are appended to the initial definition.
                   the unique identifier of the view which will be added to the perspective layout.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -184,7 +184,7 @@ are appended to the initial definition.
                   the unique identifier of a view which already exists in the perspective.  This will be used as a reference point for placement of the view.  The relationship between these two views is defined by &lt;samp&gt;relationship&lt;/samp&gt;.  Ignored if relationship is &quot;fast&quot;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
                </appInfo>
             </annotation>
             <simpleType>

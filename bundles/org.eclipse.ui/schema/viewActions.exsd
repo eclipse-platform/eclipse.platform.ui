@@ -87,7 +87,7 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
                   a unique identifier of a registered view that is the target of this contribution.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
                </appInfo>
             </annotation>
          </attribute>

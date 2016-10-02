@@ -332,7 +332,7 @@ If no value is supplied, a default ratio will be used.
                   the id of the view to be made sticky.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id,org.eclipse.ui.views/e4view/@id"/>
                </appInfo>
             </annotation>
          </attribute>
