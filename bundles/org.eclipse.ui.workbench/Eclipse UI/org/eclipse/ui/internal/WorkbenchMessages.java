@@ -168,6 +168,8 @@ public class WorkbenchMessages extends NLS {
 	// --- Window Menu ---
 	public static String PerspectiveMenu_otherItem;
 	public static String SelectPerspective_shellTitle;
+	public static String SelectPerspective_selectPerspectiveHelp;
+	public static String SelectPerspective_noDesc;
 	public static String Workbench_showPerspectiveError;
 	public static String ChangeToPerspectiveMenu_errorTitle;
     public static String OpenPerspectiveDialogAction_text;

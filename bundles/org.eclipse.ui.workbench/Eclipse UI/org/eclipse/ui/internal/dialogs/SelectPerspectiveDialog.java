@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  *     activated and used by other components.
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 106954
  *******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -23,12 +25,19 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -62,7 +71,11 @@ public class SelectPerspectiveDialog extends Dialog implements
 
     private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
 
+	private Label descriptionHint;
+
     private Button showAllButton;
+
+	private PopupDialog perspDescPopupDialog;
 
     /**
      * PerspectiveDialog constructor comment.
@@ -125,6 +138,13 @@ public class SelectPerspectiveDialog extends Dialog implements
 
         createViewer(composite);
         layoutTopControl(list.getControl());
+
+		// Use F2... label
+		descriptionHint = new Label(composite, SWT.WRAP);
+		descriptionHint.setText(WorkbenchMessages.SelectPerspective_selectPerspectiveHelp);
+		descriptionHint.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		descriptionHint.setVisible(false);
+
         if (needsShowAllButton()) {
             createShowAllButton(composite);
         }
@@ -184,6 +204,12 @@ public class SelectPerspectiveDialog extends Dialog implements
                 handleDoubleClickEvent();
             }
         });
+		list.getControl().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				handleTableViewerKeyPressed(e);
+			}
+		});
     }
 
     /**
@@ -223,6 +249,7 @@ public class SelectPerspectiveDialog extends Dialog implements
 	public void selectionChanged(SelectionChangedEvent event) {
         updateSelection(event);
         updateButtons();
+		updateTooltip();
     }
 
     /**
@@ -246,7 +273,22 @@ public class SelectPerspectiveDialog extends Dialog implements
         }
     }
 
-    @Override
+    private void updateTooltip() {
+		String tooltip = ""; //$NON-NLS-1$
+		if (perspDesc != null) {
+			tooltip = perspDesc.getDescription();
+		}
+
+		boolean hasTooltip = tooltip != null && tooltip.length() > 0;
+		descriptionHint.setVisible(hasTooltip);
+
+		if (perspDescPopupDialog != null) {
+			perspDescPopupDialog.close();
+			perspDescPopupDialog = null;
+		}
+	}
+
+	@Override
 	protected void okPressed() {
         ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
                 .getActivitySupport().getTriggerPointManager().getTriggerPoint(
@@ -260,4 +302,57 @@ public class SelectPerspectiveDialog extends Dialog implements
 	protected boolean isResizable() {
     	return true;
     }
+
+	private void handleTableViewerKeyPressed(KeyEvent event) {
+		// popup the description for the selected perspective
+		if (event.keyCode == SWT.F2 && event.stateMask == 0) {
+			IStructuredSelection selection = list.getStructuredSelection();
+			// only show description if one perspective is selected
+			if (selection.size() == 1) {
+				Object o = selection.getFirstElement();
+				if (o instanceof IPerspectiveDescriptor) {
+					String description = ((IPerspectiveDescriptor) o).getDescription();
+					if (description.length() == 0) {
+						description = WorkbenchMessages.SelectPerspective_noDesc;
+					}
+					popUp(description);
+				}
+			}
+		}
+	}
+
+	private void popUp(final String description) {
+		perspDescPopupDialog = new PopupDialog(getShell(), PopupDialog.HOVER_SHELLSTYLE, true, false, false, false, false, null, null) {
+			private static final int CURSOR_SIZE = 15;
+
+			@Override
+			protected Point getInitialLocation(Point initialSize) {
+				// show popup relative to cursor
+				Display display = getShell().getDisplay();
+				Point location = display.getCursorLocation();
+				location.x += CURSOR_SIZE;
+				location.y += CURSOR_SIZE;
+				return location;
+			}
+
+			@Override
+			protected Control createDialogArea(Composite parent) {
+				Label label = new Label(parent, SWT.WRAP);
+				label.setText(description);
+				label.addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusLost(FocusEvent event) {
+						close();
+					}
+				});
+				// Use the compact margins employed by PopupDialog.
+				GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+				gd.horizontalIndent = PopupDialog.POPUP_HORIZONTALSPACING;
+				gd.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
+				label.setLayoutData(gd);
+				return label;
+			}
+		};
+		perspDescPopupDialog.open();
+	}
 }
