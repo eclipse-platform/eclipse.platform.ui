@@ -92,7 +92,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		if (!reconciliers.isEmpty()) {
 			return reconciliers.get(0);
 		}
-		return null;
+		return super.getPresentationReconciler(sourceViewer);
 	}
 
 }
