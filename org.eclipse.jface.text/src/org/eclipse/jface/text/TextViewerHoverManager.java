@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -186,6 +187,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 						setInformation(null, null);
 					}
 					hasFinished= true;
+				} catch (OperationCanceledException e) {
+					// Just swallow the exception if the operation was canceled
 				} catch (RuntimeException ex) {
 					String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
 					ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
