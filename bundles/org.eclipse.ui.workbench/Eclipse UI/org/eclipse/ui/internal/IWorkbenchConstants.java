@@ -161,6 +161,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_CLASS = "class"; //$NON-NLS-1$
 
+	public static final String TAG_USE_DEPENDENCY_INJECTION = "inject"; //$NON-NLS-1$
+
     public static final String TAG_FILE = "file"; //$NON-NLS-1$
 
     public static final String TAG_DESCRIPTOR = "descriptor"; //$NON-NLS-1$

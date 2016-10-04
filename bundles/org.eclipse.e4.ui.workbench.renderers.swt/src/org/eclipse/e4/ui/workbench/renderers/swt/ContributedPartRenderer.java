@@ -70,67 +70,70 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
-		if (!(element instanceof MPart) || !(parent instanceof Composite))
+		if (!(element instanceof MPart) || !(parent instanceof Composite)) {
 			return null;
+		}
 
-		Widget parentWidget = (Widget) parent;
-		Widget newWidget = null;
+		// retrieve context for this part
 		final MPart part = (MPart) element;
-
-		final Composite newComposite = new Composite((Composite) parentWidget,
-				SWT.NONE) {
-
-			/**
-			 * Field to determine whether we are currently in the midst of
-			 * granting focus to the part.
-			 */
-			private boolean beingFocused = false;
-
-			@Override
-			public boolean setFocus() {
-				if (!beingFocused) {
-					try {
-						// we are currently asking the part to take focus
-						beingFocused = true;
-
-						// delegate an attempt to set the focus here to the
-						// part's implementation (if there is one)
-						Object object = part.getObject();
-						if (object != null && isEnabled()) {
-							IPresentationEngine pe = part.getContext().get(
-									IPresentationEngine.class);
-							pe.focusGui(part);
-							return true;
-						}
-						return super.setFocus();
-					} finally {
-						// we are done, unset our flag
-						beingFocused = false;
-					}
-				}
-
-				// already being focused, likely some strange recursive call,
-				// just return
-				return true;
-			}
-		};
-
-		newComposite.setLayout(new FillLayout(SWT.VERTICAL));
-
-		newWidget = newComposite;
-		bindWidget(element, newWidget);
-
-		// Create a context for this part
 		IEclipseContext localContext = part.getContext();
-		localContext.set(Composite.class, newComposite);
+		Widget parentWidget = (Widget) parent;
+		// retrieve existing Composite, e.g., for the e4 compatibility case
+		Composite partComposite = localContext.getLocal(Composite.class);
 
-		IContributionFactory contributionFactory = localContext
-				.get(IContributionFactory.class);
-		Object newPart = contributionFactory.create(part.getContributionURI(),
-				localContext);
+		// does the part already have a composite in its contexts?
+		if (partComposite == null) {
+
+			final Composite newComposite = new Composite((Composite) parentWidget, SWT.NONE) {
+
+				/**
+				 * Field to determine whether we are currently in the midst of
+				 * granting focus to the part.
+				 */
+				private boolean beingFocused = false;
+
+				@Override
+				public boolean setFocus() {
+					if (!beingFocused) {
+						try {
+							// we are currently asking the part to take focus
+							beingFocused = true;
+
+							// delegate an attempt to set the focus here to the
+							// part's implementation (if there is one)
+							Object object = part.getObject();
+							if (object != null && isEnabled()) {
+								IPresentationEngine pe = part.getContext().get(IPresentationEngine.class);
+								pe.focusGui(part);
+								return true;
+							}
+							return super.setFocus();
+						} finally {
+							// we are done, unset our flag
+							beingFocused = false;
+						}
+					}
+
+					// already being focused, likely some strange recursive
+					// call,
+					// just return
+					return true;
+				}
+			};
+			newComposite.setLayout(new FillLayout(SWT.VERTICAL));
+
+
+			partComposite = newComposite;
+		}
+		bindWidget(element, partComposite);
+
+		localContext.set(Composite.class, partComposite);
+
+		IContributionFactory contributionFactory = localContext.get(IContributionFactory.class);
+		Object newPart = contributionFactory.create(part.getContributionURI(), localContext);
 		part.setObject(newPart);
 
-		return newWidget;
+		return partComposite;
 	}
 
 	/**

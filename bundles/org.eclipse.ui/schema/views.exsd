@@ -183,6 +183,40 @@ If no value is supplied, a default ratio will be used.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="inject" type="boolean">
+            <annotation>
+               <documentation>
+                  flag indicating whether this view allows to use the Eclipse dependency injection (Eclipse DI) framework. 
+If set to true, Eclipse DI will be used to inject the view.  Otherwise no Eclipse DI is used.
+The default is false.
+
+&lt;p/&gt;
+The framework will process the fields and methods in the following order. * steps are in addition to the process without Eclipse DI.
+
+&lt;ol&gt;
+ &lt;li&gt; default constructor&lt;/li&gt;
+ &lt;li&gt; the IExecutableExtension#setInitializationData method&lt;/li&gt;
+ &lt;li&gt; the IViewPart#init method&lt;/li&gt;
+ &lt;li&gt; optionally fields annotated with @Inject  *&lt;/li&gt;
+ &lt;li&gt; optionally methods annoted with @Inject * &lt;/li&gt;
+ &lt;li&gt; optionally one method annotated with @PostConstruct *&lt;/li&gt;
+ &lt;li&gt; the IWorkbenchPart#createPartControl method&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p/&gt;
+You cannot use constructor injection with these views, as the framework still requires a parameterless constructor.
+&lt;p/&gt;
+ On disposal of the view the methods are called in the following order:
+ &lt;ol&gt;
+ &lt;li&gt; IWorkbenchPart#dispose&lt;/li&gt;
+ &lt;li&gt; optionally a method annotated with @PreDestroy *&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;p&gt;&lt;em&gt;Since: 4.7&lt;/em&gt;&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

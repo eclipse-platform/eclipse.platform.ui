@@ -12,6 +12,8 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.tests.api.workbenchpart.ArbitraryPropertyTest;
+import org.eclipse.ui.tests.api.workbenchpart.DependencyInjectionView;
+import org.eclipse.ui.tests.api.workbenchpart.DependencyInjectionViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.LifecycleViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
 import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
@@ -62,13 +64,15 @@ import org.junit.runners.Suite;
      UIJobTest.class,
      Bug75118Test.class,
      FileEditorInputTest.class,
-		IDETest.class,
+	 IDETest.class,
      IEditorMatchingStrategyTest.class,
      XMLMementoTest.class,
      //IWorkbenchPartTestableTests.class,
      ArbitraryPropertyTest.class,
      LifecycleViewTest.class,
-		Bug407422Test.class, MultipleWindowsTest.class
+	 DependencyInjectionViewTest.class, 
+	 Bug407422Test.class, 
+	 MultipleWindowsTest.class
 })
 public class ApiTestSuite {
 

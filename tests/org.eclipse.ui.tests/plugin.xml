@@ -3730,6 +3730,13 @@
             id="org.eclipse.ui.tests.LifecycleView"
             name="Lifecycle View">
       </view>
+      <view
+            class="org.eclipse.ui.tests.api.workbenchpart.DependencyInjectionView"
+            id="org.eclipse.ui.tests.dependencyinjectionview"
+            inject="true"
+            name="Dependency Injection View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.statusHandlers">

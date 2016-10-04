@@ -168,6 +168,12 @@ public class ViewRegistry implements IViewRegistry {
 			String viewClass = colonIndex == -1 ? clsSpec : clsSpec.substring(0, colonIndex);
 			descriptor.getPersistedState().put(ORIGINAL_COMPATIBILITY_VIEW_CLASS, viewClass);
 			descriptor.getPersistedState().put(ORIGINAL_COMPATIBILITY_VIEW_BUNDLE, bundle.getSymbolicName());
+
+			boolean useDependencyInjection = Boolean
+					.parseBoolean(element.getAttribute(IWorkbenchConstants.TAG_USE_DEPENDENCY_INJECTION));
+			if (useDependencyInjection) {
+				descriptor.getTags().add(IWorkbenchConstants.TAG_USE_DEPENDENCY_INJECTION);
+			}
 		}
 		descriptor.setContributionURI(implementationURI);
 
