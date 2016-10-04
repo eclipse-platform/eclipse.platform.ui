@@ -160,4 +160,9 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return getCssText();
+	}
 }
