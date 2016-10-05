@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
@@ -135,7 +135,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
         Shell dialogShell = fWizardDialog.getShell();
         dialogShell.setSize(Math.max(SIZING_WIZARD_WIDTH_2, dialogShell
                 .getSize().x), SIZING_WIZARD_HEIGHT_2);
-        WorkbenchHelp.setHelp(fWizardDialog.getShell(),
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fWizardDialog.getShell(),
                 IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
 
         IWorkingSetManager workingSetManager = fWorkbench
