@@ -570,21 +570,11 @@ public class PropertySheet extends PageBookView
 		return pinPropertySheetAction != null && pinPropertySheetAction.isChecked();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.4
-	 */
 	@Override
 	public ShowInContext getShowInContext() {
 		return new PropertyShowInContext(currentPart, currentSelection);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.4
-	 */
 	@Override
 	public boolean show(ShowInContext aContext) {
 		if (!isPinned()
@@ -632,37 +622,21 @@ public class PropertySheet extends PageBookView
 		return getIgnoredViews().contains(partID);
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtension[])
-	 * @since 3.5
-	 */
 	@Override
 	public void added(IExtension[] extensions) {
 		ignoredViews = null;
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtensionPoint[])
-	 * @since 3.5
-	 */
 	@Override
 	public void added(IExtensionPoint[] extensionPoints) {
 		ignoredViews = null;
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtension[])
-	 * @since 3.5
-	 */
 	@Override
 	public void removed(IExtension[] extensions) {
 		ignoredViews = null;
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtensionPoint[])
-	 * @since 3.5
-	 */
 	@Override
 	public void removed(IExtensionPoint[] extensionPoints) {
 		ignoredViews = null;
