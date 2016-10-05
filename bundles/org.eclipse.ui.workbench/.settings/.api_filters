@@ -21,4 +21,201 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/help/DialogPageContextComputer.java" type="org.eclipse.ui.help.DialogPageContextComputer">
+        <filter comment="no* annotations required for the API removal process" id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.DialogPageContextComputer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.DialogPageContextComputer"/>
+                <message_argument value="computeContexts(HelpEvent)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.DialogPageContextComputer"/>
+                <message_argument value="getLocalContexts(HelpEvent)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/help/IContextComputer.java" type="org.eclipse.ui.help.IContextComputer">
+        <filter comment="no* annotations required for the API removal process" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.IContextComputer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.IContextComputer"/>
+                <message_argument value="computeContexts(HelpEvent)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.IContextComputer"/>
+                <message_argument value="getLocalContexts(HelpEvent)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/help/ViewContextComputer.java" type="org.eclipse.ui.help.ViewContextComputer">
+        <filter comment="no* annotations required for the API removal process" id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.ViewContextComputer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.ViewContextComputer"/>
+                <message_argument value="computeContexts(HelpEvent)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.ViewContextComputer"/>
+                <message_argument value="getLocalContexts(HelpEvent)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/help/WorkbenchHelp.java" type="org.eclipse.ui.help.WorkbenchHelp">
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="createHelpListener(ICommand)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="displayContext(IContext, int, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="displayHelp()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="displayHelp(IContext)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="displayHelp(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="displayHelpResource(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="getHelp(Control)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="getHelp(Menu)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="getHelp(MenuItem)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="getHelpSupport()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="isContextHelpDisplayed()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(Control, IContextComputer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(Control, Object[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(Control, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(IAction, IContextComputer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(IAction, Object[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(IAction, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(Menu, IContextComputer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(Menu, Object[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(Menu, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(MenuItem, IContextComputer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(MenuItem, Object[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="no* annotations required for the API removal process" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="setHelp(MenuItem, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
