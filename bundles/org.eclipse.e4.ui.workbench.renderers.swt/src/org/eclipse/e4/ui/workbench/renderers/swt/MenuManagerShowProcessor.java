@@ -137,24 +137,19 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 			MMenuElement currentMenuElement = ml[i];
 			if (currentMenuElement instanceof MDynamicMenuContribution) {
-				Object contribution = ((MDynamicMenuContribution) currentMenuElement)
-						.getObject();
+				MDynamicMenuContribution dmc = (MDynamicMenuContribution) currentMenuElement;
+				Object contribution = dmc.getObject();
 				if (contribution == null) {
-					IEclipseContext context = modelService
-							.getContainingContext(menuModel);
-					contribution = contributionFactory.create(
-							((MDynamicMenuContribution) currentMenuElement)
-									.getContributionURI(), context);
-					((MDynamicMenuContribution) currentMenuElement)
-							.setObject(contribution);
+					IEclipseContext context = modelService.getContainingContext(menuModel);
+					contribution = contributionFactory.create(dmc.getContributionURI(), context);
+					dmc.setObject(contribution);
 				}
 
-				IEclipseContext dynamicMenuContext = EclipseContextFactory
-						.create();
+				IEclipseContext dynamicMenuContext = EclipseContextFactory.create();
 				ArrayList<MMenuElement> mel = new ArrayList<>();
 				dynamicMenuContext.set(List.class, mel);
-				IEclipseContext parentContext = modelService
-						.getContainingContext(currentMenuElement);
+				dynamicMenuContext.set(MDynamicMenuContribution.class, dmc);
+				IEclipseContext parentContext = modelService.getContainingContext(currentMenuElement);
 				Object rc = ContextInjectionFactory.invoke(contribution,
 						AboutToShow.class, parentContext, dynamicMenuContext,
 						this);
