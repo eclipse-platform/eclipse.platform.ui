@@ -1038,6 +1038,20 @@
                optional="true">
          </commandParameter>
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.edit"
+            description="%command.copyDescription.description"
+            id="org.eclipse.ui.ide.markers.copyDescription"
+            name="%command.copyDescription.name"
+            defaultHandler="org.eclipse.ui.internal.views.markers.CopyMarkerDescriptionHandler">            
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.edit"
+            description="%command.copyMarkerResourceQualifiedName.description"
+            id="org.eclipse.ui.ide.markers.copyMarkerResourceQualifiedName"
+            name="%command.copyMarkerResourceQualifiedName.name"
+            defaultHandler="org.eclipse.ui.internal.views.markers.CopyMarkerResourceQualifiedNameHandler">            
+      </command>          
    </extension>
 
    <extension
@@ -1752,6 +1766,25 @@
          <command
                commandId="org.eclipse.ui.edit.copy">
          </command>
+         <menu
+               id="org.eclipse.ui.ide.markers.copyDetailsMenu"
+               label="%menu.copyDetails.label">
+            <command
+                  commandId="org.eclipse.ui.ide.markers.copyDescription"
+                  label="%command.copyDescription.label"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.ide.markers.copyMarkerResourceQualifiedName"
+                  icon="icons/full/elcl16/cpyqual_menu.png"
+                  label="%command.copyMarkerResourceQualifiedName.label"
+                  style="push">
+            </command>
+            <dynamic
+                  class="org.eclipse.ui.ExtensionFactory:copyDetailsContribution"
+                  id="org.eclipse.ui.menus.dynamicCopyDetailsMenu">
+            </dynamic>   
+         </menu>
          <command
                commandId="org.eclipse.ui.edit.delete">
          </command>
