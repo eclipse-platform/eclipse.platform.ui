@@ -548,6 +548,7 @@ public class MMenuItemTest {
 	}
 
 	@Test
+	@Ignore("See Bug 452765")
 	public void testMMenuItem_Text_EmptyString() {
 		testMMenuItem_Text("", "", "label", "label");
 	}
@@ -563,21 +564,25 @@ public class MMenuItemTest {
 	}
 
 	@Test
+	@Ignore("See Bug 452765")
 	public void testMMenuItem_Text_NullString() {
 		testMMenuItem_Text(null, "", "label", "label");
 	}
 
 	@Test
+	@Ignore("See Bug 452765")
 	public void testMMenuItem_Text_StringEmpty() {
 		testMMenuItem_Text("label", "label", "", "");
 	}
 
 	@Test
+	@Ignore("See Bug 452765")
 	public void testMMenuItem_Text_StringNull() {
 		testMMenuItem_Text("label", "label", null, "");
 	}
 
 	@Test
+	@Ignore("See Bug 452765")
 	public void testMMenuItem_Text_StringStringChanged() {
 		testMMenuItem_Text("label", "label", "label2", "label2");
 	}
