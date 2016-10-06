@@ -21,10 +21,4 @@
   <version>0.12.100-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
-  <properties>
-  	<!-- Test not ready for Surefire -->
-  	<skipTests>true</skipTests>
-  </properties>
-
-
 </project>
