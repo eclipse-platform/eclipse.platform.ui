@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,14 @@
 
 package org.eclipse.ui.internal.navigator.filters;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -63,10 +66,24 @@ public class CommonFiltersTab extends CustomizationTab {
 
 	private TablePatternFilter patternFilter = new TablePatternFilter();
 
+	private Deque<ICommonFilterDescriptor> filterDescriptorChangeHistory = new ArrayDeque<>();
+
 	protected CommonFiltersTab(Composite parent,
 			INavigatorContentService aContentService) {
 		super(parent, aContentService);
 		createControl();
+	}
+
+	@Override
+	protected void checkStateChanged(CheckStateChangedEvent event) {
+		super.checkStateChanged(event);
+		ICommonFilterDescriptor filterDescriptor = (ICommonFilterDescriptor) event.getElement();
+		filterDescriptorChangeHistory.remove(filterDescriptor);
+		filterDescriptorChangeHistory.push(filterDescriptor);
+	}
+
+	protected ICommonFilterDescriptor[] getFilterDescriptorChangeHistory() {
+		return filterDescriptorChangeHistory.toArray(new ICommonFilterDescriptor[filterDescriptorChangeHistory.size()]);
 	}
 
 	private void createControl() {

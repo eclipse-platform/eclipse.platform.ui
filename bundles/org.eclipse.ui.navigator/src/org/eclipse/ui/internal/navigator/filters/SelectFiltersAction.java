@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal.navigator.filters;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.CommonViewer;
 
@@ -49,8 +50,9 @@ public class SelectFiltersAction extends Action {
 	@Override
 	public void run() {
 		CommonFilterSelectionDialog filterSelectionDialog = new CommonFilterSelectionDialog(commonViewer);
-		filterSelectionDialog.open();
-		filterGroup.updateFilterShortcuts();
+		if (filterSelectionDialog.open() == Window.OK) {
+			filterGroup.updateFilterShortcuts(filterSelectionDialog.getFilterDescriptorChangeHistory());
+		}
 	}
 
 }

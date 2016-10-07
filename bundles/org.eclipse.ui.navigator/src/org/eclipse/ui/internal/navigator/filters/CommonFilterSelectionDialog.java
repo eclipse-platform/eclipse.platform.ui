@@ -262,4 +262,11 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 		super.okPressed();
 	}
+
+	protected ICommonFilterDescriptor[] getFilterDescriptorChangeHistory() {
+		if (commonFiltersTab != null) {
+			return commonFiltersTab.getFilterDescriptorChangeHistory();
+		}
+		return new ICommonFilterDescriptor[0];
+	}
 }

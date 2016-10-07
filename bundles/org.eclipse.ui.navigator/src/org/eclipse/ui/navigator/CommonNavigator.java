@@ -226,6 +226,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 		commonActionGroup = createCommonActionGroup();
 		commonActionGroup.fillActionBars(getViewSite().getActionBars());
+		if (memento != null && commonActionGroup instanceof IMementoAware) {
+			((IMementoAware) commonActionGroup).restoreState(memento);
+		}
 
 		ISaveablesLifecycleListener saveablesLifecycleListener = new ISaveablesLifecycleListener() {
 			ISaveablesLifecycleListener siteSaveablesLifecycleListener = getSite()
@@ -335,7 +338,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 					.intValue() == 1
 					: false));
 		}
-
 	}
 
 	/**
@@ -353,6 +355,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		super.saveState(aMemento);
 		commonManager.saveState(aMemento);
 		commonViewer.getNavigatorContentService().saveState(aMemento);
+		if (commonActionGroup instanceof IMementoAware) {
+			((IMementoAware) commonActionGroup).saveState(aMemento);
+		}
 	}
 
 	/**
