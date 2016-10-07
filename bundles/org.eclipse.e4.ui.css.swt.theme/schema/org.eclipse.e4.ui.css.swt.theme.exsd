@@ -213,8 +213,8 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         A theme which only applies on Win32/WinXP:
-&lt;p&gt;
+         &lt;p&gt;
+A theme which only applies on Win32/WinXP:
 &lt;pre&gt;
 &lt;theme
   basestylesheeturi=&quot;css/e4_default_winxp_blu.css&quot;
@@ -226,8 +226,8 @@
 &lt;/pre&gt;
 &lt;/p&gt;
 
-A stylesheet contributed to all Systems:
 &lt;p&gt;
+A stylesheet contributed to all Systems:
 &lt;pre&gt;
 &lt;stylesheet
   uri=&quot;css/default.css&quot;&gt;
@@ -235,11 +235,15 @@ A stylesheet contributed to all Systems:
 &lt;/pre&gt;
 &lt;/p&gt;
 
-The CSS theme and the legacy Colors and Fonts one association:
+&lt;p&gt;
+The CSS theme and the legacy Colors and Fonts association:
+&lt;pre&gt;
 &lt;themeAssociation
  themeId=&quot;org.eclipse.e4.ui.css.theme.e4_classic&quot;
  colorAndFontId=&quot;org.eclipse.ui.defaultTheme&quot;&gt; 
 &lt;/themeassociation&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
