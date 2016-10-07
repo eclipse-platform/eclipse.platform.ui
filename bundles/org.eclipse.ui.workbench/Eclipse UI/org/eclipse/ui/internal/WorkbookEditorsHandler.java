@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Marc-Andre Laperle (Ericsson) - Bug 413278
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497618, 368977
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497618, 368977, 504088
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -17,11 +17,9 @@ import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.commands.ICommandService;
 
 /**
@@ -83,39 +81,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				}
 				return matcher.matches(matchName);
 			}
-		};
-	}
-
-	@Override
-	protected ColumnLabelProvider getColumnLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof EditorReference) {
-					EditorReference er = ((EditorReference) element);
-					if (er.isDirty()) {
-						return "*" + er.getTitle(); //$NON-NLS-1$
-					}
-					return er.getTitle();
-				}
-				return super.getText(element);
-			}
-
-			@Override
-			public Image getImage(Object element) {
-				if (element instanceof EditorReference) {
-					return ((EditorReference) element).getTitleImage();
-				}
-				return super.getImage(element);
-			}
-
-			@Override
-			public String getToolTipText(Object element) {
-				if (element instanceof EditorReference) {
-					return ((EditorReference) element).getTitleToolTip();
-				}
-				return super.getToolTipText(element);
-			};
 		};
 	}
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Patrik Suzzi <psuzzi@gmail.com> - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -151,7 +151,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			shell = window.getShell();
 		dialog = new Shell(shell, SWT.MODELESS);
 		dialog.setBackground(getBackground());
-		dialog.setMinimumSize(new Point(150, 120));
+		dialog.setMinimumSize(new Point(120, 50));
 		Display display = dialog.getDisplay();
 		dialog.setLayout(new FillLayout());
 
@@ -732,7 +732,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 	/** True to show search text and enable filtering */
 	protected boolean isFiltered() {
-		return true;
+		return false;
 	}
 
 	/** True to have dialog persistent after releasing the key combo */
@@ -740,14 +740,48 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		return true;
 	}
 
-	/** returns the columnlabel provider for the only column */
-	protected abstract ColumnLabelProvider getColumnLabelProvider();
-
 	/** Return the filter to use */
-	protected abstract ViewerFilter getFilter();
+	protected ViewerFilter getFilter() {
+		return null;
+	}
+
+	/** returns the columnlabel provider for the only column */
+	protected ColumnLabelProvider getColumnLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof WorkbenchPartReference) {
+					WorkbenchPartReference ref = ((WorkbenchPartReference) element);
+					if (ref.isDirty()) {
+						return "*" + ref.getTitle(); //$NON-NLS-1$
+					}
+					return ref.getTitle();
+				}
+				return super.getText(element);
+			}
+
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof WorkbenchPartReference) {
+					return ((WorkbenchPartReference) element).getTitleImage();
+				}
+				return super.getImage(element);
+			}
+
+			@Override
+			public String getToolTipText(Object element) {
+				if (element instanceof WorkbenchPartReference) {
+					return ((WorkbenchPartReference) element).getTitleToolTip();
+				}
+				return super.getToolTipText(element);
+			};
+		};
+	}
 
 	/** Set the filter text entered by the User */
-	protected abstract void setMatcherString(String pattern);
+	protected void setMatcherString(String pattern) {
+
+	}
 
 	/** Add all items to the dialog in the activation order */
 	protected abstract Object getInput(WorkbenchPage page);
