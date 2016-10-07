@@ -93,7 +93,7 @@ public abstract class PluginAction extends Action implements
                 .getAttribute(IWorkbenchRegistryConstants.ATT_DEFINITION_ID);
         setActionDefinitionId(defId);
 
-        pluginId = configElement.getNamespace();
+		pluginId = configElement.getNamespaceIdentifier();
 
         // Read enablement declaration.
         if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR) != null) {

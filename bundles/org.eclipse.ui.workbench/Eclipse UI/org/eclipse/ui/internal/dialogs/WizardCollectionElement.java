@@ -336,7 +336,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 
     @Override
 	public String getPluginId() {
-        return configElement != null ? configElement.getNamespace() : pluginId;
+		return configElement != null ? configElement.getNamespaceIdentifier() : pluginId;
     }
 
 

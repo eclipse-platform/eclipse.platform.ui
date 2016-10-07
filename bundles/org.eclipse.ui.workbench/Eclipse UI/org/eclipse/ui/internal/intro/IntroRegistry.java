@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.intro;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -128,7 +127,7 @@ public class IntroRegistry implements IIntroRegistry {
 						IStatus status = new Status(
 								IStatus.ERROR,
 								elements[j].getDeclaringExtension()
-										.getNamespace(),
+										.getNamespaceIdentifier(),
 								IStatus.ERROR,
 								"introId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
 						WorkbenchPlugin.log("Invalid intro binding", status); //$NON-NLS-1$

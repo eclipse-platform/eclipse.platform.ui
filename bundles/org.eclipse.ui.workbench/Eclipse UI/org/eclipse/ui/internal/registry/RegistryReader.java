@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.registry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -52,7 +51,8 @@ public abstract class RegistryReader {
         IExtension extension = element.getDeclaringExtension();
         StringBuffer buf = new StringBuffer();
         buf
-                .append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
+				.append("Plugin " + extension.getNamespaceIdentifier() + ", extension " //$NON-NLS-1$//$NON-NLS-2$
+						+ extension.getExtensionPointUniqueIdentifier());
         // look for an ID if available - this should help debugging
         String id = element.getAttribute("id"); //$NON-NLS-1$
         if (id != null) {
@@ -105,8 +105,8 @@ public abstract class RegistryReader {
         Comparator comparer = new Comparator() {
             @Override
 			public int compare(Object arg0, Object arg1) {
-                String s1 = ((IExtension) arg0).getNamespace();
-                String s2 = ((IExtension) arg1).getNamespace();
+				String s1 = ((IExtension) arg0).getNamespaceIdentifier();
+				String s2 = ((IExtension) arg1).getNamespaceIdentifier();
                 return s1.compareToIgnoreCase(s2);
             }
         };

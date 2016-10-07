@@ -93,7 +93,7 @@ public class MarkerImageProviderRegistry {
     public void addProvider(IConfigurationElement element) {
         Descriptor desc = new Descriptor();
         desc.element = element;
-        desc.pluginBundle = Platform.getBundle(element.getNamespace());
+		desc.pluginBundle = Platform.getBundle(element.getNamespaceIdentifier());
         desc.id = element.getAttribute(ATT_ID);
         desc.markerType = element.getAttribute(ATT_MARKER_TYPE);
         desc.imagePath = element.getAttribute(ATT_ICON);

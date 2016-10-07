@@ -93,7 +93,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
             IExtension extension = configurationElement.getDeclaringExtension();
 
             if (extension != null) {
-				namespace = extension.getNamespace();
+				namespace = extension.getNamespaceIdentifier();
 			}
         }
 

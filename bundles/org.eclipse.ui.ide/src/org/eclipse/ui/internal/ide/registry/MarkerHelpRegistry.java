@@ -167,7 +167,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 */
 	private boolean hasResolution(IMarker marker, IConfigurationElement element) {
 		IMarkerResolutionGenerator generator = null;
-		if (Platform.getBundle(element.getNamespace()).getState() == Bundle.ACTIVE) {
+		if (Platform.getBundle(element.getNamespaceIdentifier()).getState() == Bundle.ACTIVE) {
 			// The element's plugin is loaded so we instantiate
 			// the resolution
 			try {

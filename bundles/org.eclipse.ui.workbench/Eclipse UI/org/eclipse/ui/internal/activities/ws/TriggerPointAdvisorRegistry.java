@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.activities.ws;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -147,7 +146,7 @@ public class TriggerPointAdvisorRegistry {
 						IStatus status = new Status(
 								IStatus.ERROR,
 								elements[j].getDeclaringExtension()
-										.getNamespace(),
+										.getNamespaceIdentifier(),
 								IStatus.ERROR,
 								"triggerPointAdvisorId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
 						WorkbenchPlugin
