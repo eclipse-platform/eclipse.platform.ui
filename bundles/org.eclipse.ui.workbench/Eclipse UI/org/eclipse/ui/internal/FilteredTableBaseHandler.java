@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088, 504089
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -203,7 +203,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			text.setText(EMPTY_STRING);
 		}
 
-		tableViewer.setInput(page.getSortedEditorReferences());
+		// gets the input from the concrete subclass
+		tableViewer.setInput(getInput(page));
 
 		int tableItemCount = table.getItemCount();
 
@@ -730,22 +731,21 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		});
 	}
 
-	/** True to show search text and enable filtering */
+	/** True to show search text and enable filtering. False by default */
 	protected boolean isFiltered() {
 		return false;
 	}
 
-	/** True to have dialog persistent after releasing the key combo */
-	protected boolean isPersistent() {
-		return true;
-	}
-
-	/** Return the filter to use */
+	/** Return the filter to use. Null by default */
 	protected ViewerFilter getFilter() {
 		return null;
 	}
 
-	/** returns the columnlabel provider for the only column */
+	/** Set the filter text entered by the User, does nothing by default */
+	protected void setMatcherString(String pattern) {
+	}
+
+	/** Default ColumnLabelProvider. The table has only one column */
 	protected ColumnLabelProvider getColumnLabelProvider() {
 		return new ColumnLabelProvider() {
 			@Override
@@ -776,11 +776,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				return super.getToolTipText(element);
 			};
 		};
-	}
-
-	/** Set the filter text entered by the User */
-	protected void setMatcherString(String pattern) {
-
 	}
 
 	/** Add all items to the dialog in the activation order */
