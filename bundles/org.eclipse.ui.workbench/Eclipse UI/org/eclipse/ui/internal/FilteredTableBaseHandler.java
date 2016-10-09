@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088, 504089
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088, 504089, 504090
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -69,6 +69,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
  * Base class to open a dialog to filter and select elements of a {@link Table}.
@@ -745,6 +746,15 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	protected void setMatcherString(String pattern) {
 	}
 
+	private PerspectiveLabelProvider perspectiveLabelProvider = null;
+
+	private PerspectiveLabelProvider getPerspectiveLabelProvider() {
+		if (perspectiveLabelProvider == null) {
+			perspectiveLabelProvider = new PerspectiveLabelProvider(false);
+		}
+		return perspectiveLabelProvider;
+	}
+
 	/** Default ColumnLabelProvider. The table has only one column */
 	protected ColumnLabelProvider getColumnLabelProvider() {
 		return new ColumnLabelProvider() {
@@ -756,6 +766,10 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 						return "*" + ref.getTitle(); //$NON-NLS-1$
 					}
 					return ref.getTitle();
+				} else if (element instanceof IPerspectiveDescriptor) {
+					IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+					String text = getPerspectiveLabelProvider().getText(desc);
+					return (text == null) ? "" : text; //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}
@@ -764,6 +778,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			public Image getImage(Object element) {
 				if (element instanceof WorkbenchPartReference) {
 					return ((WorkbenchPartReference) element).getTitleImage();
+				} else if (element instanceof IPerspectiveDescriptor) {
+					IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+					return getPerspectiveLabelProvider().getImage(desc);
 				}
 				return super.getImage(element);
 			}

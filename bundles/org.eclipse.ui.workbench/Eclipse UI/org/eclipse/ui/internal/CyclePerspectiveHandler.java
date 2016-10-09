@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504090
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -31,25 +32,15 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  *
  * @since 3.3
  */
-public class CyclePerspectiveHandler extends CycleBaseHandler {
+public class CyclePerspectiveHandler extends FilteredTableBaseHandler {
 	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
             false);
 
 	@Override
-	protected void addItems(Table table, WorkbenchPage page) {
-		IPerspectiveDescriptor perspectives[] = page.getSortedPerspectives();
-        for (int i = perspectives.length - 1; i >= 0; i--) {
-            TableItem item = new TableItem(table, SWT.NONE);
-            IPerspectiveDescriptor desc = perspectives[i];
-            String text = labelProvider.getText(desc);
-            if(text == null) {
-				text = "";//$NON-NLS-1$
-			}
-            item.setText(text);
-            item.setImage(labelProvider.getImage(desc));
-            item.setData(desc);
-        }
-
+	protected Object getInput(WorkbenchPage page) {
+		List<IPerspectiveDescriptor> refs = Arrays.asList(page.getSortedPerspectives());
+		Collections.reverse(refs);
+		return refs;
 	}
 
 	@Override
