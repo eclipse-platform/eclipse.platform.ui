@@ -32,6 +32,15 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private final long longEventErrorThresholdMillis;
 
+	private static class StackTrace extends Throwable {
+		private static final long serialVersionUID = -2829405667536819137L;
+
+		@Override
+		public String toString() {
+			return Messages.DefaultUiFreezeEventLogger_stack_trace_header;
+		}
+	}
+
 	private static class SeverityMultiStatus extends MultiStatus {
 		public SeverityMultiStatus(int severity, String pluginId, String message, Throwable exception) {
 			super(pluginId, OK, message, exception);
@@ -81,8 +90,7 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 			ThreadInfo[] threads = sample.getStackTraces();
 
 			// The first thread is guaranteed to be the display thread.
-			Exception stackTrace =
-					new Exception(Messages.DefaultUiFreezeEventLogger_stack_trace_header);
+			Throwable stackTrace = new StackTrace();
 			stackTrace.setStackTrace(threads[0].getStackTrace());
 			String traceText = NLS.bind(
 					Messages.DefaultUiFreezeEventLogger_sample_header_2,
