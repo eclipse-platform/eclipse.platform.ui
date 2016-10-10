@@ -78,7 +78,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="before" type="string">
+         <attribute name="isBefore" type="string">
             <annotation>
                <documentation>
                   The id of a hoverProvider before which to place this contribution.
@@ -89,7 +89,7 @@ Plan is to have contributions are sorted according to that value and to have onl
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="after" type="string">
+         <attribute name="isAfter" type="string">
             <annotation>
                <documentation>
                   The id of a hoverProvider after which to place this contribution.

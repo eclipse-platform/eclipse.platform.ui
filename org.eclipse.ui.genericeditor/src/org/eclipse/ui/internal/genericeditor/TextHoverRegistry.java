@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -38,23 +44,32 @@ public final class TextHoverRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".hoverProviders"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, TextHoverExtension> extensions = new HashMap<>();
+	private SortedSet<TextHoverExtension> extensions;
 	private boolean outOfSync = true;
 
-	private static class TextHoverExtension {
+	static class TextHoverExtension {
 		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
 		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+		private static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
+		private static final String IS_BEFORE_ATTRIBUTE = "isBefore"; //$NON-NLS-1$
+		private static final String IS_AFTER_ATTRIBUTE = "isAfter"; //$NON-NLS-1$
 
 		private IConfigurationElement extension;
 		private IContentType targetContentType;
 		private ITextHover delegate;
+		private String id;
+		private String isBefore;
+		private String isAfter;
 
 		public TextHoverExtension(IConfigurationElement extension) throws Exception {
 			this.extension = extension;
 			this.targetContentType = Platform.getContentTypeManager().getContentType(extension.getAttribute(CONTENT_TYPE_ATTRIBUTE));
+			this.id = extension.getAttribute(ID_ATTRIBUTE);
+			this.isBefore = extension.getAttribute(IS_BEFORE_ATTRIBUTE);
+			this.isAfter = extension.getAttribute(IS_AFTER_ATTRIBUTE);
 		}
 
-		private ITextHover getDelegate() {
+		public ITextHover getDelegate() {
 			if (this.delegate == null) {
 				try {
 					this.delegate = (ITextHover) extension.createExecutableExtension(CLASS_ATTRIBUTE);
@@ -65,6 +80,24 @@ public final class TextHoverRegistry {
 			return delegate;
 		}
 
+		public String getId() {
+			if (this.id != null) {
+				return this.id;
+			}
+			return this.extension.getContributor().getName() + '@' + toString();
+		}
+
+		public String getIsAfter() {
+			return this.isAfter;
+		}
+
+		public String getIsBefore() {
+			return this.isBefore;
+		}
+
+		IConfigurationElement getConfigurationElement() {
+			return this.extension;
+		}
 	}
 
 	public TextHoverRegistry(IPreferenceStore preferenceStore) {
@@ -80,31 +113,42 @@ public final class TextHoverRegistry {
 		if (this.outOfSync) {
 			sync();
 		}
-		// TODO rather that returning the 1st active hover, consider
-		// supporting compound/aggregated hovers.
-		for (TextHoverExtension ext : this.extensions.values()) {
+		List<TextHoverExtension> hoversToConsider = new ArrayList<>();
+		for (TextHoverExtension ext : this.extensions) {
 			if (contentTypes.contains(ext.targetContentType)) {
-				return ext.getDelegate();
+				hoversToConsider.add(ext);
 			}
+		}
+		if (!hoversToConsider.isEmpty()) {
+			return new CompositeTextHover(hoversToConsider);
 		}
 		return null;
 	}
 
 	private void sync() {
-		Set<IConfigurationElement> toRemoveExtensions = new HashSet<>(this.extensions.keySet());
+		Set<IConfigurationElement> toRemoveExtensions = new HashSet<>();
+		Map<IConfigurationElement, TextHoverExtension> ext = new HashMap<>();
+		if (this.extensions != null) {
+			ext = this.extensions.stream().collect(Collectors.toMap(TextHoverExtension::getConfigurationElement, Function.identity()));
+			toRemoveExtensions = ext.keySet();
+		}
 		for (IConfigurationElement extension : Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID)) {
 			toRemoveExtensions.remove(extension);
-			if (!this.extensions.containsKey(extension)) {
+			if (!ext.containsKey(extension)) {
 				try {
-					this.extensions.put(extension, new TextHoverExtension(extension));
+					ext.put(extension, new TextHoverExtension(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
 				}
 			}
 		}
 		for (IConfigurationElement toRemove : toRemoveExtensions) {
-			this.extensions.remove(toRemove);
+			ext.remove(toRemove);
 		}
+
+		OrderedExtensionComparator comparator = new OrderedExtensionComparator(ext.values());
+		this.extensions = new TreeSet<>(comparator);
+		this.extensions.addAll(ext.values());
 		this.outOfSync = false;
 	}
 

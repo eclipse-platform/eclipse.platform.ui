@@ -11,7 +11,8 @@
 package org.eclipse.ui.internal.genericeditor;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +57,12 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	private Set<IContentType> getContentTypes() {
 		if (this.contentTypes == null) {
-			this.contentTypes = new HashSet<>(Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(editor.getEditorInput().getName())));
+			this.contentTypes = new LinkedHashSet<>();
+			this.contentTypes.addAll(Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(editor.getEditorInput().getName())));
+			Iterator<IContentType> it = this.contentTypes.iterator();
+			while (it.hasNext()) {
+				this.contentTypes.add(it.next().getBaseType());
+			}
 		}
 		return this.contentTypes;
 	}
