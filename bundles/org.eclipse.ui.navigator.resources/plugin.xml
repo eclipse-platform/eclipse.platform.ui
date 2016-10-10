@@ -347,6 +347,7 @@
                class="org.eclipse.ui.internal.navigator.workingsets.WorkingSetSorter"
                id="org.eclipse.ui.navigator.resources.workingSets.sorter"/>
       </navigatorContent>
+
    </extension>
     <extension
           point="org.eclipse.core.runtime.adapters">
@@ -523,23 +524,5 @@
                optional="false">
          </commandParameter>
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.decorators">
-      <decorator
-            class="org.eclipse.ui.internal.navigator.resources.problems.ProblemMarkersLabelDecorator"
-            id="org.eclipse.ui.navigator.resources.decorators.problems"
-            label="%problems.decorator.label"
-            state="true"
-            lightweight="false">
-         <enablement>
-         	<objectClass
-                name="java.lang.Object">
-         	</objectClass>
-         </enablement>
-         <description>
-            %problems.decorator.description
-         </description>
-      </decorator>
    </extension>
 </plugin>

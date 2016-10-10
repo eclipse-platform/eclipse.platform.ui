@@ -171,9 +171,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 			runnables.add(getRefreshRunnable(resource));
 			return;
 		}
-		if ((changeFlags & IResourceDelta.MARKERS) != 0) {
-			runnables.add(getRefreshRunnable(resource.getProject()));
-		}
 
 
 		// Handle changed children .
