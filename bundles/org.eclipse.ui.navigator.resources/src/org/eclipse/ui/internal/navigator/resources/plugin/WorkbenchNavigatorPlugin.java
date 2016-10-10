@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,11 +59,9 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 		if (message != null) {
 			getDefault().getLog().log(
 					new Status(IStatus.ERROR, PLUGIN_ID, 0, message, null));
-			System.err.println(message + "\nReason:"); //$NON-NLS-1$
 		}
 		if(status != null) {
 			getDefault().getLog().log(status);
-			System.err.println(status.getMessage());
 		}
 	}
 
