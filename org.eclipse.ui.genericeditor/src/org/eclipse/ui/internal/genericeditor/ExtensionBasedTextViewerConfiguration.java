@@ -75,6 +75,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		res.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
 		res.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
 		res.enableColoredLabels(true);
+		res.enableAutoActivation(true);
 		res.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		res.setInformationControlCreator(new AbstractReusableInformationControlCreator() {
 			@Override

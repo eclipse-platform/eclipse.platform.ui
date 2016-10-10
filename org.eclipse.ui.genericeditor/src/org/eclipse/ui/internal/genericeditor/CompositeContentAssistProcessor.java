@@ -12,7 +12,9 @@ package org.eclipse.ui.internal.genericeditor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -60,12 +62,40 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		return null;
+		Set<Character> res = new HashSet<>();
+		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
+			char[] chars = processor.getCompletionProposalAutoActivationCharacters();
+			if (chars != null) {
+				for (char c : chars) {
+					res.add(c);
+				}
+			}
+		}
+		return toCharArray(res);
+	}
+
+	private char[] toCharArray(Set<Character> chars) {
+		char[] res = new char[chars.size()];
+		int i = 0;
+		for (Character c : chars) {
+			res[i] = c;
+			i++;
+		}
+		return res;
 	}
 
 	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
-		return null;
+		Set<Character> res = new HashSet<>();
+		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
+			char[] chars = processor.getContextInformationAutoActivationCharacters();
+			if (chars != null) {
+				for (char c : chars) {
+					res.add(c);
+				}
+			}
+		}
+		return toCharArray(res);
 	}
 
 	@Override
