@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.ITextViewer;
@@ -70,13 +72,30 @@ public class HoverTest {
 
 	@Test
 	public void testHover() throws Exception {
-		this.editor.selectAndReveal(2, 0);
-		// Events need to be processed for hover listener to work correctly
-		long timeout = 1000;
-		long start = System.currentTimeMillis();
-		while (start + timeout > System.currentTimeMillis()) {
-			Display.getDefault().readAndDispatch();
+		assertEquals("Alrighty!", getHoverData());
+	}
+	
+	@Test
+	public void testProblemHover() throws Exception {
+		String problemMessage = "Huston...";
+		IMarker marker = null;
+		try {
+			marker = GenericEditorTestUtils.getFile().createMarker(IMarker.PROBLEM);
+			marker.setAttribute(IMarker.LINE_NUMBER, 1);
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+			marker.setAttribute(IMarker.CHAR_START, 0);
+			marker.setAttribute(IMarker.CHAR_END, 5);
+			marker.setAttribute(IMarker.MESSAGE, problemMessage);
+			assertEquals(problemMessage, getHoverData());
+		} finally {
+			if (marker != null) {
+				marker.delete();
+			}
 		}
+	}
+
+	private Object getHoverData() throws Exception {
+		this.editor.selectAndReveal(2, 0);
 		// sending event to trigger hover computation
 		StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
 		editorTextWidget.getShell().forceActive();
@@ -91,6 +110,12 @@ public class HoverTest {
 		hoverEvent.display = editorTextWidget.getDisplay();
 		hoverEvent.doit = true;
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
+		// Events need to be processed for hover listener to work correctly
+		long timeout = 1000; //ms
+		long start = System.currentTimeMillis();
+		while (start + timeout > System.currentTimeMillis()) {
+			Display.getDefault().readAndDispatch();
+		}
 		// retrieving hover content
 		Method getSourceViewerMethod= AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");
 		getSourceViewerMethod.setAccessible(true);
@@ -102,7 +127,7 @@ public class HoverTest {
 		informationField.setAccessible(true);
 		Object hoverData = informationField.get(hover);
 		Thread.sleep(500); // hoverData populated asynchronously
-		assertEquals("Alrighty!", hoverData);
+		return hoverData;
 	}
 
 }
