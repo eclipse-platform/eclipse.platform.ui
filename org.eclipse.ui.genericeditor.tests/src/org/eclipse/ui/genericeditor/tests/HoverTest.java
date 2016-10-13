@@ -96,6 +96,7 @@ public class HoverTest {
 
 	private Object getHoverData() throws Exception {
 		this.editor.selectAndReveal(2, 0);
+		waitAndDispatch();
 		// sending event to trigger hover computation
 		StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
 		editorTextWidget.getShell().forceActive();
@@ -111,11 +112,7 @@ public class HoverTest {
 		hoverEvent.doit = true;
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
 		// Events need to be processed for hover listener to work correctly
-		long timeout = 1000; //ms
-		long start = System.currentTimeMillis();
-		while (start + timeout > System.currentTimeMillis()) {
-			Display.getDefault().readAndDispatch();
-		}
+		waitAndDispatch();
 		// retrieving hover content
 		Method getSourceViewerMethod= AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");
 		getSourceViewerMethod.setAccessible(true);
@@ -126,8 +123,16 @@ public class HoverTest {
 		Field informationField = AbstractInformationControlManager.class.getDeclaredField("fInformation");
 		informationField.setAccessible(true);
 		Object hoverData = informationField.get(hover);
-		Thread.sleep(500); // hoverData populated asynchronously
+		waitAndDispatch();
 		return hoverData;
+	}
+
+	private void waitAndDispatch() {
+		long timeout = 1000; //ms
+		long start = System.currentTimeMillis();
+		while (start + timeout > System.currentTimeMillis()) {
+			Display.getDefault().readAndDispatch();
+		}
 	}
 
 }

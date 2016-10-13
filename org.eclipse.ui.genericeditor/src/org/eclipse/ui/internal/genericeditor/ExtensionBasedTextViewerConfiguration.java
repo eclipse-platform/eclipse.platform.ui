@@ -11,9 +11,10 @@
 package org.eclipse.ui.internal.genericeditor;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
@@ -58,10 +59,14 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private Set<IContentType> getContentTypes() {
 		if (this.contentTypes == null) {
 			this.contentTypes = new LinkedHashSet<>();
-			this.contentTypes.addAll(Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(editor.getEditorInput().getName())));
-			Iterator<IContentType> it = this.contentTypes.iterator();
-			while (it.hasNext()) {
-				this.contentTypes.add(it.next().getBaseType());
+			Queue<IContentType> types = new LinkedList<>(Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(editor.getEditorInput().getName())));
+			while (!types.isEmpty()) {
+				IContentType type = types.poll();
+				this.contentTypes.add(type);
+				IContentType parent = type.getBaseType();
+				if (parent != null) {
+					types.add(parent);
+				}
 			}
 		}
 		return this.contentTypes;
