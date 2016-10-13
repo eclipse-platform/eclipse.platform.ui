@@ -379,6 +379,12 @@
             composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4SelectedTabFillHandler">
          <property-name
+               name="swt-selected-tab-highlight">
+         </property-name>
+                  <property-name
+               name="swt-selected-highlight-top">
+         </property-name>
+         <property-name
                name="swt-selected-tab-fill">
          </property-name>
       </handler>

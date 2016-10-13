@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Fabio Zadrozny - Bug 465711
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 497586
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 506540
  *     Mike Marchand <mmarchand@cranksoftware.com> - Bug 538740
  *******************************************************************************/
@@ -120,6 +121,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	private CTabFolderWrapper parentWrapper;
 
 	private Color hotUnselectedTabsColorBackground;
+	private Color selectedTabHighlightColor;
+	private boolean drawTabHighlightOnTop = true;
 
 	@Inject
 	public CTabRendering(CTabFolder parent) {
@@ -565,6 +568,18 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			}
 		}
 
+		if (selectedTabHighlightColor != null) {
+			gc.setBackground(selectedTabHighlightColor);
+			boolean highlightOnTop = drawTabHighlightOnTop;
+			if (onBottom) {
+				highlightOnTop = !highlightOnTop;
+			}
+			int verticalOffset = highlightOnTop ? 0 : bounds.height - 2;
+			int horizontalOffset = itemIndex == 0 || cornerSize == SQUARE_CORNER ? 0 : 1;
+			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
+			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment, 3);
+		}
+
 		if (backgroundPattern != null) {
 			backgroundPattern.dispose();
 		}
@@ -1004,6 +1019,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	}
 
 	@Override
+	public void setSelectedTabHighlight(Color color) {
+		this.selectedTabHighlightColor = color;
+		parent.redraw();
+	}
+
+	@Override
 	public void setSelectedTabFill(Color color) {
 		setSelectedTabFill(new Color[] { color }, new int[] { 100 });
 	}
@@ -1277,6 +1298,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public void setSelectedTabHighlightTop(boolean drawTabHiglightOnTop) {
+		this.drawTabHighlightOnTop = drawTabHiglightOnTop;
+		parent.redraw();
 	}
 
 	@Override

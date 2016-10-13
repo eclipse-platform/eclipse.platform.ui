@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2014-2015 IBM Corporation and others.
+ *  Copyright (c) 2014, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,12 +11,17 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *      Fabio Zadrozny - Bug 465711
+ *      Simon Scholz <simon.scholz@vogella.com> - Bug 497586
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.css.swt;
 
 import org.eclipse.swt.graphics.Color;
 
 public interface ICTabRendering {
+	void setSelectedTabHighlightTop(boolean drawTabHiglightOnTop);
+
+	void setSelectedTabHighlight(Color color);
+
 	void setSelectedTabFill(Color color);
 
 	void setSelectedTabFill(Color[] colors, int[] percents);
