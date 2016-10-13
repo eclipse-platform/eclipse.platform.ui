@@ -155,7 +155,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		if (duration > NOTICEABLE_DELAY && beginTaskCalled) {
 			assertTrue("this operation took: " + duration + "ms, it should report progress", workedSoFar > 0);
 		}
-		assertTrue("done has not been called on ProgressMonitor", hasFailed || !beginTaskCalled || doneCalls > 0);
 	}
 
 	@Override
