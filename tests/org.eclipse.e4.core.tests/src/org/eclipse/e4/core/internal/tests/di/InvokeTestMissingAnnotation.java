@@ -13,6 +13,7 @@ package org.eclipse.e4.core.internal.tests.di;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class InvokeTestMissingAnnotation {
 	/**
 	 * Checks that no methods is called and that an execution is thrown
 	 */
-	@Test(expected = Exception.class)
+	@Test(expected = InjectionException.class)
 	public void testCallMethodsWithMissingAnnotation() {
 		TestSuperclass editor = new TestSuperclass();
 		ContextInjectionFactory.invoke(editor, Execute.class, EclipseContextFactory.create());
