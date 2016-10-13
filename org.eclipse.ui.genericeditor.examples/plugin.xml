@@ -43,5 +43,12 @@
             contentType="org.eclipse.ui.genericeditor.examples.dotproject">
       </presentationReconciler>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editorContentTypeBinding
+            contentTypeId="org.eclipse.ui.genericeditor.examples.dotproject"
+            editorId="org.eclipse.ui.genericeditor.GenericEditor">
+      </editorContentTypeBinding>
+   </extension>
 
 </plugin>
