@@ -1265,11 +1265,26 @@
       <fontDefinition
             categoryId="org.eclipse.ui.workbenchMisc"
             id="org.eclipse.ui.workbench.texteditor.blockSelectionModeFont"
+            isEditable="true"
             label="%blockSelectionModeFont.label"
-            defaultsTo="org.eclipse.jface.textfont">
+            value="Courier New-regular-10">
          <description>
             %blockSelectionModeFont.description
          </description>
+         <fontValue
+               os="linux"
+               value="Monospace-regular-10"
+               ws="gtk">
+         </fontValue>
+         <fontValue
+               os="win32"
+               value="Consolas-regular-10"
+               >
+         </fontValue>
+         <fontValue
+               os="macosx"
+               value="Monaco-regular-11">
+         </fontValue>
       </fontDefinition>
    </extension>
    
