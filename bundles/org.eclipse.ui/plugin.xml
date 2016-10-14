@@ -1895,6 +1895,32 @@
       		name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="false">
 		 </data>
       </theme>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.HOVER_BACKGROUND"
+            label="%Color.infoBackground">
+            <colorFactory
+               class="org.eclipse.ui.internal.themes.RGBInfoColorFactory"
+               plugin="org.eclipse.ui">
+               <parameter
+                      name="color"
+                      value="background">
+                </parameter>
+            </colorFactory>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.HOVER_FOREGROUND"
+            label="%Color.infoForeground">
+            <colorFactory
+               class="org.eclipse.ui.internal.themes.RGBInfoColorFactory"
+               plugin="org.eclipse.ui">
+               <parameter
+                      name="color"
+                      value="foreground">
+                </parameter>
+            </colorFactory>
+      </colorDefinition>
       <theme
             id="org.eclipse.ui.r30"
             name="%ThemeName.R30">
