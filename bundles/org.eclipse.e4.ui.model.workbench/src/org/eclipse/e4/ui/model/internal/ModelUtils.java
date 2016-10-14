@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
  *                                      through a fragment or other means
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 474865
  *******************************************************************************/
 package org.eclipse.e4.ui.model.internal;
 
@@ -205,7 +206,8 @@ public class ModelUtils {
 	static MApplicationElement getParent(MApplicationElement element) {
 		if ( (element instanceof MUIElement) && ((MUIElement)element).getCurSharedRef() != null) {
 			return ((MUIElement)element).getCurSharedRef().getParent();
-		} else if (element.getTransientData().get(CONTAINING_PARENT) instanceof MApplicationElement) {
+		} else if (element != null && element.getTransientData() != null
+				&& element.getTransientData().get(CONTAINING_PARENT) instanceof MApplicationElement) {
 			return (MApplicationElement) element.getTransientData().get(CONTAINING_PARENT);
 		} else if (element instanceof EObject) {
 			EObject eContainer = ((EObject) element).eContainer();
