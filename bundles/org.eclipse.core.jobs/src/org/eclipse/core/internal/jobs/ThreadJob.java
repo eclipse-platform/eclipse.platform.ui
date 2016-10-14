@@ -214,7 +214,8 @@ class ThreadJob extends Job {
 		return result;
 	}
 
-	static ThreadJob waitForRun(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob, Thread blocker) {
+	private static ThreadJob waitForRun(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob,
+			Thread blocker) {
 		// Ask lock manager if it safe to block this thread
 		final boolean canBlock = manager.getLockManager().canBlock();
 		ThreadJob result = threadJob;
