@@ -190,28 +190,14 @@ class ThreadJob extends Job {
 		// check if there is a blocking thread before waiting
 		InternalJob blockingJob = manager.findBlockingJob(threadJob);
 		Thread blocker = blockingJob == null ? null : blockingJob.getThread();
-		ThreadJob result;
-		boolean wasInterrupted;
 		try {
 			// just return if lock listener decided to grant immediate access
 			if (manager.getLockManager().aboutToWait(blocker))
 				return threadJob;
-			result = waitForRun(threadJob, monitor, blockingJob, blocker);
+			return waitForRun(threadJob, monitor, blockingJob, blocker);
 		} finally {
-			// We need to check for interruption unconditionally in order to
-			// ensure we clear the thread's interrupted
-			// state. However, we only throw an OperationCanceledException
-			// outside of the finally block because we only
-			// want to throw that exception if we're not already throwing some
-			// other exception here.
-			wasInterrupted = Thread.interrupted();
 			manager.getLockManager().aboutToRelease();
 		}
-
-		if (wasInterrupted) {
-			throw new OperationCanceledException();
-		}
-		return result;
 	}
 
 	private static ThreadJob waitForRun(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob,
@@ -245,7 +231,7 @@ class ThreadJob extends Job {
 			// 4) Monitor is canceled.
 			while (true) {
 				// monitor is foreign code so do not hold locks while calling into monitor
-				if (interrupted || isCanceled(monitor))
+				if (isCanceled(monitor))
 					// Condition #4.
 					throw new OperationCanceledException();
 				// Try to run the job. If result is null, this job was allowed to run.
@@ -301,16 +287,17 @@ class ThreadJob extends Job {
 				manager.getLockManager().removeLockWaitThread(currentThread, threadJob.getRule());
 			}
 		} finally {
+			if (interrupted)
+				Thread.currentThread().interrupt();
 			//only update the lock state if we ended up using the thread job that was given to us
 			waitEnd(threadJob, threadJob == result, monitor);
 			if (threadJob == result) {
 				if (waiting)
 					manager.implicitJobs.removeWaiting(threadJob);
 			}
-			if (canBlock) {
+			if (canBlock)
 				// must unregister monitoring this job
 				manager.endMonitoring(threadJob);
-			}
 		}
 	}
 
