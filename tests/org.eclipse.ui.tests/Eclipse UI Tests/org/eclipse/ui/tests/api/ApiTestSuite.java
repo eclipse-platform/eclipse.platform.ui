@@ -12,7 +12,6 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.tests.api.workbenchpart.ArbitraryPropertyTest;
-import org.eclipse.ui.tests.api.workbenchpart.DependencyInjectionView;
 import org.eclipse.ui.tests.api.workbenchpart.DependencyInjectionViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.LifecycleViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
@@ -70,8 +69,8 @@ import org.junit.runners.Suite;
      //IWorkbenchPartTestableTests.class,
      ArbitraryPropertyTest.class,
      LifecycleViewTest.class,
-	 DependencyInjectionViewTest.class, 
-	 Bug407422Test.class, 
+	 DependencyInjectionViewTest.class,
+	 Bug407422Test.class,
 	 MultipleWindowsTest.class
 })
 public class ApiTestSuite {
