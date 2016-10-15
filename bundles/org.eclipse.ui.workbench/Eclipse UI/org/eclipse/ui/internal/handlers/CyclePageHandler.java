@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504091
  ******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -31,7 +34,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.CycleBaseHandler;
+import org.eclipse.ui.internal.FilteredTableBaseHandler;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.PageSwitcher;
@@ -46,8 +49,12 @@ import org.eclipse.ui.part.WorkbenchPart;
  * @since 3.4
  *
  */
-public class CyclePageHandler extends CycleBaseHandler {
+public class CyclePageHandler extends FilteredTableBaseHandler {
 
+	/**
+	 *
+	 */
+	private static final String K_INDEX = "index"; //$NON-NLS-1$
 	/**
 	 * The character limit before text is truncated.
 	 */
@@ -60,7 +67,31 @@ public class CyclePageHandler extends CycleBaseHandler {
 	}
 
 	@Override
-	protected void addItems(Table table, WorkbenchPage page) {
+	protected Object getInput(WorkbenchPage page) {
+		List<FilteredTableItem> rows = new ArrayList<>();
+
+		for(int i=0; i<pageSwitcher.getPages().length; i++){
+			Object viewPage = pageSwitcher.getPages()[i];
+			FilteredTableItem item = new FilteredTableItem();
+			ImageDescriptor imageDescriptor = pageSwitcher.getImageDescriptor(viewPage);
+			if (imageDescriptor != null) {
+				if (lrm == null) {
+					lrm = new LocalResourceManager(JFaceResources.getResources());
+				}
+				item.setImage(lrm.createImage(imageDescriptor));
+			}
+			item.putData(K_INDEX, i);
+			String name = pageSwitcher.getName(viewPage);
+			if (name.length() > TEXT_LIMIT) {
+				name = name.substring(0, TEXT_LIMIT) + "..."; //$NON-NLS-1$
+			}
+			item.setText(name);
+			rows.add(item);
+		}
+		return rows;
+	}
+
+	protected void addItemz(Table table, WorkbenchPage page) {
 		Object[] pages = pageSwitcher.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			TableItem item = null;
@@ -173,7 +204,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 		if (selectedItem == null) {
 			return;
 		}
-
-		pageSwitcher.activatePage(selectedItem);
+		// activate the page with the selected index
+		pageSwitcher.activatePage(((FilteredTableItem) selectedItem).getData(K_INDEX));
 	}
 }
