@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,21 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Mickael Istria (Red Hat Inc.) Bug 264404 - Problem decorators
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.workbench;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
@@ -42,6 +52,47 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
 		}
 		return null;
 	}
+
+	@Override
+	protected ImageDescriptor decorateImage(ImageDescriptor input, Object element) {
+		ImageDescriptor descriptor = super.decorateImage(input, element);
+		if (descriptor == null) {
+			return null;
+		}
+		IResource resource = Adapters.adapt(element, IResource.class);
+		if (resource != null && (resource.getType() != IResource.PROJECT || ((IProject) resource).isOpen())) {
+			ImageDescriptor overlay = null;
+			switch (getHighestProblemSeverity(resource)) {
+			case IMarker.SEVERITY_ERROR:
+				overlay = PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+				break;
+			case IMarker.SEVERITY_WARNING:
+				overlay = PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+				break;
+			}
+			if (overlay != null) {
+				descriptor = new DecorationOverlayIcon(descriptor, overlay, IDecoration.BOTTOM_LEFT);
+			}
+		}
+		return descriptor;
+	}
+
+
+	private int getHighestProblemSeverity(IResource resource) {
+		int problemSeverity = -1;
+		try {
+			for (IMarker marker : resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
+				problemSeverity = Math.max(problemSeverity, marker.getAttribute(IMarker.SEVERITY, -1));
+			}
+		} catch (CoreException e) {
+			// Mute error to prevent pop-up in case of concurrent modification
+			// of markers.
+		}
+		return problemSeverity;
+	}
+
 
 	@Override
 	public void restoreState(IMemento aMemento) {
