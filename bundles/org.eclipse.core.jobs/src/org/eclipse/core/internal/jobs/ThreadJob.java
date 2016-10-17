@@ -190,14 +190,47 @@ class ThreadJob extends Job {
 		// check if there is a blocking thread before waiting
 		InternalJob blockingJob = manager.findBlockingJob(threadJob);
 		Thread blocker = blockingJob == null ? null : blockingJob.getThread();
+		ThreadJob result;
+		// The reactToInterruption flag allows this method to react correctly
+		// to Thread.interrupt(). However, there are unit tests that currently
+		// rely on the fact that the interrupt flag is ignored. If this flag
+		// is disabled, we don't react if the thread was already interrupted
+		// prior to the start of this method call -- we'll just restore the
+		// interrupted flag to its initial state at the end.
+		boolean setInterruptFlagAtEnd = !JobManager.reactToInterruption && Thread.interrupted();
+		boolean interruptedDuringWaitForRun;
 		try {
 			// just return if lock listener decided to grant immediate access
 			if (manager.getLockManager().aboutToWait(blocker))
 				return threadJob;
-			return waitForRun(threadJob, monitor, blockingJob, blocker);
+			result = waitForRun(threadJob, monitor, blockingJob, blocker);
 		} finally {
+			// We need to check for interruption unconditionally in order to
+			// ensure we clear the thread's interrupted state. However, we only
+			// throw an OperationCanceledException outside of the finally block
+			// because we only want to throw that exception if we're not already
+			// throwing some other exception here.
+			interruptedDuringWaitForRun = Thread.interrupted();
 			manager.getLockManager().aboutToRelease();
+			// If the thread was interrupted prior to the call to joinRun, the
+			// interruption was not caused by the jobs framework. Although the
+			// correct behavior here is to still terminate cleanly and throw
+			// an OperationCanceledException, there are some existing unit tests
+			// that are interrupting threads and are relying on the fact that
+			// nobody reacts to the interruption. To keep these tests working,
+			// we restore the interrupted flag back to the state it had
+			if (setInterruptFlagAtEnd) {
+				Thread.currentThread().interrupt();
+			}
 		}
+
+		// During the call to waitForRun, we use the thread's interrupt flag to
+		// trigger cancellation, so thread interruption at this time should
+		// trigger an OCE.
+		if (interruptedDuringWaitForRun) {
+			throw new OperationCanceledException();
+		}
+		return result;
 	}
 
 	private static ThreadJob waitForRun(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob,
@@ -231,7 +264,7 @@ class ThreadJob extends Job {
 			// 4) Monitor is canceled.
 			while (true) {
 				// monitor is foreign code so do not hold locks while calling into monitor
-				if (isCanceled(monitor))
+				if (interrupted || isCanceled(monitor))
 					// Condition #4.
 					throw new OperationCanceledException();
 				// Try to run the job. If result is null, this job was allowed to run.
@@ -287,17 +320,16 @@ class ThreadJob extends Job {
 				manager.getLockManager().removeLockWaitThread(currentThread, threadJob.getRule());
 			}
 		} finally {
-			if (interrupted)
-				Thread.currentThread().interrupt();
 			//only update the lock state if we ended up using the thread job that was given to us
 			waitEnd(threadJob, threadJob == result, monitor);
 			if (threadJob == result) {
 				if (waiting)
 					manager.implicitJobs.removeWaiting(threadJob);
 			}
-			if (canBlock)
+			if (canBlock) {
 				// must unregister monitoring this job
 				manager.endMonitoring(threadJob);
+			}
 		}
 	}
 
