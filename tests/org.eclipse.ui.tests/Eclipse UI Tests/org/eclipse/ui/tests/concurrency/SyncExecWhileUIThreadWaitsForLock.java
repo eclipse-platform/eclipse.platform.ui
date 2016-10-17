@@ -11,11 +11,17 @@
 
 package org.eclipse.ui.tests.concurrency;
 
-import org.eclipse.swt.widgets.Display;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.jobs.ILock;
-
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 import junit.framework.TestCase;
 
@@ -25,6 +31,32 @@ import junit.framework.TestCase;
  * UISynchronizer and UILockListener conspire to prevent deadlock in this case.
  */
 public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
+
+	private List<IStatus> reportedErrors;
+	private ILogListener listener;
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		reportedErrors = new ArrayList<>();
+		listener = new ILogListener() {
+
+			@Override
+			public void logging(IStatus status, String plugin) {
+				reportedErrors.add(status);
+			}
+		};
+		WorkbenchPlugin.getDefault().getLog().addLogListener(listener);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		if (listener != null) {
+			WorkbenchPlugin.getDefault().getLog().removeLogListener(listener);
+		}
+		super.tearDown();
+	}
+
 	public void testDeadlock() {
 		final ILock lock = Job.getJobManager().newLock();
 		final boolean[] blocked = new boolean[] {false};
@@ -88,5 +120,10 @@ public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
 			}
 		}
 		//if we get here, the test succeeded
+
+		assertEquals("Unexpected error count reported: " + reportedErrors, 1, reportedErrors.size());
+		MultiStatus status = (MultiStatus) reportedErrors.get(0);
+		assertEquals("Unexpected child status count reported: " + Arrays.toString(status.getChildren()), 2,
+				status.getChildren().length);
 	}
 }

@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.LockListener;
 import org.eclipse.swt.widgets.Display;
 
@@ -169,7 +174,8 @@ public class UILockListener extends LockListener {
         }
     }
 
-    void interruptUI() {
+	void interruptUI(Runnable runnable) {
+		reportInterruption(runnable);
         display.getThread().interrupt();
     }
 
@@ -185,4 +191,35 @@ public class UILockListener extends LockListener {
     boolean isUIWaiting() {
         return (ui != null) && (Thread.currentThread() != ui);
     }
+
+	/**
+	 * Adds a 'UI thread interrupted' message to the log with extra lock state
+	 * and thread stack information.
+	 */
+	private void reportInterruption(Runnable runnable) {
+		Thread nonUiThread = Thread.currentThread();
+
+		String msg = "To avoid deadlock while executing Display.syncExec() with argument: " //$NON-NLS-1$
+				+ runnable + ", thread " + nonUiThread.getName() //$NON-NLS-1$
+				+ " will interrupt UI thread."; //$NON-NLS-1$
+		MultiStatus main = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, msg,
+				new IllegalStateException());
+
+		ThreadInfo[] threads = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { nonUiThread.getId(), display.getThread().getId() }, true, true);
+
+		for (ThreadInfo info : threads) {
+			String childMsg;
+			if (info.getThreadId() == nonUiThread.getId()) {
+				// see org.eclipse.core.internal.jobs.LockManager.isLockOwner()
+				childMsg = nonUiThread.getName() + " thread is an instance of Worker or owns an ILock"; //$NON-NLS-1$
+			} else {
+				childMsg = "UI thread waiting on a job or lock."; //$NON-NLS-1$
+			}
+			childMsg += " Stack: \n" + info.toString(); //$NON-NLS-1$
+			Status child = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, childMsg, null);
+			main.add(child);
+		}
+
+		WorkbenchPlugin.log(main);
+	}
 }

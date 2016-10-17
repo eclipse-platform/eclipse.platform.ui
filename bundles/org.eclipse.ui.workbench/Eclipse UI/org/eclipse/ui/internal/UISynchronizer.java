@@ -159,7 +159,7 @@ public class UISynchronizer extends Synchronizer {
             //before it can serve the asyncExec to do the pending work
             do {
                 if (lockListener.isUIWaiting()) {
-					lockListener.interruptUI();
+					lockListener.interruptUI(runnable);
 				}
             } while (!work.acquire(1000));
         } catch (InterruptedException e) {
