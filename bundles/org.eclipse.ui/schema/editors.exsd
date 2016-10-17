@@ -6,8 +6,8 @@
          <meta.schema plugin="org.eclipse.ui" id="editors" name="Internal and External Editors"/>
       </appInfo>
       <documentation>
-         This extension point is used to add new editors to the 
-workbench and to associate them with resource content types.
+         This extension point is used to add new editors to the workbench or to
+associate an already declared editor with a content-type.
 An editor is a visual component within a 
 workbench page. It is typically used to edit or browse 
 a document or input object.  To open an editor, the user 
@@ -232,7 +232,7 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
    <element name="editorContentTypeBinding">
       <annotation>
          <documentation>
-            Advertises that an existing editor is suitable to editor resource of an existing content-type.
+            Binds an existing editor to the given content-type.
          </documentation>
       </annotation>
       <complexType>
