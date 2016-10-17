@@ -22,19 +22,16 @@ import org.eclipse.swt.graphics.Image;
  * ErrorInfo is the info that displays errors.
  */
 public class ErrorInfo extends JobTreeElement {
-
 	private final IStatus errorStatus;
-
 	private final Job job;
-
 	private final long timestamp;
 
 	/**
-	 * Create a new instance of the receiver.
+	 * Creates a new instance of ErrorInfo.
 	 *
 	 * @param status
 	 * @param job
-	 *            The Job to create
+	 *            the Job to create
 	 */
 	public ErrorInfo(IStatus status, Job job) {
 		errorStatus = status;
@@ -60,7 +57,7 @@ public class ErrorInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the image for the receiver.
+	 * Returns the image for the receiver.
 	 *
 	 * @return Image
 	 */
@@ -74,7 +71,7 @@ public class ErrorInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the current status of the receiver.
+	 * Returns the current status of the receiver.
 	 *
 	 * @return IStatus
 	 */
@@ -88,7 +85,7 @@ public class ErrorInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the job that generated the error.
+	 * Returns the job that generated the error.
 	 *
 	 * @return the job that generated the error
 	 */
@@ -97,7 +94,7 @@ public class ErrorInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the timestamp for the job.
+	 * Returns the timestamp for the job.
 	 *
 	 * @return long
 	 */
@@ -106,18 +103,12 @@ public class ErrorInfo extends JobTreeElement {
 	}
 
 	@Override
-	public int compareTo(Object arg0) {
-		if (arg0 instanceof ErrorInfo) {
-			// Order ErrorInfo by time received
-			long otherTimestamp = ((ErrorInfo) arg0).timestamp;
-			if (timestamp < otherTimestamp) {
-				return -1;
-			} else if (timestamp > otherTimestamp) {
-				return 1;
-			} else {
-				return 0;
-			}
+	public int compareTo(JobTreeElement other) {
+		if (other instanceof ErrorInfo) {
+			// Order ErrorInfo by time received.
+			return Long.compare(timestamp, ((ErrorInfo) other).timestamp);
 		}
-		return super.compareTo(arg0);
+
+		return super.compareTo(other);
 	}
 }

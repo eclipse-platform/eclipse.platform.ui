@@ -75,7 +75,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * job in the dialog.
 	 */
 	private class BlockedUIElement extends JobTreeElement {
-
 		@Override
 		Object[] getChildren() {
 			return ProgressManagerUtil.EMPTY_OBJECT_ARRAY;
@@ -143,24 +142,24 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
 			IProgressMonitor blockedMonitor, IStatus reason, String taskName) {
-		// use an existing dialog if available
+		// Use an existing dialog if available.
 		if (singleton != null) {
 			return singleton;
 		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
 
-		if (taskName == null || taskName.length() == 0)
-			singleton
-					.setBlockedTaskName(ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement);
-		else
+		if (taskName == null || taskName.length() == 0) {
+			singleton.setBlockedTaskName(ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement);
+		} else {
 			singleton.setBlockedTaskName(taskName);
+		}
 
 		/**
 		 * If there is no parent shell we have not been asked for a parent so we
 		 * want to avoid blocking. If there is a parent then it is OK to open.
 		 */
 		if (parentShell == null) {
-			// create the job that will open the dialog after a delay.
+			// Create the job that will open the dialog after a delay.
 			WorkbenchJob dialogJob = new WorkbenchJob(
 					WorkbenchMessages.EventLoopProgressMonitor_OpenDialogJobName) {
 				@Override
@@ -175,8 +174,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 					return Status.OK_STATUS;
 				}
 			};
-			// Wait for long operation time to prevent a proliferation
-			// of dialogs
+			// Wait for long operation time to prevent a proliferation of
+			// dialogs.
 			dialogJob.setSystem(true);
 			dialogJob.schedule(PlatformUI.getWorkbench().getProgressService()
 					.getLongOperationTime());
@@ -188,17 +187,14 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * monitor is done. Clear the receiver.
+	 * The monitor is done. Clear the receiver.
 	 *
 	 * @param monitor
 	 *            The monitor that is now cleared.
 	 */
 	public static void clear(IProgressMonitor monitor) {
-		if (singleton == null) {
-			return;
-		}
-		singleton.close(monitor);
-
+		if (singleton != null)
+			singleton.close(monitor);
 	}
 
 	/**
@@ -226,7 +222,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * This method creates the dialog area under the parent composite.
+	 * Creates the dialog area under the parent composite.
 	 *
 	 * @param parent
 	 *            The parent Composite.
@@ -242,19 +238,19 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * This method creates a dialog area in the parent composite and displays a
-	 * progress tree viewer of the running jobs.
+	 * Creates a dialog area in the parent composite and displays a progress
+	 * tree viewer of the running jobs.
 	 *
 	 * @param parent
 	 *            The parent Composite.
 	 */
 	void showJobDetails(Composite parent) {
-		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.BORDER);
+		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setComparator(new ViewerComparator() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public int compare(Viewer testViewer, Object e1, Object e2) {
-				return ((Comparable) e1).compareTo(e2);
+				return ((Comparable<Object>) e1).compareTo(e2);
 			}
 		});
 		ProgressViewerContentProvider provider = getContentProvider();
@@ -270,13 +266,12 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * Return the content provider used for the receiver.
+	 * Returns the content provider used for the receiver.
 	 *
 	 * @return ProgressTreeContentProvider
 	 */
 	private ProgressViewerContentProvider getContentProvider() {
 		return new ProgressViewerContentProvider(viewer, true, false) {
-
 			@Override
 			public Object[] getElements(Object inputElement) {
 				Object[] elements = super.getElements(inputElement);
@@ -289,7 +284,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * Clear the cursors in the dialog.
+	 * Clears the cursors in the dialog.
 	 */
 	private void clearCursors() {
 		clearCursor(cancelSelected);
@@ -305,7 +300,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * Clear the cursor on the supplied control.
+	 * Clears the cursor on the supplied control.
 	 *
 	 * @param control
 	 */
@@ -328,7 +323,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * This method sets the message in the message label.
 	 *
-	 * @param messageString -
+	 * @param messageString
 	 *            the String for the message area
 	 */
 	private void setMessage(String messageString) {
@@ -372,7 +367,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 	@Override
 	public boolean close() {
-		// Clear the singleton first
+		// Clear the singleton first.
 		singleton = null;
 		clearCursors();
 		return super.close();
@@ -391,5 +386,4 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	void setBlockedTaskName(String taskName) {
 		this.blockedTaskName = taskName;
 	}
-
 }

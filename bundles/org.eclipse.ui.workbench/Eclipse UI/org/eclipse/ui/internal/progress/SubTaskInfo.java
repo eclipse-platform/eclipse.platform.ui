@@ -14,13 +14,11 @@ package org.eclipse.ui.internal.progress;
  * SubTaskInfo is the class that displays a subtask in the tree.
  */
 class SubTaskInfo extends JobTreeElement {
-
 	protected String taskName;
-
-	JobInfo jobInfo;
+	protected final JobInfo jobInfo;
 
 	/**
-	 * Create a new instance of the receiver.
+	 * Creates a new instance of the receiver.
 	 *
 	 * @param parentJob
 	 * @param name
@@ -49,7 +47,7 @@ class SubTaskInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Set the taskName of the receiver.
+	 * Sets the taskName of the receiver.
 	 *
 	 * @param name
 	 */

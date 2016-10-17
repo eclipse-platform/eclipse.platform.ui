@@ -13,7 +13,6 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -24,17 +23,11 @@ import org.eclipse.osgi.util.NLS;
  */
 
 class GroupInfo extends JobTreeElement implements IProgressMonitor {
-
-	private List infos = new ArrayList();
-
+	private List<JobInfo> infos = new ArrayList<>();
 	private Object lock = new Object();
-
 	private String taskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-
-	boolean isActive = false;
-
+	boolean isActive;
 	double total = -1;
-
 	double currentWork;
 
 	@Override
@@ -42,7 +35,6 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		synchronized (lock) {
 			return !infos.isEmpty();
 		}
-
 	}
 
 	@Override
@@ -60,13 +52,11 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		String[] messageValues = new String[2];
 		messageValues[0] = taskName;
 		messageValues[1] = String.valueOf(getPercentDone());
-		return NLS.bind(ProgressMessages.JobInfo_NoTaskNameDoneMessage,
-				messageValues);
-
+		return NLS.bind(ProgressMessages.JobInfo_NoTaskNameDoneMessage, messageValues);
 	}
 
 	/**
-	 * Return an integer representing the amount of work completed.
+	 * Returns an integer representing the amount of work completed.
 	 *
 	 * @return int
 	 */
@@ -81,16 +71,16 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	@Override
 	public void beginTask(String name, int totalWork) {
-		if (name == null)
+		if (name == null) {
 			name = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-		else
+		} else {
 			taskName = name;
+		}
 		total = totalWork;
 		synchronized (lock) {
 			isActive = true;
 		}
 		ProgressManager.getInstance().refreshGroup(this);
-
 	}
 
 	@Override
@@ -99,27 +89,25 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 			isActive = false;
 		}
 		updateInProgressManager();
-
 	}
 
 	/**
-	 * Update the receiver in the progress manager. If all of the jobs are
+	 * Updates the receiver in the progress manager. If all of the jobs are
 	 * finished and the receiver is not being kept then remove it.
 	 */
 	private void updateInProgressManager() {
-		Iterator infoIterator = infos.iterator();
-		while (infoIterator.hasNext()) {
-			JobInfo next = (JobInfo) infoIterator.next();
-			if (!(next.getJob().getState() == Job.NONE)) {
+		for (JobInfo info : infos) {
+			if (!(info.getJob().getState() == Job.NONE)) {
 				ProgressManager.getInstance().refreshGroup(this);
 				return;
 			}
 		}
 
-		if (FinishedJobs.getInstance().isKept(this))
+		if (FinishedJobs.getInstance().isKept(this)) {
 			ProgressManager.getInstance().refreshGroup(this);
-		else
+		} else {
 			ProgressManager.getInstance().removeGroup(this);
+		}
 	}
 
 	@Override
@@ -127,12 +115,11 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		synchronized (lock) {
 			currentWork += work;
 		}
-
 	}
 
 	@Override
 	public boolean isCanceled() {
-		// Just a group so no cancel state
+		// Just a group so no cancel state.
 		return false;
 	}
 
@@ -146,16 +133,16 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		synchronized (this) {
 			isActive = true;
 		}
-		if (name == null)
+		if (name == null) {
 			taskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-		else
+		} else {
 			taskName = name;
-
+		}
 	}
 
 	@Override
 	public void subTask(String name) {
-		// Not interesting for this monitor
+		// Not interesting for this monitor.
 	}
 
 	@Override
@@ -164,7 +151,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	}
 
 	/**
-	 * Remove the job from the list of jobs.
+	 * Removes the job from the list of jobs.
 	 *
 	 * @param job
 	 */
@@ -178,7 +165,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	}
 
 	/**
-	 * Remove the job from the list of jobs.
+	 * Removes the job from the list of jobs.
 	 *
 	 * @param job
 	 */
