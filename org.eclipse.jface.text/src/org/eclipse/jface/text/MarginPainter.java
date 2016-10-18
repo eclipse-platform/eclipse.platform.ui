@@ -115,10 +115,10 @@ public class MarginPainter implements IPainter, PaintListener {
 	private void computeWidgetX() {
 		GC gc= new GC(fTextWidget);
 		fFontForCachedWidgetX= fTextWidget.getFont();
-		int pixels= gc.getFontMetrics().getAverageCharWidth();
+		double pixels= gc.getFontMetrics().getAverageCharacterWidth();
 		gc.dispose();
 
-		fCachedWidgetX= pixels * fMarginWidth;
+		fCachedWidgetX= (int) (pixels * fMarginWidth + 0.5);
 	}
 
 	@Override
