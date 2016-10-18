@@ -881,6 +881,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	@Override
 	public Element getElement(Object element) {
 		Element elt = null;
+		if (element == null) {
+			return elt;
+		}
 		CSSElementContext elementContext = getCSSElementContext(element);
 		if (elementContext != null) {
 			if (!elementContext.elementMustBeRefreshed(elementProvider)) {
