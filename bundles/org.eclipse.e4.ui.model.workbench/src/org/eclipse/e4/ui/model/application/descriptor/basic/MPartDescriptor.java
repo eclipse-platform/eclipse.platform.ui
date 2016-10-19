@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 
@@ -49,6 +50,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription <em>Localized Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getProperties <em>Properties</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getTrimBars <em>Trim Bars</em>}</li>
  * </ul>
  *
  * @model
@@ -311,5 +313,22 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * @generated
 	 */
 	Map<String, String> getProperties();
+
+	/**
+	 * Returns the value of the '<em><b>Trim Bars</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimBar}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * The collection of TrimBars associated with the part represented by this descriptor.
+	 * @since 1.3
+	 * </p>
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Trim Bars</em>' containment reference list.
+	 * @model containment="true"
+	 * @generated
+	 */
+	List<MTrimBar> getTrimBars();
 
 } // MPartDescriptor
