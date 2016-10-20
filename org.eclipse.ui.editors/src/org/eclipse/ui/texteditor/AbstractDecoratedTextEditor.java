@@ -1788,8 +1788,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	private String findSelectedOverviewRulerAnnotationLabel() {
-		Point selection= getSourceViewer().getSelectedRange();
 		IAnnotationModel model= getSourceViewer().getAnnotationModel();
+		if (model == null) {
+			return null;
+		}
+		Point selection= getSourceViewer().getSelectedRange();
 		Annotation annotation= null;
 		Iterator<Annotation> iter= model.getAnnotationIterator();
 		while (iter.hasNext()) {

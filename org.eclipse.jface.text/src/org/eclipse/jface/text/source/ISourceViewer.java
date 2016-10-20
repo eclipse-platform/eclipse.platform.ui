@@ -155,7 +155,7 @@ public interface ISourceViewer extends ITextViewer {
 	 * {@link ISourceViewerExtension2#getVisualAnnotationModel()}in order to
 	 * get access to the viewer's visual annotation model.
 	 *
-	 * @return this viewer's annotation model
+	 * @return this viewer's annotation model, or <code>null</code> if none could be determined
 	 */
 	IAnnotationModel getAnnotationModel();
 
