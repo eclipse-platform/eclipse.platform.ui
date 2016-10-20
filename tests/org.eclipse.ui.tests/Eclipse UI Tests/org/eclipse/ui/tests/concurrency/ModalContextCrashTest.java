@@ -13,13 +13,13 @@ package org.eclipse.ui.tests.concurrency;
 
 import java.lang.reflect.InvocationTargetException;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+
+import junit.framework.TestCase;
 
 /**
  * Makes ModalContext thread crash and hang the IDE
@@ -34,6 +34,9 @@ public class ModalContextCrashTest extends TestCase {
 		}
 		catch (InvocationTargetException e){
 			//We should get this
+		}
+		if (Thread.interrupted()) {
+			fail("Thread was interrupted at end of test");
 		}
 	}
 

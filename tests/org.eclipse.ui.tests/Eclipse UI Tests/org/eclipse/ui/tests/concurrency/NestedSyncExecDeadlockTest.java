@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import junit.framework.TestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -24,6 +23,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
+import junit.framework.TestCase;
 
 /**
  * This is a regression test for a case where a recursive attempt to syncExec
@@ -114,9 +115,15 @@ public class NestedSyncExecDeadlockTest extends TestCase {
 
 	public void testDeadlock() throws Exception {
 		doTest(1000 * 30); // 30 secs almost always locks
+		if (Thread.interrupted()) {
+			fail("Thread was interrupted at end of test");
+		}
 	}
 
 	public void testOK() throws Exception {
 		doTest(0); // 0 rarely locks
+		if (Thread.interrupted()) {
+			fail("Thread was interrupted at end of test");
+		}
 	}
 }
