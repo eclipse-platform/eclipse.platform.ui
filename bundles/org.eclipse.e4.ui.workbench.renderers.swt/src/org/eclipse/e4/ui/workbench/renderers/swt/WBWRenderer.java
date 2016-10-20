@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 441150, 444410, 472654
- *     Simon Scholz <Lars.Vogel@vogella.com> - Bug 429729
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 429729, 506306
  *     Mike Leneweit <mike-le@web.de> - Bug 444410
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -640,7 +640,7 @@ public class WBWRenderer extends SWTPartRenderer {
 						app.setSelectedElement(w);
 						w.getContext().activate();
 					} else if (parentME == null) {
-						parentME = (MUIElement) ((EObject) w).eContainer();
+						parentME = modelService.getContainer(w);
 						if (parentME instanceof MContext) {
 							w.getContext().activate();
 						}
@@ -686,7 +686,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	private void cleanUp(MWindow window) {
-		Object parent = ((EObject) window).eContainer();
+		MUIElement parent = modelService.getContainer(window);
 		if (parent instanceof MApplication) {
 			MApplication application = (MApplication) parent;
 			List<MWindow> children = application.getChildren();
@@ -761,7 +761,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		MUIElement parent = element.getParent();
 		if (parent == null) {
 			// might be a detached window
-			parent = (MUIElement) ((EObject) element).eContainer();
+			parent = modelService.getContainer(element);
 			return parent == null ? null : parent.getWidget();
 		}
 
