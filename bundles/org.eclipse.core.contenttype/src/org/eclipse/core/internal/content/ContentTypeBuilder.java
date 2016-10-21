@@ -15,8 +15,7 @@ import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -83,11 +82,18 @@ public class ContentTypeBuilder {
 	/**
 	 * Builds all content types found in the extension registry.
 	 */
-	public void buildCatalog() {
+	public void buildCatalog(IScopeContext context) {
 		IConfigurationElement[] allContentTypeCEs = getConfigurationElements();
 		for (int i = 0; i < allContentTypeCEs.length; i++)
 			if (allContentTypeCEs[i].getName().equals("content-type")) //$NON-NLS-1$
 				registerContentType(allContentTypeCEs[i]);
+		for (String id : ContentTypeManager.getUserDefinedContentTypeIds(context)) {
+			IEclipsePreferences node = context.getNode(id);
+			catalog.addContentType(ContentType.createContentType(catalog, id,
+					node.get(ContentType.PREF_USER_DEFINED__NAME, ContentType.EMPTY_STRING),
+					(byte) 0, new String[0], new String[0], node.get(ContentType.PREF_USER_DEFINED__BASE_TYPE_ID, null), null, Collections.emptyMap(),
+					null));
+		}
 		for (int i = 0; i < allContentTypeCEs.length; i++)
 			if (allContentTypeCEs[i].getName().equals("file-association")) //$NON-NLS-1$
 				registerFileAssociation(allContentTypeCEs[i]);
@@ -168,7 +174,8 @@ public class ContentTypeBuilder {
 				defaultProperties = Collections.singletonMap(IContentDescription.CHARSET, defaultCharset);
 			else if (!defaultProperties.containsKey(IContentDescription.CHARSET))
 				defaultProperties.put(IContentDescription.CHARSET, defaultCharset);
-		return ContentType.createContentType(catalog, uniqueId, name, priority, fileExtensions, fileNames, baseTypeId, aliasTargetTypeId, defaultProperties, contentTypeCE);
+		return ContentType.createContentType(catalog, uniqueId, name, priority, fileExtensions, fileNames, baseTypeId,
+				aliasTargetTypeId, defaultProperties, contentTypeCE);
 	}
 
 	// Store this around for performance

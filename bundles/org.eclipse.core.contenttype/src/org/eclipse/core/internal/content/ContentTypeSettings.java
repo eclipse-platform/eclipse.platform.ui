@@ -161,4 +161,9 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		}
 	}
 
+	@Override
+	public boolean isUserDefined() {
+		return getContentType().isUserDefined();
+	}
+
 }

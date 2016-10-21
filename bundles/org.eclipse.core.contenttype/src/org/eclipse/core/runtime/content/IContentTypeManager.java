@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.content;
 
 import java.util.EventObject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  *
  * @see org.eclipse.core.runtime.content.IContentTypeMatcher
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContentTypeManager extends IContentTypeMatcher {
 
@@ -215,4 +217,45 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * @see IContentTypeManager.IContentTypeChangeListener
 	 */
 	public void removeContentTypeChangeListener(IContentTypeChangeListener listener);
+
+	/**
+	 * Adds a new content-type to the registry. The content-type identifier
+	 * mustn't be used by any existing content-type.
+	 *
+	 * @param contentTypeIdentifier
+	 *            the non-null content-type id
+	 * @param name
+	 *            the non-null user readable name
+	 * @param baseType
+	 *            parent base type. May be null, indicating that there is no
+	 *            base type.
+	 * @return the newly created and registered content-type
+	 * @throws CoreException
+	 *             If the type was not added due to an internal error.
+	 * @since 3.6
+	 */
+	public IContentType addContentType(String contentTypeIdentifier, String name, IContentType baseType)
+			throws CoreException;
+
+	/**
+	 * Removes a content-type from underlying registry.
+	 *
+	 * The content-type must be a content-type that was previously defined with
+	 * the {@link #addContentType(String, String, IContentType)} on the same
+	 * IContentTypeManager. Content-types defined via extension point cannot be
+	 * removed from the registry.
+	 *
+	 * @param contentTypeIdentifier
+	 *            the identifier of the content-type to remove. If no
+	 *            user-defined content-type exists for this identifier, the
+	 *            method returns changing nothing and will not throw an
+	 *            exception.
+	 * @throws IllegalArgumentException
+	 *             if the target content-type was not created by user.
+	 * @throws CoreException
+	 *             if an internal error prevented the content-type from being
+	 *             removed.
+	 * @since 3.6
+	 */
+	public void removeContentType(String contentTypeIdentifier) throws CoreException;
 }

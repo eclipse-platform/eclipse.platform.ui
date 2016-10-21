@@ -605,4 +605,16 @@ public final class ContentTypeCatalog {
 		}
 		return destination;
 	}
+
+	void removeContentType(String contentTypeIdentifier) throws CoreException {
+		ContentType contentType = getContentType(contentTypeIdentifier);
+		if (contentType == null) {
+			return;
+		}
+		if (!contentType.isUserDefined()) {
+			throw new IllegalArgumentException("Content type must be user-defined."); //$NON-NLS-1$
+		}
+		contentTypes.remove(contentType.getId());
+	}
+
 }

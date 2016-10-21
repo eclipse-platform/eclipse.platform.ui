@@ -51,6 +51,14 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	public final static String PREF_DEFAULT_CHARSET = "charset"; //$NON-NLS-1$
 	public final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
 	public final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
+	/** @since 3.6 */
+	public static final String PREF_USER_DEFINED = "userDefined"; //$NON-NLS-1$
+	/** @since 3.6 */
+	public static final String PREF_USER_DEFINED__SEPARATOR = ","; //$NON-NLS-1$
+	/** @since 3.6 */
+	public static final String PREF_USER_DEFINED__NAME = "name"; //$NON-NLS-1$
+	/** @since 3.6 */
+	public static final String PREF_USER_DEFINED__BASE_TYPE_ID = "baseTypeId"; //$NON-NLS-1$
 	final static byte PRIORITY_HIGH = 1;
 	final static byte PRIORITY_LOW = -1;
 	final static byte PRIORITY_NORMAL = 0;
@@ -59,6 +67,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	final static byte STATUS_INVALID = 2;
 	final static byte STATUS_UNKNOWN = 0;
 	final static byte STATUS_VALID = 1;
+	static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private String aliasTargetId;
 	private String baseTypeId;
 	private boolean builtInAssociations = false;
@@ -255,8 +264,13 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 					return baseType.getDescriber();
 				return (NO_DESCRIBER == tmpDescriber) ? null : (IContentDescriber) tmpDescriber;
 			}
-			final String describerValue = contentTypeElement.getAttribute(DESCRIBER_ELEMENT);
-			if (describerValue != null || contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0)
+			final String describerValue = contentTypeElement != null
+					? contentTypeElement.getAttribute(DESCRIBER_ELEMENT)
+					: null;
+			IConfigurationElement[] childrenDescribers = contentTypeElement != null
+					? contentTypeElement.getChildren(DESCRIBER_ELEMENT)
+					: new IConfigurationElement[0];
+			if (describerValue != null || childrenDescribers.length > 0)
 				try {
 					if ("".equals(describerValue)) { //$NON-NLS-1$
 						describer = NO_DESCRIBER;
@@ -606,6 +620,11 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 
 	void setBaseType(ContentType baseType) {
 		this.baseType = baseType;
+	}
+
+	@Override
+	public boolean isUserDefined() {
+		return this.contentTypeElement == null;
 	}
 
 }

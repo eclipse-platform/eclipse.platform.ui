@@ -13,9 +13,13 @@ package org.eclipse.core.internal.content;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.osgi.util.NLS;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager {
 	private static class ContentTypeRegistryChangeListener implements IRegistryChangeListener {
@@ -140,7 +144,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		// build catalog by parsing the extension registry
 		ContentTypeBuilder builder = createBuilder(newCatalog);
 		try {
-			builder.buildCatalog();
+			builder.buildCatalog(getContext());
 			// only remember catalog if building it was successful
 			catalog = newCatalog;
 		} catch (InvalidRegistryObjectException e) {
@@ -189,8 +193,13 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		contentTypeListeners.remove(listener);
 	}
 
-	public void fireContentTypeChangeEvent(ContentType type) {
-		IContentType eventObject = new ContentTypeHandler(type, type.getCatalog().getGeneration());
+	public void fireContentTypeChangeEvent(IContentType type) {
+		IContentType eventObject = type;
+		if (type instanceof ContentType) {
+			eventObject = new ContentTypeHandler((ContentType) type, ((ContentType) type).getCatalog().getGeneration());
+		} else {
+			eventObject = type;
+		}
 		for (final IContentTypeChangeListener listener : this.contentTypeListeners) {
 			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(eventObject);
 			ISafeRunnable job = new ISafeRunnable() {
@@ -212,5 +221,88 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	public IContentDescription getSpecificDescription(BasicDescription description) {
 		// this is the platform content type manager, no specificities
 		return description;
+	}
+
+	@Override
+	public final void removeContentType(String contentTypeIdentifier) throws CoreException {
+		if (contentTypeIdentifier == null) {
+			return;
+		}
+		IContentType contentType = getContentType(contentTypeIdentifier);
+		if (contentType == null) {
+			return;
+		}
+		if (!contentType.isUserDefined()) {
+			throw new IllegalArgumentException("Can only delete content-types defined by users."); //$NON-NLS-1$
+		}
+		getCatalog().removeContentType(contentType.getId());
+		// Remove preferences for this content type.
+		List<String> userDefinedIds = new ArrayList<>(Arrays.asList(getUserDefinedContentTypeIds()));
+		userDefinedIds.remove(contentType.getId());
+		getContext().getNode(ContentType.PREF_USER_DEFINED).put(ContentType.PREF_USER_DEFINED,
+				userDefinedIds.stream().collect(Collectors.joining(ContentType.PREF_USER_DEFINED__SEPARATOR)));
+		try {
+			getContext().getNode(ContentType.PREF_USER_DEFINED).flush();
+		} catch (BackingStoreException e) {
+			String message = NLS.bind(ContentMessages.content_errorSavingSettings, contentType.getId());
+			IStatus status = new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, e);
+			throw new CoreException(status);
+		}
+		getCatalog().organize();
+		fireContentTypeChangeEvent(contentType);
+	}
+
+	@Override
+	public final IContentType addContentType(String id, String name, IContentType baseType) throws CoreException {
+		if (id == null) {
+			throw new IllegalArgumentException("Content-type 'id' mustn't be null");//$NON-NLS-1$
+		}
+		if (id.contains(ContentType.PREF_USER_DEFINED__SEPARATOR)) {
+			throw new IllegalArgumentException(
+					"Content-Type id mustn't contain '" + ContentType.PREF_USER_DEFINED__SEPARATOR + '\''); //$NON-NLS-1$
+		}
+		if (getContentType(id) != null) {
+			throw new IllegalArgumentException("Content-type '" + id + "' already exists.");//$NON-NLS-1$ //$NON-NLS-2$
+		}
+		ContentType contentType = ContentType.createContentType(getCatalog(), id, name, (byte) 0, new String[0],
+				new String[0], baseType != null ? baseType.getId() : null, null, null, null);
+		getCatalog().addContentType(contentType);
+		// Add preferences for this content type.
+		String currentUserDefined = getContext().getNode(ContentType.PREF_USER_DEFINED)
+				.get(ContentType.PREF_USER_DEFINED, ContentType.EMPTY_STRING);
+		if (currentUserDefined.length() > 0) {
+			currentUserDefined += ContentType.PREF_USER_DEFINED__SEPARATOR;
+		}
+		getContext().getNode(ContentType.PREF_USER_DEFINED).put(ContentType.PREF_USER_DEFINED, currentUserDefined + id);
+		contentType.setValidation(ContentType.STATUS_UNKNOWN);
+		IEclipsePreferences contextTypeNode = getContext().getNode(contentType.getId());
+		contextTypeNode.put(ContentType.PREF_USER_DEFINED__NAME, name);
+		if (baseType != null) {
+			contextTypeNode.put(ContentType.PREF_USER_DEFINED__BASE_TYPE_ID, baseType.getId());
+		}
+		try {
+			getContext().getNode(ContentType.PREF_USER_DEFINED).flush();
+			contextTypeNode.flush();
+		} catch (BackingStoreException e) {
+			String message = NLS.bind(ContentMessages.content_errorSavingSettings, id);
+			IStatus status = new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, e);
+			throw new CoreException(status);
+		}
+		getCatalog().organize();
+		fireContentTypeChangeEvent(contentType);
+		return contentType;
+	}
+
+	private String[] getUserDefinedContentTypeIds() {
+		return getUserDefinedContentTypeIds(getContext());
+	}
+
+	static String[] getUserDefinedContentTypeIds(IScopeContext context) {
+		String ids = context.getNode(ContentType.PREF_USER_DEFINED)
+				.get(ContentType.PREF_USER_DEFINED, ContentType.EMPTY_STRING);
+		if (ids.isEmpty()) {
+			return new String[0];
+		}
+		return ids.split(ContentType.PREF_USER_DEFINED__SEPARATOR);
 	}
 }

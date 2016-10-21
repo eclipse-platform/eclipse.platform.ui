@@ -202,4 +202,13 @@ public class ContentTypeHandler implements IContentType {
 		return id;
 	}
 
+	@Override
+	public boolean isUserDefined() {
+		ContentType target = getTarget();
+		if (target != null) {
+			return target.isUserDefined();
+		}
+		return false;
+	}
+
 }

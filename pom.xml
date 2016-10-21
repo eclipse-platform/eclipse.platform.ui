@@ -65,10 +65,6 @@
 
     <module>features/org.eclipse.core.runtime.feature</module>
 
-    <module>tests/com.google.code.atinject.tck</module>
-    <module>tests/org.eclipse.core.expressions.tests</module>
-    <module>tests/org.eclipse.core.tests.harness</module>
-    <module>tests/org.eclipse.core.tests.runtime</module>
-    <module>tests/org.eclipse.e4.core.tests</module>
+    <module>tests</module>
   </modules>
 </project>
