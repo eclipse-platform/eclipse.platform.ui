@@ -75,7 +75,7 @@ public final class PendingSyncExec {
 	public void waitUntilExecuted(UILockListener lockListener) throws InterruptedException {
 		// even if the UI was not blocked earlier, it might become blocked
 		// before it can serve the asyncExec to do the pending work
-		do {
+		while (!acquire(1000)) {
 			if (lockListener.isUIWaiting()) {
 				synchronized (this) {
 					if (!hasFinishedRunning) {
@@ -83,7 +83,7 @@ public final class PendingSyncExec {
 					}
 				}
 			}
-		} while (!acquire(1000));
+		}
 	}
 
     @Override
