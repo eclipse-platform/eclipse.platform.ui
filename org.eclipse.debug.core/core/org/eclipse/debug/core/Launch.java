@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech - Bug 82003: The IDisconnect implementation by Launch module is too restrictive.
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 506182 - Launch is not multi-thread safe
  *******************************************************************************/
 package org.eclipse.debug.core;
 
@@ -15,11 +16,13 @@ package org.eclipse.debug.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.PlatformObject;
-
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IProcess;
@@ -39,6 +42,15 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * @see ILaunchManager
  */
 public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILaunchListener, ILaunchConfigurationListener, IDebugEventSetListener {
+
+	/**
+	 * Lock object for controlling access to processes and targets
+	 */
+	private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+	private final Lock readLock = lock.readLock();
+
+	private final Lock writeLock = lock.writeLock();
 
 	/**
 	 * The debug targets associated with this
@@ -119,15 +131,20 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public boolean canTerminate() {
-		for (IProcess process : getProcesses0()) {
-			if (process.canTerminate()) {
-				return true;
+		 readLock.lock();
+		try {
+			for (IProcess process : getProcesses0()) {
+				if (process.canTerminate()) {
+					return true;
+				}
 			}
-		}
-		for (IDebugTarget target : getDebugTargets0()) {
-			if (target.canTerminate() || target.canDisconnect()) {
-				return true;
+			for (IDebugTarget target : getDebugTargets0()) {
+				if (target.canTerminate() || target.canDisconnect()) {
+					return true;
+				}
 			}
+		} finally {
+			 readLock.unlock();
 		}
 		return false;
 	}
@@ -137,8 +154,14 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public Object[] getChildren() {
-		ArrayList<Object> children = new ArrayList<Object>(getDebugTargets0());
-		children.addAll(getProcesses0());
+		readLock.lock();
+		ArrayList<Object> children;
+		try {
+			children = new ArrayList<Object>(getDebugTargets0());
+			children.addAll(getProcesses0());
+		} finally {
+			readLock.unlock();
+		}
 		return children.toArray();
 	}
 
@@ -147,8 +170,13 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public IDebugTarget getDebugTarget() {
-		if (!getDebugTargets0().isEmpty()) {
-			return getDebugTargets0().get(0);
+		readLock.lock();
+		try {
+			if (!getDebugTargets0().isEmpty()) {
+				return getDebugTargets0().get(0);
+			}
+		} finally {
+			readLock.unlock();
 		}
 		return null;
 	}
@@ -158,7 +186,12 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public IProcess[] getProcesses() {
-		return getProcesses0().toArray(new IProcess[getProcesses0().size()]);
+		readLock.lock();
+		try {
+			return getProcesses0().toArray(new IProcess[getProcesses0().size()]);
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	/**
@@ -192,18 +225,23 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public boolean isTerminated() {
-		if (getProcesses0().isEmpty() && getDebugTargets0().isEmpty()) {
-			return false;
-		}
-		for (IProcess process : getProcesses0()) {
-			if (!process.isTerminated()) {
+		readLock.lock();
+		try {
+			if (getProcesses0().isEmpty() && getDebugTargets0().isEmpty()) {
 				return false;
 			}
-		}
-		for (IDebugTarget target : getDebugTargets0()) {
-			if (!(target.isTerminated() || target.isDisconnected())) {
-				return false;
+			for (IProcess process : getProcesses0()) {
+				if (!process.isTerminated()) {
+					return false;
+				}
 			}
+			for (IDebugTarget target : getDebugTargets0()) {
+				if (!(target.isTerminated() || target.isDisconnected())) {
+					return false;
+				}
+			}
+		} finally {
+			readLock.unlock();
 		}
 		return true;
 	}
@@ -304,7 +342,12 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public IDebugTarget[] getDebugTargets() {
-		return fTargets.toArray(new IDebugTarget[fTargets.size()]);
+		readLock.lock();
+		try {
+			return fTargets.toArray(new IDebugTarget[fTargets.size()]);
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	/**
@@ -323,10 +366,18 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	@Override
 	public void addDebugTarget(IDebugTarget target) {
 		if (target != null) {
-			if (!getDebugTargets0().contains(target)) {
-				addEventListener();
-				getDebugTargets0().add(target);
-				fireChanged();
+			writeLock.lock();
+			boolean changed = false;
+			try {
+				if (!getDebugTargets0().contains(target)) {
+					addEventListener();
+					changed = getDebugTargets0().add(target);
+				}
+			} finally {
+				writeLock.unlock();
+				if (changed) {
+					fireChanged();
+				}
 			}
 		}
 	}
@@ -337,8 +388,15 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	@Override
 	public void removeDebugTarget(IDebugTarget target) {
 		if (target != null) {
-			if (getDebugTargets0().remove(target)) {
-				fireChanged();
+			writeLock.lock();
+			boolean changed = false;
+			try {
+				changed = getDebugTargets0().remove(target);
+			} finally {
+				writeLock.unlock();
+				if (changed) {
+					fireChanged();
+				}
 			}
 		}
 	}
@@ -349,10 +407,18 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	@Override
 	public void addProcess(IProcess process) {
 		if (process != null) {
-			if (!getProcesses0().contains(process)) {
-				addEventListener();
-				getProcesses0().add(process);
-				fireChanged();
+			writeLock.lock();
+			boolean changed = false;
+			try {
+				if (!getProcesses0().contains(process)) {
+					addEventListener();
+					changed = getProcesses0().add(process);
+				}
+			} finally {
+				writeLock.unlock();
+				if (changed) {
+					fireChanged();
+				}
 			}
 		}
 	}
@@ -363,8 +429,15 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	@Override
 	public void removeProcess(IProcess process) {
 		if (process != null) {
-			if (getProcesses0().remove(process)) {
-				fireChanged();
+			writeLock.lock();
+			boolean changed = false;
+			try {
+				changed = getProcesses0().remove(process);
+			} finally {
+				writeLock.unlock();
+				if (changed) {
+					fireChanged();
+				}
 			}
 		}
 	}
@@ -424,17 +497,22 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public boolean canDisconnect() {
-		for (IProcess process : getProcesses0()) {
-			if (process instanceof IDisconnect) {
-				if (((IDisconnect) process).canDisconnect()) {
+		readLock.lock();
+		try {
+			for (IProcess process : getProcesses0()) {
+				if (process instanceof IDisconnect) {
+					if (((IDisconnect) process).canDisconnect()) {
+						return true;
+					}
+				}
+			}
+			for (IDebugTarget target : getDebugTargets0()) {
+				if (target.canDisconnect()) {
 					return true;
 				}
 			}
-		}
-		for (IDebugTarget target : getDebugTargets0()) {
-			if (target.canDisconnect()) {
-				return true;
-			}
+		} finally {
+			readLock.unlock();
 		}
         return false;
 	}
@@ -444,18 +522,23 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public void disconnect() throws DebugException {
-		for (IProcess process : getProcesses0()) {
-			if (process instanceof IDisconnect) {
-				IDisconnect dis = (IDisconnect) process;
-				if (dis.canDisconnect()) {
-					dis.disconnect();
+		readLock.lock();
+		try {
+			for (IProcess process : getProcesses0()) {
+				if (process instanceof IDisconnect) {
+					IDisconnect dis = (IDisconnect) process;
+					if (dis.canDisconnect()) {
+						dis.disconnect();
+					}
 				}
 			}
-		}
-		for (IDebugTarget target : getDebugTargets0()) {
-			if (target.canDisconnect()) {
-				target.disconnect();
+			for (IDebugTarget target : getDebugTargets0()) {
+				if (target.canDisconnect()) {
+					target.disconnect();
+				}
 			}
+		} finally {
+			readLock.unlock();
 		}
 	}
 
@@ -468,17 +551,22 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	@Override
 	public boolean isDisconnected() {
-		for (IProcess process : getProcesses0()) {
-			if (process instanceof IDisconnect) {
-				if (!((IDisconnect) process).isDisconnected()) {
+		readLock.lock();
+		try {
+			for (IProcess process : getProcesses0()) {
+				if (process instanceof IDisconnect) {
+					if (!((IDisconnect) process).isDisconnected()) {
+						return false;
+					}
+				}
+			}
+			for (IDebugTarget target : getDebugTargets0()) {
+				if (!target.isDisconnected()) {
 					return false;
 				}
 			}
-		}
-		for (IDebugTarget target : getDebugTargets0()) {
-			if (!target.isDisconnected()) {
-				return false;
-			}
+		} finally {
+			readLock.unlock();
 		}
         // only return true if there are processes or targets that are disconnected
         return hasChildren();

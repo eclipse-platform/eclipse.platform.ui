@@ -23,6 +23,7 @@ import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.debug.tests.launching.LaunchFavoriteTests;
 import org.eclipse.debug.tests.launching.LaunchHistoryTests;
 import org.eclipse.debug.tests.launching.LaunchManagerTests;
+import org.eclipse.debug.tests.launching.LaunchTests;
 import org.eclipse.debug.tests.launching.RefreshTabTests;
 import org.eclipse.debug.tests.sourcelookup.SourceLookupFacilityTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
@@ -92,6 +93,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(LaunchManagerTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
 		addTest(new TestSuite(ArgumentParsingTests.class));
+		addTest(new TestSuite(LaunchTests.class));
 
 		// Status handlers
 		addTest(new TestSuite(StatusHandlerTests.class));
