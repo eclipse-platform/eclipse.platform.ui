@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -57,6 +58,7 @@ public class SegmentedModeTest {
 	@After
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
+		TestUtil.cleanUp();
 	}
 
 	/*

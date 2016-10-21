@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.lang.reflect.Field;
@@ -77,6 +78,7 @@ public class MarkerAnnotationOrderTest {
 			if ("org.eclipse.ui.editors.markerUpdaters".equals(extensions[i].getExtensionPointUniqueIdentifier()))
 				registry.removeExtension(extensions[i], masterToken);
 		}
+		TestUtil.cleanUp();
 	}
 
 	@Test

@@ -11,11 +11,12 @@
 
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -42,6 +43,11 @@ public class ChainedPreferenceStoreTest {
 	private static final String VALUE= "8";
 	private static final String DEFAULT_VALUE= "4";
 	private static final String DEFAULT_DEFAULT_VALUE= "";
+
+	@After
+	public void tearDown() {
+		TestUtil.cleanUp();
+	}
 
 	/**
 	 * [implementation] ChainedPreferenceStore
@@ -131,5 +137,4 @@ public class ChainedPreferenceStoreTest {
 		assertEquals(null, event.getOldValue());
 		assertEquals(DEFAULT_VALUE, event.getNewValue());
 	}
-
 }

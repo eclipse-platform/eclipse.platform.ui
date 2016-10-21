@@ -65,6 +65,7 @@ public class ZoomTest {
 	public static void tearDownAfterClass() throws Exception {
 		file.delete(true, new NullProgressMonitor());
 		project.delete(true, new NullProgressMonitor());
+		TestUtil.cleanUp();
 	}
 
 	@Before

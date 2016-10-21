@@ -68,6 +68,7 @@ public class GotoLineTest {
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;
+		TestUtil.cleanUp();
 	}
 
 	@Test

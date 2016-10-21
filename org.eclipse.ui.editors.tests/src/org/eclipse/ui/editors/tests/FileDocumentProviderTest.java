@@ -92,7 +92,7 @@ public class FileDocumentProviderTest {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		page = workbench.getActiveWorkbenchWindow().getActivePage();
 		editor = IDE.openEditor(page, file);
-		processUIEvents();
+		TestUtil.runEventLoop();
 
 		IStatusLineManager statusLineManager = editor.getEditorSite().getActionBars().getStatusLineManager();
 		// This is default monitor which almost all editors are using
@@ -106,7 +106,7 @@ public class FileDocumentProviderTest {
 		// process UI events while waiting on workspace lock
 		fileProvider.setProgressMonitor(progressMonitor);
 
-		waitForJobs(500, 5000);
+		TestUtil.waitForJobs(500, 5000);
 		Job[] jobs = Job.getJobManager().find(null);
 		String jobsList = Arrays.toString(jobs);
 		System.out.println("Still running jobs: " + jobsList);
@@ -127,7 +127,8 @@ public class FileDocumentProviderTest {
 			page.closeEditor(editor, false);
 		}
 		ResourceHelper.deleteProject(file.getProject().getName());
-		processUIEvents();
+		TestUtil.runEventLoop();
+		TestUtil.cleanUp();
 	}
 
 	@Test
@@ -216,75 +217,6 @@ public class FileDocumentProviderTest {
 		}
 		System.out.println("Managed to update file after " + count + " attempts");
 		assertFalse(fsManager.fastIsSynchronized(file));
-	}
-
-	/**
-	 * Utility for waiting until the execution of jobs of any family has
-	 * finished or timeout is reached. If no jobs are running, the method waits
-	 * given minimum wait time. While this method is waiting for jobs, UI events
-	 * are processed.
-	 *
-	 * @param minTimeMs
-	 *            minimum wait time in milliseconds
-	 * @param maxTimeMs
-	 *            maximum wait time in milliseconds
-	 */
-	public static void waitForJobs(long minTimeMs, long maxTimeMs) {
-		if (maxTimeMs < minTimeMs) {
-			throw new IllegalArgumentException("Max time is smaller as min time!");
-		}
-		final long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < minTimeMs) {
-			processUIEvents();
-		}
-		while (!Job.getJobManager().isIdle() && System.currentTimeMillis() - start < maxTimeMs) {
-			processUIEvents();
-		}
-	}
-
-	/**
-	 * Process all queued UI events. If called from background thread, blocks
-	 * until all pending events are processed in UI thread.
-	 */
-	public static void processUIEvents() {
-		processUIEvents(0);
-	}
-
-	/**
-	 * Process all queued UI events. If called from background thread, blocks
-	 * until all pending events are processed in UI thread.
-	 *
-	 * @param timeInMillis
-	 *            time to wait. During this time all UI events are processed but
-	 *            the current thread is blocked
-	 */
-	public static void processUIEvents(final long timeInMillis) {
-		if (Display.getCurrent() != null) {
-			if (timeInMillis <= 0) {
-				while (Display.getCurrent().readAndDispatch()) {
-					// process queued ui events at least once
-				}
-			} else {
-				long start = System.currentTimeMillis();
-				while (System.currentTimeMillis() - start <= timeInMillis) {
-					while (Display.getCurrent().readAndDispatch()) {
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-							break;
-						}
-					}
-				}
-			}
-		} else {
-			// synchronously refresh UI
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					processUIEvents();
-				}
-			});
-		}
 	}
 
 	static void logError(String message, Exception ex) {

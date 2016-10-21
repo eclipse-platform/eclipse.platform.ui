@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.editors.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -89,6 +91,7 @@ public class EncodingChangeTests {
 		fEditor= null;
 		fFile= null;
 		ResourceHelper.deleteProject("EncodingChangeTestProject");
+		TestUtil.cleanUp();
 	}
 
 	@Test
