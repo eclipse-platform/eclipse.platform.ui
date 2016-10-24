@@ -28,6 +28,7 @@ public class AllTests extends TestCase {
 		suite.addTest(IAdapterManagerTest.suite());
 		suite.addTest(IAdapterManagerServiceTest.suite());
 		suite.addTest(AdapterManagerDynamicTest.suite());
+		suite.addTest(LogTest.suite());
 		suite.addTest(OperationCanceledExceptionTest.suite());
 		suite.addTest(PathTest.suite());
 		suite.addTest(PlatformTest.suite());
