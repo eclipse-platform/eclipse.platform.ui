@@ -53,6 +53,8 @@ public class ConsoleManagerTests extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		assertNotNull("Must run in UI thread, but was in: " + Thread.currentThread().getName(), //$NON-NLS-1$
+				Display.getCurrent());
 		count = 20;
 		latch = new CountDownLatch(count);
 		executorService = Executors.newFixedThreadPool(count);
@@ -121,26 +123,55 @@ public class ConsoleManagerTests extends TestCase {
 		for (ConsoleMock console : consoles) {
 			showConsole(console);
 		}
+		System.out.println("All tasks scheduled, processing UI events now..."); //$NON-NLS-1$
+		processUIEvents(1000);
+
 		// Console manager starts a job with delay, let wait for him a bit
+		System.out.println("Waiting on jobs now..."); //$NON-NLS-1$
 		waitForJobs();
 
 		// Give UI a chance to proceed pending console manager jobs
+		System.out.println("Done with jobs, processing UI events again..."); //$NON-NLS-1$
 		processUIEvents(3000);
 
 		executorService.shutdown();
-		executorService.awaitTermination(1, TimeUnit.MINUTES);
+
+		System.out.println("Waiting on execution service to finish..."); //$NON-NLS-1$
+		boolean OK = waitForExecutorService();
+		if (!OK) {
+			System.out.println("Timed out..."); //$NON-NLS-1$
+			processUIEvents(10000);
+
+			// timeout?
+			assertTrue("Timeout occurred while waiting on console to be shown", //$NON-NLS-1$
+					waitForExecutorService());
+		} else {
+			System.out.println("Done waiting on execution service to finish"); //$NON-NLS-1$
+		}
 		int shown = ConsoleMock.allShownConsoles.intValue();
 		assertEquals("Only " + shown + " consoles were shown from " + count, count, shown); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private boolean waitForExecutorService() throws InterruptedException {
+		for (int i = 0; i < 60; i++) {
+			if (executorService.awaitTermination(1, TimeUnit.SECONDS)) {
+				return true;
+			}
+			processUIEvents(100);
+		}
+		return false;
 	}
 
 	private void processUIEvents(final long millis) {
 		long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < millis) {
-			PlatformUI.getWorkbench().getDisplay().readAndDispatch();
+			while (PlatformUI.getWorkbench().getDisplay().readAndDispatch()) {
+				// loop untile the queue is empty
+			}
 		}
 	}
 
-	private void waitForJobs() throws Exception {
+	private void waitForJobs() throws InterruptedException {
 		if (Display.getCurrent() == null) {
 			Thread.sleep(200);
 		} else {
@@ -167,8 +198,9 @@ public class ConsoleManagerTests extends TestCase {
 					System.out.println("Requesting to show: " + console); //$NON-NLS-1$
 					manager.showConsoleView(console);
 					waitForJobs();
-				} catch (Exception e) {
+				} catch (InterruptedException e) {
 					e.printStackTrace();
+					Thread.interrupted();
 				}
 			}
 		});
