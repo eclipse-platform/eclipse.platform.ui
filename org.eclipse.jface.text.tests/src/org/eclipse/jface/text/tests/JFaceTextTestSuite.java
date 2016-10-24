@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.jface.text.source.LineNumberRulerColumnTest;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerZeroLengthTest;
@@ -29,6 +30,7 @@ import org.eclipse.jface.text.tests.rules.WordRuleTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+		LineNumberRulerColumnTest.class,
 		HTML2TextReaderTest.class,
 		TextHoverPopupTest.class,
 		TextPresentationTest.class,

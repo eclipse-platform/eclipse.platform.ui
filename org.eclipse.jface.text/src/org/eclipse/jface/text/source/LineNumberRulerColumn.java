@@ -10,6 +10,7 @@
  *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Shift clicking in line number column doesn't select range - https://bugs.eclipse.org/bugs/show_bug.cgi?id=32166
  *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Clicking in line number ruler should not trigger annotation ruler - https://bugs.eclipse.org/bugs/show_bug.cgi?id=40889
  *     Florian Weßling <flo@cdhq.de> - [rulers] Line numbering was wrong when word wrap was active - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
+ *     Rüdiger Herrmann - Insufficient is-disposed check in LineNumberRulerColumn::redraw - https://bugs.eclipse.org/bugs/show_bug.cgi?id=506427
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -872,7 +873,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			return;
 		}
 
-		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
+		if (!isDisposed()) {
 			if (VerticalRuler.AVOID_NEW_GC) {
 				fCanvas.redraw();
 				fCanvas.update();
@@ -882,6 +883,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				gc.dispose();
 			}
 		}
+	}
+
+	private boolean isDisposed() {
+		return fCachedTextViewer == null || fCanvas == null || fCanvas.isDisposed()
+				|| fCachedTextViewer.getTextWidget() == null;
 	}
 
 	@Override
