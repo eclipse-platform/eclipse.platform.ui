@@ -31,7 +31,6 @@
         <configuration>
           <useUIHarness>true</useUIHarness>
           <useUIThread>true</useUIThread>
-          <argLine>-Xms128m -Xmx512m</argLine>
             <dependencies>
               <dependency>
                 <type>eclipse-plugin</type>
