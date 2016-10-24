@@ -91,7 +91,7 @@ public class ContainerCreator {
 					if (resource != null) {
 						if (resource instanceof IContainer) {
 							fContainer= (IContainer) resource;
-							subMonitor.step(1);
+							subMonitor.split(1);
 						} else {
 							// fContainerFullPath specifies a file as directory
 							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, resource.getFullPath()), null));

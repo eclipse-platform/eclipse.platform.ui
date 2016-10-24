@@ -387,7 +387,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			// set synchronization stamp to know whether the file synchronizer must become active
 			fSynchronizationStamp= fFile.getModificationStamp();
 
-			subMonitor.step(1);
+			subMonitor.split(1);
 			// TODO commit persistable annotation model
 		}
 

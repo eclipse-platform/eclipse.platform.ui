@@ -246,7 +246,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		fSynchronizationStamp= fFile.getModificationStamp();
 
 		addFileBufferContentListeners();
-		subMonitor.step(1);
+		subMonitor.split(1);
 
 	}
 
