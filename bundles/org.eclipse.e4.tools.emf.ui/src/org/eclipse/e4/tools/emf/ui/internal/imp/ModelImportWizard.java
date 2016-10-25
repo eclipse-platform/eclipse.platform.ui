@@ -44,7 +44,12 @@ public class ModelImportWizard extends Wizard {
 		this.applicationElement = applicationElement;
 		this.editor = editor;
 		this.hint = hint;
-		application = (MApplication) editor.getEditor().getModelProvider().getRoot().get(0);
+		Object modelSelection = editor.getEditor().getModelProvider().getRoot().get(0);
+		if (modelSelection instanceof MApplication) {
+			application = (MApplication) modelSelection;
+		} else {
+			application = null;
+		}
 		setWindowTitle(Messages.ModelImportWizard_Model
 			+ " " + applicationElement.getSimpleName() + " " + Messages.ModelImportWizard_ImportWizard); //$NON-NLS-1$ //$NON-NLS-2$
 		setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool
