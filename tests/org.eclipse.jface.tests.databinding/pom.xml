@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.jface</groupId>
   <artifactId>org.eclipse.jface.tests.databinding</artifactId>
-  <version>1.1.100-SNAPSHOT</version>
+  <version>1.8.100-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
