@@ -251,7 +251,7 @@ ProgressInfoItem,
 ProgressInfoItem > *,
 CompareViewerPane,
 CompareViewerPane > * {
-    background-color: red;
+    background-color: #262626;
     color: #eeeeee;
 }
 
