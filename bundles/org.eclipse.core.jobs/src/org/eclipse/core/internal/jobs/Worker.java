@@ -51,8 +51,9 @@ public class Worker extends Thread {
 		try {
 			while ((currentJob = pool.startJob(this)) != null) {
 				IStatus result = Status.OK_STATUS;
+				IProgressMonitor monitor = currentJob.getProgressMonitor();
 				try {
-					result = currentJob.run(currentJob.getProgressMonitor());
+					result = currentJob.run(monitor);
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {
@@ -64,6 +65,9 @@ public class Worker extends Thread {
 				} catch (Error e) {
 					result = handleException(currentJob, e);
 				} finally {
+					if (result != Job.ASYNC_FINISH && monitor != null) {
+						monitor.done();
+					}
 					//clear interrupted state for this thread
 					Thread.interrupted();
 					//result must not be null

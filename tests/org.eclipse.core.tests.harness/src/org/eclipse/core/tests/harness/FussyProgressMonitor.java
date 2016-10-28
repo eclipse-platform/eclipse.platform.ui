@@ -103,9 +103,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 
 	@Override
 	public void done() {
-		assertTrue("done must be called after beginTask", beginTaskCalled);
-		assertTrue("done can only be called once", doneCalls == 0);
-		//assert("done is called before all work is done", totalWork==UNKNOWN || totalWork==workedSoFar);
 		workedSoFar = totalWork;
 		doneCalls++;
 	}
