@@ -154,10 +154,9 @@ public class HelpURLConnection extends URLConnection {
 	}
 
 	private InputStream getLocalHelp(Bundle plugin) {
-		InputStream in;
 		// first try using content provider, then try to find the file
 		// inside doc.zip, and finally try the file system
-		in = ResourceLocator.openFromProducer(plugin,
+		InputStream in = ResourceLocator.openFromProducer(plugin,
 				query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
 				getLocale());
 
@@ -504,14 +503,13 @@ public class HelpURLConnection extends URLConnection {
 		try{
 			if (in!=null)
 			{
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
-				String line,result=""; //$NON-NLS-1$
+				String line, result = ""; //$NON-NLS-1$
+				try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
 
-				while ((line = br.readLine())!=null)
-				{
-					result+=line+'\n';
+					while ((line = br.readLine()) != null) {
+						result += line + '\n';
+					}
 				}
-				br.close();
 				in.close();
 				return result;
 			}

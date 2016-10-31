@@ -391,11 +391,12 @@ public class PrintData extends RequestData {
 					in = HelpSystem.getHelpContent(href, locale);
 				}
 
-				Reader reader = new BufferedReader(new InputStreamReader(in, charset));
-				char[] cbuf = new char[4096];
-				int num;
-				while ((num = reader.read(cbuf)) > 0) {
-					buf.append(cbuf, 0, num);
+				try (Reader reader = new BufferedReader(new InputStreamReader(in, charset))) {
+					char[] cbuf = new char[4096];
+					int num;
+					while ((num = reader.read(cbuf)) > 0) {
+						buf.append(cbuf, 0, num);
+					}
 				}
 			}
 			catch (Exception e) {
