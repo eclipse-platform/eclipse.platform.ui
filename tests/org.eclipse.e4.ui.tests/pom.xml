@@ -36,8 +36,8 @@
 				 <includes>
             		<include>**/org/eclipse/e4/ui/tests/UIAllTests.java</include>
           		</includes>
-				<useUIHarness>true</useUIHarness>
-				<useUIThread>true</useUIThread>
+				<useUIHarness>false</useUIHarness>
+				<useUIThread>false</useUIThread>
 			</configuration>
   		</plugin>
   	</plugins>
