@@ -28,7 +28,7 @@
    <properties>
      <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.ui.git</tycho.scmUrl>
   </properties>
-
+  
   <!-- 
     To build individual bundles, we specify a repository where to find parent pom, 
     in case it is not in local maven cache already
@@ -49,6 +49,23 @@
           <url>https://repo.eclipse.org/content/repositories/eclipse/</url>
         </repository>
       </repositories>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-compiler-plugin</artifactId>
+            <version>${tycho.version}</version>
+             <configuration>
+ 	       <!-- Do not use useProjectSettings; it'll always override -nowarn -->
+              <compilerArgs>
+               <arg>-properties</arg>
+               <arg>${project.basedir}/.settings/org.eclipse.jdt.core.prefs</arg>
+               <arg>-nowarn</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
