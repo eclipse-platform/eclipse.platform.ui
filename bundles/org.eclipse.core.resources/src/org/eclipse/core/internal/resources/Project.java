@@ -198,7 +198,7 @@ public class Project extends Container implements IProject {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, subMonitor.newChild(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -304,7 +304,7 @@ public class Project extends Container implements IProject {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -540,7 +540,7 @@ public class Project extends Container implements IProject {
 						workspace.beginOperation(true);
 						workspace.aboutToBuild(Project.this, trigger);
 					} finally {
-						workspace.endOperation(rule, false, innerMonitor);
+						workspace.endOperation(rule, false);
 					}
 					final ISchedulingRule buildRule = workspace.getBuildManager().getRule(config, trigger, builderName, args);
 					try {
@@ -552,7 +552,7 @@ public class Project extends Container implements IProject {
 						if (!result.isOK())
 							throw new ResourceException(result);
 					} finally {
-						workspace.endOperation(buildRule, false, innerMonitor);
+						workspace.endOperation(buildRule, false);
 						try {
 							workspace.prepareOperation(rule, innerMonitor);
 							//don't open the tree eagerly because it will be wasted if no change occurs
@@ -562,7 +562,7 @@ public class Project extends Container implements IProject {
 							if (workspace.getElementTree().isImmutable())
 								workspace.newWorkingTree();
 						} finally {
-							workspace.endOperation(rule, false, Policy.subMonitorFor(innerMonitor, Policy.endOpWork));
+							workspace.endOperation(rule, false);
 						}
 					}
 				} finally {
@@ -689,7 +689,7 @@ public class Project extends Container implements IProject {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -979,7 +979,7 @@ public class Project extends Container implements IProject {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -1075,7 +1075,7 @@ public class Project extends Container implements IProject {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -1267,7 +1267,7 @@ public class Project extends Container implements IProject {
 					throw new CoreException(status);
 			} finally {
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.POST_PROJECT_CHANGE, this));
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -1308,7 +1308,7 @@ public class Project extends Container implements IProject {
 				throw e;
 			} finally {
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.POST_PROJECT_CHANGE, this));
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();

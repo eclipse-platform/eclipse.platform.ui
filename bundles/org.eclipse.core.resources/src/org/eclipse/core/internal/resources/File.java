@@ -54,7 +54,7 @@ public class File extends Resource implements IFile {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -167,7 +167,7 @@ public class File extends Resource implements IFile {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -341,7 +341,7 @@ public class File extends Resource implements IFile {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -419,7 +419,7 @@ public class File extends Resource implements IFile {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();

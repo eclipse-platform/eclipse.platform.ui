@@ -108,7 +108,7 @@ public class Folder extends Container implements IFolder {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();

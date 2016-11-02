@@ -129,7 +129,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	}
 
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Policy.opWork + Policy.endOpWork + 1);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Policy.opWork + 1);
 		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 		try {
 			workspace.prepareOperation(rule, subMonitor.split(1));
@@ -154,7 +154,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			if (workspace.getElementTree().isImmutable()) {
 				workspace.newWorkingTree();
 			}
-			workspace.endOperation(rule, false, subMonitor.newChild(Policy.endOpWork, SubMonitor.SUPPRESS_ISCANCELED | SubMonitor.SUPPRESS_BEGINTASK));
+			workspace.endOperation(rule, false);
 		}
 	}
 

@@ -76,7 +76,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 					if (systemBundle.getState() != Bundle.STOPPING)
 						doFlushCache(monitor, getPathsToFlush());
 				} finally {
-					workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+					workspace.endOperation(rule, false);
 				}
 			} catch (OperationCanceledException e) {
 				return Status.CANCEL_STATUS;

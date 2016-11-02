@@ -266,7 +266,7 @@ public class Synchronizer implements ISynchronizer {
 					throw new ResourceException(status);
 			}
 		} finally {
-			workspace.endOperation(resource, false, null);
+			workspace.endOperation(resource, false);
 		}
 	}
 

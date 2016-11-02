@@ -98,7 +98,7 @@ public class CharsetManager implements IManager {
 					workspace.getWorkManager().operationCanceled();
 					throw e;
 				} finally {
-					workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+					workspace.endOperation(rule, true);
 				}
 			} catch (CoreException ce) {
 				return ce.getStatus();

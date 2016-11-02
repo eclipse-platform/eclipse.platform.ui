@@ -80,7 +80,7 @@ public class SavedState implements ISavedState {
 				forgetTrees(); // free trees to prevent memory leak
 				workspace.getNotificationManager().broadcastChanges(listener, IResourceChangeEvent.POST_BUILD, delta);
 			} finally {
-				workspace.endOperation(rule, false, null);
+				workspace.endOperation(rule, false);
 			}
 		} catch (CoreException e) {
 			// this is unlikely to happen, so, just log it

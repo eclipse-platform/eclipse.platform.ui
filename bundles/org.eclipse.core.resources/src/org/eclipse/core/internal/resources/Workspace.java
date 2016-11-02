@@ -69,7 +69,7 @@ import org.xml.sax.InputSource;
  * is an operation that is not nested within another workspace operation in the current
  * thread.
  * See the javadoc of {@link #prepareOperation(ISchedulingRule, IProgressMonitor)},
- * {@link #beginOperation(boolean)}, and {@link #endOperation(ISchedulingRule, boolean, IProgressMonitor)}
+ * {@link #beginOperation(boolean)}, and {@link #endOperation(ISchedulingRule, boolean)}
  * for more details.
  * </p>
  * <p>
@@ -443,7 +443,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					aboutToBuild(this, trigger);
 				} finally {
 					if (rule == null) {
-						endOperation(buildRule, false, monitor);
+						endOperation(buildRule, false);
 						prepareOperation(rule, monitor);
 						beginOperation(false);
 					}
@@ -488,7 +488,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				} finally {
 					// Run the POST_BUILD with the WRule held
 					if (rule == null) {
-						endOperation(rule, false, monitor);
+						endOperation(rule, false);
 						prepareOperation(buildRule, monitor);
 						beginOperation(false);
 					}
@@ -502,7 +502,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (tree.isImmutable())
 					newWorkingTree();
 				// Rule will be the build-rule from the POST_BUILD refresh
-				endOperation(buildRule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				endOperation(buildRule, false);
 			}
 		} finally {
 			monitor.done();
@@ -528,7 +528,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				beginOperation(true);
 				broadcastPostChange();
 			} finally {
-				endOperation(rule, build, null);
+				endOperation(rule, build);
 			}
 		} catch (CoreException e) {
 			Policy.log(e.getStatus().getSeverity(), e.getMessage(), e);
@@ -1009,7 +1009,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				endOperation(getRoot(), true, Policy.subMonitorFor(monitor, totalWork - opWork));
+				endOperation(getRoot(), true);
 			}
 			if (status.matches(IStatus.ERROR))
 				throw new ResourceException(status);
@@ -1153,7 +1153,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		IPath srcValue = URIUtil.toPath(srcPathVariableManager.getURIValue(variable));
 		if (srcValue == null) // if the variable doesn't exist, return another
-								// variable that doesn't exist either
+									// variable that doesn't exist either
 			return PathVariableUtil.getUniqueVariableName(variable, dest);
 		IPath resolvedSrcValue = URIUtil.toPath(srcPathVariableManager.resolveURI(URIUtil.toURI(srcValue)));
 
@@ -1384,7 +1384,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				endOperation(getRoot(), true, Policy.subMonitorFor(monitor, totalWork - opWork));
+				endOperation(getRoot(), true);
 			}
 		} finally {
 			monitor.done();
@@ -1405,7 +1405,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (markers[i] != null && markers[i].getResource() != null)
 					markerManager.removeMarker(markers[i].getResource(), markers[i].getId());
 		} finally {
-			endOperation(null, false, null);
+			endOperation(null, false);
 		}
 	}
 
@@ -1432,7 +1432,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * registered resource change listeners are notified.  If autobuilding is
 	 * enabled, a build is run.
 	 */
-	public void endOperation(ISchedulingRule rule, boolean build, IProgressMonitor monitor) throws CoreException {
+	public void endOperation(ISchedulingRule rule, boolean build) throws CoreException {
 		WorkManager workManager = getWorkManager();
 		//don't do any end operation work if we failed to check in
 		if (workManager.checkInFailed(rule))
@@ -1999,7 +1999,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				endOperation(getRoot(), true, Policy.subMonitorFor(monitor, totalWork - opWork));
+				endOperation(getRoot(), true);
 			}
 			if (status.matches(IStatus.ERROR))
 				throw new ResourceException(status);
@@ -2250,7 +2250,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					notificationManager.endAvoidNotify();
 				if (depth >= 0)
 					getWorkManager().endUnprotected(depth);
-				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				endOperation(rule, false);
 			}
 		} finally {
 			monitor.done();
@@ -2291,7 +2291,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			message = Messages.resources_snapRequest;
 			return new ResourceStatus(IStatus.OK, message);
 		} finally {
-			endOperation(getRoot(), false, null);
+			endOperation(getRoot(), false);
 		}
 	}
 

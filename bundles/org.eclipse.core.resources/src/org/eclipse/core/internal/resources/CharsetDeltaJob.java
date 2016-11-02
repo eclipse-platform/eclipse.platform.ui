@@ -180,7 +180,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 				workspace.getWorkManager().operationCanceled();
 				return Status.CANCEL_STATUS;
 			} finally {
-				workspace.endOperation(null, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(null, true);
 			}
 			monitor.worked(Policy.opWork);
 		} catch (CoreException sig) {

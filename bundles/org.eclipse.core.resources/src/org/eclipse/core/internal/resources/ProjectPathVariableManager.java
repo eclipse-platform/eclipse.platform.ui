@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -368,7 +367,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 					}
 					project.writeDescription(IResource.NONE);
 				} finally {
-					project.workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+					project.workspace.endOperation(rule, true);
 				}
 			}
 		}

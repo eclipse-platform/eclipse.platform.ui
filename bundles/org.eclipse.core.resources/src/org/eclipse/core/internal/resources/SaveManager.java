@@ -155,7 +155,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					workspace.beginOperation(true);
 					state.newTree = workspace.getElementTree();
 				} finally {
-					workspace.endOperation(null, false, null);
+					workspace.endOperation(null, false);
 				}
 				return state;
 			}
@@ -1265,7 +1265,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, false, Policy.monitorFor(null));
+				workspace.endOperation(rule, false);
 			}
 		} finally {
 			isSaving = false;

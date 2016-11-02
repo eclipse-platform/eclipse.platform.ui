@@ -101,11 +101,10 @@ public class Policy {
 	public static boolean DEBUG_SAVE_SYNCINFO = false;
 	public static boolean DEBUG_SAVE_TREE = false;
 	public static boolean DEBUG_STRINGS = false;
-	public static int endOpWork = 1;
 	public static final long MAX_BUILD_DELAY = 1000;
 
 	public static final long MIN_BUILD_DELAY = 100;
-	public static int opWork = 99;
+	public static int opWork = 100;
 	public static final int totalWork = 100;
 
 	public static void checkCanceled(IProgressMonitor monitor) {

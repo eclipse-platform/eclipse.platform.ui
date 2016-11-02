@@ -81,7 +81,7 @@ public abstract class Container extends Resource implements IContainer {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -277,7 +277,7 @@ public abstract class Container extends Resource implements IContainer {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();
@@ -378,7 +378,7 @@ public abstract class Container extends Resource implements IContainer {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(rule, true);
 			}
 		} finally {
 			monitor.done();

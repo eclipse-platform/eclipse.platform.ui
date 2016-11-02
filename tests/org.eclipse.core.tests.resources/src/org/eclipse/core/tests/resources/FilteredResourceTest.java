@@ -715,7 +715,7 @@ public class FilteredResourceTest extends ResourceTest {
 				ResourceInfo ri = ((Resource) project).getResourceInfo(false, true);
 				ri.clear(ICoreConstants.M_USED);
 			} finally {
-				workspace.endOperation(project, true, getMonitor());
+				workspace.endOperation(project, true);
 			}
 		} catch (CoreException e) {
 			fail("2.90", e);
@@ -768,7 +768,7 @@ public class FilteredResourceTest extends ResourceTest {
 				ResourceInfo ri = ((Resource) project).getResourceInfo(false, true);
 				ri.clear(ICoreConstants.M_USED);
 			} finally {
-				workspace.endOperation(project, true, getMonitor());
+				workspace.endOperation(project, true);
 			}
 		} catch (CoreException e) {
 			fail("4.5", e);
@@ -860,7 +860,7 @@ public class FilteredResourceTest extends ResourceTest {
 				ResourceInfo ri = ((Resource) project).getResourceInfo(false, true);
 				ri.clear(ICoreConstants.M_USED);
 			} finally {
-				workspace.endOperation(project, true, getMonitor());
+				workspace.endOperation(project, true);
 			}
 		} catch (CoreException e) {
 			fail("2.90", e);

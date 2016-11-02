@@ -547,7 +547,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -594,7 +594,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(workspace.getRoot(), true, progress.split(1));
+			workspace.endOperation(workspace.getRoot(), true);
 		}
 	}
 
@@ -683,7 +683,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -701,7 +701,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getMarkerManager().add(this, info);
 			return new Marker(this, info.getId());
 		} finally {
-			workspace.endOperation(rule, false, null);
+			workspace.endOperation(rule, false);
 		}
 	}
 
@@ -785,7 +785,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -800,7 +800,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.beginOperation(true);
 			workspace.getMarkerManager().removeMarkers(this, type, includeSubtypes, depth);
 		} finally {
-			workspace.endOperation(rule, false, null);
+			workspace.endOperation(rule, false);
 		}
 	}
 
@@ -1519,7 +1519,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -1562,7 +1562,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, build, progress.split(1));
+			workspace.endOperation(rule, build);
 		}
 	}
 
@@ -1629,7 +1629,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -1659,7 +1659,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			internalSetLocal(flag, depth);
 			progress.step(98);
 		} finally {
-			workspace.endOperation(null, true, progress.split(1));
+			workspace.endOperation(null, true);
 		}
 	}
 
@@ -1760,7 +1760,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -2012,7 +2012,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				refreshLocal(DEPTH_INFINITE, progress.split(98));
 			}
 		} finally {
-			workspace.endOperation(rule, true, progress.split(1));
+			workspace.endOperation(rule, true);
 		}
 	}
 

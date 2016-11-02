@@ -43,7 +43,7 @@ public abstract class InternalWorkspaceJob extends Job {
 			} finally {
 				if (depth >= 0)
 					workspace.getWorkManager().endUnprotected(depth);
-				workspace.endOperation(null, false, monitor);
+				workspace.endOperation(null, false);
 			}
 		} catch (CoreException e) {
 			return e.getStatus();

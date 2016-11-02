@@ -70,7 +70,7 @@ public class Marker extends PlatformObject implements IMarker {
 			getWorkspace().beginOperation(true);
 			getWorkspace().getMarkerManager().removeMarker(getResource(), getId());
 		} finally {
-			getWorkspace().endOperation(rule, false, null);
+			getWorkspace().endOperation(rule, false);
 		}
 	}
 
@@ -266,7 +266,7 @@ public class Marker extends PlatformObject implements IMarker {
 				manager.changedMarkers(resource, new MarkerDelta[] {delta});
 			}
 		} finally {
-			workspace.endOperation(null, false, null);
+			workspace.endOperation(null, false);
 		}
 	}
 
@@ -305,7 +305,7 @@ public class Marker extends PlatformObject implements IMarker {
 				manager.changedMarkers(resource, new MarkerDelta[] {delta});
 			}
 		} finally {
-			workspace.endOperation(null, false, null);
+			workspace.endOperation(null, false);
 		}
 	}
 
@@ -334,7 +334,7 @@ public class Marker extends PlatformObject implements IMarker {
 				manager.changedMarkers(resource, new MarkerDelta[] {delta});
 			}
 		} finally {
-			workspace.endOperation(null, false, null);
+			workspace.endOperation(null, false);
 		}
 	}
 }
