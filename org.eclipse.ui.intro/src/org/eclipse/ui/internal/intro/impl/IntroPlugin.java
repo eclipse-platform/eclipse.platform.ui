@@ -91,6 +91,7 @@ public class IntroPlugin extends AbstractUIPlugin {
             launchBar.close();
             launchBar = null;
         }
+		IntroLaunchBar.destroyAll(getWorkbench());
     }
 
     public void setLaunchBar(IntroLaunchBar launchBar) {

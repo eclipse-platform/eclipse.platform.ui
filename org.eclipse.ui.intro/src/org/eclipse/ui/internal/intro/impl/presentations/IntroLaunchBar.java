@@ -9,6 +9,7 @@
  **************************************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -45,6 +47,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.AnimationEngine;
@@ -188,7 +191,7 @@ public class IntroLaunchBar {
 			IntroLaunchBarElement element) {
 		EModelService modelService = (EModelService) window.getService(EModelService.class);
 		MTrimmedWindow trimmedWindow = (MTrimmedWindow) window.getService(MTrimmedWindow.class);
-
+		
 		MToolControl trimControl = modelService.createModelElement(MToolControl.class);
 		trimControl.setElementId(LAUNCHBAR_ID);
 		trimControl.setContributionURI(BUNDLECLASS_URI);
@@ -203,6 +206,27 @@ public class IntroLaunchBar {
 
 		// should now be rendered
 		return (IntroLaunchBar) trimControl.getObject();
+	}
+
+	/**
+	 * Remove all traces of any launch bars found in the model. Required on startup as the
+	 * {@linkplain IntroLaunchBar} instances may not be have been rendered yet and so are
+	 * disconnected from the {@link IntroPlugin}'s state.
+	 * 
+	 * @param workbench
+	 *            the workbench to process
+	 */
+	public static void destroyAll(IWorkbench workbench) {
+		EModelService modelService = workbench.getService(EModelService.class);
+		MApplication application = workbench.getService(MApplication.class);
+		List<MToolControl> candidates = modelService.findElements(application, MToolControl.class,
+				EModelService.IN_TRIM, toolControl -> LAUNCHBAR_ID.equals(toolControl.getElementId())
+						&& BUNDLECLASS_URI.equals(((MToolControl) toolControl).getContributionURI()));
+		for (MToolControl trimControl : candidates) {
+			if (trimControl.getParent() != null) {
+				trimControl.getParent().getChildren().remove(trimControl);
+			}
+		}
 	}
 
 	private static SideValue determineLocation(IntroLaunchBarElement element) {
