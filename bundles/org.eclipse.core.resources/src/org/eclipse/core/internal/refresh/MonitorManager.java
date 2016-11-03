@@ -294,7 +294,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (refreshNeeded) {
 			new PollingMonitor(refreshManager).runOnce();
 		}
-		subMonitor.step(1);
+		subMonitor.split(1);
 	}
 
 	/**

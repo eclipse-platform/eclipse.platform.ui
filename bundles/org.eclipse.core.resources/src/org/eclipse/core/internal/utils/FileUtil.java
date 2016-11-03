@@ -419,7 +419,7 @@ public class FileUtil {
 					String msg = NLS.bind(Messages.localstore_couldNotWrite, path);
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), msg, e);
 				}
-				subMonitor.step(1);
+				subMonitor.split(1);
 			}
 		} finally {
 			safeClose(source);

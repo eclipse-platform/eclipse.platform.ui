@@ -589,7 +589,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 			// Copy over the properties.
 			getPropertyManager().copy(this, destProject, DEPTH_ZERO);
-			progress.step(18);
+			progress.split(18);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -652,7 +652,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			if (linkDescription.isGroup())
 				info.set(M_VIRTUAL);
 			getLocalManager().link(this, localLocation, fileInfo);
-			progress.step(5);
+			progress.split(5);
 			// Save the location in the project description.
 			Project project = (Project) getProject();
 			boolean changed = project.internalGetDescription().setLinkLocation(getProjectRelativePath(), linkDescription);
@@ -665,19 +665,19 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					throw e; // Rethrow.
 				}
 			}
-			progress.step(4);
+			progress.split(4);
 
 			// Refresh to discover any new resources below this linked location.
 			if (getType() != IResource.FILE) {
 				// Refresh either in background or foreground.
 				if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
 					workspace.refreshManager.refresh(this);
-					progress.step(90);
+					progress.split(90);
 				} else {
 					refreshLocal(DEPTH_INFINITE, progress.split(90));
 				}
 			} else {
-				progress.step(90);
+				progress.split(90);
 			}
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -1624,7 +1624,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			} else {
 				info.clear(ICoreConstants.M_DERIVED);
 			}
-			progress.step(98);
+			progress.split(98);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -1657,7 +1657,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.prepareOperation(null, progress.split(1));
 			workspace.beginOperation(true);
 			internalSetLocal(flag, depth);
-			progress.step(98);
+			progress.split(98);
 		} finally {
 			workspace.endOperation(null, true);
 		}
@@ -1755,7 +1755,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			// Forget content-related caching flags.
 			info.clear(M_CONTENT_CACHE);
 			workspace.updateModificationStamp(info);
-			progress.step(98);
+			progress.split(98);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -2007,7 +2007,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			// Refresh either in background or foreground.
 			if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
 				workspace.refreshManager.refresh(this);
-				progress.step(99);
+				progress.split(99);
 			} else {
 				refreshLocal(DEPTH_INFINITE, progress.split(98));
 			}

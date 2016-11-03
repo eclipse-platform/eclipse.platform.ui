@@ -1146,7 +1146,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, subMonitor.split(1));
 				restoreHiddenAttribute = true;
 			} else {
-				subMonitor.step(1);
+				subMonitor.split(1);
 			}
 			int options = append ? EFS.APPEND : EFS.NONE;
 			OutputStream out = store.openOutputStream(options, subMonitor.split(1));
@@ -1154,7 +1154,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, true);
 				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, subMonitor.split(1));
 			} else {
-				subMonitor.step(1);
+				subMonitor.split(1);
 			}
 			FileUtil.transferStreams(content, out, store.toString(), subMonitor.split(1));
 			// get the new last modified time and stash in the info
