@@ -18,6 +18,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="false"
             icon="icons/full/obj16/geneditor.png"
             id="org.eclipse.ui.genericeditor.GenericEditor"
