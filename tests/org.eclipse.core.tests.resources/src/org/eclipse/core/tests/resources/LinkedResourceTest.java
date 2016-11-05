@@ -845,7 +845,6 @@ public class LinkedResourceTest extends ResourceTest {
 			childStore = EFS.getStore(linkChild.getLocationURI());
 		} catch (CoreException e) {
 			fail("0.99", e);
-			return;
 		}
 
 		//everything should exist at this point
@@ -1930,7 +1929,7 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.1", linkChild.exists());
 	}
 
-	public void testBug293935_linkedFolderWithOverlappingLocation() {
+	public void testLinkedFolderWithOverlappingLocation_Bug293935_() {
 		IWorkspace workspace = getWorkspace();
 
 		IPath projectLocation = existingProject.getLocation();
@@ -1976,7 +1975,7 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 	}
 
-	public void testBug338010_linkedFolderWithSymlink() {
+	public void testLinkedFolderWithSymlink_Bug338010() {
 		// Only activate this test if testing of symbolic links is possible.
 		if (!canCreateSymLinks())
 			return;
@@ -2000,5 +1999,41 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 		// Check that the symlink is preserved.
 		assertEquals("1.2", resolvedLinkChildLocation, folder.getLocation());
+	}
+
+	/**
+	 * Tests deleting of the target of a linked folder that itself is a symbolic link.
+	 */
+	public void testDeleteLinkTarget_Bug507084() throws Exception {
+		// Only activate this test if testing of symbolic links is possible.
+		if (!canCreateSymLinks())
+			return;
+		IPath baseLocation = getRandomLocation();
+		IPath resolvedBaseLocation = resolve(baseLocation);
+		deleteOnTearDown(resolvedBaseLocation);
+		IPath symlinkTarget = resolvedBaseLocation.append("dir1/A");
+		symlinkTarget.append("B/C").toFile().mkdirs();
+		IPath linkParentDir = resolvedBaseLocation.append("dir2");
+		linkParentDir.toFile().mkdirs();
+		createSymLink(linkParentDir.toFile(), "symlink", symlinkTarget.toOSString(), true);
+
+		IFolder folder = nonExistingFolderInExistingProject;
+		IPath symLink = linkParentDir.append("symlink");
+		folder.createLink(symLink, IResource.NONE, getMonitor());
+		assertTrue("1.1", folder.exists());
+		assertTrue("1.2", folder.getFolder("B/C").exists());
+		assertEquals("1.3", symLink, folder.getLocation());
+		// Delete the symlink and the directory that contains it.
+		symLink.toFile().delete();
+		linkParentDir.toFile().delete();
+		// Check that the directory that contained the symlink has been deleted.
+		assertFalse("2.1", linkParentDir.toFile().exists());
+		// Refresh the project.
+		folder.getParent().refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		// Check that the linked folder still exists.
+		assertTrue("3.1", folder.exists());
+		// Check that the contents of the linked folder no longer exist.
+		assertFalse("3.2", folder.getFolder("B").exists());
+		assertFalse("3.3", folder.getFolder("B/C").exists());
 	}
 }

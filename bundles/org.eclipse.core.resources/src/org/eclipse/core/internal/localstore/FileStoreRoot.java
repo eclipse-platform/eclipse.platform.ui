@@ -111,14 +111,16 @@ public class FileStoreRoot {
 	 */
 	IFileStore createStore(IPath workspacePath, IResource resource) throws CoreException {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
-		IFileStore rootStore;
-		final URI uri = resource.getPathVariableManager().resolveURI(getCanonicalRoot());
+		// For a linked resource itself we have to use its root, but for its children we prefer
+		// to use the canonical root since it provides for faster file system access.
+		// See http://bugs.eclipse.org/507084
+		final URI uri = resource.getPathVariableManager().resolveURI(resource.isLinked() ? root : getCanonicalRoot());
 		if (!uri.isAbsolute()) {
-			//handles case where resource location cannot be resolved
-			//such as unresolved path variable or invalid file system scheme
+			// Handles case where resource location cannot be resolved such as
+			// unresolved path variable or invalid file system scheme.
 			return EFS.getNullFileSystem().getStore(workspacePath);
 		}
-		rootStore = EFS.getStore(uri);
+		IFileStore rootStore = EFS.getStore(uri);
 		if (childPath.segmentCount() == 0)
 			return rootStore;
 		return rootStore.getFileStore(childPath);
