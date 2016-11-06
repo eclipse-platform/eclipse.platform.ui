@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500661
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -76,6 +79,34 @@ public abstract class QuickAccessElement {
 		return provider;
 	}
 
+	private static final String WS_START = "^\\s+"; //$NON-NLS-1$
+	private static final String WS_END = "\\s+$"; //$NON-NLS-1$
+	private static final String ANY_WS = "\\s+"; //$NON-NLS-1$
+	private static final String EMPTY_STR = ""; //$NON-NLS-1$
+	private static final String PAR_START = "\\("; //$NON-NLS-1$
+	private static final String PAR_END = "\\)"; //$NON-NLS-1$
+	private static final String ONE_CHAR = ".?"; //$NON-NLS-1$
+
+	private String pFilter;
+	private Pattern pattern;
+
+	/**
+	 * Get the existing {@link Pattern} for the given filter, or create a new one
+	 *
+	 * @param filter
+	 * @return
+	 */
+	private Pattern getPattern(String filter) {
+		if (pattern == null || !filter.equals(pFilter)) {
+			pFilter = filter;
+			String sFilter = filter.replaceFirst(WS_START, EMPTY_STR).replaceFirst(WS_END, EMPTY_STR)
+					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
+			sFilter = String.format(".*(%s).*", sFilter.replaceAll(ANY_WS, ").*(")); //$NON-NLS-1$//$NON-NLS-2$
+			pattern = Pattern.compile(sFilter, Pattern.CASE_INSENSITIVE);
+		}
+		return pattern;
+	}
+
 	/**
 	 * If this element is a match (partial, complete, camel case, etc) to the
 	 * given filter, returns a {@link QuickAccessEntry}. Otherwise returns
@@ -98,6 +129,23 @@ public abstract class QuickAccessElement {
 			return new QuickAccessEntry(this, providerForMatching,
 					new int[][] { { index, index + filter.length() - 1 } },
  EMPTY_INDICES, quality);
+		}
+		//
+		Pattern p = getPattern(filter);
+		Matcher m = p.matcher(sortLabel);
+		if (m.matches()) {
+			int groupCount = m.groupCount();
+			int[][] indices = new int[groupCount][];
+			for (int i = 0; i < groupCount; i++) {
+				int nGrp = i + 1;
+				// capturing group
+				indices[i] = new int[] { m.start(nGrp), m.end(nGrp) - 1 };
+			}
+			// return match and list of indices
+			int quality = QuickAccessEntry.MATCH_EXCELLENT;
+			return new QuickAccessEntry(this, providerForMatching,
+					indices,
+					EMPTY_INDICES, quality );
 		}
 		String combinedLabel = (providerForMatching.getName() + " " + getLabel()); //$NON-NLS-1$
 		index = combinedLabel.toLowerCase().indexOf(filter);
