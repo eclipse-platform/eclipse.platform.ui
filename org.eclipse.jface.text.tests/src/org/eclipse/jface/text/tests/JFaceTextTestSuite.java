@@ -14,13 +14,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import org.eclipse.jface.text.source.LineNumberRulerColumnTest;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerZeroLengthTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
+import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
 
 
 /**

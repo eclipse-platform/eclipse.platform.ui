@@ -8,7 +8,7 @@
  * Contributors:
  *     Rüdiger Herrmann - Insufficient is-disposed check in LineNumberRulerColumn::redraw - https://bugs.eclipse.org/bugs/show_bug.cgi?id=506427
  *******************************************************************************/
-package org.eclipse.jface.text.source;
+package org.eclipse.jface.text.tests.source;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +16,10 @@ import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.LineNumberRulerColumn;
+import org.eclipse.jface.text.source.SourceViewer;
 
 public class LineNumberRulerColumnTest {
 
