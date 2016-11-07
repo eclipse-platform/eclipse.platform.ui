@@ -24,9 +24,16 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- copy necessary class files resources -->
-		<copy todir="${destdir}">
+		<!--copy todir="${destdir}">
 			<fileset dir="${basedir}/remote_bin"/>
-		</copy>
+		</copy-->
+		<javac target="1.6" source="1.6" destdir="${destdir}" failonerror="false" verbose="false" debug="on"  includeAntRuntime="yes" includejavaruntime="true"
+			 classpath="${basedir}/bin">
+			<src path="${basedir}/remote"/>
+			<compilerarg value="-Xlint"/>
+		</javac>
+		<copy file="${basedir}/remote_bin/META-INF/eclipse.inf" tofile="${destdir}/META-INF/eclipse.inf"/>
+		<copy file="${basedir}/remote_bin/org/eclipse/ant/internal/launching/remote/RemoteAntMessages.properties" tofile="${destdir}/org/eclipse/ant/internal/launching/remote/RemoteAntMessages.properties"/>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar destfile="${build.result.folder}/lib/remote.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>

@@ -24,9 +24,15 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- copy necessary class files resources -->
-		<copy todir="${destdir}">
+		<!--copy todir="${destdir}">
 			<fileset dir="${basedir}/common_bin"/>
-		</copy>
+		</copy -->
+		<javac target="1.6" source="1.6" destdir="${destdir}" failonerror="false" verbose="false" debug="on"  includeAntRuntime="yes"  classpath="${basedir}/bin">
+			<src path="${basedir}/common"/>
+			<compilerarg value="-Xlint"/>
+		</javac>
+		<copy file="${basedir}/common_bin/META-INF/eclipse.inf" tofile="${destdir}/META-INF/eclipse.inf"/>
+		
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar destfile="${build.result.folder}/lib/antdebug.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
