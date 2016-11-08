@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 
 /**
@@ -21,17 +24,25 @@ import org.eclipse.ui.editors.text.TextEditor;
 public class ExtensionBasedTextEditor extends TextEditor {
 
 	private static final String CONTEXT_ID = "org.eclipse.ui.genericeditor.genericEditorContext"; //$NON-NLS-1$
+	private ExtensionBasedTextViewerConfiguration configuration;
 
 	/**
 	 * 
 	 */
 	public ExtensionBasedTextEditor() {
-		setSourceViewerConfiguration(new ExtensionBasedTextViewerConfiguration(this, getPreferenceStore()));
+		configuration = new ExtensionBasedTextViewerConfiguration(this, getPreferenceStore());
+		setSourceViewerConfiguration(configuration);
 	}
-
+	
 	@Override
 	protected void setKeyBindingScopes(String[] scopes) {
 		super.setKeyBindingScopes(new String[] { CONTEXT_ID });
+	}
+
+	@Override
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		super.doSetInput(input);
+		configuration.watchDocument(getDocumentProvider().getDocument(input));
 	}
 
 }

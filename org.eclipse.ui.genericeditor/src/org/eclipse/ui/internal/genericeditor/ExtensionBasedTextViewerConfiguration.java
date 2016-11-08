@@ -23,6 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -32,7 +33,9 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite
@@ -41,19 +44,30 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
  * 
  * @since 1.0
  */
-public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration {
+public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration implements IDocumentPartitioningListener {
 
-	private IEditorPart editor;
+	private ITextEditor editor;
 	private Set<IContentType> contentTypes;
+	private IDocument document;
+	private ContentAssistant contentAssistant;
+	private IContentAssistProcessor contentAssistProcessor;
 
 	/**
 	 * 
 	 * @param editor the editor we're creating.
 	 * @param preferenceStore the preference store.
 	 */
-	public ExtensionBasedTextViewerConfiguration(IEditorPart editor, IPreferenceStore preferenceStore) {
+	public ExtensionBasedTextViewerConfiguration(ITextEditor editor, IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		this.editor = editor;
+		this.editor.addPropertyListener(new IPropertyListener() {
+			@Override
+			public void propertyChanged(Object source, int propId) {
+				if (propId == IEditorPart.PROP_INPUT) {
+					watchDocument(editor.getDocumentProvider().getDocument(editor.getEditorInput()));
+				}
+			}
+		});
 	}
 
 	private Set<IContentType> getContentTypes() {
@@ -81,20 +95,23 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistProcessorRegistry registry= GenericEditorPlugin.getDefault().getContentAssistProcessorRegistry();
-		IContentAssistProcessor processor = new CompositeContentAssistProcessor(registry.getContentAssistProcessors(sourceViewer, getContentTypes()));
-		ContentAssistant res= new ContentAssistant();
-		res.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
-		res.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
-		res.enableColoredLabels(true);
-		res.enableAutoActivation(true);
-		res.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-		res.setInformationControlCreator(new AbstractReusableInformationControlCreator() {
+		contentAssistProcessor = new CompositeContentAssistProcessor(registry.getContentAssistProcessors(sourceViewer, getContentTypes()));
+		contentAssistant = new ContentAssistant();
+		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
+		contentAssistant.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
+		contentAssistant.enableColoredLabels(true);
+		contentAssistant.enableAutoActivation(true);
+		contentAssistant.setContentAssistProcessor(contentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+		if (this.document != null) {
+			associateTokenContentTypes(this.document);
+		}
+		contentAssistant.setInformationControlCreator(new AbstractReusableInformationControlCreator() {
 			@Override
 			protected IInformationControl doCreateInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent);
 			}
 		});
-		return res;
+		return contentAssistant;
 	}
 
 	@Override
@@ -105,6 +122,32 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 			return reconciliers.get(0);
 		}
 		return super.getPresentationReconciler(sourceViewer);
+	}
+
+	void watchDocument(IDocument document) {
+		if (this.document == document) {
+			return;
+		}
+		if (this.document != null) {
+			this.document.removeDocumentPartitioningListener(this);
+		}
+		this.document = document;
+		associateTokenContentTypes(document);
+		document.addDocumentPartitioningListener(this);
+	}
+
+	@Override
+	public void documentPartitioningChanged(IDocument document) {
+		associateTokenContentTypes(document);
+	}
+
+	private void associateTokenContentTypes(IDocument document) {
+		if (contentAssistant == null) {
+			return;
+		}
+		for (String legalTokenContentType : document.getLegalContentTypes()) {
+			contentAssistant.setContentAssistProcessor(this.contentAssistProcessor, legalTokenContentType);
+		}
 	}
 
 }
