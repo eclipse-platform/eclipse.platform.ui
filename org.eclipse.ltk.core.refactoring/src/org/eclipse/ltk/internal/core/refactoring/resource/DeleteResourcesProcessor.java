@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -122,7 +123,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 			for (int i= 0; i < fResources.length; i++) {
 				IResource resource= fResources[i];
-				if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
+				if (!isSynchronizedExcludingLinkedResources(resource)) {
 					String pathLabel= BasicElementLabels.getPathLabel(resource.getFullPath(), false);
 					
 					String locationLabel= null;
@@ -171,6 +172,33 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		} finally {
 			pm.done();
 		}
+	}
+
+	/**
+	 * Checks whether this resource and its descendents are considered to be in sync with the local
+	 * file system. The linked resources and their descendents are excluded from the check.
+	 * 
+	 * @param resource the resource to check
+	 * @return <code>true</code> if this resource and its descendents except linked resources are
+	 *         synchronized, and <code>false</code> in all other cases
+	 * @throws CoreException if visiting the resource descendents fails for any reason
+	 * @see IResource#isSynchronized(int)
+	 */
+	public boolean isSynchronizedExcludingLinkedResources(IResource resource) throws CoreException {
+		boolean[] result= { true };
+		resource.accept(new IResourceVisitor() {
+			@Override
+			public boolean visit(IResource visitedResource) throws CoreException {
+				if (!result[0] || visitedResource.isLinked())
+					return false;
+				if (!visitedResource.isSynchronized(IResource.DEPTH_ZERO)) {
+					result[0]= false;
+					return false;
+				}
+				return true;
+			}
+		}, IResource.DEPTH_INFINITE, IContainer.DO_NOT_CHECK_EXISTENCE);
+		return result[0];
 	}
 
 	private void checkDirtyResources(final RefactoringStatus result) throws CoreException {
