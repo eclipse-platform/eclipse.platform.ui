@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -811,6 +811,7 @@ public class UIEvents {
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/advanced/Perspective/*"; //$NON-NLS-1$
 		public static final String TOPIC_WINDOWS = "org/eclipse/e4/ui/model/advanced/Perspective/windows/*"; //$NON-NLS-1$
+		public static final String TOPIC_TRIMBARS = "org/eclipse/e4/ui/model/advanced/Perspective/trimBars/*"; //$NON-NLS-1$
 
 		// Attributes that can be tested in event handlers
 		public static final String WINDOWS = "windows"; //$NON-NLS-1$
@@ -846,6 +847,7 @@ public class UIEvents {
 		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/basic/Part/description/*"; //$NON-NLS-1$
 		public static final String TOPIC_MENUS = "org/eclipse/e4/ui/model/basic/Part/menus/*"; //$NON-NLS-1$
 		public static final String TOPIC_TOOLBAR = "org/eclipse/e4/ui/model/basic/Part/toolbar/*"; //$NON-NLS-1$
+		public static final String TOPIC_TRIMBARS = "org/eclipse/e4/ui/model/basic/Part/trimBars/*"; //$NON-NLS-1$
 
 		/**
 		 * @since 1.1
