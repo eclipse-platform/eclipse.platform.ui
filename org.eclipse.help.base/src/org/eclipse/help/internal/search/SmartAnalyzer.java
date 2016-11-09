@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.*;
-
-import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.AnalyzerWrapper;
 
 /**
  * Smart Analyzer. Chooses underlying implementation based on the field which
  * text is analyzed.
  */
-public final class SmartAnalyzer extends Analyzer {
+public final class SmartAnalyzer extends AnalyzerWrapper {
 	Analyzer pluggedInAnalyzer;
 	Analyzer exactAnalyzer;
 
@@ -26,20 +26,16 @@ public final class SmartAnalyzer extends Analyzer {
 	 * Constructor for SmartAnalyzer.
 	 */
 	public SmartAnalyzer(String locale, Analyzer pluggedInAnalyzer) {
-		super();
+		super(PER_FIELD_REUSE_STRATEGY);
 		this.pluggedInAnalyzer = pluggedInAnalyzer;
 		this.exactAnalyzer = new DefaultAnalyzer(locale);
 	}
-	/**
-	 * Creates a TokenStream which tokenizes all the text in the provided
-	 * Reader. Delegates to DefaultAnalyzer when field used to search for exact
-	 * match, and to plugged-in analyzer for other fields.
-	 */
+
 	@Override
-	public final TokenStream tokenStream(String fieldName, Reader reader) {
+	public final Analyzer getWrappedAnalyzer(String fieldName) {
 		if (fieldName != null && fieldName.startsWith("exact_")) { //$NON-NLS-1$
-			return exactAnalyzer.tokenStream(fieldName, reader);
+			return exactAnalyzer;
 		}
-		return pluggedInAnalyzer.tokenStream(fieldName, reader);
+		return pluggedInAnalyzer;
 	}
 }

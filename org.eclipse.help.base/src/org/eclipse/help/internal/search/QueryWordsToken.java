@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import org.apache.lucene.index.*;
@@ -41,16 +42,16 @@ public class QueryWordsToken {
 			if (questionPos == -1 && starPos == value.length() - 1) {
 				Term t = new Term("exact_" + field, value.substring(0, starPos)); //$NON-NLS-1$
 				q = new PrefixQuery(t);
-				((PrefixQuery) q).setBoost(boost);
+				q = new BoostQuery(q, boost);
 			} else {
 				Term t = new Term("exact_" + field, value); //$NON-NLS-1$
 				q = new WildcardQuery(t);
-				((WildcardQuery) q).setBoost(boost);
+				q = new BoostQuery(q, boost);
 			}
 		} else {
 			Term t = new Term(field, value);
 			q = new TermQuery(t);
-			((TermQuery) q).setBoost(boost);
+			q = new BoostQuery(q, boost);
 		}
 		// after updating Lucene, set boost on a Query class
 		return q;

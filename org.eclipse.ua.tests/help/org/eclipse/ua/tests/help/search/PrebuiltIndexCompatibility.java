@@ -23,7 +23,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexFormatTooOldException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
@@ -58,17 +59,33 @@ public class PrebuiltIndexCompatibility {
 	/**
 	 * Test index built with Lucene 1.9.1
 	 */
-	@Test
-	public void test1_9_1_IndexReadable() throws Exception {
+	@Test(expected = IndexFormatTooOldException.class)
+	public void test1_9_1_IndexUnReadable() throws Exception {
 		checkReadable("data/help/searchindex/index191");
 	}
 
 	/**
 	 * Test index built with Lucene 2.9.1
 	 */
-	@Test
-	public void test2_9_1_IndexReadable() throws Exception {
+	@Test(expected = IndexFormatTooOldException.class)
+	public void test2_9_1_IndexUnReadable() throws Exception {
 		checkReadable("data/help/searchindex/index291");
+	}
+
+	/**
+	 * Test index built with Lucene 3.5.0
+	 */
+	@Test(expected = IndexFormatTooOldException.class)
+	public void test3_5_0_IndexUnReadable() throws Exception {
+		checkReadable("data/help/searchindex/index350");
+	}
+
+	/**
+	 * Test index built with Lucene 6.1.0
+	 */
+	@Test
+	public void test6_1_0_IndexReadable() throws Exception {
+		checkReadable("data/help/searchindex/index610");
 	}
 
 	/**
@@ -77,7 +94,7 @@ public class PrebuiltIndexCompatibility {
 	@Test
 	public void test1_9_1Compatible()
 	{
-		checkCompatible("data/help/searchindex/index191", true);
+		checkCompatible("data/help/searchindex/index191", false);
 	}
 
 	/**
@@ -86,13 +103,29 @@ public class PrebuiltIndexCompatibility {
 	@Test
 	public void test2_9_1Compatible()
 	{
-		checkCompatible("data/help/searchindex/index291", true);
+		checkCompatible("data/help/searchindex/index291", false);
+	}
+
+	/**
+	 ** Test compatibility of Lucene 3.5.0 index with current Lucene
+	 */
+	@Test
+	public void test3_5_0Compatible() {
+		checkCompatible("data/help/searchindex/index350", false);
+	}
+
+	/**
+	 ** Test compatibility of Lucene 6.1.0 index with current Lucene
+	 */
+	@Test
+	public void test6_1_0Compatible() {
+		checkCompatible("data/help/searchindex/index610", true);
 	}
 
 	@Test
 	public void test1_9_1LuceneCompatible()
 	{
-		checkLuceneCompatible("1.9.1", true);
+		checkLuceneCompatible("1.9.1", false);
 	}
 
 	@Test
@@ -104,12 +137,22 @@ public class PrebuiltIndexCompatibility {
 	@Test
 	public void test2_9_1LuceneCompatible()
 	{
-		checkLuceneCompatible("2.9.1", true);
+		checkLuceneCompatible("2.9.1", false);
+	}
+
+	@Test
+	public void test3_5_0LuceneCompatible() {
+		checkLuceneCompatible("3.5.0", false);
+	}
+
+	@Test
+	public void test6_1_0LuceneCompatible() {
+		checkLuceneCompatible("6.1.0", true);
 	}
 
 	@Test
 	public void testPluginIndexEqualToItself() {
-		PluginIndex index = createPluginIndex("data/help/searchindex/index191");
+		PluginIndex index = createPluginIndex("data/help/searchindex/index610");
 		assertTrue(index.equals(index));
 	}
 
@@ -118,8 +161,8 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void testPluginIndexEquality() {
-		PluginIndex index1a = createPluginIndex("data/help/searchindex/index191");
-		PluginIndex index1b = createPluginIndex("data/help/searchindex/index191");
+		PluginIndex index1a = createPluginIndex("data/help/searchindex/index610");
+		PluginIndex index1b = createPluginIndex("data/help/searchindex/index610");
 		assertTrue(index1a.equals(index1b));
 	}
 
@@ -128,8 +171,8 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void testPluginIndexHash() {
-		PluginIndex index1a = createPluginIndex("data/help/searchindex/index191");
-		PluginIndex index1b = createPluginIndex("data/help/searchindex/index191");
+		PluginIndex index1a = createPluginIndex("data/help/searchindex/index610");
+		PluginIndex index1b = createPluginIndex("data/help/searchindex/index610");
 		assertEquals(index1a.hashCode(), index1b.hashCode());
 	}
 
@@ -138,8 +181,8 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void testPluginIndexInequality() {
-		PluginIndex index1 = createPluginIndex("data/help/searchindex/index191");
-		PluginIndex index2 = createPluginIndex("data/help/searchindex/index291");
+		PluginIndex index1 = createPluginIndex("data/help/searchindex/index610");
+		PluginIndex index2 = createPluginIndex("data/help/searchindex/index350");
 		assertFalse(index1.equals(index2));
 	}
 
@@ -156,10 +199,11 @@ public class PrebuiltIndexCompatibility {
 			String filePath = resolved.getFile();
 			QueryBuilder queryBuilder = new QueryBuilder("eclipse", new AnalyzerDescriptor("en-us"));
 			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList<String>() , false);
-			try (Directory luceneDirectory = new NIOFSDirectory(new File(filePath));
-					IndexSearcher searcher = new IndexSearcher(IndexReader.open(luceneDirectory, true))) {
+			IndexSearcher searcher;
+			try (Directory luceneDirectory = new NIOFSDirectory(new File(filePath).toPath())) {
+				searcher = new IndexSearcher(DirectoryReader.open(luceneDirectory));
 				TopDocs hits = searcher.search(luceneQuery, 500);
-				assertEquals(hits.totalHits, 1);
+				assertTrue(hits.totalHits >= 1);
 			}
 		} else {
 			fail("Cannot resolve to file protocol");

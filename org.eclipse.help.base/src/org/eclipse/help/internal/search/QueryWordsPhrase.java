@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.util.ArrayList;
@@ -40,13 +41,14 @@ public class QueryWordsPhrase extends QueryWordsToken {
 	 */
 	@Override
 	public Query createLuceneQuery(String field, float boost) {
-		PhraseQuery q = new PhraseQuery();
+		PhraseQuery.Builder qBuilder = new PhraseQuery.Builder();
+		BoostQuery boostQuery = null;
 		for (Iterator<String> it = getWords().iterator(); it.hasNext();) {
 			String word = it.next();
 			Term t = new Term(field, word);
-			q.add(t);
-			q.setBoost(boost);
+			qBuilder.add(t);
+			boostQuery = new BoostQuery(qBuilder.build(), boost);
 		}
-		return q;
+		return boostQuery;
 	}
 }

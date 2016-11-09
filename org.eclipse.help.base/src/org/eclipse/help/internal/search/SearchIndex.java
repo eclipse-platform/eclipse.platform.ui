@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Holger Voormann - fix for bug 426785 (http://eclip.se/426785)
  *     Alexander Kurtakov - Bug 460787
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -33,17 +34,24 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexFormatTooOldException;
+import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LogByteSizeMergePolicy;
 import org.apache.lucene.index.LogMergePolicy;
+import org.apache.lucene.index.PostingsEnum;
+import org.apache.lucene.index.SlowCompositeReaderWrapper;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -170,7 +178,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		inconsistencyFile = new File(indexDir.getParentFile(), locale + ".inconsistent"); //$NON-NLS-1$
 		htmlSearchParticipant = new HTMLSearchParticipant(indexDir.getAbsolutePath());
 		try {
-			luceneDirectory = new NIOFSDirectory(indexDir);
+			luceneDirectory = new NIOFSDirectory(indexDir.toPath());
 		} catch (IOException e) {
 		}
 		if (!exists()) {
@@ -189,6 +197,25 @@ public class SearchIndex implements IHelpSearchIndex {
 				// in vm
 			}
 		}
+
+		try {
+			DirectoryReader.open(luceneDirectory);
+		} catch (IndexFormatTooOldException | IndexNotFoundException e) {
+			deleteDir(indexDir);
+			indexDir.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void deleteDir(File indexDir) {
+		File[] files = indexDir.listFiles();
+		for (File file : files) {
+			if (file.isDirectory())
+				deleteDir(file);
+			file.delete();
+		}
 	}
 
 	/**
@@ -203,11 +230,11 @@ public class SearchIndex implements IHelpSearchIndex {
 	public IStatus addDocument(String name, URL url) {
 		try {
 			Document doc = new Document();
-			doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.add(new StringField(FIELD_NAME, name, Field.Store.YES));
 			addExtraFields(doc);
 			String pluginId = LocalSearchManager.getPluginId(name);
 			if (relativePath != null) {
-				doc.add(new Field(FIELD_INDEX_ID, relativePath, Field.Store.YES, Field.Index.NOT_ANALYZED));
+				doc.add(new StringField(FIELD_INDEX_ID, relativePath, Field.Store.YES));
 			}
 			// check for the explicit search participant.
 			SearchParticipant participant = null;
@@ -225,9 +252,9 @@ public class SearchIndex implements IHelpSearchIndex {
 					String filters = doc.get("filters"); //$NON-NLS-1$
 					indexedDocs.put(name, filters != null ? filters : "0"); //$NON-NLS-1$
 					if (id != null)
-						doc.add(new Field("id", id, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+						doc.add(new StoredField("id", id)); //$NON-NLS-1$
 					if (pid != null)
-						doc.add(new Field("participantId", pid, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+						doc.add(new StoredField("participantId", pid)); //$NON-NLS-1$
 					iw.addDocument(doc);
 				}
 				return status;
@@ -266,6 +293,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	/**
 	 * Starts additions. To be called before adding documents.
 	 */
+	@SuppressWarnings("resource")
 	public synchronized boolean beginAddBatch(boolean firstOperation) {
 		try {
 			if (iw != null) {
@@ -283,7 +311,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			indexedDocs.restore();
 			setInconsistent(true);
 			LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(analyzerDescriptor.getAnalyzer(), 1000000);
-			IndexWriterConfig writerConfig = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_31, analyzer);
+			IndexWriterConfig writerConfig = new IndexWriterConfig(analyzer);
 			writerConfig.setOpenMode(create ? OpenMode.CREATE : OpenMode.APPEND);
 			LogMergePolicy mergePolicy = new LogByteSizeMergePolicy();
 			mergePolicy.setMergeFactor(20);
@@ -307,7 +335,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			ir = IndexReader.open(luceneDirectory, false);
+			ir = DirectoryReader.open(luceneDirectory);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
@@ -323,7 +351,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			if (ir != null) {
 				ir.close();
 			}
-			ir = IndexReader.open(luceneDirectory, false);
+			ir = DirectoryReader.open(luceneDirectory);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
@@ -341,7 +369,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	public IStatus removeDocument(String name) {
 		Term term = new Term(FIELD_NAME, name);
 		try {
-			ir.deleteDocuments(term);
+			iw.deleteDocuments(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
@@ -379,7 +407,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			 * know about this change. Close it so that it gets reloaded next search.
 			 */
 			if (searcher != null) {
-				searcher.close();
+				searcher.getIndexReader().close();
 				searcher = null;
 			}
 			return true;
@@ -411,7 +439,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			 * know about this change. Close it so that it gets reloaded next search.
 			 */
 			if (searcher != null) {
-				searcher.close();
+				searcher.getIndexReader().close();
 				searcher = null;
 			}
 			return true;
@@ -468,8 +496,8 @@ public class SearchIndex implements IHelpSearchIndex {
 			for (int i = 0; i < indexPaths.size(); i++) {
 				String indexId = indexIds.get(i);
 				String indexPath = indexPaths.get(i);
-				try {
-					dirList.add(new NIOFSDirectory(new File(indexPath)));
+				try (NIOFSDirectory dir = new NIOFSDirectory(new File(indexPath).toPath())) {
+					dirList.add(dir);
 				} catch (IOException ioe) {
 					HelpBasePlugin
 							.logError(
@@ -525,19 +553,15 @@ public class SearchIndex implements IHelpSearchIndex {
 	}
 
 	public IStatus removeDuplicates(String name, String[] index_paths) {
-		TermDocs hrefDocs = null;
-		TermDocs indexDocs = null;
-		Term hrefTerm = new Term(FIELD_NAME, name);
-		try {
+
+		try (LeafReader ar = SlowCompositeReaderWrapper.wrap(ir)) {
+			PostingsEnum hrefDocs = null;
+			PostingsEnum indexDocs = null;
+			Term hrefTerm = new Term(FIELD_NAME, name);
 			for (int i = 0; i < index_paths.length; i++) {
 				Term indexTerm = new Term(FIELD_INDEX_ID, index_paths[i]);
-				if (i == 0) {
-					hrefDocs = ir.termDocs(hrefTerm);
-					indexDocs = ir.termDocs(indexTerm);
-				} else {
-					hrefDocs.seek(hrefTerm);
-					indexDocs.seek(indexTerm);
-				}
+				hrefDocs = ar.postings(hrefTerm);
+				indexDocs = ar.postings(indexTerm);
 				removeDocuments(hrefDocs, indexDocs);
 			}
 		} catch (IOException ioe) {
@@ -545,19 +569,6 @@ public class SearchIndex implements IHelpSearchIndex {
 					"IO exception occurred while removing duplicates of document " + name //$NON-NLS-1$
 							+ " from index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					ioe);
-		} finally {
-			if (hrefDocs != null) {
-				try {
-					hrefDocs.close();
-				} catch (IOException e) {
-				}
-			}
-			if (indexDocs != null) {
-				try {
-					indexDocs.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return Status.OK_STATUS;
 	}
@@ -569,33 +580,33 @@ public class SearchIndex implements IHelpSearchIndex {
 	 * @param docs2
 	 * @throws IOException
 	 */
-	private void removeDocuments(TermDocs doc1, TermDocs docs2) throws IOException {
-		if (!doc1.next()) {
+	private void removeDocuments(PostingsEnum doc1, PostingsEnum docs2) throws IOException {
+		if (doc1.nextDoc() == PostingsEnum.NO_MORE_DOCS) {
 			return;
 		}
-		if (!docs2.next()) {
+		if (docs2.nextDoc() == PostingsEnum.NO_MORE_DOCS) {
 			return;
 		}
 		while (true) {
-			if (doc1.doc() < docs2.doc()) {
-				if (!doc1.skipTo(docs2.doc())) {
-					if (!doc1.next()) {
+			if (doc1.docID() < docs2.docID()) {
+				if (doc1.advance(docs2.docID()) == PostingsEnum.NO_MORE_DOCS) {
+					if (doc1.nextDoc() == PostingsEnum.NO_MORE_DOCS) {
 						return;
 					}
 				}
-			} else if (doc1.doc() > docs2.doc()) {
-				if (!docs2.skipTo(doc1.doc())) {
-					if (!doc1.next()) {
+			} else if (doc1.docID() > docs2.docID()) {
+				if (docs2.advance(doc1.docID()) == PostingsEnum.NO_MORE_DOCS) {
+					if (doc1.nextDoc() == PostingsEnum.NO_MORE_DOCS) {
 						return;
 					}
 				}
 			}
-			if (doc1.doc() == docs2.doc()) {
-				ir.deleteDocument(doc1.doc());
-				if (!doc1.next()) {
+			if (doc1.docID() == docs2.docID()) {
+				iw.tryDeleteDocument(ir, doc1.docID());
+				if (doc1.nextDoc() == PostingsEnum.NO_MORE_DOCS) {
 					return;
 				}
-				if (!docs2.next()) {
+				if (docs2.nextDoc() == PostingsEnum.NO_MORE_DOCS) {
 					return;
 				}
 			}
@@ -634,7 +645,7 @@ public class SearchIndex implements IHelpSearchIndex {
 				if (searcher == null) {
 					openSearcher();
 				}
-				TopDocs topDocs = searcher.search(luceneQuery, null, 1000);
+				TopDocs topDocs = searcher.search(luceneQuery, 1000);
 				collector.addHits(LocalSearchManager.asList(topDocs, searcher), highlightTerms);
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
@@ -731,9 +742,9 @@ public class SearchIndex implements IHelpSearchIndex {
 		}
 		Version luceneVersion = new Version(luceneVersionString);
 		Version indexVersion = new Version(indexVersionString);
-		Version v191 = new Version(1, 9, 1);
-		if (indexVersion.compareTo(v191) < 0) {
-			// index is older than Lucene 1.9.1
+		Version v610 = new Version(6, 1, 0);
+		if (indexVersion.compareTo(v610) < 0) {
+			// index is older than Lucene 6.1.0
 			return false;
 		}
 		if ( luceneVersion.compareTo(indexVersion) >= 0 ) {
@@ -801,7 +812,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	public void openSearcher() throws IOException {
 		synchronized (searcherCreateLock) {
 			if (searcher == null) {
-				searcher = new IndexSearcher(IndexReader.open(luceneDirectory, false));
+				searcher = new IndexSearcher(DirectoryReader.open(luceneDirectory));
 			}
 		}
 	}
@@ -819,7 +830,7 @@ public class SearchIndex implements IHelpSearchIndex {
 				if (searches.isEmpty()) {
 					if (searcher != null) {
 						try {
-							searcher.close();
+							searcher.getIndexReader().close();
 						} catch (IOException ioe) {
 						}
 					}
@@ -899,7 +910,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	private void cleanOldIndex() {
 		try (LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(analyzerDescriptor.getAnalyzer(), 10000);
 				IndexWriter cleaner = new IndexWriter(luceneDirectory,
-						new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_31, analyzer)
+						new IndexWriterConfig(analyzer)
 								.setOpenMode(OpenMode.CREATE))) {
 
 		} catch (IOException ioe) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov - Bug 460787
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
-import java.io.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.StopFilter;
+import org.apache.lucene.analysis.en.PorterStemFilter;
+import org.apache.lucene.analysis.util.CharArraySet;
+
 /**
- * Lucene Analyzer for English. LowerCaseTokenizer->StopFilter->PorterStemFilter
+ * Lucene Analyzer for English.
+ * LowerCaseAndDigitsTokenizer->StopFilter->PorterStemFilter
  */
 public final class Analyzer_en extends Analyzer {
 	/**
@@ -26,13 +33,19 @@ public final class Analyzer_en extends Analyzer {
 	public Analyzer_en() {
 		super();
 	}
-	/**
-	 * Creates a TokenStream which tokenizes all the text in the provided
-	 * Reader.
+
+	/*
+	 * Can't use try-with-resources because the Lucene internally reuses
+	 * components. See {@link org.apache.lucene.analysis.Analyzer.ReuseStrategy}
 	 */
+	@SuppressWarnings("resource")
 	@Override
-	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		return new PorterStemFilter(new StopFilter(Version.LUCENE_30, new LowerCaseAndDigitsTokenizer(reader), getStopWords(), false));
+	protected TokenStreamComponents createComponents(String fieldName) {
+		final Tokenizer source;
+		source = new LowerCaseAndDigitsTokenizer();
+		TokenStream result = new StopFilter(source, new CharArraySet(getStopWords(), false));
+		result = new PorterStemFilter(result);
+		return new TokenStreamComponents(source, result);
 	}
 
 	private Set<String> stopWords;

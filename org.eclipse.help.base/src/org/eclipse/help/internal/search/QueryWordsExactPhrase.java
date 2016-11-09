@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.lucene.index.*;
-import org.apache.lucene.search.*;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BoostQuery;
+import org.apache.lucene.search.PhraseQuery;
+import org.apache.lucene.search.Query;
 /**
  * Represents a quoted token in user search query words
  */
@@ -39,13 +42,14 @@ public class QueryWordsExactPhrase extends QueryWordsToken {
 	 */
 	@Override
 	public Query createLuceneQuery(String field, float boost) {
-		PhraseQuery q = new PhraseQuery();
+		PhraseQuery.Builder qBuilder = new PhraseQuery.Builder();
+		BoostQuery boostQuery = null;
 		for (Iterator<String> it = getWords().iterator(); it.hasNext();) {
 			String word = it.next();
 			Term t = new Term("exact_" + field, word); //$NON-NLS-1$
-			q.add(t);
-			q.setBoost(boost);
+			qBuilder.add(t);
+			boostQuery = new BoostQuery(qBuilder.build(), boost);
 		}
-		return q;
+		return boostQuery;
 	}
 }

@@ -19,14 +19,15 @@ Require-Bundle: org.junit,
  org.eclipse.ui.forms,
  org.eclipse.ui.browser;bundle-version="3.2.300",
  org.eclipse.equinox.jsp.jasper;bundle-version="1.0.200",
- org.eclipse.equinox.jsp.jasper.registry;bundle-version="1.0.100"
+ org.eclipse.equinox.jsp.jasper.registry;bundle-version="1.0.100",
+ org.apache.lucene.analyzers-common;bundle-version="6.1.0",
+ org.apache.lucene.analyzers-smartcn;bundle-version="6.1.0",
+ org.apache.lucene.core;bundle-version="6.1.0",
+ org.apache.lucene.misc;bundle-version="6.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
 Import-Package: javax.servlet;version="3.1.0",
- javax.servlet.http;version="3.1.0",
- org.apache.lucene.index;core=split;version="[3.5.0,4.0.0)",
- org.apache.lucene.search;core=split;version="[3.5.0,4.0.0)",
- org.apache.lucene.store;core=split;version="[3.5.0,4.0.0)"
+ javax.servlet.http;version="3.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.ua.tests,
  org.eclipse.ua.tests.browser,

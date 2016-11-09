@@ -82,10 +82,6 @@
             class="org.eclipse.help.internal.search.AnalyzerFactory:ko">
       </analyzer>
       <analyzer
-            locale="zh"
-            class="org.apache.lucene.analysis.cn.ChineseAnalyzer">
-      </analyzer>
-      <analyzer
             locale="cs"
             class="org.eclipse.help.internal.search.AnalyzerFactory:cs">
       </analyzer>
@@ -100,6 +96,10 @@
       <analyzer
             locale="fr"
             class="org.eclipse.help.internal.search.AnalyzerFactory:fr">
+      </analyzer>
+      <analyzer
+            class="org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer"
+            locale="zh">
       </analyzer>
       <analyzer
             locale="nl"

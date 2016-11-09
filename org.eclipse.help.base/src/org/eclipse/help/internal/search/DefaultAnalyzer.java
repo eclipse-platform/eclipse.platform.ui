@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2016 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -7,27 +7,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov - Bug 460787
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.Reader;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import com.ibm.icu.text.BreakIterator;
-
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
-import org.eclipse.core.runtime.Platform;
+import com.ibm.icu.text.BreakIterator;
 
 
 /**
- * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
- * java.text)
+ * Lucene Analyzer. LowerCaseFilter->StandardTokenizer
  */
 public final class DefaultAnalyzer extends Analyzer {
 
@@ -84,15 +82,6 @@ public final class DefaultAnalyzer extends Analyzer {
 	}
 
 	/**
-	 * Creates a TokenStream which tokenizes all the text in the provided
-	 * Reader.
-	 */
-	@Override
-	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		return new LowerCaseFilter(Version.LUCENE_30, new WordTokenStream(fieldName, reader, locale));
-	}
-
-	/**
 	 * Creates a Locale object out of a string representation
 	 */
 	private Locale getLocale(String clientLocale) {
@@ -111,5 +100,18 @@ public final class DefaultAnalyzer extends Analyzer {
 			return new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
 		else
 			return Locale.getDefault();
+	}
+
+	/*
+	 * Can't use try-with-resources because the Lucene internally reuses
+	 * components. See {@link org.apache.lucene.analysis.Analyzer.ReuseStrategy}
+	 */
+	@SuppressWarnings("resource")
+	@Override
+	protected TokenStreamComponents createComponents(String fieldName) {
+		Tokenizer source = new StandardTokenizer();
+		LowerCaseFilter filter = new LowerCaseFilter(source);
+		TokenStreamComponents components = new TokenStreamComponents(source, filter);
+		return components;
 	}
 }

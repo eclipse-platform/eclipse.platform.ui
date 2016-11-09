@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Torrence  - patch for bug Bug 107648
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.io.*;
@@ -22,6 +23,7 @@ import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.BooleanQuery.Builder;
 import org.eclipse.help.internal.base.*;
 /**
  * Build query acceptable by the search engine.
@@ -223,8 +225,8 @@ public class QueryBuilder {
 					String word = it.next();
 					phrase.addWord(word);
 					// add analyzed word to the list of words to highlight
-					// if (!highlightWords.contains(word))
-					//	highlightWords.add(word);
+					if (!highlightWords.contains(word))
+						highlightWords.add(word);
 				}
 				// add phrase only if not empty
 				if (phrase.getWords().size() > 0) {
@@ -243,6 +245,7 @@ public class QueryBuilder {
 	private List<String> analyzeText(Analyzer analyzer, String fieldName, String text) {
 		List<String> words = new ArrayList<>(1);
 		try (Reader reader = new StringReader(text); TokenStream tStream = analyzer.tokenStream(fieldName, reader)) {
+			tStream.reset();
 			CharTermAttribute termAttribute = tStream.getAttribute(CharTermAttribute.class);
 			while (tStream.incrementToken()) {
 				String term = termAttribute.toString();
@@ -300,12 +303,12 @@ public class QueryBuilder {
 		return oredQueries;
 	}
 	private Query orQueries(Collection<Query> queries) {
-		BooleanQuery bq = new BooleanQuery();
+		Builder builder = new BooleanQuery.Builder();
 		for (Iterator<Query> it = queries.iterator(); it.hasNext();) {
 			Query q = it.next();
-			bq.add(q, BooleanClause.Occur.SHOULD);
+			builder.add(q, BooleanClause.Occur.SHOULD);
 		}
-		return bq;
+		return builder.build();
 	}
 	/**
 	 * Obtains Lucene Query for tokens containing only AND and NOT operators.
@@ -314,7 +317,7 @@ public class QueryBuilder {
 	 */
 	private Query getRequiredQuery(List<QueryWordsToken> requiredTokens, String[] fieldNames,
 			float[] boosts) {
-		BooleanQuery retQuery = new BooleanQuery();
+		Builder retQueryBuilder = new BooleanQuery.Builder();
 		boolean requiredTermExist = false;
 		// Parse tokens left to right
 		QueryWordsToken operator = null;
@@ -333,22 +336,22 @@ public class QueryBuilder {
 			// creates the boolean query of all fields
 			Query q = qs[0];
 			if (fieldNames.length > 1) {
-				BooleanQuery allFieldsQuery = new BooleanQuery();
+				Builder allFieldsQueryBuilder = new BooleanQuery.Builder();
 				for (int f = 0; f < fieldNames.length; f++)
-					allFieldsQuery.add(qs[f], BooleanClause.Occur.SHOULD);
-				q = allFieldsQuery;
+					allFieldsQueryBuilder.add(qs[f], BooleanClause.Occur.SHOULD);
+				q = allFieldsQueryBuilder.build();
 			}
 			if (operator != null && operator.type == QueryWordsToken.NOT) {
-				retQuery.add(q, BooleanClause.Occur.MUST_NOT); // add as prohibited
+				retQueryBuilder.add(q, BooleanClause.Occur.MUST_NOT); // prohibited
 			} else {
-				retQuery.add(q, BooleanClause.Occur.MUST); // add as required
+				retQueryBuilder.add(q, BooleanClause.Occur.MUST); // required
 				requiredTermExist = true;
 			}
 		}
 		if (!requiredTermExist) {
 			return null; // cannot search for prohibited only
 		}
-		return retQuery;
+		return retQueryBuilder.build();
 	}
 	private Query getLuceneQuery(String[] fieldNames, float[] boosts) {
 		Query luceneQuery = createLuceneQuery(analyzedTokens, fieldNames,
@@ -423,20 +426,20 @@ public class QueryBuilder {
 			if (analyzedTokens.get(i).type != QueryWordsToken.WORD)
 				return query;
 		// Create phrase query for all tokens and OR with original query
-		BooleanQuery booleanQuery = new BooleanQuery();
-		booleanQuery.add(query, BooleanClause.Occur.SHOULD);
-		PhraseQuery[] phraseQueries = new PhraseQuery[fields.length];
+		Builder booleanQueryBuilder = new BooleanQuery.Builder();
+		booleanQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
+		PhraseQuery.Builder[] phraseQueriesBuilders = new PhraseQuery.Builder[fields.length];
 		for (int f = 0; f < fields.length; f++) {
-			phraseQueries[f] = new PhraseQuery();
+			phraseQueriesBuilders[f] = new PhraseQuery.Builder();
 			for (int i = 0; i < analyzedTokens.size(); i++) {
 				Term t = new Term(fields[f], analyzedTokens
 						.get(i).value);
-				phraseQueries[f].add(t);
+				phraseQueriesBuilders[f].add(t);
 			}
-			phraseQueries[f].setBoost(10 * boosts[f]);
-			booleanQuery.add(phraseQueries[f], BooleanClause.Occur.SHOULD);
+			Query boostQuery = new BoostQuery(phraseQueriesBuilders[f].build(), 10 * boosts[f]);
+			booleanQueryBuilder.add(boostQuery, BooleanClause.Occur.SHOULD);
 		}
-		return booleanQuery;
+		return booleanQueryBuilder.build();
 	}
 	/**
 	 * Obtains analyzed terms from query as one string. Words are double quoted,

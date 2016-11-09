@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 
 package org.eclipse.help.internal.search;
@@ -16,6 +17,8 @@ import java.io.StringReader;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 import org.eclipse.help.search.ISearchDocument;
 
 /**
@@ -32,25 +35,25 @@ public class LuceneSearchDocument implements ISearchDocument {
 
 	@Override
 	public void setTitle(String title) {
-		doc.add(new Field("title", title, Field.Store.NO, Field.Index.ANALYZED)); //$NON-NLS-1$
-		doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.ANALYZED)); //$NON-NLS-1$
-		doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+		doc.add(new TextField("title", title, Field.Store.NO)); //$NON-NLS-1$
+		doc.add(new TextField("exact_title", title, Field.Store.NO)); //$NON-NLS-1$
+		doc.add(new StoredField("raw_title", title)); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setSummary(String summary) {
-	  	doc.add(new Field("summary", summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+		doc.add(new StoredField("summary", summary)); //$NON-NLS-1$
 	}
 
 	@Override
 	public void addContents(String contents) {
-		doc.add(new Field("contents", new StringReader(contents))); //$NON-NLS-1$
-		doc.add(new Field("exact_contents", new StringReader(contents))); //$NON-NLS-1$
+		doc.add(new TextField("contents", new StringReader(contents))); //$NON-NLS-1$
+		doc.add(new TextField("exact_contents", new StringReader(contents))); //$NON-NLS-1$
 	}
 
 	@Override
 	public void setHasFilters(boolean hasFilters) {
-		doc.add(new Field("filters", Boolean.toString(hasFilters), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+		doc.add(new StoredField("filters", Boolean.toString(hasFilters))); //$NON-NLS-1$
 	}
 
 	public Document getDocument() {
@@ -59,8 +62,8 @@ public class LuceneSearchDocument implements ISearchDocument {
 
 	@Override
 	public void addContents(Reader contents, Reader exactContents) {
-		doc.add(new Field("contents", contents)); //$NON-NLS-1$
-		doc.add(new Field("exact_contents", exactContents)); //$NON-NLS-1$
+		doc.add(new TextField("contents", contents)); //$NON-NLS-1$
+		doc.add(new TextField("exact_contents", exactContents)); //$NON-NLS-1$
 	}
 
 }

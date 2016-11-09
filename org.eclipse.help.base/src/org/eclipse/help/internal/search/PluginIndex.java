@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -131,13 +132,12 @@ public class PluginIndex {
 	}
 
 	public boolean isCompatible(Bundle bundle, IPath prefixedPath) {
-		URL url = FileLocator.find(bundle, prefixedPath
-				.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME), null);
+		URL url = FileLocator.find(bundle, prefixedPath.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME), null);
 		if (url == null) {
-			HelpBasePlugin.logError(prefixedPath
-					.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME)
-					+ " file missing from help index \"" //$NON-NLS-1$
-					+ path + "\" of plugin " + getPluginId(), null); //$NON-NLS-1$
+			HelpBasePlugin.logError(
+					prefixedPath.append(SearchIndex.DEPENDENCIES_VERSION_FILENAME) + " file missing from help index \"" //$NON-NLS-1$
+							+ path + "\" of plugin " + getPluginId(), //$NON-NLS-1$
+					null);
 
 			return false;
 		}
@@ -150,6 +150,8 @@ public class PluginIndex {
 					.getProperty(SearchIndex.DEPENDENCIES_KEY_ANALYZER);
 			if (!targetIndex.isLuceneCompatible(lucene)
 					|| !targetIndex.isAnalyzerCompatible(analyzer)) {
+				HelpBasePlugin.logError("Error trying to consume Lucene index from bundle " + bundle.toString() //$NON-NLS-1$
+						+ ". Please use an index built with Lucene 6.1 or higher.", null); //$NON-NLS-1$
 				return false;
 			}
 		} catch (MalformedURLException mue) {

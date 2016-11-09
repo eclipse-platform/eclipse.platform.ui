@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2012, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -19,8 +20,9 @@ import org.apache.lucene.analysis.el.GreekAnalyzer;
 import org.apache.lucene.analysis.fr.FrenchAnalyzer;
 import org.apache.lucene.analysis.nl.DutchAnalyzer;
 import org.apache.lucene.analysis.ru.RussianAnalyzer;
-import org.apache.lucene.util.Version;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 
 /**
  * A factory responsible for instantiating a lucene {@link Analyzer}.
@@ -30,27 +32,26 @@ public class AnalyzerFactory implements IExecutableExtension{
 	public Analyzer create() {
 		if (locale == null)
 			return null;
-		Version version = Version.LUCENE_35;
 		if ("pt".equals(locale)) //$NON-NLS-1$
-			return new BrazilianAnalyzer(version);
+			return new BrazilianAnalyzer();
 		if ("ja".equals(locale)) //$NON-NLS-1$
-			return new CJKAnalyzer(version);
+			return new CJKAnalyzer();
 		if ("ko".equals(locale)) //$NON-NLS-1$
-			return new CJKAnalyzer(version);
+			return new CJKAnalyzer();
 		if ("pt".equals(locale)) //$NON-NLS-1$
-			return new BrazilianAnalyzer(version);
+			return new BrazilianAnalyzer();
 		if ("cs".equals(locale)) //$NON-NLS-1$
-			return new CzechAnalyzer(version);
+			return new CzechAnalyzer();
 		if ("de".equals(locale)) //$NON-NLS-1$
-			return new GermanAnalyzer(version);
+			return new GermanAnalyzer();
 		if ("el".equals(locale)) //$NON-NLS-1$
-			return new GreekAnalyzer(version);
+			return new GreekAnalyzer();
 		if ("fr".equals(locale)) //$NON-NLS-1$
-			return new FrenchAnalyzer(version);
+			return new FrenchAnalyzer();
 		if ("nl".equals(locale)) //$NON-NLS-1$
-			return new DutchAnalyzer(version);
+			return new DutchAnalyzer();
 		if ("ru".equals(locale)) //$NON-NLS-1$
-			return new RussianAnalyzer(version);
+			return new RussianAnalyzer();
 		//unknown language
 		return null;
 

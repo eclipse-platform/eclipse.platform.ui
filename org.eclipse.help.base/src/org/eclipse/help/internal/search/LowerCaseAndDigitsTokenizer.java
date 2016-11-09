@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,30 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov - Bug 460787
+ *     Sopot Cela - Bug 466829
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.*;
-
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.analysis.util.CharTokenizer;
 
 /**
- * Tokenizer breaking words around letters or digits.
+ * Tokenizer breaking words around letters or digits. Also normalizes to lower
+ * case.
  */
 public class LowerCaseAndDigitsTokenizer extends CharTokenizer {
 
-    public LowerCaseAndDigitsTokenizer(Reader input) {
-        super(Version.LUCENE_30, input);
-    }
-    @Override
-	protected char normalize(char c) {
-        return Character.toLowerCase(c);
-    }
+	@Override
+	protected boolean isTokenChar(int c) {
+		return Character.isLetterOrDigit(c);
+	}
 
-    @Override
-	protected boolean isTokenChar(char c) {
-        return Character.isLetterOrDigit(c);
-    }
+	@Override
+	protected int normalize(int c) {
+		return Character.toLowerCase(c);
+	}
 
 }
