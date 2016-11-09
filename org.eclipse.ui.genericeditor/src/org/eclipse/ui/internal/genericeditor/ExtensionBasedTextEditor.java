@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.genericeditor;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 

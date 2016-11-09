@@ -67,18 +67,18 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 			char[] chars = processor.getCompletionProposalAutoActivationCharacters();
 			if (chars != null) {
 				for (char c : chars) {
-					res.add(c);
+					res.add(Character.valueOf(c));
 				}
 			}
 		}
 		return toCharArray(res);
 	}
 
-	private char[] toCharArray(Set<Character> chars) {
+	private static char[] toCharArray(Set<Character> chars) {
 		char[] res = new char[chars.size()];
 		int i = 0;
 		for (Character c : chars) {
-			res[i] = c;
+			res[i] = c.charValue();
 			i++;
 		}
 		return res;
@@ -91,7 +91,7 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 			char[] chars = processor.getContextInformationAutoActivationCharacters();
 			if (chars != null) {
 				for (char c : chars) {
-					res.add(c);
+					res.add(Character.valueOf(c));
 				}
 			}
 		}
@@ -110,9 +110,8 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 		}
 		if (res.length() == 0) {
 			return null;
-		} else {
-			return res.toString();
 		}
+		return res.toString();
 	}
 
 	@Override

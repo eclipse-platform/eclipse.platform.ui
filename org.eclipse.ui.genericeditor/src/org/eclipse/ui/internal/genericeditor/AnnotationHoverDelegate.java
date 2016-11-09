@@ -53,6 +53,7 @@ public class AnnotationHoverDelegate implements ITextHover {
 		return this.delegate;
 	}
 
+	@Deprecated
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (textViewer instanceof ISourceViewer) {

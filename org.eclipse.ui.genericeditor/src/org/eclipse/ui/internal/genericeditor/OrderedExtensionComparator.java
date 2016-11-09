@@ -49,7 +49,7 @@ class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 		if (before0 == null) {
 			return false;
 		}
-		if ("*".equals(before0)) {
+		if ("*".equals(before0)) { //$NON-NLS-1$
 			return true;
 		}
 		String id1 = arg1.getId();
@@ -71,7 +71,7 @@ class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 		if (after0 == null) {
 			return false;
 		}
-		if ("*".equals(after0)) {
+		if ("*".equals(after0)) { //$NON-NLS-1$
 			return true;
 		}
 		String id1 = arg1.getId();
