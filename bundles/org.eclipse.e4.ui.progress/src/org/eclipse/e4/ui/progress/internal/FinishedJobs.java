@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,15 +20,12 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.progress.IDisposableAction;
 import org.eclipse.e4.ui.progress.IProgressConstants;
 
@@ -60,23 +57,13 @@ public class FinishedJobs extends EventManager {
 		void removed(JobTreeElement jte);
 	}
 
-	private IJobProgressManagerListener listener;
+	final IJobProgressManagerListener listener;
 
 	private final Set<JobTreeElement> keptjobinfos = new LinkedHashSet<>();
 
 	private HashMap<Object, Long> finishedTime = new HashMap<>();
 
 	private static final JobTreeElement[] EMPTY_INFOS = new JobTreeElement[0];
-
-	@Inject
-	ProgressManager progressManager;
-
-	@PostConstruct
-	void init(MApplication application) {
-		progressManager.addListener(listener);
-		// TODO E4 workaround for @creatable problem
-		application.getContext().set(FinishedJobs.class, this);
-	}
 
 	public FinishedJobs() {
 		listener = new IJobProgressManagerListener() {
@@ -97,10 +84,12 @@ public class FinishedJobs extends EventManager {
 
 			@Override
 			public void refreshGroup(GroupInfo info) {
+				// no action
 			}
 
 			@Override
 			public void refreshAll() {
+				// no action
 			}
 
 			@Override
@@ -115,6 +104,7 @@ public class FinishedJobs extends EventManager {
 
 			@Override
 			public void removeGroup(GroupInfo group) {
+				// no action
 			}
 
 			@Override

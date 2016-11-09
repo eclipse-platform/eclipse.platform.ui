@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -123,7 +123,6 @@ public class ProgressManager extends ProgressProvider {
 	@Inject
 	JobInfoFactory jobInfoFactory;
 
-	@Optional
 	@Inject
 	FinishedJobs finishedJobs;
 
@@ -137,12 +136,6 @@ public class ProgressManager extends ProgressProvider {
 		singleton.shutdown();
 	}
 
-//	/**
-//	 * Create a new instance of the receiver.
-//	 */
-//	protected ProgressManager() {
-//	}
-
 	@PostConstruct
 	protected void init(WorkbenchDialogBlockedHandler dialogBlockedHandler) {
 		Dialog.setBlockedHandler(dialogBlockedHandler);
@@ -153,6 +146,7 @@ public class ProgressManager extends ProgressProvider {
 
 		Job.getJobManager().setProgressProvider(this);
 		Job.getJobManager().addJobChangeListener(this.changeListener);
+		addListener(finishedJobs.listener);
 	}
 
 	private void setUpImages() {

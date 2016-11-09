@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,8 +27,9 @@ public class JobInfoFactory {
 	Services services;
 
 	public JobInfo getJobInfo(Job enclosingJob) {
-		return new JobInfo(enclosingJob,
-				services.getService(ProgressManager.class),
-				services.getService(FinishedJobs.class));
+		ProgressManager progressManager = services.getService(ProgressManager.class);
+		// ProgressManager might already been disposed on shutdown
+		return new JobInfo(enclosingJob, progressManager,
+				progressManager != null ? progressManager.finishedJobs : null);
 	}
 }

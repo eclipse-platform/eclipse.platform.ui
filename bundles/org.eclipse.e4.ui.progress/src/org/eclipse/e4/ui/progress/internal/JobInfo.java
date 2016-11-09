@@ -100,7 +100,9 @@ public class JobInfo extends JobTreeElement {
 		this.canceled = true;
 		this.job.cancel();
 		// Call the refresh so that this is updated immediately
-		progressManager.refreshJobInfo(this);
+		if (progressManager != null) {
+			progressManager.refreshJobInfo(this);
+		}
 	}
 
 	/**
@@ -111,7 +113,9 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	void clearTaskInfo() {
-		finishedJobs.remove(taskInfo);
+		if (finishedJobs != null) {
+			finishedJobs.remove(taskInfo);
+		}
 		taskInfo = null;
 	}
 
