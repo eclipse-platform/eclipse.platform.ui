@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc) - [507295] orderExtensions
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.ui.internal.workbench.ExtensionsSort;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -96,22 +95,7 @@ public abstract class RegistryReader {
      * @return ordered extensions
      */
     public static IExtension[] orderExtensions(IExtension[] extensions) {
-        // By default, the order is based on plugin id sorted
-        // in ascending order. The order for a plugin providing
-        // more than one extension for an extension point is
-        // dependent in the order listed in the XML file.
-        IExtension[] sortedExtension = new IExtension[extensions.length];
-        System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
-        Comparator comparer = new Comparator() {
-            @Override
-			public int compare(Object arg0, Object arg1) {
-				String s1 = ((IExtension) arg0).getNamespaceIdentifier();
-				String s2 = ((IExtension) arg1).getNamespaceIdentifier();
-                return s1.compareToIgnoreCase(s2);
-            }
-        };
-        Collections.sort(Arrays.asList(sortedExtension), comparer);
-        return sortedExtension;
+		return new ExtensionsSort().sort(extensions);
     }
 
     /**
