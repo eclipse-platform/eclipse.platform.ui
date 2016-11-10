@@ -1783,7 +1783,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				activeJobsCount = jobGroup.getActiveJobsCount();
 				failedJobsCount = jobGroup.getFailedJobsCount();
 				canceledJobsCount = jobGroup.getCanceledJobsCount();
-				seedJobsRemainingCount = jobGroup.getseedJobsRemainingCount();
+				seedJobsRemainingCount = jobGroup.getSeedJobsRemainingCount();
 				if (activeJobsCount == 0)
 					jobResults = jobGroup.getCompletedJobResults();
 			}

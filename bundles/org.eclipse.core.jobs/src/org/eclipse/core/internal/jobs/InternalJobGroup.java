@@ -255,7 +255,7 @@ public class InternalJobGroup {
 	 *
 	 * @return the count of initial jobs remaining to be scheduled
 	 */
-	final int getseedJobsRemainingCount() {
+	final int getSeedJobsRemainingCount() {
 		return seedJobsRemainingCount;
 	}
 
