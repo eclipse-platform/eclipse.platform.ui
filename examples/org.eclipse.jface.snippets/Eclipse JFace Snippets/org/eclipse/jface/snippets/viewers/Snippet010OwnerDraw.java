@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
-
 public class Snippet010OwnerDraw {
 
 	public static void main(String[] args) {
@@ -48,8 +47,9 @@ public class Snippet010OwnerDraw {
 
 		shell.open();
 
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) display.sleep ();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
 		display.dispose();
 	}
@@ -112,8 +112,7 @@ public class Snippet010OwnerDraw {
 		 * @param event
 		 */
 		protected void drawFlag(Event event) {
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_BLUE));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
 
 			Rectangle bounds = event.getBounds();
 			bounds.width += 100;
@@ -143,15 +142,12 @@ public class Snippet010OwnerDraw {
 			TextLayout layout = new TextLayout(display);
 			layout.setText(buffer.toString());
 
-			TextStyle plain = new TextStyle(JFaceResources
-					.getFont(JFaceResources.DEFAULT_FONT), display
-					.getSystemColor(SWT.COLOR_LIST_FOREGROUND), display
-					.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			TextStyle plain = new TextStyle(JFaceResources.getFont(JFaceResources.DEFAULT_FONT),
+					display.getSystemColor(SWT.COLOR_LIST_FOREGROUND),
+					display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-			TextStyle italic = new TextStyle(JFaceResources.getFontRegistry()
-					.getItalic(JFaceResources.DEFAULT_FONT), display
-					.getSystemColor(SWT.COLOR_BLUE), display
-					.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			TextStyle italic = new TextStyle(JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT),
+					display.getSystemColor(SWT.COLOR_BLUE), display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 			layout.setStyle(plain, 0, name.length() - 1);
 			layout.setStyle(italic, name.length(), buffer.length() - 1);
@@ -207,23 +203,19 @@ public class Snippet010OwnerDraw {
 			Rectangle bounds = event.getBounds();
 			bounds.width += 100;
 			int stripeHeight = bounds.height / 3;
-			Rectangle stripe = new Rectangle(bounds.x, bounds.y, bounds.width,
-					stripeHeight);
+			Rectangle stripe = new Rectangle(bounds.x, bounds.y, bounds.width, stripeHeight);
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_BLACK));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			event.gc.fillRectangle(stripe);
 
 			stripe.y += stripeHeight;
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_RED));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_RED));
 			event.gc.fillRectangle(stripe);
 
 			stripe.y += stripeHeight;
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_YELLOW));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 			event.gc.fillRectangle(stripe);
 
 		}
@@ -242,23 +234,19 @@ public class Snippet010OwnerDraw {
 			Rectangle bounds = event.getBounds();
 			bounds.width += 100;
 			int stripeHeight = bounds.height / 3;
-			Rectangle stripe = new Rectangle(bounds.x, bounds.y, bounds.width,
-					stripeHeight);
+			Rectangle stripe = new Rectangle(bounds.x, bounds.y, bounds.width, stripeHeight);
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_RED));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_RED));
 			event.gc.fillRectangle(stripe);
 
 			stripe.y += stripeHeight;
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_WHITE));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			event.gc.fillRectangle(stripe);
 
 			stripe.y += stripeHeight;
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_RED));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_RED));
 			event.gc.fillRectangle(stripe);
 
 		}
@@ -275,13 +263,30 @@ public class Snippet010OwnerDraw {
 			Rectangle bounds = event.getBounds();
 			bounds.width += 100;
 
-			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_RED));
-			event.gc.fillRectangle(new Rectangle(bounds.width / 2 + bounds.x
-					- 5, bounds.y, 10, bounds.height));
-			event.gc.fillRectangle(new Rectangle(bounds.x, bounds.height / 2
-					+ bounds.y - 5, bounds.width, 10));
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_RED));
+			event.gc.fillRectangle(new Rectangle(bounds.width / 2 + bounds.x - 5, bounds.y, 10, bounds.height));
+			event.gc.fillRectangle(new Rectangle(bounds.x, bounds.height / 2 + bounds.y - 5, bounds.width, 10));
 
+		}
+	}
+
+	private class DenmarkEntry extends CountryEntry {
+		DenmarkEntry() {
+			super("Danmark", "Denmark", "TBD");
+		}
+
+		@Override
+		protected void drawFlag(Event event) {
+
+			Rectangle bounds = event.getBounds();
+			bounds.width += 100;
+
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_RED));
+			event.gc.fillRectangle(bounds);
+
+			event.gc.setBackground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			event.gc.fillRectangle(new Rectangle(bounds.width / 2 + bounds.x - 5, bounds.y, 10, bounds.height));
+			event.gc.fillRectangle(new Rectangle(bounds.x, bounds.height / 2 + bounds.y - 5, bounds.width, 10));
 		}
 	}
 
@@ -290,12 +295,12 @@ public class Snippet010OwnerDraw {
 	private CountryEntry[] entries;
 
 	public Snippet010OwnerDraw() {
-		entries = new CountryEntry[3];
+		entries = new CountryEntry[4];
 		entries[0] = new AustriaEntry();
 		entries[1] = new GermanyEntry();
 		entries[2] = new EnglandEntry();
+		entries[3] = new DenmarkEntry();
 	}
-
 
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.FULL_SELECTION);
@@ -307,8 +312,7 @@ public class Snippet010OwnerDraw {
 			@Override
 			protected void measure(Event event, Object element) {
 				CountryEntry country = (CountryEntry) element;
-				event.setBounds(new Rectangle(event.x, event.y, country.getWidth(event),
-						country.getHeight(event)));
+				event.setBounds(new Rectangle(event.x, event.y, country.getWidth(event), country.getHeight(event)));
 			}
 
 			@Override
@@ -319,8 +323,7 @@ public class Snippet010OwnerDraw {
 			}
 		});
 
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
 
 		viewer.getControl().setLayoutData(data);
 		viewer.setInput(entries);
