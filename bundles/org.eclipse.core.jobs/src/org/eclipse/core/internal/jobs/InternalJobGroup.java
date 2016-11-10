@@ -58,7 +58,7 @@ public class InternalJobGroup {
 	protected InternalJobGroup(String name, int maxThreads, int seedJobsCount) {
 		Assert.isNotNull(name);
 		Assert.isLegal(maxThreads >= 0);
-		Assert.isLegal(seedJobsCount > 0);
+		Assert.isLegal(seedJobsCount >= 0);
 		this.name = name;
 		this.maxThreads = maxThreads;
 		this.seedJobsCount = seedJobsCount;
