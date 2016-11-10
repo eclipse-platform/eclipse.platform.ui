@@ -1037,7 +1037,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, JobMessages.jobs_blocked0, jobCount);
 		try {
-			int jobsLeft;
 			while (true) {
 				if (subMonitor.isCanceled())
 					throw new OperationCanceledException();
@@ -1054,16 +1053,16 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				}
 				if (jobGroup.doJoin(remainingTime))
 					break;
+				int jobsLeft;
 				synchronized (lock) {
 					jobsLeft = jobGroup.getActiveJobsCount();
 				}
-				if (jobsLeft < jobCount) {
+				if (jobsLeft < jobCount)
 					subMonitor.worked(jobCount - jobsLeft);
-				} else {
-					jobCount = jobsLeft;
-					subMonitor.setWorkRemaining(jobCount);
-				}
-				subMonitor.subTask(getWaitMessage(jobsLeft));
+
+				jobCount = jobsLeft;
+				subMonitor.setWorkRemaining(jobCount);
+				subMonitor.subTask(getWaitMessage(jobCount));
 			}
 		} finally {
 			if (monitor != null) {
