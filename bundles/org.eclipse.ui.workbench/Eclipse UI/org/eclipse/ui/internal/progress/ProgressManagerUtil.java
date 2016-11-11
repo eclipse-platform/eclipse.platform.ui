@@ -179,39 +179,160 @@ public class ProgressManagerUtil {
 	 * @param control
 	 * @return String
 	 */
-
 	static String shortenText(String textValue, Control control) {
 		if (textValue == null) {
 			return null;
 		}
-		GC gc = new GC(control);
 		int maxWidth = control.getBounds().width - 5;
-		int maxExtent = gc.textExtent(textValue).x;
-		if (maxExtent < maxWidth) {
+		String ellipsisString = ellipsis;
+		GC gc = new GC(control);
+		try {
+			return clipToSize(gc, textValue, ellipsisString, maxWidth);
+		} finally {
 			gc.dispose();
-			return textValue;
 		}
+	}
+
+	private static String clipToSize(GC gc, String textValue, String ellipsisString, int maxWidth) {
+		int averageCharWidth = gc.getFontMetrics().getAverageCharWidth();
 		int length = textValue.length();
-		int charsToClip = Math.round(0.95f * length
-				* (1 - ((float) maxWidth / maxExtent)));
+
 		int secondWord = findSecondWhitespace(textValue, gc, maxWidth);
 		int pivot = ((length - secondWord) / 2) + secondWord;
-		int start = pivot - (charsToClip / 2);
-		int end = pivot + (charsToClip / 2) + 1;
-		while (start >= 0 && end < length) {
-			String s1 = textValue.substring(0, start);
-			String s2 = textValue.substring(end, length);
-			String s = s1 + ellipsis + s2;
-			int l = gc.textExtent(s).x;
-			if (l < maxWidth) {
-				gc.dispose();
-				return s;
+
+		int currentLength;
+		int upperBoundWidth;
+		int upperBoundLength = 0;
+
+		// Now use newton's method to search for the correct string size
+		int lowerBoundLength = 0;
+		int lowerBoundWidth = 0;
+
+		// Try to guess the size of the string based on the font's average
+		// character width
+		int estimatedCharactersThatWillFit = maxWidth / averageCharWidth;
+
+		if (estimatedCharactersThatWillFit >= length) {
+			int maxExtent = gc.textExtent(textValue).x;
+			if (maxExtent <= maxWidth) {
+				return textValue;
 			}
-			start--;
-			end++;
+			currentLength = Math.max(0,
+					Math.round(length * ((float) maxWidth / maxExtent)) - ellipsisString.length());
+			upperBoundWidth = maxExtent;
+			upperBoundLength = length;
+		} else {
+			currentLength = Math.min(length, Math.max(0, estimatedCharactersThatWillFit - ellipsisString.length()));
+			for (;;) {
+				String s = clipToLength(textValue, ellipsisString, pivot, currentLength);
+				int currentExtent = gc.textExtent(s).x;
+				if (currentExtent > maxWidth) {
+					upperBoundWidth = currentExtent;
+					upperBoundLength = currentLength;
+					break;
+				}
+				if (currentLength == length) {
+					// No need to clip the string if the whole thing fits.
+					return textValue;
+				}
+				lowerBoundWidth = currentExtent;
+				lowerBoundLength = currentLength;
+				currentLength = Math.min(length, currentLength * 2 + 1);
+			}
 		}
-		gc.dispose();
-		return textValue;
+
+		String s;
+		for (;;) {
+			int oldLength = currentLength;
+			s = clipToLength(textValue, ellipsisString, pivot, currentLength);
+
+			int l = gc.textExtent(s).x;
+			int tooBigBy = l - maxWidth;
+			if (tooBigBy == 0) {
+				// If this was exactly the right size, stop the binary
+				// search
+				break;
+			} else if (tooBigBy > 0) {
+				// The string is too big. Need to clip more.
+				upperBoundLength = currentLength;
+				upperBoundWidth = l;
+				if (currentLength <= lowerBoundLength + 1) {
+					// We're one character away from a value that is known
+					// to clip too much, so opt for clipping slightly too
+					// much
+					currentLength = lowerBoundLength;
+					break;
+				}
+				if (tooBigBy <= averageCharWidth * 2) {
+					currentLength--;
+				} else {
+					int spaceToRightOfLowerBound = maxWidth - lowerBoundWidth;
+					currentLength = lowerBoundLength
+							+ (currentLength - lowerBoundLength) * spaceToRightOfLowerBound / (l - lowerBoundWidth);
+					if (currentLength >= oldLength) {
+						currentLength = oldLength - 1;
+					} else if (currentLength <= lowerBoundLength) {
+						currentLength = lowerBoundLength + 1;
+					}
+				}
+			} else {
+				// The string is too small. Need to clip less.
+				lowerBoundLength = currentLength;
+				lowerBoundWidth = l;
+				if (currentLength >= upperBoundLength - 1) {
+					// We're one character away from a value that is known
+					// to clip too little, so opt for clipping slightly
+					// too much
+					currentLength = upperBoundLength - 1;
+					break;
+				}
+				if (-tooBigBy <= averageCharWidth * 2) {
+					currentLength++;
+				} else {
+					currentLength = currentLength
+							+ (upperBoundLength - currentLength) * (-tooBigBy) / (upperBoundWidth - l);
+					if (currentLength <= oldLength) {
+						currentLength = oldLength + 1;
+					} else if (currentLength >= upperBoundLength) {
+						currentLength = upperBoundLength - 1;
+					}
+				}
+			}
+		}
+
+		s = clipToLength(textValue, ellipsisString, pivot, currentLength);
+		return s;
+	}
+
+	private static String clipToLength(String textValue, String ellipsisString, int pivot, int newLength) {
+		return getClippedString(textValue, ellipsisString, pivot, textValue.length() - newLength);
+	}
+
+	private static String getClippedString(String textValue, String ellipsisString, int pivot, int charsToClip) {
+		int length = textValue.length();
+		if (charsToClip <= 0) {
+			return textValue;
+		}
+		if (charsToClip >= length) {
+			return ""; //$NON-NLS-1$
+		}
+		String s;
+		int start = pivot - charsToClip / 2;
+		int end = pivot + (charsToClip + 1) / 2;
+
+		if (start < 0) {
+			end -= start;
+			start = 0;
+		}
+		if (end < 0) {
+			start -= end;
+			end = 0;
+		}
+
+		String s1 = textValue.substring(0, start);
+		String s2 = textValue.substring(end, length);
+		s = s1 + ellipsisString + s2;
+		return s;
 	}
 
 	/**
