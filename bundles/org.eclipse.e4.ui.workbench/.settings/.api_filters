@@ -40,6 +40,22 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Part">
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Part"/>
+                <message_argument value="TOPIC_TRIMBARS"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents$Perspective">
+        <filter id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.UIEvents.Perspective"/>
+                <message_argument value="TOPIC_TRIMBARS"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/modeling/EModelService.java" type="org.eclipse.e4.ui.workbench.modeling.EModelService">
         <filter comment="Type parameter was missing; binary compatibilty is preserved due to type erasure" id="420679712">
             <message_arguments>
