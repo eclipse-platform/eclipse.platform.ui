@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Marc-Andre Laperle (Ericsson) - Bug 466233: Toolbar items are wrongly rendered into a "drop-down"
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 476386
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 507404
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -118,9 +119,9 @@ public class TrimBarLayout extends Layout {
 		}
 
 		// First, hide any empty toolbars
-		MTrimBar bar = (MTrimBar) composite.getData(AbstractPartRenderer.OWNING_ME);
-		for (MTrimElement te : bar.getChildren()) {
-			hideManagedTB(te);
+		Object bar = composite.getData(AbstractPartRenderer.OWNING_ME);
+		if (bar instanceof MTrimBar) {
+			((MTrimBar) bar).getChildren().forEach(this::hideManagedTB);
 		}
 
 		int totalMajor = horizontal ? wHint - (marginLeft + marginRight) : hHint - (marginTop + marginBottom);
