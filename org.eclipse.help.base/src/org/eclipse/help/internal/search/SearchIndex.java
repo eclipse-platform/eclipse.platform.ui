@@ -496,7 +496,10 @@ public class SearchIndex implements IHelpSearchIndex {
 			for (int i = 0; i < indexPaths.size(); i++) {
 				String indexId = indexIds.get(i);
 				String indexPath = indexPaths.get(i);
-				try (NIOFSDirectory dir = new NIOFSDirectory(new File(indexPath).toPath())) {
+				try {
+					// can't use try-with-resources as 'dir' needs to stay open
+					@SuppressWarnings("resource")
+					NIOFSDirectory dir = new NIOFSDirectory(new File(indexPath).toPath());
 					dirList.add(dir);
 				} catch (IOException ioe) {
 					HelpBasePlugin
