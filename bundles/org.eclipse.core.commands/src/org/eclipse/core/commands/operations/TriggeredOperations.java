@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,18 @@
 package org.eclipse.core.commands.operations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.commands.ExecutionException;
 
 /**
  * Triggered operations are a specialized implementation of a composite
@@ -80,6 +83,24 @@ public final class TriggeredOperations extends AbstractOperation implements
 			// the children to be disposed since they are to replace this
 			// operation.
 			List<IUndoableOperation> childrenToRestore = new ArrayList<>(children);
+			if (childrenToRestore.size() > 1) {
+				// the children are in the order they were executed in, so we
+				// need to reverse the order so they are put on the undo stack
+				// in the correct order. The first operation is the first one
+				// that is undone. We only need to reverse the order when the
+				// operation being replaced is on the undo stack. If it's on the
+				// redo stack, then the children are already in the correct
+				// order to be redone.
+				Set<IUndoableOperation> undoHistory = new HashSet<>();
+				for (IUndoContext context : this.getContexts()) {
+					if (context != null) {
+						undoHistory.addAll(Arrays.asList(history.getUndoHistory(context)));
+					}
+				}
+				if (undoHistory.contains(this)) {
+					Collections.reverse(childrenToRestore);
+				}
+			}
 			children = new ArrayList<>(0);
 			recomputeContexts();
 			operation.dispose();
