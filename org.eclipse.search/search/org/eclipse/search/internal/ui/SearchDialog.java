@@ -160,6 +160,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	public SearchDialog(IWorkbenchWindow window, String pageId) {
 		super(window.getShell());
+		setShellStyle(SWT.RESIZE | SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
+		setBlockOnOpen(false);
 		fWorkbenchWindow= window;
 		fCurrentSelection= window.getSelectionService().getSelection();
 		fCurrentEnclosingProject= evaluateEnclosingProject(fCurrentSelection, getActiveEditor());

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -53,6 +56,17 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 			SearchPlugin.beep();
 			return;
 		}
+		// search dialog already open?
+		Shell[] shells = Display.getCurrent().getShells();
+		for (Shell shell : shells) {
+			Object data = shell.getData();
+			if (data instanceof SearchDialog) {
+				shell.setActive();
+				shell.setFocus();
+				return;
+			}
+		}
+
 		SearchDialog dialog= new SearchDialog(getWorkbenchWindow(), fPageId);
 		dialog.open();
 	}
