@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import static org.eclipse.e4.ui.css.swt.dom.CTabFolderElement.setBackgroundOverriddenDuringRenderering;
-import static org.eclipse.e4.ui.css.swt.dom.CompositeElement.hasBackgroundOverriddenByCSS;
-
 import java.lang.reflect.Field;
 import javax.inject.Inject;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
@@ -31,14 +28,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
 
 @SuppressWarnings("restriction")
 public class CTabRendering extends CTabFolderRenderer implements ICTabRendering {
-	private static final String CONTAINS_TOOLBAR = "CTabRendering.containsToolbar"; //$NON-NLS-1$
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -974,7 +967,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 
 		drawUnselectedTabBackground(gc, partHeaderBounds, state, vertical, defaultBackground);
 		drawTabBackground(gc, partHeaderBounds, state, vertical, defaultBackground);
-		drawChildrenBackground(partHeaderBounds);
 	}
 
 	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds,
@@ -1014,43 +1006,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		}
 		drawBackground(gc, partHeaderBounds.x, partHeaderBounds.height - 1, partHeaderBounds.width,
 				parent.getBounds().height, defaultBackground, colors, percents, vertical);
-	}
-
-	// Workaround for the bug 433276. Remove it when the bug gets fixed
-	private void drawChildrenBackground(Rectangle partHeaderBounds) {
-		for (Control control : parent.getChildren()) {
-			if (!hasBackgroundOverriddenByCSS(control) && containsToolbar(control)) {
-				drawChildBackground((Composite) control, partHeaderBounds);
-			}
-		}
-	}
-
-	private boolean containsToolbar(Control control) {
-		if (control.getData(CONTAINS_TOOLBAR) != null) {
-			return true;
-		}
-
-		if (control instanceof Composite) {
-			for (Control child : ((Composite) control).getChildren()) {
-				if (child instanceof ToolBar) {
-					control.setData(CONTAINS_TOOLBAR, true);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private void drawChildBackground(Composite composite, Rectangle partHeaderBounds) {
-		Rectangle rec = composite.getBounds();
-		Color background = null;
-		boolean partOfHeader = rec.y >= partHeaderBounds.y && rec.y < partHeaderBounds.height;
-
-		if (!partOfHeader && selectedTabFillColors != null) {
-			background = selectedTabFillColors.length == 2 ? selectedTabFillColors[1] : selectedTabFillColors[0];
-		}
-
-		setBackgroundOverriddenDuringRenderering(composite, background);
 	}
 
 	/*
