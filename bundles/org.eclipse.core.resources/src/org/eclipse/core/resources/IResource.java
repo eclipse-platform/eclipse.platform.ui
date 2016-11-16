@@ -61,8 +61,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * </ul>
  * </p>
  * <p>
- * Resources implement the <code>IAdaptable</code> interface;
- * 	extensions are managed by the platform's adapter manager.
+ * Resources implement the {@link IAdaptable} interface;
+ * extensions are managed by the platform's adapter manager.
  * </p>
  *
  * @see IWorkspace
@@ -446,13 +446,13 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param visitor the visitor
 	 * @param depth the depth to which members of this resource should be
-	 *		visited.  One of {@link IResource#DEPTH_ZERO}, {@link IResource#DEPTH_ONE},
-	 *		or {@link IResource#DEPTH_INFINITE}.
+	 *	   visited.  One of {@link IResource#DEPTH_ZERO}, {@link IResource#DEPTH_ONE},
+	 *	   or {@link IResource#DEPTH_INFINITE}.
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
-	 *   and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
-	 *   and {@link IContainer#DO_NOT_CHECK_EXISTENCE} if the resource on which the method is
-	 *   called should not be checked for existence
+	 *     ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
+	 *     and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
+	 *     and {@link IContainer#DO_NOT_CHECK_EXISTENCE} if the resource on which the method is
+	 *     called should not be checked for existence
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
@@ -672,7 +672,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 */
 	public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -701,33 +701,33 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Session properties and markers are not copied.
 	 * </p>
 	 * <p>
-	 * The <code>FORCE</code> update flag controls how this method deals with cases
+	 * The {@link #FORCE} update flag controls how this method deals with cases
 	 * where the workspace is not completely in sync with the local file system. If
-	 * <code>FORCE</code> is not specified, the method will only attempt to copy
+	 * {@link #FORCE} is not specified, the method will only attempt to copy
 	 * resources that are in sync with the corresponding files and directories in
 	 * the local file system; it will fail if it encounters a resource that is out
-	 * of sync with the file system. However, if <code>FORCE</code> is specified,
+	 * of sync with the file system. However, if {@link #FORCE} is specified,
 	 * the method copies all corresponding files and directories from the local file
 	 * system, including ones that have been recently updated or created. Note that
-	 * in both settings of the <code>FORCE</code> flag, the operation fails if the
+	 * in both settings of the {@link #FORCE} flag, the operation fails if the
 	 * newly created resources in the workspace would be out of sync with the local
 	 * file system; this ensures files in the file system cannot be accidentally
 	 * overwritten.
 	 * </p>
 	 * <p>
-	 * The <code>SHALLOW</code> update flag controls how this method deals with linked
-	 * resources.  If <code>SHALLOW</code> is not specified, then the underlying
+	 * The {@link #SHALLOW} update flag controls how this method deals with linked
+	 * resources.  If {@link #SHALLOW} is not specified, then the underlying
 	 * contents of the linked resource will always be copied in the file system.  In
 	 * this case, the destination of the copy will never be a linked resource or
-	 * contain any linked resources.  If <code>SHALLOW</code> is specified when a
+	 * contain any linked resources.  If {@link #SHALLOW} is specified when a
 	 * linked resource is copied into another project, a new linked resource is
 	 * created in the destination project that points to the same file system
 	 * location.  When a project containing linked resources is copied, the new
 	 * project will contain the same linked resources pointing to the same file
 	 * system locations.  For both of these shallow cases, no files on disk under
-	 * the linked resource are actually copied.  With the <code>SHALLOW</code> flag,
+	 * the linked resource are actually copied.  With the {@link #SHALLOW} flag,
 	 * copying of linked resources into anything other than a project is not
-	 * permitted.  The <code>SHALLOW</code> update flag is ignored when copying non-
+	 * permitted.  The {@link #SHALLOW} update flag is ignored when copying non-
 	 * linked resources.
 	 * </p>
 	 * <p>
@@ -781,10 +781,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The resource corresponding to the parent destination path does not exist.</li>
 	 * <li> The resource corresponding to the parent destination path is a closed project.</li>
 	 * <li> The source is a linked resource, but the destination is not a project,
-	 *      and <code>SHALLOW</code> is specified.</li>
+	 *      and {@link #SHALLOW} is specified.</li>
 	 * <li> A resource at destination path does exist.</li>
 	 * <li> This resource or one of its descendants is out of sync with the local file
-	 *      system and <code>FORCE</code> is not specified.</li>
+	 *      system and {@link #FORCE} is not specified.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendants.</li>
 	 * <li> The source resource is a file and the destination path specifies a project.</li>
@@ -843,7 +843,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 */
 	public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -858,33 +858,33 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * When a resource is copied, its persistent properties are copied with it.
 	 * Session properties and markers are not copied.
 	 * </p>
-	 * <p> The <code>FORCE</code> update flag controls how this method deals with
+	 * <p> The {@link #FORCE} update flag controls how this method deals with
 	 * cases where the workspace is not completely in sync with the local file
-	 * system. If <code>FORCE</code> is not specified, the method will only attempt
+	 * system. If {@link #FORCE} is not specified, the method will only attempt
 	 * to copy resources that are in sync with the corresponding files and
 	 * directories in the local file system; it will fail if it encounters a
 	 * resource that is out of sync with the file system. However, if
-	 * <code>FORCE</code> is specified, the method copies all corresponding files
+	 * {@link #FORCE} is specified, the method copies all corresponding files
 	 * and directories from the local file system, including ones that have been
 	 * recently updated or created. Note that in both settings of the
-	 * <code>FORCE</code> flag, the operation fails if the newly created resources
+	 * {@link #FORCE} flag, the operation fails if the newly created resources
 	 * in the workspace would be out of sync with the local file system; this
 	 * ensures files in the file system cannot be accidentally overwritten.
 	 * </p>
 	 * <p>
-	 * The <code>SHALLOW</code> update flag controls how this method deals with
-	 * linked resources.  If <code>SHALLOW</code> is not specified, then the
+	 * The {@link #SHALLOW} update flag controls how this method deals with
+	 * linked resources.  If {@link #SHALLOW} is not specified, then the
 	 * underlying contents of any linked resources in the project will always be
 	 * copied in the file system.  In this case, the destination of the copy will
-	 * never contain any linked resources.  If <code>SHALLOW</code> is specified
+	 * never contain any linked resources.  If {@link #SHALLOW} is specified
 	 * when a project containing linked resources is copied, new linked resources
 	 * are created in the destination project that point to the same file system
 	 * locations.  In this case, no files on disk under linked resources are
-	 * actually copied. The <code>SHALLOW</code> update flag is ignored when copying
+	 * actually copied. The {@link #SHALLOW} update flag is ignored when copying
 	 * non- linked resources.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>FORCE</code> or <code>SHALLOW</code> are ignored.
+	 * Update flags other than {@link #FORCE} or {@link #SHALLOW} are ignored.
 	 * </p>
 	 * <p>
 	 * An attempt will be made to copy the local history for this resource and its children,
@@ -902,7 +902,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param description the destination project description
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (<code>FORCE</code> and <code>SHALLOW</code>)
+	 *   ({@link #FORCE} and {@link #SHALLOW})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be copied. Reasons include:
@@ -912,14 +912,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource is not a project.</li>
 	 * <li> The project described by the given description already exists.</li>
 	 * <li> This resource or one of its descendents is out of sync with the local file
-	 *      system and <code>FORCE</code> is not specified.</li>
+	 *      system and {@link #FORCE} is not specified.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
 	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see #FORCE
 	 * @see #SHALLOW
 	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
@@ -987,7 +987,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 *
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
@@ -1088,7 +1088,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IFile#delete(boolean, boolean, IProgressMonitor)
 	 * @see IFolder#delete(boolean, boolean, IProgressMonitor)
 	 * @see #FORCE
@@ -1286,7 +1286,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Returns a cached value of the local time stamp on disk for this resource, or
-	 * <code>NULL_STAMP</code>  if the resource does not exist or is not local or is
+	 * {@link #NULL_STAMP}  if the resource does not exist or is not local or is
 	 * not accessible.  The return value is represented as the number of milliseconds
 	 * since the epoch (00:00:00 GMT, January 1, 1970).
 	 * The returned value may not be the same as the actual time stamp
@@ -1294,9 +1294,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * Note that due to varying file system timing granularities, this value is not guaranteed
 	 * to change every time the file is modified.  For a more reliable indication of whether
-	 * the file has changed, use <code>getModificationStamp</code>.
+	 * the file has changed, use {@link #getModificationStamp}.
 	 *
-	 * @return a local file system time stamp, or <code>NULL_STAMP</code>.
+	 * @return a local file system time stamp, or {@link #NULL_STAMP}.
 	 * @since 3.0
 	 */
 	public long getLocalTimeStamp();
@@ -1401,7 +1401,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IMarker getMarker(long id);
 
 	/**
-	 * Returns a non-negative modification stamp, or <code>NULL_STAMP</code> if
+	 * Returns a non-negative modification stamp, or {@link #NULL_STAMP} if
 	 * the resource does not exist or is not local or is not accessible.
 	 * <p>
 	 * A resource's modification stamp gets updated each time a resource is modified.
@@ -1416,18 +1416,18 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * The following things affect a resource's modification stamp:
 	 * <ul>
-	 * <li>creating a non-project resource (changes from <code>NULL_STAMP</code>)</li>
+	 * <li>creating a non-project resource (changes from {@link #NULL_STAMP})</li>
 	 * <li>changing the contents of a file</li>
 	 * <li><code>touch</code>ing a resource</li>
 	 * <li>setting the attributes of a project presented in a project description</li>
-	 * <li>deleting a resource (changes to <code>NULL_STAMP</code>)</li>
-	 * <li>moving a resource (source changes to <code>NULL_STAMP</code>,
-	 destination changes from <code>NULL_STAMP</code>)</li>
-	 * <li>copying a resource (destination changes from <code>NULL_STAMP</code>)</li>
+	 * <li>deleting a resource (changes to {@link #NULL_STAMP})</li>
+	 * <li>moving a resource (source changes to {@link #NULL_STAMP},
+	 destination changes from {@link #NULL_STAMP})</li>
+	 * <li>copying a resource (destination changes from {@link #NULL_STAMP})</li>
 	 * <li>making a resource local</li>
-	 * <li>closing a project (changes to <code>NULL_STAMP</code>)</li>
-	 * <li>opening a project (changes from <code>NULL_STAMP</code>)</li>
-	 * <li>adding or removing a project nature (changes from <code>NULL_STAMP</code>)</li>
+	 * <li>closing a project (changes to {@link #NULL_STAMP})</li>
+	 * <li>opening a project (changes from {@link #NULL_STAMP})</li>
+	 * <li>adding or removing a project nature (changes from {@link #NULL_STAMP})</li>
 	 * </ul>
 	 * The following things do not affect a resource's modification stamp:
 	 * <ul>
@@ -1440,7 +1440,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * </p>
 	 *
-	 * @return the modification stamp, or <code>NULL_STAMP</code> if this resource either does
+	 * @return the modification stamp, or {@link #NULL_STAMP} if this resource either does
 	 *    not exist or exists as a closed project
 	 * @see IResource#NULL_STAMP
 	 * @see #revertModificationStamp(long)
@@ -1691,19 +1691,17 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Returns the type of this resource.
-	 * The returned value will be one of <code>FILE</code>,
-	 * <code>FOLDER</code>, <code>PROJECT</code>, <code>ROOT</code>.
+	 * The returned value will be one of {@link #FILE}, {@link #FOLDER}, {@link #PROJECT}, {@link #ROOT}.
 	 * <p>
 	 * <ul>
-	 * <li> All resources of type <code>FILE</code> implement <code>IFile</code>.</li>
-	 * <li> All resources of type <code>FOLDER</code> implement <code>IFolder</code>.</li>
-	 * <li> All resources of type <code>PROJECT</code> implement <code>IProject</code>.</li>
-	 * <li> All resources of type <code>ROOT</code> implement <code>IWorkspaceRoot</code>.</li>
+	 * <li> All resources of type {@link #FILE} implement {@link IFile}.</li>
+	 * <li> All resources of type {@link #FOLDER} implement {@link IFolder}.</li>
+	 * <li> All resources of type {@link #PROJECT} implement {@link IProject}.</li>
+	 * <li> All resources of type {@link #ROOT} implement {@link IWorkspaceRoot}.</li>
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * This is a resource handle operation; the resource need
-	 * not exist in the workspace.
+	 * This is a resource handle operation; the resource need not exist in the workspace.
 	 * </p>
 	 *
 	 * @return the type of this resource
@@ -1717,8 +1715,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns the workspace which manages this resource.
 	 * <p>
-	 * This is a resource handle operation; the resource need
-	 * not exist in the workspace.
+	 * This is a resource handle operation; the resource need not exist in the workspace.
 	 * </p>
 	 *
 	 * @return the workspace
@@ -1731,8 +1728,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * this is equivalent to existing and being open.  The workspace root
 	 * is always accessible.
 	 *
-	 * @return <code>true</code> if this resource is accessible, and
-	 *   <code>false</code> otherwise
+	 * @return <code>true</code> if this resource is accessible, and <code>false</code> otherwise
 	 * @see #exists()
 	 * @see IProject#isOpen()
 	 */
@@ -1748,7 +1744,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 *
 	 * @return <code>true</code> if this resource is marked as derived, and
-	 *   <code>false</code> otherwise
+	 *     <code>false</code> otherwise
 	 * @see #setDerived(boolean)
 	 * @since 2.0
 	 */
@@ -1767,10 +1763,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * this method returns false for children of derived resources.
 	 * </p>
 	 *
-	 * @param options bit-wise or of option flag constants
-	 *  (only {@link #CHECK_ANCESTORS} is applicable)
-	 * @return <code>true</code> if this resource subtree is derived, and
-	 *   <code>false</code> otherwise
+	 * @param options bit-wise or of option flag constants (only {@link #CHECK_ANCESTORS} is applicable)
+	 * @return <code>true</code> if this resource subtree is derived, and <code>false</code> otherwise
 	 * @see IResource#setDerived(boolean)
 	 * @since 3.4
 	 */
@@ -1779,13 +1773,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns whether this resource is hidden in the resource tree. Returns
 	 * <code>false</code> if this resource does not exist.
-	 *	<p>
+	 * <p>
 	 * This operation is not related to the file system hidden attribute accessible using
 	 * {@link ResourceAttributes#isHidden()}.
 	 * </p>
 	 *
-	 * @return <code>true</code> if this resource is hidden , and
-	 *   <code>false</code> otherwise
+	 * @return <code>true</code> if this resource is hidden, and <code>false</code> otherwise
 	 * @see #setHidden(boolean)
 	 * @since 3.4
 	 */
@@ -1889,10 +1882,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * unavailable for both reading and writing.
 	 * </p>
 	 *
-	 * @param depth valid values are <code>DEPTH_ZERO</code>,
-	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
-	 * @return <code>true</code> if this resource is local, and
-	 *   <code>false</code> otherwise
+	 * @param depth valid values are {@link #DEPTH_ZERO}, {@link #DEPTH_ONE}, or {@link #DEPTH_INFINITE}
+	 * @return <code>true</code> if this resource is local, and <code>false</code> otherwise
 	 *
 	 * @see #setLocal(boolean, int, IProgressMonitor)
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated
@@ -1960,8 +1951,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * this operation may be time-consuming.
 	 * </p>
 	 *
-	 * @param depth the depth (one of <code>IResource.DEPTH_ZERO</code>,
-	 *   <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>)
+	 * @param depth the depth (one of {@link #DEPTH_ZERO}, {@link #DEPTH_ONE}, or {@link #DEPTH_INFINITE})
 	 * @return <code>true</code> if this resource and its descendents to the
 	 *    specified depth are synchronized, and <code>false</code> in all other
 	 *    cases
@@ -2054,7 +2044,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The source resource is a file and the destination path specifies a project.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 */
 	public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -2086,29 +2076,29 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * it. Likewise for all other attributes of the resource including markers.
 	 * </p>
 	 * <p>
-	 * The <code>FORCE</code> update flag controls how this method deals with cases
+	 * The {@link #FORCE} update flag controls how this method deals with cases
 	 * where the workspace is not completely in sync with the local file system. If
-	 * <code>FORCE</code> is not specified, the method will only attempt to move
+	 * {@link #FORCE} is not specified, the method will only attempt to move
 	 * resources that are in sync with the corresponding files and directories in
 	 * the local file system; it will fail if it encounters a resource that is out
-	 * of sync with the file system. However, if <code>FORCE</code> is specified,
+	 * of sync with the file system. However, if {@link #FORCE} is specified,
 	 * the method moves all corresponding files and directories from the local file
 	 * system, including ones that have been recently updated or created. Note that
-	 * in both settings of the <code>FORCE</code> flag, the operation fails if the
+	 * in both settings of the {@link #FORCE} flag, the operation fails if the
 	 * newly created resources in the workspace would be out of sync with the local
 	 * file system; this ensures files in the file system cannot be accidentally
 	 * overwritten.
 	 * </p>
 	 * <p>
-	 * The <code>KEEP_HISTORY</code> update flag controls whether or not
+	 * The {@link #KEEP_HISTORY} update flag controls whether or not
 	 * file that are about to be deleted from the local file system have their
 	 * current contents saved in the workspace's local history. The local history
 	 * mechanism serves as a safety net to help the user recover from mistakes that
-	 * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
+	 * might otherwise result in data loss. Specifying {@link #KEEP_HISTORY}
 	 * is recommended except in circumstances where past states of the files are of
 	 * no conceivable interest to the user. Note that local history is maintained
 	 * with each individual project, and gets discarded when a project is deleted
-	 * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
+	 * from the workspace. Hence {@link #KEEP_HISTORY} is only really applicable
 	 * when moving files and folders, but not whole projects.
 	 * </p>
 	 * <p>
@@ -2118,24 +2108,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * of the move operation.
 	 * </p>
 	 * <p>
-	 * The <code>SHALLOW</code> update flag controls how this method deals with linked
-	 * resources.  If <code>SHALLOW</code> is not specified, then the underlying
+	 * The {@link #SHALLOW} update flag controls how this method deals with linked
+	 * resources.  If {@link #SHALLOW} is not specified, then the underlying
 	 * contents of the linked resource will always be moved in the file system.  In
 	 * this case, the destination of the move will never be a linked resource or
-	 * contain any linked resources. If <code>SHALLOW</code> is specified when a
+	 * contain any linked resources. If {@link #SHALLOW} is specified when a
 	 * linked resource is moved into another project, a new linked resource is
 	 * created in the destination project that points to the same file system
 	 * location.  When a project containing linked resources is moved, the new
 	 * project will contain the same linked resources pointing to the same file
 	 * system locations.  For either of these cases, no files on disk under the
-	 * linked resource are actually moved. With the <code>SHALLOW</code> flag,
+	 * linked resource are actually moved. With the {@link #SHALLOW} flag,
 	 * moving of linked resources into anything other than a project is not
-	 * permitted.  The <code>SHALLOW</code> update flag is ignored when moving non-
+	 * permitted.  The {@link #SHALLOW} update flag is ignored when moving non-
 	 * linked resources.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>and
-	 * <code>SHALLOW</code> are ignored.
+	 * Update flags other than {@link #FORCE}, {@link #KEEP_HISTORY}and
+	 * {@link #SHALLOW} are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a subsequent
@@ -2151,7 +2141,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param destination the destination path
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and <code>SHALLOW</code>)
+	 *   ({@link #FORCE}, {@link #KEEP_HISTORY} and {@link #SHALLOW})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be moved. Reasons include:
@@ -2165,7 +2155,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The resource corresponding to the parent destination path is a closed
 	 *      project.</li>
 	 * <li> The source is a linked resource, but the destination is not a project
-	 *      and  <code>SHALLOW</code> is specified.</li>
+	 *      and  {@link #SHALLOW} is specified.</li>
 	 * <li> A resource at destination path does exist.</li>
 	 * <li> A resource of a different type exists at the destination path.</li>
 	 * <li> This resource or one of its descendents is out of sync with the local file system
@@ -2179,7 +2169,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 * @see #FORCE
 	 * @see #KEEP_HISTORY
@@ -2232,7 +2222,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 */
 	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -2258,29 +2248,29 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Parts of the supplied description other than the name and location are ignored.
 	 * </p>
 	 * <p>
-	 * The <code>FORCE</code> update flag controls how this method deals with cases
+	 * The {@link #FORCE} update flag controls how this method deals with cases
 	 * where the workspace is not completely in sync with the local file system. If
-	 * <code>FORCE</code> is not specified, the method will only attempt to move
+	 * {@link #FORCE} is not specified, the method will only attempt to move
 	 * resources that are in sync with the corresponding files and directories in
 	 * the local file system; it will fail if it encounters a resource that is out
-	 * of sync with the file system. However, if <code>FORCE</code> is specified,
+	 * of sync with the file system. However, if {@link #FORCE} is specified,
 	 * the method moves all corresponding files and directories from the local file
 	 * system, including ones that have been recently updated or created. Note that
-	 * in both settings of the <code>FORCE</code> flag, the operation fails if the
+	 * in both settings of the {@link #FORCE} flag, the operation fails if the
 	 * newly created resources in the workspace would be out of sync with the local
 	 * file system; this ensures files in the file system cannot be accidentally
 	 * overwritten.
 	 * </p>
 	 * <p>
-	 * The <code>KEEP_HISTORY</code> update flag controls whether or not file that
+	 * The {@link #KEEP_HISTORY} update flag controls whether or not file that
 	 * are about to be deleted from the local file system have their current
 	 * contents saved in the workspace's local history. The local history mechanism
 	 * serves as a safety net to help the user recover from mistakes that might
-	 * otherwise result in data loss. Specifying <code>KEEP_HISTORY</code> is
+	 * otherwise result in data loss. Specifying {@link #KEEP_HISTORY} is
 	 * recommended except in circumstances where past states of the files are of no
 	 * conceivable interest to the user. Note that local history is maintained
 	 * with each individual project, and gets discarded when a project is deleted
-	 * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
+	 * from the workspace. Hence {@link #KEEP_HISTORY} is only really applicable
 	 * when moving files and folders, but not whole projects.
 	 * </p>
 	 * <p>
@@ -2288,15 +2278,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * destination.
 	 * </p>
 	 * <p>
-	 * The <code>SHALLOW</code> update flag controls how this method deals with linked
-	 * resources.  If <code>SHALLOW</code> is not specified, then the underlying
+	 * The {@link #SHALLOW} update flag controls how this method deals with linked
+	 * resources.  If {@link #SHALLOW} is not specified, then the underlying
 	 * contents of any linked resource will always be moved in the file system.  In
 	 * this case, the destination of the move will not contain any linked resources.
-	 * If  <code>SHALLOW</code> is specified when a project containing linked
+	 * If  {@link #SHALLOW} is specified when a project containing linked
 	 * resources is moved, new linked resources are created in the destination
 	 * project pointing to the same file system locations.  In this case, no files
 	 * on disk under any linked resource are actually moved.  The
-	 * <code>SHALLOW</code> update flag is ignored when moving non- linked
+	 * {@link #SHALLOW} update flag is ignored when moving non- linked
 	 * resources.
 	 * </p>
 	 * <p>
@@ -2326,8 +2316,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param description the destination project description
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   ({@link #FORCE}, {@link #KEEP_HISTORY}, {@link #SHALLOW}
-	 *   and {@link #REPLACE}).
+	 *   ({@link #FORCE}, {@link #KEEP_HISTORY}, {@link #SHALLOW} and {@link #REPLACE}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be moved. Reasons include:
@@ -2337,7 +2326,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource is not a project.</li>
 	 * <li> The project at the destination already exists.</li>
 	 * <li> This resource or one of its descendents is out of sync with the
-	 *      local  file system and <code>FORCE</code> is not specified.</li>
+	 *      local  file system and {@link #FORCE} is not specified.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
 	 * <li> Resource changes are disallowed during certain types of resource change
@@ -2346,7 +2335,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *  in the file system, the destination directory must either not exist or be empty.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 * @see #FORCE
 	 * @see #KEEP_HISTORY
@@ -2378,17 +2367,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * by the given progress monitor.
 	 * </p>
 	 *
-	 * @param depth valid values are <code>DEPTH_ZERO</code>,
-	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
-	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 * @param depth valid values are {@link #DEPTH_ZERO}, {@link #DEPTH_ONE}, or {@link #DEPTH_INFINITE}
+	 * @param monitor a progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResource#DEPTH_ZERO
 	 * @see IResource#DEPTH_ONE
 	 * @see IResource#DEPTH_INFINITE
@@ -2585,8 +2572,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 *
 	 * @param flag whether this resource should be considered local
-	 * @param depth valid values are <code>DEPTH_ZERO</code>,
-	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
+	 * @param depth valid values are {@link #DEPTH_ZERO}, {@link #DEPTH_ONE}, or {@link #DEPTH_INFINITE}
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -2595,7 +2581,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See {@link IResourceChangeEvent} for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see #isLocal(int)
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
@@ -2786,8 +2772,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * by the given progress monitor.
 	 * </p>
 	 *
-	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 * @param monitor a progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
@@ -2796,7 +2781,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled.
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @see IResourceDelta#CONTENT
 	 * @see IResourceDelta#DESCRIPTION
