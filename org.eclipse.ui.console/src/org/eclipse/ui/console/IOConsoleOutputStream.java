@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 507661
  *******************************************************************************/
 package org.eclipse.ui.console;
 
@@ -165,7 +166,8 @@ public class IOConsoleOutputStream extends OutputStream {
 	@Override
 	public synchronized void close() throws IOException {
         if(closed) {
-            throw new IOException("Output Stream is closed"); //$NON-NLS-1$
+			// Closeable#close() has no effect if already closed
+			return;
         }
         if (prependCR) { // force writing of last /r
             prependCR = false;
