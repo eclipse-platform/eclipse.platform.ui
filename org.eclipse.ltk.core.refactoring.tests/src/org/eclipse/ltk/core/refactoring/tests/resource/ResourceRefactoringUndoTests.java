@@ -4,17 +4,19 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -63,7 +65,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class ResourceRefactoringUndoTests extends TestCase {
-
 	private static final String TEST_NEWPROJECT_NAME= "projectTestNew";
 	private static final String TEST_FOLDER_NAME= "test";
 	private static final String TEST_NEWFOLDER_NAME= "testNew";
@@ -73,6 +74,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	private static final String TEST_LINKEDFILE_NAME= "linkedFile.txt";
 	private static final String TEST_SUBFOLDER_NAME= "subFolder";
 	private static List<String> fileNameExcludes= new ArrayList<>();
+
 	static {
 		fileNameExcludes.add(".project");
 	}
@@ -190,7 +192,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 			desc.setResourcePath(fProject.getProject().getFullPath());
 			desc.setNewName(TEST_NEWPROJECT_NAME);
 			PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
-	
+
 			ProjectSnapshot snap= new ProjectSnapshot(fProject.getProject());
 			execute(op);
 			renamedProject= getWorkspaceRoot().getProject(TEST_NEWPROJECT_NAME);
@@ -274,6 +276,36 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FolderSnapshot snap= new FolderSnapshot(testLinkedFolder);
+		execute(op);
+		assertFalse("Folder delete failed", testLinkedFolder.exists());
+		undo();
+		assertTrue("Folder recreation failed", testLinkedFolder.exists());
+		assertTrue("Folder CONTENT was altered on undo", snap.isValid(testLinkedFolder.getParent()));
+		redo();
+		assertFalse("Redo delete failed", testLinkedFolder.exists());
+	}
+
+	public void testFolderDeleteLinkedDeletedOnFilesystemUndoRedoLTK() throws ExecutionException, CoreException {
+		RefactoringContribution deleteContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
+		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) deleteContribution.createDescriptor();
+		desc.setResourcePaths(new IPath[] { testLinkedFolder.getFullPath() });
+
+		PerformRefactoringOperation op= new PerformRefactoringOperation(
+				desc.createRefactoringContext(new RefactoringStatus()),
+				CheckConditionsOperation.ALL_CONDITIONS);
+
+		FolderSnapshot snap= new FolderSnapshot(testLinkedFolder);
+
+		// Create a subfolder containing a file under the linked folder.
+		IFolder subfolder= testLinkedFolder.getFolder("A");
+		subfolder.create(true, true, getMonitor());
+		IFile file= subfolder.getFile("test.txt");
+		file.create(new ByteArrayInputStream("test contents".getBytes(StandardCharsets.UTF_8)), true, getMonitor());
+		// Delete the target of the linked folder on the file system making the linked folder out of sync
+		// with the file system.
+		IFileStore folderStore= EFS.getStore(testLinkedFolder.getLocationURI());
+		folderStore.delete(EFS.NONE, getMonitor());  // Delete the target folder on the file system.
+
 		execute(op);
 		assertFalse("Folder delete failed", testLinkedFolder.exists());
 		undo();
@@ -430,10 +462,10 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	}
 
 	/**
-	 * Returns a FileStore instance backed by storage in a temporary location.
-	 * The returned store will not exist, but will belong to an existing parent.
-	 * The tearDown method in this class will ensure the location is deleted
-	 * after the test is completed.
+	 * Returns a FileStore instance backed by storage in a temporary location. The returned store
+	 * will not exist, but will belong to an existing parent. The tearDown method in this class will
+	 * ensure the location is deleted after the test is completed.
+	 *
 	 * @return The temp filestore to use
 	 */
 	private IFileStore getTempStore() {

@@ -57,9 +57,13 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 	protected AbstractResourceUndoState(IResource resource) {
 		parent= resource.getParent();
 		if (resource.isAccessible()) {
-			modificationStamp= resource.getModificationStamp();
-			localTimeStamp= resource.getLocalTimeStamp();
 			resourceAttributes= resource.getResourceAttributes();
+			// If resourceAttruibutes is null, the resource doesn't exist on disk, so leave
+			// modificationStamp and localTimeStamp set to IResource.NULL_STAMP.
+			if (resourceAttributes != null) {
+				modificationStamp= resource.getModificationStamp();
+				localTimeStamp= resource.getLocalTimeStamp();
+			}
 			try {
 				IMarker[] markers= resource.findMarkers(null, true, IResource.DEPTH_INFINITE);
 				markerDescriptions= new MarkerUndoState[markers.length];

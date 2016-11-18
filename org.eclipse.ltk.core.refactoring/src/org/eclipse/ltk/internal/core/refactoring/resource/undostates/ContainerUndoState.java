@@ -12,6 +12,8 @@
 package org.eclipse.ltk.internal.core.refactoring.resource.undostates;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +46,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	protected URI location;
 
 	private String defaultCharSet;
-	private AbstractResourceUndoState[] members;
+	private List<AbstractResourceUndoState> members;
 
 	/**
 	 * Create a container description from the specified container handle that
@@ -132,10 +134,13 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 			if (container.isAccessible()) {
 				defaultCharSet = container.getDefaultCharset(false);
 				IResource[] resourceMembers = container.members();
-				members = new AbstractResourceUndoState[resourceMembers.length];
-				for (int i = 0; i < resourceMembers.length; i++) {
-					members[i] = (AbstractResourceUndoState) ResourceUndoState
-							.fromResource(resourceMembers[i]);
+				members = new ArrayList<>(resourceMembers.length);
+				for (IResource resourceMember : resourceMembers) {
+					// Add a member only if its container exists on disk or if the member is a linked resource.
+					// Otherwise avoid wasting time. See http://bugs.eclipse.org/508260
+					if (localTimeStamp != IResource.NULL_STAMP || resourceMember.isLinked()) {
+						members.add((AbstractResourceUndoState) ResourceUndoState.fromResource(resourceMember));
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -161,11 +166,10 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 			IProgressMonitor monitor, int ticks) throws CoreException {
 
 		// restore any children
-		if (members != null && members.length > 0) {
-			for (int i = 0; i < members.length; i++) {
-				members[i].parent = parentHandle;
-				members[i].createResource(new SubProgressMonitor(monitor, ticks
-						/ members.length));
+		if (members != null) {
+			for (AbstractResourceUndoState member : members) {
+				member.parent = parentHandle;
+				member.createResource(new SubProgressMonitor(monitor, ticks / members.size()));
 			}
 		}
 	}
@@ -176,21 +180,17 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 		monitor.beginTask(
 				RefactoringCoreMessages.FolderDescription_SavingUndoInfoProgress, 100);
 		if (members != null) {
-			for (int i = 0; i < members.length; i++) {
-				if (members[i] instanceof FileUndoState) {
-					IPath path = resource.getFullPath().append(
-							((FileUndoState) members[i]).name);
-					IFile fileHandle = resource.getWorkspace().getRoot().getFile(
-							path);
-					members[i].recordStateFromHistory(fileHandle,
-							new SubProgressMonitor(monitor, 100 / members.length));
-				} else if (members[i] instanceof FolderUndoState) {
-					IPath path = resource.getFullPath().append(
-							((FolderUndoState) members[i]).name);
-					IFolder folderHandle = resource.getWorkspace().getRoot()
-							.getFolder(path);
-					members[i].recordStateFromHistory(folderHandle,
-							new SubProgressMonitor(monitor, 100 / members.length));
+			for (AbstractResourceUndoState member : members) {
+				if (member instanceof FileUndoState) {
+					IPath path = resource.getFullPath().append(((FileUndoState) member).name);
+					IFile fileHandle = resource.getWorkspace().getRoot().getFile(path);
+					member.recordStateFromHistory(fileHandle,
+							new SubProgressMonitor(monitor, 100 / members.size()));
+				} else if (member instanceof FolderUndoState) {
+					IPath path = resource.getFullPath().append(((FolderUndoState) member).name);
+					IFolder folderHandle = resource.getWorkspace().getRoot().getFolder(path);
+					member.recordStateFromHistory(folderHandle,
+							new SubProgressMonitor(monitor, 100 / members.size()));
 				}
 			}
 		}
@@ -215,13 +215,13 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 */
 	public ContainerUndoState getFirstLeafFolder() {
 		// If there are no members, this is a leaf
-		if (members == null || members.length == 0) {
+		if (members == null || members.isEmpty()) {
 			return this;
 		}
 		// Traverse the members and find the first potential leaf
-		for (int i = 0; i < members.length; i++) {
-			if (members[i] instanceof ContainerUndoState) {
-				return ((ContainerUndoState) members[i]).getFirstLeafFolder();
+		for (AbstractResourceUndoState member : members) {
+			if (member instanceof ContainerUndoState) {
+				return ((ContainerUndoState) member).getFirstLeafFolder();
 			}
 		}
 		// No child folders were found, this is a leaf
@@ -238,13 +238,9 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 */
 	public void addMember(AbstractResourceUndoState member) {
 		if (members == null) {
-			members = new AbstractResourceUndoState[] { member };
-		} else {
-			AbstractResourceUndoState[] expandedMembers = new AbstractResourceUndoState[members.length + 1];
-			System.arraycopy(members, 0, expandedMembers, 0, members.length);
-			expandedMembers[members.length] = member;
-			members = expandedMembers;
+			members = new ArrayList<>();
 		}
+		members.add(member);
 	}
 
 	@Override
@@ -274,9 +270,9 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 		if (existence) {
 			if (checkMembers) {
 				// restore any children
-				if (members != null && members.length > 0) {
-					for (int i = 0; i < members.length; i++) {
-						if (!members[i].verifyExistence(checkMembers)) {
+				if (members != null) {
+					for (AbstractResourceUndoState member : members) {
+						if (!member.verifyExistence(checkMembers)) {
 							return false;
 						}
 					}
