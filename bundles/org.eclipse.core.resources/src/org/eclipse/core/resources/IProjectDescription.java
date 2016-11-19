@@ -275,12 +275,14 @@ public interface IProjectDescription {
 	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
+	 * @deprecated please use {@link IDynamicReferenceProvider} with the builders extension point to supply dynamic references
 	 * @see #getDynamicReferences()
 	 * @see #setBuildConfigReferences(String, IBuildConfiguration[])
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @param projects list of projects
 	 * @since 3.0
 	 */
+	@Deprecated
 	public void setDynamicReferences(IProject[] projects);
 
 	/**

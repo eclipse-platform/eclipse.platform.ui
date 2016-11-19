@@ -61,8 +61,21 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected volatile IBuildConfiguration[] cachedBuildConfigs;
 	// Cached build configuration references. Not persisted.
 	protected Map<String, IBuildConfiguration[]> cachedConfigRefs = Collections.synchronizedMap(new HashMap<String, IBuildConfiguration[]>(1));
-	// Cached project level references.
-	protected volatile IProject[] cachedRefs = null;
+	/**
+	 * Cached project level references. Synchronize on {@link #cachedRefsMutex} before reading or writing. Increment
+	 * {@link #cachedRefsDirtyCount} whenever this is dirtied.
+	 */
+	protected IProject[] cachedRefs;
+	/**
+	 * Counts the number of times {@link #cachedRefs} has been dirtied. Can be used to determine if dynamic dependencies have
+	 * changed during an operation that is intended to be atomic with respect to dynamic dependencies. Synchronize on
+	 * {@link #cachedRefsMutex} before accessing.
+	 */
+	protected int cachedRefsDirtyCount;
+	/**
+	 * Mutex used to protect {@link #cachedRefs} and {@link #cachedRefsDirtyCount}.
+	 */
+	protected final Object cachedRefsMutex = new Object();
 
 	/**
 	 * Map of (IPath -> LinkDescription) pairs for each linked resource
@@ -103,7 +116,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		clone.buildSpec = getBuildSpec(true);
 		clone.dynamicConfigRefs = (HashMap<String, IBuildConfiguration[]>) dynamicConfigRefs.clone();
 		clone.cachedConfigRefs = Collections.synchronizedMap(new HashMap<String, IBuildConfiguration[]>(1));
-		clone.clearCachedReferences(null);
+		clone.clearCachedDynamicReferences(null);
 		return clone;
 	}
 
@@ -111,12 +124,15 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Clear cached references for the specified build config name
 	 * or all if configName is null.
 	 */
-	private void clearCachedReferences(String configName) {
-		if (configName == null)
-			cachedConfigRefs.clear();
-		else
-			cachedConfigRefs.remove(configName);
-		cachedRefs = null;
+	public void clearCachedDynamicReferences(String configName) {
+		synchronized (cachedRefsMutex) {
+			if (configName == null)
+				cachedConfigRefs.clear();
+			else
+				cachedConfigRefs.remove(configName);
+			cachedRefs = null;
+			cachedRefsDirtyCount++;
+		}
 	}
 
 	/**
@@ -189,8 +205,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @see #getAllBuildConfigReferences(String, boolean)
 	 */
 	public IProject[] getAllReferences(boolean makeCopy) {
-		IProject[] projRefs = cachedRefs;
-		if (projRefs == null) {
+		int dirtyCount;
+		IProject[] projRefs;
+
+		synchronized (cachedRefsMutex) {
+			projRefs = cachedRefs;
+			dirtyCount = cachedRefsDirtyCount;
+		}
+		// Retry this computation until we're able to proceed to the end without someone dirtying the cache.
+		// This loop is here to prevent us from caching a stale result if someone dirties the cache between
+		// the time we invoke getAllBuildConfigReferences and the time we can write to cachedRefs.
+		while (projRefs == null) {
 			IBuildConfiguration[] refs;
 			if (hasBuildConfig(activeConfiguration))
 				refs = getAllBuildConfigReferences(activeConfiguration, false);
@@ -200,7 +225,16 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				// No build configuration => fall-back to default
 				refs = getAllBuildConfigReferences(IBuildConfiguration.DEFAULT_CONFIG_NAME, false);
 			Collection<IProject> l = getProjectsFromBuildConfigRefs(refs);
-			projRefs = cachedRefs = l.toArray(new IProject[l.size()]);
+
+			synchronized (cachedRefsMutex) {
+				// If nobody dirtied the cache since the start of this operation then we can cache the
+				// new result and end the loop.
+				if (cachedRefsDirtyCount == dirtyCount) {
+					cachedRefs = l.toArray(new IProject[l.size()]);
+				}
+				projRefs = cachedRefs;
+				dirtyCount = cachedRefsDirtyCount;
+			}
 		}
 		//still need to copy the result to prevent tampering with the cache
 		return makeCopy ? (IProject[]) projRefs.clone() : projRefs;
@@ -224,7 +258,15 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (refs == null) {
 			Set<IBuildConfiguration> references = new LinkedHashSet<>();
 			IBuildConfiguration[] dynamicBuildConfigs = dynamicConfigRefs.containsKey(configName) ? dynamicConfigRefs.get(configName) : EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
-			Collection<BuildConfiguration> dynamic = getBuildConfigReferencesFromProjects(dynamicRefs);
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getName());
+			Collection<BuildConfiguration> dynamic;
+			try {
+				IBuildConfiguration buildConfig = project.getBuildConfig(configName);
+				dynamic = getBuildConfigReferencesFromProjects(computeDynamicReferencesForProject(buildConfig, getBuildSpec()));
+			} catch (CoreException e) {
+				dynamic = Collections.emptyList();
+			}
+			Collection<BuildConfiguration> legacyDynamic = getBuildConfigReferencesFromProjects(dynamicRefs);
 			Collection<BuildConfiguration> statik = getBuildConfigReferencesFromProjects(staticRefs);
 
 			// Combine all references:
@@ -232,6 +274,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			references.addAll(Arrays.asList(dynamicBuildConfigs));
 			// We preserve the previous order of static project references before dynamic project references
 			references.addAll(statik);
+			references.addAll(legacyDynamic);
 			references.addAll(dynamic);
 			refs = references.toArray(new IBuildConfiguration[references.size()]);
 			cachedConfigRefs.put(configName, refs);
@@ -539,7 +582,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public void setActiveBuildConfig(String configName) {
 		Assert.isNotNull(configName);
 		if (!configName.equals(activeConfiguration))
-			clearCachedReferences(null);
+			clearCachedDynamicReferences(null);
 		activeConfiguration = configName;
 	}
 
@@ -567,16 +610,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		comment = value;
 	}
 
+	@Deprecated
 	@Override
 	public void setDynamicReferences(IProject[] value) {
 		Assert.isLegal(value != null);
 		dynamicRefs = copyAndRemoveDuplicates(value);
-		clearCachedReferences(null);
+		clearCachedDynamicReferences(null);
 	}
 
 	public void setBuildConfigReferences(HashMap<String, IBuildConfiguration[]> refs) {
 		dynamicConfigRefs = new HashMap<>(refs);
-		clearCachedReferences(null);
+		clearCachedDynamicReferences(null);
 	}
 
 	@Override
@@ -586,7 +630,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (!hasBuildConfig(configName))
 			return;
 		dynamicConfigRefs.put(configName, copyAndRemoveDuplicates(references));
-		clearCachedReferences(configName);
+		clearCachedDynamicReferences(configName);
 	}
 
 	@Override
@@ -613,7 +657,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		// Remove references for deleted buildConfigs
 		boolean modified = dynamicConfigRefs.keySet().retainAll(buildConfigNames);
 		if (modified)
-			clearCachedReferences(null);
+			clearCachedDynamicReferences(null);
 		// Clear the cached IBuildConfiguration[]
 		cachedBuildConfigs = null;
 	}
@@ -813,7 +857,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public void setReferencedProjects(IProject[] value) {
 		Assert.isLegal(value != null);
 		staticRefs = copyAndRemoveDuplicates(value);
-		clearCachedReferences(null);
+		clearCachedDynamicReferences(null);
 	}
 
 	/**
@@ -871,7 +915,46 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			dynamicConfigRefs = new HashMap<>(description.dynamicConfigRefs);
 		}
 		if (changed)
-			clearCachedReferences(null);
+			clearCachedDynamicReferences(null);
 		return changed;
+	}
+
+	/**
+	 * Computes the dynamic references for the given project + configuration.
+	 */
+	private static IProject[] computeDynamicReferencesForProject(IBuildConfiguration buildConfig, ICommand[] buildSpec) {
+		List<IProject> result = new ArrayList<>();
+		for (ICommand command : buildSpec) {
+			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, command.getBuilderName());
+
+			if (extension == null) {
+				continue;
+			}
+
+			IConfigurationElement[] configurationElements = extension.getConfigurationElements();
+
+			if (configurationElements.length == 0) {
+				continue;
+			}
+
+			IConfigurationElement element = configurationElements[0];
+
+			Object executableExtension;
+			try {
+				IConfigurationElement[] children = element.getChildren("dynamicReference"); //$NON-NLS-1$
+				if (children.length != 0) {
+					executableExtension = children[0].createExecutableExtension("class"); //$NON-NLS-1$
+					if (executableExtension instanceof IDynamicReferenceProvider) {
+						IDynamicReferenceProvider provider = (IDynamicReferenceProvider) executableExtension;
+
+						result.addAll(provider.getDependentProjects(buildConfig));
+					}
+				}
+			} catch (CoreException e) {
+				String problemElement = element.toString();
+				ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, "Unable to load dynamic reference provider: " + problemElement, e)); //$NON-NLS-1$
+			}
+		}
+		return result.toArray(new IProject[0]);
 	}
 }

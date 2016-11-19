@@ -470,6 +470,21 @@ public class Project extends Container implements IProject {
 	}
 
 	@Override
+	public void clearCachedDynamicReferences() {
+		ResourceInfo info = getResourceInfo(false, false);
+		if (info == null) {
+			// If the project is not open there is no cached state and so there is nothing to do.
+			return;
+		}
+		ProjectDescription description = ((ProjectInfo) info).getDescription();
+		if (description == null) {
+			// If the project is in the process of being created there is no cached state and nothing to do.
+			return;
+		}
+		description.clearCachedDynamicReferences(null);
+	}
+
+	@Override
 	public IProject[] getReferencingProjects() {
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		List<IProject> result = new ArrayList<>(projects.length);

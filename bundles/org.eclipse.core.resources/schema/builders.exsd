@@ -69,6 +69,7 @@ name is the id of the builder extension. When defining a builder extension, user
    <element name="builder">
       <complexType>
          <sequence>
+            <element ref="dynamicReference" minOccurs="0" maxOccurs="1"/>
             <element ref="run" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="hasNature" type="boolean">
@@ -154,6 +155,24 @@ specified builder class
       </complexType>
    </element>
 
+   <element name="dynamicReference">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  The fully-qualified name of a class that implements &lt;samp&gt;org.eclipse.core.resources.IDynamicReferenceProvider&lt;/samp&gt;.
+                  If supplied, the given class will asked to return a list of other projects that
+                  must be built before this one when the build system is computing the build order.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.core.resources.IDynamicReferenceProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -187,7 +206,6 @@ If this extension was defined in a plug-in with id &quot;com.xyz.coolplugin&quot
 subclass of &lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt;.
       </documentation>
    </annotation>
-
 
    <annotation>
       <appInfo>

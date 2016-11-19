@@ -101,7 +101,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @see IResourceRuleFactory#buildRule()
 	 */
-	public void build(int kind, String builderName, Map<String,String> args, IProgressMonitor monitor) throws CoreException;
+	public void build(int kind, String builderName, Map<String, String> args, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Builds this project. Does nothing if the project is closed.
@@ -611,6 +611,20 @@ public interface IProject extends IContainer, IAdaptable {
 	public IProject[] getReferencedProjects() throws CoreException;
 
 	/**
+	 * Clears the cache of dynamic project references for this project. Invoking this
+	 * method will cause the dynamic project references to be recomputed the next time
+	 * they are accessed (for example, in a call to {@link #getReferencedProjects()}.
+	 * It is not necessary to hold the workspace lock when invoking this method. Plugins
+	 * that provide an {@link IDynamicReferenceProvider} should invoke this method to
+	 * inform the rest of the application when one or more dynamic project references
+	 * may have changed. This will also clear any other cached data that is derived from
+	 * the dynamic references.
+	 *
+	 * @since 3.12
+	 */
+	public void clearCachedDynamicReferences();
+
+	/**
 	 * Returns the list of all open projects which reference
 	 * this project. This project may or may not exist. Returns
 	 * an empty array if there are no referencing projects.
@@ -744,8 +758,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #saveSnapshot(int, URI, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public void loadSnapshot(int options, URI snapshotLocation,
-			IProgressMonitor monitor) throws CoreException;
+	public void loadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Renames this project so that it is located at the name in
@@ -894,8 +907,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #loadSnapshot(int, URI, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public void saveSnapshot(int options, URI snapshotLocation,
-			IProgressMonitor monitor) throws CoreException;
+	public void saveSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Changes this project resource to match the given project
