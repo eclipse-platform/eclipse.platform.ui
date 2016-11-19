@@ -14,11 +14,11 @@
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
-            base-type="org.eclipse.core.runtime.text"
+            base-type="org.eclipse.core.runtime.xml"
             file-names=".project"
             id="dotproject"
             name="Eclipse .project"
-            priority="normal">
+            priority="high">
       </content-type>
    </extension>
    <extension

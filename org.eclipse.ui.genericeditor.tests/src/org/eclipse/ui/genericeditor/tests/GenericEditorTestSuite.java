@@ -15,11 +15,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-/**
- * Test Suite for org.eclipse.ui.editors.
- *
- * @since 3.0
- */
 @RunWith(Suite.class)
 @SuiteClasses({
 		CompletionTest.class,
@@ -28,4 +23,5 @@ import org.junit.runners.Suite.SuiteClasses;
 })
 public class GenericEditorTestSuite {
 	// see @SuiteClasses
+	
 }

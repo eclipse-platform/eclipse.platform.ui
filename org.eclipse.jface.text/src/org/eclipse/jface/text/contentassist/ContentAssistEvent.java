@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - [content assist][api] ContentAssistEvent should contain information about auto activation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=193728
+ *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -43,7 +44,7 @@ public final class ContentAssistEvent {
 	 * @param ca the assistant
 	 * @param proc the processor
 	 */
-	ContentAssistEvent(ContentAssistant ca, IContentAssistProcessor proc) {
+	ContentAssistEvent(IContentAssistant ca, IContentAssistProcessor proc) {
 		this(ca, proc, false);
 	}
 

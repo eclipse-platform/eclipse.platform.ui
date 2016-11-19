@@ -17,6 +17,10 @@
 					class="org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor"
 					contentType="org.eclipse.core.runtime.text">
 		</contentAssistProcessor>
+  <contentAssistProcessor
+        class="org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor"
+        contentType="org.eclipse.core.runtime.text">
+  </contentAssistProcessor>
  </extension>
  <extension
 			 point="org.eclipse.ui.genericeditor.hoverProviders">

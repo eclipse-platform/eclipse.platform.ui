@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 
 import org.eclipse.core.resources.IMarker;
@@ -96,7 +95,7 @@ public class HoverTest {
 
 	private Object getHoverData() throws Exception {
 		this.editor.selectAndReveal(2, 0);
-		waitAndDispatch();
+		GenericEditorTestUtils.waitAndDispatch(1000);
 		// sending event to trigger hover computation
 		StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
 		editorTextWidget.getShell().forceActive();
@@ -112,7 +111,7 @@ public class HoverTest {
 		hoverEvent.doit = true;
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
 		// Events need to be processed for hover listener to work correctly
-		waitAndDispatch();
+		GenericEditorTestUtils.waitAndDispatch(1000);
 		// retrieving hover content
 		Method getSourceViewerMethod= AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");
 		getSourceViewerMethod.setAccessible(true);
@@ -123,16 +122,8 @@ public class HoverTest {
 		Field informationField = AbstractInformationControlManager.class.getDeclaredField("fInformation");
 		informationField.setAccessible(true);
 		Object hoverData = informationField.get(hover);
-		waitAndDispatch();
+		GenericEditorTestUtils.waitAndDispatch(1000);
 		return hoverData;
-	}
-
-	private void waitAndDispatch() {
-		long timeout = 1000; //ms
-		long start = System.currentTimeMillis();
-		while (start + timeout > System.currentTimeMillis()) {
-			Display.getDefault().readAndDispatch();
-		}
 	}
 
 }

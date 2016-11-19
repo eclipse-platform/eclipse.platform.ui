@@ -17,12 +17,19 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
-public class BarContentAssistProcessor implements IContentAssistProcessor {
+public class LongRunningBarContentAssistProcessor implements IContentAssistProcessor {
 
-	public static final String PROPOSAL = "s are good for a beer.";
+	public static final String PROPOSAL = "s are also good for soft drink cocktails.";
+	public static final int DELAY = 2000;
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		try {
+			Thread.sleep(DELAY);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String text = viewer.getDocument().get();
 		if (text.length() >= 3 && text.substring(offset - 3, offset).equals("bar")) {
 			String message = PROPOSAL;

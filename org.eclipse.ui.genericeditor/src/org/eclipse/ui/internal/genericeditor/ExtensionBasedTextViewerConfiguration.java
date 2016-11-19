@@ -26,6 +26,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.contentassist.AsyncContentAssistant;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -49,8 +50,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private ITextEditor editor;
 	private Set<IContentType> contentTypes;
 	private IDocument document;
-	private ContentAssistant contentAssistant;
-	private IContentAssistProcessor contentAssistProcessor;
+	private AsyncContentAssistant contentAssistant;
+	private List<IContentAssistProcessor> processors;
 
 	/**
 	 * 
@@ -95,13 +96,15 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistProcessorRegistry registry= GenericEditorPlugin.getDefault().getContentAssistProcessorRegistry();
-		contentAssistProcessor = new CompositeContentAssistProcessor(registry.getContentAssistProcessors(sourceViewer, getContentTypes()));
-		contentAssistant = new ContentAssistant();
+		contentAssistant = new AsyncContentAssistant();
 		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
 		contentAssistant.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
 		contentAssistant.enableColoredLabels(true);
 		contentAssistant.enableAutoActivation(true);
-		contentAssistant.setContentAssistProcessor(contentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+		this.processors = registry.getContentAssistProcessors(sourceViewer, getContentTypes());
+		for (IContentAssistProcessor processor : this.processors) {
+			contentAssistant.addContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		}
 		if (this.document != null) {
 			associateTokenContentTypes(this.document);
 		}
@@ -142,11 +145,13 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	}
 
 	private void associateTokenContentTypes(IDocument document) {
-		if (contentAssistant == null) {
+		if (contentAssistant == null || this.processors == null) {
 			return;
 		}
 		for (String legalTokenContentType : document.getLegalContentTypes()) {
-			contentAssistant.setContentAssistProcessor(this.contentAssistProcessor, legalTokenContentType);
+			for (IContentAssistProcessor processor : this.processors) {
+				contentAssistant.addContentAssistProcessor(processor, legalTokenContentType);
+			}
 		}
 	}
 

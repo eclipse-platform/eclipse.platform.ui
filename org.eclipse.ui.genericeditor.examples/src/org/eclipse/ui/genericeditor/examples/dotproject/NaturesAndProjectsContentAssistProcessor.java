@@ -26,7 +26,7 @@ public class NaturesAndProjectsContentAssistProcessor implements IContentAssistP
 
     @Override
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-        String text = viewer.getTextWidget().getText();
+        String text = viewer.getDocument().get();
         String natureTag= "<nature>";
         String projectReferenceTag="<project>";
         IWorkspace workspace = ResourcesPlugin.getWorkspace();

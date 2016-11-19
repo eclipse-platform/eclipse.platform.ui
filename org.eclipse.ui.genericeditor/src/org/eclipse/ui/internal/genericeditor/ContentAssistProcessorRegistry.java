@@ -17,8 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
@@ -32,7 +34,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -80,12 +81,21 @@ public class ContentAssistProcessorRegistry {
 		/**
 		 * @return whether the referenced contribution should contribute to the current editor.
 		 */
-		public boolean isActive() {
-			IEditorInput input = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
-			IContentTypeManager contentTypeManager= Platform.getContentTypeManager();
-			for (IContentType currentContentType : contentTypeManager.findContentTypesFor(input.getName())) {
-				if (currentContentType.isKindOf(targetContentType)) {
-					return true;
+		public boolean isActive(ITextViewer viewer) {
+			String fileName = null;
+			if (viewer != null && viewer.getDocument() != null) {
+				IPath location = FileBuffers.getTextFileBufferManager().getTextFileBuffer(viewer.getDocument()).getLocation();
+				fileName =  location.segment(location.segmentCount() - 1);
+			}
+			if (fileName == null) {
+				fileName = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput().getName();
+			}
+			if (fileName != null) {
+				IContentTypeManager contentTypeManager= Platform.getContentTypeManager();
+				for (IContentType currentContentType : contentTypeManager.findContentTypesFor(fileName)) {
+					if (currentContentType.isKindOf(targetContentType)) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -93,7 +103,7 @@ public class ContentAssistProcessorRegistry {
 
 		@Override
 		public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-			if (isActive()) {
+			if (isActive(viewer)) {
 				return getDelegate().computeCompletionProposals(viewer, offset);
 			}
 			return new ICompletionProposal[0];
@@ -101,7 +111,7 @@ public class ContentAssistProcessorRegistry {
 
 		@Override
 		public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
-			if (isActive()) {
+			if (isActive(viewer)) {
 				return getDelegate().computeContextInformation(viewer, offset);
 			}
 			return new IContextInformation[0];
@@ -109,7 +119,7 @@ public class ContentAssistProcessorRegistry {
 
 		@Override
 		public char[] getCompletionProposalAutoActivationCharacters() {
-			if (isActive()) {
+			if (isActive(null)) {
 				return getDelegate().getCompletionProposalAutoActivationCharacters();
 			}
 			return null;
@@ -117,7 +127,7 @@ public class ContentAssistProcessorRegistry {
 
 		@Override
 		public char[] getContextInformationAutoActivationCharacters() {
-			if (isActive()) {
+			if (isActive(null)) {
 				return getDelegate().getContextInformationAutoActivationCharacters();
 			}
 			return null;
@@ -125,7 +135,7 @@ public class ContentAssistProcessorRegistry {
 
 		@Override
 		public String getErrorMessage() {
-			if (isActive()) {
+			if (isActive(null)) {
 				return getDelegate().getErrorMessage();
 			}
 			return null;
@@ -133,7 +143,7 @@ public class ContentAssistProcessorRegistry {
 
 		@Override
 		public IContextInformationValidator getContextInformationValidator() {
-			if (isActive()) {
+			if (isActive(null)) {
 				return getDelegate().getContextInformationValidator();
 			}
 			return null;

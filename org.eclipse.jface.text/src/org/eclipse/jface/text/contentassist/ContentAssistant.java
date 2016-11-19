@@ -11,13 +11,15 @@
  *     Anton Leherbauer (Wind River Systems) - [content assist][api] ContentAssistEvent should contain information about auto activation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=193728
  *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
  *     John Glassmyer, jogl@google.com - catch Content Assist exceptions to protect navigation keys - http://bugs.eclipse.org/434901
+ *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -908,7 +910,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private boolean fIsAutoInserting= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;
-	private Map<String, IContentAssistProcessor> fProcessors;
+	private Map<String, Set<IContentAssistProcessor>> fProcessors;
 
 	/**
 	 * The partitioning.
@@ -924,7 +926,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private Color fProposalSelectorBackground;
 	private Color fProposalSelectorForeground;
 
-	private ITextViewer fViewer;
+	ITextViewer fViewer;
 	private String fLastErrorMessage;
 
 	private Closer fCloser;
@@ -964,7 +966,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.0
 	 */
-	private ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
+	ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
 	/**
 	 * The dialog settings for the control's bounds.
 	 *
@@ -1087,7 +1089,32 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (processor == null)
 			fProcessors.remove(contentType);
 		else
-			fProcessors.put(contentType, processor);
+			fProcessors.put(contentType, Collections.singleton(processor));
+	}
+	
+	/**
+	 * Registers a given content assist processor for a particular content type. If there is already
+	 * a processor registered for this type, it is kept and the new processor is appended to the list
+	 * of processors for given content-type.
+	 *
+	 * @param processor The content-assist process to add
+	 * @param contentType Document token content-type it applies to
+	 * @since 3.12
+	 */
+	protected void addContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
+		Assert.isNotNull(contentType);
+
+		if (fProcessors == null)
+			fProcessors= new HashMap<>();
+
+		if (processor == null) {
+			fProcessors.remove(contentType);
+		} else {
+			if (!fProcessors.containsKey(contentType)) {
+				fProcessors.put(contentType, new LinkedHashSet<>());
+			}
+			fProcessors.get(contentType).add(processor);
+		}
 	}
 
 	/*
@@ -1098,7 +1125,28 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProcessors == null)
 			return null;
 
-		return fProcessors.get(contentType);
+		Set<IContentAssistProcessor> res = fProcessors.get(contentType);
+		if (res == null || res.isEmpty()) {
+			return null;
+		} else {
+			return res.iterator().next(); // return first one although there might be multiple ones... TODO, consider an aggregator contentAssistProcessor to return here
+		}
+	}
+
+	/**
+	 * @param contentType Document token content-type it applies to
+	 * @return the available content-assist processors for provide token content-type.
+	 * @since 3.12
+	 */
+	protected Set<IContentAssistProcessor> getContentAssistProcessors(String contentType) {
+		if (fProcessors == null)
+			return null;
+
+		Set<IContentAssistProcessor> res = fProcessors.get(contentType);
+		if (res == null || res.isEmpty()) {
+			return null;
+		}
+		return res;
 	}
 
 	/**
@@ -1112,16 +1160,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return ""; //$NON-NLS-1$
 
 		StringBuffer buf= new StringBuffer(5);
-		Iterator<Entry<String, IContentAssistProcessor>> iter= fProcessors.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<String, IContentAssistProcessor> entry= iter.next();
-			IContentAssistProcessor processor= entry.getValue();
-			char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
-			if (triggers != null)
-				buf.append(triggers);
-			triggers= processor.getContextInformationAutoActivationCharacters();
-			if (triggers != null)
-				buf.append(triggers);
+		for (Set<IContentAssistProcessor> processorsForContentType : fProcessors.values()) {
+			for (IContentAssistProcessor processor : processorsForContentType) {
+				char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
+				if (triggers != null)
+					buf.append(triggers);
+				triggers= processor.getContextInformationAutoActivationCharacters();
+				if (triggers != null)
+					buf.append(triggers);
+			}
 		}
 		return buf.toString();
 	}

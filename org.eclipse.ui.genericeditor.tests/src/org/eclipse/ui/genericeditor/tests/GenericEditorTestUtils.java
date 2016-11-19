@@ -12,6 +12,8 @@ package org.eclipse.ui.genericeditor.tests;
 
 import java.io.ByteArrayInputStream;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -46,6 +48,14 @@ public class GenericEditorTestUtils {
 	
 	public static IFile getFile(){
 		return file;
+	}
+	
+	public static void waitAndDispatch(long milliseconds) {
+		long timeout = milliseconds; //ms
+		long start = System.currentTimeMillis();
+		while (start + timeout > System.currentTimeMillis()) {
+			Display.getDefault().readAndDispatch();
+		}
 	}
 
 }
