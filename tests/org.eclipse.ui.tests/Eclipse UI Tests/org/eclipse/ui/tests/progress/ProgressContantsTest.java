@@ -63,11 +63,17 @@ public class ProgressContantsTest extends ProgressTestCase {
 		CommandHandler handler = new CommandHandler();
 		IHandlerActivation record = service.activateHandler(commandId, handler);
 
+		waitForJobs(100, 1000);
 		okJob.join();
-
 		processEvents();
 
 		ProgressInfoItem item = findProgressInfoItem(okJob);
+		if (item == null) {
+			waitForJobs(100, 1000);
+			okJob.join();
+			processEvents();
+			item = findProgressInfoItem(okJob);
+		}
 		assertNotNull(item);
 		item.executeTrigger();
 		assertTrue(handler.executed);
