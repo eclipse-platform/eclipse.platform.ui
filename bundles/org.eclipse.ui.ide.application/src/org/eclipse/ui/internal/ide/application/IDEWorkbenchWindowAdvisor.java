@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems) -  bug 284447
  *     Christian Georgi (SAP)             -  bug 432480
  *     Denis Zygann <d.zygann@web.de>      - bug 457390
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 502050
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -352,7 +354,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
 				if (IDEInternalPreferences.WORKSPACE_NAME.equals(property)
-						|| IDEInternalPreferences.SHOW_LOCATION.equals(property)) {
+						|| IDEInternalPreferences.SHOW_LOCATION.equals(property)
+						|| IDEInternalPreferences.SHOW_LOCATION_NAME.equals(property)) {
 					// Make sure the title is actually updated by
 					// setting last active page.
 					lastActivePage = null;
@@ -365,6 +368,14 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	}
 
 	private String computeTitle() {
+		StringJoiner sj = new StringJoiner(" - "); //$NON-NLS-1$
+
+		// workspace location / name
+		String workspaceLocation = wbAdvisor.getWorkspaceLocation();
+		if (workspaceLocation != null) {
+			sj.add(workspaceLocation);
+		}
+
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		IWorkbenchPage currentPage = configurer.getWindow().getActivePage();
 		IEditorPart activeEditor = null;
@@ -372,54 +383,20 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			activeEditor = lastActiveEditor;
 		}
 
-		String title = null;
-		IProduct product = Platform.getProduct();
-		if (product != null) {
-			title = product.getName();
-		}
-		if (title == null) {
-			title = ""; //$NON-NLS-1$
-		}
-
+		// active editor
 		if (currentPage != null) {
 			if (activeEditor != null) {
-				lastEditorTitleTooltip = activeEditor.getTitleToolTip();
-				title = NLS.bind(
-						IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
-						lastEditorTitleTooltip, title);
-			}
-			IPerspectiveDescriptor persp = currentPage.getPerspective();
-			String label = ""; //$NON-NLS-1$
-			if (persp != null) {
-				label = persp.getLabel();
-			}
-			IAdaptable input = currentPage.getInput();
-			if (input != null && !input.equals(wbAdvisor.getDefaultPageInput())) {
-				label = currentPage.getLabel();
-			}
-			if (label != null && !label.equals("")) { //$NON-NLS-1$
-				title = NLS.bind(
-						IDEWorkbenchMessages.WorkbenchWindow_shellTitle, label,
-						title);
+				sj.add(activeEditor.getTitleToolTip());
 			}
 		}
 
-		String workspaceLocation = wbAdvisor.getWorkspaceLocation();
-		if (workspaceLocation != null) {
-			title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
-					title, workspaceLocation);
+		// Application (product) name
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			sj.add(product.getName());
 		}
 
-		// Bug 284447: Prepend workspace name to the title
-		String workspaceName = IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore().getString(
-						IDEInternalPreferences.WORKSPACE_NAME);
-		if (workspaceName != null && workspaceName.length() > 0) {
-			title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle,
-					workspaceName, title);
-		}
-
-		return title;
+		return sj.toString();
 	}
 
 	private void recomputeTitle() {
@@ -598,7 +575,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			openWelcomeEditor(window, new WelcomeEditorInput(productInfo), null);
 		} else {
 			// Show the welcome page for any newly installed features
-			List<AboutInfo> welcomeFeatures = new ArrayList<AboutInfo>();
+			List<AboutInfo> welcomeFeatures = new ArrayList<>();
 			for (Iterator it = wbAdvisor.getNewlyAddedBundleGroups().entrySet()
 					.iterator(); it.hasNext();) {
 				Map.Entry entry = (Map.Entry) it.next();
