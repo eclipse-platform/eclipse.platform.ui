@@ -10,13 +10,15 @@
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654, 491272, 491398
  *     Leung Wang Hei <gemaspecial@yahoo.com.hk> - Bug 483343
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293, 492434, 492452, 459989
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293, 492434, 492452, 459989, 507322
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -410,6 +412,7 @@ public abstract class QuickAccessContents {
 		}
 		boolean done;
 		String category = null;
+		Set<String> prevPickIds = new HashSet<>();
 		do {
 			// will be set to false if we find a provider with remaining
 			// elements
@@ -437,15 +440,24 @@ public abstract class QuickAccessContents {
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
 					QuickAccessElement[] sortedElements = provider.getElementsSorted();
 
-					// count number or previous picks
-					if ((provider instanceof PreviousPicksProvider)) {
+					// count previous picks and store ids
+					if (isPreviousPickProvider) {
 						prevPick = sortedElements.length;
+						Stream.of(sortedElements).forEach(e -> prevPickIds.add(e.getId()));
 					}
 
 					int j = indexPerProvider[i];
+					// loops on all the elements of a provider
 					while (j < sortedElements.length
 							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))) {
 						QuickAccessElement element = sortedElements[j];
+
+						// Skip element if already in contained amid previous picks
+						if (!isPreviousPickProvider && prevPickIds.contains(element.getId())) {
+							j++;
+							continue;
+						}
+
 						QuickAccessEntry entry = null;
 						if (filter.length() == 0) {
 							if (i == 0 || showAllMatches) {
