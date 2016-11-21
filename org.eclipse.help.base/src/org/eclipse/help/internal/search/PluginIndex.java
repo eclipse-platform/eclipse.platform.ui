@@ -21,8 +21,10 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.util.ResourceLocator;
@@ -148,10 +150,11 @@ public class PluginIndex {
 					.getProperty(SearchIndex.DEPENDENCIES_KEY_LUCENE);
 			String analyzer = prop
 					.getProperty(SearchIndex.DEPENDENCIES_KEY_ANALYZER);
-			if (!targetIndex.isLuceneCompatible(lucene)
-					|| !targetIndex.isAnalyzerCompatible(analyzer)) {
-				HelpBasePlugin.logError("Error trying to consume Lucene index from bundle " + bundle.toString() //$NON-NLS-1$
-						+ ". Please use an index built with Lucene 6.1 or higher.", null); //$NON-NLS-1$
+			if (!targetIndex.isLuceneCompatible(lucene) || !targetIndex.isAnalyzerCompatible(analyzer)) {
+				String message = "Unable to consume Lucene index from bundle '" + bundle.toString() //$NON-NLS-1$
+						+ "'. The index should be rebuilt with Lucene 6.1."; //$NON-NLS-1$
+				Status warningStatus = new Status(IStatus.WARNING, HelpBasePlugin.PLUGIN_ID, IStatus.OK, message, null);
+				HelpBasePlugin.logStatus(warningStatus);
 				return false;
 			}
 		} catch (MalformedURLException mue) {
