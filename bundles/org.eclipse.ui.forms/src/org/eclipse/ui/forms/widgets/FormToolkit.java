@@ -315,9 +315,9 @@ public class FormToolkit {
 	}
 
 	/**
-	 * Creats the composite that can server as a separator between various parts
-	 * of a form. Separator height should be controlled by setting the height
-	 * hint on the layout data for the composite.
+	 * Creates the composite that can server as a separator between various
+	 * parts of a form. Separator height should be controlled by setting the
+	 * height hint on the layout data for the composite.
 	 *
 	 * @param parent
 	 *            the separator parent
