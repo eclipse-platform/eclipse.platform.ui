@@ -903,6 +903,23 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
+	 * Verifies that no cancellation checks are performed within
+	 * {@link SubMonitor#split(int, int)} when passing in the
+	 * {@link SubMonitor#SUPPRESS_ISCANCELED} flag.
+	 */
+	public void testSplitDoesNotCancelWhenCancellationSuppressed() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		monitor.setCanceled(true);
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		for (int idx = 0; idx < 100; idx++) {
+			progress.split(1, SubMonitor.SUPPRESS_ISCANCELED);
+		}
+
+		// If we get this far, it means cancellation was suppressed and the test
+		// passed
+	}
+
+	/**
 	 * Creates and destroys the given number of child progress monitors under the given parent.
 	 *
 	 * @param parent monitor to create children under. The caller must call done on this monitor
