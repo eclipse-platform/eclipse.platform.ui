@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.utils.*;
@@ -138,8 +139,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * @param target
 	 */
 	private void asyncRefresh(IResource target) {
-		if (lightweightAutoRefreshEnabled)
-			workspace.getRefreshManager().refresh(target);
+		if (lightweightAutoRefreshEnabled) {
+			RefreshManager refreshManager = workspace.getRefreshManager();
+			// refreshManager can be null during shutdown
+			if (refreshManager != null) {
+				refreshManager.refresh(target);
+			}
+		}
 	}
 
 	private void findLinkedResourcesPaths(URI inputLocation, final ArrayList<IPath> results) throws CoreException {
