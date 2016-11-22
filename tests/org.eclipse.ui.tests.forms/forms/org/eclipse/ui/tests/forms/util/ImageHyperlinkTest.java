@@ -12,8 +12,6 @@ package org.eclipse.ui.tests.forms.util;
 
 import java.lang.reflect.Field;
 
-import junit.framework.TestCase;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -25,6 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
+
+import junit.framework.TestCase;
 
 public class ImageHyperlinkTest extends TestCase {
 
@@ -100,6 +100,17 @@ public class ImageHyperlinkTest extends TestCase {
 		assertTrue(prevDisabledImage.isDisposed());
 	}
 
+	public void testPaintHyperlinkDoesNotLeakDisabledImage() throws Exception {
+		Image prevImage = createGradient();
+		imageHyperlink.setImage(prevImage);
+		imageHyperlink.setEnabled(false);
+		imageHyperlink.paintHyperlink(gc);
+
+		Image prevDisabledImage = getDisabledImage(imageHyperlink);
+		imageHyperlink.paintHyperlink(gc);
+
+		assertSame(prevDisabledImage, getDisabledImage(imageHyperlink));
+	}
 	public void testSetImageNullClearsDisabledImage() throws Exception {
 		Image image = createGradient();
 		imageHyperlink.setImage(image);
