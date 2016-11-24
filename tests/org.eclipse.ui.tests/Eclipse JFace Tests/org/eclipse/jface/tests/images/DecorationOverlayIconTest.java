@@ -12,13 +12,13 @@ package org.eclipse.jface.tests.images;
 
 import static org.junit.Assert.assertNotEquals;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-import org.junit.After;
 import org.junit.Before;
 
 import junit.framework.TestCase;
@@ -38,27 +38,19 @@ public class DecorationOverlayIconTest extends TestCase {
 	@Override
 	@Before
 	public void setUp() {
-		baseImage1 = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+		ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
+		baseImage1 = imageRegistry.get(Dialog.DLG_IMG_HELP);
 		assertNotNull(baseImage1);
-		baseDescriptor1 = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		baseDescriptor1 = imageRegistry.getDescriptor(Dialog.DLG_IMG_HELP);
 		assertNotNull(baseDescriptor1);
-		baseImage2 = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		baseImage2 = imageRegistry.get(Dialog.DLG_IMG_MESSAGE_ERROR);
 		assertNotNull(baseImage2);
-		baseDescriptor2 = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+		baseDescriptor2 = imageRegistry.getDescriptor(Dialog.DLG_IMG_MESSAGE_ERROR);
 		assertNotNull(baseDescriptor2);
-		overlayDescriptor1 = PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+		overlayDescriptor1 = imageRegistry.getDescriptor(Dialog.DLG_IMG_MESSAGE_INFO);
 		assertNotNull(overlayDescriptor1);
-		overlayDescriptor2 = PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+		overlayDescriptor2 = imageRegistry.getDescriptor(Dialog.DLG_IMG_MESSAGE_WARNING);
 		assertNotNull(overlayDescriptor2);
-	}
-
-	@Override
-	@After
-	public void tearDown() {
-		baseImage1.dispose();
-		baseImage2.dispose();
 	}
 
 	public void testEqualsAndHashCode() {
