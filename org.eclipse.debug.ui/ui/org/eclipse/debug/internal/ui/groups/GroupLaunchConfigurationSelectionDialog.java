@@ -77,6 +77,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	private String mode;
 	private GroupElementPostLaunchAction action = GroupElementPostLaunchAction.NONE;
 	private Object actionParam;
+	private boolean adoptIfRunning;
 	private ViewerFilter emptyTypeFilter;
 	private IStructuredSelection fInitialSelection;
 	private ComboControlledStackComposite fStackComposite;
@@ -210,6 +211,17 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			}
 		});
 
+		Button chkAdopt = new Button(comp, SWT.CHECK);
+		chkAdopt.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_adoptText);
+		chkAdopt.setToolTipText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_adoptTooltip);
+		chkAdopt.setSelection(adoptIfRunning);
+		chkAdopt.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				adoptIfRunning = chkAdopt.getSelection();
+			}
+		});
+
 		createPostLaunchControl(comp);
 		return comp;
 	}
@@ -286,6 +298,10 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 
 	public GroupElementPostLaunchAction getAction() {
 		return action;
+	}
+
+	public boolean getAdoptIfRunning() {
+		return adoptIfRunning;
 	}
 
 	public Object getActionParam() {
@@ -406,6 +422,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	public void setInitialSelection(GroupLaunchElement el) {
 		action = el.action;
 		actionParam = el.actionParam;
+		adoptIfRunning = el.adoptIfRunning;
 		fInitialSelection = new StructuredSelection(el.data);
 		fSelection = fInitialSelection;
 	}

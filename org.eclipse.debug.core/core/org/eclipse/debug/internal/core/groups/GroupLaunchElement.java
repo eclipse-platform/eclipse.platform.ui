@@ -60,6 +60,7 @@ public class GroupLaunchElement {
 	public boolean enabled = true;
 	public String mode = MODE_INHERIT;
 	public GroupLaunchElement.GroupElementPostLaunchAction action = GroupElementPostLaunchAction.NONE;
+	public boolean adoptIfRunning = false;
 	public Object actionParam;
 	public String name;
 	public ILaunchConfiguration data;

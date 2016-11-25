@@ -13,9 +13,12 @@
 package org.eclipse.debug.internal.core.groups;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +50,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$
+	private static final String ADOPT_PROP = "adoptIfRunning"; //$NON-NLS-1$
 	private static final String MODE_PROP = "mode"; //$NON-NLS-1$
 	private static final String ACTION_PROP = "action"; //$NON-NLS-1$
 	private static final String ACTION_PARAM_PROP = "actionParam"; //$NON-NLS-1$
@@ -60,10 +64,6 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 	private static final Status GROUP_LAUNCH_START = new Status(IStatus.INFO, DEBUG_CORE, CODE_GROUP_LAUNCH_START, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	private static final Status GROUP_LAUNCH_DONE = new Status(IStatus.INFO, DEBUG_CORE, CODE_GROUP_LAUNCH_DONE, IInternalDebugCoreConstants.EMPTY_STRING, null);
-
-	public GroupLaunchConfigurationDelegate() {
-		// nothing
-	}
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
@@ -89,7 +89,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				}
 
 				// find launch; if not found, skip (error?)
-				final ILaunchConfiguration conf = findLaunch(le.name);
+				final ILaunchConfiguration conf = findLaunchConfiguration(le.name);
 				if (conf == null) {
 					continue;
 				}
@@ -136,7 +136,12 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	}
 
 	private void launchChild(SubMonitor monitor, final GroupLaunch group, GroupLaunchElement le, final ILaunchConfiguration child, final String localMode, boolean lastConfig) throws CoreException {
-		ILaunch subLaunch = child.launch(localMode, monitor);
+		final Set<ILaunch> running = le.adoptIfRunning ? findRunningLaunch(le.name) : Collections.emptySet();
+		ILaunch subLaunch = running.stream().findFirst().orElse(null);
+		if (subLaunch == null) {
+			subLaunch = child.launch(localMode, monitor);
+		}
+
 		group.addSubLaunch(subLaunch);
 
 		// Now that we added the launch in our list, we have already
@@ -218,7 +223,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		return false;
 	}
 
-	protected static ILaunchConfiguration findLaunch(String name) throws CoreException {
+	protected static ILaunchConfiguration findLaunchConfiguration(String name) throws CoreException {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
 		for (int i = 0; i < launchConfigurations.length; i++) {
@@ -228,6 +233,20 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			}
 		}
 		return null;
+	}
+
+	protected static Set<ILaunch> findRunningLaunch(String name) {
+		Set<ILaunch> result = new HashSet<>();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		for (ILaunch l : launchManager.getLaunches()) {
+			if (l.isTerminated()) {
+				continue;
+			}
+			if (l.getLaunchConfiguration().getName().equals(name)) {
+				result.add(l);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -247,8 +266,8 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			for (Iterator<?> iterator = attrs.keySet().iterator(); iterator.hasNext();) {
 				String attr = (String) iterator.next();
 				try {
-					if (attr.startsWith(GroupLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX)) {
-						String prop = attr.substring(GroupLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX.length() + 1);
+					if (attr.startsWith(MULTI_LAUNCH_CONSTANTS_PREFIX)) {
+						String prop = attr.substring(MULTI_LAUNCH_CONSTANTS_PREFIX.length() + 1);
 						int k = prop.indexOf('.');
 						String num = prop.substring(0, k);
 						int index = Integer.parseInt(num);
@@ -276,10 +295,13 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 							}
 							el.action = action;
 							el.actionParam = actionParam;
+							if (attrs.containsKey(getProp(index, ADOPT_PROP))) {
+								el.adoptIfRunning = (Boolean) attrs.get(getProp(index, ADOPT_PROP));
+							}
 							el.mode = (String) attrs.get(getProp(index, MODE_PROP));
 							el.enabled = (Boolean) attrs.get(getProp(index, ENABLED_PROP));
 							try {
-								el.data = findLaunch(el.name);
+								el.data = findLaunchConfiguration(el.name);
 							} catch (Exception e) {
 								el.data = null;
 							}
@@ -307,14 +329,15 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			if (el == null) {
 				continue;
 			}
-			configuration.setAttribute(GroupLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.name);
-			configuration.setAttribute(GroupLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.action.toString());
+			configuration.setAttribute(getProp(i, NAME_PROP), el.name);
+			configuration.setAttribute(getProp(i, ACTION_PROP), el.action.toString());
+			configuration.setAttribute(getProp(i, ADOPT_PROP), el.adoptIfRunning);
 			// note: the saving of the action param will need to be enhanced if
 			// ever an action type is introduced that uses something that can't
 			// be reconstructed from its toString()
-			configuration.setAttribute(GroupLaunchConfigurationDelegate.getProp(i, ACTION_PARAM_PROP), el.actionParam != null ? el.actionParam.toString() : null);
-			configuration.setAttribute(GroupLaunchConfigurationDelegate.getProp(i, MODE_PROP), el.mode);
-			configuration.setAttribute(GroupLaunchConfigurationDelegate.getProp(i, ENABLED_PROP), el.enabled);
+			configuration.setAttribute(getProp(i, ACTION_PARAM_PROP), el.actionParam != null ? el.actionParam.toString() : null);
+			configuration.setAttribute(getProp(i, MODE_PROP), el.mode);
+			configuration.setAttribute(getProp(i, ENABLED_PROP), el.enabled);
 			i++;
 		}
 	}
@@ -325,7 +348,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			for (Iterator<?> iterator = attrs.keySet().iterator(); iterator.hasNext();) {
 				String attr = (String) iterator.next();
 				try {
-					if (attr.startsWith(GroupLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX)) {
+					if (attr.startsWith(MULTI_LAUNCH_CONSTANTS_PREFIX)) {
 						configuration.removeAttribute(attr);
 					}
 				} catch (Exception e) {
@@ -338,6 +361,6 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	}
 
 	public static String getProp(int index, String string) {
-		return GroupLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX + "." + index + "." + string; //$NON-NLS-1$ //$NON-NLS-2$
+		return MULTI_LAUNCH_CONSTANTS_PREFIX + "." + index + "." + string; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

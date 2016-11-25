@@ -148,7 +148,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 			// launch mode 
 			if (columnIndex == 1) {
-				return el.mode;
+				return el.mode + (el.adoptIfRunning ? DebugUIMessages.GroupLaunchConfigurationTabGroup_lblAdopt : ""); //$NON-NLS-1$
 			}
 			
 			// launch post action
@@ -309,11 +309,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 							input.add(el);
 							el.index = input.size() - 1;
 							el.enabled = true;
-							el.name = config.getName();
-							el.data = config;
-							el.mode = dialog.getMode();
-							el.action = dialog.getAction();
-							el.actionParam = dialog.getActionParam();
+							applyFromDialog(el, dialog, config);
 							treeViewer.refresh(true);
 							treeViewer.setChecked(el, el.enabled);
 						}
@@ -351,16 +347,22 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 							return;
 						}
 						assert confs.length == 1 : "invocation of the dialog for editing an entry sholdn't allow OK to be hit if the user chooses multiple launch configs in the dialog"; //$NON-NLS-1$
-						el.name = confs[0].getName();
-						el.data = confs[0];
-						el.mode = dialog.getMode();
-						el.action = dialog.getAction();
-						el.actionParam = dialog.getActionParam();
+						applyFromDialog(el, dialog, confs[0]);
 						treeViewer.refresh(true);
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
 					}
 				}
+
+				private void applyFromDialog(GroupLaunchElement el, GroupLaunchConfigurationSelectionDialog dialog, ILaunchConfiguration config) {
+					el.name = config.getName();
+					el.data = config;
+					el.mode = dialog.getMode();
+					el.action = dialog.getAction();
+					el.adoptIfRunning = dialog.getAdoptIfRunning();
+					el.actionParam = dialog.getActionParam();
+				}
+
 				@Override
 				protected void deletePressed() {
 					int[] indices = getMultiSelectionIndices();
