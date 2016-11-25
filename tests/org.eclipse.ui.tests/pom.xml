@@ -24,8 +24,6 @@
 
   <properties>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
-   	<testSuiteUITests>**/org/eclipse/ui/tests/UiTestSuite.java</testSuiteUITests>
-	<testSuiteJFace>**/org/eclipse/jface/tests/AllTests.java</testSuiteJFace>
   </properties>
 
   <build>
@@ -34,31 +32,39 @@
   			<groupId>org.eclipse.tycho</groupId>
   			<artifactId>tycho-surefire-plugin</artifactId>
   			<version>${tycho.version}</version>
-				<configuration>
-					<includes>
-						<include>${testSuiteJFace}</include>
-						<include>${testSuiteUITests}</include>
-					</includes>
-					<useUIHarness>true</useUIHarness>
-					<useUIThread>true</useUIThread>
-		  			<dependencies>
-		  				<dependency>
-		  					<type>eclipse-plugin</type>
-		  					<artifactId>org.eclipse.equinox.event</artifactId>
-		  					<version>0.0.0</version>
-		  				</dependency>
-		  				<dependency>
-		  					<type>eclipse-plugin</type>
-		  					<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
-		  					<version>0.0.0</version>
-		  				</dependency>
-						<dependency>
-							<type>eclipse-plugin</type>
-							<artifactId>org.eclipse.jdt.ui</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-		  			</dependencies>
-				</configuration>
+			<configuration>
+				<testClass>org.eclipse.ui.tests.UiTestSuite</testClass>
+				<useUIHarness>true</useUIHarness>
+				<useUIThread>true</useUIThread>
+	  			<dependencies>
+	  				<dependency>
+	  					<type>eclipse-plugin</type>
+	  					<artifactId>org.eclipse.equinox.event</artifactId>
+	  					<version>0.0.0</version>
+	  				</dependency>
+	  				<dependency>
+	  					<type>eclipse-plugin</type>
+	  					<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+	  					<version>0.0.0</version>
+	  				</dependency>
+					<dependency>
+						<type>eclipse-plugin</type>
+						<artifactId>org.eclipse.jdt.ui</artifactId>
+						<version>0.0.0</version>
+					</dependency>
+	  			</dependencies>
+			</configuration>
+			<executions>
+				<execution>
+					<id>jface-tests</id>
+					<phase>integration-test</phase>
+					<goals><goal>test</goal></goals>
+					<configuration>
+						<testClass>org.eclipse.jface.tests.AllTests</testClass>
+						<useUIHarness>false</useUIHarness>
+					</configuration>
+				</execution>
+			</executions>
   		</plugin>
   	</plugins>
   </build>
