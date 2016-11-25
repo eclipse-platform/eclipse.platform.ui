@@ -91,7 +91,8 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 		}
 
 		if (subLaunches.size() == 0) {
-			return false;
+			return fLaunched; // in case we're done launching and there is
+								// nobody -> terminated
 		}
 
 		for (ILaunch launch : subLaunches.keySet()) {

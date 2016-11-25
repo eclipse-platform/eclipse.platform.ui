@@ -39,6 +39,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -81,8 +82,8 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	private ViewerFilter emptyTypeFilter;
 	private IStructuredSelection fInitialSelection;
 	private ComboControlledStackComposite fStackComposite;
-	private Label fDelayAmountLabel;
-	private Text fDelayAmountWidget; // in seconds
+	private Label fActionParamLabel;
+	private Text fActionParamWidget; // in seconds
 	private boolean fForEditing; // true if dialog was opened to edit an entry,
 									// otherwise it was opened to add one
 	private ILaunchConfigurationType groupType;
@@ -236,6 +237,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		combo.add(GroupElementPostLaunchAction.NONE.getDescription());
 		combo.add(GroupElementPostLaunchAction.WAIT_FOR_TERMINATION.getDescription());
 		combo.add(GroupElementPostLaunchAction.DELAY.getDescription());
+		combo.add(GroupElementPostLaunchAction.OUTPUT_REGEXP.getDescription());
 		combo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -247,36 +249,46 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		});
 		combo.setText(action.getDescription());
 
-		fDelayAmountLabel = new Label(comp, SWT.NONE);
-		fDelayAmountLabel.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_9);
-
-		fDelayAmountWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		GridData gridData = new GridData();
-		gridData.widthHint = convertWidthInCharsToPixels(8);
-		fDelayAmountWidget.setLayoutData(gridData);
-		fDelayAmountWidget.addModifyListener(new ModifyListener() {
+		fActionParamLabel = new Label(comp, SWT.NONE);
+		fActionParamWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(fActionParamWidget);
+		fActionParamWidget.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String text = ((Text) e.widget).getText();
-				try {
-					actionParam = Integer.valueOf(text);
-				} catch (NumberFormatException exc) {
-					actionParam = null;
+				if (action == GroupElementPostLaunchAction.DELAY) {
+					try {
+						actionParam = Integer.valueOf(text);
+					} catch (NumberFormatException exc) {
+						actionParam = null;
+					}
+				} else if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
+					actionParam = text;
 				}
 				validate();
 			}
 		});
 		if (actionParam instanceof Integer) {
-			fDelayAmountWidget.setText(((Integer) actionParam).toString());
+			fActionParamWidget.setText(((Integer) actionParam).toString());
+		} else if (actionParam instanceof String) {
+			fActionParamWidget.setText(actionParam.toString());
 		}
 
 		showHideDelayAmountWidgets();
 	}
 
 	private void showHideDelayAmountWidgets() {
-		final boolean visible = action == GroupElementPostLaunchAction.DELAY;
-		fDelayAmountLabel.setVisible(visible);
-		fDelayAmountWidget.setVisible(visible);
+		final boolean visible = (action == GroupElementPostLaunchAction.DELAY || action == GroupElementPostLaunchAction.OUTPUT_REGEXP);
+		fActionParamLabel.setVisible(visible);
+		fActionParamWidget.setVisible(visible);
+
+		if (action == GroupElementPostLaunchAction.DELAY) {
+			fActionParamLabel.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_9);
+		} else if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
+			fActionParamLabel.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_regexp);
+		}
+
+		fActionParamLabel.getParent().layout();
 	}
 
 	public ILaunchConfiguration[] getSelectedLaunchConfigurations() {
@@ -388,6 +400,11 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			if (action == GroupElementPostLaunchAction.DELAY) {
 				isValid = (actionParam instanceof Integer) && ((Integer) actionParam > 0);
 				setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_10);
+			}
+
+			if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
+				isValid = actionParam instanceof String && !((String) actionParam).isEmpty();
+				setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_errorNoRegexp);
 			}
 		}
 

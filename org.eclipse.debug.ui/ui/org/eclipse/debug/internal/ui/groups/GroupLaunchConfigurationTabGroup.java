@@ -155,17 +155,18 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			if (columnIndex == 2) {
 				GroupElementPostLaunchAction action = el.action;
 				switch (action) {
-				case NONE:
-					return ""; //$NON-NLS-1$
-				case WAIT_FOR_TERMINATION:
+					case NONE:
+						return ""; //$NON-NLS-1$
+					case WAIT_FOR_TERMINATION:
 						return action.getDescription();
-				case DELAY:
-					final Object actionParam = el.actionParam;
-						return NLS.bind(DebugUIMessages.GroupLaunchConfigurationTabGroup_13,
-							actionParam instanceof Integer ? Integer.toString((Integer) actionParam) : "?"); //$NON-NLS-1$
-				default:
-					assert false : "new post launch action missing logic here"; //$NON-NLS-1$
-					return ""; //$NON-NLS-1$
+					case DELAY:
+						final Object actionParam = el.actionParam;
+						return NLS.bind(DebugUIMessages.GroupLaunchConfigurationTabGroup_13, actionParam instanceof Integer ? Integer.toString((Integer) actionParam) : "?"); //$NON-NLS-1$
+					case OUTPUT_REGEXP:
+						return NLS.bind(DebugUIMessages.GroupLaunchConfigurationTabGroup_0, el.actionParam);
+					default:
+						assert false : "new post launch action missing logic here"; //$NON-NLS-1$
+						return ""; //$NON-NLS-1$
 				}
 			}
 			return null;

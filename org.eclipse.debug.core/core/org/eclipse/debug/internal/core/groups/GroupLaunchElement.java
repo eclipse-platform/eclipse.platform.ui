@@ -34,7 +34,8 @@ public class GroupLaunchElement {
 	public static enum GroupElementPostLaunchAction {
 		NONE(DebugCoreMessages.GroupLaunchConfigurationDelegate_None), //
 		WAIT_FOR_TERMINATION(DebugCoreMessages.GroupLaunchConfigurationDelegate_Wait_until_terminated), //
-		DELAY(DebugCoreMessages.GroupLaunchConfigurationDelegate_Delay);
+		DELAY(DebugCoreMessages.GroupLaunchConfigurationDelegate_Delay), //
+		OUTPUT_REGEXP(DebugCoreMessages.GroupLaunchElement_outputRegexp);
 
 		private final String description;
 

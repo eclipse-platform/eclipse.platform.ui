@@ -19,6 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -33,10 +37,13 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
+import org.eclipse.debug.internal.core.groups.observer.ProcessObserver;
+import org.eclipse.debug.internal.core.groups.observer.StreamObserver;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -193,9 +200,44 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				}
 				break;
 
+			case OUTPUT_REGEXP:
+				String regexp = (String) le.actionParam;
+				if (regexp != null) {
+					monitor.subTask(NLS.bind(DebugCoreMessages.GroupLaunchConfigurationDelegate_waiting, regexp, subLaunch.getLaunchConfiguration().getName()));
+					if (!waitForOutputMatching(subLaunch, monitor, regexp)) {
+						throw new RuntimeException(NLS.bind(DebugCoreMessages.GroupLaunchConfigurationDelegate_failedWait, regexp, le.name));
+					}
+				}
+
+				break;
+
 			default:
 				assert false : "new post launch action type is missing logic"; //$NON-NLS-1$
 		}
+	}
+
+	// blocks until a specific string is in the log output
+	private boolean waitForOutputMatching(ILaunch launch, IProgressMonitor m, String regexp) {
+		int processCount = launch.getProcesses().length;
+		final ExecutorService executor = Executors.newCachedThreadPool();
+		final CountDownLatch countDownLatch = new CountDownLatch(processCount);
+		Future<Integer> process = null;
+		for (IProcess p : launch.getProcesses()) {
+			process = executor.submit(new ProcessObserver(m, p, countDownLatch));
+			executor.submit(new StreamObserver(m, p, regexp, countDownLatch));
+		}
+		try {
+			countDownLatch.await();
+		} catch (InterruptedException e) {
+			// should not happen at all!
+		}
+		executor.shutdown();
+		// process terminated before condition
+		if (process == null || process.isDone()) {
+			return false;
+		}
+		// condition matched
+		return true;
 	}
 
 	/*
@@ -292,6 +334,9 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 								} catch (NumberFormatException exc) {
 									DebugPlugin.log(exc);
 								}
+							}
+							if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
+								actionParam = attrs.get(getProp(index, ACTION_PARAM_PROP));
 							}
 							el.action = action;
 							el.actionParam = actionParam;

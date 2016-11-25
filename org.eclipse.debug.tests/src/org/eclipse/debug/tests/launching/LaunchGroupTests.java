@@ -3,7 +3,11 @@ package org.eclipse.debug.tests.launching;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.CoreException;
@@ -13,8 +17,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamMonitor;
+import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
@@ -149,23 +156,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 						if (l.getLaunchConfiguration().contentsEqual(t1)) {
 							// add a dummy process, otherwise the launch never
 							// terminates...
-							InvocationHandler handler = new InvocationHandler() {
-								@Override
-								public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-									String name = method.getName();
-									if (name.equals("equals")) { //$NON-NLS-1$
-										return args.length == 1 && proxy == args[0];
-									}
-									if (name.equals("getStreamsProxy")) { //$NON-NLS-1$
-										return null;
-									}
-									return Boolean.TRUE;
-								}
-							};
-							IProcess process = (IProcess) Proxy.newProxyInstance(LaunchGroupTests.class.getClassLoader(), new Class[] {
-									IProcess.class,
-									IDisconnect.class }, handler);
-							l.addProcess(process);
+							attachDummyProcess(l);
 							l.terminate();
 						}
 					}
@@ -174,6 +165,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 					e.printStackTrace();
 				}
 			}
+
 		}.start();
 
 		// attention: need to do this before launching!
@@ -191,6 +183,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
+
 
 	public void testAdopt() throws Exception {
 		final ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
@@ -235,6 +228,168 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[2] should be Group 1", history[2].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[3] should be Test1", history[3].contentsEqual(t1)); //$NON-NLS-1$
 		assertTrue("Test1 should be launched only once", launchCount.get() == 1); //$NON-NLS-1$
+	}
+
+	public void testWaitForOutput() throws Exception {
+		String testOutput = "TestOutput"; //$NON-NLS-1$
+
+		final ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
+		ILaunchConfiguration t2 = getLaunchConfiguration("Test2"); //$NON-NLS-1$
+		ILaunchConfiguration grp = createLaunchGroup(DEF_GRP_NAME, createLaunchGroupElement(t1, GroupElementPostLaunchAction.OUTPUT_REGEXP, testOutput, false), createLaunchGroupElement(t2, GroupElementPostLaunchAction.NONE, null, false));
+
+		// attach a dummy process to the launch once it is launched.
+		final DummyAttachListener attachListener = new DummyAttachListener(t1);
+		getLaunchManager().addLaunchListener(attachListener);
+
+		// start a thread that will produce output on the dummy process after
+		// some time
+		new Thread("Output Producer") { //$NON-NLS-1$
+			@Override
+			public void run() {
+				try {
+					// wait some time before causing the group to continue
+					Thread.sleep(2000);
+					attachListener.getStream().write("TestOutput"); //$NON-NLS-1$
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
+		long start = System.currentTimeMillis();
+
+		// attention: need to do this before launching!
+		LaunchHistory runHistory = getRunLaunchHistory();
+
+		// launching the group should block until the output is produced
+		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
+		getLaunchManager().removeLaunchListener(attachListener);
+
+		assertTrue("output was not awaited", (System.currentTimeMillis() - start) > 2000); //$NON-NLS-1$
+
+		ILaunchConfiguration[] history = runHistory.getHistory();
+		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
+		assertTrue("history[0] should be Test Group", history[0].contentsEqual(grp)); //$NON-NLS-1$
+		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
+		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
+	}
+
+	protected Set<ILaunch> findRunningLaunch(ILaunchConfiguration cfg) {
+		Set<ILaunch> result = new HashSet<>();
+		for (ILaunch l : getLaunchManager().getLaunches()) {
+			if (l.isTerminated()) {
+				continue;
+			}
+			if (l.getLaunchConfiguration().equals(cfg)) {
+				result.add(l);
+			}
+		}
+		return result;
+	}
+
+	private static DummyStream attachDummyProcess(final ILaunch l) {
+		final DummyStream dummy = new DummyStream();
+		final InvocationHandler streamProxyHandler = new InvocationHandler() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				String name = method.getName();
+				if (name.equals("getOutputStreamMonitor")) { //$NON-NLS-1$
+					return dummy;
+				}
+				return null;
+			}
+		};
+
+		final InvocationHandler handler = new InvocationHandler() {
+			boolean terminated = false;
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				String name = method.getName();
+				if (name.equals("equals")) { //$NON-NLS-1$
+					return args.length == 1 && proxy == args[0];
+				}
+				if (name.equals("getStreamsProxy")) { //$NON-NLS-1$
+					return Proxy.newProxyInstance(LaunchGroupTests.class.getClassLoader(), new Class[] {
+							IStreamsProxy.class }, streamProxyHandler);
+				}
+				if (name.equals("getLaunch")) { //$NON-NLS-1$
+					return l;
+				}
+				if (name.equals("getLabel")) { //$NON-NLS-1$
+					return l.getLaunchConfiguration().getName();
+				}
+				if (name.equals("getAttribute")) { //$NON-NLS-1$
+					return null;
+				}
+				if (name.equals("isTerminated")) { //$NON-NLS-1$
+					return terminated;
+				}
+				if (name.equals("terminate")) { //$NON-NLS-1$
+					terminated = true;
+				}
+				return Boolean.TRUE;
+			}
+		};
+		IProcess process = (IProcess) Proxy.newProxyInstance(LaunchGroupTests.class.getClassLoader(), new Class[] {
+				IProcess.class, IDisconnect.class }, handler);
+		l.addProcess(process);
+		return dummy;
+	}
+
+	private static final class DummyStream implements IStreamMonitor {
+
+		private final List<IStreamListener> listeners = new ArrayList<>();
+
+		@Override
+		public void addListener(IStreamListener listener) {
+			listeners.add(listener);
+		}
+
+		@Override
+		public String getContents() {
+			return null;
+		}
+
+		@Override
+		public void removeListener(IStreamListener listener) {
+			listeners.remove(listener);
+		}
+
+		public void write(String s) {
+			for (IStreamListener l : listeners) {
+				l.streamAppended(s, null);
+			}
+		}
+
+	}
+
+	private static final class DummyAttachListener implements ILaunchListener {
+
+		private ILaunchConfiguration cfg;
+		private DummyStream stream;
+
+		public DummyAttachListener(ILaunchConfiguration cfg) {
+			this.cfg = cfg;
+		}
+
+		public DummyStream getStream() {
+			return stream;
+		}
+
+		@Override
+		public void launchRemoved(ILaunch launch) {
+		}
+
+		@Override
+		public void launchAdded(ILaunch launch) {
+			if (launch.getLaunchConfiguration().equals(cfg))
+				stream = attachDummyProcess(launch);
+		}
+
+		@Override
+		public void launchChanged(ILaunch launch) {
+		}
+
 	}
 
 }
