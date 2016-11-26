@@ -723,7 +723,7 @@ public final class Util {
 		IWorkbenchWindow windowToParentOn = activeWindow == null ? (workbench
 				.getWorkbenchWindowCount() > 0 ? workbench
 				.getWorkbenchWindows()[0] : null) : activeWindow;
-		return windowToParentOn == null ? null : activeWindow.getShell();
+		return windowToParentOn == null ? null : windowToParentOn.getShell();
 	}
 
 	/**
