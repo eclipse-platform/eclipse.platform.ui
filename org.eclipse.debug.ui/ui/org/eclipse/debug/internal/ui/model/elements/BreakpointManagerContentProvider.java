@@ -275,6 +275,37 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             }            
         }
 
+		void sortContainers() {
+			IBreakpoint[] breakpoints = filterBreakpoints(fInput, getSelectionFilter(fInput, getDebugContext()), fBpManager.getBreakpoints());
+
+			synchronized (this) {
+				ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+				// create a reference container, use for deleting elements and
+				// adding elements
+				ModelDelta dummyDelta = new ModelDelta(null, IModelDelta.NO_CHANGE);
+				BreakpointContainer refContainer = createRootContainer(dummyDelta, fInput, fOrganizers, breakpoints);
+
+				// delete all elements
+				deleteAllElements(fContainer, delta);
+
+				// adjust the old organizer with the reference organizer
+				BreakpointContainer.copyOrganizers(fContainer, refContainer);
+
+				// insert all elements
+				IBreakpoint newBreakpoint = insertAddedElements(fContainer, refContainer, delta);
+				delta.setChildCount(fContainer.getChildren().length);
+
+				// select the new breakpoint
+				if (newBreakpoint != null) {
+					appendModelDeltaToElement(delta, newBreakpoint, IModelDelta.SELECT);
+				}
+				if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
+					DebugUIPlugin.trace("POST BREAKPOINT DELTA (setOrganizers)\n"); //$NON-NLS-1$
+				}
+				postModelChanged(delta, false);
+			}
+		}
+
         private synchronized IStructuredSelection getDebugContext() {
             return fDebugContext;
         }
@@ -285,7 +316,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @param event the event 
          */
         private void presentationPropertyChanged(PropertyChangeEvent event) {
-            if (IPresentationContext.PROPERTY_DISPOSED.equals(event.getProperty())) {
+			if (IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR_SORT.equals(event.getProperty())) {
+				sortContainers();
+			} else if (IPresentationContext.PROPERTY_DISPOSED.equals(event.getProperty())) {
                 contextDisposed(fInput.getContext());
             }
             if (IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS.equals(event.getProperty())) {
@@ -608,7 +641,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 // if a child exist in container, than recursively search into container. And also update the organizer of
                 // of container to the one in the refContainer's child.
                 } else if (element instanceof BreakpointContainer) {
-                    ModelDelta childDelta = containerDelta.addNode(element, container.getChildIndex(element), IModelDelta.STATE, -1);
+					ModelDelta childDelta = containerDelta.addNode(element, container.getChildIndex(element), IModelDelta.INSTALL, -1);
                     BreakpointContainer.copyOrganizers((BreakpointContainer) element, (BreakpointContainer) refChildren[i]);
                     newBreakpoint = insertAddedElements((BreakpointContainer) element, (BreakpointContainer) refChildren[i], childDelta);
                     childDelta.setChildCount(((BreakpointContainer) element).getChildren().length);
@@ -618,6 +651,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             return newBreakpoint;
         }
         
+
+
         /**
          * Delete elements from existing container that doesn't exist in the reference container.
          * 
@@ -647,6 +682,21 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             }
         }
         
+		private void deleteAllElements(BreakpointContainer container, ModelDelta containerDelta) {
+			Object[] children = container.getChildren();
+			// Object[] refChildren = refContainer.getChildren();
+
+			// if a child of container doesn't exist in refContainer, than
+			// remove it from container
+			for (int i = 0; i < children.length; ++i) {
+				if (children[i] instanceof BreakpointContainer) {
+						BreakpointContainer.removeAll((BreakpointContainer) children[i], containerDelta);
+					} else {
+						BreakpointContainer.removeBreakpoint(container, (IBreakpoint) children[i], containerDelta);
+					}
+			}
+		}
+
         /**
          * Get the element that is in the collection.
          * 

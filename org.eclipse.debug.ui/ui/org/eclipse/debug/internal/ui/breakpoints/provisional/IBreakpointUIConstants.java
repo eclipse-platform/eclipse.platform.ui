@@ -60,4 +60,6 @@ public interface IBreakpointUIConstants {
      */
     public static final String PROP_BREAKPOINTS_ELEMENT_COMPARATOR = "ElementComparator";   //$NON-NLS-1$
 
+	public static final String PROP_BREAKPOINTS_ELEMENT_COMPARATOR_SORT = "ElementComparatorSort"; //$NON-NLS-1$
+
 }

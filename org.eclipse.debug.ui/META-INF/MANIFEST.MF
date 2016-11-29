@@ -15,6 +15,7 @@ Export-Package: org.eclipse.debug.internal.ui;
    org.eclipse.debug.examples.mixedmode",
  org.eclipse.debug.internal.ui.actions;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpointGroups;x-internal:=true,
+ org.eclipse.debug.internal.ui.actions.breakpointSortBy;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpoints;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.expressions;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.variables;x-internal:=true,

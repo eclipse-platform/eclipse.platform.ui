@@ -14,7 +14,6 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -86,7 +85,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
-
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
@@ -128,7 +126,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementContentProvider fgCPMemoryRetrieval = new MemoryRetrievalContentProvider();
     private static IElementContentProvider fgCPMemoryBlock = new MemoryBlockContentProvider();   
     private static IElementContentProvider fgCPBreakpointManager = new BreakpointManagerContentProvider();
-    private static IElementContentProvider fgCPBreakpoint = new BreakpointContentProvider();
+	private static IElementContentProvider fgCPBreakpoint = new BreakpointContentProvider();
     
     private static IElementMementoProvider fgMPFrame = new StackFrameMementoProvider();
     private static IElementMementoProvider fgMPVariable = new VariableMementoProvider();

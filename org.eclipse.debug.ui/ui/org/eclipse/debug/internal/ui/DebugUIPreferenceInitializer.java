@@ -65,6 +65,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE, true);
 		
 		prefs.setDefault(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION, false);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_BREAKPOINT_SORTING_ORDER, IInternalDebugUIConstants.BREAKPOINT_SORTING_ORDER_NAME);
 
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);

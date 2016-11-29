@@ -853,6 +853,14 @@
                label="%GroupBy.label"
                tooltip="%GroupBy.tooltip">
          </action>
+         <action
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.sortByAction"
+               menubarPath="defaultBreakpointGroup"
+               class="org.eclipse.debug.internal.ui.actions.breakpointSortBy.SortBreakpointsByAction"
+               helpContextId="sort_breakpoints_by_action_context"
+               label="%SortBy.label"
+               tooltip="%SortBy.tooltip">
+         </action>
       </viewContribution>
 <!-- Contributions to Expression View Toolbar -->
       <viewContribution

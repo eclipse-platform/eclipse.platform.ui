@@ -446,4 +446,25 @@ public interface IInternalDebugUIConstants {
 	 */
 	public static final String PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION = IDebugUIConstants.PLUGIN_ID + ".RelaunchAndTerminateLaunchAction"; //$NON-NLS-1$
 
+	/**
+	 * Int preference indicating the sorting order of breakpoints
+	 * 
+	 * @since 3.12
+	 */
+	public static final String PREF_BREAKPOINT_SORTING_ORDER = IDebugUIConstants.PLUGIN_ID + ".BreakpointSortingOrder"; //$NON-NLS-1$
+
+	/**
+	 * Int indicating the breakpoints will be sorted by name
+	 * 
+	 * @since 3.12
+	 */
+	public static final int BREAKPOINT_SORTING_ORDER_NAME = 0;
+
+	/**
+	 * Int indicating the breakpoints will be sorted by Creation Time
+	 * 
+	 * @since 3.12
+	 */
+	public static final int BREAKPOINT_SORTING_ORDER_CREATION_TIME = 1;
+
 }

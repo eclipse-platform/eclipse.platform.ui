@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2013 Texas Instruments and others
+ * Copyright (c) 2009, 2016 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -97,14 +98,31 @@ public class ElementComparator implements Comparator<Object> {
 	 * @return
 	 */
 	private int doCompare(IBreakpoint b1, IBreakpoint b2) {
+		int sortingOrder = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_BREAKPOINT_SORTING_ORDER);
+		IMarker marker1 = b1.getMarker();
+		IMarker marker2 = b2.getMarker();
+		if (sortingOrder == IInternalDebugUIConstants.BREAKPOINT_SORTING_ORDER_CREATION_TIME) {
+			// The most relevant/ new ones to be shown on top
+			try {
+				long b1CreationTime = marker1.getCreationTime();
+				long b2CreationTime = marker2.getCreationTime();
+				if (b1CreationTime > b2CreationTime) {
+					return -1;
+				} else if (b1CreationTime < b2CreationTime) {
+					return 1;
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+
+		}
 		String text1 = IInternalDebugCoreConstants.EMPTY_STRING;
 		String text2 = IInternalDebugCoreConstants.EMPTY_STRING;
 		
 		text1 += b1.getModelIdentifier();
 		text2 += b2.getModelIdentifier();
 		
-		IMarker marker1 = b1.getMarker();
-		IMarker marker2 = b2.getMarker();
+
 		try {		
 			if (marker1.exists() && marker2.exists()) {
 				text1 += SPACE + marker1.getType();

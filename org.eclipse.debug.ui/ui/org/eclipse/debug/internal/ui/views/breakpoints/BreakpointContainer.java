@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
@@ -30,7 +29,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -293,7 +291,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
             		childDelta = rootDelta.addNode(container, fChildContainers.indexOf(container), IModelDelta.INSERTED|IModelDelta.INSTALL, -1);
             	
             	} else {
-            		childDelta = rootDelta.addNode(container, fChildContainers.indexOf(container), IModelDelta.STATE, -1);
+					childDelta = rootDelta.addNode(container, fChildContainers.indexOf(container), IModelDelta.STATE, -1);
             	}
 
            		container.addBreakpoint(breakpoint, childDelta);
@@ -362,7 +360,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     public static void copyOrganizers(BreakpointContainer destContainer, BreakpointContainer sourceContainer) {
     	destContainer.fNesting = sourceContainer.fNesting;
     	destContainer.fOrganizer = sourceContainer.fOrganizer;
-    	destContainer.fCategory = sourceContainer.fCategory;    	
+		destContainer.fCategory = sourceContainer.fCategory;
     }
     
     /**
