@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.text.revisions.Colors;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
@@ -181,8 +182,16 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fResizable= (shellStyle & SWT.RESIZE) != 0;
 		fShell= new Shell(parentShell, shellStyle);
 		Display display= fShell.getDisplay();
-		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		
+		ColorRegistry colorRegistry =  JFaceResources.getColorRegistry();
+		Color foreground= colorRegistry.get("org.eclipse.ui.workbench.HOVER_FOREGROUND"); //$NON-NLS-1$
+		if (foreground == null) {
+			foreground = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		}
+		Color background= colorRegistry.get("org.eclipse.ui.workbench.HOVER_BACKGROUND"); //$NON-NLS-1$
+		if (background == null) {
+			background = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
 		setColor(fShell, foreground, background);
 
 		GridLayout layout= new GridLayout(1, false);
