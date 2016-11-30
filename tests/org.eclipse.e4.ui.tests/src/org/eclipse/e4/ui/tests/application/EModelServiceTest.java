@@ -15,6 +15,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -23,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.junit.Test;
@@ -310,4 +312,18 @@ public class EModelServiceTest extends UITest {
 		assertEquals(2, modelService.countRenderableChildren(perspective));
 	}
 
+	@Test
+	public void testCreatePartFromDescriptorWithTrimBars() {
+		MPartDescriptor mPartDescriptor = ems.createModelElement(MPartDescriptor.class);
+		MTrimBar mTrimBar = ems.createModelElement(MTrimBar.class);
+		mTrimBar.setElementId("test.trimbar.id");
+		mPartDescriptor.getTrimBars().add(mTrimBar);
+
+		MPart newPart = ems.createPart(mPartDescriptor);
+
+		assertEquals(1, newPart.getTrimBars().size());
+		assertEquals(1, mPartDescriptor.getTrimBars().size());
+		assertEquals(newPart.getTrimBars().get(0).getElementId(), mPartDescriptor.getTrimBars().get(0).getElementId());
+
+	}
 }
