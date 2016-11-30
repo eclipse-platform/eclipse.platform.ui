@@ -124,8 +124,6 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 			return getPreferencesService().getString(nodePath, key, null, null);
 		else if (Boolean.class.equals(descriptorsClass))
 			return getPreferencesService().getBoolean(nodePath, key, false, null);
-		else if (Boolean.class.equals(descriptorsClass))
-			return getPreferencesService().getBoolean(nodePath, key, false, null);
 		else if (Integer.class.equals(descriptorsClass))
 			return getPreferencesService().getInt(nodePath, key, 0, null);
 		else if (Double.class.equals(descriptorsClass))
