@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,10 +49,8 @@ public class EModelServiceTest extends UITest {
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(
-				EModelService.class);
-		MPerspective foundPerspective = modelService
-				.getPerspectiveFor(partStack);
+		EModelService modelService = window.getContext().get(EModelService.class);
+		MPerspective foundPerspective = modelService.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
 	}
@@ -81,10 +79,8 @@ public class EModelServiceTest extends UITest {
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(
-				EModelService.class);
-		MPerspective foundPerspective = modelService
-				.getPerspectiveFor(partStack);
+		EModelService modelService = window.getContext().get(EModelService.class);
+		MPerspective foundPerspective = modelService.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
 	}
@@ -117,10 +113,8 @@ public class EModelServiceTest extends UITest {
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(
-				EModelService.class);
-		MPerspective foundPerspective = modelService
-				.getPerspectiveFor(partStack);
+		EModelService modelService = window.getContext().get(EModelService.class);
+		MPerspective foundPerspective = modelService.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
 	}
@@ -139,8 +133,7 @@ public class EModelServiceTest extends UITest {
 
 		assertEquals(windowA, application.getSelectedElement());
 
-		EModelService modelService = applicationContext
-				.get(EModelService.class);
+		EModelService modelService = applicationContext.get(EModelService.class);
 		modelService.bringToTop(windowA);
 		assertEquals(windowA, application.getSelectedElement());
 
@@ -166,8 +159,7 @@ public class EModelServiceTest extends UITest {
 
 		assertEquals(windowB, application.getSelectedElement());
 
-		EModelService modelService = applicationContext
-				.get(EModelService.class);
+		EModelService modelService = applicationContext.get(EModelService.class);
 		modelService.bringToTop(windowA);
 		assertEquals(windowA, application.getSelectedElement());
 
@@ -193,8 +185,7 @@ public class EModelServiceTest extends UITest {
 
 		assertEquals(window, application.getSelectedElement());
 
-		EModelService modelService = applicationContext
-				.get(EModelService.class);
+		EModelService modelService = applicationContext.get(EModelService.class);
 		modelService.bringToTop(part);
 		assertTrue(part.isToBeRendered());
 		assertTrue(detachedWindow.isToBeRendered());
@@ -206,10 +197,8 @@ public class EModelServiceTest extends UITest {
 		MPart part = ems.createModelElement(MPart.class);
 		perspective.getChildren().add(part);
 
-		EModelService modelService = applicationContext
-				.get(EModelService.class);
-		assertEquals(EModelService.NOT_IN_UI,
-				modelService.getElementLocation(part));
+		EModelService modelService = applicationContext.get(EModelService.class);
+		assertEquals(EModelService.NOT_IN_UI, modelService.getElementLocation(part));
 	}
 
 	@Test
@@ -221,10 +210,8 @@ public class EModelServiceTest extends UITest {
 		MWindow innerWindow = ems.createModelElement(MWindow.class);
 		detachedWindow.getWindows().add(innerWindow);
 
-		EModelService modelService = applicationContext
-				.get(EModelService.class);
-		assertEquals(EModelService.NOT_IN_UI,
-				modelService.getElementLocation(innerWindow));
+		EModelService modelService = applicationContext.get(EModelService.class);
+		assertEquals(EModelService.NOT_IN_UI, modelService.getElementLocation(innerWindow));
 	}
 
 	@Test
