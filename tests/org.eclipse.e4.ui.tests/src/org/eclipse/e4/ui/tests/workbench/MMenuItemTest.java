@@ -331,14 +331,14 @@ public class MMenuItemTest {
 	@Test
 	public void testSubMenuCreation() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
-		MMenu menuBar = ems.createModelElement(MMenu.class);
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
+		MMenu mainMenu = ems.createModelElement(MMenu.class);
+		mainMenu.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(mainMenu);
 
 		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
-		menuBar.getChildren().add(fileMenu);
+		mainMenu.getChildren().add(fileMenu);
 
 		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
@@ -362,8 +362,8 @@ public class MMenuItemTest {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManagerRenderer renderer = getRenderer(appContext, menuBar);
-		MenuManager manager = renderer.getManager(menuBar);
+		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
+		MenuManager manager = renderer.getManager(mainMenu);
 		assertNotNull("failed to create menu bar manager", manager);
 
 		assertEquals(1, manager.getSize());
@@ -378,14 +378,14 @@ public class MMenuItemTest {
 	@Test
 	public void testTbrItem() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
-		MMenu menuBar = ems.createModelElement(MMenu.class);
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
+		MMenu mainMenu = ems.createModelElement(MMenu.class);
+		mainMenu.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(mainMenu);
 
 		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
-		menuBar.getChildren().add(fileMenu);
+		mainMenu.getChildren().add(fileMenu);
 
 		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
@@ -410,8 +410,8 @@ public class MMenuItemTest {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManagerRenderer renderer = getRenderer(appContext, menuBar);
-		MenuManager manager = renderer.getManager(menuBar);
+		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
+		MenuManager manager = renderer.getManager(mainMenu);
 		assertNotNull("failed to create menu bar manager", manager);
 
 		assertEquals(1, manager.getSize());
@@ -426,14 +426,14 @@ public class MMenuItemTest {
 	@Test
 	public void testInvisibleItem() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
-		MMenu menuBar = ems.createModelElement(MMenu.class);
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
+		MMenu mainMenu = ems.createModelElement(MMenu.class);
+		mainMenu.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(mainMenu);
 
 		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
-		menuBar.getChildren().add(fileMenu);
+		mainMenu.getChildren().add(fileMenu);
 
 		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
@@ -458,8 +458,8 @@ public class MMenuItemTest {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManagerRenderer renderer = getRenderer(appContext, menuBar);
-		MenuManager manager = renderer.getManager(menuBar);
+		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
+		MenuManager manager = renderer.getManager(mainMenu);
 		assertNotNull("failed to create menu bar manager", manager);
 
 		assertEquals(1, manager.getSize());
@@ -476,14 +476,14 @@ public class MMenuItemTest {
 	@Test
 	public void testMenuContribution() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
-		MMenu menuBar = ems.createModelElement(MMenu.class);
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
+		MMenu mainMenu = ems.createModelElement(MMenu.class);
+		mainMenu.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(mainMenu);
 
 		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
-		menuBar.getChildren().add(fileMenu);
+		mainMenu.getChildren().add(fileMenu);
 
 		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
@@ -508,7 +508,7 @@ public class MMenuItemTest {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManagerRenderer renderer = getRenderer(appContext, menuBar);
+		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 
 		MenuManager fileManager = renderer.getManager(fileMenu);
 		assertNotNull("No file menu?", fileManager);
@@ -521,14 +521,14 @@ public class MMenuItemTest {
 	@Test
 	public void testWithVisible() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
-		MMenu menuBar = ems.createModelElement(MMenu.class);
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
+		MMenu mainMenu = ems.createModelElement(MMenu.class);
+		mainMenu.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(mainMenu);
 
 		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
-		menuBar.getChildren().add(fileMenu);
+		mainMenu.getChildren().add(fileMenu);
 
 		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
@@ -553,7 +553,7 @@ public class MMenuItemTest {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManagerRenderer renderer = getRenderer(appContext, menuBar);
+		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
 
 		MenuManager fileManager = renderer.getManager(fileMenu);
 		assertNotNull("No file menu?", fileManager);
@@ -564,7 +564,7 @@ public class MMenuItemTest {
 		assertEquals("mmc.item1", mmcItem.getId());
 		assertEquals("before the first show, we have no context to evaluate", true, mmcItem.isVisible());
 
-		MenuManager manager = renderer.getManager(menuBar);
+		MenuManager manager = renderer.getManager(mainMenu);
 		manager.updateAll(true);
 		Menu fileWidget = fileManager.getMenu();
 		assertNotNull(fileWidget);
@@ -604,16 +604,16 @@ public class MMenuItemTest {
 	}
 
 	@Test
-	public void testMenuBarVisibility() throws Exception {
+	public void testVisibilityOfMenuItemChangesBasedOnCoreExpression() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
-		MMenu menuBar = ems.createModelElement(MMenu.class);
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
+		MMenu mainMenu = ems.createModelElement(MMenu.class);
+		mainMenu.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(mainMenu);
 
 		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
-		menuBar.getChildren().add(fileMenu);
+		mainMenu.getChildren().add(fileMenu);
 
 		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
@@ -633,28 +633,31 @@ public class MMenuItemTest {
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
-		createMenuContribution(application);
+		createMenuContributionWithCoreExpression(application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManagerRenderer renderer = getRenderer(appContext, menuBar);
-		MenuManager manager = renderer.getManager(menuBar);
+		MenuManagerRenderer renderer = getRenderer(appContext, mainMenu);
+		MenuManager manager = renderer.getManager(mainMenu);
 		manager.updateAll(true);
 
 		assertEquals(2, manager.getSize());
 
 		MenuManager vanishManager = (MenuManager) manager.getItems()[1];
 		assertEquals("vanish", vanishManager.getId());
-
+		// core expression evaluates to false, hence menu should not be visible
 		assertFalse(vanishManager.isVisible());
 		assertNull(vanishManager.getMenu());
 
+		// ensure core expression now evaluates to true
 		appContext.set("mmc1", Boolean.TRUE);
 
+		// menu should be visible now
 		assertTrue(vanishManager.isVisible());
 		assertNotNull(vanishManager.getMenu());
 
+		// again, ensure that coreexpression evaluates to false
 		appContext.remove("mmc1");
 
 		assertFalse(vanishManager.isVisible());
@@ -832,7 +835,7 @@ public class MMenuItemTest {
 		return mmc;
 	}
 
-	private void createMenuContribution(MApplication application) {
+	private void createMenuContributionWithCoreExpression(MApplication application) {
 		MMenuContribution mmc = ems.createModelElement(MMenuContribution.class);
 		mmc.setElementId("test.contrib2");
 		mmc.setParentId("org.eclipse.ui.main.menu");
