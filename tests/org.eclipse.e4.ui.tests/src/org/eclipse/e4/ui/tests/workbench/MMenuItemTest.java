@@ -72,8 +72,7 @@ public class MMenuItemTest {
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 		ContextInjectionFactory.make(BindingServiceAddon.class, appContext);
-		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
-				PartRenderingEngine.engineURI);
+		appContext.set(E4Workbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 		ems = appContext.get(EModelService.class);
 	}
 
@@ -85,8 +84,7 @@ public class MMenuItemTest {
 		appContext.dispose();
 	}
 
-	private void testMMenuItem_Text(String before, String beforeExpected,
-			String after, String afterExpected) {
+	private void testMMenuItem_Text(String before, String beforeExpected, String after, String afterExpected) {
 		MWindow window = ems.createModelElement(MWindow.class);
 		MMenu menu = ems.createModelElement(MMenu.class);
 		MMenuItem menuItem = ems.createModelElement(MDirectMenuItem.class);
@@ -282,8 +280,7 @@ public class MMenuItemTest {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
-		MenuManager barManager = (MenuManager) ((Menu) menu.getWidget())
-				.getData();
+		MenuManager barManager = (MenuManager) ((Menu) menu.getWidget()).getData();
 		barManager.updateAll(true);
 
 		Object widget1 = menuItem.getWidget();
@@ -565,8 +562,7 @@ public class MMenuItemTest {
 
 		IContributionItem mmcItem = fileManager.getItems()[3];
 		assertEquals("mmc.item1", mmcItem.getId());
-		assertEquals("before the first show, we have no context to evaluate",
-				true, mmcItem.isVisible());
+		assertEquals("before the first show, we have no context to evaluate", true, mmcItem.isVisible());
 
 		MenuManager manager = renderer.getManager(menuBar);
 		manager.updateAll(true);
@@ -583,8 +579,7 @@ public class MMenuItemTest {
 
 		fileWidget.notifyListeners(SWT.Show, show);
 
-		assertEquals("after the first show, it should not be visible", false,
-				mmcItem.isVisible());
+		assertEquals("after the first show, it should not be visible", false, mmcItem.isVisible());
 
 		fileWidget.notifyListeners(SWT.Hide, hide);
 
@@ -867,11 +862,9 @@ public class MMenuItemTest {
 		application.getMenuContributions().add(mmc);
 	}
 
-	private MenuManagerRenderer getRenderer(IEclipseContext context,
-			MUIElement element) {
+	private MenuManagerRenderer getRenderer(IEclipseContext context, MUIElement element) {
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
-		AbstractPartRenderer renderer = rendererFactory.getRenderer(element,
-				null);
+		AbstractPartRenderer renderer = rendererFactory.getRenderer(element, null);
 		assertEquals(MenuManagerRenderer.class, renderer.getClass());
 		return (MenuManagerRenderer) renderer;
 	}
