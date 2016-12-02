@@ -327,7 +327,12 @@ public class ProgressManagerUtil {
 		}
 
 		String s1 = textValue.substring(0, start);
-		String s2 = textValue.substring(end, length);
+		String s2;
+		if (end < length) {
+			s2 = textValue.substring(end, length);
+		} else {
+			s2 = ""; //$NON-NLS-1$
+		}
 		s = s1 + ellipsisString + s2;
 		return s;
 	}
