@@ -183,8 +183,8 @@ public class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Returns the control that is used as a separator betweeen the title and
-	 * the client, or <samp>null </samp> if not set.
+	 * Returns the control that is used as a separator between the title and the
+	 * client, or <samp>null </samp> if not set.
 	 *
 	 * @return separator control or <samp>null </samp> if not set.
 	 */
@@ -238,8 +238,8 @@ public class Section extends ExpandableComposite {
 	/**
 	 * Sets the description control of this section. The control must not be
 	 * <samp>null</samp> and must be a direct child of this container. If
-	 * defined, contol will be placed below the title text and the separator and
-	 * will be hidden int he collapsed state.
+	 * defined, control will be placed below the title text and the separator
+	 * and will be hidden in the collapsed state.
 	 * <p>
 	 * This method and <code>DESCRIPTION</code> style are mutually exclusive.
 	 * Use the method only if you want to create the description control
@@ -439,7 +439,7 @@ public class Section extends ExpandableComposite {
 			gc.fillGradientRectangle(bounds.width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
 		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
-			// New in 3.3 - edge treatmant
+			// New in 3.3 - edge treatment
 			gc.setForeground(getBackground());
 			gc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
 					marginHeight + 2, marginWidth + 2, marginHeight + 2, marginWidth + 2, marginHeight + 1,
