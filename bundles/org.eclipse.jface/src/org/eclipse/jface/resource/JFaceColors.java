@@ -11,6 +11,7 @@
 package org.eclipse.jface.resource;
 
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
@@ -95,6 +96,69 @@ public class JFaceColors {
                 JFacePreferences.ACTIVE_HYPERLINK_COLOR);
     }
 
+	/**
+	 * Background color intended for widgets that display text.
+	 * This color is compatible with with Gtk system themes, for example
+	 * on the white theme this color is white and on the dark theme it is dark.
+	 * <p>
+	 * Note, there is no need to free this color because it's a color managed by
+	 * the system not the application.
+	 * </p>
+	 *
+	 * @param display
+	 *            the display the color is from
+	 * @return Color most suitable for presenting text background depending on
+	 *         the platform, to match the rest of the environment.
+	 *
+	 * @since 3.13
+	 */
+	public static Color getInformationViewerBackgroundColor(Display display) {
+		if (Util.isWin32() || Util.isCocoa()) {
+			// Technically COLOR_INFO_* should only be used for tooltips. But on
+			// Windows/Cocoa COLOR_INFO_* gives info viewers/hovers a
+			// yellow background which is very suitable for information
+			// presentation.
+			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
+
+		// Technically, COLOR_LIST_* is not the best system color for this
+		// because it is only supposed to be used for Tree/List controls. But at
+		// the moment COLOR_TEXT_* is not implemented, so this should work for
+		// now. See Bug 508612.
+		return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	}
+
+	/**
+	 * Foreground color intended for widgets that display text.
+	 * This color is compatible with with Gtk system themes, for example
+	 * on the white theme this color is black and on the dark theme it is bright.
+	 * <p>
+	 * Note, there is no need to free this color because it's a color managed by
+	 * the system not the application.
+	 * </p>
+	 *
+	 * @param display
+	 *            the display the color is from
+	 * @return Color most suitable for presenting text foreground depending on
+	 *         the platform, to match the rest of the environment.
+	 *
+	 * @since 3.13
+	 */
+	public static Color getInformationViewerForegroundColor(Display display) {
+		if (Util.isWin32() || Util.isCocoa()) {
+			// Technically COLOR_INFO_* should only be used for tooltips. But on
+			// Windows/Cocoa COLOR_INFO_* gives info viewers/hovers a
+			// yellow background which is very suitable for information
+			// presentation.
+			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		}
+
+		// Technically, COLOR_LIST_* is not the best system color for this
+		// because it is only supposed to be used for Tree/List controls. But at
+		// the moment COLOR_TEXT_* is not implemented, so this should work for
+		// now. See Bug 508612.
+		return display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+	}
     /**
      * Clear out the cached color for name. This is generally
      * done when the color preferences changed and any cached colors
