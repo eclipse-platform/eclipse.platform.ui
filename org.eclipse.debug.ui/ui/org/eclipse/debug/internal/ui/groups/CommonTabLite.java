@@ -317,7 +317,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		fFavoritesTable.setInput(config);
 		fFavoritesTable.setCheckedElements(new Object[]{});
 		try {
-			List groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList());
+			List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<String>());
 			if (groups.isEmpty()) {
 				// check old attributes for backwards compatible
 				if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
@@ -328,10 +328,10 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 				}
 			}
 			if (!groups.isEmpty()) {
-				List list = new ArrayList();
-				Iterator iterator = groups.iterator();
+				List<LaunchGroupExtension> list = new ArrayList<LaunchGroupExtension>();
+				Iterator<String> iterator = groups.iterator();
 				while (iterator.hasNext()) {
-					String id = (String)iterator.next();
+					String id = iterator.next();
 					LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
 					if (extension != null) {
 						list.add(extension);
@@ -385,7 +385,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			boolean run = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 			if (debug || run) {
 				// old attributes
-				List groups = new ArrayList();
+				List<LaunchGroupExtension> groups = new ArrayList<LaunchGroupExtension>();
 				int num = 0;
 				if (debug) {
 					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
@@ -411,11 +411,11 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			} 
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
-			List groups = null;
+			List<String> groups = null;
 			for (int i = 0; i < checked.length; i++) {
 				LaunchGroupExtension group = (LaunchGroupExtension)checked[i];
 				if (groups == null) {
-					groups = new ArrayList();
+					groups = new ArrayList<String>();
 				}
 				groups.add(group.getIdentifier());
 			}
@@ -534,7 +534,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
-			List possibleGroups = new ArrayList();
+			List<ILaunchGroup> possibleGroups = new ArrayList<ILaunchGroup>();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
 			for (int i = 0; i < groups.length; i++) {
 				ILaunchGroup extension = groups[i];
@@ -560,11 +560,11 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 */
 	class FavoritesLabelProvider implements ITableLabelProvider {
 		
-		private Map fImages = new HashMap();
+		private Map<Object, Image> fImages = new HashMap<Object, Image>();
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			Image image = (Image)fImages.get(element);
+			Image image = fImages.get(element);
 			if (image == null) {
 				ImageDescriptor descriptor = ((LaunchGroupExtension)element).getImageDescriptor();
 				if (descriptor != null) {
@@ -586,9 +586,9 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 
 		@Override
 		public void dispose() {
-			Iterator images = fImages.values().iterator();
+			Iterator<Image> images = fImages.values().iterator();
 			while (images.hasNext()) {
-				Image image = (Image)images.next();
+				Image image = images.next();
 				image.dispose();
 			}
 		}
