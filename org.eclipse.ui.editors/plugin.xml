@@ -204,7 +204,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.DefaultTextEditor"
-            icon="$nl$/icons/full/obj16/file_obj.gif"
+            icon="$nl$/icons/full/obj16/file_obj.png"
             class="org.eclipse.ui.editors.text.TextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="org.eclipse.ui.DefaultTextEditor">
@@ -403,7 +403,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             name="%NewUntitledTextFile.label"
-            icon="$nl$/icons/full/etool16/new_untitled_text_file.gif"
+            icon="$nl$/icons/full/etool16/new_untitled_text_file.png"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.internal.editors.text.UntitledTextFileWizard"
             canFinishEarly="true"
@@ -437,8 +437,8 @@
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                class="org.eclipse.ui.internal.editors.text.PreviousPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.previous"
-               disabledIcon="$nl$/icons/full/dtool16/prev_nav.gif"
-               icon="$nl$/icons/full/etool16/prev_nav.gif"
+               disabledIcon="$nl$/icons/full/dtool16/prev_nav.png"
+               icon="$nl$/icons/full/etool16/prev_nav.png"
                label="%goToPreviousAnnotation.label"
                retarget="true"
                tooltip="%goToPreviousAnnotation.tooltip">
@@ -450,8 +450,8 @@
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                class="org.eclipse.ui.internal.editors.text.NextPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.next"
-               disabledIcon="$nl$/icons/full/dtool16/next_nav.gif"
-               icon="$nl$/icons/full/etool16/next_nav.gif"
+               disabledIcon="$nl$/icons/full/dtool16/next_nav.png"
+               icon="$nl$/icons/full/etool16/next_nav.png"
                label="%goToNextAnnotation.label"
                retarget="true"
                tooltip="%goToNextAnnotation.tooltip">
@@ -466,8 +466,8 @@
                id="org.eclipse.ui.edit.text.gotoLastEditPosition"
                class="org.eclipse.ui.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.gif"
-               icon="$nl$/icons/full/etool16/last_edit_pos.gif"
+               disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.png"
+               icon="$nl$/icons/full/etool16/last_edit_pos.png"
                helpContextId="org.eclipse.ui.goto_last_edit_position_action_context"
                label="%goToLastEditPosition.label"
                menubarPath="navigate/"
@@ -520,7 +520,7 @@
       		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
             label="%spelling.label"
             symbolicIcon="warning"
-            quickFixIcon="$nl$/icons/full/obj16/quick_fix_warning_obj.gif"
+            quickFixIcon="$nl$/icons/full/obj16/quick_fix_warning_obj.png"
             presentationLayer="5"
             contributesToHeader="true"
             colorPreferenceKey="spellingIndicationColor"
@@ -552,7 +552,7 @@
             colorPreferenceKey="errorIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showErrorInNextPrevDropdownToolbarAction"
             symbolicIcon="error"
-            quickFixIcon="$nl$/icons/full/obj16/quick_fix_error_obj.gif"
+            quickFixIcon="$nl$/icons/full/obj16/quick_fix_error_obj.png"
             isGoToNextNavigationTargetKey="isErrorGoToNextNavigationTarget"
             isGoToNextNavigationTarget="true"
             isGoToPreviousNavigationTargetKey="isErrorGoToPreviousNavigationTarget"
@@ -578,7 +578,7 @@
             colorPreferenceKey="warningIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showWarningInNextPrevDropdownToolbarAction"
             symbolicIcon="warning"
-            quickFixIcon="$nl$/icons/full/obj16/quick_fix_warning_obj.gif"
+            quickFixIcon="$nl$/icons/full/obj16/quick_fix_warning_obj.png"
             isGoToNextNavigationTargetKey="isWarningGoToNextNavigationTarget"
             isGoToNextNavigationTarget="true"
             isGoToPreviousNavigationTargetKey="isWarningGoToPreviousNavigationTarget"
