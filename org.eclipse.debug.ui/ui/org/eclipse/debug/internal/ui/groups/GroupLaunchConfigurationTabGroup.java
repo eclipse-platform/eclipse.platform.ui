@@ -558,6 +558,9 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 	 *         if launch configuration should be filtered
 	 */
 	public static boolean isValidLaunchReference(ILaunchConfiguration config) {
+		if (config == null) {
+			return false;
+		}
 		return DebugUIPlugin.doLaunchConfigurationFiltering(config) && !WorkbenchActivityHelper.filterItem(config);
 	}
 
