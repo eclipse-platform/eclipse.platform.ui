@@ -21,6 +21,7 @@ import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.debug.tests.launching.ArgumentParsingTests;
 import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.debug.tests.launching.LaunchFavoriteTests;
+import org.eclipse.debug.tests.launching.LaunchGroupTests;
 import org.eclipse.debug.tests.launching.LaunchHistoryTests;
 import org.eclipse.debug.tests.launching.LaunchManagerTests;
 import org.eclipse.debug.tests.launching.LaunchTests;
@@ -103,5 +104,8 @@ public class AutomatedSuite extends TestSuite {
 
 		// Console view
 		addTest(new TestSuite(ConsoleManagerTests.class));
+
+		// Launch Groups
+		addTest(new TestSuite(LaunchGroupTests.class));
 	}
 }

@@ -99,7 +99,9 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 				return false;
 			}
 		}
-		return true;
+		return fLaunched; // we're done only if we're already done launching.
+							// this is required for the WAIT_FOR_TERMINATION
+							// mode.
 	}
 
 	/**
