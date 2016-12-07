@@ -27,8 +27,11 @@ import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPos
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.viewers.BaseLabelProvider;
@@ -219,11 +222,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		 * @return Button
 		 */
 		protected Button createPushButton(Composite parent, String key) {
-			Button button = new Button(parent, SWT.PUSH);
-			button.setText(key);
-			button.setFont(parent.getFont());
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			button.setLayoutData(data);
+			Button button = SWTFactory.createPushButton(parent, key, null);
 			button.addSelectionListener(this);
 			return button;
 		}
@@ -485,6 +484,11 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		@Override
 		public String getName() {
 			return DebugUIMessages.GroupLaunchConfigurationTabGroup_10;
+		}
+
+		@Override
+		public Image getImage() {
+			return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_LAUNCH_GROUP);
 		}
 
 		@Override

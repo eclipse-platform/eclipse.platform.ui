@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.groups;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -33,7 +34,8 @@ import org.eclipse.swt.widgets.Label;
 class ComboControlledStackComposite extends Composite {
 	private Composite fArea;
 	private Combo fCombo;
-	private Map<String, Composite> tabMap; // label ==> tab 
+	private Map<String, Composite> tabMap; // label ==> tab
+	private Map<String, String> capMap = new TreeMap<>();
 	private StackLayout layout;
 	private Label fLabel;
 
@@ -47,28 +49,36 @@ class ComboControlledStackComposite extends Composite {
 	public void setLabelText(String label) {
 		fLabel.setText(label);
 	}
+
+	private static String capitalize(String l) {
+		return l.substring(0, 1).toUpperCase() + l.substring(1);
+	}
+
 	public void addItem(String label, Composite tab) {
 		tabMap.put(label, tab);
-		fCombo.add(label);
+		String cap = capitalize(label);
+		fCombo.add(cap);
+		capMap.put(cap, label);
 		if (layout.topControl==null) {
 			layout.topControl = tab;
-			fCombo.setText(label);
+			fCombo.setText(cap);
 		}
 	}
 
 	public void deleteItem(String label) {
-		if (fCombo.getText().equals(label)) {
+		if (capMap.get(fCombo.getText()).equals(label)) {
 			setSelection(fCombo.getItem(0));
 		}
 		Composite tab = tabMap.get(label);
 		if (tab != null) {
 			tab.dispose();
 			tabMap.remove(label);
+			capMap.remove(capitalize(label));
 		}
 	}
 
 	public void setSelection(String label) {
-		fCombo.setText(label);
+		fCombo.setText(capitalize(label));
 		setPage(label);
 	}
 
@@ -93,8 +103,16 @@ class ComboControlledStackComposite extends Composite {
 		return fLabel;
 	}
 
+	/**
+	 * @return the underlying combo, should NOT be used to get the actual text,
+	 *         use {@link #getSelection()} instead.
+	 */
 	public Combo getCombo() {
 		return fCombo;
+	}
+
+	public String getSelection() {
+		return capMap.get(fCombo.getText());
 	}
 
 	protected Composite createTabArea(Composite parent) {
@@ -124,7 +142,7 @@ class ComboControlledStackComposite extends Composite {
 	}
 
 	protected void comboSelected(String label) {
-		setPage(label);
+		setPage(capMap.get(label));
 	}
 
 	protected void setPage(String label) {

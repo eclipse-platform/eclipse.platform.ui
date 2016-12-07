@@ -13,10 +13,13 @@
 package org.eclipse.debug.internal.ui.groups;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -31,6 +34,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationFilteredTree;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -70,7 +74,6 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	private static final String GROUP_TYPE_ID = "org.eclipse.debug.core.groups.GroupLaunchConfigurationType"; //$NON-NLS-1$
 	
 	private ISelection fSelection;
-	private ILaunchGroup[] launchGroups;
 	private String mode;
 	private GroupElementPostLaunchAction action = GroupElementPostLaunchAction.NONE;
 	private Object actionParam;
@@ -86,8 +89,6 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 
 	public GroupLaunchConfigurationSelectionDialog(Shell shell, String initMode, boolean forEditing, ILaunchConfiguration self) {
 		super(shell);
-		LaunchConfigurationManager manager = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-		launchGroups = manager.getLaunchGroups();
 		mode = initMode;
 		fForEditing = forEditing;
 		selfRef = self;
@@ -151,13 +152,24 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 
 		fStackComposite = new ComboControlledStackComposite(comp, SWT.NONE);
 
-		Map<String, ILaunchGroup> modes = new TreeMap<>();
-		for (ILaunchGroup launchGroup : launchGroups) {
+		Map<String, ILaunchGroup> modes = new LinkedHashMap<>();
+		modes.put(GroupLaunchElement.MODE_INHERIT, new InheritModeGroup());
+		Set<ILaunchGroup> sortedGroups = new TreeSet<>((a, b) -> {
+			return a.getLabel().compareTo(b.getLabel());
+		});
+		LaunchConfigurationManager mgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+		sortedGroups.addAll(Arrays.asList(mgr.getLaunchGroups()));
+		for (ILaunchGroup launchGroup : sortedGroups) {
+			LaunchHistory history = mgr.getLaunchHistory(launchGroup.getIdentifier());
+			if (history == null) {
+				// mode currently not supported.
+				continue;
+			}
+
 			if (!modes.containsKey(launchGroup.getMode())) {
 				modes.put(launchGroup.getMode(), launchGroup);
 			}
 		}
-		modes.put(GroupLaunchElement.MODE_INHERIT, new InheritModeGroup());
 
 		for (Map.Entry<String, ILaunchGroup> entry : modes.entrySet()) {
 			ILaunchGroup launchGroup = entry.getValue();
@@ -194,7 +206,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		fStackComposite.getCombo().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				mode = ((Combo) e.widget).getText();
+				mode = fStackComposite.getSelection();
 			}
 		});
 
