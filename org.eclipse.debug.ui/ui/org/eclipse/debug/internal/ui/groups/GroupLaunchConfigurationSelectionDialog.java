@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -66,6 +67,8 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * Dialog to select launch configuration(s)
  */
 class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements ISelectionChangedListener {
+	private static final String GROUP_TYPE_ID = "org.eclipse.debug.core.groups.GroupLaunchConfigurationType"; //$NON-NLS-1$
+	
 	private ISelection fSelection;
 	private ILaunchGroup[] launchGroups;
 	private String mode;
@@ -78,6 +81,8 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	private Text fDelayAmountWidget; // in seconds
 	private boolean fForEditing; // true if dialog was opened to edit an entry,
 									// otherwise it was opened to add one
+	private ILaunchConfigurationType groupType;
+	private ILaunchConfiguration selfRef;
 
 	public GroupLaunchConfigurationSelectionDialog(Shell shell, String initMode, boolean forEditing, ILaunchConfiguration self) {
 		super(shell);
@@ -85,14 +90,17 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		launchGroups = manager.getLaunchGroups();
 		mode = initMode;
 		fForEditing = forEditing;
+		selfRef = self;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
+		
+		groupType = getLaunchManager().getLaunchConfigurationType(GROUP_TYPE_ID);
 		emptyTypeFilter = new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				try {
 					if (element instanceof ILaunchConfigurationType) {
 						ILaunchConfigurationType type = (ILaunchConfigurationType) element;
-						if (type.equals(self.getType())) {
+						if (type.equals(groupType)) {
 							// we're hiding ourselves. if we're the only group,
 							// don't show the type.
 							return getLaunchManager().getLaunchConfigurations(type).length > 1;
@@ -101,7 +109,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 						return getLaunchManager().getLaunchConfigurations(type).length > 0;
 					} else if (element instanceof ILaunchConfiguration) {
 						ILaunchConfiguration c = (ILaunchConfiguration) element;
-						if (c.getName().equals(self.getName()) && c.getType().equals(self.getType())) {
+						if (c.getName().equals(self.getName()) && c.getType().equals(groupType)) {
 							return false;
 						}
 
@@ -336,6 +344,18 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			}
 		}
 
+		try {
+			for (ILaunchConfiguration sel : getSelectedLaunchConfigurations()) {
+				if (isValid && sel.getType().equals(groupType)) {
+					// check whether there is a recursive reference to self
+					isValid = !hasSelfRecursive(sel);
+					setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_0);
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+
 		if (isValid) {
 			if (action == GroupElementPostLaunchAction.DELAY) {
 				isValid = (actionParam instanceof Integer) && ((Integer) actionParam > 0);
@@ -346,6 +366,29 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		if (ok_button != null) {
 			ok_button.setEnabled(isValid);
 		}
+	}
+
+	private boolean hasSelfRecursive(ILaunchConfiguration c) throws CoreException {
+		if (c == null) {
+			return false;
+		}
+
+		if(c.getType().equals(groupType)) {
+			// it's a launch group
+			if (c.getName().equals(selfRef.getName())) {
+				return true;
+			}
+
+			// recurse to all elements of the group
+			for (GroupLaunchElement e : GroupLaunchConfigurationDelegate.createLaunchElements(c)) {
+				// if any of the contained configs is self
+				if (hasSelfRecursive(e.data)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	public void setInitialSelection(GroupLaunchElement el) {
