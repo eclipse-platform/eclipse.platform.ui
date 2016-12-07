@@ -3265,7 +3265,8 @@ M4 = Platform-specific fourth key
       <launchConfigurationTabGroup
             class="org.eclipse.debug.internal.ui.groups.GroupLaunchConfigurationTabGroup"
             id="org.eclipse.debug.ui.groups.GroupLaunchConfigurationTabGroup"
-            type="org.eclipse.debug.core.groups.GroupLaunchConfigurationType">
+            type="org.eclipse.debug.core.groups.GroupLaunchConfigurationType"
+            description="%GroupLaunch.description">
       </launchConfigurationTabGroup>
    </extension>
 </plugin>
