@@ -245,6 +245,7 @@ class ThreadJob extends Job {
 		ThreadJob result = threadJob;
 		boolean interrupted = false;
 		boolean waiting = false;
+		boolean ruleCompatibleAndTransferred = false;
 		try {
 			waitStart(threadJob, monitor, blockingJob);
 			manager.implicitJobs.addWaiting(threadJob);
@@ -288,6 +289,8 @@ class ThreadJob extends Job {
 					result = (ThreadJob) blockingJob;
 					// push expects a compatible rule, otherwise an exception will be thrown
 					result.push(threadJob.getRule());
+					// rule was either accepted or both jobs have null rules
+					ruleCompatibleAndTransferred = true;
 					result.isBlocked = threadJob.isBlocked;
 					// Condition #3.
 					return result;
@@ -326,9 +329,23 @@ class ThreadJob extends Job {
 				manager.getLockManager().removeLockWaitThread(currentThread, threadJob.getRule());
 			}
 		} finally {
-			//only update the lock state if we ended up using the thread job that was given to us
-			waitEnd(threadJob, threadJob == result, monitor);
-			if (threadJob == result) {
+			boolean canStopWaiting;
+			boolean updateLockState;
+			if (threadJob != result) {
+				// The rule which was blocking given threadJob could have been transferred to
+				// this thread while we were waiting, and if our rule was contained in the
+				// blocking rule, we can remove this job from the waiting queue
+				canStopWaiting = ruleCompatibleAndTransferred;
+				// lock sate should be unchanged, the thread is same as before
+				updateLockState = false;
+			} else {
+				// job acquired blocked rule, so it can be removed from the waiting queue
+				canStopWaiting = true;
+				// update the lock state because our thread acquired the rule now
+				updateLockState = true;
+			}
+			waitEnd(threadJob, updateLockState, monitor);
+			if (canStopWaiting) {
 				if (waiting)
 					manager.implicitJobs.removeWaiting(threadJob);
 			}
