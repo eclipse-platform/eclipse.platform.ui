@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 502050
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -83,6 +84,12 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER, getShowInSystemExplorerCommand());
 
 		node.put(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY, SystemEditorOrTextEditorStrategy.EXTENSION_ID);
+
+		// IDE window title
+		node.putBoolean(IDEInternalPreferences.SHOW_LOCATION, false);
+		node.putBoolean(IDEInternalPreferences.SHOW_LOCATION_NAME, true);
+		node.putBoolean(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE, false);
+		node.putBoolean(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE, true);
 	}
 
 	/**

@@ -900,19 +900,27 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
+	 * Returns the location specified in command line when -showlocation is
+	 * defined. Otherwise returns null
+	 *
+	 * @return
+	 */
+	public String getCommandLineLocation() {
+		IEclipseContext context = getWorkbenchConfigurer().getWorkbench().getService(IEclipseContext.class);
+		return context != null ? (String) context.get(E4Workbench.FORCED_SHOW_LOCATION) : null;
+	}
+
+	/**
 	 * Returns the location to show in the window title, depending on a
-	 * {@link IDEInternalPreferences#SHOW_LOCATION} and
-	 * {@link IDEInternalPreferences#SHOW_LOCATION_NAME} user preferences.
-	 * Note that this may be overridden by the '-showlocation' command line
-	 * argument.
+	 * {@link IDEInternalPreferences#SHOW_LOCATION} user preference. Note that
+	 * this may be overridden by the '-showlocation' command line argument.
 	 *
 	 * @return the location string, or <code>null</code> if the location is not
 	 *         being shown
 	 */
 	public String getWorkspaceLocation() {
+		String location = getCommandLineLocation();
 		// read command line, which has priority
-		IEclipseContext context = getWorkbenchConfigurer().getWorkbench().getService(IEclipseContext.class);
-		String location = context != null ? (String) context.get(E4Workbench.FORCED_SHOW_LOCATION) : null;
 		if (location != null) {
 			return location;
 		}
@@ -920,12 +928,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_LOCATION)) {
 			// show the full location
 			return Platform.getLocation().toOSString();
-		}
-		// show only name (SHOW_LOCATION_NAME)
-		String workspaceName = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.getString(IDEInternalPreferences.WORKSPACE_NAME);
-		if (workspaceName != null && workspaceName.length() > 0) {
-			return workspaceName;
 		}
 		return null;
 	}

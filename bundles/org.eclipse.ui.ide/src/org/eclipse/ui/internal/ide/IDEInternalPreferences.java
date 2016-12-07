@@ -121,6 +121,16 @@ public interface IDEInternalPreferences {
 	public static final String SHOW_LOCATION_NAME = "SHOW_LOCATION_NAME"; //$NON-NLS-1$
 
 	/**
+	 * Whether to show the perspective name in the window title.
+	 */
+	public static final String SHOW_PERSPECTIVE_IN_TITLE = "SHOW_PERSPECTIVE_IN_TITLE"; //$NON-NLS-1$
+
+	/**
+	 * Whether to show the product name in the window title.
+	 */
+	public static final String SHOW_PRODUCT_IN_TITLE = "SHOW_PRODUCT_IN_TITLE"; //$NON-NLS-1$
+
+	/**
 	 * System explore command, used to launch file manager showing selected
 	 * resource.
 	 */

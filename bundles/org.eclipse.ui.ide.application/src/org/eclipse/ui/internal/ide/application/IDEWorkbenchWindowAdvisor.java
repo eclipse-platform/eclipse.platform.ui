@@ -355,7 +355,9 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				String property = event.getProperty();
 				if (IDEInternalPreferences.WORKSPACE_NAME.equals(property)
 						|| IDEInternalPreferences.SHOW_LOCATION.equals(property)
-						|| IDEInternalPreferences.SHOW_LOCATION_NAME.equals(property)) {
+						|| IDEInternalPreferences.SHOW_LOCATION_NAME.equals(property)
+						|| IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE.equals(property)
+						|| IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE.equals(property)) {
 					// Make sure the title is actually updated by
 					// setting last active page.
 					lastActivePage = null;
@@ -370,17 +372,29 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private String computeTitle() {
 		StringJoiner sj = new StringJoiner(" - "); //$NON-NLS-1$
 
-		// workspace location / name
-		String workspaceLocation = wbAdvisor.getWorkspaceLocation();
-		if (workspaceLocation != null) {
-			sj.add(workspaceLocation);
-		}
+		IPreferenceStore ps = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		IWorkbenchPage currentPage = configurer.getWindow().getActivePage();
 		IEditorPart activeEditor = null;
 		if (currentPage != null) {
 			activeEditor = lastActiveEditor;
+		}
+
+		// show workspace name
+		if (ps.getBoolean(IDEInternalPreferences.SHOW_LOCATION_NAME)) {
+			String workspaceName = ps.getString(IDEInternalPreferences.WORKSPACE_NAME);
+			if (workspaceName != null && workspaceName.length() > 0) {
+				sj.add(workspaceName);
+			}
+		}
+
+		// perspective name
+		if (ps.getBoolean(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE)) {
+			IPerspectiveDescriptor persp = currentPage.getPerspective();
+			if (persp != null) {
+				sj.add(persp.getLabel());
+			}
 		}
 
 		// active editor
@@ -390,10 +404,19 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			}
 		}
 
+		// workspace location is non null either when SHOW_LOCATION is true or
+		// when forcing -showlocation via command line
+		String workspaceLocation = wbAdvisor.getWorkspaceLocation();
+		if (workspaceLocation != null) {
+			sj.add(workspaceLocation);
+		}
+
 		// Application (product) name
-		IProduct product = Platform.getProduct();
-		if (product != null) {
-			sj.add(product.getName());
+		if (ps.getBoolean(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE)) {
+			IProduct product = Platform.getProduct();
+			if (product != null) {
+				sj.add(product.getName());
+			}
 		}
 
 		return sj.toString();
