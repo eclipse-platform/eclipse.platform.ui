@@ -431,6 +431,11 @@ Twistie {
     color: #EEEEEE;
 }
 
+HeapStatus {
+	background-color: #4F5355;
+	color: #EEEEEE;
+}
+
 PageSiteComposite, PageSiteComposite > CImageLabel {
     color: #EEEEEE;
 }
