@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -1119,7 +1120,10 @@ public class ProgressInfoItem extends Composite {
 	private boolean getCustomThemeFlag() {
 		IThemeEngine engine = PlatformUI.getWorkbench().getService(IThemeEngine.class);
 		if (engine != null) {
-			return !engine.getActiveTheme().getId().equals(DEFAULT_THEME);
+			ITheme activeTheme = engine.getActiveTheme();
+			if (activeTheme != null) {
+				return !DEFAULT_THEME.equals(activeTheme.getId());
+			}
 		}
 		return false;
 	}
