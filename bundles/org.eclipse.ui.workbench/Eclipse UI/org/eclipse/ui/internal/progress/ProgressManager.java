@@ -342,7 +342,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		Job.getJobManager().addJobChangeListener(this.changeListener);
 		StatusManager.getManager().addListener(notificationListener);
 
-		display = PlatformUI.getWorkbench().getDisplay();
+		display = Display.getDefault();
 
 		uiRefreshThrottler = new Throttler(display, Duration.ofMillis(100), () -> {
 			Set<JobInfo> localPendingJobUpdates;
