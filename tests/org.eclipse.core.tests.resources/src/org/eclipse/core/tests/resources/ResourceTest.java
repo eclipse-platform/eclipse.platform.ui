@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.nio.file.attribute.FileTime;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.filesystem.*;
-import org.eclipse.core.internal.filesystem.Policy;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
@@ -110,7 +109,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * Convenience method to copy contents from one stream to another.
 	 */
 	public static void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) {
-		monitor = Policy.monitorFor(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		try {
 			byte[] buffer = new byte[8192];
 			while (true) {
@@ -127,7 +126,7 @@ public abstract class ResourceTest extends CoreTest {
 				} catch (IOException e) {
 					fail("Failed to write during transferStreams", e);
 				}
-				monitor.worked(1);
+				subMonitor.setWorkRemaining(100).split(1);
 			}
 		} finally {
 			try {

@@ -121,13 +121,12 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	@Override
 	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		Policy.checkCanceled(monitor);
 		final IFileInfo sourceInfo = fetchInfo(EFS.NONE, null);
-		if (sourceInfo.isDirectory())
+		if (sourceInfo.isDirectory()) {
 			copyDirectory(sourceInfo, destination, options, monitor);
-		else
+		} else {
 			copyFile(sourceInfo, destination, options, monitor);
+		}
 	}
 
 	/**
@@ -438,7 +437,6 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	@Override
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
 		//caching is the only recognized option
 		if (options != EFS.CACHE)
 			return null;

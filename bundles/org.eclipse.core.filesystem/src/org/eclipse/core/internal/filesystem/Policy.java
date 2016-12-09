@@ -55,10 +55,6 @@ public class Policy {
 		RuntimeLog.log(new Status(severity, PI_FILE_SYSTEM, 1, message, t));
 	}
 
-	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
-		return monitor == null ? new NullProgressMonitor() : monitor;
-	}
-
 	/**
 	 * Closes a stream and ignores any resulting exception.
 	 */
