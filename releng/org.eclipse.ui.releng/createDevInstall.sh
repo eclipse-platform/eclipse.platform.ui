@@ -22,7 +22,6 @@ org.hamcrest/1.1.0.v20090501071000,\
 org.hamcrest.integration/1.1.0.v201303031500,\
 org.hamcrest.library/1.1.0.v20090501071000,\
 org.hamcrest.text/1.1.0.v20090501071000,\
-org.objenesis/1.0.0.v201105211943,\
 org.eclipse.nebula.widgets.gallery.feature.feature.group,\
 org.eclipse.egit.feature.group,\
 org.eclipse.egit.source.feature.group,\

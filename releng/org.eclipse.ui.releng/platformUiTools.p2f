@@ -72,11 +72,6 @@
         <repository location='http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository'/>
       </repositories>
     </iu>
-    <iu id='org.objenesis' name='org.objenesis' version='1.0.0.v201105211943'>
-      <repositories size='1'>
-        <repository location='http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository'/>
-      </repositories>
-    </iu>
     <iu id='org.eclipse.pde.api.tools.ee.feature.feature.group' name='API Tools Execution Environment Descriptions' >
       <repositories size='2'>
         <repository location='http://download.eclipse.org/eclipse/updates/4.5-I-builds'/>
