@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,14 @@ package org.eclipse.core.internal.filesystem;
 import java.io.*;
 import java.util.Date;
 import org.eclipse.core.internal.runtime.RuntimeLog;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Grab bag of utility methods for the file system plugin
  */
 public class Policy {
 	public static final String PI_FILE_SYSTEM = "org.eclipse.core.filesystem"; //$NON-NLS-1$
-
-	public static void checkCanceled(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
-			throw new OperationCanceledException();
-	}
 
 	/**
 	 * Print a debug message to the console. 
