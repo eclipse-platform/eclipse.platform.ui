@@ -215,6 +215,13 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 */
 	private void drawLineRange(GC gc, int startLine, int endLine, int x, int w) {
 		final int viewPortWidth= fTextWidget.getClientArea().width;
+		int spaceCharWidth = gc.stringExtent(" ").x; //$NON-NLS-1$
+		boolean optimizeWhitespacePainting = false;
+		if ( (spaceCharWidth == gc.stringExtent(String.valueOf(SPACE_SIGN)).x) &&
+				(spaceCharWidth == gc.stringExtent(String.valueOf(IDEOGRAPHIC_SPACE_SIGN)).x)) {
+			optimizeWhitespacePainting = true;
+		}
+
 		for (int line= startLine; line <= endLine; line++) {
 			int lineOffset= fTextWidget.getOffsetAtLine(line);
 			// line end offset including line delimiter
@@ -268,7 +275,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 			// draw character range
 			if (endOffset > startOffset) {
-				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset);
+				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset, optimizeWhitespacePainting);
 			}
 		}
 	}
@@ -286,7 +293,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param lineOffset inclusive start index of the line
 	 * @param lineEndOffset exclusive end index of the line
 	 */
-	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset) {
+	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset, boolean optimizeWhitespacePainting) {
 		StyledTextContent content= fTextWidget.getContent();
 		String lineText= content.getTextRange(lineOffset, lineEndOffset - lineOffset);
 		int startOffsetInLine= startOffset - lineOffset;
@@ -338,8 +345,12 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 								visibleChar.append(SPACE_SIGN);
 							}
 						}
-						// 'continue' would improve performance but may produce drawing errors
-						// for long runs of space if width of space and dot differ
+						// 'continue' improves performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ, therefore
+						// it can be used only for monospace fonts
+						if (optimizeWhitespacePainting) {
+							continue;
+						}
 						break;
 					case '\u3000': // ideographic whitespace
 						if (isEmptyLine) {
@@ -359,8 +370,12 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
 							}
 						}
-						// 'continue' would improve performance but may produce drawing errors
-						// for long runs of space if width of space and dot differ
+						// 'continue' improves performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ, therefore
+						// it can be used only for monospace fonts
+						if (optimizeWhitespacePainting) {
+							continue;
+						}
 						break;
 					case '\t':
 						if (isEmptyLine) {
