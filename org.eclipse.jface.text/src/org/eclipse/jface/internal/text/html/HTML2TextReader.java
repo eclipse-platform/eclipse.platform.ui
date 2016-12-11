@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [509032] Support additional tags
  *******************************************************************************/
 package org.eclipse.jface.internal.text.html;
 
@@ -40,10 +41,15 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 		fgTags= new HashSet<>();
 		fgTags.add("b"); //$NON-NLS-1$
+		fgTags.add("strong"); //$NON-NLS-1$
 		fgTags.add("br"); //$NON-NLS-1$
 		fgTags.add("br/"); //$NON-NLS-1$
 		fgTags.add("div"); //$NON-NLS-1$
 		fgTags.add("del"); //$NON-NLS-1$
+		fgTags.add("strike"); //$NON-NLS-1$
+		fgTags.add("s"); //$NON-NLS-1$
+		fgTags.add("em"); //$NON-NLS-1$
+		fgTags.add("i"); //$NON-NLS-1$
 		fgTags.add("h1"); //$NON-NLS-1$
 		fgTags.add("h2"); //$NON-NLS-1$
 		fgTags.add("h3"); //$NON-NLS-1$
@@ -71,12 +77,12 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	private int fCounter= 0;
 	private TextPresentation fTextPresentation;
 	private int fBold= 0;
-	private int fBoldStartOffset= -1;
+	private int fItalic= 0;
 	private int fStrikeout= 0;
-	private int fStrikeoutStartOffset= -1;
 	private boolean fInParagraph= false;
 	private boolean fIgnore= false;
 	private boolean fHeaderDetected= false;
+	private StyleRange fCurrentStyleRange;
 
 	/**
 	 * Transforms the HTML text from the reader to formatted text.
@@ -88,6 +94,8 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	public HTML2TextReader(Reader reader, TextPresentation presentation) {
 		super(new PushbackReader(reader));
 		fTextPresentation= presentation;
+		fCurrentStyleRange= new StyleRange();
+		fCurrentStyleRange.start= 0;
 	}
 
 	@Override
@@ -98,57 +106,42 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		return c;
 	}
 
-	private void setBold(int offset, int length) {
-		if (fTextPresentation != null && offset >= 0 && length > 0) {
-			fTextPresentation.addStyleRange(new StyleRange(offset, length, null, null, SWT.BOLD));
-		}
-	}
-
-	private void setStrikeout(int offset, int length) {
-		if (fTextPresentation != null && offset >= 0 && length > 0) {
-			StyleRange styleRange= new StyleRange(offset, length, null, null, SWT.NORMAL);
-			styleRange.strikeout= true;
-			fTextPresentation.addStyleRange(styleRange);
-		}
-	}
-
-	private void setBoldAndStrikeOut(int offset, int length) {
-		if (fTextPresentation != null && offset >= 0 && length > 0) {
-			StyleRange styleRange= new StyleRange(offset, length, null, null, SWT.BOLD);
-			styleRange.strikeout= true;
-			fTextPresentation.addStyleRange(styleRange);
-		}
-	}
-
 	protected void startBold() {
 		if (fBold == 0) {
-			fBoldStartOffset= fCounter;
-			if (fStrikeout > 0) {
-				setStrikeout(fStrikeoutStartOffset, fCounter - fStrikeoutStartOffset);
-			}
+			finishAndReinitializeCurrentStyle(fCounter);
+			fCurrentStyleRange.fontStyle |= SWT.BOLD;
 		}
 		++fBold;
+	}
+
+	protected void startItalic() {
+		if (fItalic == 0) {
+			finishAndReinitializeCurrentStyle(fCounter);
+			fCurrentStyleRange.fontStyle |= SWT.ITALIC;
+		}
+		++fItalic;
+	}
+
+	protected void stopItalic() {
+		--fItalic;
+		if (fItalic == 0) {
+			finishAndReinitializeCurrentStyle(fCounter);
+			fCurrentStyleRange.fontStyle ^= SWT.ITALIC;
+		}
 	}
 
 	protected void stopBold() {
 		--fBold;
 		if (fBold == 0) {
-			if (fStrikeout == 0) {
-				setBold(fBoldStartOffset, fCounter - fBoldStartOffset);
-			} else {
-				setBoldAndStrikeOut(fBoldStartOffset, fCounter - fBoldStartOffset);
-				fStrikeoutStartOffset= fCounter;
-			}
-			fBoldStartOffset= -1;
+			finishAndReinitializeCurrentStyle(fCounter);
+			fCurrentStyleRange.fontStyle ^= SWT.BOLD;
 		}
 	}
 
 	protected void startStrikeout() {
 		if (fStrikeout == 0) {
-			fStrikeoutStartOffset= fCounter;
-			if (fBold > 0) {
-				setBold(fBoldStartOffset, fCounter - fBoldStartOffset);
-			}
+			finishAndReinitializeCurrentStyle(fCounter);
+			fCurrentStyleRange.strikeout= true;
 		}
 		++fStrikeout;
 	}
@@ -156,14 +149,23 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	protected void stopStrikeout() {
 		--fStrikeout;
 		if (fStrikeout == 0) {
-			if (fBold == 0) {
-				setStrikeout(fStrikeoutStartOffset, fCounter - fStrikeoutStartOffset);
-			} else {
-				setBoldAndStrikeOut(fStrikeoutStartOffset, fCounter - fStrikeoutStartOffset);
-				fBoldStartOffset= fCounter;
-			}
-			fStrikeoutStartOffset= -1;
+			finishAndReinitializeCurrentStyle(fCounter);
+			fCurrentStyleRange.strikeout= false;
 		}
+	}
+	
+	private void finishAndReinitializeCurrentStyle(int offset) {
+		if (offset != fCurrentStyleRange.start && !isDefaultStyleRange(fCurrentStyleRange)) {
+			fCurrentStyleRange.length= offset - fCurrentStyleRange.start;
+			fTextPresentation.addStyleRange(fCurrentStyleRange);
+		}
+		fCurrentStyleRange= (StyleRange)fCurrentStyleRange.clone();
+		fCurrentStyleRange.start= offset;
+		fCurrentStyleRange.length= 0;
+	}
+
+	private static boolean isDefaultStyleRange(StyleRange styleRange) {
+		return styleRange.equals(new StyleRange(styleRange.start,styleRange.length, null, null));
 	}
 
 	protected void startPreformattedText() {
@@ -213,12 +215,22 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			return EMPTY_STRING;
 		}
 
-		if ("b".equals(html)) { //$NON-NLS-1$
+		if ("i".equals(html) || "em".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
+			startItalic();
+			return EMPTY_STRING;
+		}
+		
+		if ("/i".equals(html) || "/em".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
+			stopItalic();
+			return EMPTY_STRING;
+		}
+		
+		if ("b".equals(html) || "strong".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
 			startBold();
 			return EMPTY_STRING;
 		}
 
-		if ("del".equals(html)) { //$NON-NLS-1$
+		if ("del".equals(html) || "s".equals(html) || "strike".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			startStrikeout();
 			return EMPTY_STRING;
 		}
@@ -238,12 +250,12 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			// FIXME: this hard-coded prefix does not work for RTL languages, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=91682
 			return LINE_DELIM + HTMLMessages.getString("HTML2TextReader.listItemPrefix"); //$NON-NLS-1$
 
-		if ("/b".equals(html)) { //$NON-NLS-1$
+		if ("/b".equals(html) || "/strong".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
 			stopBold();
 			return EMPTY_STRING;
 		}
 
-		if ("/del".equals(html)) { //$NON-NLS-1$
+		if ("/del".equals(html) || "/s".equals(html) || "/strike".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			stopStrikeout();
 			return EMPTY_STRING;
 		}

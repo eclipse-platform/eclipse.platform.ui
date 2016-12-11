@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [509032] Support additional tags
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
@@ -274,6 +275,31 @@ public class HTML2TextReaderTest {
 				new StyleRange(21 + 4*LD.length(), 7, null, null, SWT.BOLD)
 		};
 		verify(string, expected, ranges);
+	}
+	
+	@Test
+	public void testCombineBoldItalicStriker() throws IOException {
+		String string= "<strong>strong</strong>,<em>italic</em>,<s>strike</s>," +
+				"<strong><em>strongItalic</em></strong>,<s><strong>strongStrike</strong></s>," +
+				"<em><s>italicStrike</s></em>," +
+				"<em><strong><s>strongItalicStrike</s></strong></em>," +
+				"none";
+		String expected= "strong,italic,strike,strongItalic,strongStrike,italicStrike,strongItalicStrike,none";
+		StyleRange[] ranges= {
+				new StyleRange(0, 6, null, null, SWT.BOLD),
+				new StyleRange(7, 6, null, null, SWT.ITALIC),
+				strike(new StyleRange(14, 6, null, null)),
+				new StyleRange(21, 12, null, null, SWT.BOLD | SWT.ITALIC),
+				strike(new StyleRange(34, 12, null, null, SWT.BOLD)),
+				strike(new StyleRange(47, 12, null, null, SWT.ITALIC)),
+				strike(new StyleRange(60, 18, null, null, SWT.BOLD | SWT.ITALIC)),
+		};
+		verify(string, expected, ranges);
+	}
+
+	private StyleRange strike(StyleRange styleRange) {
+		styleRange.strikeout = true;
+		return styleRange;
 	}
 }
 
