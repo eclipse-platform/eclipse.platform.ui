@@ -159,8 +159,21 @@ class QuickAccessEntry {
 			break;
 		case 1:
 			textLayout.setText(element.getLabel());
-			// ignore the image size: we rescale to suit available space
-			event.width += textLayout.getBounds().height + 4;
+			// Two situations for measuring icons:
+			// - command with very large icon image (500x500) [scale down]
+			// - command with normal image (16x16) but small text-height (8pt)
+			Image image = getImage(element, resourceManager);
+			Rectangle imageRect = image.getBounds();
+			Rectangle textBounds = textLayout.getBounds();
+			int iconSize = imageRect.height;
+			// Heuristic: only scale image if has double the pixels
+			if (iconSize > 16 && iconSize >= 2 * textBounds.height) {
+				// image will be scaled down to fit
+				iconSize = textBounds.height;
+			}
+			// include additional line 1 for category separator
+			event.height = Math.max(event.height, iconSize + 3);
+			event.width += iconSize + 4;
 			if (boldStyle != null) {
 				for (int i = 0; i < elementMatchRegions.length; i++) {
 					int[] matchRegion = elementMatchRegions[i];
@@ -219,13 +232,15 @@ class QuickAccessEntry {
 			Rectangle availableBounds = ((TableItem) event.item).getTextBounds(event.index);
 			Rectangle requiredBounds = textLayout.getBounds();
 			Rectangle imageBounds = image.getBounds();
-			int maxImageSize = requiredBounds.height;
+			// 3 = top + bottom + category lines
+			int maxImageSize = availableBounds.height - 3;
 			// preserve aspect ratio
 			int destHeight = Math.min(imageBounds.height, maxImageSize);
 			int destWidth = destHeight * imageBounds.width / imageBounds.height;
-			// and centre within available space
+			// and centre within available space; remove 1 from height for
+			// category separator
 			int startX = (maxImageSize - destWidth) / 2;
-			int startY = (availableBounds.height - destHeight) / 2;
+			int startY = (availableBounds.height - 1 - destHeight) / 2;
 			event.gc.drawImage(image, 0, 0, imageBounds.width, imageBounds.height,
 					availableBounds.x + startX, availableBounds.y + startY,
 					destWidth, destHeight);
