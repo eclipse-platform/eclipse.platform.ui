@@ -548,6 +548,10 @@
       <keyword
             id="org.eclipse.ui.ide.save"
             label="%PreferenceKeywords.Save"/>
+      <keyword
+            id="org.eclipse.ui.ide.open"
+            label="%PreferenceKeywords.Open">
+      </keyword>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -605,6 +609,9 @@
          <keywordReference id="org.eclipse.ui.ide.editing"/>
          <keywordReference id="org.eclipse.ui.ide.editors"/>
          <keywordReference id="org.eclipse.ui.ide.unassociated"/>
+         <keywordReference
+               id="org.eclipse.ui.ide.open">
+         </keywordReference>
       </page>
       <page
             name="%PreferencePages.Views"
