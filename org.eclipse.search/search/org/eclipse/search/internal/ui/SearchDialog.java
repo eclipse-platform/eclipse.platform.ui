@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,8 +40,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -435,7 +435,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		TabFolder folder= new TabFolder(composite, SWT.NONE);
+		CTabFolder folder = new CTabFolder(composite, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		folder.setFont(composite.getFont());
@@ -445,7 +445,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			if (WorkbenchActivityHelper.filterItem(descriptor))
 			    continue;
 
-			final TabItem item= new TabItem(folder, SWT.NONE);
+			final CTabItem item = new CTabItem(folder, SWT.NONE);
 			item.setData("descriptor", descriptor); //$NON-NLS-1$
 			item.setText(descriptor.getLabel());
 			item.addDisposeListener(new DisposeListener() {
@@ -567,8 +567,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 
 	private void turnToPage(SelectionEvent event) {
-		final TabItem item= (TabItem) event.item;
-		TabFolder folder= item.getParent();
+		final CTabItem item = (CTabItem) event.item;
+		CTabFolder folder = item.getParent();
 
 		SearchPageDescriptor descriptor= (SearchPageDescriptor) item.getData("descriptor"); //$NON-NLS-1$
 
