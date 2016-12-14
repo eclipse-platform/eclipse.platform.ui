@@ -275,7 +275,7 @@ public class FormColors {
 
 	/**
 	 * Computes the border color relative to the background. Allocated border
-	 * color is designed to work well with white. Otherwise, stanard widget
+	 * color is designed to work well with white. Otherwise, standard widget
 	 * background color will be used.
 	 */
 	protected void updateBorderColor() {
@@ -450,7 +450,7 @@ public class FormColors {
 	 * @param from
 	 *            range start (excluding the value itself)
 	 * @param to
-	 *            tange end (excluding the value itself)
+	 *            range end (excluding the value itself)
 	 * @return <code>true</code> if at least two of the primary colors in the
 	 *         source RGB are within the provided range, <code>false</code>
 	 *         otherwise.
