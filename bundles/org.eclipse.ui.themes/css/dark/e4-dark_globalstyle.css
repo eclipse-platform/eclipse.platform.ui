@@ -43,6 +43,7 @@ ViewForm > ToolBar, /* SWT-BUG: ToolBar do not inherit rules from ViewForm */
    element without a CSS id, a CSS class and a seekable Widget name, cannot be overridden
    by a subsequent more specific rule used to correct the style for seekable elements (<1>): */
 TabFolder > Composite > *, /* Composite > CommitSearchPage$... */
+CTabFolder > Composite > *, /* Composite > CommitSearchPage$... */
 TabFolder > Composite > * > * /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non-sense bugs in apparently not related other rules */, /* Composite > ContentMergeViewer$... > TextMergeViewer$... */
 DocCommentOwnerComposite > Group > *, /* Group > DocCommentOwnerComposite$... */
 TabFolder > Composite > ScrolledComposite > *, /* ScrolledComposite > ControlListViewer$... */
