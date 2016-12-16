@@ -30,6 +30,7 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 	private TextHoverRegistry textHoversRegistry;
 	private ContentAssistProcessorRegistry contentAssistProcessorsRegistry;
 	private PresentationReconcilerRegistry presentationReconcilierRegistry;
+	private AutoEditStrategyRegistry autoEditStrategyRegistry;
 
 	@Override
 	public void start(BundleContext context) throws Exception{
@@ -78,5 +79,16 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 			this.presentationReconcilierRegistry = new PresentationReconcilerRegistry();
 		}
 		return this.presentationReconcilierRegistry;
+	}
+
+	/**
+	 * @return the registry allowing to access contributed {@link IAutoEditStrategy}s.
+	 * @since 1.1
+	 */
+	public synchronized AutoEditStrategyRegistry getAutoEditStrategyRegistry() {
+		if (this.autoEditStrategyRegistry == null) {
+			this.autoEditStrategyRegistry = new AutoEditStrategyRegistry();
+		}
+		return this.autoEditStrategyRegistry;
 	}
 }

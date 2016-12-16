@@ -14,6 +14,7 @@
    <extension-point id="presentationReconcilers" name="%ExtPoint.presentationReconciliers" schema="schema/presentationReconcilers.exsd"/>
    <extension-point id="contentAssistProcessors" name="%ExtPoint.contentAssistProcessors" schema="schema/contentAssistProcessors.exsd"/>
    <extension-point id="hoverProviders" name="%ExtPoint.hoverProviders" schema="schema/hoverProviders.exsd"/>
+   <extension-point id="autoEditStrategies" name="%ExtPoint.autoEditStrategies" schema="schema/autoEditStrategies.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
@@ -188,4 +189,15 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		return null; // to disable spell-checker
 	}
+	
+	@Override
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+		AutoEditStrategyRegistry registry = GenericEditorPlugin.getDefault().getAutoEditStrategyRegistry();
+		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, getContentTypes());
+		if (!editStrategies.isEmpty()) {
+			return editStrategies.toArray(new IAutoEditStrategy[editStrategies.size()]);
+		}
+		return super.getAutoEditStrategies(sourceViewer, contentType);
+	}
+	
 }

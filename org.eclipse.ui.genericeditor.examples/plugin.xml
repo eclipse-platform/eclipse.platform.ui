@@ -57,5 +57,11 @@
             contentTypeId="org.eclipse.ui.genericeditor.examples.dotproject">
       </participant>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.genericeditor.autoEditStrategies">
+      <autoEditStrategy
+            class="org.eclipse.ui.genericeditor.examples.dotproject.TagAutoEditStrategy"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </autoEditStrategy>
+   </extension>
 </plugin>

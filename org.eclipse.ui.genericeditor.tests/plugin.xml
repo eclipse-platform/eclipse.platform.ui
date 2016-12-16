@@ -53,5 +53,20 @@
           priority="normal">
     </content-type>
  </extension>
+ <extension
+       point="org.eclipse.ui.genericeditor.autoEditStrategies">
+    <autoEditStrategy
+          class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyFirst"
+          contentType="org.eclipse.core.runtime.text">
+    </autoEditStrategy>
+    <autoEditStrategy
+          class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategySecond"
+          contentType="org.eclipse.core.runtime.text">
+    </autoEditStrategy>
+    <autoEditStrategy
+          class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyThird"
+          contentType="org.eclipse.core.runtime.text">
+    </autoEditStrategy>
+ </extension>
 
 </plugin>
