@@ -78,8 +78,15 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					IContentProvider contentProvider = getContentProvider();
 					// If we are building lazily then request lookup now
 					if (contentProvider instanceof ILazyContentProvider) {
-						((ILazyContentProvider) contentProvider)
-								.updateElement(index);
+						ILazyContentProvider lazyProvider = (ILazyContentProvider) contentProvider;
+						if (!isBusy()) {
+							lazyProvider.updateElement(index);
+						} else {
+							// In case event is sent during doUpdateItem() we
+							// should run async update to avoid RuntimeException
+							// from ColumnViewer.checkBusy(), see bug 488484
+							getControl().getDisplay().asyncExec(() -> lazyProvider.updateElement(index));
+						}
 						return;
 					}
 				}
