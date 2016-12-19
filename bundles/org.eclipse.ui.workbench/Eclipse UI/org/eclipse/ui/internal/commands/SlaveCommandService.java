@@ -289,12 +289,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 		try {
 			final IElementReference reference = registerElementForCommand(parameterizedCommand,
 					element);
-			return new Runnable() {
-				@Override
-				public void run() {
-					unregisterElement(reference);
-				}
-			};
+			return () -> unregisterElement(reference);
 		} catch (NotDefinedException e) {
 			WorkbenchPlugin.log(e);
 		}

@@ -76,16 +76,13 @@ public class ShowViewMenu extends ContributionItem {
 
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
 
-	private Comparator actionComparator = new Comparator() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			if (collator == null) {
-				collator = Collator.getInstance();
-			}
-			CommandContributionItemParameter a1 = (CommandContributionItemParameter) o1;
-			CommandContributionItemParameter a2 = (CommandContributionItemParameter) o2;
-			return collator.compare(a1.label, a2.label);
+	private Comparator actionComparator = (o1, o2) -> {
+		if (collator == null) {
+			collator = Collator.getInstance();
 		}
+		CommandContributionItemParameter a1 = (CommandContributionItemParameter) o1;
+		CommandContributionItemParameter a2 = (CommandContributionItemParameter) o2;
+		return collator.compare(a1.label, a2.label);
 	};
 
 	private Action showDlgAction;
@@ -97,12 +94,7 @@ public class ShowViewMenu extends ContributionItem {
 
 	private MenuManager menuManager;
 
-	private IMenuListener menuListener = new IMenuListener() {
-		@Override
-		public void menuAboutToShow(IMenuManager manager) {
-			manager.markDirty();
-		}
-	};
+	private IMenuListener menuListener = manager -> manager.markDirty();
 	private boolean makeFast;
 
 	private static Collator collator;

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.preferences;
 import java.util.Set;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
@@ -23,12 +22,7 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
 
     private IThemeManager manager;
 
-    private IPropertyChangeListener listener = new IPropertyChangeListener() {
-        @Override
-		public void propertyChange(PropertyChangeEvent event) {
-            firePropertyChange(event.getProperty());
-        }
-    };
+    private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
     public ThemeManagerAdapter(IThemeManager manager) {
         this.manager = manager;

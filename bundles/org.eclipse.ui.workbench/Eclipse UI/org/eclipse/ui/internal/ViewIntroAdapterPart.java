@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IntroMessages;
@@ -35,7 +34,6 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -53,28 +51,25 @@ public final class ViewIntroAdapterPart extends ViewPart {
 
 	private IEventBroker eventBroker;
 
-	private EventHandler zoomChangeListener = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			if (!handleZoomEvents)
-				return;
+	private EventHandler zoomChangeListener = event -> {
+		if (!handleZoomEvents)
+			return;
 
-			Object changedObj = event.getProperty(EventTags.ELEMENT);
-			if (!(changedObj instanceof MPartStack))
-				return;
+		Object changedObj = event.getProperty(EventTags.ELEMENT);
+		if (!(changedObj instanceof MPartStack))
+			return;
 
-			if (changedObj != getIntroStack())
-				return;
+		if (changedObj != getIntroStack())
+			return;
 
-			if (UIEvents.isADD(event)
-					&& UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
-							IPresentationEngine.MAXIMIZED)) {
-				setStandby(false);
-			} else if (UIEvents.isREMOVE(event)
-					&& UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
-							IPresentationEngine.MAXIMIZED)) {
-				setStandby(true);
-			}
+		if (UIEvents.isADD(event)
+				&& UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
+						IPresentationEngine.MAXIMIZED)) {
+			setStandby(false);
+		} else if (UIEvents.isREMOVE(event)
+				&& UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
+						IPresentationEngine.MAXIMIZED)) {
+			setStandby(true);
 		}
 	};
 
@@ -113,19 +108,16 @@ public final class ViewIntroAdapterPart extends ViewPart {
      */
     public void setStandby(final boolean standby) {
 		final Control control = (Control) ((PartSite) getSite()).getModel().getWidget();
-        BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-            @Override
-			public void run() {
-                try {
-                    control.setRedraw(false);
-                    introPart.standbyStateChanged(standby);
-                } finally {
-                    control.setRedraw(true);
-                }
+        BusyIndicator.showWhile(control.getDisplay(), () -> {
+		    try {
+		        control.setRedraw(false);
+		        introPart.standbyStateChanged(standby);
+		    } finally {
+		        control.setRedraw(true);
+		    }
 
-                setBarVisibility(standby);
-            }
-        });
+		    setBarVisibility(standby);
+		});
     }
 
     /**
@@ -192,12 +184,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
                     .createNewIntroPart();
             // reset the part name of this view to be that of the intro title
             setPartName(introPart.getTitle());
-            introPart.addPropertyListener(new IPropertyListener() {
-                @Override
-				public void propertyChanged(Object source, int propId) {
-                    firePropertyChange(propId);
-                }
-            });
+            introPart.addPropertyListener((source, propId) -> firePropertyChange(propId));
             introSite = new ViewIntroAdapterSite(site, workbench
                     .getIntroDescriptor());
             introPart.init(introSite, memento);

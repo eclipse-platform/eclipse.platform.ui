@@ -26,8 +26,6 @@ import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -111,12 +109,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 			menu = (Menu) engine.createGui(menuModel, shell, model.getContext());
 			if (menu != null) {
 				final Menu tmpMenu = menu;
-				partContainer.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						tmpMenu.dispose();
-					}
-				});
+				partContainer.addDisposeListener(e -> tmpMenu.dispose());
 			}
 		}
 

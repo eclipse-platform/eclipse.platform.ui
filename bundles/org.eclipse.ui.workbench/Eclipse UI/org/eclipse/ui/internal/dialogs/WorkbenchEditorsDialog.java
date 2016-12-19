@@ -23,8 +23,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -383,21 +381,18 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 okPressed();
             }
         });
-        editorsTable.addDisposeListener(new DisposeListener() {
-            @Override
-			public void widgetDisposed(DisposeEvent e) {
-                for (Iterator images = imageCache.values().iterator(); images
-                        .hasNext();) {
-                    Image i = (Image) images.next();
-                    i.dispose();
-                }
-                for (Iterator images = disabledImageCache.values().iterator(); images
-                        .hasNext();) {
-                    Image i = (Image) images.next();
-                    i.dispose();
-                }
-            }
-        });
+        editorsTable.addDisposeListener(e -> {
+		    for (Iterator images1 = imageCache.values().iterator(); images1
+		            .hasNext();) {
+		        Image i1 = (Image) images1.next();
+		        i1.dispose();
+		    }
+		    for (Iterator images2 = disabledImageCache.values().iterator(); images2
+		            .hasNext();) {
+		        Image i2 = (Image) images2.next();
+		        i2.dispose();
+		    }
+		});
         editorsTable.setFocus();
         applyDialogFont(dialogArea);
         return dialogArea;

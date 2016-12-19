@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.themes.ITheme;
@@ -26,12 +25,7 @@ public class ThemeAdapter extends PropertyMapAdapter {
 
     private ITheme targetTheme;
 
-    private IPropertyChangeListener listener = new IPropertyChangeListener() {
-        @Override
-		public void propertyChange(PropertyChangeEvent event) {
-            firePropertyChange(event.getProperty());
-        }
-    };
+    private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
     public ThemeAdapter(ITheme targetTheme) {
         this.targetTheme = targetTheme;

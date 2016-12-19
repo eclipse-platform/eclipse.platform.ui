@@ -65,12 +65,9 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * when it changes, since many workbench adapters derive their icon from the file
      * associations in the registry.
      */
-    private IPropertyListener editorRegistryListener = new IPropertyListener() {
-		@Override
-		public void propertyChanged(Object source, int propId) {
-			if (propId == IEditorRegistry.PROP_CONTENTS) {
-				fireLabelProviderChanged(new LabelProviderChangedEvent(WorkbenchLabelProvider.this));
-			}
+    private IPropertyListener editorRegistryListener = (source, propId) -> {
+		if (propId == IEditorRegistry.PROP_CONTENTS) {
+			fireLabelProviderChanged(new LabelProviderChangedEvent(WorkbenchLabelProvider.this));
 		}
 	};
 	private ResourceManager resourceManager;
