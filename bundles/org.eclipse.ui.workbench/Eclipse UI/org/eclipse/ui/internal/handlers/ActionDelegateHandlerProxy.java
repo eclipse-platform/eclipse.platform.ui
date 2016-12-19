@@ -31,8 +31,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -398,11 +396,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		if (action == null) {
 			action = new CommandLegacyActionWrapper(actionId, command, style,
 					window);
-			action.addPropertyChangeListener(new IPropertyChangeListener() {
-				@Override
-				public final void propertyChange(final PropertyChangeEvent event) {
-					// TODO Update the state somehow.
-				}
+			action.addPropertyChangeListener(event -> {
+				// TODO Update the state somehow.
 			});
 		}
 		return action;

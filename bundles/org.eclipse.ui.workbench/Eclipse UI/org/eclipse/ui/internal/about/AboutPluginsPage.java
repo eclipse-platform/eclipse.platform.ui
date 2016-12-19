@@ -38,12 +38,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -51,8 +49,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -379,13 +375,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		vendorInfo.getTable().setHeaderVisible(true);
 		vendorInfo.getTable().setLinesVisible(true);
 		vendorInfo.getTable().setFont(parent.getFont());
-		vendorInfo.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				checkEnablement();
-			}
-		});
+		vendorInfo.addSelectionChangedListener(event -> checkEnablement());
 
 		final TableComparator comparator = new TableComparator();
 		vendorInfo.setComparator(comparator);
@@ -418,12 +408,9 @@ public class AboutPluginsPage extends ProductInfoPage {
 		vendorInfo.setLabelProvider(new BundleTableLabelProvider());
 
 		final BundlePatternFilter searchFilter = new BundlePatternFilter();
-		filterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				searchFilter.setPattern(filterText.getText());
-				vendorInfo.refresh();
-			}
+		filterText.addModifyListener(e -> {
+			searchFilter.setPattern(filterText.getText());
+			vendorInfo.refresh();
 		});
 		vendorInfo.addFilter(searchFilter);
 

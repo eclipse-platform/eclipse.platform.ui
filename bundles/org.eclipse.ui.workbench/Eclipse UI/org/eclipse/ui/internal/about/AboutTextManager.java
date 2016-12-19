@@ -17,15 +17,10 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
@@ -117,15 +112,12 @@ public class AboutTextManager {
     private void createCursors() {
         handCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_HAND);
         busyCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_WAIT);
-        styledText.addDisposeListener(new DisposeListener() {
-            @Override
-			public void widgetDisposed(DisposeEvent e) {
-                handCursor.dispose();
-                handCursor = null;
-                busyCursor.dispose();
-                busyCursor = null;
-            }
-        });
+        styledText.addDisposeListener(e -> {
+		    handCursor.dispose();
+		    handCursor = null;
+		    busyCursor.dispose();
+		    busyCursor = null;
+		});
     }
 
 
@@ -163,90 +155,84 @@ public class AboutTextManager {
             }
         });
 
-        styledText.addMouseMoveListener(new MouseMoveListener() {
-            @Override
-			public void mouseMove(MouseEvent e) {
-                // Do not change cursor on drag events
-                if (mouseDown) {
-                    if (!dragEvent) {
-                        StyledText text = (StyledText) e.widget;
-                        text.setCursor(null);
-                    }
-                    dragEvent = true;
-                    return;
-                }
-                StyledText text = (StyledText) e.widget;
-                int offset = -1;
-                try {
-                    offset = text.getOffsetAtLocation(new Point(e.x, e.y));
-                } catch (IllegalArgumentException ex) {
-                    // leave value as -1
-                }
-                if (offset == -1) {
-					text.setCursor(null);
-				} else if (item != null && item.isLinkAt(offset)) {
-					text.setCursor(handCursor);
-				} else {
-					text.setCursor(null);
-				}
-            }
-        });
+        styledText.addMouseMoveListener(e -> {
+		    // Do not change cursor on drag events
+		    if (mouseDown) {
+		        if (!dragEvent) {
+		            StyledText text1 = (StyledText) e.widget;
+		            text1.setCursor(null);
+		        }
+		        dragEvent = true;
+		        return;
+		    }
+		    StyledText text2 = (StyledText) e.widget;
+		    int offset = -1;
+		    try {
+		        offset = text2.getOffsetAtLocation(new Point(e.x, e.y));
+		    } catch (IllegalArgumentException ex) {
+		        // leave value as -1
+		    }
+		    if (offset == -1) {
+				text2.setCursor(null);
+			} else if (item != null && item.isLinkAt(offset)) {
+				text2.setCursor(handCursor);
+			} else {
+				text2.setCursor(null);
+			}
+		});
 
-        styledText.addTraverseListener(new TraverseListener() {
-            @Override
-			public void keyTraversed(TraverseEvent e) {
-                switch (e.detail) {
-                case SWT.TRAVERSE_ESCAPE:
-                    e.doit = true;
-                    break;
-                case SWT.TRAVERSE_TAB_NEXT:
-                    //Previously traverse out in the backward direction?
-                    Point nextSelection = styledText.getSelection();
-                    int charCount = styledText.getCharCount();
-                    if ((nextSelection.x == charCount)
-                            && (nextSelection.y == charCount)) {
-                    	styledText.setSelection(0);
-                    }
-                    StyleRange nextRange = findNextRange();
-                    if (nextRange == null) {
-                        // Next time in start at beginning, also used by
-                        // TRAVERSE_TAB_PREVIOUS to indicate we traversed out
-                        // in the forward direction
-                    	styledText.setSelection(0);
-                        e.doit = true;
-                    } else {
-                    	styledText.setSelectionRange(nextRange.start,
-                                nextRange.length);
-                        e.doit = true;
-                        e.detail = SWT.TRAVERSE_NONE;
-                    }
-                    break;
-                case SWT.TRAVERSE_TAB_PREVIOUS:
-                    //Previously traverse out in the forward direction?
-                    Point previousSelection = styledText.getSelection();
-                    if ((previousSelection.x == 0)
-                            && (previousSelection.y == 0)) {
-                    	styledText.setSelection(styledText.getCharCount());
-					}
-                    StyleRange previousRange = findPreviousRange();
-                    if (previousRange == null) {
-                        // Next time in start at the end, also used by
-                        // TRAVERSE_TAB_NEXT to indicate we traversed out
-                        // in the backward direction
-                    	styledText.setSelection(styledText.getCharCount());
-                        e.doit = true;
-                    } else {
-                    	styledText.setSelectionRange(previousRange.start,
-                                previousRange.length);
-                        e.doit = true;
-                        e.detail = SWT.TRAVERSE_NONE;
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        });
+        styledText.addTraverseListener(e -> {
+		    switch (e.detail) {
+		    case SWT.TRAVERSE_ESCAPE:
+		        e.doit = true;
+		        break;
+		    case SWT.TRAVERSE_TAB_NEXT:
+		        //Previously traverse out in the backward direction?
+		        Point nextSelection = styledText.getSelection();
+		        int charCount = styledText.getCharCount();
+		        if ((nextSelection.x == charCount)
+		                && (nextSelection.y == charCount)) {
+		        	styledText.setSelection(0);
+		        }
+		        StyleRange nextRange = findNextRange();
+		        if (nextRange == null) {
+		            // Next time in start at beginning, also used by
+		            // TRAVERSE_TAB_PREVIOUS to indicate we traversed out
+		            // in the forward direction
+		        	styledText.setSelection(0);
+		            e.doit = true;
+		        } else {
+		        	styledText.setSelectionRange(nextRange.start,
+		                    nextRange.length);
+		            e.doit = true;
+		            e.detail = SWT.TRAVERSE_NONE;
+		        }
+		        break;
+		    case SWT.TRAVERSE_TAB_PREVIOUS:
+		        //Previously traverse out in the forward direction?
+		        Point previousSelection = styledText.getSelection();
+		        if ((previousSelection.x == 0)
+		                && (previousSelection.y == 0)) {
+		        	styledText.setSelection(styledText.getCharCount());
+				}
+		        StyleRange previousRange = findPreviousRange();
+		        if (previousRange == null) {
+		            // Next time in start at the end, also used by
+		            // TRAVERSE_TAB_NEXT to indicate we traversed out
+		            // in the backward direction
+		        	styledText.setSelection(styledText.getCharCount());
+		            e.doit = true;
+		        } else {
+		        	styledText.setSelectionRange(previousRange.start,
+		                    previousRange.length);
+		            e.doit = true;
+		            e.detail = SWT.TRAVERSE_NONE;
+		        }
+		        break;
+		    default:
+		        break;
+		    }
+		});
 
         //Listen for Tab and Space to allow keyboard navigation
         styledText.addKeyListener(new KeyAdapter() {

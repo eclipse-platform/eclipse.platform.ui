@@ -478,12 +478,7 @@ public abstract class AbstractUIPlugin extends Plugin {
         // startup() is not guaranteed to be called in the UI thread,
         // but refreshPluginActions must run in the UI thread,
         // so use asyncExec.  See bug 6623 for more details.
-        Display.getDefault().asyncExec(new Runnable() {
-            @Override
-			public void run() {
-                WWinPluginAction.refreshActionList();
-            }
-        });
+        Display.getDefault().asyncExec(() -> WWinPluginAction.refreshActionList());
     }
 
     /**

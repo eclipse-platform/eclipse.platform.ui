@@ -12,8 +12,6 @@
 package org.eclipse.ui.internal.about;
 
 import java.io.File;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
@@ -144,22 +142,16 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 	private void fetchConfigurationInfo(final Text text) {
 		text.setText(WorkbenchMessages.AboutSystemPage_RetrievingSystemInfo);
-		Job job = Job.create(WorkbenchMessages.AboutSystemPage_FetchJobTitle, new IJobFunction() {
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				final String info = ConfigurationInfo.getSystemSummary();
-				if (!text.isDisposed()) {
-					text.getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (!text.isDisposed()) {
-								text.setText(info);
-							}
-						}
-					});
-				}
-				return Status.OK_STATUS;
+		Job job = Job.create(WorkbenchMessages.AboutSystemPage_FetchJobTitle, (IJobFunction) monitor -> {
+			final String info = ConfigurationInfo.getSystemSummary();
+			if (!text.isDisposed()) {
+				text.getDisplay().asyncExec(() -> {
+					if (!text.isDisposed()) {
+						text.setText(info);
+					}
+				});
 			}
+			return Status.OK_STATUS;
 		});
 		job.schedule();
 	}

@@ -32,8 +32,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -123,14 +121,11 @@ public class AboutDialog extends TrayDialog {
 	protected void buttonPressed(int buttonId) {
         switch (buttonId) {
         case DETAILS_ID:
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					InstallationDialog dialog = new InstallationDialog(getShell(), workbenchWindow);
-					dialog.setModalParent(AboutDialog.this);
-					dialog.open();
-				}
+			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+				IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				InstallationDialog dialog = new InstallationDialog(getShell(), workbenchWindow);
+				dialog.setModalParent(AboutDialog.this);
+				dialog.open();
 			});
             break;
         default:
@@ -407,13 +402,7 @@ public class AboutDialog extends TrayDialog {
 						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_SELECT_ALL,
 						CommandContributionItem.STYLE_PUSH)));
 		text.setMenu(textManager.createContextMenu(text));
-		text.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				textManager.dispose();
-			}
-		});
+		text.addDisposeListener(e -> textManager.dispose());
 
 	}
 

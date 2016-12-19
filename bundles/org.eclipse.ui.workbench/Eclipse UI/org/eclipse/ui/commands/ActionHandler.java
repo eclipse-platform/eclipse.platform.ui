@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.RetargetAction;
 
@@ -127,26 +126,22 @@ public final class ActionHandler extends AbstractHandler {
         if (propertyChangeListener == null) {
             attributeValuesByName = getAttributeValuesByNameFromAction();
 
-            propertyChangeListener = new IPropertyChangeListener() {
-                @Override
-				public void propertyChange(
-                        PropertyChangeEvent propertyChangeEvent) {
-                    String property = propertyChangeEvent.getProperty();
-                    if (IAction.ENABLED.equals(property)
-                            || IAction.CHECKED.equals(property)
-                            || IHandlerAttributes.ATTRIBUTE_HANDLED
-                                    .equals(property)) {
+            propertyChangeListener = propertyChangeEvent -> {
+               String property = propertyChangeEvent.getProperty();
+               if (IAction.ENABLED.equals(property)
+			    || IAction.CHECKED.equals(property)
+			    || IHandlerAttributes.ATTRIBUTE_HANDLED
+			            .equals(property)) {
 
-                        Map previousAttributeValuesByName = attributeValuesByName;
-                        attributeValuesByName = getAttributeValuesByNameFromAction();
-                        if (!attributeValuesByName
-                                .equals(previousAttributeValuesByName)) {
-							fireHandlerChanged(new HandlerEvent(
-                                    ActionHandler.this, true,
-                                    previousAttributeValuesByName));
-						}
-                    }
-                }
+			Map previousAttributeValuesByName = attributeValuesByName;
+			attributeValuesByName = getAttributeValuesByNameFromAction();
+			if (!attributeValuesByName
+			        .equals(previousAttributeValuesByName)) {
+				fireHandlerChanged(new HandlerEvent(
+			            ActionHandler.this, true,
+			            previousAttributeValuesByName));
+			}
+               }
             };
         }
 

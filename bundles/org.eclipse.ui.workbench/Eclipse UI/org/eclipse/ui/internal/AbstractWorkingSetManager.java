@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -90,13 +89,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 	}
 
-	private SortedSet<AbstractWorkingSet> workingSets = new TreeSet<>(new Comparator<AbstractWorkingSet>() {
-		@Override
-		public int compare(AbstractWorkingSet o1, AbstractWorkingSet o2) {
-			// Cast and compare directly
-			return o1.getUniqueId().compareTo(o2.getUniqueId());
-		}
-	});
+	private SortedSet<AbstractWorkingSet> workingSets = new TreeSet<>((o1, o2) -> o1.getUniqueId().compareTo(o2.getUniqueId()));
 
 	private List<IWorkingSet> recentWorkingSets = new ArrayList<>();
 
@@ -372,25 +365,22 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 
         final PropertyChangeEvent event = new PropertyChangeEvent(this,
                 changeId, oldValue, newValue);
-		Runnable notifier = new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < listeners.length; i++) {
-					final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
-					ISafeRunnable safetyWrapper = new ISafeRunnable() {
+		Runnable notifier = () -> {
+			for (int i = 0; i < listeners.length; i++) {
+				final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+				ISafeRunnable safetyWrapper = new ISafeRunnable() {
 
-						@Override
-						public void run() throws Exception {
-							listener.propertyChange(event);
-						}
+					@Override
+					public void run() throws Exception {
+						listener.propertyChange(event);
+					}
 
-						@Override
-						public void handleException(Throwable exception) {
-							// logged by the runner
-						}
-					};
-					SafeRunner.run(safetyWrapper);
-				}
+					@Override
+					public void handleException(Throwable exception) {
+						// logged by the runner
+					}
+				};
+				SafeRunner.run(safetyWrapper);
 			}
 		};
 		// Notifications are sent on the UI thread.

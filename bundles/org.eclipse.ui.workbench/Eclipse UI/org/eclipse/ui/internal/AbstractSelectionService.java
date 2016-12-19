@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -56,22 +55,12 @@ public abstract class AbstractSelectionService implements ISelectionService {
     /**
      * The JFace selection listener to hook on the active part's selection provider.
      */
-    private ISelectionChangedListener selListener = new ISelectionChangedListener() {
-        @Override
-		public void selectionChanged(SelectionChangedEvent event) {
-            fireSelection(activePart, event.getSelection());
-        }
-    };
+    private ISelectionChangedListener selListener = event -> fireSelection(activePart, event.getSelection());
 
     /**
      * The JFace post selection listener to hook on the active part's selection provider.
      */
-    private ISelectionChangedListener postSelListener = new ISelectionChangedListener() {
-        @Override
-		public void selectionChanged(SelectionChangedEvent event) {
-            firePostSelection(activePart, event.getSelection());
-        }
-    };
+    private ISelectionChangedListener postSelListener = event -> firePostSelection(activePart, event.getSelection());
 
     /**
      * Creates a new SelectionService.
