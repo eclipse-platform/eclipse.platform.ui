@@ -174,15 +174,10 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	 * display an error message
 	 */
 	private void openWebBrowserError(Display display) {
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				MessageDialog
-						.openError(
-								null,
-								WorkbenchMessages.ProductInfoDialog_errorTitle,
-								WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser);
-			}
-		});
+		display.asyncExec(() -> MessageDialog
+				.openError(
+						null,
+						WorkbenchMessages.ProductInfoDialog_errorTitle,
+						WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser));
 	}
 }

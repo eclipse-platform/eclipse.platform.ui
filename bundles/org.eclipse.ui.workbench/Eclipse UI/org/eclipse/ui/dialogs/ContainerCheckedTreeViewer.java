@@ -11,10 +11,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
-
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -62,12 +59,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
     private void initViewer() {
         setUseHashlookup(true);
-        addCheckStateListener(new ICheckStateListener() {
-            @Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-                doCheckStateChanged(event.getElement());
-            }
-        });
+        addCheckStateListener(event -> doCheckStateChanged(event.getElement()));
         addTreeListener(new ITreeViewerListener() {
             @Override
 			public void treeCollapsed(TreeExpansionEvent event) {

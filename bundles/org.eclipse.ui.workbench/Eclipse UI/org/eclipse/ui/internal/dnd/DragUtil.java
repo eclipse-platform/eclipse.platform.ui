@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.ui.PlatformUI;
@@ -212,59 +211,51 @@ public class DragUtil {
         final Tracker tracker = new Tracker(display, SWT.NULL);
         tracker.setStippled(true);
 
-        tracker.addListener(SWT.Move, new Listener() {
-            @Override
-			public void handleEvent(final Event event) {
-                display.syncExec(new Runnable() {
-                    @Override
-					public void run() {
-                    	// Get the curslor location as a point
-                        Point location = new Point(event.x, event.y);
+        tracker.addListener(SWT.Move, event -> display.syncExec(() -> {
+			// Get the curslor location as a point
+		    Point location = new Point(event.x, event.y);
 
-                        // Select a drop target; use the global one by default
-                    	IDropTarget target = null;
+		    // Select a drop target; use the global one by default
+			IDropTarget target = null;
 
-                        Control targetControl = display.getCursorControl();
+		    Control targetControl = display.getCursorControl();
 
-                        // Get the drop target for this location
-                        target = getDropTarget(targetControl,
-                                draggedItem, location,
-                                tracker.getRectangles()[0]);
+		    // Get the drop target for this location
+		    target = getDropTarget(targetControl,
+		            draggedItem, location,
+		            tracker.getRectangles()[0]);
 
-                    	// Set up the tracker feedback based on the target
-                        Rectangle snapTarget = null;
-                        if (target != null) {
-                            snapTarget = target.getSnapRectangle();
+			// Set up the tracker feedback based on the target
+		    Rectangle snapTarget = null;
+		    if (target != null) {
+		        snapTarget = target.getSnapRectangle();
 
-                            tracker.setCursor(target.getCursor());
-                        } else {
-                            tracker.setCursor(DragCursors
-                                    .getCursor(DragCursors.INVALID));
-                        }
+		        tracker.setCursor(target.getCursor());
+		    } else {
+		        tracker.setCursor(DragCursors
+		                .getCursor(DragCursors.INVALID));
+		    }
 
-                        // If snapping then reset the tracker's rectangle based on the current drop target
-                        if (allowSnapping) {
-                            if (snapTarget == null) {
-                                snapTarget = new Rectangle(sourceBounds.x
-                                        + location.x - initialLocation.x,
-                                        sourceBounds.y + location.y
-                                                - initialLocation.y,
-                                        sourceBounds.width, sourceBounds.height);
-                            }
+		    // If snapping then reset the tracker's rectangle based on the current drop target
+		    if (allowSnapping) {
+		        if (snapTarget == null) {
+		            snapTarget = new Rectangle(sourceBounds.x
+		                    + location.x - initialLocation.x,
+		                    sourceBounds.y + location.y
+		                            - initialLocation.y,
+		                    sourceBounds.width, sourceBounds.height);
+		        }
 
-                            // Try to prevent flicker: don't change the rectangles if they're already in
-                            // the right location
-                            Rectangle[] currentRectangles = tracker.getRectangles();
+		        // Try to prevent flicker: don't change the rectangles if they're already in
+		        // the right location
+		        Rectangle[] currentRectangles = tracker.getRectangles();
 
-                            if (!(currentRectangles.length == 1 && currentRectangles[0]
-                                    .equals(snapTarget))) {
-								tracker.setRectangles(new Rectangle[] { Geometry.copy(snapTarget) });
-                            }
-                        }
-                    }
-                });
-            }
-        });
+		        if (!(currentRectangles.length == 1 && currentRectangles[0]
+		                .equals(snapTarget))) {
+					tracker.setRectangles(new Rectangle[] { Geometry.copy(snapTarget) });
+		        }
+		    }
+		}));
 
         // Setup...when the drag starts we might already be over a valid target, check this...
         // If there is a 'global' target then skip the check

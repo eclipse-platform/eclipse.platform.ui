@@ -181,22 +181,19 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 		// The next two methods make a number of UI calls, so we wrap the
 		// whole thing up in a syncExec.
 		final IStatus[] status = new IStatus[1];
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				// Compute the undoable or redoable status
-				status[0] = computeOperationStatus(operation, history, uiInfo,
-						doing);
+		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+			// Compute the undoable or redoable status
+			status[0] = computeOperationStatus(operation, history, uiInfo,
+					doing);
 
-				// Report non-OK statuses to the user. In some cases, the user
-				// may choose to proceed, and the returned status will be
-				// different than what is reported.
-				if (!status[0].isOK()) {
-					status[0] = reportAndInterpretStatus(status[0], uiInfo,
-							operation, doing);
-				}
-
+			// Report non-OK statuses to the user. In some cases, the user
+			// may choose to proceed, and the returned status will be
+			// different than what is reported.
+			if (!status[0].isOK()) {
+				status[0] = reportAndInterpretStatus(status[0], uiInfo,
+						operation, doing);
 			}
+
 		});
 
 		// If the operation is still not OK, inform the history that the

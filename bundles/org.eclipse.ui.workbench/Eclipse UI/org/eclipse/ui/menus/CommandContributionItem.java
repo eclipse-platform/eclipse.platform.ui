@@ -28,7 +28,6 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.DeviceResourceException;
@@ -307,14 +306,11 @@ public class CommandContributionItem extends ContributionItem {
 
 	private ICommandListener getCommandListener() {
 		if (commandListener == null) {
-			commandListener = new ICommandListener() {
-				@Override
-				public void commandChanged(CommandEvent commandEvent) {
-					if (commandEvent.isHandledChanged()
-							|| commandEvent.isEnabledChanged()
-							|| commandEvent.isDefinedChanged()) {
-						updateCommandProperties(commandEvent);
-					}
+			commandListener = commandEvent -> {
+				if (commandEvent.isHandledChanged()
+						|| commandEvent.isEnabledChanged()
+						|| commandEvent.isDefinedChanged()) {
+					updateCommandProperties(commandEvent);
 				}
 			};
 		}
@@ -325,29 +321,26 @@ public class CommandContributionItem extends ContributionItem {
 		if (commandEvent.isHandledChanged()) {
 			dropDownMenuOverride = null;
 		}
-		Runnable update = new Runnable() {
-			@Override
-			public void run() {
-				if (commandEvent.isEnabledChanged()
-						|| commandEvent.isHandledChanged()) {
-					if (visibleEnabled) {
-						IContributionManager parent = getParent();
-						if (parent != null) {
-							parent.update(true);
-						}
-					}
-					IHandler handler = commandEvent.getCommand().getHandler();
-					if (shouldRestoreAppearance(handler)) {
-						label = contributedLabel;
-						tooltip = contributedTooltip;
-						icon = contributedIcon;
-						disabledIcon = contributedDisabledIcon;
-						hoverIcon = contributedHoverIcon;
+		Runnable update = () -> {
+			if (commandEvent.isEnabledChanged()
+					|| commandEvent.isHandledChanged()) {
+				if (visibleEnabled) {
+					IContributionManager parent = getParent();
+					if (parent != null) {
+						parent.update(true);
 					}
 				}
-				if (commandEvent.getCommand().isDefined()) {
-					update(null);
+				IHandler handler = commandEvent.getCommand().getHandler();
+				if (shouldRestoreAppearance(handler)) {
+					label = contributedLabel;
+					tooltip = contributedTooltip;
+					icon = contributedIcon;
+					disabledIcon = contributedDisabledIcon;
+					hoverIcon = contributedHoverIcon;
 				}
+			}
+			if (commandEvent.getCommand().isDefined()) {
+				update(null);
 			}
 		};
 		if (display.getThread() == Thread.currentThread()) {
@@ -794,19 +787,16 @@ public class CommandContributionItem extends ContributionItem {
 
 	private Listener getItemListener() {
 		if (menuItemListener == null) {
-			menuItemListener = new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					switch (event.type) {
-					case SWT.Dispose:
-						handleWidgetDispose(event);
-						break;
-					case SWT.Selection:
-						if (event.widget != null) {
-							handleWidgetSelection(event);
-						}
-						break;
+			menuItemListener = event -> {
+				switch (event.type) {
+				case SWT.Dispose:
+					handleWidgetDispose(event);
+					break;
+				case SWT.Selection:
+					if (event.widget != null) {
+						handleWidgetSelection(event);
 					}
+					break;
 				}
 			};
 		}
@@ -885,12 +875,9 @@ public class CommandContributionItem extends ContributionItem {
 						}
 						@Override
 						public void menuAboutToHide(IMenuManager manager) {
-							display.asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									menuService.releaseContributions(menuManager);
-									menuManager.dispose();
-								}
+							display.asyncExec(() -> {
+								menuService.releaseContributions(menuManager);
+								menuManager.dispose();
 							});
 						}
 					});
@@ -999,15 +986,10 @@ public class CommandContributionItem extends ContributionItem {
 		return super.isVisible();
 	}
 
-	private IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
-
-		@Override
-		public void bindingManagerChanged(BindingManagerEvent event) {
-			if (event.isActiveBindingsChanged()
-					&& event.isActiveBindingsChangedFor(getCommand())) {
-				update();
-			}
-
+	private IBindingManagerListener bindingManagerListener = event -> {
+		if (event.isActiveBindingsChanged()
+				&& event.isActiveBindingsChangedFor(getCommand())) {
+			update();
 		}
 
 	};

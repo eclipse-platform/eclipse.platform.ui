@@ -41,7 +41,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
@@ -58,7 +57,6 @@ import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public abstract class CompatibilityPart implements ISelectionChangedListener {
@@ -89,22 +87,19 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	/**
 	 * This handler will be notified when the part's widget has been un/set.
 	 */
-	private EventHandler widgetSetHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			// check that we're looking at our own part and that the widget is
-			// being unset
-			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
-					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
-				 Assert.isTrue(!composite.isDisposed(),
-										"The widget should not have been disposed at this point"); //$NON-NLS-1$
-				beingDisposed = true;
-				WorkbenchPartReference reference = getReference();
-				// notify the workbench we're being closed
-				((WorkbenchPage) reference.getPage()).firePartDeactivatedIfActive(part);
-				((WorkbenchPage) reference.getPage()).firePartHidden(part);
-				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
-			}
+	private EventHandler widgetSetHandler = event -> {
+		// check that we're looking at our own part and that the widget is
+		// being unset
+		if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
+				&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+			 Assert.isTrue(!composite.isDisposed(),
+									"The widget should not have been disposed at this point"); //$NON-NLS-1$
+			beingDisposed = true;
+			WorkbenchPartReference reference = getReference();
+			// notify the workbench we're being closed
+			((WorkbenchPage) reference.getPage()).firePartDeactivatedIfActive(part);
+			((WorkbenchPage) reference.getPage()).firePartHidden(part);
+			((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 		}
 	};
 
@@ -112,27 +107,20 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	 * This handler will be notified when the part's client object has been
 	 * un/set.
 	 */
-	private EventHandler objectSetHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			// check that we're looking at our own part and that the object is
-			// being set
-			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
-					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
-				WorkbenchPartReference reference = getReference();
-				// notify the workbench we've been opened
-				((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
-			}
+	private EventHandler objectSetHandler = event -> {
+		// check that we're looking at our own part and that the object is
+		// being set
+		if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
+				&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
+			WorkbenchPartReference reference = getReference();
+			// notify the workbench we've been opened
+			((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
 		}
 	};
 
-	private ISelectionChangedListener postListener = new ISelectionChangedListener() {
-
-		@Override
-		public void selectionChanged(SelectionChangedEvent e) {
-			ESelectionService selectionService = part.getContext().get(ESelectionService.class);
-			selectionService.setPostSelection(e.getSelection());
-		}
+	private ISelectionChangedListener postListener = e -> {
+		ESelectionService selectionService = part.getContext().get(ESelectionService.class);
+		selectionService.setPostSelection(e.getSelection());
 	};
 
 	private IWorkbenchPart legacyPart;
@@ -369,45 +357,41 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			part.setDirty(saveable.isDirty());
 		}
 
-		wrapped.addPropertyListener(new IPropertyListener() {
-			@Override
-			public void propertyChanged(Object source, int propId) {
-				switch (propId) {
-				case IWorkbenchPartConstants.PROP_TITLE:
-					part.setLabel(computeLabel());
+		wrapped.addPropertyListener((source, propId) -> {
+			switch (propId) {
+			case IWorkbenchPartConstants.PROP_TITLE:
+				part.setLabel(computeLabel());
 
-					if (wrapped.getTitleImage() != null) {
-						Image newImage = wrapped.getTitleImage();
-						part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
-								newImage);
-					}
-					String titleToolTip = wrapped.getTitleToolTip();
-					if (titleToolTip != null) {
-						part.getTransientData().put(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY, titleToolTip);
-					}
-					break;
-				case IWorkbenchPartConstants.PROP_DIRTY:
-					boolean supportsDirtyState = SaveableHelper.isDirtyStateSupported(wrapped);
-					if (!supportsDirtyState) {
-						part.setDirty(false);
-						return;
-					}
-					ISaveablePart saveable = SaveableHelper.getSaveable(wrapped);
-					if (saveable != null) {
-						part.setDirty(saveable.isDirty());
-					} else if (part.isDirty()) {
-						// reset if the wrapped legacy part do not exposes
-						// saveable adapter anymore, see bug 495567 comment 6
-						part.setDirty(false);
-					}
-					break;
-				case IWorkbenchPartConstants.PROP_INPUT:
-					WorkbenchPartReference ref = getReference();
-					((WorkbenchPage) ref.getSite().getPage()).firePartInputChanged(ref);
-					break;
+				if (wrapped.getTitleImage() != null) {
+					Image newImage = wrapped.getTitleImage();
+					part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
+							newImage);
 				}
+				String titleToolTip = wrapped.getTitleToolTip();
+				if (titleToolTip != null) {
+					part.getTransientData().put(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY, titleToolTip);
+				}
+				break;
+			case IWorkbenchPartConstants.PROP_DIRTY:
+				boolean supportsDirtyState = SaveableHelper.isDirtyStateSupported(wrapped);
+				if (!supportsDirtyState) {
+					part.setDirty(false);
+					return;
+				}
+				ISaveablePart saveable1 = SaveableHelper.getSaveable(wrapped);
+				if (saveable1 != null) {
+					part.setDirty(saveable1.isDirty());
+				} else if (part.isDirty()) {
+					// reset if the wrapped legacy part do not exposes
+					// saveable adapter anymore, see bug 495567 comment 6
+					part.setDirty(false);
+				}
+				break;
+			case IWorkbenchPartConstants.PROP_INPUT:
+				WorkbenchPartReference ref = getReference();
+				((WorkbenchPage) ref.getSite().getPage()).firePartInputChanged(ref);
+				break;
 			}
-
 		});
 	}
 

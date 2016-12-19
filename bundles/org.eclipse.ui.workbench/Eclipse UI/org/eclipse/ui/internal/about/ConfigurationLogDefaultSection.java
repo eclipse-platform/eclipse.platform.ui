@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
@@ -62,14 +61,11 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         writer.println();
         writer.println(WorkbenchMessages.SystemSummary_systemProperties);
         Properties properties = System.getProperties();
-        SortedSet set = new TreeSet(new Comparator() {
-            @Override
-			public int compare(Object o1, Object o2) {
-                String s1 = (String) o1;
-                String s2 = (String) o2;
-                return s1.compareTo(s2);
-            }
-        });
+        SortedSet set = new TreeSet((o1, o2) -> {
+		    String s1 = (String) o1;
+		    String s2 = (String) o2;
+		    return s1.compareTo(s2);
+		});
         set.addAll(properties.keySet());
         Iterator i = set.iterator();
         while (i.hasNext()) {

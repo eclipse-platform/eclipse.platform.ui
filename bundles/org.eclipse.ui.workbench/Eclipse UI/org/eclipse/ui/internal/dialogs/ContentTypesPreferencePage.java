@@ -24,13 +24,11 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -41,8 +39,6 @@ import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -375,19 +371,16 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			}
 		});
 
-		charsetField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String errorMessage = null;
-				String text = charsetField.getText();
-				try {
-					if (text.length() != 0 && !Charset.isSupported(text))
-						errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
-				} catch (IllegalCharsetNameException ex) {
+		charsetField.addModifyListener(e -> {
+			String errorMessage = null;
+			String text = charsetField.getText();
+			try {
+				if (text.length() != 0 && !Charset.isSupported(text))
 					errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
-				}
-				setErrorMessage(errorMessage);
+			} catch (IllegalCharsetNameException ex) {
+				errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
 			}
+			setErrorMessage(errorMessage);
 		});
 
 	}
@@ -414,28 +407,24 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			data.horizontalSpan = 1;
 			fileAssociationViewer.getControl().setLayoutData(data);
 			fileAssociationViewer
-					.addSelectionChangedListener(new ISelectionChangedListener() {
-
-						@Override
-						public void selectionChanged(SelectionChangedEvent event) {
-							IStructuredSelection selection = (IStructuredSelection) event
-									.getSelection();
-							if (selection.isEmpty()) {
-								editButton.setEnabled(false);
-								removeButton.setEnabled(false);
-								return;
-							}
-							boolean enabled = true;
-							List elements = selection.toList();
-							for (Iterator i = elements.iterator(); i.hasNext();) {
-								Spec spec = (Spec) i.next();
-								if (spec.isPredefined) {
-									enabled = false;
-								}
-							}
-							editButton.setEnabled(enabled && selection.size() == 1);
-							removeButton.setEnabled(enabled);
+					.addSelectionChangedListener(event -> {
+						IStructuredSelection selection = (IStructuredSelection) event
+								.getSelection();
+						if (selection.isEmpty()) {
+							editButton.setEnabled(false);
+							removeButton.setEnabled(false);
+							return;
 						}
+						boolean enabled = true;
+						List elements = selection.toList();
+						for (Iterator i = elements.iterator(); i.hasNext();) {
+							Spec spec = (Spec) i.next();
+							if (spec.isPredefined) {
+								enabled = false;
+							}
+						}
+						editButton.setEnabled(enabled && selection.size() == 1);
+						removeButton.setEnabled(enabled);
 					});
 		}
 		{
@@ -625,32 +614,28 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			contentTypesViewer.getControl().setLayoutData(data);
 
 			contentTypesViewer
-					.addSelectionChangedListener(new ISelectionChangedListener() {
+					.addSelectionChangedListener(event -> {
+						IContentType contentType = (IContentType) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						fileAssociationViewer.setInput(contentType);
 
-						@Override
-						public void selectionChanged(SelectionChangedEvent event) {
-							IContentType contentType = (IContentType) ((IStructuredSelection) event
-									.getSelection()).getFirstElement();
-							fileAssociationViewer.setInput(contentType);
-
-							if (contentType != null) {
-								String charset = contentType
-										.getDefaultCharset();
-								if (charset == null) {
-									charset = ""; //$NON-NLS-1$
-								}
-								charsetField.setText(charset);
-							} else {
-								charsetField.setText(""); //$NON-NLS-1$
+						if (contentType != null) {
+							String charset = contentType
+									.getDefaultCharset();
+							if (charset == null) {
+								charset = ""; //$NON-NLS-1$
 							}
-
-							charsetField.setEnabled(contentType != null);
-							addButton.setEnabled(contentType != null);
-							setButton.setEnabled(false);
-
-							addChildContentTypeButton.setEnabled(contentType != null);
-							removeContentTypeButton.setEnabled(contentType != null && contentType.isUserDefined());
+							charsetField.setText(charset);
+						} else {
+							charsetField.setText(""); //$NON-NLS-1$
 						}
+
+						charsetField.setEnabled(contentType != null);
+						addButton.setEnabled(contentType != null);
+						setButton.setEnabled(false);
+
+						addChildContentTypeButton.setEnabled(contentType != null);
+						removeContentTypeButton.setEnabled(contentType != null && contentType.isUserDefined());
 					});
 		}
 		Composite buttonsComposite = new Composite(composite, SWT.NONE);

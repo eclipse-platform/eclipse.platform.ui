@@ -38,8 +38,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -414,18 +412,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	 *            must not be <code>null</code>.
 	 */
 	protected final void addTraverseListener(final Table table) {
-		table.addTraverseListener(new TraverseListener() {
-			/**
-			 * Blocks all key traversal events.
-			 *
-			 * @param event
-			 *            The trigger event; must not be <code>null</code>.
-			 */
-			@Override
-			public final void keyTraversed(final TraverseEvent event) {
-				event.doit = false;
-			}
-		});
+		table.addTraverseListener(event -> event.doit = false);
 	}
 
 	/**

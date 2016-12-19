@@ -69,15 +69,11 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		@Override
 		public void beginTask(final String name, final int totalWork) {
 
-			updateUI(new Runnable() {
-
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					AbsolutePositionProgressMonitorPart.super.beginTask(name,
-							totalWork);
-				}
+			updateUI(() -> {
+				if (isDisposed())
+					return;
+				AbsolutePositionProgressMonitorPart.super.beginTask(name,
+						totalWork);
 			});
 
 		}
@@ -85,14 +81,10 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		@Override
 		public void done() {
 
-			updateUI(new Runnable() {
-
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					AbsolutePositionProgressMonitorPart.super.done();
-				}
+			updateUI(() -> {
+				if (isDisposed())
+					return;
+				AbsolutePositionProgressMonitorPart.super.done();
 			});
 
 		}
@@ -100,15 +92,11 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		@Override
 		public void internalWorked(final double work) {
 
-			updateUI(new Runnable() {
-
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					AbsolutePositionProgressMonitorPart.super
-							.internalWorked(work);
-				}
+			updateUI(() -> {
+				if (isDisposed())
+					return;
+				AbsolutePositionProgressMonitorPart.super
+						.internalWorked(work);
 			});
 
 		}
@@ -116,14 +104,10 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		@Override
 		public void setFont(final Font font) {
 
-			updateUI(new Runnable() {
-
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					AbsolutePositionProgressMonitorPart.super.setFont(font);
-				}
+			updateUI(() -> {
+				if (isDisposed())
+					return;
+				AbsolutePositionProgressMonitorPart.super.setFont(font);
 			});
 
 		}
@@ -131,14 +115,10 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		@Override
 		protected void updateLabel() {
 
-			updateUI(new Runnable() {
-
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					AbsolutePositionProgressMonitorPart.super.updateLabel();
-				}
+			updateUI(() -> {
+				if (isDisposed())
+					return;
+				AbsolutePositionProgressMonitorPart.super.updateLabel();
 			});
 
 		}

@@ -17,14 +17,10 @@ import java.util.Comparator;
 
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -154,30 +150,22 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         });
 
         checkboxViewer
-                .addSelectionChangedListener(new ISelectionChangedListener() {
-                    @Override
-					public void selectionChanged(SelectionChangedEvent event) {
-                        if (event.getSelection() instanceof IStructuredSelection) {
-                            IStructuredSelection sel = (IStructuredSelection) event
-                                    .getSelection();
-                            DecoratorDefinition definition = (DecoratorDefinition) sel
-                                    .getFirstElement();
-                            if (definition == null) {
-								clearDescription();
-							} else {
-								showDescription(definition);
-							}
-                        }
-                    }
-                });
+                .addSelectionChangedListener(event -> {
+				    if (event.getSelection() instanceof IStructuredSelection) {
+				        IStructuredSelection sel = (IStructuredSelection) event
+				                .getSelection();
+				        DecoratorDefinition definition = (DecoratorDefinition) sel
+				                .getFirstElement();
+				        if (definition == null) {
+							clearDescription();
+						} else {
+							showDescription(definition);
+						}
+				    }
+				});
 
-        checkboxViewer.addCheckStateListener(new ICheckStateListener() {
-            @Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-                checkboxViewer.setSelection(new StructuredSelection(event
-                        .getElement()));
-            }
-        });
+        checkboxViewer.addCheckStateListener(event -> checkboxViewer.setSelection(new StructuredSelection(event
+		        .getElement())));
     }
 
     /**

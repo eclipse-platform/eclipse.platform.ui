@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -78,18 +77,13 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
     /**
      * TODO: should this be done with an addition listener?
      */
-    private final IRegistryChangeListener registryListener = new IRegistryChangeListener() {
-
-        @Override
-		public void registryChanged(IRegistryChangeEvent event) {
-            // reset the reader.
-            // TODO This is expensive.  Can we be more selective?
-            if (getParent() != null) {
-                getParent().markDirty();
-            }
-        }
-
-    };
+    private final IRegistryChangeListener registryListener = event -> {
+	    // reset the reader.
+	    // TODO This is expensive.  Can we be more selective?
+	    if (getParent() != null) {
+	        getParent().markDirty();
+	    }
+	};
 
     private ActionFactory.IWorkbenchAction showDlgAction;
 

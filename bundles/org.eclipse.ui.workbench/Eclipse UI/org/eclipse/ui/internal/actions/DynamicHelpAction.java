@@ -86,13 +86,8 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 			return;
 		}
 		// This may take a while, so use the busy indicator
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				workbenchWindow.getWorkbench().getHelpSystem()
-						.displayDynamicHelp();
-			}
-		});
+		BusyIndicator.showWhile(null, () -> workbenchWindow.getWorkbench().getHelpSystem()
+				.displayDynamicHelp());
 	}
 
 	@Override
