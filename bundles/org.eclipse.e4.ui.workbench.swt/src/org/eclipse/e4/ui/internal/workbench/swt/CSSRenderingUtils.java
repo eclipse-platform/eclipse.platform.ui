@@ -24,8 +24,6 @@ import org.eclipse.e4.ui.widgets.ImageBasedFrame;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -36,7 +34,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.css.CSSPrimitiveValue;
@@ -256,82 +253,66 @@ public class CSSRenderingUtils {
 	private void addHandleImageDisposedListener(
 			ImageBasedFrame imageBasedFrame, final Control toFrame,
 			final String classId, final boolean vertical) {
-		final Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (!(event.widget instanceof ImageBasedFrame)) {
-					return;
-				}
+		final Listener listener = event -> {
+			if (!(event.widget instanceof ImageBasedFrame)) {
+				return;
+			}
 
-				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
-				if (!isImagesRefreshRequired(frame)) {
-					return;
-				}
+			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+			if (!isImagesRefreshRequired(frame)) {
+				return;
+			}
 
-				Image handleImage = createImage(toFrame, classId,
-						HANDLE_IMAGE_PROP, null);
-				if (vertical && handleImage != null) {
-					handleImage = rotateImage(toFrame.getDisplay(),
-							handleImage, null);
-				}
-				if (handleImage != null) {
-					frame.setImages(null, null, handleImage);
-				}
+			Image handleImage = createImage(toFrame, classId,
+					HANDLE_IMAGE_PROP, null);
+			if (vertical && handleImage != null) {
+				handleImage = rotateImage(toFrame.getDisplay(),
+						handleImage, null);
+			}
+			if (handleImage != null) {
+				frame.setImages(null, null, handleImage);
 			}
 		};
 
 		toFrame.getDisplay().addListener(SWT.Skin, listener);
 
-		imageBasedFrame.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				e.widget.getDisplay().removeListener(SWT.Skin, listener);
-			}
-		});
+		imageBasedFrame.addDisposeListener(e -> e.widget.getDisplay().removeListener(SWT.Skin, listener));
 	}
 
 	private void addFrameImageDisposedListener(ImageBasedFrame imageBasedFrame,
 			final Control toFrame, final String classId, final boolean vertical) {
-		final Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (!(event.widget instanceof ImageBasedFrame)) {
-					return;
-				}
+		final Listener listener = event -> {
+			if (!(event.widget instanceof ImageBasedFrame)) {
+				return;
+			}
 
-				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
-				if (!isImagesRefreshRequired(frame)) {
-					return;
-				}
+			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+			if (!isImagesRefreshRequired(frame)) {
+				return;
+			}
 
-				Integer[] frameInts = new Integer[4];
-				Image frameImage = createImage(toFrame, classId,
-						FRAME_IMAGE_PROP, frameInts);
-				if (vertical && frameImage != null) {
-					frameImage = rotateImage(toFrame.getDisplay(), frameImage,
-							frameInts);
-				}
+			Integer[] frameInts = new Integer[4];
+			Image frameImage = createImage(toFrame, classId,
+					FRAME_IMAGE_PROP, frameInts);
+			if (vertical && frameImage != null) {
+				frameImage = rotateImage(toFrame.getDisplay(), frameImage,
+						frameInts);
+			}
 
-				Image handleImage = createImage(toFrame, classId,
-						HANDLE_IMAGE_PROP, null);
-				if (vertical && handleImage != null) {
-					handleImage = rotateImage(toFrame.getDisplay(),
-							handleImage, null);
-				}
-				if (frameImage != null) {
-					frame.setImages(frameImage, frameInts, handleImage);
-				}
-			 }
-		};
+			Image handleImage = createImage(toFrame, classId,
+					HANDLE_IMAGE_PROP, null);
+			if (vertical && handleImage != null) {
+				handleImage = rotateImage(toFrame.getDisplay(),
+						handleImage, null);
+			}
+			if (frameImage != null) {
+				frame.setImages(frameImage, frameInts, handleImage);
+			}
+		 };
 
 		toFrame.getDisplay().addListener(SWT.Skin, listener);
 
-		imageBasedFrame.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				e.widget.getDisplay().removeListener(SWT.Skin, listener);
-			}
-		});
+		imageBasedFrame.addDisposeListener(e -> e.widget.getDisplay().removeListener(SWT.Skin, listener));
 	}
 
 	private boolean isImagesRefreshRequired(ImageBasedFrame frame) {

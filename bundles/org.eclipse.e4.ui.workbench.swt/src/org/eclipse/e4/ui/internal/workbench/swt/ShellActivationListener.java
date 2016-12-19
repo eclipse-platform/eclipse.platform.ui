@@ -19,8 +19,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -175,12 +173,9 @@ public class ShellActivationListener implements Listener {
 		EContextService contextService = context.get(EContextService.class);
 		contextService.activateContext(EBindingService.DIALOG_CONTEXT_ID);
 
-		shell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				deactivate(shell);
-				context.dispose();
-			}
+		shell.addDisposeListener(e -> {
+			deactivate(shell);
+			context.dispose();
 		});
 
 		return context;
