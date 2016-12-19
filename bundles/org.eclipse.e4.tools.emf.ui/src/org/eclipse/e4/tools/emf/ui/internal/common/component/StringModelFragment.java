@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,33 +9,47 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
+import org.eclipse.e4.emf.xpath.XPathContext;
+import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
+import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ModelResultHandlerImpl;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -54,10 +68,11 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -67,17 +82,25 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class StringModelFragment extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
+	// The local collector used by both dialogs (findParentReference and
+	// FeaturesSelection)
+	private ClassContributionCollector collector;
+	// The selected Container is the class that match the ID.
+	// It can be get from the FindParentReferenceDialog or computed from the ID.
+	private EClass selectedContainer;
 
 	private final IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties
 			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
 	private final List<Action> actions = new ArrayList<>();
-
-	private EClass selectedContainer;
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -85,6 +108,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	@Inject
 	public StringModelFragment() {
 		super();
+		collector = getCollector();
 	}
 
 	@PostConstruct
@@ -152,6 +176,56 @@ public class StringModelFragment extends AbstractComponentEditor {
 		return composite;
 	}
 
+	/**
+	 * Returns the selectedContainer, which is the EClass behind the Extended
+	 * Element ID. It can be known thanks to the dialog or must be computed from
+	 * the ID value
+	 *
+	 * @return
+	 */
+	private EClass getSelectedContainer() {
+
+		if (selectedContainer != null) {
+			return selectedContainer;
+		}
+
+		// we get the StringModelFragment
+		StringModelFragmentImpl modelFragment = getStringModelFragment();
+
+		Filter filter = new Filter(ApplicationPackageImpl.eINSTANCE.getApplication(), ""); //$NON-NLS-1$
+		WritableList list = new WritableList<>();
+		ModelResultHandler resultHandler = new ModelResultHandlerImpl(list, filter, this,
+				modelFragment.eResource());
+
+		collector.findModelElements(filter, resultHandler);
+		List<EClass> globalResult = new ArrayList<>();
+
+		for (Object o : list) {
+			if (o instanceof MApplication) {
+				MApplication mApp = (MApplication) o;
+				List<EClass> targetClass = getTargetClass(mApp);
+				globalResult.addAll(targetClass);
+			}
+		}
+		selectedContainer = globalResult.isEmpty() ? null : globalResult.get(0);
+
+		return selectedContainer;
+	}
+
+	private StringModelFragmentImpl getStringModelFragment() {
+		return ((StringModelFragmentImpl) getMaster().getValue());
+	}
+
+	private ClassContributionCollector getCollector() {
+		final Bundle bundle = FrameworkUtil.getBundle(FindParentReferenceElementDialog.class);
+		final BundleContext context = bundle.getBundleContext();
+		final ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
+		if (ref != null) {
+			return (ClassContributionCollector) context.getService(ref);
+		}
+		return null;
+	}
+
 	private Composite createForm(Composite parent) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
@@ -192,20 +266,25 @@ public class StringModelFragment extends AbstractComponentEditor {
 					EMFEditProperties.value(getEditingDomain(),
 							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
 
+			// Add a modify listener to control the change of the ID -> Must
+			// force the computation of selectedContainer.
+			t.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					selectedContainer = null;
+				}
+			});
+
 			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(),
-							StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages);
+							StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages,
+							collector);
 					dialog.open();
-					// store user selected container
-					if (dialog.getReturnCode() == Window.OK) {
-						selectedContainer = dialog.getSelectedContainer();
-					} else {
-						selectedContainer = null;
-					}
+					selectedContainer = dialog.getSelectedContainer();
 				}
 			});
 		}
@@ -242,7 +321,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),
 							getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages,
-							selectedContainer);
+							getSelectedContainer());
 					dialog.open();
 				}
 			});
@@ -355,5 +434,82 @@ public class StringModelFragment extends AbstractComponentEditor {
 		});
 		return l;
 	}
+
+	/**
+	 * This method returns the target class of the element pointed by the
+	 * 'extended element ID' value In case of several matches it returns a list
+	 * of possible classes (but this case means that the ID is used for
+	 * different objects in different models present in the workspace). If the
+	 * parent element ID value is xpath:/ or
+	 * 'org.eclipse.e4.legacy.ide.application', it returns MApplication EClass
+	 *
+	 * @param application
+	 *            : the application to be parsed
+	 * @return the list of EClass
+	 */
+	public List<EClass> getTargetClass(MApplication application) {
+		List<EClass> ret = Collections.emptyList();
+		StringModelFragmentImpl modelFragment = getStringModelFragment();
+
+
+		String idsOrXPath = modelFragment.getParentElementId();
+		if ("xpath:/".equals(idsOrXPath) || "org.eclipse.e4.legacy.ide.application".equals(idsOrXPath)) {
+			ret = new ArrayList<>();
+			ret.add(ApplicationPackageImpl.eINSTANCE.getApplication());
+		} else {
+			// Deal with non default MApplication IDs.
+			if (idsOrXPath.startsWith("xpath:")) {
+				String xPath = idsOrXPath.substring(6);
+				ret = getTargetClassFromXPath(application, xPath);
+			} else {
+
+				MApplicationElement o = ModelUtils.findElementById(application, idsOrXPath);
+				if (o != null) {
+					ret = new ArrayList<>();
+					ret.add(((EObject) o).eClass());
+				}
+			}
+		}
+
+		return ret;
+
+	}
+
+
+
+	/**
+	 * Returns the EClass of the Application element(s) referenced by the xpath
+	 * value (without prefix)
+	 *
+	 * @param application
+	 *            : the application to be parsed
+	 * @param xpath
+	 *            : the xpath value without the 'xpath:' prefix
+	 * @return the list of EClass(es) matching this xpath
+	 */
+	private List<EClass> getTargetClassFromXPath(MApplication application, String xpath) {
+		List<EClass> ret = new ArrayList<>();
+
+		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
+		XPathContext xpathContext = f.newContext((EObject) application);
+		Iterator<Object> i = xpathContext.iterate(xpath);
+
+		try {
+			while (i.hasNext()) {
+				Object obj = i.next();
+				if (obj instanceof MApplicationElement) {
+					ApplicationElementImpl ae = (ApplicationElementImpl) obj;
+					ret.add(ae.eClass());
+				}
+			}
+		} catch (Exception ex) {
+			// custom xpath functions will throw exceptions
+			ex.printStackTrace();
+		}
+
+		return ret;
+	}
+
+
 
 }

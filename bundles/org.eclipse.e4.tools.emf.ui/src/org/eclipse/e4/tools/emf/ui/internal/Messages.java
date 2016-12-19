@@ -605,6 +605,7 @@ public class Messages {
 	public String FindParentReferenceElementDialog_Message;
 	public String FindParentReferenceElementDialog_ContainerType;
 	public String FindParentReferenceElementDialog_Search;
+	public String FindParentReferenceElementDialog_HelpTooltip;
 	public String FindParentReferenceElementDialog_NoId;
 	public String FindParentReferenceElementDialog_ClearCache;
 	public String FindParentReferenceElementDialog_NoReferenceId;

@@ -9,6 +9,7 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 437469
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -16,10 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
-import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -31,7 +30,6 @@ import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -69,10 +67,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private final MStringModelFragment fragment;
@@ -84,13 +78,15 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private ComboViewer eClassViewer;
 	private Text searchText;
 	private EClass selectedContainer;
+	private ClassContributionCollector collector;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor,
-			MStringModelFragment fragment, Messages Messages) {
+			MStringModelFragment fragment, Messages Messages, ClassContributionCollector collector) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editor = editor;
 		this.Messages = Messages;
+		this.collector = collector;
 	}
 
 	@Override
@@ -124,8 +120,13 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_ContainerType);
 
-		final Combo combo = new Combo(container, SWT.NONE);
+		Composite parentForCombo = new Composite(container, SWT.NONE);
+		parentForCombo.setLayout(new GridLayout(2, false));
+		parentForCombo.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+
+		final Combo combo = new Combo(parentForCombo, SWT.NONE);
 		eClassViewer = new ComboViewer(combo);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		eClassViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -171,6 +172,12 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		};
 		new AutoCompleteField(combo, textContentAdapter, values);
+
+		Label help = new Label(parentForCombo, SWT.NONE);
+		final Image helpImage = new Image(parent.getDisplay(),
+				getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")); //$NON-NLS-1$
+		help.setImage(helpImage);
+		help.setToolTipText(Messages.FindParentReferenceElementDialog_HelpTooltip);
 
 		l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_Search);
@@ -220,8 +227,6 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		list = new WritableList();
 		viewer.setInput(list);
 
-		final ClassContributionCollector collector = getCollector();
-
 		searchText.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -244,7 +249,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 
 	protected void updateSearch() {
 		if (currentResultHandler != null) {
-			currentResultHandler.cancled = true;
+			currentResultHandler.cancel();
 		}
 		list.clear();
 
@@ -252,7 +257,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				(EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
 
 		currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, ((EObject) fragment).eResource());
-		getCollector().findModelElements(filter, currentResultHandler);
+		collector.findModelElements(filter, currentResultHandler);
 
 	}
 
@@ -285,60 +290,6 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		return selectedContainer;
 	}
 
-	private ClassContributionCollector getCollector() {
-		final Bundle bundle = FrameworkUtil.getBundle(FindParentReferenceElementDialog.class);
-		final BundleContext context = bundle.getBundleContext();
-		final ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
-		if (ref != null) {
-			return (ClassContributionCollector) context.getService(ref);
-		}
-		return null;
-	}
 
-	private static class ModelResultHandlerImpl implements ModelResultHandler {
-		private boolean cancled = false;
-		private final IObservableList list;
-		private final Filter filter;
-		private final AbstractComponentEditor editor;
-		private final Resource resource;
-
-		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor,
-				Resource resource) {
-			this.list = list;
-			this.filter = filter;
-			this.editor = editor;
-			this.resource = resource;
-		}
-
-		@Override
-		public void result(EObject data) {
-			if (!cancled) {
-				if (!resource.getURI().equals(data.eResource().getURI())) {
-					if (data instanceof MApplicationElement) {
-						final String elementId = ((MApplicationElement) data).getElementId();
-						if (elementId == null) {
-							list.add(data);
-							return;
-						}
-
-						if (elementId.trim().length() > 0) {
-							if (filter.elementIdPattern.matcher(elementId).matches()) {
-								list.add(data);
-								return;
-							}
-						}
-
-						final String label = editor.getDetailLabel(data);
-						if (label != null && label.trim().length() > 0) {
-							if (filter.elementIdPattern.matcher(label).matches()) {
-								list.add(data);
-								return;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 
 }
