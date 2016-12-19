@@ -67,12 +67,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -84,7 +80,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
@@ -392,12 +387,9 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 
 			// Prevent ESC from closing the DW
-			wbwShell.addTraverseListener(new TraverseListener() {
-				@Override
-				public void keyTraversed(TraverseEvent e) {
-					if (e.detail == SWT.TRAVERSE_ESCAPE) {
-						e.doit = false;
-					}
+			wbwShell.addTraverseListener(e -> {
+				if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					e.doit = false;
 				}
 			});
 		}
@@ -452,12 +444,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		localContext.set(Shell.class, wbwShell);
 		localContext.set(E4Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
 		setCloseHandler(wbwModel);
-		localContext.set(IShellProvider.class, new IShellProvider() {
-			@Override
-			public Shell getShell() {
-				return wbwShell;
-			}
-		});
+		localContext.set(IShellProvider.class, () -> wbwShell);
 		final PartServiceSaveHandler saveHandler = new PartServiceSaveHandler() {
 			@Override
 			public Save promptToSave(MPart dirtyPart) {
@@ -552,20 +539,12 @@ public class WBWRenderer extends SWTPartRenderer {
 		// no direct model parent, must be a detached window
 		if (window.getParent() == null) {
 			context.set(IWindowCloseHandler.class,
-					new IWindowCloseHandler() {
-						@Override
-						public boolean close(MWindow window) {
-							return closeDetachedWindow(window);
-						}
-					});
+					window1 -> closeDetachedWindow(window1));
 		} else {
 			context.set(IWindowCloseHandler.class,
-					new IWindowCloseHandler() {
-						@Override
-						public boolean close(MWindow window) {
-							EPartService partService = window.getContext().get(EPartService.class);
-							return partService.saveAll(true);
-						}
+					window1 -> {
+						EPartService partService = window1.getContext().get(EPartService.class);
+						return partService.saveAll(true);
 					});
 		}
 	}
@@ -640,30 +619,22 @@ public class WBWRenderer extends SWTPartRenderer {
 					}
 				}
 			});
-			shell.addListener(SWT.Activate, new Listener() {
-				@Override
-				public void handleEvent(org.eclipse.swt.widgets.Event event) {
-					MUIElement parentME = w.getParent();
-					if (parentME instanceof MApplication) {
-						MApplication app = (MApplication) parentME;
-						app.setSelectedElement(w);
+			shell.addListener(SWT.Activate, event -> {
+				MUIElement parentME = w.getParent();
+				if (parentME instanceof MApplication) {
+					MApplication app = (MApplication) parentME;
+					app.setSelectedElement(w);
+					w.getContext().activate();
+				} else if (parentME == null) {
+					parentME = modelService.getContainer(w);
+					if (parentME instanceof MContext) {
 						w.getContext().activate();
-					} else if (parentME == null) {
-						parentME = modelService.getContainer(w);
-						if (parentME instanceof MContext) {
-							w.getContext().activate();
-						}
 					}
-					updateNonFocusState(SWT.Activate, w);
 				}
+				updateNonFocusState(SWT.Activate, w);
 			});
 
-			shell.addListener(SWT.Deactivate, new Listener() {
-				@Override
-				public void handleEvent(org.eclipse.swt.widgets.Event event) {
-					updateNonFocusState(SWT.Deactivate, w);
-				}
-			});
+			shell.addListener(SWT.Deactivate, event -> updateNonFocusState(SWT.Deactivate, w));
 		}
 	}
 
@@ -788,19 +759,16 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		// Capture the max/min state
 		final MUIElement disposeME = shellME;
-		shell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				Shell shell = (Shell) e.widget;
-				if (disposeME != null) {
-					disposeME.getTags().remove(ShellMinimizedTag);
-					disposeME.getTags().remove(ShellMaximizedTag);
-					if (shell.getMinimized()) {
-						disposeME.getTags().add(ShellMinimizedTag);
-					}
-					if (shell.getMaximized()) {
-						disposeME.getTags().add(ShellMaximizedTag);
-					}
+		shell.addDisposeListener(e -> {
+			Shell shell1 = (Shell) e.widget;
+			if (disposeME != null) {
+				disposeME.getTags().remove(ShellMinimizedTag);
+				disposeME.getTags().remove(ShellMaximizedTag);
+				if (shell1.getMinimized()) {
+					disposeME.getTags().add(ShellMinimizedTag);
+				}
+				if (shell1.getMaximized()) {
+					disposeME.getTags().add(ShellMaximizedTag);
 				}
 			}
 		});

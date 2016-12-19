@@ -41,33 +41,30 @@ public class AreaRenderer extends SWTPartRenderer {
 	@Inject
 	private IEventBroker eventBroker;
 
-	private EventHandler itemUpdater = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			// Ensure that this event is for a MArea
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MArea))
-				return;
+	private EventHandler itemUpdater = event -> {
+		// Ensure that this event is for a MArea
+		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MArea))
+			return;
 
-			MArea areaModel = (MArea) event
-					.getProperty(UIEvents.EventTags.ELEMENT);
-			CTabFolder ctf = (CTabFolder) areaModel.getWidget();
-			CTabItem areaItem = ctf.getItem(0);
+		MArea areaModel = (MArea) event
+				.getProperty(UIEvents.EventTags.ELEMENT);
+		CTabFolder ctf = (CTabFolder) areaModel.getWidget();
+		CTabItem areaItem = ctf.getItem(0);
 
-			// No widget == nothing to update
-			if (areaItem == null)
-				return;
+		// No widget == nothing to update
+		if (areaItem == null)
+			return;
 
-			String attName = (String) event
-					.getProperty(UIEvents.EventTags.ATTNAME);
-			if (UIEvents.UILabel.LABEL.equals(attName)
-					|| UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
-				areaItem.setText(areaModel.getLocalizedLabel());
-			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
-				areaItem.setImage(getImage(areaModel));
-			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)
-					|| UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
-				areaItem.setToolTipText(areaModel.getLocalizedTooltip());
-			}
+		String attName = (String) event
+				.getProperty(UIEvents.EventTags.ATTNAME);
+		if (UIEvents.UILabel.LABEL.equals(attName)
+				|| UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
+			areaItem.setText(areaModel.getLocalizedLabel());
+		} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+			areaItem.setImage(getImage(areaModel));
+		} else if (UIEvents.UILabel.TOOLTIP.equals(attName)
+				|| UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
+			areaItem.setToolTipText(areaModel.getLocalizedTooltip());
 		}
 	};
 

@@ -79,8 +79,6 @@ import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.internal.MenuManagerEventHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
@@ -279,18 +277,15 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 
-	private EventHandler selectionUpdater = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			// Ensure that this event is for a MToolItem
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
-				return;
+	private EventHandler selectionUpdater = event -> {
+		// Ensure that this event is for a MToolItem
+		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+			return;
 
-			MMenuItem itemModel = (MMenuItem) event.getProperty(UIEvents.EventTags.ELEMENT);
-			IContributionItem ici = getContribution(itemModel);
-			if (ici != null) {
-				ici.update();
-			}
+		MMenuItem itemModel = (MMenuItem) event.getProperty(UIEvents.EventTags.ELEMENT);
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			ici.update();
 		}
 	};
 
@@ -412,14 +407,11 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			processContributions(menuModel, menuModel.getElementId(), menuBar, menuModel instanceof MPopupMenu);
 		}
 		if (newMenu != null) {
-			newMenu.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					cleanUp(menuModel);
-					MenuManager manager = getManager(menuModel);
-					if (manager != null) {
-						manager.markDirty();
-					}
+			newMenu.addDisposeListener(e -> {
+				cleanUp(menuModel);
+				MenuManager manager = getManager(menuModel);
+				if (manager != null) {
+					manager.markDirty();
 				}
 			});
 		}
@@ -1194,18 +1186,14 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			if (this.mgrToUpdate.isEmpty()) {
 				Display display = context.get(Display.class);
 				if (display != null && !display.isDisposed()) {
-					display.timerExec(100, new Runnable() {
-
-						@Override
-						public void run() {
-							Collection<IContributionManager> toUpdate = new LinkedHashSet<>();
-							synchronized (mgrToUpdate) {
-								toUpdate.addAll(mgrToUpdate);
-								mgrToUpdate.clear();
-							}
-							for (IContributionManager mgr : toUpdate) {
-								mgr.update(false);
-							}
+					display.timerExec(100, () -> {
+						Collection<IContributionManager> toUpdate = new LinkedHashSet<>();
+						synchronized (mgrToUpdate) {
+							toUpdate.addAll(mgrToUpdate);
+							mgrToUpdate.clear();
+						}
+						for (IContributionManager mgr1 : toUpdate) {
+							mgr1.update(false);
 						}
 					});
 				}

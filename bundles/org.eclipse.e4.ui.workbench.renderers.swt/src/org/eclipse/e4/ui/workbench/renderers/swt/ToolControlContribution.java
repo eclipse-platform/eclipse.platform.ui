@@ -21,8 +21,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -58,13 +56,9 @@ public class ToolControlContribution extends ControlContribution {
 			final Object tcImpl = contribFactory.create(
 					model.getContributionURI(), parentContext, localContext);
 			model.setObject(tcImpl);
-			newComposite.addDisposeListener(new DisposeListener() {
-
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					ContextInjectionFactory.uninject(tcImpl, parentContext);
-					model.setObject(null);
-				}
+			newComposite.addDisposeListener(e -> {
+				ContextInjectionFactory.uninject(tcImpl, parentContext);
+				model.setObject(null);
 			});
 		}
 

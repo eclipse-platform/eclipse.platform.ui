@@ -30,7 +30,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
@@ -51,19 +50,16 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 	private MPart partToActivate;
 
-	private Listener activationListener = new Listener() {
-		@Override
-		public void handleEvent(Event event) {
-			// we only want to activate the part if the activated widget is
-			// actually bound to a model element
-			MPart part = (MPart) event.widget.getData(OWNING_ME);
-			if (part != null) {
-				try {
-					partToActivate = part;
-					activate(partToActivate);
-				} finally {
-					partToActivate = null;
-				}
+	private Listener activationListener = event -> {
+		// we only want to activate the part if the activated widget is
+		// actually bound to a model element
+		MPart part = (MPart) event.widget.getData(OWNING_ME);
+		if (part != null) {
+			try {
+				partToActivate = part;
+				activate(partToActivate);
+			} finally {
+				partToActivate = null;
 			}
 		}
 	};

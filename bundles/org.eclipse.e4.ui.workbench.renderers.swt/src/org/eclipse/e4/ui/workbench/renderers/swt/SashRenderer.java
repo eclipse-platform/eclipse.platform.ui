@@ -20,8 +20,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
@@ -94,12 +92,9 @@ public class SashRenderer extends SWTPartRenderer {
 
 			// If my layout's container gets disposed 'unbind' the sash elements
 			if (parent instanceof Composite) {
-				((Composite) parent).addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						element.setWidget(null);
-						element.setRenderer(null);
-					}
+				((Composite) parent).addDisposeListener(e -> {
+					element.setWidget(null);
+					element.setRenderer(null);
 				});
 			}
 			return newRect;

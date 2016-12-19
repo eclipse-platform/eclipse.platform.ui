@@ -34,8 +34,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -130,14 +128,11 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 			// Ensure that disposed widgets are unbound form the model
 			Widget swtWidget = (Widget) widget;
-			swtWidget.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					MUIElement element = (MUIElement) e.widget
-							.getData(OWNING_ME);
-					if (element != null)
-						unbindWidget(element);
-				}
+			swtWidget.addDisposeListener(e -> {
+				MUIElement element = (MUIElement) e.widget
+						.getData(OWNING_ME);
+				if (element != null)
+					unbindWidget(element);
 			});
 		}
 
@@ -329,12 +324,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 				.getName());
 		pinImage = getImageFromURI(pinURI);
 
-		Display.getCurrent().disposeExec(new Runnable() {
-			@Override
-			public void run() {
-				for (Image image : imageMap.values()) {
-					image.dispose();
-				}
+		Display.getCurrent().disposeExec(() -> {
+			for (Image image : imageMap.values()) {
+				image.dispose();
 			}
 		});
 	}

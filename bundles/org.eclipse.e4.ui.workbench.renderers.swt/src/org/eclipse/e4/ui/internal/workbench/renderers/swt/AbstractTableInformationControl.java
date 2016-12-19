@@ -22,16 +22,12 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -270,40 +266,37 @@ public abstract class AbstractTableInformationControl {
 			}
 		});
 
-		fShell.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				switch (e.detail) {
-				case SWT.TRAVERSE_PAGE_NEXT:
-					e.detail = SWT.TRAVERSE_NONE;
-					e.doit = true;
-					{
-						int n = table.getItemCount();
-						if (n == 0)
-							return;
+		fShell.addTraverseListener(e -> {
+			switch (e.detail) {
+			case SWT.TRAVERSE_PAGE_NEXT:
+				e.detail = SWT.TRAVERSE_NONE;
+				e.doit = true;
+				{
+					int n1 = table.getItemCount();
+					if (n1 == 0)
+						return;
 
-						int i = table.getSelectionIndex() + 1;
-						if (i >= n)
-							i = 0;
-						table.setSelection(i);
-					}
-					break;
-
-				case SWT.TRAVERSE_PAGE_PREVIOUS:
-					e.detail = SWT.TRAVERSE_NONE;
-					e.doit = true;
-					{
-						int n = table.getItemCount();
-						if (n == 0)
-							return;
-
-						int i = table.getSelectionIndex() - 1;
-						if (i < 0)
-							i = n - 1;
-						table.setSelection(i);
-					}
-					break;
+					int i1 = table.getSelectionIndex() + 1;
+					if (i1 >= n1)
+						i1 = 0;
+					table.setSelection(i1);
 				}
+				break;
+
+			case SWT.TRAVERSE_PAGE_PREVIOUS:
+				e.detail = SWT.TRAVERSE_NONE;
+				e.doit = true;
+				{
+					int n2 = table.getItemCount();
+					if (n2 == 0)
+						return;
+
+					int i2 = table.getSelectionIndex() - 1;
+					if (i2 < 0)
+						i2 = n2 - 1;
+					table.setSelection(i2);
+				}
+				break;
 			}
 		});
 
@@ -397,12 +390,9 @@ public abstract class AbstractTableInformationControl {
 		fFilterText.setMessage(WorkbenchSWTMessages.FilteredTree_FilterMessage);
 		fFilterText.setText(""); //$NON-NLS-1$
 
-		fFilterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String text = ((Text) e.widget).getText();
-				setMatcherString(text);
-			}
+		fFilterText.addModifyListener(e -> {
+			String text = ((Text) e.widget).getText();
+			setMatcherString(text);
 		});
 	}
 

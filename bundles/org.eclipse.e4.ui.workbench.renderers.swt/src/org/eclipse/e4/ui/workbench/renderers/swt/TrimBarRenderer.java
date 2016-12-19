@@ -29,8 +29,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -105,12 +103,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			default:
 				return null;
 			}
-			trimComposite.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					cleanUp(trimModel);
-				}
-			});
+			trimComposite.addDisposeListener(e -> cleanUp(trimModel));
 		} else {
 			trimComposite = new Composite(parentComp, SWT.NONE);
 			trimComposite.setLayout(new TrimBarLayout(true));

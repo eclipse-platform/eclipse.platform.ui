@@ -44,8 +44,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -93,12 +91,7 @@ public abstract class AbstractContributionItem extends ContributionItem {
 
 	private ISWTResourceUtilities resUtils = null;
 
-	protected IMenuListener menuListener = new IMenuListener() {
-		@Override
-		public void menuAboutToShow(IMenuManager manager) {
-			update(null);
-		}
-	};
+	protected IMenuListener menuListener = manager -> update(null);
 
 	/**
 	 * Flag to ensure that an error during updates are only logged once to
@@ -378,13 +371,10 @@ public abstract class AbstractContributionItem extends ContributionItem {
 				final IMenuCreator creator = (IMenuCreator) obj;
 				final Menu menu = creator.getMenu(toolItem.getParent().getShell());
 				if (menu != null) {
-					toolItem.addDisposeListener(new DisposeListener() {
-						@Override
-						public void widgetDisposed(DisposeEvent e) {
-							if (menu != null && !menu.isDisposed()) {
-								creator.dispose();
-								mmenu.setWidget(null);
-							}
+					toolItem.addDisposeListener(e -> {
+						if (menu != null && !menu.isDisposed()) {
+							creator.dispose();
+							mmenu.setWidget(null);
 						}
 					});
 					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
@@ -469,23 +459,20 @@ public abstract class AbstractContributionItem extends ContributionItem {
 
 	protected Listener getItemListener() {
 		if (menuItemListener == null) {
-			menuItemListener = new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					switch (event.type) {
-					case SWT.Dispose:
-						handleWidgetDispose(event);
-						break;
-					case SWT.DefaultSelection:
-					case SWT.Selection:
-						if (event.widget != null) {
-							handleWidgetSelection(event);
-						}
-						break;
-					case SWT.Help:
-						handleHelpRequest();
-						break;
+			menuItemListener = event -> {
+				switch (event.type) {
+				case SWT.Dispose:
+					handleWidgetDispose(event);
+					break;
+				case SWT.DefaultSelection:
+				case SWT.Selection:
+					if (event.widget != null) {
+						handleWidgetSelection(event);
 					}
+					break;
+				case SWT.Help:
+					handleHelpRequest();
+					break;
 				}
 			};
 		}

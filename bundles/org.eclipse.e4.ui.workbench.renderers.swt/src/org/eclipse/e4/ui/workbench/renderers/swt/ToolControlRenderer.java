@@ -36,7 +36,6 @@ import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
@@ -214,13 +213,8 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		if (hideable) {
 			MenuItem hideItem = new MenuItem(toolControlMenu, SWT.NONE);
 			hideItem.setText(Messages.ToolBarManagerRenderer_MenuCloseText);
-			hideItem.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(org.eclipse.swt.widgets.Event event) {
-					toolControl.getTags().add(
-							IPresentationEngine.HIDDEN_EXPLICITLY);
-				}
-			});
+			hideItem.addListener(SWT.Selection, event -> toolControl.getTags().add(
+					IPresentationEngine.HIDDEN_EXPLICITLY));
 
 			new MenuItem(toolControlMenu, SWT.SEPARATOR);
 		}
@@ -228,12 +222,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		MenuItem restoreHiddenItems = new MenuItem(toolControlMenu, SWT.NONE);
 		restoreHiddenItems
 				.setText(Messages.ToolBarManagerRenderer_MenuRestoreText);
-		restoreHiddenItems.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				removeHiddenTags(toolControl);
-			}
-		});
+		restoreHiddenItems.addListener(SWT.Selection, event -> removeHiddenTags(toolControl));
 		renderedCtrl.setMenu(toolControlMenu);
 
 	}

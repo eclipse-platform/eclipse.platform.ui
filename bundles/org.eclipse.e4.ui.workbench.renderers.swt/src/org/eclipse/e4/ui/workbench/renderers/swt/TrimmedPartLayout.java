@@ -11,8 +11,6 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -190,48 +188,28 @@ public class TrimmedPartLayout extends Layout {
 			if (top == null) {
 				top = new Composite(parent, SWT.NONE);
 				top.setLayout(new TrimBarLayout(true));
-				top.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						top = null;
-					}
-				});
+				top.addDisposeListener(e -> top = null);
 			}
 			return top;
 		} else if (side == SWT.BOTTOM) {
 			if (bottom == null) {
 				bottom = new Composite(parent, SWT.NONE);
 				bottom.setLayout(new TrimBarLayout(true));
-				bottom.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						bottom = null;
-					}
-				});
+				bottom.addDisposeListener(e -> bottom = null);
 			}
 			return bottom;
 		} else if (side == SWT.LEFT) {
 			if (left == null) {
 				left = new Composite(parent, SWT.NONE);
 				left.setLayout(new TrimBarLayout(false));
-				left.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						left = null;
-					}
-				});
+				left.addDisposeListener(e -> left = null);
 			}
 			return left;
 		} else if (side == SWT.RIGHT) {
 			if (right == null) {
 				right = new Composite(parent, SWT.NONE);
 				right.setLayout(new TrimBarLayout(false));
-				right.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						right = null;
-					}
-				});
+				right.addDisposeListener(e -> right = null);
 			}
 			return right;
 		}
