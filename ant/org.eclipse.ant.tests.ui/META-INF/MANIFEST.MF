@@ -39,5 +39,5 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.ant.launching,
  org.eclipse.core.externaltools
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
