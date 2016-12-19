@@ -391,7 +391,9 @@ public class Messages {
 	public String StringModelFragment_Label;
 	public String StringModelFragment_Description;
 	public String StringModelFragment_Featurename;
+	public String StringModelFragment_FeaturenameTooltip;
 	public String StringModelFragment_ParentId;
+	public String StringModelFragment_ParentIdTooltip;
 	public String StringModelFragment_PositionInList;
 	public String StringModelFragment_Elements;
 
