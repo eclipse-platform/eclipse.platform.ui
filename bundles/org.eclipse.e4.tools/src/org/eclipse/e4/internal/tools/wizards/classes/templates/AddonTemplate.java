@@ -24,13 +24,13 @@ public class AddonTemplate
   public String generate(Object argument)
   {
     final StringBuffer stringBuffer = new StringBuffer();
-     JavaClass domainClass = (JavaClass)argument;
+     JavaClass domainClass = (JavaClass)argument; 
     stringBuffer.append(TEXT_1);
-     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) {
+     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { 
     stringBuffer.append(TEXT_2);
     stringBuffer.append( domainClass.getPackageFragment().getElementName() );
     stringBuffer.append(TEXT_3);
-     }
+     } 
     stringBuffer.append(TEXT_4);
     stringBuffer.append( domainClass.getName() );
     stringBuffer.append(TEXT_5);
