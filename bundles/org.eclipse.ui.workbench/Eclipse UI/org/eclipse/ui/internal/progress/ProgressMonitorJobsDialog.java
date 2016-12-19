@@ -303,20 +303,17 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return;
 				}
 
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    @Override
-					public void run() {
-						//Reset the watch if it is not safe to open
-						 if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this,null)){
-							  watchTicks();
-							  return;
-						 }
+                PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+					//Reset the watch if it is not safe to open
+					 if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this,null)){
+						  watchTicks();
+						  return;
+					 }
 
-                        if (!alreadyClosed) {
-							open();
-						}
-                    }
-                });
+				    if (!alreadyClosed) {
+						open();
+					}
+				});
             }
 
             @Override

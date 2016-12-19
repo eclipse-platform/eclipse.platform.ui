@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -89,13 +88,10 @@ public class ProgressView extends ViewPart {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		menuMgr.add(cancelAction);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				JobInfo info = getSelectedInfo();
-				if (info == null) {
-					return;
-				}
+		menuMgr.addMenuListener(manager -> {
+			JobInfo info = getSelectedInfo();
+			if (info == null) {
+				return;
 			}
 		});
 		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));

@@ -415,13 +415,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	}
 
 	private INotificationListener createNotificationListener() {
-		return new StatusManager.INotificationListener(){
-			@Override
-			public void statusManagerNotified(int type, StatusAdapter[] adapters) {
-				if(type == INotificationTypes.HANDLED){
-					FinishedJobs.getInstance().removeErrorJobs();
-					StatusAdapterHelper.getInstance().clear();
-				}
+		return (type, adapters) -> {
+			if(type == INotificationTypes.HANDLED){
+				FinishedJobs.getInstance().removeErrorJobs();
+				StatusAdapterHelper.getInstance().clear();
 			}
 		};
 	}
@@ -845,20 +842,17 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
 		// Show a busy cursor until the dialog opens.
-		Runnable dialogWaitRunnable = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					dialog.setOpenOnRun(false);
-					setUserInterfaceActive(false);
-					dialog.run(true, true, runnable);
-				} catch (InvocationTargetException e) {
-					invokes[0] = e;
-				} catch (InterruptedException e) {
-					interrupt[0] = e;
-				} finally {
-					setUserInterfaceActive(true);
-				}
+		Runnable dialogWaitRunnable = () -> {
+			try {
+				dialog.setOpenOnRun(false);
+				setUserInterfaceActive(false);
+				dialog.run(true, true, runnable);
+			} catch (InvocationTargetException e1) {
+				invokes[0] = e1;
+			} catch (InterruptedException e2) {
+				interrupt[0] = e2;
+			} finally {
+				setUserInterfaceActive(true);
 			}
 		};
 		busyCursorWhile(dialogWaitRunnable, dialog);
@@ -1032,12 +1026,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			final ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
 		final RunnableWithStatus runnableWithStatus = new RunnableWithStatus(context, runnable, rule);
 		final Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				BusyIndicator.showWhile(display, runnableWithStatus);
-			}
-		});
+		display.syncExec(() -> BusyIndicator.showWhile(display, runnableWithStatus));
 
 		IStatus status = runnableWithStatus.getStatus();
 		if (!status.isOK()) {

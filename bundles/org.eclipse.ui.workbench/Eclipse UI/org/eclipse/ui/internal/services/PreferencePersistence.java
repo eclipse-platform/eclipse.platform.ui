@@ -432,12 +432,9 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	protected PreferencePersistence() {
 		super();
 
-		preferenceChangeListener = new IPropertyChangeListener() {
-			@Override
-			public final void propertyChange(final PropertyChangeEvent event) {
-				if (isChangeImportant(event)) {
-					read();
-				}
+		preferenceChangeListener = event -> {
+			if (isChangeImportant(event)) {
+				read();
 			}
 		};
 	}

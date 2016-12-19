@@ -20,12 +20,7 @@ import org.eclipse.core.runtime.Preferences;
 public final class PreferencesAdapter extends PropertyMapAdapter {
     private Preferences store;
 
-    private Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
-        @Override
-		public void propertyChange(Preferences.PropertyChangeEvent event) {
-            firePropertyChange(event.getProperty());
-        }
-    };
+    private Preferences.IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
     public PreferencesAdapter(Preferences toConvert) {
         this.store = toConvert;
