@@ -140,48 +140,35 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.UNDONE:
 			case OperationHistoryEvent.REDONE:
 				if (event.getOperation().hasContext(undoContext)) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							update();
-						}
-					});
+					display.asyncExec(() -> update());
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (event.getOperation().hasContext(undoContext)) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (pruning) {
-								IStatus status = event.getStatus();
-								/*
-								 * Prune the history unless we can determine
-								 * that this was a cancelled attempt. See
-								 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=101215
-								 */
-								if (status == null
-										|| status.getSeverity() != IStatus.CANCEL) {
-									flush();
-								}
-								// not all flushes will trigger an update so
-								// force it here
-								update();
-							} else {
-								update();
+					display.asyncExec(() -> {
+						if (pruning) {
+							IStatus status = event.getStatus();
+							/*
+							 * Prune the history unless we can determine
+							 * that this was a cancelled attempt. See
+							 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=101215
+							 */
+							if (status == null
+									|| status.getSeverity() != IStatus.CANCEL) {
+								flush();
 							}
+							// not all flushes will trigger an update so
+							// force it here
+							update();
+						} else {
+							update();
 						}
 					});
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_CHANGED:
 				if (event.getOperation() == getOperation()) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							update();
-						}
-					});
+					display.asyncExec(() -> update());
 				}
 				break;
 			}
@@ -300,20 +287,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		progressDialog = new TimeTriggeredProgressMonitorDialog(parent,
 				getWorkbenchWindow().getWorkbench().getProgressService()
 						.getLongOperationTime());
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor pm)
-					throws InvocationTargetException {
-				try {
-					runCommand(pm);
-				} catch (ExecutionException e) {
-					if (pruning) {
-						flush();
-					}
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
+		IRunnableWithProgress runnable = pm -> {
+try {
+		runCommand(pm);
+} catch (ExecutionException e) {
+		if (pruning) {
+			flush();
+		}
+		throw new InvocationTargetException(e);
+}
+};
 		try {
 			boolean runInBackground = false;
 			if (getOperation() instanceof IAdvancedUndoableOperation2) {

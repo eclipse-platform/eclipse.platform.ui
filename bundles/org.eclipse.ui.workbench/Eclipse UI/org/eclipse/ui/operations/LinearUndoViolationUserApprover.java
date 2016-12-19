@@ -73,14 +73,11 @@ public final class LinearUndoViolationUserApprover extends
 				WorkbenchMessages.Operations_linearRedoViolation,
 				getTitle(part), operation.getLabel());
 		final boolean [] proceed = new boolean[1];
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				// Show a dialog.
-				part.setFocus();
-				proceed[0] = MessageDialog.openQuestion(part.getSite()
-						.getShell(), getTitle(part), message);
-			}
+		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+			// Show a dialog.
+			part.setFocus();
+			proceed[0] = MessageDialog.openQuestion(part.getSite()
+					.getShell(), getTitle(part), message);
 		});
 
 		if (proceed[0]) {
@@ -118,14 +115,11 @@ public final class LinearUndoViolationUserApprover extends
 				WorkbenchMessages.Operations_linearUndoViolation,
 				getTitle(part), operation.getLabel());
 		final boolean [] proceed = new boolean[1];
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				// Show a dialog.
-				part.setFocus();
-				proceed[0] = MessageDialog.openQuestion(part.getSite()
-						.getShell(), getTitle(part), message);
-			}
+		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+			// Show a dialog.
+			part.setFocus();
+			proceed[0] = MessageDialog.openQuestion(part.getSite()
+					.getShell(), getTitle(part), message);
 		});
 
 		if (proceed[0]) {

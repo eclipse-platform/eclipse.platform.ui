@@ -27,8 +27,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -185,12 +183,7 @@ public class InstallationDialog extends TrayDialog implements
 		folderData.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
 		folder.setLayoutData(folderData);
 		folder.addSelectionListener(createFolderSelectionListener());
-		folder.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				releaseContributions();
-			}
-		});
+		folder.addDisposeListener(e -> releaseContributions());
 		return composite;
 	}
 
@@ -270,13 +263,7 @@ public class InstallationDialog extends TrayDialog implements
 						.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 				createButtons(page);
 				item.setData(page);
-				item.addDisposeListener(new DisposeListener() {
-
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						page.dispose();
-					}
-				});
+				item.addDisposeListener(e -> page.dispose());
 				pageComposite.layout(true, true);
 
 			} catch (CoreException e1) {

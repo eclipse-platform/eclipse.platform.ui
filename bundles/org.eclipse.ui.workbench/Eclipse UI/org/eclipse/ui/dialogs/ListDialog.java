@@ -13,8 +13,6 @@ package org.eclipse.ui.dialogs;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -111,14 +109,11 @@ public class ListDialog extends SelectionDialog {
         fTableViewer.setContentProvider(fContentProvider);
         fTableViewer.setLabelProvider(fLabelProvider);
         fTableViewer.setInput(fInput);
-        fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-            @Override
-			public void doubleClick(DoubleClickEvent event) {
-                if (fAddCancelButton) {
-					okPressed();
-				}
-            }
-        });
+        fTableViewer.addDoubleClickListener(event -> {
+		    if (fAddCancelButton) {
+				okPressed();
+			}
+		});
         List initialSelection = getInitialElementSelections();
         if (initialSelection != null) {
 			fTableViewer

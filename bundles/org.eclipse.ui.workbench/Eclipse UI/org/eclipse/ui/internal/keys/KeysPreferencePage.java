@@ -56,12 +56,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -714,12 +710,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 300;
 		textTriggerSequence.setLayoutData(gridData);
-		textTriggerSequence.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				update();
-			}
-		});
+		textTriggerSequence.addModifyListener(e -> update());
 		textTriggerSequence.addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -731,12 +722,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 				bindingService.setKeyFilterEnabled(true);
 			}
 		});
-		textTriggerSequence.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (!bindingService.isKeyFilterEnabled()) {
-					bindingService.setKeyFilterEnabled(true);
-				}
+		textTriggerSequence.addDisposeListener(e -> {
+			if (!bindingService.isKeyFilterEnabled()) {
+				bindingService.setKeyFilterEnabled(true);
 			}
 		});
 
@@ -2008,30 +1996,27 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		// this comparator is based on the ParameterizedCommands#compareTo(*)
 		// method, but uses the collator.
-		Comparator comparator = new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				String name1 = null;
-				String name2 = null;
-				try {
-					name1 = ((ParameterizedCommand) o1).getName();
-				} catch (NotDefinedException e) {
-					return -1;
-				}
-				try {
-					name2 = ((ParameterizedCommand) o2).getName();
-				} catch (NotDefinedException e) {
-					return 1;
-				}
-				int rc = collator.compare(name1, name2);
-				if (rc != 0) {
-					return rc;
-				}
-
-				String id1 = ((ParameterizedCommand) o1).getId();
-				String id2 = ((ParameterizedCommand) o2).getId();
-				return collator.compare(id1, id2);
+		Comparator comparator = (o1, o2) -> {
+			String name1 = null;
+			String name2 = null;
+			try {
+				name1 = ((ParameterizedCommand) o1).getName();
+			} catch (NotDefinedException e1) {
+				return -1;
 			}
+			try {
+				name2 = ((ParameterizedCommand) o2).getName();
+			} catch (NotDefinedException e2) {
+				return 1;
+			}
+			int rc = collator.compare(name1, name2);
+			if (rc != 0) {
+				return rc;
+			}
+
+			String id1 = ((ParameterizedCommand) o1).getId();
+			String id2 = ((ParameterizedCommand) o2).getId();
+			return collator.compare(id1, id2);
 		};
 		Collections.sort(commands, comparator);
 		return commands;

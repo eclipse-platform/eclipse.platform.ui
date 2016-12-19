@@ -40,18 +40,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
@@ -61,8 +58,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -642,37 +637,30 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 				fBindingService.setKeyFilterEnabled(true);
 			}
 		});
-		fBindingText.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (!fBindingService.isKeyFilterEnabled()) {
-					fBindingService.setKeyFilterEnabled(true);
-				}
+		fBindingText.addDisposeListener(e -> {
+			if (!fBindingService.isKeyFilterEnabled()) {
+				fBindingService.setKeyFilterEnabled(true);
 			}
 		});
 
 		fKeySequenceText = new KeySequenceText(fBindingText);
 		fKeySequenceText.setKeyStrokeLimit(4);
 		fKeySequenceText
-				.addPropertyChangeListener(new IPropertyChangeListener() {
-					@Override
-					public final void propertyChange(
-							final PropertyChangeEvent event) {
-						if (!event.getOldValue().equals(event.getNewValue())) {
-							final KeySequence keySequence = fKeySequenceText.getKeySequence();
-							if (!keySequence.isComplete()) {
-								return;
-							}
+				.addPropertyChangeListener(event -> {
+if (!event.getOldValue().equals(event.getNewValue())) {
+				final KeySequence keySequence = fKeySequenceText.getKeySequence();
+				if (!keySequence.isComplete()) {
+					return;
+				}
 
-							BindingElement activeBinding = (BindingElement) keyController.getBindingModel()
-									.getSelectedElement();
-							if (activeBinding != null) {
-								activeBinding.setTrigger(keySequence);
-							}
-							fBindingText.setSelection(fBindingText.getTextLimit());
-						}
-					}
-				});
+				BindingElement activeBinding = (BindingElement) keyController.getBindingModel()
+						.getSelectedElement();
+				if (activeBinding != null) {
+					activeBinding.setTrigger(keySequence);
+				}
+				fBindingText.setSelection(fBindingText.getTextLimit());
+}
+});
 
 		// Button for adding trapped key strokes
 		final Button addKeyButton = new Button(leftDataArea, SWT.LEFT | SWT.ARROW);
@@ -743,29 +731,21 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		fWhenCombo.getCombo().setLayoutData(gridData);
 		fWhenCombo.setContentProvider(new ModelContentProvider());
 		fWhenCombo.setLabelProvider(new ListLabelProvider());
-		fWhenCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public final void selectionChanged(final SelectionChangedEvent event) {
-				ContextElement context = (ContextElement) ((IStructuredSelection) event
-						.getSelection()).getFirstElement();
-				if (context != null) {
-					keyController.getContextModel().setSelectedElement(context);
-				}
+		fWhenCombo.addSelectionChangedListener(event -> {
+			ContextElement context = (ContextElement) ((IStructuredSelection) event
+					.getSelection()).getFirstElement();
+			if (context != null) {
+				keyController.getContextModel().setSelectedElement(context);
 			}
 		});
-		IPropertyChangeListener whenListener = new IPropertyChangeListener() {
-
-			// Sets the combo selection when a new keybinding is selected?
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getSource() == keyController.getContextModel()
-						&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-								.getProperty())) {
-					Object newVal = event.getNewValue();
-					StructuredSelection structuredSelection = newVal == null ? null
-							: new StructuredSelection(newVal);
-					fWhenCombo.setSelection(structuredSelection, true);
-				}
+		IPropertyChangeListener whenListener = event -> {
+			if (event.getSource() == keyController.getContextModel()
+					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
+							.getProperty())) {
+				Object newVal = event.getNewValue();
+				StructuredSelection structuredSelection = newVal == null ? null
+						: new StructuredSelection(newVal);
+				fWhenCombo.setSelection(structuredSelection, true);
 			}
 		};
 		keyController.addPropertyChangeListener(whenListener);
@@ -805,16 +785,11 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		tableLayout.addColumnData(new ColumnWeightData(60));
 		tableLayout.addColumnData(new ColumnWeightData(40));
 		table.setLayout(tableLayout);
-		conflictViewer.setContentProvider(new IStructuredContentProvider() {
-
-			@Override
-			public Object[] getElements(Object inputElement) {
-				if (inputElement instanceof Collection) {
-					return ((Collection) inputElement).toArray();
-				}
-				return new Object[0];
+		conflictViewer.setContentProvider((IStructuredContentProvider) inputElement -> {
+			if (inputElement instanceof Collection) {
+				return ((Collection) inputElement).toArray();
 			}
-
+			return new Object[0];
 		});
 		conflictViewer.setLabelProvider(new BindingElementLabelProvider() {
 			@Override
@@ -827,100 +802,87 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 		conflictViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
+				.addSelectionChangedListener(event -> {
+					ModelElement binding = (ModelElement) ((IStructuredSelection) event.getSelection())
+							.getFirstElement();
+					BindingModel bindingModel = keyController
+							.getBindingModel();
+					if (binding != null
+							&& binding != bindingModel.getSelectedElement()) {
+						StructuredSelection selection = new StructuredSelection(
+								binding);
 
-					// When the conflict viewer's selection changes, update the
-					// model's current selection
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						ModelElement binding = (ModelElement) ((IStructuredSelection) event.getSelection())
-								.getFirstElement();
-						BindingModel bindingModel = keyController
-								.getBindingModel();
-						if (binding != null
-								&& binding != bindingModel.getSelectedElement()) {
-							StructuredSelection selection = new StructuredSelection(
-									binding);
+						bindingModel.setSelectedElement(binding);
+						conflictViewer.setSelection(selection);
 
+						boolean selectionVisible = false;
+						TreeItem[] items = fFilteredTree.getViewer()
+								.getTree().getItems();
+						for (int i = 0; i < items.length; i++) {
+							if (items[i].getData().equals(binding)) {
+								selectionVisible = true;
+								break;
+							}
+						}
+
+						if (!selectionVisible) {
+							fFilteredTree.getFilterControl().setText(""); //$NON-NLS-1$
+							fFilteredTree.getViewer().refresh();
 							bindingModel.setSelectedElement(binding);
 							conflictViewer.setSelection(selection);
-
-							boolean selectionVisible = false;
-							TreeItem[] items = fFilteredTree.getViewer()
-									.getTree().getItems();
-							for (int i = 0; i < items.length; i++) {
-								if (items[i].getData().equals(binding)) {
-									selectionVisible = true;
-									break;
-								}
-							}
-
-							if (!selectionVisible) {
-								fFilteredTree.getFilterControl().setText(""); //$NON-NLS-1$
-								fFilteredTree.getViewer().refresh();
-								bindingModel.setSelectedElement(binding);
-								conflictViewer.setSelection(selection);
-							}
 						}
 					}
 				});
 
-		IPropertyChangeListener conflictsListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getSource() == keyController.getConflictModel()
-						&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-								.getProperty())) {
-					if (keyController.getConflictModel().getConflicts() != null) {
-						Object newVal = event.getNewValue();
-						StructuredSelection structuredSelection = newVal == null ? null
-								: new StructuredSelection(newVal);
-						conflictViewer.setSelection(structuredSelection, true);
-					}
-				} else if (ConflictModel.PROP_CONFLICTS.equals(event
-						.getProperty())) {
-					conflictViewer.setInput(event.getNewValue());
-				} else if (ConflictModel.PROP_CONFLICTS_ADD.equals(event
-						.getProperty())) {
-					conflictViewer.add(event.getNewValue());
-				} else if (ConflictModel.PROP_CONFLICTS_REMOVE.equals(event
-						.getProperty())) {
-					conflictViewer.remove(event.getNewValue());
+		IPropertyChangeListener conflictsListener = event -> {
+			if (event.getSource() == keyController.getConflictModel()
+					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
+							.getProperty())) {
+				if (keyController.getConflictModel().getConflicts() != null) {
+					Object newVal = event.getNewValue();
+					StructuredSelection structuredSelection = newVal == null ? null
+							: new StructuredSelection(newVal);
+					conflictViewer.setSelection(structuredSelection, true);
 				}
+			} else if (ConflictModel.PROP_CONFLICTS.equals(event
+					.getProperty())) {
+				conflictViewer.setInput(event.getNewValue());
+			} else if (ConflictModel.PROP_CONFLICTS_ADD.equals(event
+					.getProperty())) {
+				conflictViewer.add(event.getNewValue());
+			} else if (ConflictModel.PROP_CONFLICTS_REMOVE.equals(event
+					.getProperty())) {
+				conflictViewer.remove(event.getNewValue());
 			}
 		};
 		keyController.addPropertyChangeListener(conflictsListener);
 
-		IPropertyChangeListener dataUpdateListener = new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				BindingElement bindingElement = null;
-				boolean weCare = false;
-				if (event.getSource() == keyController.getBindingModel()
-						&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-								.getProperty())) {
-					bindingElement = (BindingElement) event.getNewValue();
-					weCare = true;
-				} else if (event.getSource() == keyController.getBindingModel()
-						.getSelectedElement()
-						&& ModelElement.PROP_MODEL_OBJECT.equals(event
-								.getProperty())) {
-					bindingElement = (BindingElement) event.getSource();
-					weCare = true;
-				}
-				if (bindingElement == null && weCare) {
-					commandNameValueLabel.setText(""); //$NON-NLS-1$
-					fDescriptionText.setText(""); //$NON-NLS-1$
-					fBindingText.setText(""); //$NON-NLS-1$
-				} else if (bindingElement != null) {
-					commandNameValueLabel.setText(bindingElement.getName());
-					String desc = bindingElement.getDescription();
-					fDescriptionText.setText(desc==null?"":desc); //$NON-NLS-1$
-					KeySequence trigger = (KeySequence) bindingElement
-							.getTrigger();
-					fKeySequenceText.setKeySequence(trigger);
-				}
+		IPropertyChangeListener dataUpdateListener = event -> {
+			BindingElement bindingElement = null;
+			boolean weCare = false;
+			if (event.getSource() == keyController.getBindingModel()
+					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
+							.getProperty())) {
+				bindingElement = (BindingElement) event.getNewValue();
+				weCare = true;
+			} else if (event.getSource() == keyController.getBindingModel()
+					.getSelectedElement()
+					&& ModelElement.PROP_MODEL_OBJECT.equals(event
+							.getProperty())) {
+				bindingElement = (BindingElement) event.getSource();
+				weCare = true;
+			}
+			if (bindingElement == null && weCare) {
+				commandNameValueLabel.setText(""); //$NON-NLS-1$
+				fDescriptionText.setText(""); //$NON-NLS-1$
+				fBindingText.setText(""); //$NON-NLS-1$
+			} else if (bindingElement != null) {
+				commandNameValueLabel.setText(bindingElement.getName());
+				String desc = bindingElement.getDescription();
+				fDescriptionText.setText(desc==null?"":desc); //$NON-NLS-1$
+				KeySequence trigger = (KeySequence) bindingElement
+						.getTrigger();
+				fKeySequenceText.setKeySequence(trigger);
 			}
 		};
 		keyController.addPropertyChangeListener(dataUpdateListener);
@@ -1001,48 +963,37 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		columns[CATEGORY_COLUMN].setWidth(130);
 		columns[USER_DELTA_COLUMN].setWidth(50);
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			// When the viewer changes selection, update the model's current
-			// selection
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				ModelElement binding = (ModelElement) ((IStructuredSelection) event
-						.getSelection()).getFirstElement();
-				keyController.getBindingModel().setSelectedElement(binding);
-			}
+		viewer.addSelectionChangedListener(event -> {
+			ModelElement binding = (ModelElement) ((IStructuredSelection) event
+					.getSelection()).getFirstElement();
+			keyController.getBindingModel().setSelectedElement(binding);
 		});
 
-		IPropertyChangeListener treeUpdateListener = new IPropertyChangeListener() {
-
-			// When the model changes a property, update the viewer
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getSource() == keyController.getBindingModel()
-						&& CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
-					Object newVal = event.getNewValue();
-					StructuredSelection structuredSelection = newVal == null ? null : new StructuredSelection(newVal);
-					viewer.setSelection(structuredSelection, true);
-				} else if (event.getSource() instanceof BindingElement
-						&& ModelElement.PROP_MODEL_OBJECT.equals(event.getProperty())) {
-					viewer.update(event.getSource(), null);
-				} else if (BindingElement.PROP_CONFLICT.equals(event
-						.getProperty())) {
-					viewer.update(event.getSource(), null);
-				} else if (BindingModel.PROP_BINDINGS.equals(event
-						.getProperty())) {
-					viewer.refresh();
-				} else if (BindingModel.PROP_BINDING_ADD.equals(event
-						.getProperty())) {
-					viewer.add(keyController.getBindingModel(), event
-							.getNewValue());
-				} else if (BindingModel.PROP_BINDING_REMOVE.equals(event
-						.getProperty())) {
-					viewer.remove(event.getNewValue());
-				} else if (BindingModel.PROP_BINDING_FILTER.equals(event
-						.getProperty())) {
-					viewer.refresh();
-				}
+		IPropertyChangeListener treeUpdateListener = event -> {
+			if (event.getSource() == keyController.getBindingModel()
+					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
+				Object newVal = event.getNewValue();
+				StructuredSelection structuredSelection = newVal == null ? null : new StructuredSelection(newVal);
+				viewer.setSelection(structuredSelection, true);
+			} else if (event.getSource() instanceof BindingElement
+					&& ModelElement.PROP_MODEL_OBJECT.equals(event.getProperty())) {
+				viewer.update(event.getSource(), null);
+			} else if (BindingElement.PROP_CONFLICT.equals(event
+					.getProperty())) {
+				viewer.update(event.getSource(), null);
+			} else if (BindingModel.PROP_BINDINGS.equals(event
+					.getProperty())) {
+				viewer.refresh();
+			} else if (BindingModel.PROP_BINDING_ADD.equals(event
+					.getProperty())) {
+				viewer.add(keyController.getBindingModel(), event
+						.getNewValue());
+			} else if (BindingModel.PROP_BINDING_REMOVE.equals(event
+					.getProperty())) {
+				viewer.remove(event.getNewValue());
+			} else if (BindingModel.PROP_BINDING_FILTER.equals(event
+					.getProperty())) {
+				viewer.refresh();
 			}
 		};
 		keyController.addPropertyChangeListener(treeUpdateListener);
@@ -1150,31 +1101,19 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		gridData.widthHint = 150;
 		gridData.horizontalAlignment = SWT.FILL;
 		fSchemeCombo.getCombo().setLayoutData(gridData);
-		fSchemeCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public final void selectionChanged(final SelectionChangedEvent event) {
-				BusyIndicator.showWhile(fFilteredTree.getViewer().getTree().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						SchemeElement scheme = (SchemeElement) ((IStructuredSelection) event.getSelection())
-								.getFirstElement();
-						keyController.getSchemeModel().setSelectedElement(scheme);
-					}
-				});
-			}
-		});
-		IPropertyChangeListener listener = new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getSource() == keyController.getSchemeModel()
-						&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
-								.getProperty())) {
-					Object newVal = event.getNewValue();
-					StructuredSelection structuredSelection = newVal == null ? null
-							: new StructuredSelection(newVal);
-					fSchemeCombo.setSelection(structuredSelection, true);
-				}
+		fSchemeCombo.addSelectionChangedListener(event -> BusyIndicator.showWhile(fFilteredTree.getViewer().getTree().getDisplay(), () -> {
+			SchemeElement scheme = (SchemeElement) ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
+			keyController.getSchemeModel().setSelectedElement(scheme);
+		}));
+		IPropertyChangeListener listener = event -> {
+			if (event.getSource() == keyController.getSchemeModel()
+					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event
+							.getProperty())) {
+				Object newVal = event.getNewValue();
+				StructuredSelection structuredSelection = newVal == null ? null
+						: new StructuredSelection(newVal);
+				fSchemeCombo.setSelection(structuredSelection, true);
 			}
 		};
 
@@ -1264,12 +1203,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 
 			fFilteredTree.setRedraw(false);
-			BusyIndicator.showWhile(fFilteredTree.getViewer().getTree().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					keyController.setDefaultBindings(fBindingService);
-				}
-			});
+			BusyIndicator.showWhile(fFilteredTree.getViewer().getTree().getDisplay(), () -> keyController.setDefaultBindings(fBindingService));
 			fFilteredTree.setRedraw(true);
 			if (DEBUG) {
 				final long elapsedTime = System.currentTimeMillis() - startTime;

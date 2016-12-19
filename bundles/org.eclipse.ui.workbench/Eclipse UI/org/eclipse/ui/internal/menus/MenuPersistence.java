@@ -52,12 +52,7 @@ final public class MenuPersistence extends RegistryPersistence {
 	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<>();
 	private ArrayList<MTrimContribution> trimContributions = new ArrayList<>();
 
-	private final Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
-		@Override
-		public int compare(IConfigurationElement c1, IConfigurationElement c2) {
-			return c1.getContributor().getName().compareToIgnoreCase(c2.getContributor().getName());
-		}
-	};
+	private final Comparator<IConfigurationElement> comparer = (c1, c2) -> c1.getContributor().getName().compareToIgnoreCase(c2.getContributor().getName());
 	private Pattern contributorFilter;
 
 	/**

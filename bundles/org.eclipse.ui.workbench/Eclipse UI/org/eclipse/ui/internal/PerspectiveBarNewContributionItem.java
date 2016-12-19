@@ -13,8 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -53,14 +51,11 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
     @Override
 	public void fill(final ToolBar parent, int index) {
         if (toolItem == null && parent != null) {
-            parent.addDisposeListener(new DisposeListener() {
-                @Override
-				public void widgetDisposed(DisposeEvent e) {
-                    //toolItem.getImage().dispose();
-                    toolItem.dispose();
-                    toolItem = null;
-                }
-            });
+            parent.addDisposeListener(e -> {
+			    //toolItem.getImage().dispose();
+			    toolItem.dispose();
+			    toolItem = null;
+			});
 
             toolItem = new ToolItem(parent, SWT.PUSH);
             if (image == null || image.isDisposed()) {
