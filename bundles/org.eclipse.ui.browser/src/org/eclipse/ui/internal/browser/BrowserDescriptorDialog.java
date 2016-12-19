@@ -18,8 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -137,21 +136,18 @@ public class BrowserDescriptorDialog extends Dialog {
 
 		browseButton = SWTUtil.createButton(composite, Messages.browse);
 		browseButton.setFont(font);
-		browseButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-				dialog.setText(Messages.browseMessage);
+		browseButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+			dialog.setText(Messages.browseMessage);
 
-				String fname = browserLocationTextfield.getText();
+			String fname = browserLocationTextfield.getText();
 
-				dialog.setFileName(fname);
-				fname = dialog.open();
+			dialog.setFileName(fname);
+			fname = dialog.open();
 
-				if (fname != null)
-					browserLocationTextfield.setText(fname);
-			}
-		});
+			if (fname != null)
+				browserLocationTextfield.setText(fname);
+		}));
 
 		SWTUtil.createLabel(composite, Messages.parameters).setFont(font);
 		browserParametersTextfield = createText(composite, browser.getParameters(), s -> browser.setParameters(s),
