@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.expressions.ICountable;
 import org.eclipse.core.expressions.IIterable;
@@ -27,24 +26,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * @since 3.3
  */
 public class SelectionAdapterFactory implements IAdapterFactory {
-	private static final ICountable ICOUNT_0 = new ICountable() {
-		@Override
-		public int count() {
-			return 0;
-		}
-	};
-	private static final ICountable ICOUNT_1 = new ICountable() {
-		@Override
-		public int count() {
-			return 1;
-		}
-	};
-	private static final IIterable ITERATE_EMPTY = new IIterable() {
-		@Override
-		public Iterator iterator() {
-			return Collections.EMPTY_LIST.iterator();
-		}
-	};
+	private static final ICountable ICOUNT_0 = () -> 0;
+	private static final ICountable ICOUNT_1 = () -> 1;
+	private static final IIterable ITERATE_EMPTY = () -> Collections.EMPTY_LIST.iterator();
 
 	/**
 	 * The classes we can adapt to.
@@ -69,21 +53,10 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 			return ITERATE_EMPTY;
 		}
 		if (sel instanceof IStructuredSelection) {
-			return new IIterable() {
-				@Override
-				public Iterator iterator() {
-					return ((IStructuredSelection) sel).iterator();
-				}
-			};
+			return (IIterable) () -> ((IStructuredSelection) sel).iterator();
 		}
 		final List list = Arrays.asList(new Object[] { sel });
-		return new IIterable() {
-
-			@Override
-			public Iterator iterator() {
-				return list.iterator();
-			}
-		};
+		return (IIterable) () -> list.iterator();
 	}
 
 	private Object countable(final ISelection sel) {
@@ -92,12 +65,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		}
 		if (sel instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) sel;
-			return new ICountable() {
-				@Override
-				public int count() {
-					return ss.size();
-				}
-			};
+			return (ICountable) () -> ss.size();
 		}
 		return ICOUNT_1;
 	}

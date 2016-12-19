@@ -23,8 +23,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -63,19 +61,13 @@ public abstract class QuickMenuCreator {
 			return;
 		}
 		quickMenu.setLocation(location);
-		quickMenu.addListener(SWT.Hide, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (!display.isDisposed()) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (!quickMenu.isDisposed()) {
-								quickMenu.dispose();
-							}
-						}
-					});
-				}
+		quickMenu.addListener(SWT.Hide, event -> {
+			if (!display.isDisposed()) {
+				display.asyncExec(() -> {
+					if (!quickMenu.isDisposed()) {
+						quickMenu.dispose();
+					}
+				});
 			}
 		});
 		quickMenu.setVisible(true);

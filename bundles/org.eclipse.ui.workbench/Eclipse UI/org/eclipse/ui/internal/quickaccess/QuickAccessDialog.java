@@ -87,158 +87,149 @@ public class QuickAccessDialog extends PopupDialog {
 		final MWindow model = workbenchWindow.getModel();
 
 		BusyIndicator.showWhile(window.getShell() == null ? null : window.getShell().getDisplay(),
-				new Runnable() {
-
-					@Override
-					public void run() {
-						final CommandProvider commandProvider = new CommandProvider();
-						commandProvider.setSnapshot(new ExpressionContext(model.getContext()
-								.getActiveLeaf()));
-						QuickAccessProvider[] providers = new QuickAccessProvider[] {
-								new PreviousPicksProvider(previousPicksList),
-								new EditorProvider(),
-								new ViewProvider(model.getContext().get(MApplication.class), model),
-								new PerspectiveProvider(), commandProvider, new ActionProvider(),
-								new WizardProvider(), new PreferenceProvider(),
-								new PropertiesProvider() };
-						providerMap = new HashMap();
-						for (int i = 0; i < providers.length; i++) {
-							providerMap.put(providers[i].getId(), providers[i]);
-						}
-						QuickAccessDialog.this.contents = new QuickAccessContents(providers) {
-							@Override
-							protected void updateFeedback(boolean filterTextEmpty,
-									boolean showAllMatches) {
-								if (filterTextEmpty) {
-									setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
-								} else {
-									TriggerSequence[] sequences = getInvokingCommandKeySequences();
-									if (showAllMatches || sequences == null
-											|| sequences.length == 0) {
-										setInfoText(""); //$NON-NLS-1$
-									} else {
-										setInfoText(NLS
-												.bind(QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
-														sequences[0].format()));
-									}
-								}
-							}
-
-							@Override
-							protected void doClose() {
-								QuickAccessDialog.this.close();
-							}
-
-							/**
-							 * @param element
-							 */
-							void addPreviousPick(String text, Object element) {
-								// previousPicksList:
-								// Remove element from previousPicksList so
-								// there are no duplicates
-								// If list is max size, remove last(oldest)
-								// element
-								// Remove entries for removed element from
-								// elementMap and textMap
-								// Add element to front of previousPicksList
-								previousPicksList.remove(element);
-								if (previousPicksList.size() == MAXIMUM_NUMBER_OF_ELEMENTS) {
-									Object removedElement = previousPicksList.removeLast();
-									ArrayList removedList = (ArrayList) textMap
-											.remove(removedElement);
-									for (int i = 0; i < removedList.size(); i++) {
-										elementMap.remove(removedList.get(i));
-									}
-								}
-								previousPicksList.addFirst(element);
-
-								// textMap:
-								// Get list of strings for element from textMap
-								// Create new list for element if there isn't
-								// one and put
-								// element->textList in textMap
-								// Remove rememberedText from list
-								// If list is max size, remove first(oldest)
-								// string
-								// Remove text from elementMap
-								// Add rememberedText to list of strings for
-								// element in textMap
-								ArrayList textList = (ArrayList) textMap.get(element);
-								if (textList == null) {
-									textList = new ArrayList();
-									textMap.put(element, textList);
-								}
-
-								textList.remove(text);
-								if (textList.size() == MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT) {
-									Object removedText = textList.remove(0);
-									elementMap.remove(removedText);
-								}
-
-								if (text.length() > 0) {
-									textList.add(text);
-
-									// elementMap:
-									// Put rememberedText->element in elementMap
-									// If it replaced a different element update
-									// textMap and
-									// PreviousPicksList
-									Object replacedElement = elementMap.put(text, element);
-									if (replacedElement != null && !replacedElement.equals(element)) {
-										textList = (ArrayList) textMap.get(replacedElement);
-										if (textList != null) {
-											textList.remove(text);
-											if (textList.isEmpty()) {
-												textMap.remove(replacedElement);
-												previousPicksList.remove(replacedElement);
-											}
-										}
-									}
-								}
-							}
-
-							@Override
-							protected QuickAccessElement getPerfectMatch(String filter) {
-								QuickAccessElement perfectMatch = (QuickAccessElement) elementMap
-										.get(filter);
-								return perfectMatch;
-							}
-
-							@Override
-							protected void handleElementSelected(String text, Object selectedElement) {
-								if (selectedElement instanceof QuickAccessElement) {
-									addPreviousPick(text, selectedElement);
-									storeDialog(getDialogSettings());
-
-									/*
-									 * Execute after the dialog has been fully
-									 * closed/disposed and the correct
-									 * EclipseContext is in place.
-									 */
-									final QuickAccessElement element = (QuickAccessElement) selectedElement;
-									window.getShell().getDisplay().asyncExec(new Runnable() {
-										@Override
-										public void run() {
-											element.execute();
-										}
-									});
-								}
-							}
-						};
-						restoreDialog();
-						QuickAccessDialog.this.invokingCommand = invokingCommand;
-						if (QuickAccessDialog.this.invokingCommand != null
-								&& !QuickAccessDialog.this.invokingCommand.isDefined()) {
-							QuickAccessDialog.this.invokingCommand = null;
-						} else {
-							// Pre-fetch key sequence - do not change because
-							// scope will
-							// change later.
-							getInvokingCommandKeySequences();
-						}
-						// create early
-						create();
+				() -> {
+					final CommandProvider commandProvider = new CommandProvider();
+					commandProvider.setSnapshot(new ExpressionContext(model.getContext()
+							.getActiveLeaf()));
+					QuickAccessProvider[] providers = new QuickAccessProvider[] {
+							new PreviousPicksProvider(previousPicksList),
+							new EditorProvider(),
+							new ViewProvider(model.getContext().get(MApplication.class), model),
+							new PerspectiveProvider(), commandProvider, new ActionProvider(),
+							new WizardProvider(), new PreferenceProvider(),
+							new PropertiesProvider() };
+					providerMap = new HashMap();
+					for (int i = 0; i < providers.length; i++) {
+						providerMap.put(providers[i].getId(), providers[i]);
 					}
+					QuickAccessDialog.this.contents = new QuickAccessContents(providers) {
+						@Override
+						protected void updateFeedback(boolean filterTextEmpty,
+								boolean showAllMatches) {
+							if (filterTextEmpty) {
+								setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
+							} else {
+								TriggerSequence[] sequences = getInvokingCommandKeySequences();
+								if (showAllMatches || sequences == null
+										|| sequences.length == 0) {
+									setInfoText(""); //$NON-NLS-1$
+								} else {
+									setInfoText(NLS
+											.bind(QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
+													sequences[0].format()));
+								}
+							}
+						}
+
+						@Override
+						protected void doClose() {
+							QuickAccessDialog.this.close();
+						}
+
+						/**
+						 * @param element
+						 */
+						void addPreviousPick(String text, Object element) {
+							// previousPicksList:
+							// Remove element from previousPicksList so
+							// there are no duplicates
+							// If list is max size, remove last(oldest)
+							// element
+							// Remove entries for removed element from
+							// elementMap and textMap
+							// Add element to front of previousPicksList
+							previousPicksList.remove(element);
+							if (previousPicksList.size() == MAXIMUM_NUMBER_OF_ELEMENTS) {
+								Object removedElement = previousPicksList.removeLast();
+								ArrayList removedList = (ArrayList) textMap
+										.remove(removedElement);
+								for (int i = 0; i < removedList.size(); i++) {
+									elementMap.remove(removedList.get(i));
+								}
+							}
+							previousPicksList.addFirst(element);
+
+							// textMap:
+							// Get list of strings for element from textMap
+							// Create new list for element if there isn't
+							// one and put
+							// element->textList in textMap
+							// Remove rememberedText from list
+							// If list is max size, remove first(oldest)
+							// string
+							// Remove text from elementMap
+							// Add rememberedText to list of strings for
+							// element in textMap
+							ArrayList textList = (ArrayList) textMap.get(element);
+							if (textList == null) {
+								textList = new ArrayList();
+								textMap.put(element, textList);
+							}
+
+							textList.remove(text);
+							if (textList.size() == MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT) {
+								Object removedText = textList.remove(0);
+								elementMap.remove(removedText);
+							}
+
+							if (text.length() > 0) {
+								textList.add(text);
+
+								// elementMap:
+								// Put rememberedText->element in elementMap
+								// If it replaced a different element update
+								// textMap and
+								// PreviousPicksList
+								Object replacedElement = elementMap.put(text, element);
+								if (replacedElement != null && !replacedElement.equals(element)) {
+									textList = (ArrayList) textMap.get(replacedElement);
+									if (textList != null) {
+										textList.remove(text);
+										if (textList.isEmpty()) {
+											textMap.remove(replacedElement);
+											previousPicksList.remove(replacedElement);
+										}
+									}
+								}
+							}
+						}
+
+						@Override
+						protected QuickAccessElement getPerfectMatch(String filter) {
+							QuickAccessElement perfectMatch = (QuickAccessElement) elementMap
+									.get(filter);
+							return perfectMatch;
+						}
+
+						@Override
+						protected void handleElementSelected(String text, Object selectedElement) {
+							if (selectedElement instanceof QuickAccessElement) {
+								addPreviousPick(text, selectedElement);
+								storeDialog(getDialogSettings());
+
+								/*
+								 * Execute after the dialog has been fully
+								 * closed/disposed and the correct
+								 * EclipseContext is in place.
+								 */
+								final QuickAccessElement element = (QuickAccessElement) selectedElement;
+								window.getShell().getDisplay().asyncExec(() -> element.execute());
+							}
+						}
+					};
+					restoreDialog();
+					QuickAccessDialog.this.invokingCommand = invokingCommand;
+					if (QuickAccessDialog.this.invokingCommand != null
+							&& !QuickAccessDialog.this.invokingCommand.isDefined()) {
+						QuickAccessDialog.this.invokingCommand = null;
+					} else {
+						// Pre-fetch key sequence - do not change because
+						// scope will
+						// change later.
+						getInvokingCommandKeySequences();
+					}
+					// create early
+					create();
 				});
 		QuickAccessDialog.this.contents.refresh(""); //$NON-NLS-1$
 	}

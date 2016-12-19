@@ -61,33 +61,13 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	private Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<>();
 	private Map<String, Set<ISelectionListener>> targetedPostSelectionListeners = new HashMap<>();
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener listener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
-		@Override
-		public void selectionChanged(MPart part, Object selection) {
-			handleSelectionChanged(part, selection, false);
-		}
-	};
+	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener listener = (part, selection) -> handleSelectionChanged(part, selection, false);
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedListener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
-		@Override
-		public void selectionChanged(MPart part, Object selection) {
-			handleSelectionChanged(part, selection, true);
-		}
-	};
+	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedListener = (part, selection) -> handleSelectionChanged(part, selection, true);
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener postListener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
-		@Override
-		public void selectionChanged(MPart part, Object selection) {
-			handlePostSelectionChanged(part, selection, false);
-		}
-	};
+	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener postListener = (part, selection) -> handlePostSelectionChanged(part, selection, false);
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedPostListener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
-		@Override
-		public void selectionChanged(MPart part, Object selection) {
-			handlePostSelectionChanged(part, selection, true);
-		}
-	};
+	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedPostListener = (part, selection) -> handlePostSelectionChanged(part, selection, true);
 
 	private void handleSelectionChanged(MPart part, Object selection, boolean targeted) {
 		selection = createCompatibilitySelection(selection);

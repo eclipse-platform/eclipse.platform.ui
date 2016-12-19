@@ -74,52 +74,41 @@ public class SelectAllHandler extends WidgetMethodHandler {
 					try {
 						final Object focusComponent = getFocusComponent();
 						if (focusComponent != null) {
-							Runnable methodRunnable = new Runnable() {
-								@Override
-								public void run() {
-									try {
-										methodToExecute.invoke(focusComponent);
-										// and back to the UI thread :-)
-										focusControl.getDisplay().asyncExec(
-												new Runnable() {
-													@Override
-													public void run() {
-														if (!focusControl
-																.isDisposed()) {
-															focusControl
-																	.notifyListeners(
-																			SWT.Selection,
-																			null);
-														}
-													}
-												});
-									} catch (final IllegalAccessException e) {
-										// The method is protected, so do
-										// nothing.
-									} catch (final InvocationTargetException e) {
-										/*
-										 * I would like to log this exception --
-										 * and possibly show a dialog to the
-										 * user -- but I have to go back to the
-										 * SWT event loop to do this. So, back
-										 * we go....
-										 */
-										focusControl.getDisplay().asyncExec(
-												new Runnable() {
-													@Override
-													public void run() {
-														ExceptionHandler
-																.getInstance()
-																.handleException(
-																		new ExecutionException(
-																				"An exception occurred while executing " //$NON-NLS-1$
-																						+ methodToExecute
-																								.getName(),
-																				e
-																						.getTargetException()));
-													}
-												});
-									}
+							Runnable methodRunnable = () -> {
+								try {
+									methodToExecute.invoke(focusComponent);
+									// and back to the UI thread :-)
+									focusControl.getDisplay().asyncExec(
+											() -> {
+												if (!focusControl
+														.isDisposed()) {
+													focusControl
+															.notifyListeners(
+																	SWT.Selection,
+																	null);
+												}
+											});
+								} catch (final IllegalAccessException e1) {
+									// The method is protected, so do
+									// nothing.
+								} catch (final InvocationTargetException e2) {
+									/*
+									 * I would like to log this exception --
+									 * and possibly show a dialog to the
+									 * user -- but I have to go back to the
+									 * SWT event loop to do this. So, back
+									 * we go....
+									 */
+									focusControl.getDisplay().asyncExec(
+											() -> ExceptionHandler
+													.getInstance()
+													.handleException(
+															new ExecutionException(
+																	"An exception occurred while executing " //$NON-NLS-1$
+																			+ methodToExecute
+																					.getName(),
+																	e2
+																			.getTargetException())));
 								}
 							};
 

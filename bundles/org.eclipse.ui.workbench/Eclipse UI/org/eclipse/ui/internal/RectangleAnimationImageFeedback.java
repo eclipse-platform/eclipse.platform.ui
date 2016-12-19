@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -48,12 +46,7 @@ public class RectangleAnimationImageFeedback extends
 			super(parent, style);
 			this.image = image;
 
-			addPaintListener(new PaintListener() {
-				@Override
-				public void paintControl(PaintEvent e) {
-					paintImage(e.gc);
-				}
-			});
+			addPaintListener(e -> paintImage(e.gc));
 		}
 
 		/**

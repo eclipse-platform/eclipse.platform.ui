@@ -62,8 +62,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -241,12 +239,7 @@ public class SearchField {
 			@Override
 			public void focusLost(FocusEvent e) {
 				// Once the focus event is complete, check if we should close the shell
-				table.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						checkFocusLost(table, txtQuickAccess);
-					}
-				});
+				table.getDisplay().asyncExec(() -> checkFocusLost(table, txtQuickAccess));
 				activated = false;
 			}
 
@@ -265,20 +258,10 @@ public class SearchField {
 			public void focusLost(FocusEvent e) {
 				// Once the focus event is complete, check if we should close
 				// the shell
-				table.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						checkFocusLost(table, txtQuickAccess);
-					}
-				});
+				table.getDisplay().asyncExec(() -> checkFocusLost(table, txtQuickAccess));
 			}
 		});
-		txtQuickAccess.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				showList();
-			}
-		});
+		txtQuickAccess.addModifyListener(e -> showList());
 		txtQuickAccess.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
