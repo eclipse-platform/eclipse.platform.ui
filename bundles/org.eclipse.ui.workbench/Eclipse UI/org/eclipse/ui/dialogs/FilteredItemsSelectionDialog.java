@@ -46,28 +46,23 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -84,14 +79,10 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -462,13 +453,10 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		headerLabel.setText((getMessage() != null && getMessage().trim()
 				.length() > 0) ? getMessage()
 				: WorkbenchMessages.FilteredItemsSelectionDialog_patternLabel);
-		headerLabel.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
-					e.detail = SWT.TRAVERSE_NONE;
-					pattern.setFocus();
-				}
+		headerLabel.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
+				e.detail = SWT.TRAVERSE_NONE;
+				pattern.setFocus();
 			}
 		});
 
@@ -499,13 +487,10 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		listLabel
 				.setText(WorkbenchMessages.FilteredItemsSelectionDialog_listLabel);
 
-		listLabel.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
-					e.detail = SWT.TRAVERSE_NONE;
-					list.getTable().setFocus();
-				}
+		listLabel.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
+				e.detail = SWT.TRAVERSE_NONE;
+				list.getTable().setFocus();
 			}
 		});
 
@@ -618,12 +603,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		contextMenuManager = new MenuManager();
 		contextMenuManager.setRemoveAllWhenShown(true);
-		contextMenuManager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-		});
+		contextMenuManager.addMenuListener(manager -> fillContextMenu(manager));
 
 		final Table table = list.getTable();
 		Menu menu= contextMenuManager.createContextMenu(table);
@@ -691,12 +671,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		createPopupMenu();
 
-		pattern.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				applyFilter();
-			}
-		});
+		pattern.addModifyListener(e -> applyFilter());
 
 		pattern.addKeyListener(new KeyAdapter() {
 			@Override
@@ -709,21 +684,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			}
 		});
 
-		list.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				StructuredSelection selection = (StructuredSelection) event
-						.getSelection();
-				handleSelected(selection);
-			}
+		list.addSelectionChangedListener(event -> {
+			StructuredSelection selection = (StructuredSelection) event
+					.getSelection();
+			handleSelected(selection);
 		});
 
-		list.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick();
-			}
-		});
+		list.addDoubleClickListener(event -> handleDoubleClick());
 
 		list.getTable().addKeyListener(new KeyAdapter() {
 			@Override

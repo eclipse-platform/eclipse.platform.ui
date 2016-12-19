@@ -77,12 +77,7 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
             return;
         }
         //This may take a while, so use the busy indicator
-        BusyIndicator.showWhile(null, new Runnable() {
-            @Override
-			public void run() {
-            	workbenchWindow.getWorkbench().getHelpSystem().displayHelp();
-            }
-        });
+        BusyIndicator.showWhile(null, () -> workbenchWindow.getWorkbench().getHelpSystem().displayHelp());
     }
 
     @Override

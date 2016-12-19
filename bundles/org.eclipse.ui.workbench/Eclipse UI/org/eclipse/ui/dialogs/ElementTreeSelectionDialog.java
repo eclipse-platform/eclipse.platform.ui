@@ -20,15 +20,11 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -257,15 +253,12 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
     @Override
 	public void create() {
-        BusyIndicator.showWhile(null, new Runnable() {
-            @Override
-			public void run() {
-                access$superCreate();
-                fViewer.setSelection(new StructuredSelection(
-                        getInitialElementSelections()), true);
-                updateOKStatus();
-            }
-        });
+        BusyIndicator.showWhile(null, () -> {
+		    access$superCreate();
+		    fViewer.setSelection(new StructuredSelection(
+		            getInitialElementSelections()), true);
+		    updateOKStatus();
+		});
     }
 
     @Override
@@ -304,14 +297,11 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
         fViewer = doCreateTreeViewer(parent, style);
         fViewer.setContentProvider(fContentProvider);
         fViewer.setLabelProvider(fLabelProvider);
-        fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
-			public void selectionChanged(SelectionChangedEvent event) {
-                access$setResult(((IStructuredSelection) event.getSelection())
-                        .toList());
-                updateOKStatus();
-            }
-        });
+        fViewer.addSelectionChangedListener(event -> {
+		    access$setResult(((IStructuredSelection) event.getSelection())
+		            .toList());
+		    updateOKStatus();
+		});
 
         fViewer.setComparator(fComparator);
         if (fFilters != null) {
@@ -332,27 +322,24 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
                 }
             });
         }
-        fViewer.addDoubleClickListener(new IDoubleClickListener() {
-            @Override
-			public void doubleClick(DoubleClickEvent event) {
-                updateOKStatus();
+        fViewer.addDoubleClickListener(event -> {
+		    updateOKStatus();
 
-                //If it is not OK or if double click does not
-                //select then expand
-                if (!(fDoubleClickSelects && fCurrStatus.isOK())) {
-                    ISelection selection = event.getSelection();
-                    if (selection instanceof IStructuredSelection) {
-                        Object item = ((IStructuredSelection) selection)
-                                .getFirstElement();
-                        if (fViewer.getExpandedState(item)) {
-							fViewer.collapseToLevel(item, 1);
-						} else {
-							fViewer.expandToLevel(item, 1);
-						}
-                    }
-                }
-            }
-        });
+		    //If it is not OK or if double click does not
+		    //select then expand
+		    if (!(fDoubleClickSelects && fCurrStatus.isOK())) {
+		        ISelection selection = event.getSelection();
+		        if (selection instanceof IStructuredSelection) {
+		            Object item = ((IStructuredSelection) selection)
+		                    .getFirstElement();
+		            if (fViewer.getExpandedState(item)) {
+						fViewer.collapseToLevel(item, 1);
+					} else {
+						fViewer.expandToLevel(item, 1);
+					}
+		        }
+		    }
+		});
 
         fViewer.setInput(fInput);
 

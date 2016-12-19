@@ -25,12 +25,7 @@ public class HelpContentsHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) {
 
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp();
-			}
-		});
+		BusyIndicator.showWhile(null, () -> PlatformUI.getWorkbench().getHelpSystem().displayHelp());
 		return null;
 	}
 

@@ -375,15 +375,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	public IFileEditorMapping[] getFileEditorMappings() {
         FileEditorMapping[] array = typeEditorMappings.allMappings();
         final Collator collator = Collator.getInstance();
-		Arrays.sort(array, new Comparator<FileEditorMapping>() {
-
-            @Override
-			public int compare(FileEditorMapping o1, FileEditorMapping o2) {
-				String s1 = o1.getLabel();
-				String s2 = o2.getLabel();
-                return collator.compare(s1, s2);
-            }
-        });
+		Arrays.sort(array, (o1, o2) -> {
+			String s1 = o1.getLabel();
+			String s2 = o2.getLabel();
+		    return collator.compare(s1, s2);
+		});
         return array;
     }
 

@@ -11,11 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.ITriggerPoint;
@@ -64,18 +60,8 @@ public class ExportPage extends ImportExportPage {
 		exportTree = new CategorizedWizardSelectionTree(
 				root, WorkbenchMessages.ExportWizard_selectWizard);
 		Composite exportComp = exportTree.createControl(parent);
-		exportTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				listSelectionChanged(event.getSelection());
-			}
-		});
-		exportTree.getViewer().addDoubleClickListener(new IDoubleClickListener(){
-	    	@Override
-			public void doubleClick(DoubleClickEvent event) {
-	    		treeDoubleClicked(event);
-	    	}
-	    });
+		exportTree.getViewer().addSelectionChangedListener(event -> listSelectionChanged(event.getSelection()));
+		exportTree.getViewer().addDoubleClickListener(event -> treeDoubleClicked(event));
 		setTreeViewer(exportTree.getViewer());
 	    return exportComp;
 	}

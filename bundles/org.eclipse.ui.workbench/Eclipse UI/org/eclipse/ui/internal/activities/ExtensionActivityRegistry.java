@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -63,22 +61,18 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
         this.extensionRegistry = extensionRegistry;
 
         this.extensionRegistry
-                .addRegistryChangeListener(new IRegistryChangeListener() {
-                    @Override
-					public void registryChanged(
-                            IRegistryChangeEvent registryChangeEvent) {
-                        IExtensionDelta[] extensionDeltas = registryChangeEvent
-                                .getExtensionDeltas(Persistence.PACKAGE_PREFIX,
-                                        Persistence.PACKAGE_BASE);
+                .addRegistryChangeListener(registryChangeEvent -> {
+                  IExtensionDelta[] extensionDeltas = registryChangeEvent
+				    .getExtensionDeltas(Persistence.PACKAGE_PREFIX,
+				            Persistence.PACKAGE_BASE);
 
-                        if (extensionDeltas.length != 0) {
-							try {
-                                load();
-                            } catch (IOException eIO) {
-                            }
-						}
-                    }
-                });
+                  if (extensionDeltas.length != 0) {
+				try {
+				    load();
+				} catch (IOException eIO) {
+				}
+}
+               });
 
         try {
             load();

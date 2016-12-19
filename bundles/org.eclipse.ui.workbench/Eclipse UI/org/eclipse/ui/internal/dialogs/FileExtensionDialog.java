@@ -17,8 +17,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -117,13 +115,10 @@ public class FileExtensionDialog extends TitleAreaDialog {
 		if (initialValue != null) {
 			filenameField.setText(initialValue);
 		}
-		filenameField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent event) {
-				if (event.widget == filenameField) {
-					filename = filenameField.getText().trim();
-					okButton.setEnabled(validateFileType());
-				}
+		filenameField.addModifyListener(event -> {
+			if (event.widget == filenameField) {
+				filename = filenameField.getText().trim();
+				okButton.setEnabled(validateFileType());
 			}
 		});
 		filenameField.setFocus();

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
@@ -338,16 +337,12 @@ public class EditorSelectionDialog extends Dialog {
 		restoreWidgetValues(); // Place buttons to the appropriate state
 
 		// Run async to restore selection on *visible* dialog - otherwise three won't scroll
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				if (editorTable.isDisposed()) {
-					return;
-				}
-				fillEditorTable();
-				updateEnableState();
+		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+			if (editorTable.isDisposed()) {
+				return;
 			}
+			fillEditorTable();
+			updateEnableState();
 		});
 	    return contents;
 	}
@@ -435,14 +430,11 @@ public class EditorSelectionDialog extends Dialog {
 		if (externalEditors == null) {
 			IProgressService ps = PlatformUI.getWorkbench().getService(IProgressService.class);
 			// Since this can take a while, show the busy cursor.
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					// Get the external editors available
-					EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
-					externalEditors = reg.getSortedEditorsFromOS();
-					externalEditors = filterEditors(externalEditors);
-				}
+			IRunnableWithProgress runnable = monitor -> {
+				// Get the external editors available
+				EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
+				externalEditors = reg.getSortedEditorsFromOS();
+				externalEditors = filterEditors(externalEditors);
 			};
 			try {
 				// See bug 47556 - Program.getPrograms() requires a Display.getCurrent() != null

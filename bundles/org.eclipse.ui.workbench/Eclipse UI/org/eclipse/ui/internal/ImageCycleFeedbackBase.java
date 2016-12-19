@@ -114,13 +114,7 @@ public abstract class ImageCycleFeedbackBase extends AnimationFeedbackBase {
 
 			final Image finalImage = image;
 
-			display.syncExec(new Runnable() {
-				@Override
-				public void run() {
-					showImage(finalImage);
-
-				}
-			});
+			display.syncExec(() -> showImage(finalImage));
 
 			/*
 			 * Sleep for the specified delay time (adding commonly-used

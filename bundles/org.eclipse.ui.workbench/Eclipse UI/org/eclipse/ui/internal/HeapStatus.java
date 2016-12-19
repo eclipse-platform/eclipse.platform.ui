@@ -18,13 +18,11 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.Method;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -35,7 +33,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
@@ -88,15 +85,12 @@ public class HeapStatus extends Composite {
         }
     };
 
-    private final IPropertyChangeListener prefListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (IHeapStatusConstants.PREF_UPDATE_INTERVAL.equals(event.getProperty())) {
-				setUpdateIntervalInMS(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
-			}
-			else if (IHeapStatusConstants.PREF_SHOW_MAX.equals(event.getProperty())) {
-				showMax = prefStore.getBoolean(IHeapStatusConstants.PREF_SHOW_MAX);
-			}
+    private final IPropertyChangeListener prefListener = event -> {
+		if (IHeapStatusConstants.PREF_UPDATE_INTERVAL.equals(event.getProperty())) {
+			setUpdateIntervalInMS(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
+		}
+		else if (IHeapStatusConstants.PREF_SHOW_MAX.equals(event.getProperty())) {
+			showMax = prefStore.getBoolean(IHeapStatusConstants.PREF_SHOW_MAX);
 		}
 	};
 
@@ -140,59 +134,54 @@ public class HeapStatus extends Composite {
 
 		createContextMenu();
 
-        Listener listener = new Listener() {
-
-            @Override
-			public void handleEvent(Event event) {
-                switch (event.type) {
-                case SWT.Dispose:
-                	doDispose();
-                    break;
-                case SWT.Resize:
-                    Rectangle rect = getClientArea();
-                    button.setBounds(rect.width - imgBounds.width - 1, 1, imgBounds.width, rect.height - 2);
-                    break;
-                case SWT.Paint:
-                    if (event.widget == HeapStatus.this) {
-                    	paintComposite(event.gc);
-                    }
-                    else if (event.widget == button) {
-                        paintButton(event.gc);
-                    }
-                    break;
-                case SWT.MouseUp:
-                    if (event.button == 1) {
-						if (!isInGC) {
-							arm(false);
-							gc();
-						}
-                    }
-                    break;
-                case SWT.MouseDown:
-                    if (event.button == 1) {
-	                    if (event.widget == HeapStatus.this) {
-							setMark();
-						} else if (event.widget == button) {
-							if (!isInGC)
-								arm(true);
-						}
-                    }
-                    break;
-                case SWT.MouseEnter:
-                	HeapStatus.this.updateTooltip = true;
-                	updateToolTip();
-                	break;
-                case SWT.MouseExit:
-                    if (event.widget == HeapStatus.this) {
-                    	HeapStatus.this.updateTooltip = false;
-					} else if (event.widget == button) {
+        Listener listener = event -> {
+		    switch (event.type) {
+		    case SWT.Dispose:
+		    	doDispose();
+		        break;
+		    case SWT.Resize:
+		        Rectangle rect = getClientArea();
+		        button.setBounds(rect.width - imgBounds.width - 1, 1, imgBounds.width, rect.height - 2);
+		        break;
+		    case SWT.Paint:
+		        if (event.widget == HeapStatus.this) {
+		        	paintComposite(event.gc);
+		        }
+		        else if (event.widget == button) {
+		            paintButton(event.gc);
+		        }
+		        break;
+		    case SWT.MouseUp:
+		        if (event.button == 1) {
+					if (!isInGC) {
 						arm(false);
+						gc();
 					}
-                    break;
-                }
-            }
-
-        };
+		        }
+		        break;
+		    case SWT.MouseDown:
+		        if (event.button == 1) {
+		            if (event.widget == HeapStatus.this) {
+						setMark();
+					} else if (event.widget == button) {
+						if (!isInGC)
+							arm(true);
+					}
+		        }
+		        break;
+		    case SWT.MouseEnter:
+		    	HeapStatus.this.updateTooltip = true;
+		    	updateToolTip();
+		    	break;
+		    case SWT.MouseExit:
+		        if (event.widget == HeapStatus.this) {
+		        	HeapStatus.this.updateTooltip = false;
+				} else if (event.widget == button) {
+					arm(false);
+				}
+		        break;
+		    }
+		};
         addListener(SWT.Dispose, listener);
         addListener(SWT.MouseDown, listener);
         addListener(SWT.Paint, listener);
@@ -207,12 +196,9 @@ public class HeapStatus extends Composite {
 		// make sure stats are updated before first paint
 		updateStats();
 
-        getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (!isDisposed()) {
-					getDisplay().timerExec(updateInterval, timer);
-				}
+        getDisplay().asyncExec(() -> {
+			if (!isDisposed()) {
+				getDisplay().timerExec(updateInterval, timer);
 			}
 		});
    	}
@@ -323,12 +309,7 @@ public class HeapStatus extends Composite {
     private void createContextMenu() {
         MenuManager menuMgr = new MenuManager();
         menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager menuMgr) {
-				fillMenu(menuMgr);
-			}
-		});
+        menuMgr.addMenuListener(menuMgr1 -> fillMenu(menuMgr1));
         Menu menu = menuMgr.createContextMenu(this);
         setMenu(menu);
     }
@@ -368,12 +349,9 @@ public class HeapStatus extends Composite {
 			@Override
 			public void run() {
 				busyGC();
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!isDisposed()) {
-							gcRunning(false);
-						}
+				getDisplay().asyncExec(() -> {
+					if (!isDisposed()) {
+						gcRunning(false);
 					}
 				});
 			}

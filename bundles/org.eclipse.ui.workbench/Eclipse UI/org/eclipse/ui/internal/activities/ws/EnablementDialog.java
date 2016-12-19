@@ -19,12 +19,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -136,28 +132,21 @@ public class EnablementDialog extends Dialog {
             viewer.setLabelProvider(new ActivityLabelProvider(manager));
             viewer.setInput(activityIdsCopy);
             viewer.setCheckedElements(activityIdsCopy.toArray());
-            viewer.addCheckStateListener(new ICheckStateListener() {
+            viewer.addCheckStateListener(event -> {
+			    if (event.getChecked()) {
+					activitiesToEnable.add(event.getElement());
+				} else {
+					activitiesToEnable.remove(event.getElement());
+				}
 
-                @Override
-				public void checkStateChanged(CheckStateChangedEvent event) {
-                    if (event.getChecked()) {
-						activitiesToEnable.add(event.getElement());
-					} else {
-						activitiesToEnable.remove(event.getElement());
-					}
-
-                    getButton(Window.OK).setEnabled(
-                            !activitiesToEnable.isEmpty());
-                }
-            });
-            viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-                @Override
-				public void selectionChanged(SelectionChangedEvent event) {
-                    selectedActivity = (String) ((IStructuredSelection) event
-                            .getSelection()).getFirstElement();
-                    setDetails();
-                }
-            });
+			    getButton(Window.OK).setEnabled(
+			            !activitiesToEnable.isEmpty());
+			});
+            viewer.addSelectionChangedListener(event -> {
+			    selectedActivity = (String) ((IStructuredSelection) event
+			            .getSelection()).getFirstElement();
+			    setDetails();
+			});
             activitiesToEnable.addAll(activityIdsCopy);
 
             viewer.getControl().setLayoutData(

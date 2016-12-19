@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
@@ -246,16 +245,13 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 
 	private IPropertyChangeListener getEnablementListener() {
 		if (enablementListener == null) {
-			enablementListener = new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (event.getProperty() == PROP_ENABLED) {
-						setProxyEnabled(event.getNewValue() == null ? false
-								: ((Boolean) event.getNewValue())
-										.booleanValue());
-						fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
-								true, false));
-					}
+			enablementListener = event -> {
+				if (event.getProperty() == PROP_ENABLED) {
+					setProxyEnabled(event.getNewValue() == null ? false
+							: ((Boolean) event.getNewValue())
+									.booleanValue());
+					fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
+							true, false));
 				}
 			};
 		}
@@ -384,14 +380,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 
 	private IHandlerListener getHandlerListener() {
 		if (handlerListener == null) {
-			handlerListener = new IHandlerListener() {
-				@Override
-				public void handlerChanged(HandlerEvent handlerEvent) {
-					fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
-							handlerEvent.isEnabledChanged(), handlerEvent
-									.isHandledChanged()));
-				}
-			};
+			handlerListener = handlerEvent -> fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
+					handlerEvent.isEnabledChanged(), handlerEvent
+							.isHandledChanged()));
 		}
 		return handlerListener;
 	}

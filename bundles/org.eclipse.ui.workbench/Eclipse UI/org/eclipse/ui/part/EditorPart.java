@@ -79,14 +79,11 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * setContentDescription. Used for compatibility with old parts that call setTitle
      * or overload getTitle instead of using setContentDescription.
      */
-    private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
-        @Override
-		public void propertyChanged(Object source, int propId) {
-            if (propId == IWorkbenchPartConstants.PROP_TITLE) {
-                setDefaultPartName();
-            }
-        }
-    };
+    private IPropertyListener compatibilityTitleListener = (source, propId) -> {
+	    if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+	        setDefaultPartName();
+	    }
+	};
 
     /**
      * Creates a new workbench editor.

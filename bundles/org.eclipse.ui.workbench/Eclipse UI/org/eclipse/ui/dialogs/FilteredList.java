@@ -24,8 +24,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.Accessible;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -244,13 +242,10 @@ public class FilteredList extends Composite {
 		fList = new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fList.setFont(parent.getFont());
-		fList.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				fLabelProvider.dispose();
-				if (fUpdateJob != null) {
-					fUpdateJob.cancel();
-				}
+		fList.addDisposeListener(e -> {
+			fLabelProvider.dispose();
+			if (fUpdateJob != null) {
+				fUpdateJob.cancel();
 			}
 		});
 		fLabelProvider = labelProvider;

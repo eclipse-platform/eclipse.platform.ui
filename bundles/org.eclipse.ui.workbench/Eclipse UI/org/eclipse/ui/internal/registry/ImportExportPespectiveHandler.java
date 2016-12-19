@@ -45,7 +45,6 @@ import org.eclipse.ui.internal.e4.migration.PerspectiveBuilder;
 import org.eclipse.ui.internal.e4.migration.PerspectiveReader;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 @SuppressWarnings("restriction")
@@ -302,39 +301,21 @@ public class ImportExportPespectiveHandler {
 
 	private void initializeEventHandlers() {
 
-		importPreferencesEnd = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				removeImportedPreferences();
+		importPreferencesEnd = event -> removeImportedPreferences();
+
+		exportPreferencesBegin = event -> copyPerspsToPreferences();
+
+		exportPreferencesEnd = event -> removeExportedPreferences();
+
+		preferenceListener = event -> {
+			if (ignoreEvents) {
+				return;
 			}
-		};
 
-		exportPreferencesBegin = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				copyPerspsToPreferences();
-			}
-		};
-
-		exportPreferencesEnd = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				removeExportedPreferences();
-			}
-		};
-
-		preferenceListener = new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (ignoreEvents) {
-					return;
-				}
-
-				if (event.getKey().endsWith(PERSPECTIVE_SUFFIX_4X)) {
-					importPerspective4x(event);
-				} else if (event.getKey().endsWith(PERSPECTIVE_SUFFIX_3X)) {
-					importPerspective3x(event);
-				}
+			if (event.getKey().endsWith(PERSPECTIVE_SUFFIX_4X)) {
+				importPerspective4x(event);
+			} else if (event.getKey().endsWith(PERSPECTIVE_SUFFIX_3X)) {
+				importPerspective3x(event);
 			}
 		};
 

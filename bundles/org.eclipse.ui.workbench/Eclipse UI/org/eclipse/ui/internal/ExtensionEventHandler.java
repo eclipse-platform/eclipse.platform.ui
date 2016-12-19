@@ -127,12 +127,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void asyncAppear(Display display, final IExtensionPoint extpt,
             final IExtension ext) {
-        Runnable run = new Runnable() {
-            @Override
-			public void run() {
-                appear(extpt, ext);
-            }
-        };
+        Runnable run = () -> appear(extpt, ext);
         display.syncExec(run);
     }
 
@@ -212,32 +207,29 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
         message.append(ExtensionEventHandlerMessages.ExtensionEventHandler_need_to_reset);
 
-        display.asyncExec(new Runnable() {
-            @Override
-			public void run() {
-                Shell parentShell = null;
-                IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-                if (window == null) {
-                    if (workbench.getWorkbenchWindowCount() == 0) {
-						return;
-					}
-                    window = workbench.getWorkbenchWindows()[0];
-                }
+        display.asyncExec(() -> {
+		    Shell parentShell = null;
+		    IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		    if (window == null) {
+		        if (workbench.getWorkbenchWindowCount() == 0) {
+					return;
+				}
+		        window = workbench.getWorkbenchWindows()[0];
+		    }
 
-                parentShell = window.getShell();
+		    parentShell = window.getShell();
 
-                if (MessageDialog
-                        .openQuestion(
-                                parentShell,
-                                ExtensionEventHandlerMessages.ExtensionEventHandler_reset_perspective, message.toString())) {
-                    IWorkbenchPage page = window.getActivePage();
-                    if (page == null) {
-						return;
-					}
-                    page.resetPerspective();
-                }
-            }
-        });
+		    if (MessageDialog
+		            .openQuestion(
+		                    parentShell,
+		                    ExtensionEventHandlerMessages.ExtensionEventHandler_reset_perspective, message.toString())) {
+		        IWorkbenchPage page = window.getActivePage();
+		        if (page == null) {
+					return;
+				}
+		        page.resetPerspective();
+		    }
+		});
 
     }
 }
