@@ -118,42 +118,37 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
         final IStatus statuses[] = new IStatus[1];
         // Start busy indicator.
         BusyIndicator.showWhile(parentWizardPage.getShell().getDisplay(),
-                new Runnable() {
-                    @Override
-					public void run() {
-                        SafeRunner.run(new SafeRunnable() {
-                            /**
-                             * Add the exception details to status is one happens.
-                             */
-                            @Override
-							public void handleException(Throwable e) {
-                               	IPluginContribution contribution = Adapters.adapt(wizardElement, IPluginContribution.class);
-                                statuses[0] = new Status(
-                                        IStatus.ERROR,
-                                        contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
-                                        IStatus.OK,
-                                        WorkbenchMessages.WorkbenchWizard_errorMessage,
-                                        e);
-                            }
+                () -> SafeRunner.run(new SafeRunnable() {
+				    /**
+				     * Add the exception details to status is one happens.
+				     */
+				    @Override
+					public void handleException(Throwable e) {
+				       	IPluginContribution contribution = Adapters.adapt(wizardElement, IPluginContribution.class);
+				        statuses[0] = new Status(
+				                IStatus.ERROR,
+				                contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
+				                IStatus.OK,
+				                WorkbenchMessages.WorkbenchWizard_errorMessage,
+				                e);
+				    }
 
-                            @Override
-							public void run() {
-                                try {
-                                    workbenchWizard[0] = createWizard();
-                                    // create instance of target wizard
-                                } catch (CoreException e) {
-                                	IPluginContribution contribution = Adapters.adapt(wizardElement, IPluginContribution.class);
-                                	statuses[0] = new Status(
-                                            IStatus.ERROR,
-                                            contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
-                                            IStatus.OK,
-                                            WorkbenchMessages.WorkbenchWizard_errorMessage,
-                                            e);
-                                }
-                            }
-                        });
-                    }
-                });
+				    @Override
+					public void run() {
+				        try {
+				            workbenchWizard[0] = createWizard();
+				            // create instance of target wizard
+				        } catch (CoreException e) {
+				        	IPluginContribution contribution = Adapters.adapt(wizardElement, IPluginContribution.class);
+				        	statuses[0] = new Status(
+				                    IStatus.ERROR,
+				                    contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
+				                    IStatus.OK,
+				                    WorkbenchMessages.WorkbenchWizard_errorMessage,
+				                    e);
+				        }
+				    }
+				}));
 
         if (statuses[0] != null) {
             parentWizardPage

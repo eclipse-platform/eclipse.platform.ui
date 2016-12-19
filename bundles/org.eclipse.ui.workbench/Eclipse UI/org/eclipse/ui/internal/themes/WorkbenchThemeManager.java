@@ -33,8 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -86,18 +84,14 @@ public class WorkbenchThemeManager extends EventManager implements
 
 	private ITheme currentTheme;
 
-	private IPropertyChangeListener currentThemeListener = new IPropertyChangeListener() {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			firePropertyChange(event);
-			if (event.getSource() instanceof FontRegistry) {
-				JFaceResources.getFontRegistry().put(event.getProperty(),
-						(FontData[]) event.getNewValue());
-			} else if (event.getSource() instanceof ColorRegistry) {
-				JFaceResources.getColorRegistry().put(event.getProperty(),
-						(RGB) event.getNewValue());
-			}
+	private IPropertyChangeListener currentThemeListener = event -> {
+		firePropertyChange(event);
+		if (event.getSource() instanceof FontRegistry) {
+			JFaceResources.getFontRegistry().put(event.getProperty(),
+					(FontData[]) event.getNewValue());
+		} else if (event.getSource() instanceof ColorRegistry) {
+			JFaceResources.getColorRegistry().put(event.getProperty(),
+					(RGB) event.getNewValue());
 		}
 	};
 
@@ -153,12 +147,7 @@ public class WorkbenchThemeManager extends EventManager implements
 
 		final boolean highContrast = Display.getCurrent().getHighContrast();
 
-		Display.getCurrent().addListener(SWT.Settings, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				updateThemes();
-			}
-		});
+		Display.getCurrent().addListener(SWT.Settings, event -> updateThemes());
 
 		// If in HC, *always* use the system default.
 		// This ignores any default theme set via plugin_customization.ini

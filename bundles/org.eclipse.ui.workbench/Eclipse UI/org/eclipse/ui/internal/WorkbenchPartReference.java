@@ -141,19 +141,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
     protected Map propertyCache = new HashMap();
 
-    private IPropertyListener propertyChangeListener = new IPropertyListener() {
-        @Override
-		public void propertyChanged(Object source, int propId) {
-            partPropertyChanged(source, propId);
-        }
-    };
+    private IPropertyListener propertyChangeListener = (source, propId) -> partPropertyChanged(source, propId);
 
-    private IPropertyChangeListener partPropertyChangeListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			partPropertyChanged(event);
-		}
-    };
+    private IPropertyChangeListener partPropertyChangeListener = event -> partPropertyChanged(event);
 
 	private IWorkbenchPage page;
 

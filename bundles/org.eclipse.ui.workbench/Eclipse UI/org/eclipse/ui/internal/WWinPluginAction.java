@@ -15,10 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate;
@@ -81,34 +78,31 @@ public class WWinPluginAction extends PluginAction implements
 				retargetAction = new RetargetAction(id, label, style);
 			}
             retargetAction
-                    .addPropertyChangeListener(new IPropertyChangeListener() {
-                        @Override
-						public void propertyChange(PropertyChangeEvent event) {
-                            if (event.getProperty().equals(IAction.ENABLED)) {
-                                Object val = event.getNewValue();
-                                if (val instanceof Boolean) {
-                                    setEnabled(((Boolean) val).booleanValue());
-                                }
-                            } else if (event.getProperty().equals(
-                                    IAction.CHECKED)) {
-                                Object val = event.getNewValue();
-                                if (val instanceof Boolean) {
-                                    setChecked(((Boolean) val).booleanValue());
-                                }
-                            } else if (event.getProperty().equals(IAction.TEXT)) {
-                                Object val = event.getNewValue();
-                                if (val instanceof String) {
-                                    setText((String) val);
-                                }
-                            } else if (event.getProperty().equals(
-                                    IAction.TOOL_TIP_TEXT)) {
-                                Object val = event.getNewValue();
-                                if (val instanceof String) {
-                                    setToolTipText((String) val);
-                                }
-                            }
-                        }
-                    });
+                    .addPropertyChangeListener(event -> {
+					    if (event.getProperty().equals(IAction.ENABLED)) {
+					        Object val1 = event.getNewValue();
+					        if (val1 instanceof Boolean) {
+					            setEnabled(((Boolean) val1).booleanValue());
+					        }
+					    } else if (event.getProperty().equals(
+					            IAction.CHECKED)) {
+					        Object val2 = event.getNewValue();
+					        if (val2 instanceof Boolean) {
+					            setChecked(((Boolean) val2).booleanValue());
+					        }
+					    } else if (event.getProperty().equals(IAction.TEXT)) {
+					        Object val3 = event.getNewValue();
+					        if (val3 instanceof String) {
+					            setText((String) val3);
+					        }
+					    } else if (event.getProperty().equals(
+					            IAction.TOOL_TIP_TEXT)) {
+					        Object val4 = event.getNewValue();
+					        if (val4 instanceof String) {
+					            setToolTipText((String) val4);
+					        }
+					    }
+					});
             retargetAction.setEnabled(false);
             setEnabled(false);
             window.getPartService().addPartListener(retargetAction);
@@ -123,23 +117,20 @@ public class WWinPluginAction extends PluginAction implements
         }
         addToActionList(this);
 
-        super.setHelpListener(new HelpListener() {
-            @Override
-			public void helpRequested(HelpEvent e) {
-                HelpListener listener = null;
-                if (retargetAction != null) {
-					listener = retargetAction.getHelpListener();
-				}
-                if (listener == null) {
-					// use our own help listener
-                    listener = localHelpListener;
-				}
-                if (listener != null) {
-					// pass on the event
-                    listener.helpRequested(e);
-				}
-            }
-        });
+        super.setHelpListener(e -> {
+		    HelpListener listener = null;
+		    if (retargetAction != null) {
+				listener = retargetAction.getHelpListener();
+			}
+		    if (listener == null) {
+				// use our own help listener
+		        listener = localHelpListener;
+			}
+		    if (listener != null) {
+				// pass on the event
+		        listener.helpRequested(e);
+			}
+		});
     }
 
     /**

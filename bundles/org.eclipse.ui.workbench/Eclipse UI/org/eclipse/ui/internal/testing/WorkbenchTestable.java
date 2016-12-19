@@ -57,25 +57,22 @@ public class WorkbenchTestable extends TestableObject {
         this.workbench = workbench;
         if (getTestHarness() != null) {
         	// don't use a job, since tests often wait for all jobs to complete before proceeding
-            Runnable runnable = new Runnable() {
-                @Override
-				public void run() {
-					// disable workbench auto-save during tests
-					if ("true".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsDisableWorkbenchAutoSave"))) { //$NON-NLS-1$ //$NON-NLS-2$
-						if (WorkbenchTestable.this.workbench instanceof Workbench) {
-							((Workbench) WorkbenchTestable.this.workbench).setEnableAutoSave(false);
-						}
-						Job.getJobManager().cancel(Workbench.WORKBENCH_AUTO_SAVE_JOB);
+            Runnable runnable = () -> {
+				// disable workbench auto-save during tests
+				if ("true".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsDisableWorkbenchAutoSave"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					if (WorkbenchTestable.this.workbench instanceof Workbench) {
+						((Workbench) WorkbenchTestable.this.workbench).setEnableAutoSave(false);
 					}
-                	// Some tests (notably the startup performance tests) do not want to wait for early startup.
-                	// Allow this to be disabled by specifying the system property: org.eclipse.ui.testsWaitForEarlyStartup=false
-                	// For details, see bug 94129 [Workbench] Performance test regression caused by workbench harness change
-                	if (!"false".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsWaitForEarlyStartup"))) {  //$NON-NLS-1$ //$NON-NLS-2$
-                		waitForEarlyStartup();
-                	}
-                    getTestHarness().runTests();
-                }
-            };
+					Job.getJobManager().cancel(Workbench.WORKBENCH_AUTO_SAVE_JOB);
+				}
+				// Some tests (notably the startup performance tests) do not want to wait for early startup.
+				// Allow this to be disabled by specifying the system property: org.eclipse.ui.testsWaitForEarlyStartup=false
+				// For details, see bug 94129 [Workbench] Performance test regression caused by workbench harness change
+				if (!"false".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsWaitForEarlyStartup"))) {  //$NON-NLS-1$ //$NON-NLS-2$
+					waitForEarlyStartup();
+				}
+			    getTestHarness().runTests();
+			};
             new Thread(runnable, "WorkbenchTestable").start(); //$NON-NLS-1$
         }
     }
@@ -127,12 +124,7 @@ public class WorkbenchTestable extends TestableObject {
     @Override
 	public void testingFinished() {
         // force events to be processed, and ensure the close is done in the UI thread
-        display.syncExec(new Runnable() {
-            @Override
-			public void run() {
-                Assert.isTrue(workbench.close());
-            }
-        });
+        display.syncExec(() -> Assert.isTrue(workbench.close()));
         ErrorDialog.AUTOMATED_MODE = oldAutomatedMode;
         SafeRunnable.setIgnoreErrors(oldIgnoreErrors);
     }
