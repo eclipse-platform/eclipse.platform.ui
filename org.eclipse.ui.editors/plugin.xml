@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!-- ====================================================================== -->
-<!-- Copyright (c) 2002, 2015 IBM Corporation and others.                   -->
+<!-- Copyright (c) 2002, 2016 IBM Corporation and others.                   -->
 <!-- All rights reserved. This program and the accompanying materials       -->
 <!-- are made available under the terms of the Eclipse Public License v1.0  -->
 <!-- which accompanies this distribution, and is available at               -->
@@ -681,7 +681,7 @@
             colorPreferenceKey="changeIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showChangeInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
-            overviewRulerPreferenceValue="false"
+            overviewRulerPreferenceValue="true"
             presentationLayer="0"
             label="%changes.label"
             textPreferenceValue="false"
@@ -702,7 +702,7 @@
             colorPreferenceKey="additionIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showAdditionInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
-            overviewRulerPreferenceValue="false"
+            overviewRulerPreferenceValue="true"
             presentationLayer="0"
             label="%additions.label"
             textPreferenceValue="false"
@@ -723,7 +723,7 @@
             colorPreferenceKey="deletionIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showDeletionInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
-            overviewRulerPreferenceValue="false"
+            overviewRulerPreferenceValue="true"
             presentationLayer="0"
             label="%deletions.label"
             textPreferenceValue="false"
