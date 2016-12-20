@@ -24,12 +24,13 @@ class JobListeners {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}
 
-	private final IListenerDoit aboutToRun = (listener, event) -> listener.aboutToRun(event);
-	private final IListenerDoit awake = (listener, event) -> listener.awake(event);
-	private final IListenerDoit done = (listener, event) -> listener.done(event);
-	private final IListenerDoit running = (listener, event) -> listener.running(event);
-	private final IListenerDoit scheduled = (listener, event) -> listener.scheduled(event);
-	private final IListenerDoit sleeping = (listener, event) -> listener.sleeping(event);
+	private final IListenerDoit aboutToRun = IJobChangeListener::aboutToRun;
+	private final IListenerDoit awake = IJobChangeListener::awake;
+	private final IListenerDoit done = IJobChangeListener::done;
+	private final IListenerDoit running = IJobChangeListener::running;
+	private final IListenerDoit scheduled = IJobChangeListener::scheduled;
+	private final IListenerDoit sleeping = IJobChangeListener::sleeping;
+
 	/**
 	 * The global job listeners.
 	 */
