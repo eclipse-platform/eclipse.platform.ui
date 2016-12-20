@@ -12,8 +12,8 @@ package org.eclipse.jface.window;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -113,7 +113,7 @@ public abstract class Window implements IShellProvider {
 		 * Handle the exception.
 		 *
 		 * @param t
-		 *            The exception that occured.
+		 *            The exception that occurred.
 		 */
 		public void handleException(Throwable t);
 	}
@@ -438,7 +438,7 @@ public abstract class Window implements IShellProvider {
 	 * getLayout() to return null.
 	 *
 	 * <p>
-	 * It is common practise to create and return a single composite that
+	 * It is common practice to create and return a single composite that
 	 * contains the entire window contents.
 	 * </p>
 	 *
@@ -687,8 +687,8 @@ public abstract class Window implements IShellProvider {
 	 * Returns the shell style bits.
 	 * <p>
 	 * The default value is <code>SWT.CLOSE|SWT.MIN|SWT.MAX|SWT.RESIZE</code>.
-	 * Subclassers should call <code>setShellStyle</code> to change this
-	 * value, rather than overriding this method.
+	 * Subclasses should call <code>setShellStyle</code> to change this value,
+	 * rather than overriding this method.
 	 * </p>
 	 *
 	 * @return the shell style bits
@@ -905,7 +905,7 @@ public abstract class Window implements IShellProvider {
 	 *            point to find (display coordinates)
 	 * @param toFind
 	 *            point to find (display coordinates)
-	 * @return the montor closest to the given point
+	 * @return the monitor closest to the given point
 	 */
 	private static Monitor getClosestMonitor(Display toSearch, Point toFind) {
 		int closest = Integer.MAX_VALUE;
