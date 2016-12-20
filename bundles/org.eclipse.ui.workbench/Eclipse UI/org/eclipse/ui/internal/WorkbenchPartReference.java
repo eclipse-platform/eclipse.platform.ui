@@ -341,7 +341,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 				.getActiveWorkbenchWindow();
 		if (part != null && wbw.getModel().getRenderer() instanceof SWTPartRenderer) {
 			SWTPartRenderer r = (SWTPartRenderer) wbw.getModel().getRenderer();
-			return r.getImage(part);
+			Image image = r.getImage(part);
+			if (image != null) {
+				return image;
+			}
 		}
 
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);

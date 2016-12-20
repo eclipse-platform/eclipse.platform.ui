@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -53,7 +54,11 @@ public class EditorElement extends QuickAccessElement {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return ImageDescriptor.createFromImage(editorReference.getTitleImage());
+		Image titleImage = editorReference.getTitleImage();
+		if (titleImage == null) {
+			return null;
+		}
+		return ImageDescriptor.createFromImage(titleImage);
 	}
 
 	@Override
