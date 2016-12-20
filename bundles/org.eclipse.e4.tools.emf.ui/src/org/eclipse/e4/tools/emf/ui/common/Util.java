@@ -20,6 +20,10 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -30,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -37,15 +42,21 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
 public class Util {
+
+	private static final String APP_E4XMI_DEFAULT = "Application.e4xmi"; //$NON-NLS-1$
+
 	public static final boolean isNullOrEmpty(String element) {
 		return element == null || element.trim().length() == 0;
 	}
@@ -59,8 +70,8 @@ public class Util {
 			if (c instanceof EClass) {
 				final EClass eclass = (EClass) c;
 				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
-					&& !eclass.isInterface()
-					&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+						&& !eclass.isInterface()
+						&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
 					list.add(new FeatureClass(eclass.getName(), eclass));
 				}
 			}
@@ -150,7 +161,7 @@ public class Util {
 	}
 
 	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
-		int index, EStructuralFeature feature) {
+			int index, EStructuralFeature feature) {
 		if (liveModel) {
 			final EObject container = ((EObject) element).eContainer();
 			@SuppressWarnings("unchecked")
@@ -176,7 +187,7 @@ public class Util {
 	}
 
 	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
-		int index) {
+			int index) {
 		if (liveModel) {
 			final MElementContainer<MUIElement> container = element.getParent();
 			container.getChildren().remove(element);
@@ -192,13 +203,97 @@ public class Util {
 		}
 		final MElementContainer<MUIElement> container = element.getParent();
 		final Command cmd = MoveCommand.create(editingDomain, container,
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, element, index);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, element, index);
 
 		if (cmd.canExecute()) {
 			editingDomain.getCommandStack().execute(cmd);
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * This method searches for fragments or application model elements
+	 * resources
+	 */
+	public static ResourceSet getModelElementResources() {
+		ResourceSet resourceSet = new ResourceSetImpl();
+		final PDEExtensionRegistry reg = new PDEExtensionRegistry();
+		IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true); //$NON-NLS-1$
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+		for (final IExtension ext : extensions) {
+			for (final IConfigurationElement el : ext.getConfigurationElements()) {
+				if (el.getName().equals("fragment")) { //$NON-NLS-1$
+					URI uri;
+					// System.err.println("Model-Ext: Checking: " +
+					// ext.getContributor().getName());
+					final IProject p = root.getProject(ext.getContributor().getName());
+					if (p.exists() && p.isOpen()) {
+						uri = URI.createPlatformResourceURI(
+								ext.getContributor().getName() + "/" + el.getAttribute("uri"), true); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						uri = URI.createURI("platform:/plugin/" + ext.getContributor().getName() + "/" //$NON-NLS-1$ //$NON-NLS-2$
+								+ el.getAttribute("uri")); //$NON-NLS-1$
+					}
+					// System.err.println(uri);
+					try {
+						resourceSet.getResource(uri, true);
+					} catch (final Exception e) {
+						e.printStackTrace();
+						// System.err.println("=============> Failing");
+					}
+
+				}
+			}
+		}
+
+		extensions = reg.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
+		for (final IExtension ext : extensions) {
+			for (final IConfigurationElement el : ext.getConfigurationElements()) {
+				if (el.getName().equals("product")) { //$NON-NLS-1$
+					boolean xmiPropertyPresent = false;
+					for (final IConfigurationElement prop : el.getChildren("property")) { //$NON-NLS-1$
+						if (prop.getAttribute("name").equals("applicationXMI")) { //$NON-NLS-1$//$NON-NLS-2$
+							final String v = prop.getAttribute("value"); //$NON-NLS-1$
+							setUpResourceSet(resourceSet, root, v);
+							xmiPropertyPresent = true;
+							break;
+						}
+					}
+					if (!xmiPropertyPresent) {
+						setUpResourceSet(resourceSet, root, ext.getNamespaceIdentifier() + "/" + APP_E4XMI_DEFAULT); //$NON-NLS-1$
+						break;
+					}
+				}
+			}
+		}
+		return resourceSet;
+
+	}
+
+	private static void setUpResourceSet(ResourceSet resourceSet, IWorkspaceRoot root, String v) {
+		final String[] s = v.split("/"); //$NON-NLS-1$
+		URI uri;
+		// System.err.println("Product-Ext: Checking: " + v + " => P:" + s[0] +
+		// "");
+		final IProject p = root.getProject(s[0]);
+		if (p.exists() && p.isOpen()) {
+			uri = URI.createPlatformResourceURI(v, true);
+		} else {
+			uri = URI.createURI("platform:/plugin/" + v); //$NON-NLS-1$
+		}
+
+		// System.err.println(uri);
+		try {
+			// prevent some unnecessary calls by checking the uri
+			if (resourceSet.getURIConverter().exists(uri, null)) {
+				resourceSet.getResource(uri, true);
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			// System.err.println("=============> Failing");
+		}
 	}
 
 	public static final void addDecoration(Control control, Binding binding) {
@@ -227,8 +322,8 @@ public class Util {
 						fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
 						break;
 					}
-					final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
-						fieldDecorationID);
+					final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
+							.getFieldDecoration(fieldDecorationID);
 					dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
 				}
 			}

@@ -23,24 +23,19 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
-import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
-import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ModelResultHandlerImpl;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -49,8 +44,8 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl;
-import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -58,6 +53,8 @@ import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
@@ -82,17 +79,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 public class StringModelFragment extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	// The local collector used by both dialogs (findParentReference and
-	// FeaturesSelection)
-	private ClassContributionCollector collector;
 	// The selected Container is the class that match the ID.
 	// It can be get from the FindParentReferenceDialog or computed from the ID.
 	private EClass selectedContainer;
@@ -102,13 +92,15 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	private final List<Action> actions = new ArrayList<>();
 
+	// The resource set where to search for element with a specific ID.
+	private ResourceSet resourceSet = null;
+
 	@Inject
 	IEclipseContext eclipseContext;
 
 	@Inject
 	public StringModelFragment() {
 		super();
-		collector = getCollector();
 	}
 
 	@PostConstruct
@@ -189,41 +181,59 @@ public class StringModelFragment extends AbstractComponentEditor {
 			return selectedContainer;
 		}
 
-		// we get the StringModelFragment
+		// we get the StringModelFragment. If no ID, no search...
 		StringModelFragmentImpl modelFragment = getStringModelFragment();
+		String parentElementId = modelFragment.getParentElementId();
+		if ((parentElementId == null) || (parentElementId.isEmpty())) {
+			return null;
+		}
 
-		Filter filter = new Filter(ApplicationPackageImpl.eINSTANCE.getApplication(), ""); //$NON-NLS-1$
-		WritableList list = new WritableList<>();
-		ModelResultHandler resultHandler = new ModelResultHandlerImpl(list, filter, this,
-				modelFragment.eResource());
+		if ("xpath:/".equals(parentElementId) || "org.eclipse.e4.legacy.ide.application".equals(parentElementId)) {
+			return ApplicationPackageImpl.eINSTANCE.getApplication();
+		}
 
-		collector.findModelElements(filter, resultHandler);
-		List<EClass> globalResult = new ArrayList<>();
+		// We have to proceed to a simple search on all elements in all resource
+		// set...
+		// Must load the models and check for ids.
+		if (resourceSet == null) {
+			resourceSet = Util.getModelElementResources();
+		}
 
-		for (Object o : list) {
-			if (o instanceof MApplication) {
-				MApplication mApp = (MApplication) o;
-				List<EClass> targetClass = getTargetClass(mApp);
-				globalResult.addAll(targetClass);
+		String xpath = parentElementId.startsWith("xpath:") ? parentElementId.substring(6) : null;
+
+		for (final Resource res : resourceSet.getResources()) {
+			final TreeIterator<EObject> it = EcoreUtil.getAllContents(res, true);
+			while (it.hasNext()) {
+				final EObject o = it.next();
+				// We found this element, if this is an application element not
+				// contained in model fragement imports
+				// and having the same ID. We return the first found.
+
+				// Deal with non default MApplication IDs.
+				if (xpath != null) {
+					if (o instanceof MApplication) {
+						EClass found = getTargetClassFromXPath((MApplication) o, xpath);
+						if (found != null) {
+							return found;
+						}
+					}
+				} else {
+					// This is a standard search with ID.
+					if ((o instanceof MApplicationElement)
+							&& (o.eContainingFeature() != FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS)
+							&& parentElementId.equals(((MApplicationElement) o).getElementId())) {
+						selectedContainer = o.eClass();
+						return selectedContainer;
+					}
+				}
 			}
 		}
-		selectedContainer = globalResult.isEmpty() ? null : globalResult.get(0);
 
 		return selectedContainer;
 	}
 
 	private StringModelFragmentImpl getStringModelFragment() {
 		return ((StringModelFragmentImpl) getMaster().getValue());
-	}
-
-	private ClassContributionCollector getCollector() {
-		final Bundle bundle = FrameworkUtil.getBundle(FindParentReferenceElementDialog.class);
-		final BundleContext context = bundle.getBundleContext();
-		final ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
-		if (ref != null) {
-			return (ClassContributionCollector) context.getService(ref);
-		}
-		return null;
 	}
 
 	private Composite createForm(Composite parent) {
@@ -261,10 +271,11 @@ public class StringModelFragment extends AbstractComponentEditor {
 			// t.setEditable(false);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(
-					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(),
-							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t),
+					EMFEditProperties
+					.value(getEditingDomain(),
+							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID)
+					.observeDetail(getMaster()));
 
 			// Add a modify listener to control the change of the ID -> Must
 			// force the computation of selectedContainer.
@@ -282,7 +293,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					final FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(),
 							StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages,
-							collector);
+							getSelectedContainer());
 					dialog.open();
 					selectedContainer = dialog.getSelectedContainer();
 				}
@@ -309,10 +320,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 			TextPasteHandler.createFor(t);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
-			context.bindValue(
-					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(),
-							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t),
+					EMFEditProperties
+					.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME)
+					.observeDetail(getMaster()));
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -435,47 +446,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 		return l;
 	}
 
-	/**
-	 * This method returns the target class of the element pointed by the
-	 * 'extended element ID' value In case of several matches it returns a list
-	 * of possible classes (but this case means that the ID is used for
-	 * different objects in different models present in the workspace). If the
-	 * parent element ID value is xpath:/ or
-	 * 'org.eclipse.e4.legacy.ide.application', it returns MApplication EClass
-	 *
-	 * @param application
-	 *            : the application to be parsed
-	 * @return the list of EClass
-	 */
-	public List<EClass> getTargetClass(MApplication application) {
-		List<EClass> ret = Collections.emptyList();
-		StringModelFragmentImpl modelFragment = getStringModelFragment();
-
-
-		String idsOrXPath = modelFragment.getParentElementId();
-		if ("xpath:/".equals(idsOrXPath) || "org.eclipse.e4.legacy.ide.application".equals(idsOrXPath)) {
-			ret = new ArrayList<>();
-			ret.add(ApplicationPackageImpl.eINSTANCE.getApplication());
-		} else {
-			// Deal with non default MApplication IDs.
-			if (idsOrXPath.startsWith("xpath:")) {
-				String xPath = idsOrXPath.substring(6);
-				ret = getTargetClassFromXPath(application, xPath);
-			} else {
-
-				MApplicationElement o = ModelUtils.findElementById(application, idsOrXPath);
-				if (o != null) {
-					ret = new ArrayList<>();
-					ret.add(((EObject) o).eClass());
-				}
-			}
-		}
-
-		return ret;
-
-	}
-
-
 
 	/**
 	 * Returns the EClass of the Application element(s) referenced by the xpath
@@ -487,8 +457,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	 *            : the xpath value without the 'xpath:' prefix
 	 * @return the list of EClass(es) matching this xpath
 	 */
-	private List<EClass> getTargetClassFromXPath(MApplication application, String xpath) {
-		List<EClass> ret = new ArrayList<>();
+	private EClass getTargetClassFromXPath(MApplication application, String xpath) {
 
 		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
 		XPathContext xpathContext = f.newContext((EObject) application);
@@ -499,7 +468,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				Object obj = i.next();
 				if (obj instanceof MApplicationElement) {
 					ApplicationElementImpl ae = (ApplicationElementImpl) obj;
-					ret.add(ae.eClass());
+					return ae.eClass();
 				}
 			}
 		} catch (Exception ex) {
@@ -507,9 +476,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			ex.printStackTrace();
 		}
 
-		return ret;
+		return null;
 	}
-
-
 
 }

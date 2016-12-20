@@ -25,6 +25,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -67,6 +68,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private final MStringModelFragment fragment;
@@ -81,12 +86,24 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private ClassContributionCollector collector;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor,
-			MStringModelFragment fragment, Messages Messages, ClassContributionCollector collector) {
+			MStringModelFragment fragment, Messages Messages,
+			EClass previousSelection) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editor = editor;
 		this.Messages = Messages;
-		this.collector = collector;
+		this.collector = getCollector();
+		this.selectedContainer = previousSelection;
+	}
+
+	private ClassContributionCollector getCollector() {
+		final Bundle bundle = FrameworkUtil.getBundle(FindParentReferenceElementDialog.class);
+		final BundleContext context = bundle.getBundleContext();
+		final ServiceReference<?> ref = context.getServiceReference(ClassContributionCollector.class.getName());
+		if (ref != null) {
+			return (ClassContributionCollector) context.getService(ref);
+		}
+		return null;
 	}
 
 	@Override
@@ -147,7 +164,6 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 		eClassViewer.setInput(eClassList);
-		eClassViewer.getCombo().select(0);
 		eClassViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		eClassViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -244,6 +260,16 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				collector.clearModelCache();
 			}
 		});
+
+		// Manage the current selection on comboviewer (previous or first one).
+		if (selectedContainer != null) {
+			eClassViewer.setSelection(new StructuredSelection(selectedContainer));
+		} else {
+			// Select addon by default (not necessary in the first position in
+			// the eclasslist...)
+			eClassViewer.setSelection(new StructuredSelection(ApplicationPackageImpl.Literals.ADDON));
+		}
+
 		return comp;
 	}
 

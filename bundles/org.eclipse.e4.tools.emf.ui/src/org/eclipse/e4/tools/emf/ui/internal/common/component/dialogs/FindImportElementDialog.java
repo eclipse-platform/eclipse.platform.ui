@@ -11,10 +11,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
-import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
@@ -22,7 +20,6 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -142,7 +139,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (currentResultHandler != null) {
-					currentResultHandler.cancled = true;
+					currentResultHandler.cancel();
 				}
 				list.clear();
 				final Filter filter = new Filter(element.eClass(), searchText.getText());
@@ -192,48 +189,4 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		return null;
 	}
 
-	private static class ModelResultHandlerImpl implements ModelResultHandler {
-		private boolean cancled = false;
-		private final IObservableList list;
-		private final Filter filter;
-		private final AbstractComponentEditor editor;
-		private final Resource resource;
-
-		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor,
-				Resource resource) {
-			this.list = list;
-			this.filter = filter;
-			this.editor = editor;
-			this.resource = resource;
-		}
-
-		@Override
-		public void result(EObject data) {
-			if (!cancled) {
-				if (!resource.getURI().equals(data.eResource().getURI())) {
-					if (data instanceof MApplicationElement) {
-						final String elementId = ((MApplicationElement) data).getElementId();
-						if (elementId == null) {
-							list.add(data);
-							return;
-						}
-
-						if (elementId.trim().length() > 0) {
-							if (filter.elementIdPattern.matcher(elementId).matches()) {
-								list.add(data);
-								return;
-							}
-						}
-
-						final String label = editor.getDetailLabel(data);
-						if (label != null && label.trim().length() > 0) {
-							if (filter.elementIdPattern.matcher(label).matches()) {
-								list.add(data);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 }
