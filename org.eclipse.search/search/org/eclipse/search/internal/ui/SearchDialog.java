@@ -435,7 +435,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		CTabFolder folder = new CTabFolder(composite, SWT.NONE);
+		CTabFolder folder = new CTabFolder(composite, SWT.BORDER);
+
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		folder.setFont(composite.getFont());
