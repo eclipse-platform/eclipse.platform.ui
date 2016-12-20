@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500661
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500661, 492180
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
@@ -87,26 +87,62 @@ public abstract class QuickAccessElement {
 	private static final String PAR_END = "\\)"; //$NON-NLS-1$
 	private static final String ONE_CHAR = ".?"; //$NON-NLS-1$
 
-	private String pFilter;
-	private Pattern pattern;
+	// whitespaces filter and patterns
+	private String wsFilter;
+	private Pattern wsPattern;
 
 	/**
-	 * Get the existing {@link Pattern} for the given filter, or create a new one
+	 * Get the existing {@link Pattern} for the given filter, or create a new
+	 * one. The generated pattern will replace whitespaces with * to match all.
 	 *
 	 * @param filter
 	 * @return
 	 */
-	private Pattern getPattern(String filter) {
-		if (pattern == null || !filter.equals(pFilter)) {
-			pFilter = filter;
+	private Pattern getWhitespacesPattern(String filter) {
+		if (wsPattern == null || !filter.equals(wsFilter)) {
+			wsFilter = filter;
 			String sFilter = filter.replaceFirst(WS_START, EMPTY_STR).replaceFirst(WS_END, EMPTY_STR)
 					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
 			sFilter = String.format(".*(%s).*", sFilter.replaceAll(ANY_WS, ").*(")); //$NON-NLS-1$//$NON-NLS-2$
-			pattern = Pattern.compile(sFilter, Pattern.CASE_INSENSITIVE);
+			wsPattern = Pattern.compile(sFilter, Pattern.CASE_INSENSITIVE);
 		}
-		return pattern;
+		return wsPattern;
 	}
 
+	// wildcard filter and patterns
+	private String wcFilter;
+	private Pattern wcPattern;
+
+	/**
+	 * Get the existing {@link Pattern} for the given filter, or create a new
+	 * one. The generated pattern will handle '*' and '?' wildcards.
+	 *
+	 * @param filter
+	 * @return
+	 */
+	private Pattern getWildcardsPattern(String filter) {
+		if (wcPattern == null || !filter.equals(wcFilter)) {
+			wcFilter = filter;
+			String sFilter = filter.replaceFirst(WS_START, EMPTY_STR).replaceFirst(WS_END, EMPTY_STR)
+					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
+			// replace '*' and '?' with their matchers ").*(" and ").?("
+			StringBuilder sb = new StringBuilder();
+			for(int i=0; i<sFilter.length(); i++) {
+				char c = sFilter.charAt(i);
+				if(c=='*'||c=='?') {
+					sb.append(").").append(c).append("("); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					sb.append(c);
+				}
+			}
+			sFilter = String.format(".*(%s).*", sb.toString()); //$NON-NLS-1$
+			//
+			wcPattern = Pattern.compile(sFilter, Pattern.CASE_INSENSITIVE);
+		}
+		return wcPattern;
+	}
+
+	int i = 0;
 	/**
 	 * If this element is a match (partial, complete, camel case, etc) to the
 	 * given filter, returns a {@link QuickAccessEntry}. Otherwise returns
@@ -121,6 +157,7 @@ public abstract class QuickAccessElement {
 	public QuickAccessEntry match(String filter,
 			QuickAccessProvider providerForMatching) {
 		String sortLabel = getLabel();
+		// first occurrence of filter
 		int index = sortLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
 			int quality = sortLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
@@ -130,9 +167,16 @@ public abstract class QuickAccessElement {
 					new int[][] { { index, index + filter.length() - 1 } },
  EMPTY_INDICES, quality);
 		}
-		//
-		Pattern p = getPattern(filter);
+		Pattern p;
+		if (filter.contains("*") || filter.contains("?")) { //$NON-NLS-1$ //$NON-NLS-2$
+			// check for wildcards
+			p = getWildcardsPattern(filter);
+		} else {
+			// check for whitespaces
+			p = getWhitespacesPattern(filter);
+		}
 		Matcher m = p.matcher(sortLabel);
+		// if matches, return an entry and highlight the match
 		if (m.matches()) {
 			int groupCount = m.groupCount();
 			int[][] indices = new int[groupCount][];
@@ -147,6 +191,7 @@ public abstract class QuickAccessElement {
 					indices,
 					EMPTY_INDICES, quality );
 		}
+		//
 		String combinedLabel = (providerForMatching.getName() + " " + getLabel()); //$NON-NLS-1$
 		index = combinedLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
