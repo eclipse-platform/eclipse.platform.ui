@@ -222,6 +222,9 @@ public class ManagedForm implements IManagedForm {
 			IFormPart part = parts.get(0);
 			part.setFocus();
 		}
+		if (!form.setFocus()) {
+			form.getContent().forceFocus();
+		}
 	}
 
 	@Override
