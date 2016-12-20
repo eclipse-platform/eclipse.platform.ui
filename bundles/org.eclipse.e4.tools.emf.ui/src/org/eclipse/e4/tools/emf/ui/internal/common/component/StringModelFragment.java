@@ -30,6 +30,7 @@ import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
@@ -44,6 +45,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -53,6 +55,7 @@ import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -83,6 +86,7 @@ import org.eclipse.swt.widgets.Text;
 public class StringModelFragment extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
+
 	// The selected Container is the class that match the ID.
 	// It can be get from the FindParentReferenceDialog or computed from the ID.
 	private EClass selectedContainer;
@@ -90,13 +94,15 @@ public class StringModelFragment extends AbstractComponentEditor {
 	private final IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties
 			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
+	// This is the list of available 'add child' actions depending on selected
+	// values
 	private final List<Action> actions = new ArrayList<>();
-
-	// The resource set where to search for element with a specific ID.
-	private ResourceSet resourceSet = null;
 
 	@Inject
 	IEclipseContext eclipseContext;
+
+	// The pickList to select the kind of children to add (must be refreshed)
+	private E4PickList pickList;
 
 	@Inject
 	public StringModelFragment() {
@@ -105,19 +111,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@PostConstruct
 	public void init() {
-		final List<FeatureClass> list = new ArrayList<>();
-		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
-		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
-				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
-		for (final FeatureClass featureClass : list) {
-			actions.add(new Action(featureClass.label) {
-
-				@Override
-				public void run() {
-					handleAdd(featureClass.eClass, false);
-				}
-			});
-		}
 	}
 
 	@Override
@@ -165,6 +158,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			composite = createForm(parent);
 		}
 		getMaster().setValue(object);
+		updateChildrenChoice();
 		return composite;
 	}
 
@@ -181,23 +175,27 @@ public class StringModelFragment extends AbstractComponentEditor {
 			return selectedContainer;
 		}
 
-		// we get the StringModelFragment. If no ID, no search...
+		// we get the StringModelFragment. If not initialized, no search...
 		StringModelFragmentImpl modelFragment = getStringModelFragment();
+		if (modelFragment == null) {
+			return null;
+		}
+
+		// If no element ID, no search...
 		String parentElementId = modelFragment.getParentElementId();
 		if ((parentElementId == null) || (parentElementId.isEmpty())) {
 			return null;
 		}
 
+		// known ID for application are directly filtered.
 		if ("xpath:/".equals(parentElementId) || "org.eclipse.e4.legacy.ide.application".equals(parentElementId)) {
-			return ApplicationPackageImpl.eINSTANCE.getApplication();
+			selectedContainer = ApplicationPackageImpl.eINSTANCE.getApplication();
+			return selectedContainer;
 		}
 
 		// We have to proceed to a simple search on all elements in all resource
-		// set...
-		// Must load the models and check for ids.
-		if (resourceSet == null) {
-			resourceSet = Util.getModelElementResources();
-		}
+		// set... this resource set is cached by Util...
+		ResourceSet resourceSet = Util.getModelElementResources();
 
 		String xpath = parentElementId.startsWith("xpath:") ? parentElementId.substring(6) : null;
 
@@ -206,7 +204,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			while (it.hasNext()) {
 				final EObject o = it.next();
 				// We found this element, if this is an application element not
-				// contained in model fragement imports
+				// contained in model fragment imports
 				// and having the same ID. We return the first found.
 
 				// Deal with non default MApplication IDs.
@@ -214,7 +212,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 					if (o instanceof MApplication) {
 						EClass found = getTargetClassFromXPath((MApplication) o, xpath);
 						if (found != null) {
-							return found;
+							selectedContainer = found;
+							return selectedContainer;
 						}
 					}
 				} else {
@@ -324,6 +323,12 @@ public class StringModelFragment extends AbstractComponentEditor {
 					EMFEditProperties
 					.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME)
 					.observeDetail(getMaster()));
+			t.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					updateChildrenChoice();
+				}
+			});
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -346,7 +351,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 
-			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
 					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
@@ -381,24 +386,13 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			});
 
-			final List<FeatureClass> list = new ArrayList<>();
-			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
-			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
-					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
-
-			pickList.setInput(list);
-			if (list.size() > 0) {
-				pickList.setSelection(new StructuredSelection(list.get(0)));
-			}
-
-			final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
-			pickList.getList().setInput(prop.observeDetail(getMaster()));
-
 		}
 
 		createContributedEditorTabs(folder, context, getMaster(), MStringModelFragment.class);
 
 		folder.setSelection(0);
+
+		updateChildrenChoice();
 
 		return folder;
 	}
@@ -412,6 +406,38 @@ public class StringModelFragment extends AbstractComponentEditor {
 		if (context != null) {
 			context.dispose();
 			context = null;
+		}
+	}
+
+	/**
+	 * This method will update the picklist containing the list of possible
+	 * children classes
+	 *
+	 */
+	private void updateChildrenChoice() {
+		selectedContainer = getSelectedContainer();
+
+		final List<FeatureClass> list = getTargetChildrenClasses();
+
+		pickList.setInput(list);
+		if (list.size() > 0) {
+			pickList.setSelection(new StructuredSelection(list.get(0)));
+		}
+
+		// pickList.getList().refresh();
+
+		final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
+		pickList.getList().setInput(prop.observeDetail(getMaster()));
+
+		// Update the possible actions
+		actions.clear();
+		for (final FeatureClass featureClass : list) {
+			actions.add(new Action(featureClass.label) {
+				@Override
+				public void run() {
+					handleAdd(featureClass.eClass, false);
+				}
+			});
 		}
 	}
 
@@ -477,6 +503,61 @@ public class StringModelFragment extends AbstractComponentEditor {
 		}
 
 		return null;
+	}
+
+	/**
+	 * This method computes the available classes that can be selected as child
+	 * for the current selected element. The result is cached in a map as the
+	 * meta model will not change !
+	 *
+	 * @return an empty list or the list for possible children
+	 */
+
+	public List<FeatureClass> getTargetChildrenClasses() {
+		List<FeatureClass> result = Collections.emptyList();
+
+		if (selectedContainer != null) {
+
+			// The top level class for children, is the class of the EReference
+			// bound to feature name
+			EReference childRef = null;
+			String featurename = getStringModelFragment().getFeaturename();
+
+			for (EReference ref : selectedContainer.getEAllReferences()) {
+				if (ref.getName().equals(featurename))
+				{
+					childRef = ref;
+					break;
+				}
+			}
+
+			if (childRef == null) {
+				return result;
+			}
+
+			// Get the parent EClass where this childRef is defined...
+			// For instance : for the 'children' reference it will be in
+			// UIElementContainer<T extends UIElement>
+			// We must check if the selectedContainer extends
+			// UIElementContainer<XXX> and in this case childRef is XXX
+			final EClass childClass = (EClass) ModelUtils.getTypeArgument(selectedContainer,
+					childRef.getEGenericType());
+
+			// Search for descendant of ChildClass -> This result could be
+			// cached for all StringModelFragment editors instances and computed
+			// once...
+			result = new ArrayList<>();
+			for (final InternalPackage p : Util.loadPackages()) {
+				for (EClass c : p.getAllClasses()) {
+					if (childClass.isSuperTypeOf(c)) {
+						result.add(new FeatureClass(c.getName(), c));
+					}
+				}
+
+			}
+		}
+		return result;
+
 	}
 
 }

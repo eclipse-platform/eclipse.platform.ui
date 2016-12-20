@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - added some cache for e4xmi resource management
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
@@ -19,7 +20,12 @@ import java.util.TreeSet;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -213,11 +219,29 @@ public class Util {
 	}
 
 	/**
+	 * The set of resources containing model element. Updated when one changes
+	 * in the workspace
+	 */
+	private static ResourceSet modelResourceSet;
+
+	// The lis
+	private static boolean e4ModelResourceListenerRegistered = false;
+
+	/**
 	 * This method searches for fragments or application model elements
-	 * resources
+	 * resources. It is updated when the workspace changes.. else it returns the
+	 * cached values.
 	 */
 	public static ResourceSet getModelElementResources() {
-		ResourceSet resourceSet = new ResourceSetImpl();
+
+		// Return previous computed result while workspace did not change...
+		if (modelResourceSet != null) {
+			return modelResourceSet;
+		}
+
+		registerE4XmiListener(); // Done only once.
+
+		modelResourceSet = new ResourceSetImpl();
 		final PDEExtensionRegistry reg = new PDEExtensionRegistry();
 		IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true); //$NON-NLS-1$
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -238,7 +262,7 @@ public class Util {
 					}
 					// System.err.println(uri);
 					try {
-						resourceSet.getResource(uri, true);
+						modelResourceSet.getResource(uri, true);
 					} catch (final Exception e) {
 						e.printStackTrace();
 						// System.err.println("=============> Failing");
@@ -256,21 +280,66 @@ public class Util {
 					for (final IConfigurationElement prop : el.getChildren("property")) { //$NON-NLS-1$
 						if (prop.getAttribute("name").equals("applicationXMI")) { //$NON-NLS-1$//$NON-NLS-2$
 							final String v = prop.getAttribute("value"); //$NON-NLS-1$
-							setUpResourceSet(resourceSet, root, v);
+							setUpResourceSet(modelResourceSet, root, v);
 							xmiPropertyPresent = true;
 							break;
 						}
 					}
 					if (!xmiPropertyPresent) {
-						setUpResourceSet(resourceSet, root, ext.getNamespaceIdentifier() + "/" + APP_E4XMI_DEFAULT); //$NON-NLS-1$
+						setUpResourceSet(modelResourceSet, root,
+								ext.getNamespaceIdentifier() + "/" + APP_E4XMI_DEFAULT); //$NON-NLS-1$
 						break;
 					}
 				}
 			}
 		}
-		return resourceSet;
-
+		return modelResourceSet;
 	}
+
+	/**
+	 * A listener to reset the cache of e4Xmi resource for the index research
+	 *
+	 */
+	private static void registerE4XmiListener() {
+		// Register once on the workspace.
+		// the listener could be optimized to remember of changed resource since
+		// the last call to getModelElementResources...
+		if (!e4ModelResourceListenerRegistered) {
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+				@Override
+				public void resourceChanged(IResourceChangeEvent event) {
+					// Nothing to do if resource set not yet used !
+					if (modelResourceSet == null) {
+						return;
+					}
+					IResourceDelta delta = event.getDelta();
+					checkDeltaContainsE4xmi(delta);
+				}
+
+				private void checkDeltaContainsE4xmi(IResourceDelta delta) {
+					if (modelResourceSet == null) {
+						return;
+					}
+
+					for (IResourceDelta rd : delta.getAffectedChildren()) {
+						IResource r = rd.getResource();
+						if (r instanceof IFile)
+						{
+							if ("e4xmi".equals(((IFile) r).getFileExtension())) {
+								modelResourceSet = null;
+								break;
+							}
+						} else {
+							checkDeltaContainsE4xmi(rd);
+						}
+					}
+
+				}
+			});
+			e4ModelResourceListenerRegistered = true;
+		}
+	}
+
 
 	private static void setUpResourceSet(ResourceSet resourceSet, IWorkspaceRoot root, String v) {
 		final String[] s = v.split("/"); //$NON-NLS-1$
@@ -284,7 +353,6 @@ public class Util {
 			uri = URI.createURI("platform:/plugin/" + v); //$NON-NLS-1$
 		}
 
-		// System.err.println(uri);
 		try {
 			// prevent some unnecessary calls by checking the uri
 			if (resourceSet.getURIConverter().exists(uri, null)) {
@@ -292,7 +360,6 @@ public class Util {
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
-			// System.err.println("=============> Failing");
 		}
 	}
 

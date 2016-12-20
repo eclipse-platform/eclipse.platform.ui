@@ -11,19 +11,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 @SuppressWarnings("restriction")
 public class TargetElementProviders implements IModelElementProvider {
-	private ResourceSet resourceSet;
 
 	@Override
 	public void getModelElements(Filter filter, ModelResultHandler handler) {
-		if (resourceSet == null) {
-			resourceSet = Util.getModelElementResources();
-		}
 
-		applyFilter(filter, handler);
-	}
+		ResourceSet resourceSet = Util.getModelElementResources();
 
-
-	private void applyFilter(Filter filter, ModelResultHandler handler) {
 		for (final Resource res : resourceSet.getResources()) {
 			final TreeIterator<EObject> it = EcoreUtil.getAllContents(res,
 					true);
@@ -40,13 +33,13 @@ public class TargetElementProviders implements IModelElementProvider {
 
 	@Override
 	public void clearCache() {
-		if (resourceSet == null) {
-			return;
-		}
-		for (final Resource r : resourceSet.getResources()) {
-			r.unload();
-		}
-		resourceSet = null;
+		// Should now do nothing, as Util.getModelElementResources is now
+		// listening
+		// to e4xmi changes
+		/*
+		 * if (resourceSet == null) { return; } for (final Resource r :
+		 * resourceSet.getResources()) { r.unload(); } resourceSet = null;
+		 */
 	}
 
 }

@@ -12,6 +12,7 @@
 package org.eclipse.e4.tools.emf.ui.common;
 
 import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
@@ -34,6 +35,11 @@ public interface IEditorFeature {
 			this.label = label;
 			this.iconId = iconId;
 			this.eClass = eClass;
+		}
+
+		@Override
+		public String toString() {
+			return "FeatureClass : " + label;
 		}
 	}
 

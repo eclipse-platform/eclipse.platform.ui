@@ -89,7 +89,10 @@ public abstract class AbstractPickList extends Composite {
 
 		picker = new ComboViewer(comp, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		final Combo control = picker.getCombo();
-		control.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		GridData gdpicker = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gdpicker.minimumWidth = 180;
+		gdpicker.grabExcessHorizontalSpace = true;
+		control.setLayoutData(gdpicker);
 
 		// ComboContentAdapter controlContentAdapter = new ComboContentAdapter()
 		// {
