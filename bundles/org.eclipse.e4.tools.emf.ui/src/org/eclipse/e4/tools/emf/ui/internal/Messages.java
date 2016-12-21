@@ -678,6 +678,10 @@ public class Messages {
 	public String CoreExpressionEditor_TreeLabelDescription;
 	public String CoreExpressionEditor_ExpressionId;
 
+	public String ImperativeExpressionEditor_TreeLabel;
+	public String ImperativeExpressionEditor_TreeLabelDescription;
+	public String ImperativeExpressionEditor_TrackingLabel;
+
 	public String ExpressionIdDialog_ShellTitle;
 	public String ExpressionIdDialog_DialogTitle;
 	public String ExpressionIdDialog_DialogMessage;

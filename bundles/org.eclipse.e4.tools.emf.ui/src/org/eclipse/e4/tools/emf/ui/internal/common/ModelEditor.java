@@ -91,6 +91,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.DynamicMenuContribu
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ImperativeExpressionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
@@ -1368,6 +1369,8 @@ public class ModelEditor implements IGotoObject {
 
 		registerEditor(UiPackageImpl.Literals.CORE_EXPRESSION,
 				ContextInjectionFactory.make(CoreExpressionEditor.class, context));
+		registerEditor(UiPackageImpl.Literals.IMPERATIVE_EXPRESSION,
+				ContextInjectionFactory.make(ImperativeExpressionEditor.class, context));
 
 		registerEditor(BasicPackageImpl.Literals.COMPOSITE_PART,
 				ContextInjectionFactory.make(CompositePartEditor.class, context));

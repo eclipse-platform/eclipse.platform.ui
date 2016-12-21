@@ -29,6 +29,9 @@
       <contributionClassCreator
             class="org.eclipse.e4.tools.emf.editor3x.extension.ToolControlContributionEditor">
       </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.ImperativeExpressionContributionEditor">
+      </contributionClassCreator>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

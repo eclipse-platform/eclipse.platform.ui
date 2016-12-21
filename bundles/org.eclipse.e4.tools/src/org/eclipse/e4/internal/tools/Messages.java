@@ -73,6 +73,9 @@ public class Messages extends NLS {
 	public static String NewHandlerClassWizard_CreateNewHandler;
 	public static String NewHandlerClassWizard_ExecuteMethod;
 	public static String NewHandlerClassWizard_NewHandler;
+	public static String NewImperativeExpressionClassWizard_CreateNewImperativeExpression;
+	public static String NewImperativeExpressionClassWizard_EvaluateMethod;
+	public static String NewImperativeExpressionClassWizard_NewImperativeExpression;
 	public static String NewModelFilePage_Browse;
 	public static String NewModelFilePage_Container;
 	public static String NewModelFilePage_FileContainerMustBeSpecified;

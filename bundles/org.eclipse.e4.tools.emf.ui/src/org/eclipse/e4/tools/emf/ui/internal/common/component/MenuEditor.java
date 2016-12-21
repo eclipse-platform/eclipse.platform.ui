@@ -339,6 +339,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			final List<Object> list = new ArrayList<>();
 			list.add(Messages.MenuItemEditor_NoExpression);
 			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
+			list.add(UiPackageImpl.Literals.IMPERATIVE_EXPRESSION);
 			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION,
 					UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
 			combo.setInput(list);
