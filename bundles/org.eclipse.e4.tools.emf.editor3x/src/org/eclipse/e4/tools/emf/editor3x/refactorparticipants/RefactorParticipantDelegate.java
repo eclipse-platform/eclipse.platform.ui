@@ -10,7 +10,7 @@
  * Wim Jongman <wim.jongman@remainsoftware.com> Bug 432892: Eclipse 4 Application does not work after renaming the
  * project name
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor3x;
+package org.eclipse.e4.tools.emf.editor3x.refactorparticipants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.e4.tools.emf.editor3x.RefactorModel;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -49,20 +50,17 @@ class RefactorParticipantDelegate {
 	 * @throws CoreException
 	 * @throws OperationCanceledException
 	 */
-	public static CompositeChange createChange(
-		IProgressMonitor pProgressMonitor, final RefactorModel pModel)
+	public static CompositeChange createChange(IProgressMonitor pProgressMonitor, final RefactorModel pModel)
 			throws CoreException, OperationCanceledException {
 
-		final String[] filenames = { "*.e4xmi", "plugin.xml" }; //$NON-NLS-1$ //$NON-NLS-2$
-		final FileTextSearchScope scope = FileTextSearchScope.newWorkspaceScope(
-			filenames, false);
+		final String[] filenames = { "*.e4xmi" }; //$NON-NLS-1$
+		final FileTextSearchScope scope = FileTextSearchScope.newWorkspaceScope(filenames, false);
 
 		final Map<IFile, TextFileChange> changes = new HashMap<>();
 		final TextSearchRequestor searchRequestor = new TextSearchRequestor() {
 
 			@Override
-			public boolean acceptPatternMatch(TextSearchMatchAccess matchAccess)
-				throws CoreException {
+			public boolean acceptPatternMatch(TextSearchMatchAccess matchAccess) throws CoreException {
 				final IFile file = matchAccess.getFile();
 				TextFileChange change = changes.get(file);
 
@@ -73,7 +71,7 @@ class RefactorParticipantDelegate {
 					}
 
 					if (pModel.isProjectRename()
-						&& file.getProject().equals(pModel.getOldProject())) {
+							&& file.getProject().equals(pModel.getOldProject())) {
 						// The project/resources get refactored before the
 						// TextChange is applied, therefore we need their
 						// future locations
@@ -83,11 +81,11 @@ class RefactorParticipantDelegate {
 						// new project will keep that location, only the project
 						// will be changed
 						final IPath oldFile = file.getFullPath().removeFirstSegments(
-							1);
+								1);
 						final IFile newFile = newProject.getFile(oldFile);
 
 						change = new MovedTextFileChange(file.getName(),
-							newFile, file);
+								newFile, file);
 						change.setEdit(new MultiTextEdit());
 						changes.put(file, change);
 
@@ -99,26 +97,28 @@ class RefactorParticipantDelegate {
 				}
 
 				final ReplaceEdit edit = new ReplaceEdit(
-					matchAccess.getMatchOffset(),
-					matchAccess.getMatchLength(),
-					pModel.getNewTextCurrentIndex());
+						matchAccess.getMatchOffset(),
+						matchAccess.getMatchLength(),
+						pModel.getNewTextCurrentIndex());
 				change.addEdit(edit);
 				change.addTextEditGroup(new TextEditGroup(E4_MODEL_CHANGES,
-					edit));
+						edit));
 				return true;
 			}
 		};
 
 		CompositeChange result;
 		final TextSearchEngine searchEngine = TextSearchEngine.create();
-		for (int count = pModel.getRenameCount(); count > 0; count--) {
+		int count = pModel.getRenameCount();
+		while (count > 0) {
 			pModel.setIndex(count - 1);
 			searchEngine.search(
-				scope,
-				searchRequestor,
-				TextSearchEngine.createPattern(
-					pModel.getOldTextCurrentIndex(), true, false),
+					scope,
+					searchRequestor,
+					TextSearchEngine.createPattern(
+							pModel.getOldTextCurrentIndex(), true, false),
 					pProgressMonitor);
+			count--;
 		}
 
 		if (changes.isEmpty()) {

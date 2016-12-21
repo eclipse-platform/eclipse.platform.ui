@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 BestSolution.at and others.
+ * Copyright (c) 2011, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  * Wim Jongman <wim.jongman@remainsoftware.com> - Bug 395174: e4xmi should participate in package renaming
  * Bug 432892: Eclipse 4 Application does not work after renaming the project name
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor3x;
+package org.eclipse.e4.tools.emf.editor3x.refactorparticipants;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -19,21 +19,22 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.e4.tools.emf.editor3x.RefactorModel;
 import org.eclipse.e4.tools.emf.editor3x.extension.Util;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
-public class ModelRenameParticipant extends
-org.eclipse.ltk.core.refactoring.participants.RenameParticipant {
+public class ModelRenameParticipant extends RenameParticipant {
 	private IType fType;
 	private IPackageFragment fPckage;
 	private IFile fFile;
 	private IFolder fFolder;
 	private IProject fProject;
-	private RefactorModel fModel;
+	private RefactorModel refactorModel;
 
 	@Override
 	protected boolean initialize(Object element) {
@@ -72,16 +73,15 @@ org.eclipse.ltk.core.refactoring.participants.RenameParticipant {
 	}
 
 	@Override
-	public RefactoringStatus checkConditions(IProgressMonitor pm,
-		CheckConditionsContext context) throws OperationCanceledException {
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
+			throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
 	@Override
-	public Change createChange(IProgressMonitor pm) throws CoreException,
-	OperationCanceledException {
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 
-		fModel = RefactorModel.getModel(this);
+		refactorModel = RefactorModel.getModel(this);
 
 		if (fType != null) {
 			return createClassChange(pm, fType);
@@ -107,26 +107,26 @@ org.eclipse.ltk.core.refactoring.participants.RenameParticipant {
 	}
 
 	private Change createProjectChange(IProgressMonitor pm, IProject project)
-		throws CoreException {
+			throws CoreException {
 
 		if (!getArguments().getUpdateReferences()) {
 			return null;
 		}
 
-		fModel.addTextRename("platform:/plugin/" + project.getName() + "/", //$NON-NLS-1$ //$NON-NLS-2$
-			"platform:/plugin/" + getArguments().getNewName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-		fModel.addTextRename("bundleclass://" + project.getName() + "/", //$NON-NLS-1$ //$NON-NLS-2$
-			"bundleclass://" + getArguments().getNewName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		refactorModel.addTextRename("platform:/plugin/" + project.getName() + "/", //$NON-NLS-1$ //$NON-NLS-2$
+				"platform:/plugin/" + getArguments().getNewName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		refactorModel.addTextRename("bundleclass://" + project.getName() + "/", //$NON-NLS-1$ //$NON-NLS-2$
+				"bundleclass://" + getArguments().getNewName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		fModel.setProjectRename(project, ((IWorkspaceRoot) project.getParent())
-			.getProject(getArguments().getNewName()));
+		refactorModel.setProjectRename(project, ((IWorkspaceRoot) project.getParent())
+				.getProject(getArguments().getNewName()));
 
-		return RefactorParticipantDelegate.createChange(pm, fModel);
+		return RefactorParticipantDelegate.createChange(pm, refactorModel);
 
 	}
 
 	private Change createFolderChange(IProgressMonitor pm, IFolder folder)
-		throws CoreException {
+			throws CoreException {
 
 		String SPLIT = "/"; //$NON-NLS-1$
 		if (folder.getParent().getFullPath().segmentCount() == 1) {
@@ -134,63 +134,61 @@ org.eclipse.ltk.core.refactoring.participants.RenameParticipant {
 		}
 
 		final String newUrl = "platform:/plugin/" + folder.getProject().getName() //$NON-NLS-1$
-			+ "/" + folder.getParent().getProjectRelativePath().toString() //$NON-NLS-1$
-			+ SPLIT + getArguments().getNewName();
+				+ "/" + folder.getParent().getProjectRelativePath().toString() //$NON-NLS-1$
+				+ SPLIT + getArguments().getNewName();
 
 		final String oldUrl = "platform:/plugin" + folder.getFullPath(); //$NON-NLS-1$
 
-		fModel.addTextRename(oldUrl, newUrl);
+		refactorModel.addTextRename(oldUrl, newUrl);
 
-		return RefactorParticipantDelegate.createChange(pm, fModel);
+		return RefactorParticipantDelegate.createChange(pm, refactorModel);
 	}
 
 	private Change createFileChange(IProgressMonitor pm, IFile file)
-		throws CoreException {
+			throws CoreException {
 
 		String SPLIT = "/"; //$NON-NLS-1$
 		if (file.getParent().getFullPath().segmentCount() == 1) {
 			SPLIT = ""; //$NON-NLS-1$
 		}
 		final String newUrl = "platform:/plugin/" + file.getProject().getName() + "/" //$NON-NLS-1$ //$NON-NLS-2$
-			+ file.getParent().getProjectRelativePath().toString() + SPLIT
-			+ getArguments().getNewName();
+				+ file.getParent().getProjectRelativePath().toString() + SPLIT
+				+ getArguments().getNewName();
 		final String oldUrl = "platform:/plugin" + file.getFullPath(); //$NON-NLS-1$
-		fModel.addTextRename(oldUrl, newUrl);
+		refactorModel.addTextRename(oldUrl, newUrl);
 
-		return RefactorParticipantDelegate.createChange(pm, fModel);
+		return RefactorParticipantDelegate.createChange(pm, refactorModel);
 	}
 
 	private Change createPackageChange(IProgressMonitor pm,
-		IPackageFragment pckage) throws CoreException {
+			IPackageFragment pckage) throws CoreException {
 		final String bundle = Util.getBundleSymbolicName(pckage.getJavaProject()
-			.getProject());
+				.getProject());
 
 		final String newUrl = "bundleclass://" + bundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
-			+ getArguments().getNewName();
+				+ getArguments().getNewName();
 
 		final String oldUrl = "bundleclass://" + bundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
-			+ pckage.getElementName();
-		fModel.addTextRename(oldUrl, newUrl);
+				+ pckage.getElementName();
+		refactorModel.addTextRename(oldUrl, newUrl);
 
-		return RefactorParticipantDelegate.createChange(pm, fModel);
+		return RefactorParticipantDelegate.createChange(pm, refactorModel);
 	}
 
-	private Change createClassChange(IProgressMonitor pm, IType type)
-		throws CoreException {
-		final String bundle = Util.getBundleSymbolicName(type.getJavaProject()
-			.getProject());
+	private Change createClassChange(IProgressMonitor pm, IType type) throws CoreException {
+		final String bundle = Util.getBundleSymbolicName(type.getJavaProject().getProject());
 
 		final String newUrl = "bundleclass://" //$NON-NLS-1$
-			+ bundle
-			+ "/" //$NON-NLS-1$
-			+ (type.getPackageFragment().getElementName().length() == 0 ? getArguments()
-				.getNewName() : type.getPackageFragment()
-				.getElementName() + "." + getArguments().getNewName()); //$NON-NLS-1$
+				+ bundle
+				+ "/" //$NON-NLS-1$
+				+ (type.getPackageFragment().getElementName().length() == 0 ? getArguments()
+						.getNewName() : type.getPackageFragment()
+						.getElementName() + "." + getArguments().getNewName()); //$NON-NLS-1$
 		final String oldUrl = "bundleclass://" + bundle + "/" //$NON-NLS-1$ //$NON-NLS-2$
-			+ type.getFullyQualifiedName().replace(".", "\\."); //$NON-NLS-1$//$NON-NLS-2$
-		fModel.addTextRename(oldUrl, newUrl);
+				+ type.getFullyQualifiedName();
+		refactorModel.addTextRename(oldUrl, newUrl);
 
-		return RefactorParticipantDelegate.createChange(pm, fModel);
+		return RefactorParticipantDelegate.createChange(pm, refactorModel);
 	}
 
 }

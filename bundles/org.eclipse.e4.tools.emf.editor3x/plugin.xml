@@ -41,7 +41,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
-            class="org.eclipse.e4.tools.emf.editor3x.ModelRenameParticipant"
+            class="org.eclipse.e4.tools.emf.editor3x.refactorparticipants.ModelRenameParticipant"
             id="org.eclipse.e4.tools.emf.editor3x.renameParticipant"
             name="Workbench Model Contribution Participant">
          <enablement>
@@ -75,7 +75,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
-            class="org.eclipse.e4.tools.emf.editor3x.ModelMoveParticipant"
+            class="org.eclipse.e4.tools.emf.editor3x.refactorparticipants.ModelMoveParticipant"
             id="org.eclipse.e4.tools.emf.editor3x.moveParticipant"
             name="Workbench Model Contribution Participant">
          <enablement>

@@ -9,7 +9,7 @@
  * Wim Jongman <wim.jongman@remainsoftware.com> - Bug 395174: e4xmi should participate in package renaming
  * Bug 432892: Eclipse 4 Application does not work after renaming the project name
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor3x;
+package org.eclipse.e4.tools.emf.editor3x.refactorparticipants;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.e4.tools.emf.editor3x.Messages;
+import org.eclipse.e4.tools.emf.editor3x.RefactorModel;
 import org.eclipse.e4.tools.emf.editor3x.extension.Util;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
