@@ -9,7 +9,7 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 437469
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
- * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488, 509551
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -85,9 +85,11 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private EClass selectedContainer;
 	private ClassContributionCollector collector;
 
+	/** Remember of classes that can be used for a fragment definition. */
+	private static List<EClass> extendableClasses = null;
+
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor,
-			MStringModelFragment fragment, Messages Messages,
-			EClass previousSelection) {
+			MStringModelFragment fragment, Messages Messages, EClass previousSelection) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editor = editor;
@@ -115,8 +117,8 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
-		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
+		final Image titleImage = new Image(parent.getDisplay(),
+				getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -151,10 +153,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 		eClassViewer.setContentProvider(new ArrayContentProvider());
-		final List<EClass> eClassList = new ArrayList<>();
-		for (final InternalPackage p : Util.loadPackages()) {
-			eClassList.addAll(p.getAllClasses());
-		}
+		final List<EClass> eClassList = getExtendableClasses();
 		eClassViewer.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -218,9 +217,10 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 
 				final MApplicationElement appEl = (MApplicationElement) o;
 
-				final StyledString styledString = new StyledString(
-						editor.getLabel(o)
-						+ " (" + (appEl.getElementId() == null ? "<" + Messages.FindParentReferenceElementDialog_NoId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				final StyledString styledString = new StyledString(editor.getLabel(o) + " (" //$NON-NLS-1$
+						+ (appEl.getElementId() == null
+						? "<" + Messages.FindParentReferenceElementDialog_NoId + ">" : appEl.getElementId()) //$NON-NLS-1$ //$NON-NLS-2$
+						+ ")", null); //$NON-NLS-1$
 				final String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
@@ -267,11 +267,34 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		} else {
 			// Select addon by default (not necessary in the first position in
 			// the eclasslist...)
-			eClassViewer.setSelection(new StructuredSelection(ApplicationPackageImpl.Literals.ADDON));
+			eClassViewer.setSelection(new StructuredSelection(ApplicationPackageImpl.Literals.APPLICATION));
 		}
 
 		return comp;
 	}
+
+	/**
+	 * This method returns classes that have extensible fields It rejects
+	 * eClasses having only transientData and persistedState for instance Result
+	 * is cached in a singleton for each dialog instances...
+	 *
+	 * @return
+	 */
+	private List<EClass> getExtendableClasses() {
+		if (extendableClasses == null) {
+			extendableClasses = new ArrayList<>();
+			for (final InternalPackage p : Util.loadPackages()) {
+				for (EClass c : p.getAllClasses()) {
+					if (Util.canBeExtendedInAFragment(c)) {
+						extendableClasses.add(c);
+					}
+				}
+			}
+		}
+		return extendableClasses;
+	}
+
+
 
 	protected void updateSearch() {
 		if (currentResultHandler != null) {
@@ -315,7 +338,5 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	public EClass getSelectedContainer() {
 		return selectedContainer;
 	}
-
-
 
 }

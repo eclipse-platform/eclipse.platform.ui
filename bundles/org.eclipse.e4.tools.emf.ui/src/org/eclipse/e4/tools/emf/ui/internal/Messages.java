@@ -389,6 +389,7 @@ public class Messages {
 	public String ModelFragmentsEditor_Imports;
 
 	public String StringModelFragment_Label;
+	public String StringModelFragment_LabelFor;
 	public String StringModelFragment_Description;
 	public String StringModelFragment_Featurename;
 	public String StringModelFragment_FeaturenameTooltip;

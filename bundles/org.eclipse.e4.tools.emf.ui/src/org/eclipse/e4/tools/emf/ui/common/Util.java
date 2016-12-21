@@ -363,6 +363,39 @@ public class Util {
 		}
 	}
 
+	/**
+	 * This method checks if an EClass can be extended using a fragment. ie : it
+	 * must have containment EReference to a model object.
+	 *
+	 * @param c
+	 * @return true if at least one reference type is not a StringStringToMap or
+	 *         other no editable type
+	 */
+	public static boolean canBeExtendedInAFragment(EClass c) {
+		boolean result = false;
+		for (EReference r : c.getEAllReferences()) {
+			if (referenceIsModelFragmentCompliant(r)) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * This method checks if an EReference can be considered in a model fragment
+	 * ie : it must be containment EReference to a model object.
+	 *
+	 * @param c
+	 * @return true if the reference is containment and type is not a
+	 *         StringStringToMap or other no editable type
+	 */
+	public static boolean referenceIsModelFragmentCompliant(EReference r) {
+		String t = r.getEReferenceType().getName();
+		return (r.isContainment() && !t.equals("StringToStringMap") && !t.equals("StringToObjectMap"));
+
+	}
+
 	public static final void addDecoration(Control control, Binding binding) {
 		final ControlDecoration dec = new ControlDecoration(control, SWT.BOTTOM);
 		binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {

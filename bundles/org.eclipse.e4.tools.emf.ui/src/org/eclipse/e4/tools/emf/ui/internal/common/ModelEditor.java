@@ -367,6 +367,8 @@ public class ModelEditor implements IGotoObject {
 
 	private XmiTab xmiTab;
 
+	private Label sectionHeaderLabel;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project,
 			final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
@@ -575,7 +577,7 @@ public class ModelEditor implements IGotoObject {
 		final Label iconLabel = new Label(headerContainer, SWT.NONE);
 		iconLabel.setLayoutData(new GridData(20, 20));
 
-		final Label sectionHeaderLabel = new Label(headerContainer, SWT.NONE);
+		sectionHeaderLabel = new Label(headerContainer, SWT.NONE);
 		sectionHeaderLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final Label separatorLabel = new Label(headerContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
 		final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -1545,6 +1547,10 @@ public class ModelEditor implements IGotoObject {
 		}
 		// See bug 432095.
 		// viewer.getControl().setFocus();
+	}
+
+	public void setHeaderTitle(String title) {
+		sectionHeaderLabel.setText(title);
 	}
 
 	@PreDestroy

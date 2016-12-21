@@ -120,7 +120,12 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return Messages.StringModelFragment_Label;
+		getSelectedContainer(); // Recompute selected container
+		if (selectedContainer == null) {
+			return Messages.StringModelFragment_Label;
+		} else {
+			return Messages.StringModelFragment_LabelFor + selectedContainer.getName();
+		}
 	}
 
 	@Override
@@ -157,8 +162,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent);
 		}
+		selectedContainer = null;
 		getMaster().setValue(object);
 		updateChildrenChoice();
+		getEditor().setHeaderTitle(getLabel(null));
 		return composite;
 	}
 
@@ -227,6 +234,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			}
 		}
+
+		getEditor().setHeaderTitle(getLabel(null));
 
 		return selectedContainer;
 	}

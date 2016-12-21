@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -93,13 +94,13 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		final Composite composite = (Composite) super.createDialogArea(parent);
 
 		final Image packageImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
+				"/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
 		final Image classImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
+				"/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
 		final Image featureImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
+				"/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
 		final Image newTitleImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/wizban/fieldrefact_wiz.png")); //$NON-NLS-1$
+				"/icons/full/wizban/fieldrefact_wiz.png")); //$NON-NLS-1$
 
 		setTitleImage(newTitleImage);
 
@@ -160,7 +161,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1.getClass() == InternalPackage.class) {
 					return ((InternalPackage) e1).ePackage.getNsURI().compareTo(
-						((InternalPackage) e2).ePackage.getNsURI());
+							((InternalPackage) e2).ePackage.getNsURI());
 				} else if (e1.getClass() == InternalClass.class) {
 					return ((InternalClass) e1).eClass.getName().compareTo(((InternalClass) e2).eClass.getName());
 				} else if (e1.getClass() == InternalFeature.class) {
@@ -229,7 +230,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		if (!sel.isEmpty() && sel.getFirstElement().getClass() == InternalFeature.class) {
 			final InternalFeature f = (InternalFeature) sel.getFirstElement();
 			final Command cmd = SetCommand.create(editingDomain, fragment,
-				FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME, f.feature.getName());
+					FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME, f.feature.getName());
 
 			if (cmd.canExecute()) {
 				editingDomain.getCommandStack().execute(cmd);
@@ -258,9 +259,25 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement.getClass() == InternalPackage.class) {
-				return ((InternalPackage) parentElement).classes.toArray();
+				// Must keep only classes that are usable in a fragment...
+				ArrayList<InternalClass> result = new ArrayList<>();
+				for (InternalClass ic : ((InternalPackage) parentElement).classes) {
+					if (Util.canBeExtendedInAFragment(ic.eClass)) {
+						result.add(ic);
+					}
+				}
+				return result.toArray();
 			} else if (parentElement.getClass() == InternalClass.class) {
-				return ((InternalClass) parentElement).features.toArray();
+				ArrayList<InternalFeature> result = new ArrayList<>();
+				for (InternalFeature intf : ((InternalClass) parentElement).features)
+				{
+					if ((intf.feature instanceof EReference) &&
+							Util.referenceIsModelFragmentCompliant((EReference)intf.feature))
+					{
+						result.add(intf);
+					}
+				}
+				return result.toArray();
 			}
 			return new Object[0];
 		}
