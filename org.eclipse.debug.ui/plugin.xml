@@ -200,12 +200,28 @@
                   name="breakpointGroup">
             </separator>
             <groupMarker
+                  name="lineBreakpointBeforeGroup">
+            </groupMarker>
+            <groupMarker
+                  name="lineBreakpointAfterGroup">
+            </groupMarker>
+             <groupMarker
                   name="lineBreakpointGroup">
             </groupMarker>
             <groupMarker
                   name="emptyBreakpointGroup">
             </groupMarker>
          </menu>
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+               label="%ToggleBreakpointAction.label"
+               icon="$nl$/icons/full/obj16/brkp_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
+               helpContextId="toggle_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
+               menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
+               id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
+          </action>
          <action
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
                definitionId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
@@ -214,7 +230,7 @@
                icon="$nl$/icons/full/elcl16/rem_all_co.png"
                id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"
                label="%RemoveAllBreakpointsAction.label"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
                style="push"/>
           <action
                definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
@@ -223,20 +239,10 @@
                icon="$nl$/icons/full/elcl16/skip_brkp.png"
                helpContextId="skip_all_breakpoints_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/breakpointGroup"
                style="toggle"
                id="org.eclipse.debug.ui.actions.SkipAllBreakpoints">
-         </action>
-         <action
-               definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
-               label="%ToggleWatchpointAction.label"
-               icon="$nl$/icons/full/obj16/readwrite_obj.png"
-               disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.png"
-               helpContextId="toggle_watchpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetWatchpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.ToggleWatchpoint">
          </action>
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
@@ -245,8 +251,18 @@
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_method_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetMethodBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
                id="org.eclipse.debug.ui.actions.ToggleMethodBreakpoint">
+         </action>
+          <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
+               label="%ToggleWatchpointAction.label"
+               icon="$nl$/icons/full/obj16/readwrite_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.png"
+               helpContextId="toggle_watchpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetWatchpointAction"
+               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
+               id="org.eclipse.debug.ui.actions.ToggleWatchpoint">
          </action>
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleLineBreakpoint"
@@ -255,19 +271,9 @@
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_line_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
                id="org.eclipse.debug.ui.actions.ToggleLineBreakpoint">
-         </action>         
-         <action
-               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
-               label="%ToggleBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.png"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
-               helpContextId="toggle_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
-         </action>         
+         </action>
       </actionSet>
       <actionSet
             label="%DebugActionSet.label"
@@ -618,6 +624,8 @@
             <separator name="debugGroup" visible="true"/>
             <separator name="emptyLaunchGroup" visible="true"/>
             <separator name="breakpointGroup" visible="true"/>
+            <separator name="lineBreakpointBeforeGroup" visible="true"/>
+            <separator name="lineBreakpointAfterGroup"/>
             <separator name="lineBreakpointGroup"/>
             <separator name="emptyBreakpointGroup"/>
          </menu>         
