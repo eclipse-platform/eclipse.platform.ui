@@ -70,8 +70,6 @@ public class PartHelper {
 
 		// FIXME This should be read from the CSS
 		final FillLayout layout = new FillLayout();
-		layout.marginWidth = 10;
-		layout.marginHeight = 10;
 		comp.setLayout(layout);
 
 		context.set(Composite.class.getName(), comp);
