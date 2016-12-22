@@ -10,13 +10,16 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=393150
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509603
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
 import java.io.IOException;
+
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -100,8 +103,9 @@ public class ApplicationModelEditor extends ModelEditor {
 				return;
 			}
 
-			if (resource == null)
+			if (resource == null) {
 				return;
+			}
 
 			IResourceDelta delta = event.getDelta().findMember(new Path(resource.getURI().toPlatformString(false)));
 			if (delta == null) {
@@ -117,11 +121,12 @@ public class ApplicationModelEditor extends ModelEditor {
 			if (!isSaving()) {
 
 				// reload the model if the file has changed
-				if (delta.getKind() == IResourceDelta.CHANGED) {
+				if ((delta.getKind() == IResourceDelta.CHANGED) && (delta.getMarkerDeltas().length == 0)) {
 					reloadModel();
 				}
 			}
 		}
+
 
 		private void hidePart(final boolean force) {
 			sync.asyncExec(new Runnable() {
