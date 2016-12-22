@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,10 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
@@ -107,7 +111,7 @@ public class ModelAssemblerFragmentOrderingTests {
 	}
 
 	private ModelFragmentWrapper createFragmentWrapper(MModelFragments fragmentsContainer, String featureName,
-			String parentElementId, List<MApplicationElement> contributedElements, String positionInList,
+			String parentElementId, List<? extends MApplicationElement> contributedElements, String positionInList,
 			String contributorName, String contributorURI, boolean checkExists) {
 		MStringModelFragment fragment = MFragmentFactory.INSTANCE.createStringModelFragment();
 		fragment.setFeaturename(featureName);
@@ -161,7 +165,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapperC = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "qwerty", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapperA, fragmentWrapperB, fragmentWrapperC));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -169,7 +173,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(fragmentWrapperB, iterator.next());
 		assertEquals(fragmentWrapperC, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 		assertEquals(3, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(0));
 		assertEquals(b, toolBar.getChildren().get(1));
@@ -217,7 +221,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapperC = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "qwerty", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapperA, fragmentWrapperB, fragmentWrapperC));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -230,7 +234,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(6, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(3));
@@ -263,14 +267,14 @@ public class ModelAssemblerFragmentOrderingTests {
 
 		assertTrue(toolBar.getChildren().isEmpty());
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapperA, fragmentWrapperB));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
 		assertEquals(fragmentWrapperA, iterator.next());
 		assertEquals(fragmentWrapperB, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(2, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(0));
@@ -311,7 +315,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapperB = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "index:70", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapperA, fragmentWrapperB));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -323,7 +327,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(3));
@@ -370,7 +374,7 @@ public class ModelAssemblerFragmentOrderingTests {
 
 		assertTrue(toolBar.getChildren().isEmpty());
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -378,7 +382,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(fragmentWrapper2, iterator.next());
 		assertEquals(fragmentWrapper3, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(a, toolBar.getChildren().get(0));
 		assertEquals(b, toolBar.getChildren().get(1));
@@ -426,7 +430,7 @@ public class ModelAssemblerFragmentOrderingTests {
 
 		assertTrue(toolBar.getChildren().isEmpty());
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -434,7 +438,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(fragmentWrapper2, iterator.next());
 		assertEquals(fragmentWrapper1, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(c, toolBar.getChildren().get(0));
 		assertEquals(b, toolBar.getChildren().get(1));
@@ -482,7 +486,7 @@ public class ModelAssemblerFragmentOrderingTests {
 
 		assertTrue(toolBar.getChildren().isEmpty());
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -490,7 +494,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(fragmentWrapper3, iterator.next());
 		assertEquals(fragmentWrapper1, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(b, toolBar.getChildren().get(0));
 		assertEquals(c, toolBar.getChildren().get(1));
@@ -543,7 +547,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		MModelFragments fragmentsContainerD = MFragmentFactory.INSTANCE.createModelFragments();
 		fragmentResource.getContents().add((EObject) fragmentsContainerD);
 		MHandledToolItem d = MMenuFactory.INSTANCE.createHandledToolItem();
-		c.setElementId("d");
+		d.setElementId("d");
 		ModelFragmentWrapper fragmentWrapper1 = createFragmentWrapper(fragmentsContainerA, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "index:9", contributorName, contributorURI, false);
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
@@ -558,7 +562,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3, fragmentWrapper4));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -567,7 +571,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(fragmentWrapper4, iterator.next());
 		assertEquals(fragmentWrapper1, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(c, toolBar.getChildren().get(0));
 		assertEquals(b, toolBar.getChildren().get(1));
@@ -594,11 +598,11 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "first", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper));
 
 		assertEquals(0, toolBar.getChildren().size());
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(1, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(0));
@@ -631,7 +635,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "first", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper));
 
 		assertEquals(3, toolBar.getChildren().size());
@@ -639,7 +643,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(a, toolBar.getChildren().get(0));
 		assertEquals(x, toolBar.getChildren().get(1));
@@ -681,7 +685,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "first", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -692,7 +696,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(1, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(4, toolBar.getChildren().size());
 		assertEquals(c, toolBar.getChildren().get(0));
@@ -720,10 +724,10 @@ public class ModelAssemblerFragmentOrderingTests {
 
 		assertEquals(0, toolBar.getChildren().size());
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(1, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(0));
@@ -757,7 +761,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "last", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper));
 
 		assertEquals(3, toolBar.getChildren().size());
@@ -765,7 +769,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(x, toolBar.getChildren().get(0));
 		assertEquals(y, toolBar.getChildren().get(1));
@@ -808,7 +812,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "last", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -820,7 +824,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -866,7 +870,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainer, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "before:z", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -879,7 +883,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(a, toolBar.getChildren().get(0));
 		assertEquals(x, toolBar.getChildren().get(1));
@@ -922,9 +926,9 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1));
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(4, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(3));
@@ -962,9 +966,9 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1));
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(4, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(3));
@@ -1004,7 +1008,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "before:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1016,7 +1020,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1064,7 +1068,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "before:y", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1076,7 +1080,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1126,7 +1130,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "before:y", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1139,7 +1143,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(6, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1184,7 +1188,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "before:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1196,7 +1200,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1251,7 +1255,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "last", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1264,7 +1268,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(6, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1315,7 +1319,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "after:z", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1328,7 +1332,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(x, toolBar.getChildren().get(0));
 		assertEquals(a, toolBar.getChildren().get(1));
@@ -1366,7 +1370,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "after:", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper));
 
 		assertEquals(3, toolBar.getChildren().size());
@@ -1374,7 +1378,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(4, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(3));
@@ -1408,7 +1412,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper1 = createFragmentWrapper(fragmentsContainer, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(a), "after:w", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1));
 
 		assertEquals(3, toolBar.getChildren().size());
@@ -1416,7 +1420,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(4, toolBar.getChildren().size());
 		assertEquals(a, toolBar.getChildren().get(3));
@@ -1456,7 +1460,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "after:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1468,7 +1472,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1520,14 +1524,14 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
 		assertEquals(fragmentWrapper2, iterator.next());
 		assertEquals(fragmentWrapper1, iterator.next());
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1577,7 +1581,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "after:y", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1590,7 +1594,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(6, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1645,7 +1649,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(c), "last", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper3, fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1658,7 +1662,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(6, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1703,7 +1707,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "after:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1715,7 +1719,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1759,7 +1763,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "before:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1771,7 +1775,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1815,7 +1819,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "before:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1827,7 +1831,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(b, toolBar.getChildren().get(0));
@@ -1871,7 +1875,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(b), "after:a", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2));
 
 		Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
@@ -1883,7 +1887,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(5, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
@@ -1980,7 +1984,7 @@ public class ModelAssemblerFragmentOrderingTests {
 		ModelFragmentWrapper fragmentWrapperK = createFragmentWrapper(fragmentsContainerK, "children", MAIN_TOOLBAR_ID,
 				Arrays.asList(k), "after:b", contributorName, contributorURI, false);
 
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList.addAll(Arrays.asList(fragmentWrapperA, fragmentWrapperB, fragmentWrapperC, fragmentWrapperD,
 				fragmentWrapperE, fragmentWrapperF, fragmentWrapperG, fragmentWrapperH, fragmentWrapperI,
 				fragmentWrapperJ, fragmentWrapperK));
@@ -1993,17 +1997,17 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(fragmentWrapperE, iterator.next());
 		assertEquals(fragmentWrapperA, iterator.next());
 		assertEquals(fragmentWrapperB, iterator.next());
-		assertEquals(fragmentWrapperK, iterator.next());
 		assertEquals(fragmentWrapperJ, iterator.next());
-		assertEquals(fragmentWrapperI, iterator.next());
 		assertEquals(fragmentWrapperH, iterator.next());
+		assertEquals(fragmentWrapperI, iterator.next());
+		assertEquals(fragmentWrapperK, iterator.next());
 
 		assertEquals(3, toolBar.getChildren().size());
 		assertEquals(x, toolBar.getChildren().get(0));
 		assertEquals(y, toolBar.getChildren().get(1));
 		assertEquals(z, toolBar.getChildren().get(2));
 
-		assembler.processFragments(fragmentList);
+		assembler.processFragmentWrappers(fragmentList);
 
 		assertEquals(i, toolBar.getChildren().get(0));
 		assertEquals(a, toolBar.getChildren().get(1));
@@ -2021,5 +2025,442 @@ public class ModelAssemblerFragmentOrderingTests {
 		assertEquals(k, toolBar.getChildren().get(13));
 	}
 
+	/**
+	 * Test Model:
+	 *
+	 * <pre>
+	 * Menu 0
+	 * 	Menu 0.0 index:1
+	 * 		MenuItem 0.0.0 index:0
+	 * 		MenuItem 0.0.1 index:10
+	 * 	Menu 0.1 index:10
+	 * 	Menu 0.2 index:20
+	 * </pre>
+	 */
+	@Test
+	public void testMenuAndItemsInFragments() {
+		// initial application elements
+		MWindow window = application.getChildren().get(0);
+		MMenu menu0 = MMenuFactory.INSTANCE.createMenu();
+		window.setMainMenu(menu0);
+		menu0.setElementId("menu0");
 
+		Set<ModelFragmentWrapper> fragmentList = new HashSet<>();
+		// fragment preparations
+		MMenu menu00 = MMenuFactory.INSTANCE.createMenu();
+		menu00.setElementId("menu00");
+		MMenu menu01 = MMenuFactory.INSTANCE.createMenu();
+		menu01.setElementId("menu01");
+		MMenu menu02 = MMenuFactory.INSTANCE.createMenu();
+		menu02.setElementId("menu02");
+		MHandledMenuItem menuitem000 = MMenuFactory.INSTANCE.createHandledMenuItem();
+		menuitem000.setElementId("menuitem000");
+		MHandledMenuItem menuitem001 = MMenuFactory.INSTANCE.createHandledMenuItem();
+		menuitem001.setElementId("menuitem001");
+		// the fragments
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri1"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu00";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+					Arrays.asList(menu00), "index:1", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu01";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+					Arrays.asList(menu01), "index:10", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri3"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu02";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+					Arrays.asList(menu02), "index:20", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri4"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menuitem000";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu00",
+					Arrays.asList(menuitem000), "index:0", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri5"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menuitem001";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu00",
+					Arrays.asList(menuitem001), "index:10", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+
+		assembler.processFragmentWrappers(fragmentList);
+
+		assertEquals(3, menu0.getChildren().size());
+		assertEquals(menu00, menu0.getChildren().get(0));
+		assertEquals(menu01, menu0.getChildren().get(1));
+		assertEquals(menu02, menu0.getChildren().get(2));
+		assertEquals(2, menu00.getChildren().size());
+		assertEquals(menuitem000, menu00.getChildren().get(0));
+		assertEquals(menuitem001, menu00.getChildren().get(1));
+	}
+
+	/**
+	 * Test Model:
+	 *
+	 * <pre>
+	 * Menu 0
+	 * 	Menu 0.0 index:1
+	 * 		MenuItem 0.0.0 index:0
+	 * 		MenuItem 0.0.1 index:3
+	 * 		MenuItem 0.0.2 index:20
+	 * 	Menu 0.1 index:10
+	 * 	Menu 0.2 index:20
+	 * </pre>
+	 *
+	 * <p>
+	 * Menu0 is contained in the application model
+	 * <p>
+	 * fragment1 contributes MenuItem 0.0.0, MenuItem 0.0.2, Menu 0.1 and
+	 * imports Menu 0.0 from fragment2
+	 * <p>
+	 * fragment2 contributes Menu0.0, Menu 0.2 and MenuItem 0.0.1
+	 *
+	 *
+	 */
+	@Test
+	public void testMenuAndItemsInFragmentsWithImports() {
+		// initial application elements
+		MWindow window = application.getChildren().get(0);
+		MMenu menu0 = MMenuFactory.INSTANCE.createMenu();
+		window.setMainMenu(menu0);
+		menu0.setElementId("menu0");
+
+		Set<ModelFragmentWrapper> fragmentList = new HashSet<>();
+		// fragment preparations
+		MMenu menu00 = MMenuFactory.INSTANCE.createMenu();
+		menu00.setElementId("menu00");
+		MMenu menu01 = MMenuFactory.INSTANCE.createMenu();
+		menu01.setElementId("menu01");
+		MMenu menu02 = MMenuFactory.INSTANCE.createMenu();
+		menu02.setElementId("menu02");
+		MHandledMenuItem menuitem000 = MMenuFactory.INSTANCE.createHandledMenuItem();
+		menuitem000.setElementId("menuitem000");
+		MHandledMenuItem menuitem001 = MMenuFactory.INSTANCE.createHandledMenuItem();
+		menuitem001.setElementId("menuitem001");
+		MHandledMenuItem menuitem002 = MMenuFactory.INSTANCE.createHandledMenuItem();
+		menuitem002.setElementId("menuitem002");
+		// the fragments
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri1"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "fragment1";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapperMenuItem000 = createFragmentWrapper(fragmentsContainer, "children",
+					"menu00", Arrays.asList(menuitem000), "index:0", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapperMenuItem000);
+			ModelFragmentWrapper fragmentWrapperMenuItem002 = createFragmentWrapper(fragmentsContainer, "children",
+					"menu00", Arrays.asList(menuitem002), "index:20", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapperMenuItem002);
+			ModelFragmentWrapper fragmentWrapperMenu01 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+					Arrays.asList(menu01), "index:10", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapperMenu01);
+
+			fragmentsContainer.getImports().add(menu00);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "fragment2";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapperMenu00 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+					Arrays.asList(menu00), "index:1", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapperMenu00);
+			ModelFragmentWrapper fragmentWrapperMenu02 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+					Arrays.asList(menu02), "index:20", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapperMenu02);
+			ModelFragmentWrapper fragmentWrapperMenuItem001 = createFragmentWrapper(fragmentsContainer, "children",
+					"menu00", Arrays.asList(menuitem001), "index:3", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapperMenuItem001);
+		}
+
+		assembler.processFragmentWrappers(fragmentList);
+
+		assertEquals(3, menu0.getChildren().size());
+		assertEquals(menu00, menu0.getChildren().get(0));
+		assertEquals(menu01, menu0.getChildren().get(1));
+		assertEquals(menu02, menu0.getChildren().get(2));
+		assertEquals(3, menu00.getChildren().size());
+		assertEquals(menuitem000, menu00.getChildren().get(0));
+		assertEquals(menuitem001, menu00.getChildren().get(1));
+		assertEquals(menuitem002, menu00.getChildren().get(2));
+	}
+
+	/**
+	 * Test Model:
+	 *
+	 * <pre>
+	 * Menu
+	 * 	Menu 1 index:10
+	 * 		Menu 2 index:20
+	 * 			Menu 3 index:0
+	 * </pre>
+	 *
+	 * merge Menu 3 -> Menu 1 -> Menu 2
+	 */
+	@Test
+	public void testMenuAndItemsInFragments2() {
+		// initial application elements
+		MWindow window = application.getChildren().get(0);
+		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		window.setMainMenu(menu);
+		menu.setElementId("menu");
+
+		Set<ModelFragmentWrapper> fragmentList = new HashSet<>();
+		// fragment preparations
+		MMenu menu1 = MMenuFactory.INSTANCE.createMenu();
+		menu1.setElementId("menu1");
+		MMenu menu2 = MMenuFactory.INSTANCE.createMenu();
+		menu2.setElementId("menu2");
+		MMenu menu3 = MMenuFactory.INSTANCE.createMenu();
+		menu3.setElementId("menu3");
+		// the fragments
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri3"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu3";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu2",
+					Arrays.asList(menu3), "index:0", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri1"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu1";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu",
+					Arrays.asList(menu1), "index:10", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu2";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu1",
+					Arrays.asList(menu2), "index:20", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+
+		assembler.processFragmentWrappers(fragmentList);
+
+		assertEquals(1, menu.getChildren().size());
+		assertEquals(menu1, menu.getChildren().get(0));
+		assertEquals(menu2, menu1.getChildren().get(0));
+		assertEquals(menu3, menu2.getChildren().get(0));
+	}
+
+	/**
+	 * Test Model:
+	 *
+	 * <pre>
+	 * Menu
+	 * 	Menu 1 index:10
+	 * 		Menu 2 index:20
+	 * 			Menu 3 index:0
+	 * </pre>
+	 *
+	 * merge Menu 1 -> Menu 3 -> Menu 2
+	 */
+	@Test
+	public void testMenuAndItemsInFragments3() {
+		// initial application elements
+		MWindow window = application.getChildren().get(0);
+		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		window.setMainMenu(menu);
+		menu.setElementId("menu");
+
+		Set<ModelFragmentWrapper> fragmentList = new HashSet<>();
+		// fragment preparations
+		MMenu menu1 = MMenuFactory.INSTANCE.createMenu();
+		menu1.setElementId("menu1");
+		MMenu menu2 = MMenuFactory.INSTANCE.createMenu();
+		menu2.setElementId("menu2");
+		MMenu menu3 = MMenuFactory.INSTANCE.createMenu();
+		menu3.setElementId("menu3");
+		// the fragments
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri1"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu1";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu",
+					Arrays.asList(menu1), "index:10", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri3"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu3";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu2",
+					Arrays.asList(menu3), "index:0", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+		{
+			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+			resourceSet.getResources().add(fragmentResource);
+			final String contributorName = "menu2";
+			final String contributorURI = fragmentResource.getURI().toString();
+
+			// the contributed elements
+			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+			fragmentResource.getContents().add((EObject) fragmentsContainer);
+
+			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu1",
+					Arrays.asList(menu2), "index:20", contributorName, contributorURI, false);
+			fragmentList.add(fragmentWrapper);
+		}
+
+		assembler.processFragmentWrappers(fragmentList);
+
+		assertEquals(1, menu.getChildren().size());
+		assertEquals(menu1, menu.getChildren().get(0));
+		assertEquals(menu2, menu1.getChildren().get(0));
+		assertEquals(menu3, menu2.getChildren().get(0));
+	}
+
+	@Test
+	public void testModelFragmentComparatorWithCorrectlySortedList() {
+		// initial application elements
+		MHandledToolItem x = MMenuFactory.INSTANCE.createHandledToolItem();
+		x.setElementId("x");
+		toolBar.getChildren().add(x);
+		MHandledToolItem y = MMenuFactory.INSTANCE.createHandledToolItem();
+		y.setElementId("y");
+		toolBar.getChildren().add(y);
+		MHandledToolItem z = MMenuFactory.INSTANCE.createHandledToolItem();
+		z.setElementId("z");
+		toolBar.getChildren().add(z);
+
+		// the fragments
+		Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri"));
+		resourceSet.getResources().add(fragmentResource);
+		final String contributorName = "testAfterFragmentReference3";
+		final String contributorURI = fragmentResource.getURI().toString();
+
+		// the contributed elements
+		MModelFragments fragmentsContainerA = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainerA);
+		MHandledToolItem a = MMenuFactory.INSTANCE.createHandledToolItem();
+		a.setElementId("a");
+		MModelFragments fragmentsContainerB = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainerB);
+		MHandledToolItem b = MMenuFactory.INSTANCE.createHandledToolItem();
+		b.setElementId("b");
+		MModelFragments fragmentsContainerC = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainerC);
+		MHandledToolItem c = MMenuFactory.INSTANCE.createHandledToolItem();
+		c.setElementId("c");
+
+		ModelFragmentWrapper fragmentWrapper1 = createFragmentWrapper(fragmentsContainerA, "children", MAIN_TOOLBAR_ID,
+				Arrays.asList(a), "after:b", contributorName, contributorURI, false);
+		ModelFragmentWrapper fragmentWrapper2 = createFragmentWrapper(fragmentsContainerB, "children", MAIN_TOOLBAR_ID,
+				Arrays.asList(b), "after:c", contributorName, contributorURI, false);
+		ModelFragmentWrapper fragmentWrapper3 = createFragmentWrapper(fragmentsContainerC, "children", MAIN_TOOLBAR_ID,
+				Arrays.asList(c), "after:y", contributorName, contributorURI, false);
+
+		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator(application));
+		fragmentList.addAll(Arrays.asList(fragmentWrapper1, fragmentWrapper2, fragmentWrapper3));
+
+		{
+			Iterator<ModelFragmentWrapper> iterator = fragmentList.iterator();
+			assertEquals(fragmentWrapper3, iterator.next());
+			assertEquals(fragmentWrapper2, iterator.next());
+			assertEquals(fragmentWrapper1, iterator.next());
+		}
+
+		// adding the elements to the second list will sort them again
+		Set<ModelFragmentWrapper> fragmentList2 = new TreeSet<>(new ModelFragmentComparator(application));
+		fragmentList2.addAll(fragmentList);
+
+		{
+			Iterator<ModelFragmentWrapper> iterator = fragmentList2.iterator();
+			assertEquals(fragmentWrapper3, iterator.next());
+			assertEquals(fragmentWrapper2, iterator.next());
+			assertEquals(fragmentWrapper1, iterator.next());
+		}
+
+	}
 }

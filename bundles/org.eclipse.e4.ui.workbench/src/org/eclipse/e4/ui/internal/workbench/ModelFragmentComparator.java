@@ -13,6 +13,7 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.Comparator;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
@@ -39,6 +40,13 @@ import org.eclipse.e4.ui.model.internal.PositionInfo;
  *
  */
 public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper> {
+
+	private final MApplication application;
+
+	public ModelFragmentComparator(MApplication application) {
+		super();
+		this.application = application;
+	}
 
 	@Override
 	public int compare(ModelFragmentWrapper o1, ModelFragmentWrapper o2) {
@@ -67,7 +75,10 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 		case INDEX:
 			switch (posInfo2.getPlace()) {
 			case INDEX:
-				return posInfo1.getPositionReferenceAsInteger() - posInfo2.getPositionReferenceAsInteger();
+				int result = posInfo1.getPositionReferenceAsInteger() - posInfo2.getPositionReferenceAsInteger();
+				if (result == 0)
+					return 1;
+				return result;
 			default:
 				return -1;
 			}
@@ -82,6 +93,7 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 				}
 				if (hasElement)
 					return 1;
+
 				hasElement = false;
 				for (MApplicationElement element : o1.getModelFragment().getElements()) {
 					hasElement |= ModelUtils.findElementById(element, posInfo2.getReference()) != null;
@@ -90,7 +102,12 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 				}
 				if (hasElement)
 					return -1;
-				return -1;
+
+				hasElement = ModelUtils.findElementById(application, posInfo1.getReference()) != null;
+				if (hasElement)
+					return -1;
+
+				return 1;
 			default:
 				return 1;
 			}
@@ -148,7 +165,6 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 		public int getPositionReferenceAsInteger() {
 			return Integer.parseInt(reference);
 		}
-
 	}
 
 	/**

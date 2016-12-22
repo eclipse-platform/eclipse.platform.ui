@@ -16,10 +16,14 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,6 +41,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -57,6 +62,13 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * pre- and post-processors on the model.
  */
 public class ModelAssembler {
+
+	private class Bucket {
+		SortedSet<ModelFragmentWrapper> wrapper = new TreeSet<>(new ModelFragmentComparator(application));
+		Bucket dependentOn;
+		Set<Bucket> dependencies = new LinkedHashSet<>();
+		Set<String> containedElementIds = new LinkedHashSet<>();
+	}
 
 	@Inject
 	private Logger logger;
@@ -113,7 +125,7 @@ public class ModelAssembler {
 	 *
 	 */
 	private void processFragments(IExtension[] extensions, boolean initial) {
-		Set<ModelFragmentWrapper> fragmentList = new TreeSet<>(new ModelFragmentComparator());
+		List<ModelFragmentWrapper> wrappers = new ArrayList<>();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
@@ -123,24 +135,85 @@ public class ModelAssembler {
 						continue;
 					for (MModelFragment fragment : fragmentsContainer.getFragments()) {
 						boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$
-						fragmentList.add(new ModelFragmentWrapper(fragmentsContainer, fragment,
+						wrappers.add(new ModelFragmentWrapper(fragmentsContainer, fragment,
 								ce.getContributor().getName(), URIHelper.constructPlatformURI(ce.getContributor()),
 								checkExist)); // $NON-NLS-1$
 					}
 				}
 			}
 		}
-		processFragments(fragmentList);
+
+		processFragmentWrappers(wrappers);
 	}
 
 	/**
 	 * Processes the given list of fragments wrapped in
 	 * {@link ModelFragmentWrapper} elements.
 	 *
-	 * @param fragmentList
+	 * @param wrappers
 	 *            the list of fragments
 	 */
-	public void processFragments(Set<ModelFragmentWrapper> fragmentList) {
+	public void processFragmentWrappers(Collection<ModelFragmentWrapper> wrappers) {
+		Map<String, Bucket> elementIdToBucket = new LinkedHashMap<>();
+		Map<String, Bucket> parentIdToBuckets = new LinkedHashMap<>();
+		for (ModelFragmentWrapper fragmentWrapper : wrappers) {
+			MModelFragment fragment = fragmentWrapper.getModelFragment();
+			String parentId = MStringModelFragment.class.cast(fragment).getParentElementId();
+			if (!parentIdToBuckets.containsKey(parentId)) {
+				parentIdToBuckets.put(parentId, new Bucket());
+			}
+			Bucket b = parentIdToBuckets.get(parentId);
+			if (elementIdToBucket.containsKey(parentId)) {
+				Bucket parentBucket = elementIdToBucket.get(parentId);
+				parentBucket.dependencies.add(b);
+				b.dependentOn = parentBucket;
+			}
+			b.wrapper.add(fragmentWrapper); // $NON-NLS-1$
+
+			for (MApplicationElement e : fragment.getElements()) {
+				// Error case -> clean up and ignore
+				if (parentId == e.getElementId()) {
+					// parentIdToBuckets.get(parentId).remove(b);
+					continue;
+				}
+				elementIdToBucket.put(e.getElementId(), b);
+				b.containedElementIds.add(e.getElementId());
+				if (parentIdToBuckets.containsKey(e.getElementId())) {
+					Bucket childBucket = parentIdToBuckets.get(e.getElementId());
+					b.dependencies.add(childBucket);
+					childBucket.dependentOn = b;
+				}
+			}
+		}
+		processFragments(createUnifiedFragmentList(elementIdToBucket));
+	}
+
+	private List<ModelFragmentWrapper> createUnifiedFragmentList(Map<String, Bucket> elementIdToBucket) {
+		List<ModelFragmentWrapper> fragmentList = new ArrayList<>();
+		Set<String> checkedElementIds = new LinkedHashSet<>();
+		for (String elementId : elementIdToBucket.keySet()) {
+			if (checkedElementIds.contains(elementId))
+				continue;
+			Bucket bucket = elementIdToBucket.get(elementId);
+			while (bucket.dependentOn != null) {
+				bucket = bucket.dependentOn;
+			}
+			addAllBucketFragmentWrapper(bucket, fragmentList, checkedElementIds);
+		}
+		return fragmentList;
+	}
+
+	private void addAllBucketFragmentWrapper(Bucket bucket, List<ModelFragmentWrapper> fragmentList,
+			Set<String> checkedElementIds) {
+		for (ModelFragmentWrapper wrapper : bucket.wrapper)
+			fragmentList.add(wrapper);
+		checkedElementIds.addAll(bucket.containedElementIds);
+		for (Bucket child : bucket.dependencies) {
+			addAllBucketFragmentWrapper(child, fragmentList, checkedElementIds);
+		}
+	}
+
+	public void processFragments(Collection<ModelFragmentWrapper> fragmentList) {
 		for (ModelFragmentWrapper fragmentWrapper : fragmentList) {
 			processFragment(fragmentWrapper.getFragmentContainer(), fragmentWrapper.getModelFragment(),
 					fragmentWrapper.getContributorName(), fragmentWrapper.getContributorURI(),
