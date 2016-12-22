@@ -10,6 +10,7 @@
  * Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
  * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 509606
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -54,6 +55,7 @@ import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -61,8 +63,17 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.fieldassist.ContentProposal;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -332,6 +343,43 @@ public class StringModelFragment extends AbstractComponentEditor {
 					EMFEditProperties
 					.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME)
 					.observeDetail(getMaster()));
+
+			// create the decoration for the text component
+			final ControlDecoration deco = new ControlDecoration(t, SWT.TOP | SWT.LEFT);
+
+			// use an existing image
+			Image image = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage();
+
+			// set description and image
+			deco.setDescriptionText(Messages.StringModelFragment_Ctrl_Space);
+			deco.setImage(image);
+
+			// always show decoration
+			deco.setShowOnlyOnFocus(false);
+
+			// hide the decoration if the text component has content
+			t.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					Text text = (Text) e.getSource();
+					if (!text.getText().isEmpty()) {
+						deco.hide();
+					} else {
+						deco.show();
+					}
+				}
+			});
+
+			KeyStroke keyStroke;
+			try {
+				keyStroke = KeyStroke.getInstance("Ctrl+Space");
+				ContentProposalAdapter adapter = new ContentProposalAdapter(t, new TextContentAdapter(),
+						new StringModelFragmentProposalProvider(this, t), keyStroke, null);
+				adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			t.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
@@ -404,6 +452,67 @@ public class StringModelFragment extends AbstractComponentEditor {
 		updateChildrenChoice();
 
 		return folder;
+	}
+
+	static class StringModelFragmentProposalProvider implements IContentProposalProvider {
+
+		private StringModelFragment fragment;
+		private Text text;
+
+		/**
+		 * Initialize the class passing the current instance.
+		 */
+		public StringModelFragmentProposalProvider(StringModelFragment fragment, Text t) {
+			this.fragment = fragment;
+			this.text = t;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String,
+		 *      int)
+		 */
+		@Override
+		public IContentProposal[] getProposals(String cont, int position) {
+			List<String[]> contents = new ArrayList<>();
+			StringBuilder sb = new StringBuilder(256);
+			if (fragment.getSelectedContainer() != null) {
+				for (EReference r : fragment.getSelectedContainer().getEAllReferences()) {
+					if (Util.referenceIsModelFragmentCompliant(r) && r.getName().startsWith(text.getText())) {
+						String content = r.getName();
+						sb.setLength(0);
+						sb.append(content).append(": ");
+						final EClassifier type = ModelUtils.getTypeArgument(this.fragment.getSelectedContainer(),
+								r.getEGenericType());
+						if (r.isMany()) {
+							// List<Container>
+							sb.append("List<").append(type.getName()).append(">");
+						} else {
+							// TypeOfTheClass
+							sb.append(type.getName());
+						}
+						contents.add(new String[] { content, sb.toString() });
+					}
+				}
+			}
+
+			Collections.sort(contents, new Comparator<String[]>() {
+
+				@Override
+				public int compare(String[] o1, String[] o2) {
+					// compare
+					return o1[0].compareTo(o2[0]);
+				}
+			});
+
+			IContentProposal[] contentProposals = new IContentProposal[contents.size()];
+			for (int i = 0; i < contents.size(); i++) {
+				contentProposals[i] = new ContentProposal(contents.get(i)[0], contents.get(i)[1], null);
+			}
+			return contentProposals;
+		}
+
 	}
 
 	public void dispose() {
@@ -481,7 +590,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 		return l;
 	}
 
-
 	/**
 	 * Returns the EClass of the Application element(s) referenced by the xpath
 	 * value (without prefix)
@@ -533,8 +641,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			String featurename = getStringModelFragment().getFeaturename();
 
 			for (EReference ref : selectedContainer.getEAllReferences()) {
-				if (ref.getName().equals(featurename))
-				{
+				if (ref.getName().equals(featurename)) {
 					childRef = ref;
 					break;
 				}

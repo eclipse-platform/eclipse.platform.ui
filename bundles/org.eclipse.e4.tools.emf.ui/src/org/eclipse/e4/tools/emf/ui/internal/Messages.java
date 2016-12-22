@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2014 BestSolution.at and others.
+ * Copyright (c) 2010-2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Steven Spungin <steven@spungin.tv> - Bug 431735, 430717
  *     Jonas Helming <jhelming@eclipsesource.com - Bug 444340
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 466731
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 509606
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -397,6 +398,7 @@ public class Messages {
 	public String StringModelFragment_ParentIdTooltip;
 	public String StringModelFragment_PositionInList;
 	public String StringModelFragment_Elements;
+	public String StringModelFragment_Ctrl_Space;
 
 	public String FeatureSelectionDialog_Filter;
 	public String FeatureSelectionDialog_ShellTitle;
