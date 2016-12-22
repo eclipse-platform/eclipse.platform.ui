@@ -131,7 +131,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		getSelectedContainer(); // Recompute selected container
+
 		if (selectedContainer == null) {
 			return Messages.StringModelFragment_Label;
 		} else {
@@ -246,9 +246,13 @@ public class StringModelFragment extends AbstractComponentEditor {
 			}
 		}
 
-		getEditor().setHeaderTitle(getLabel(null));
+		updateTitle();
 
 		return selectedContainer;
+	}
+
+	private void updateTitle() {
+		getEditor().setHeaderTitle(getLabel(null));
 	}
 
 	private StringModelFragmentImpl getStringModelFragment() {
@@ -315,6 +319,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 							getSelectedContainer());
 					dialog.open();
 					selectedContainer = dialog.getSelectedContainer();
+					updateTitle();
 				}
 			});
 		}
