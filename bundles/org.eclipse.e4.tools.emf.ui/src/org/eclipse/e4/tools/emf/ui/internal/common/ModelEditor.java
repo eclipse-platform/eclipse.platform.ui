@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -170,6 +171,7 @@ import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -341,6 +343,10 @@ public class ModelEditor implements IGotoObject {
 	@Inject
 	@Optional
 	private IModelExtractor modelExtractor;
+
+	@Inject
+	@Optional
+	MPart currentPart;
 
 	private final ObservablesManager obsManager;
 
@@ -1998,9 +2004,15 @@ public class ModelEditor implements IGotoObject {
 	@Inject
 	@Optional
 	public void refreshOnSave(
-			@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event) {
+			@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event,
+			@Named(IServiceConstants.ACTIVE_PART) MPart part) {
 		// If the application model is saved (-> becomes undirty) we must
 		// refresh tree (bug 472706)
+		// Must react only if editor is the current one... (bug 509598)
+		if (part != currentPart) {
+			return;
+		}
+
 		final Object type = event.getProperty(EventTags.TYPE);
 		final Object newValue = event.getProperty(EventTags.NEW_VALUE);
 
