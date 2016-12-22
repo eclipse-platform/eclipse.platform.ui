@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
@@ -1697,12 +1698,12 @@ public class ModelEditor implements IGotoObject {
 		}
 	}
 
-	class ObservableFactoryImpl implements IObservableFactory {
+	public class ObservableFactoryImpl implements IObservableFactory {
 
 		@Override
 		public IObservable createObservable(Object target) {
 			if (target instanceof IObservableList) {
-				return (IObservable) target;
+				return new WritableList((List<?>) target, Object.class);
 			} else if (target instanceof VirtualEntry<?>) {
 				return ((VirtualEntry<?>) target).getList();
 			} else {
