@@ -65,12 +65,12 @@ public class E4StringPickList extends AbstractPickList {
 		// TODO does not respect NO_ORDER yet
 
 		tiReplace = new Button(getToolBar(), SWT.PUSH);
-		tiReplace.setText(messages.E4StringPickList_Replace);
+		tiReplace.setToolTipText(messages.E4StringPickList_Replace);
 		tiReplace.setImage(editor.createImage(ResourceProvider.IMG_Obj16_world_edit));
 		tiReplace.setFont(getButtonFont());
 
 		Composite valueParent = new Composite(getToolBar().getParent(), SWT.BORDER);
-		valueParent.setLayout(new GridLayout(2, false));
+		valueParent.setLayout(new GridLayout(5, false));
 		valueParent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		Label l = new Label(valueParent, SWT.NONE);

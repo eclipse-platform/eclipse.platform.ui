@@ -126,7 +126,7 @@ public abstract class AbstractPickList extends Composite {
 		});
 
 		tiAdd = new Button(toolBar, SWT.PUSH);
-		tiAdd.setText(messages.ModelTooling_Common_AddEllipsis);
+		tiAdd.setToolTipText(messages.ModelTooling_Common_AddEllipsis);
 		tiAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiAdd.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		tiAdd.setFont(getButtonFont());
@@ -139,7 +139,7 @@ public abstract class AbstractPickList extends Composite {
 
 		tiRemove = new Button(toolBar, SWT.PUSH);
 		tiRemove.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		tiRemove.setText(messages.ModelTooling_Common_Remove);
+		tiRemove.setToolTipText(messages.ModelTooling_Common_Remove);
 		tiRemove.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_delete));
 		tiRemove.setFont(getButtonFont());
 		tiRemove.addSelectionListener(new SelectionAdapter() {
@@ -151,7 +151,7 @@ public abstract class AbstractPickList extends Composite {
 
 		tiDown = new Button(toolBar, SWT.PUSH);
 		tiDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		tiDown.setText(messages.ModelTooling_Common_Down);
+		tiDown.setToolTipText(messages.ModelTooling_Common_Down);
 		tiDown.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
 		tiDown.setFont(getButtonFont());
 		tiDown.addSelectionListener(new SelectionAdapter() {
@@ -163,7 +163,7 @@ public abstract class AbstractPickList extends Composite {
 
 		tiUp = new Button(toolBar, SWT.PUSH);
 		tiUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		tiUp.setText(messages.ModelTooling_Common_Up);
+		tiUp.setToolTipText(messages.ModelTooling_Common_Up);
 		tiUp.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
 		tiUp.setFont(getButtonFont());
 		tiUp.addSelectionListener(new SelectionAdapter() {
