@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545)
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205, 458055
+ *     Ralf Petter <ralf.petter@gmail.com> - Bug 509654
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -24,9 +25,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
@@ -84,7 +85,7 @@ public class Section extends ExpandableComposite {
 		super(parent, cstyle | getBackgroundStyle(style), style);
 		int rtl = cstyle & SWT.RIGHT_TO_LEFT;
 		if ((style & DESCRIPTION) != 0) {
-			descriptionControl = new Text(this, SWT.READ_ONLY | SWT.WRAP | rtl);
+			descriptionControl = new Label(this, SWT.WRAP | rtl);
 		}
 		if ((style & TITLE_BAR) != 0) {
 			Listener listener = e -> {
@@ -152,8 +153,8 @@ public class Section extends ExpandableComposite {
 	 * @param description
 	 */
 	public void setDescription(String description) {
-		if (descriptionControl instanceof Text)
-			((Text) descriptionControl).setText(description);
+		if (descriptionControl instanceof Label)
+			((Label) descriptionControl).setText(description);
 	}
 
 	/**
@@ -163,8 +164,8 @@ public class Section extends ExpandableComposite {
 	 *         not used to create the control.
 	 */
 	public String getDescription() {
-		if (descriptionControl instanceof Text)
-			return ((Text) descriptionControl).getText();
+		if (descriptionControl instanceof Label)
+			return ((Label) descriptionControl).getText();
 		return null;
 	}
 
