@@ -15,6 +15,8 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * Object representing the project scope in the Eclipse preferences
@@ -35,14 +37,13 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
  * @since 3.0
  */
 public final class ProjectScope extends AbstractScope {
-
 	/**
-	 * String constant (value of <code>"project"</code>) used for the
-	 * scope name for this preference scope.
+	 * String constant (value of <code>"project"</code>) used for the scope name
+	 * for this preference scope.
 	 */
 	public static final String SCOPE = "project"; //$NON-NLS-1$
 
-	private IProject context;
+	private final IProject project;
 
 	/**
 	 * Create and return a new project scope for the given project. The given
@@ -55,32 +56,25 @@ public final class ProjectScope extends AbstractScope {
 		super();
 		if (context == null)
 			throw new IllegalArgumentException();
-		this.context = context;
+		this.project = context;
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IScopeContext#getNode(java.lang.String)
-	 */
 	@Override
 	public IEclipsePreferences getNode(String qualifier) {
 		if (qualifier == null)
 			throw new IllegalArgumentException();
-		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(context.getName()).node(qualifier);
+		IPreferencesService preferencesService = Platform.getPreferencesService();
+		Preferences scopeNode = preferencesService.getRootNode().node(SCOPE);
+		Preferences projectNode = scopeNode.node(project.getName());
+		return (IEclipsePreferences) projectNode.node(qualifier);
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getLocation()
-	 */
 	@Override
 	public IPath getLocation() {
-		IProject project = ((IResource) context).getProject();
 		IPath location = project.getLocation();
 		return location == null ? null : location.append(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME);
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getName()
-	 */
 	@Override
 	public String getName() {
 		return SCOPE;
@@ -95,11 +89,11 @@ public final class ProjectScope extends AbstractScope {
 		if (!(obj instanceof ProjectScope))
 			return false;
 		ProjectScope other = (ProjectScope) obj;
-		return context.equals(other.context);
+		return project.equals(other.project);
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + context.getFullPath().hashCode();
+		return super.hashCode() * 31 + project.getFullPath().hashCode();
 	}
 }
