@@ -14,12 +14,15 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -32,7 +35,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *
  * @since 3.109
  */
-public class NewContentTypeDialog extends Dialog {
+public class NewContentTypeDialog extends TitleAreaDialog {
 
 	private String name;
 	private IContentTypeManager manager;
@@ -56,17 +59,27 @@ public class NewContentTypeDialog extends Dialog {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.
+	 * Shell)
+	 */
+	@Override
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		shell.setText(WorkbenchMessages.ContentTypes_newContentTypeDialog_title);
+	}
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite res = (Composite) super.createDialogArea(parent);
-		res.setLayout(new GridLayout(2, false));
-		Label descLabel = new Label(res, SWT.NONE);
-		descLabel.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, false, false, 2, 1));
-		descLabel.setText(WorkbenchMessages.ContentTypes_newContentTypeDialog_descritption);
-		Label nameLabel = new Label(res, SWT.NONE);
+		Composite parentComposite = (Composite) super.createDialogArea(parent);
+		Composite contents = new Composite(parentComposite, SWT.NONE);
+		contents.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		Label nameLabel = new Label(contents, SWT.LEFT);
 		nameLabel.setText(WorkbenchMessages.ContentTypes_newContentTypeDialog_nameLabel);
-		Text nameText = new Text(res, SWT.NONE);
-		nameText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		Text nameText = new Text(contents, SWT.SINGLE | SWT.BORDER);
 		nameText.setText(name);
 		nameText.addModifyListener(event -> {
 			name = nameText.getText();
@@ -83,8 +96,16 @@ public class NewContentTypeDialog extends Dialog {
 				.getImage());
 		decorator.setDescriptionText(WorkbenchMessages.ContentTypes_newContentTypeDialog_invalidContentTypeName);
 		decorator.hide();
-		getShell().setText(WorkbenchMessages.ContentTypes_newContentTypeDialog_title);
-		return res;
+		setTitle(WorkbenchMessages.ContentTypes_newContentTypeDialog_title);
+		setMessage(WorkbenchMessages.ContentTypes_newContentTypeDialog_descritption);
+
+		Dialog.applyDialogFont(parentComposite);
+
+		Point defaultMargins = LayoutConstants.getMargins();
+		GridLayoutFactory.fillDefaults().numColumns(2).margins(defaultMargins.x, defaultMargins.y)
+				.generateLayout(contents);
+
+		return contents;
 	}
 
 	private boolean validateName() {

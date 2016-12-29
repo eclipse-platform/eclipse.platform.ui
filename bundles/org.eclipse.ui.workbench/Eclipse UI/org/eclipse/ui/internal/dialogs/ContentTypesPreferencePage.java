@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -201,51 +194,10 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	}
 
 	private class ContentTypesLabelProvider extends LabelProvider {
-		private Image silhouette;
-
-		public ContentTypesLabelProvider() {
-			this.silhouette = createImage(getFont(), "\uD83D\uDC64"); //$NON-NLS-1$
-		}
-
-		private Image createImage(Font font, String s) {
-			TextLayout textLayout = new TextLayout(font.getDevice());
-			textLayout.setText(s);
-			textLayout.setFont(font);
-			Rectangle bounds = textLayout.getBounds();
-			PaletteData palette = new PaletteData(0xFF, 0xFF00, 0xFF0000);
-			ImageData imageData = new ImageData(bounds.width, bounds.height, 32, palette);
-			imageData.transparentPixel = palette
-					.getPixel(font.getDevice().getSystemColor(SWT.COLOR_TRANSPARENT).getRGB());
-			for (int column = 0; column < imageData.width; column++) {
-				for (int line = 0; line < imageData.height; line++) {
-					imageData.setPixel(column, line, imageData.transparentPixel);
-				}
-			}
-			Image image = new Image(font.getDevice(), imageData);
-			GC gc = new GC(image);
-			textLayout.draw(gc, 0, 0);
-			return image;
-		}
-
 		@Override
 		public String getText(Object element) {
 			IContentType contentType = (IContentType) element;
 			return contentType.getName();
-		}
-
-		@Override
-		public Image getImage(Object element) {
-			IContentType contentType = (IContentType) element;
-			if (contentType.isUserDefined()) {
-				return this.silhouette;
-			}
-			return super.getImage(element);
-		}
-
-		@Override
-		public void dispose() {
-			this.silhouette.dispose();
-			super.dispose();
 		}
 	}
 
@@ -430,9 +382,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		{
 			Composite buttonArea = new Composite(composite, SWT.NONE);
 			GridLayout layout = new GridLayout(1, false);
-			layout.marginHeight = layout.marginWidth = 0;
 			buttonArea.setLayout(layout);
-			GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			GridData data = new GridData(SWT.DEFAULT, SWT.TOP, false, false);
 			buttonArea.setLayoutData(data);
 
 			addButton = new Button(buttonArea, SWT.PUSH);
@@ -618,6 +569,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 						IContentType contentType = (IContentType) ((IStructuredSelection) event
 								.getSelection()).getFirstElement();
 						fileAssociationViewer.setInput(contentType);
+						editButton.setEnabled(false);
+						removeButton.setEnabled(false);
 
 						if (contentType != null) {
 							String charset = contentType
