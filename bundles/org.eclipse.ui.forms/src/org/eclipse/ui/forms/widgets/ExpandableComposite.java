@@ -12,6 +12,7 @@
  *     Didier Villevalois - Fix for Bug 178534
  *     Robin Stocker - Fix for Bug 193034 (tool tip also on text)
  *     Alena Laskavaia - Bug 481604
+ *     Ralf Petter <ralf.petter@gmail.com> - Bug 183675
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -874,7 +876,7 @@ public class ExpandableComposite extends Canvas {
 				getDescriptionControl().setVisible(expanded);
 			if (client != null)
 				client.setVisible(expanded);
-			layout();
+			reflow();
 		}
 	}
 
@@ -1108,5 +1110,37 @@ public class ExpandableComposite extends Canvas {
 		gc.setForeground(textLabel.getForeground());
 		if (toggle.isFocusControl())
 			gc.drawFocus(0, 0, size.x, size.y);
+	}
+
+	/**
+	 * Reflows this expandable composite and all the parents up the hierarchy
+	 * until a SharedScrolledComposite is reached.
+	 */
+	protected void reflow() {
+		Composite c = this;
+		while (c != null) {
+			c.setRedraw(false);
+			c = c.getParent();
+			if (c instanceof SharedScrolledComposite || c instanceof Shell) {
+				break;
+			}
+		}
+		c = this;
+		while (c != null) {
+			c.requestLayout();
+			c = c.getParent();
+			if (c instanceof SharedScrolledComposite) {
+				((SharedScrolledComposite) c).reflow(true);
+				break;
+			}
+		}
+		c = this;
+		while (c != null) {
+			c.setRedraw(true);
+			c = c.getParent();
+			if (c instanceof SharedScrolledComposite || c instanceof Shell) {
+				break;
+			}
+		}
 	}
 }

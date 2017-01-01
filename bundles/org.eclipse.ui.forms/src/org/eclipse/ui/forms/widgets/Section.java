@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545)
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205, 458055
- *     Ralf Petter <ralf.petter@gmail.com> - Bug 509654
+ *     Ralf Petter <ralf.petter@gmail.com> - Bug 509654, 183675
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
@@ -112,38 +111,6 @@ public class Section extends ExpandableComposite {
 				super.setBackgroundImage(null);
 		}
 		reflow();
-	}
-
-	/**
-	 * Reflows this section and all the parents up the hierarchy until a
-	 * SharedScrolledComposite is reached.
-	 */
-	protected void reflow() {
-		Composite c = this;
-		while (c != null) {
-			c.setRedraw(false);
-			c = c.getParent();
-			if (c instanceof SharedScrolledComposite || c instanceof Shell) {
-				break;
-			}
-		}
-		c = this;
-		while (c != null) {
-			c.layout(true);
-			c = c.getParent();
-			if (c instanceof SharedScrolledComposite) {
-				((SharedScrolledComposite) c).reflow(true);
-				break;
-			}
-		}
-		c = this;
-		while (c != null) {
-			c.setRedraw(true);
-			c = c.getParent();
-			if (c instanceof SharedScrolledComposite || c instanceof Shell) {
-				break;
-			}
-		}
 	}
 
 	/**
