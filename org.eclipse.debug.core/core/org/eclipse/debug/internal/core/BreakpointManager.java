@@ -1448,7 +1448,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					// that the icon in
 					// the editor ruler will be updated (editors listen to
 					// marker changes).
-					breakpoint.getMarker().setAttribute(IBreakpoint.ENABLED, breakpoint.isEnabled());
+					try {
+						breakpoint.getMarker().setAttribute(IBreakpoint.ENABLED, breakpoint.isEnabled());
+					} catch (CoreException e) {
+						// don't care if marker was already deleted
+					}
 				}
 			}
 		};
