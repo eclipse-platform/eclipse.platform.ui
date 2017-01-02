@@ -152,7 +152,7 @@ public class ICTable {
 
 		@Override
 		public IC[] getElements(Object inputElement) {
-			return (IC[])content.toArray(new Object[content.size()]);
+			return content.toArray(new IC[content.size()]);
 		}
 		
 	}
