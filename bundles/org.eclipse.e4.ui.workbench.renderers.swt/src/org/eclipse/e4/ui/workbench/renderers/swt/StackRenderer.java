@@ -61,6 +61,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
@@ -85,6 +86,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -137,6 +139,11 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	 * preferences
 	 */
 	public static final String MRU_CONTROLLED_BY_CSS_KEY = "MRUControlledByCSS"; //$NON-NLS-1$
+
+	/*
+	 * JFace key for default workbench tab font
+	 */
+	private static final String TAB_FONT_KEY = "org.eclipse.ui.workbench.TAB_TEXT_FONT"; //$NON-NLS-1$
 
 	/**
 	 * Default default value for MRU behavior.
@@ -1774,6 +1781,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	 */
 	@SuppressWarnings("javadoc")
 	public class TabStateHandler implements EventHandler {
+
+		@SuppressWarnings("restriction")
 		@Override
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -1793,15 +1802,17 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 				return;
 			}
 
+			boolean isCssEngineActive = isCssEngineActive(cti);
+			boolean isSelectedTab = cti == cti.getParent().getSelection();
+			boolean partActivatedEvent = newValue instanceof MPlaceholder;
+
 			if (CSSConstants.CSS_CONTENT_CHANGE_CLASS.equals(newValue)) {
 				part.getTags().remove(CSSConstants.CSS_CONTENT_CHANGE_CLASS);
-				if (cti != cti.getParent().getSelection()) {
-					part.getTags().add(CSSConstants.CSS_HIGHLIGHTED_CLASS);
+				if (!isSelectedTab) {
+					addHighlight(part, cti, isCssEngineActive);
 				}
-			} else if (newValue instanceof MPlaceholder // part gets active
-					&& part.getTags().contains(
-							CSSConstants.CSS_HIGHLIGHTED_CLASS)) {
-				part.getTags().remove(CSSConstants.CSS_HIGHLIGHTED_CLASS);
+			} else if (partActivatedEvent && part.getTags().contains(CSSConstants.CSS_HIGHLIGHTED_CLASS)) {
+				removeHighlight(part, cti, isCssEngineActive);
 			}
 
 			String prevCssCls = WidgetElement.getCSSClass(cti);
@@ -1811,6 +1822,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 					|| !prevCssCls.equals(WidgetElement.getCSSClass(cti))) {
 				reapplyStyles(cti.getParent());
 			}
+
+			// Only update tab busy state if the CSS engine is not active
+			if (isCssEngineActive || partActivatedEvent) {
+				return;
+			}
+
+			updateBusyStateNoCss(cti, newValue, oldValue);
 		}
 
 		public boolean validateElement(Object element) {
@@ -1838,4 +1856,38 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		}
 	}
 
+	@SuppressWarnings("restriction")
+	static boolean isCssEngineActive(CTabItem cti) {
+		return WidgetElement.getEngine(cti.getParent()) != null;
+	}
+
+	static void removeHighlight(MPart part, CTabItem cti, boolean cssEngineActive) {
+		part.getTags().remove(CSSConstants.CSS_HIGHLIGHTED_CLASS);
+		if (!cssEngineActive) {
+			cti.setFont(JFaceResources.getFontRegistry().get(TAB_FONT_KEY));
+		}
+	}
+
+	static void addHighlight(MPart part, CTabItem cti, boolean cssEngineActive) {
+		part.getTags().add(CSSConstants.CSS_HIGHLIGHTED_CLASS);
+		if (!cssEngineActive) {
+			cti.setFont(JFaceResources.getFontRegistry().getBold(TAB_FONT_KEY));
+		}
+	}
+
+	/**
+	 * Updates the visual for busy state of the part tab in case CSS engine is
+	 * not active
+	 */
+	static void updateBusyStateNoCss(CTabItem cti, Object newValue, Object oldValue) {
+		Font updatedFont = null;
+		if (CSSConstants.CSS_BUSY_CLASS.equals(newValue)) {
+			updatedFont = JFaceResources.getFontRegistry().getItalic(TAB_FONT_KEY);
+		} else if (CSSConstants.CSS_BUSY_CLASS.equals(oldValue)) {
+			updatedFont = JFaceResources.getFontRegistry().get(TAB_FONT_KEY);
+		}
+		if (updatedFont != null) {
+			cti.setFont(updatedFont);
+		}
+	}
 }
