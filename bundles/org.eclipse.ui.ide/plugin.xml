@@ -1780,12 +1780,14 @@
             <command
                   commandId="org.eclipse.ui.ide.markers.copyDescription"
                   label="%command.copyDescription.label"
+                  mnemonic="%command.copyDescription.mnemonic"
                   style="push">
             </command>
             <command
                   commandId="org.eclipse.ui.ide.markers.copyMarkerResourceQualifiedName"
                   icon="icons/full/elcl16/cpyqual_menu.png"
                   label="%command.copyMarkerResourceQualifiedName.label"
+                  mnemonic="%command.copyMarkerResourceQualifiedName.mnemonic"
                   style="push">
             </command>
          </menu>
