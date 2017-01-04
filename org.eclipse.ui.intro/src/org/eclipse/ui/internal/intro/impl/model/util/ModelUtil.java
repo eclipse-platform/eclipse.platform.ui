@@ -65,7 +65,7 @@ public class ModelUtil {
      * yes, returns it as is. If no, treats it as a resource relative to the
      * declaring plugin. Return the plugin relative location, fully qualified.
      * Retruns null if the passed string itself is null.
-     * 
+     *
      * @param resource
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
@@ -85,7 +85,7 @@ public class ModelUtil {
      * yes, returns it as is. If no, treats it as a resource relative to the
      * declaring plugin. Return the plugin relative location, fully qualified.
      * Retruns null if the passed string itself is null.
-     * 
+     *
      * @param resource
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
@@ -138,7 +138,7 @@ public class ModelUtil {
 
 
     /*
-     * 
+     *
      * ******** XHTML DOM util methods *********************************
      */
 
@@ -226,7 +226,7 @@ public class ModelUtil {
 
     /**
      * Returns a reference to the body of the DOM.
-     * 
+     *
      * @param dom
      * @return
      */
@@ -291,7 +291,7 @@ public class ModelUtil {
     /**
      * Same as getElementsByTagName(Element parent, String tagName) but the
      * parent element is assumed to be the root of the document.
-     * 
+     *
      * @see getElementsByTagName(Element parent, String tagName)
      */
     public static Element[] getElementsByTagName(Document dom, String tagName) {
@@ -323,7 +323,7 @@ public class ModelUtil {
      */
     public static Element getElementById(Document dom, String id,
             String localElementName) {
-        
+
         NodeList children = dom.getElementsByTagNameNS("*", localElementName); //$NON-NLS-1$
         for (int i = 0; i < children.getLength(); i++) {
             Element element = (Element) children.item(i);
@@ -338,7 +338,7 @@ public class ModelUtil {
     public static Element getElementById(Document dom, String id) {
     	return getElementById(dom, id, "*"); //$NON-NLS-1$
     }
-    
+
     public static void updateResourceAttributes(Element element,
             AbstractIntroPage page) {
         updateResourceAttributes(element, page.getBase(), page.getBundle());
@@ -354,7 +354,7 @@ public class ModelUtil {
     /**
      * Updates all the resource attributes of the passed element to point to a
      * local resolved url.
-     * 
+     *
      * @param element
      * @param extensionContent
      */
@@ -424,7 +424,7 @@ public class ModelUtil {
 
     /**
      * Remove all instances of the element from the DOM.
-     * 
+     *
      */
     public static void removeAllElements(Document dom, String elementLocalName) {
         // get all elements in DOM and remove them.

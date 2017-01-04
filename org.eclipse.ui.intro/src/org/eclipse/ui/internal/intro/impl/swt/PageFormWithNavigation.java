@@ -40,7 +40,7 @@ public class PageFormWithNavigation extends PageForm {
 
 
     /**
-     * 
+     *
      */
     public PageFormWithNavigation(FormToolkit toolkit,
             IntroModelRoot modelRoot, Form parentForm) {
@@ -49,7 +49,7 @@ public class PageFormWithNavigation extends PageForm {
 
     /**
      * Extend parent behavior and add navigation.
-     * 
+     *
      * @param pageBook
      */
     @Override
@@ -100,7 +100,7 @@ public class PageFormWithNavigation extends PageForm {
 
     /**
      * Creates an Image Hyperlink from an IntroLink. Model object is NOT cached.
-     * 
+     *
      * @param body
      * @param link
      */

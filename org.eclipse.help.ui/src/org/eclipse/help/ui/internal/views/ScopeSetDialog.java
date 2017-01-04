@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -48,8 +48,8 @@ import org.eclipse.ui.PlatformUI;
  * Scope dialog for federated search.
  */
 public class ScopeSetDialog extends TrayDialog  {
-	
-	
+
+
 	public class NonDefaultFilter extends ViewerFilter {
 
 		@Override
@@ -82,7 +82,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	private ArrayList<ScopeSet> sets;
 	private ArrayList<PendingOperation> operations;
 	private IStructuredContentProvider contentProvider;
-	
+
 	private Button showAllRadio;
 	private Button showSelectedRadio;
 
@@ -94,7 +94,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	private ScopeSet initialSelection;
 	private Object[] result;
 	private boolean localOnly;
-	
+
 	private abstract class PendingOperation {
 		ScopeSet set;
 		public PendingOperation(ScopeSet set) {
@@ -103,7 +103,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		public abstract void commit();
 		public abstract void cancel();
 	}
-	
+
 	private class AddOperation extends PendingOperation {
 		public AddOperation(ScopeSet set) {
 			super(set);
@@ -163,7 +163,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		public void cancel() {
 		}
 	}
-	
+
 	private class ScopeContentProvider implements IStructuredContentProvider {
 
 		@Override
@@ -179,7 +179,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 	private class ScopeLabelProvider extends LabelProvider {
 
 		@Override
@@ -217,11 +217,11 @@ public class ScopeSetDialog extends TrayDialog  {
 		labelProvider = new ScopeLabelProvider();
 		setInitialSelections( manager.getActiveSet());
 	}
-	
+
 	private void setInitialSelections(ScopeSet scopeSet) {
 		initialSelection = scopeSet;
 	}
-	
+
 	private ArrayList<ScopeSet> extractSets(ScopeSet[] array) {
 		ArrayList<ScopeSet> list = new ArrayList<>();
 		for (int i=0; i<array.length; i++) {
@@ -229,7 +229,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		}
 		return list;
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite container) {
     	Composite innerContainer = (Composite)super.createDialogArea(container);
@@ -244,20 +244,20 @@ public class ScopeSetDialog extends TrayDialog  {
 		viewer.setFilters(filters );
     	return innerContainer;
     }
-    
+
 	private void createRadioButtons(Composite parent) {
 		boolean showAll = initialSelection != null  && initialSelection.isDefault();
 		showAllRadio = new Button(parent, SWT.RADIO);
     	showAllRadio.setText(Messages.ScopeSet_selectAll);
-    	
+
     	showSelectedRadio = new Button(parent, SWT.RADIO);
     	showSelectedRadio.setText(Messages.ScopeSet_selectWorkingSet);
     	showAllRadio.addSelectionListener(new ShowAllListener());
     	showAllRadio.setSelection(showAll);
     	showSelectedRadio.setSelection(!showAll);
 	}
-    
-    private void createTable(Composite parent) {	
+
+    private void createTable(Composite parent) {
         viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         viewer.setContentProvider(contentProvider);
         viewer.setLabelProvider(labelProvider);
@@ -265,7 +265,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		viewer.addDoubleClickListener(event -> okPressed());
         if (initialSelection != null) {
 			viewer.setSelection(new StructuredSelection(initialSelection));
-		} 
+		}
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.heightHint = convertHeightInCharsToPixels(heightInChars);
         gd.widthHint = convertWidthInCharsToPixels(widthInChars);
@@ -273,13 +273,13 @@ public class ScopeSetDialog extends TrayDialog  {
         table.setLayoutData(gd);
         table.setFont(parent.getFont());
     }
-    
+
 	private void enableTable() {
 		if (viewer != null) {
 		    boolean showSelected = showSelectedRadio.getSelection();
 			viewer.getTable().setEnabled(showSelected);
 		    viewer.refresh();
-		    // Ensure that a scope is selected unless there are no 
+		    // Ensure that a scope is selected unless there are no
 		    // user defined scopes
 		    if (showSelected && viewer.getSelection().isEmpty()) {
 		    	Object firstElement = viewer.getElementAt(0);
@@ -289,7 +289,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		    }
 		}
 	}
-    
+
     private void createEditingButtons(Composite composite) {
 		Composite buttonComposite= new Composite(composite, SWT.RIGHT);
 		GridLayout layout= new GridLayout();
@@ -298,19 +298,19 @@ public class ScopeSetDialog extends TrayDialog  {
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		data.grabExcessHorizontalSpace= true;
 		composite.setData(data);
-    	createButton(buttonComposite, NEW_ID, Messages.ScopeSetDialog_new, false); 
-       	renameButton = createButton(buttonComposite, RENAME_ID, Messages.ScopeSetDialog_rename, false); 
-       	editButton = createButton(buttonComposite, EDIT_ID, Messages.ScopeSetDialog_edit, false); 
-       	removeButton = createButton(buttonComposite, REMOVE_ID, Messages.ScopeSetDialog_remove, false); 
+    	createButton(buttonComposite, NEW_ID, Messages.ScopeSetDialog_new, false);
+       	renameButton = createButton(buttonComposite, RENAME_ID, Messages.ScopeSetDialog_rename, false);
+       	editButton = createButton(buttonComposite, EDIT_ID, Messages.ScopeSetDialog_edit, false);
+       	removeButton = createButton(buttonComposite, REMOVE_ID, Messages.ScopeSetDialog_remove, false);
        	updateButtons();
     }
-	
+
 	public ScopeSet getActiveSet() {
 		if (result!=null && result.length>0)
 			return (ScopeSet)result[0];
 		return null;
 	}
-	
+
 	@Override
 	protected void okPressed() {
     	if (operations!=null) {
@@ -330,7 +330,7 @@ public class ScopeSetDialog extends TrayDialog  {
     	}
     	super.okPressed();
     }
-	
+
 	private void setResult(ScopeSet scope) {
 		result = new Object[] { scope };
 	}
@@ -343,7 +343,7 @@ public class ScopeSetDialog extends TrayDialog  {
 			newResult.toArray(result);
 		}
 	}
-	
+
 	@Override
 	protected void cancelPressed() {
     	if (operations!=null) {
@@ -355,7 +355,7 @@ public class ScopeSetDialog extends TrayDialog  {
     	}
 		super.cancelPressed();
 	}
-	
+
 	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
@@ -375,7 +375,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		}
 		super.buttonPressed(buttonId);
 	}
-	
+
 	private void doNew() {
 		ScopeSet newSet = new ScopeSet(getDefaultName());
 		String name = getNewName(newSet.getName(), false);
@@ -388,7 +388,7 @@ public class ScopeSetDialog extends TrayDialog  {
 			updateButtons();
 		}
 	}
-	
+
 	private String getDefaultName() {
 		Set<String> namesInUse = new HashSet<>();
 		for (int i=0; i<sets.size(); i++) {
@@ -396,7 +396,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		    namesInUse.add(set.getName().toLowerCase());
 	    }
 		for (int i = 1; i < 1000; i++) {
-			String name = Messages.ScopeSetDialog_defaultName + i; 
+			String name = Messages.ScopeSetDialog_defaultName + i;
 			if (!namesInUse.contains(name.toLowerCase())) {
 				return name;
 			}
@@ -412,15 +412,15 @@ public class ScopeSetDialog extends TrayDialog  {
 			return;
 		}
 		PreferenceManager manager = new ScopePreferenceManager(descManager, set);
-		
-		if (!localOnly) { 
+
+		if (!localOnly) {
 		    PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager, set.isEditable());
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.create();
 			dialog.getShell().setText(NLS.bind(Messages.ScopePreferenceDialog_wtitle, set.getName()));
 			dialog.open();
 		} else {
-			LocalScopeDialog localDialog = new LocalScopeDialog(getShell(), manager, descManager, set); 
+			LocalScopeDialog localDialog = new LocalScopeDialog(getShell(), manager, descManager, set);
 			localDialog.create();
 			localDialog.getShell().setText(NLS.bind(Messages.ScopePreferenceDialog_wtitle, set.getName()));
 			localDialog.open();
@@ -437,7 +437,7 @@ public class ScopeSetDialog extends TrayDialog  {
 			if (newName!=null) {
 				if (rop!=null)
 					rop.newName = newName;
-				else 
+				else
 					scheduleOperation(new RenameOperation(set, newName));
 				viewer.update(set, null);
 				updateButtons();
@@ -454,13 +454,13 @@ public class ScopeSetDialog extends TrayDialog  {
 		dialog.create();
 		String dialogTitle = isRename ?
 		  Messages.RenameDialog_wtitle : Messages.NewDialog_wtitle;
-	    dialog.getShell().setText(dialogTitle); 
+	    dialog.getShell().setText(dialogTitle);
 		if (dialog.open()==RenameDialog.OK) {
 			return dialog.getNewName();
 		}
 		return null;
 	}
-	
+
 	private void doRemove() {
 		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
@@ -472,17 +472,17 @@ public class ScopeSetDialog extends TrayDialog  {
 			Object element = viewer.getElementAt(0);
 			if (element != null) {
 				viewer.setSelection(new StructuredSelection(element));
-			} 
+			}
 			updateButtons();
 		}
 	}
-	
+
 	private void scheduleOperation(PendingOperation op) {
 		if (operations==null)
 			operations = new ArrayList<>();
 		operations.add(op);
 	}
-	
+
 	private void updateButtons() {
 		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
@@ -491,7 +491,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		removeButton.setEnabled(editableSet);
 		renameButton.setEnabled(editableSet);
 	}
-	
+
 	private PendingOperation findOperation(ScopeSet set, Class<?> type) {
 		if (operations!=null) {
 			for (int i=0; i<operations.size(); i++) {
@@ -506,6 +506,6 @@ public class ScopeSetDialog extends TrayDialog  {
 	}
 
 	public void setInput(ScopeSetManager scopeSetManager) {
-		input = scopeSetManager;	
-	}	
+		input = scopeSetManager;
+	}
 }

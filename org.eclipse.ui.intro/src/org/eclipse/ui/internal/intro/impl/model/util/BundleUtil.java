@@ -60,7 +60,7 @@ public class BundleUtil {
 
     /**
      * Retrieves the given key from the bundle header.
-     * 
+     *
      * @param bundle
      * @param key
      * @return
@@ -78,7 +78,7 @@ public class BundleUtil {
 
     /**
      * Get the resourcelocation, but do not force an $nl$ on it.
-     * 
+     *
      * @param resource
      * @param element
      * @return
@@ -94,7 +94,7 @@ public class BundleUtil {
      * Returns the fully qualified location of the passed resource string from
      * the passed plugin id. If the file could not be loaded from the plugin,
      * the resource is returned as is.
-     * 
+     *
      * @param resource
      * @return
      */
@@ -107,7 +107,7 @@ public class BundleUtil {
 
     /**
      * Shorthand util method.
-     * 
+     *
      * @param resource
      * @return
      */
@@ -168,7 +168,7 @@ public class BundleUtil {
     				}
     			}
     		}
-    		
+
             // we need to resolve this URL.
             String copyResource = resource;
             if (forceNLResolve && !copyResource.startsWith(NL_TAG)) {
@@ -224,7 +224,7 @@ public class BundleUtil {
     /**
      * Get the absolute path of the given bundle, in the form
      * file:/path_to_plugin
-     * 
+     *
      * @param bundle
      * @return
      */
@@ -252,7 +252,7 @@ public class BundleUtil {
     /**
      * Get the absolute path of the bundle with id <code>bundleId</code>. If
      * no such bundle is found, return null.
-     * 
+     *
      * @param bundleId
      * @return
      */
@@ -262,12 +262,12 @@ public class BundleUtil {
             return null;
         return getResolvedBundleLocation(bundle);
     }
-    
+
     /*
      * Bug 126085 - need to fix up file: protocol
-     * to a form that IE7 understands (file:///). 
+     * to a form that IE7 understands (file:///).
      */
-    
+
     private static String toExternalForm(URL localURL) {
     	try {
     		localURL = FileLocator.toFileURL(localURL);

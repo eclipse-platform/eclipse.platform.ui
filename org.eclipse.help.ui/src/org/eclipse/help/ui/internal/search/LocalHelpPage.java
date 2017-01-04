@@ -54,7 +54,7 @@ public class LocalHelpPage extends RootScopePage {
 	private ITreeContentProvider contentTreeContentProvider;
 
 	private ILabelProvider contentTreeLabelProvider;
-	
+
 	private CheckboxTreeViewer criteriaTree;
 
 	private ITreeContentProvider criteriaTreeContentProvider;
@@ -86,7 +86,7 @@ public class LocalHelpPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		searchAll = new Button(parent, SWT.RADIO);
-		searchAll.setText(Messages.selectAll); 
+		searchAll.setText(Messages.selectAll);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchAll.setLayoutData(gd);
@@ -102,7 +102,7 @@ public class LocalHelpPage extends RootScopePage {
 		});
 
 		searchSelected = new Button(parent, SWT.RADIO);
-		searchSelected.setText(Messages.selectWorkingSet); 
+		searchSelected.setText(Messages.selectWorkingSet);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchSelected.setLayoutData(gd);
@@ -125,7 +125,7 @@ public class LocalHelpPage extends RootScopePage {
 
 		Label contentLabel = new Label(parent, SWT.WRAP);
 		contentLabel.setFont(font);
-		contentLabel.setText(Messages.WorkingSetContent); 
+		contentLabel.setText(Messages.WorkingSetContent);
 		gd = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
@@ -133,11 +133,11 @@ public class LocalHelpPage extends RootScopePage {
 		contentLabel.setLayoutData(gd);
 
 		createContentTree(parent, font);
-		
+
 		if (HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
 			Label criteriaLabel = new Label(parent, SWT.WRAP);
 			criteriaLabel.setFont(font);
-			criteriaLabel.setText(Messages.WorkingSetCriteria); 
+			criteriaLabel.setText(Messages.WorkingSetCriteria);
 			gd = new GridData(GridData.GRAB_HORIZONTAL
 					| GridData.HORIZONTAL_ALIGN_FILL
 					| GridData.VERTICAL_ALIGN_CENTER);
@@ -145,7 +145,7 @@ public class LocalHelpPage extends RootScopePage {
 			criteriaLabel.setLayoutData(gd);
 		    createCriteriaTree(parent, font);
 		}
-		
+
 		initializeCheckedState();
 		applyDialogFont(parent);
 
@@ -201,7 +201,7 @@ public class LocalHelpPage extends RootScopePage {
 		}
 		return convertHeightInCharsToPixels(15);
 	}
-	
+
 
 	protected void createCriteriaTree(Composite parent, Font font) {
 		GridData gd;
@@ -261,7 +261,7 @@ public class LocalHelpPage extends RootScopePage {
 		return contentProvider.hasChildren(element);
 	}
 
-	void updateParentState(Object child, boolean baseChildState, 
+	void updateParentState(Object child, boolean baseChildState,
 			               CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		if (child == null)
 			return;
@@ -289,7 +289,7 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	void setSubtreeChecked(Object parent, boolean state,
-			boolean checkExpandedState,  
+			boolean checkExpandedState,
             CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 
 		Object[] children = contentProvider.getChildren(parent);
@@ -306,7 +306,7 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void findCheckedElements(java.util.List checkedResources, Object parent,  
+	private void findCheckedElements(java.util.List checkedResources, Object parent,
             CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
 		for (int i = 0; i < children.length; i++) {
@@ -316,8 +316,8 @@ public class LocalHelpPage extends RootScopePage {
 				checkedResources.add(children[i]);
 		}
 	}
-	
-	private CriterionResource[] findCheckedCriteria(Object parent,  
+
+	private CriterionResource[] findCheckedCriteria(Object parent,
             CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
 		List<CriterionResource> resources = new ArrayList<>();
@@ -339,7 +339,7 @@ public class LocalHelpPage extends RootScopePage {
 		return resources.toArray(new CriterionResource[resources.size()]);
 	}
 
-	void handleCheckStateChange(final CheckStateChangedEvent event,  
+	void handleCheckStateChange(final CheckStateChangedEvent event,
             final CheckboxTreeViewer tree, final ITreeContentProvider contentProvider) {
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 			Object element = event.getElement();
@@ -361,8 +361,8 @@ public class LocalHelpPage extends RootScopePage {
 			criteria = new CriterionResource[0];
 		} else {
 			criteria = findCheckedCriteria(
-				criteriaTree.getInput(), 
-				criteriaTree, 
+				criteriaTree.getInput(),
+				criteriaTree,
 				criteriaTreeContentProvider);
 		}
 		findCheckedElements(elements, contentTree.getInput(), contentTree, contentTreeContentProvider);
@@ -426,7 +426,7 @@ public class LocalHelpPage extends RootScopePage {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		searchAll.setSelection(true);
@@ -437,7 +437,7 @@ public class LocalHelpPage extends RootScopePage {
 		}
 		super.performDefaults();
 	}
-	
+
 	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		if ( getContainer() == null ) {

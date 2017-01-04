@@ -85,7 +85,7 @@ public class IntroHTML extends AbstractTextElement {
     /**
      * Returns the html type. Will be either "inline" or "embed". If not, null
      * will be returned as if the attibute was nto defined.
-     * 
+     *
      * @return Returns the html type value.
      */
     public boolean isInlined() {
@@ -111,7 +111,7 @@ public class IntroHTML extends AbstractTextElement {
     /**
      * Returns the intro image used as a replacement if this HTML element fails.
      * May return null if there is no image child.
-     * 
+     *
      * @return Returns the introImage.
      */
     public IntroImage getIntroImage() {

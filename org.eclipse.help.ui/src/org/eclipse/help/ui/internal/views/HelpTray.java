@@ -50,20 +50,20 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * help or a cheat sheet follows the user into a dialog.
  */
 public class HelpTray extends DialogTray implements IPageChangedListener {
-	
+
 	public static final int MINIMUM_HEIGHT = 450;
 	private static final int DEFAULT_WIDTH = 210;
-	
+
 	private int originalHeight;
 	private int heightAdded;
-	
+
 	private FormToolkit toolkit;
 	private ReusableHelpPart helpPart;
 	private Shell shell;
 	private IContributionItem closeAction;
 	private Image normal;
 	private Image hover;
-	
+
 	/**
 	 * Creates any actions needed by the tray.
 	 */
@@ -85,17 +85,17 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 			}
 		};
 	}
-	
+
 	/**
 	 * Creates the contents of the tray.
-	 * 
+	 *
 	 * @param parent the parent composite that will contain the tray
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		// if the dialog is too short, make it taller
 		ensureMinimumHeight(parent.getShell());
-		
+
 		toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
 		toolkit.getColors().initializeSectionToolBarColors();
@@ -105,7 +105,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		layout.verticalSpacing = 0;
 		container.setLayout(layout);
 		container.addListener(SWT.Dispose, event -> dispose());
-		
+
 		ToolBarManager tbm = new ToolBarManager(SWT.FLAT);
 		tbm.createControl(container);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -122,14 +122,14 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = DEFAULT_WIDTH;
 		helpPart.getControl().setLayoutData(gd);
-		
+
 		createActions();
 		tbm.add(closeAction);
-		
+
 		shell = parent.getShell();
 		hookPageChangeListener(shell);
 		helpPart.getControl().addListener(SWT.Dispose, event -> unhookPageChangeListener(shell));
-		
+
 		return container;
 	}
 
@@ -138,13 +138,13 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 */
 	private void createImages() {
 		Display display = Display.getCurrent();
-		int[] shape = new int[] { 
-				3,  3, 5,  3, 7,  5, 8,  5, 10, 3, 12, 3, 
+		int[] shape = new int[] {
+				3,  3, 5,  3, 7,  5, 8,  5, 10, 3, 12, 3,
 				12, 5, 10, 7, 10, 8, 12,10, 12,12,
 				10,12, 8, 10, 7, 10, 5, 12, 3, 12,
 				3, 10, 5,  8, 5,  7, 3,  5
 		};
-		
+
 		/*
 		 * Use magenta as transparency color since it is used infrequently.
 		 */
@@ -174,7 +174,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		gc.setForeground(border);
 		gc.drawPolygon(shape);
 		gc.dispose();
-		
+
 		backgroundHot.dispose();
 	}
 
@@ -186,7 +186,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		hover.dispose();
 		toolkit.dispose();
 		helpPart.dispose();
-		
+
 		/*
 		 * Shell is about to be closed. Add a one-time-only listener
 		 * that will return the dialog height back to original.
@@ -209,7 +209,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 * Ensures that the dialog's height is sufficient to contain the help tray.
 	 * If the dialog is too short, its height is increased. When closing the tray,
 	 * the height is returned to original (see dispose()).
-	 * 
+	 *
 	 * @param shell the dialog's shell
 	 */
 	private void ensureMinimumHeight(Shell shell) {
@@ -224,20 +224,20 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 			heightAdded = 0;
 		}
 	}
-	
+
 	/**
 	 * Returns the ReusableHelpPart contained in the tray.
-	 * 
+	 *
 	 * @return the tray's ReusableHelpPart
 	 */
 	public ReusableHelpPart getHelpPart() {
 		return helpPart;
 	}
-	
+
 	/**
 	 * Add the listener that gets notified of page changes (to automatically
 	 * update context help).
-	 * 
+	 *
 	 * @param parent the Composite to hook the listener to
 	 */
 	private void hookPageChangeListener(Composite parent) {
@@ -251,7 +251,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 * Returns whether or not the help tray can handle the given shell. In some
 	 * cases the help tray is not appropriate for shells that are too short and
 	 * not resizable. In these cases infopops are used.
-	 * 
+	 *
 	 * @param shell the shell to check
 	 * @return whether or not the help tray is appropriate for the hsell
 	 */
@@ -266,7 +266,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	/**
 	 * Called whenever the dialog we're inside has changed pages. This updates
 	 * the context help page if it is visible.
-	 * 
+	 *
 	 * @param event the page change event
 	 */
 	@Override
@@ -287,11 +287,11 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		}
 		helpPart.update(null, null, null, c, false);
 	}
-	
+
 	/**
 	 * Remove the listener that gets notified of page changes (to automatically
 	 * update context help).
-	 * 
+	 *
 	 * @param parent the Composite that had the listener
 	 */
 	private void unhookPageChangeListener(Composite parent) {

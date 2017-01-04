@@ -23,7 +23,7 @@ public class CustomizationDialog extends TrayDialog {
 
     private CustomizationContentsArea contentsArea;
 	private String pageId;
-	
+
 	private CustomizationContentsArea getContentsArea() {
 		if (contentsArea == null) {
 			contentsArea = new CustomizationContentsArea();
@@ -35,7 +35,7 @@ public class CustomizationDialog extends TrayDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.pageId = pageId;
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		CustomizationContentsArea contents = getContentsArea();
@@ -46,7 +46,7 @@ public class CustomizationDialog extends TrayDialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		return outerContainer;
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		if (getContentsArea().performOk()) {
@@ -54,7 +54,7 @@ public class CustomizationDialog extends TrayDialog {
 		}
 		super.okPressed();
 	}
-	
+
 	@Override
 	protected void cancelPressed() {
 	    getContentsArea().dispose();
@@ -63,9 +63,9 @@ public class CustomizationDialog extends TrayDialog {
 
     @Override
 	protected void configureShell(Shell newShell) {
-	    super.configureShell(newShell);	
-		newShell.setText(Messages.WelcomeCustomizationPreferencePage_Customize); 
+	    super.configureShell(newShell);
+		newShell.setText(Messages.WelcomeCustomizationPreferencePage_Customize);
 	    newShell.setImage(ImageUtil.createImage("full/elcl16/configure.gif")); //$NON-NLS-1$);
     }
-	
+
 }

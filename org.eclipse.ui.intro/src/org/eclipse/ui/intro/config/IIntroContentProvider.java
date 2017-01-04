@@ -25,14 +25,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * <ul>
  * <li>a content provider is defined in the Intro content markup file (ie:
  * introContent.xml file) as follows:
- * 
+ *
  * <p>
  * &lt;contentProvider id=&quot;roles&quot;
  * class=&quot;x.y.z.ContentProvider&quot;&gt; <br>
  * &lt;text&gt;Some alternate text for dynamic content&lt;/text&gt; <br>
  * &lt;/contentProvider&gt;
  * </p>
- * 
+ *
  * This defines the content provider as part of the intro content for that page.
  * </li>
  * <li>the content provider class is created when the page that contains this
@@ -58,7 +58,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * when the appropriate event happens.
  * <li>finally, when the intro view is closed, dispose will be called on the
  * content provider to give it a chance to dispose of any resources.</li>
- * 
+ *
  * @since 3.0.1
  */
 public interface IIntroContentProvider {
@@ -66,7 +66,7 @@ public interface IIntroContentProvider {
      * Initializes the content provider. An IIntroContentProviderSite is passed,
      * which will be called on to recompute or layout the content when the
      * content becomes stale.
-     * 
+     *
      * @param site
      *            the site of this IIntroContentProvider
      */
@@ -77,7 +77,7 @@ public interface IIntroContentProvider {
      * Creates HTML content in the provided PrintWriter. This content will be
      * included in the generated HTML page when embedded HTML widget is used to
      * render intro content.
-     * 
+     *
      * @param id
      *            the unique identifier of the content element. The same content
      *            provider class can be reused for several elements and the id
@@ -90,7 +90,7 @@ public interface IIntroContentProvider {
     /**
      * Creates SWT content in the provided Composite. This method is called when
      * Eclipse Forms are used to render intro content.
-     * 
+     *
      * @param id
      *            the unique identifier of the content element
      * @param parent

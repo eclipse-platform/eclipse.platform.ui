@@ -30,7 +30,7 @@ public class BookmarkHeaderPart extends AbstractFormPart implements IHelpPart  {
 	private Composite container;
 	private String id;
 
-	public BookmarkHeaderPart(Composite parent, FormToolkit toolkit) {	
+	public BookmarkHeaderPart(Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
 		Composite inner = toolkit.createComposite(container);
 		GridLayout layout = new GridLayout();
@@ -40,7 +40,7 @@ public class BookmarkHeaderPart extends AbstractFormPart implements IHelpPart  {
 		data.heightHint = 2;
 		inner.setLayoutData(data);
 	}
-	
+
 	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.id = id;
@@ -82,17 +82,17 @@ public class BookmarkHeaderPart extends AbstractFormPart implements IHelpPart  {
 
 	@Override
 	public void stop() {
-		
+
 	}
 
 	@Override
 	public void toggleRoleFilter() {
-		
+
 	}
 
 	@Override
 	public void refilter() {
-			
+
 	}
-		
+
 }

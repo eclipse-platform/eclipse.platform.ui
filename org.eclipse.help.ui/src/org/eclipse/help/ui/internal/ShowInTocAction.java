@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 public class ShowInTocAction implements ILiveHelpAction {
 
 	private String path;
-	
+
 	@Override
 	public void setInitializationString(String data) {
 		path = data;
@@ -43,7 +43,7 @@ public class ShowInTocAction implements ILiveHelpAction {
 			});
 		}
 	}
-	
+
 	private IHelpResource getHelpResource() {
 		StringTokenizer tok = new StringTokenizer(path, "_"); //$NON-NLS-1$
 		int index = Integer.parseInt(tok.nextToken());

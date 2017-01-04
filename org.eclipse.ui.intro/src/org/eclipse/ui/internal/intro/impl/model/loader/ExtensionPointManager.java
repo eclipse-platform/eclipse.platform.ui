@@ -76,7 +76,7 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
 
     /**
      * Load an intro model given a config id.
-     * 
+     *
      * @param configId
      * @return
      */

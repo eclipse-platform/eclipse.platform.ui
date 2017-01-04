@@ -38,11 +38,11 @@ public class IntroGroup extends AbstractIntroContainer {
     IntroGroup(Element element, Bundle bundle, String base) {
         super(element, bundle, base);
     }
-    
+
     @Override
 	protected void loadFromParent() {
     }
-    
+
     private void resolve() {
     	// reinitialize if there are variables in the value.
     	if (label==null) {
@@ -66,22 +66,22 @@ public class IntroGroup extends AbstractIntroContainer {
     	resolve();
         return label;
     }
-    
+
     @Override
 	public int getType() {
         return AbstractIntroElement.GROUP;
     }
-    
+
     public boolean isExpandable() {
     	String value=getAttribute(element, ATT_EXPANDABLE);
     	return value!=null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
-    
+
     public boolean isExpanded() {
     	String value=getAttribute(element, ATT_EXPANDED);
     	return value!=null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
-    
+
     @Override
 	protected void loadChildren() {
     	String value = getAttribute(element, ATT_COMPUTED);
@@ -102,7 +102,7 @@ public class IntroGroup extends AbstractIntroContainer {
     	    addDynamicNodes(this.element, nodes);
     	}
     }
-  
+
     private void addDynamicNodes(Element target, IntroElement [] nodes) {
     	for (int i=0; i<nodes.length; i++) {
     		IntroElement node = nodes[i];

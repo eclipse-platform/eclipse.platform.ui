@@ -39,18 +39,18 @@ public class IntroData {
 	private String productId;
 	private Map<String, PageData> pages = new HashMap<>();
 	private boolean active;
-	
+
 	public IntroData(String productId, String fileNameOrData, boolean active) {
 		this.productId = productId;
 		this.active = active;
 		if (fileNameOrData!=null)
 			initialize(fileNameOrData);
 	}
-	
+
 	public String getProductId() {
 		return productId;
 	}
-	
+
 	public PageData getPage(String pageId) {
 		return pages.get(pageId);
 	}
@@ -77,7 +77,7 @@ public class IntroData {
 		PageData pd = new PageData(page);
 		pages.put(pd.getId(), pd);
 	}
-	
+
 	public void addImplicitContent() {
 		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
 		for (int i=0; i<elements.length; i++) {
@@ -164,7 +164,7 @@ public class IntroData {
 			buffer.append(spe.getLineNumber());
 			buffer.append(", uri "); //$NON-NLS-1$
 			buffer.append(spe.getSystemId());
-			buffer.append("\n"); //$NON-NLS-1$   
+			buffer.append("\n"); //$NON-NLS-1$
 			buffer.append(spe.getMessage());
 
 			// Use the contained exception.
@@ -188,7 +188,7 @@ public class IntroData {
 		}
 		return null;
 	}
-	
+
 	public void write(PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>"); //$NON-NLS-1$
 		writer.println("<extensions>"); //$NON-NLS-1$

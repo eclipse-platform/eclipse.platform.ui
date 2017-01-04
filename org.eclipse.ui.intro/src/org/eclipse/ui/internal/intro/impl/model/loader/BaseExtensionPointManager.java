@@ -119,7 +119,7 @@ public class BaseExtensionPointManager {
      * that maps to the correct intro part id. If there is more than one config
      * thats maps to the same intro part id, log the fact, and return the first
      * one. If there are non, return null.
-     * 
+     *
      * @param configElements
      * @return
      */
@@ -150,7 +150,7 @@ public class BaseExtensionPointManager {
 
         IConfigurationElement[] configExtensionElements = registry
             .getConfigurationElementsFor(CONFIG_EXTENSION);
-        
+
         /*
          * Extension filter is used for performance testing to only load contributions
          * from a specific plug-in (fixed data set).
@@ -174,7 +174,7 @@ public class BaseExtensionPointManager {
     /**
      * Add a model to the cache. This method is private because only this
      * manager class knows how to load an intro model.
-     * 
+     *
      * @param modelId
      * @param model
      */
@@ -184,7 +184,7 @@ public class BaseExtensionPointManager {
 
     /**
      * Gets the given model from the cache.
-     * 
+     *
      * @param modelId
      */
     protected IntroModelRoot getCachedModel(String configId) {
@@ -196,7 +196,7 @@ public class BaseExtensionPointManager {
      * with an attribute of the given value. If there is more than one
      * configuration element that maps to the attribute value log the fact, and
      * return the first one. If there are non, return null.
-     * 
+     *
      * @param configElements
      * @return
      */
@@ -263,7 +263,7 @@ public class BaseExtensionPointManager {
 	public Map<String, IntroModelRoot> getIntroModels() {
         return introModels;
     }
-    
+
     /*
      * Internal test hook for restricting which extensions to load.
      */

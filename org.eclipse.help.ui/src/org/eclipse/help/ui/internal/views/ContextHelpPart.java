@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -80,7 +80,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
 
 	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
-	
+
 	private static final String MORE_HREF = "__more__"; //$NON-NLS-1$
 
 	private FormText text;
@@ -96,7 +96,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private String defaultText = ""; //$NON-NLS-1$
 
 	private String id;
-	
+
 	private Font codeFont;
 
 	private String savedDescription;
@@ -171,8 +171,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			public void getName(AccessibleEvent e) {
 		        if (e.childID == ACC.CHILDID_SELF) {
 		            String currentName = e.result;
-		            e.result = Messages.ReusableHelpPart_contextHelpPage_name 
-		              + ' ' + getSection().getText()+ ' ' +currentName;    
+		            e.result = Messages.ReusableHelpPart_contextHelpPage_name
+		              + ' ' + getSection().getText()+ ' ' +currentName;
 		        }
 		    }
 		});
@@ -186,12 +186,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		return style;
 	}
-	
+
 	private static Font createCodeFont(Display display, Font regularFont, Font textFont) {
 		FontData[] rfontData = regularFont.getFontData();
 		FontData[] tfontData = textFont.getFontData();
 		int height = 0;
-		
+
 		for (int i=0; i<rfontData.length; i++) {
 			FontData data = rfontData[i];
 			height = Math.max(height, data.getHeight());
@@ -201,7 +201,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		return new Font(display, tfontData);
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (codeFont!=null)
@@ -258,7 +258,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			parent.showURL(sHref);
 		}
 	}
-	
+
 	private void doRunCommand(String serialization) {
 		ExecuteCommandAction action = new ExecuteCommandAction();
 		action.setInitializationString(serialization);
@@ -333,11 +333,11 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		    updateDynamicHelp();
 		}
 	}
-	
+
 	private long lastUpdate = 0;
 
 	private String[] searchTerms;
-	
+
 	/*
 	 * If F1 was pressed within the last half second and this is a context change do not
 	 * update dynamic help solely due to a focus change, Bug 159450
@@ -394,7 +394,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		    searchTerms = new String[] { expression };
 		}
 	}
-	
+
 	private void updateDynamicHelp() {
 		RelatedTopicsPart part = (RelatedTopicsPart) parent
 				.findPart(IHelpUIConstants.HV_RELATED_TOPICS);
@@ -419,9 +419,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		return buff.length() > 0 ? buff.toString().trim() : null;
 	}
-	
+
 	private class SearchTerms {
-		
+
 		private List<String> terms = new ArrayList<>();
 		private Set<String> termSet = new HashSet<>();
 		public void add(String term) {
@@ -433,7 +433,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				terms.add(term);
 			}
 		}
-		
+
 		public String[] toArray() {
 			return terms.toArray(new String[terms.size()]);
 		}
@@ -518,7 +518,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		return null;
 	}
-	
+
 	private String stripMnemonic(String name) {
 		int loc = name.indexOf('&');
 		if (loc!= -1)
@@ -563,12 +563,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		sbuf.append("<p>"); //$NON-NLS-1$
 		sbuf.append(decodeContextBoldTags(context));
 		sbuf.append("</p>"); //$NON-NLS-1$
-		
+
 		ICommandLink[] commands = null;
 		if (context instanceof IContext3) {
 			commands = ((IContext3)context).getRelatedCommands();
 		}
-				
+
 		String category = new String();
 		if (commands != null && commands.length > 0) {
 			for (int i=0;i<commands.length;++i) {
@@ -589,7 +589,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				}
 			}
 		}
-		
+
 		IHelpResource[] links = context.getRelatedTopics();
 		if (links != null && context instanceof IContext2) {
 			ContextHelpSorter sorter = new ContextHelpSorter((IContext2)context);
@@ -676,7 +676,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	/**
 	 * Make sure to support the Help system bold tag. The help system returns a
 	 * regular string for getText(). Use internal apis for now to get bold.
-	 * 
+	 *
 	 * @param context
 	 * @return
 	 */
@@ -749,7 +749,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	@Override
 	public void saveState(IMemento memento) {
 	}
-	
+
 	private void doMore(String moreText) {
 		int index = Integer.parseInt(moreText);
 		parent.startSearch(searchTerms[index]);

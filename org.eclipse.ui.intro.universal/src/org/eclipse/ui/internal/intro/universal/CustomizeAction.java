@@ -19,11 +19,11 @@ import org.eclipse.ui.intro.IIntroSite;
 public class CustomizeAction extends Action {
 
 	private IIntroSite site;
-	
+
 	public CustomizeAction(IIntroSite site) {
 		this.site = site;
 	}
-	
+
 	@Override
 	public void run() {
 		String pageId = IntroPlugin.getDefault().getIntroModelRoot().getCurrentPageId();

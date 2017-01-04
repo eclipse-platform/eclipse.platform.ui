@@ -57,7 +57,7 @@ public class IntroHTMLGenerator {
 	/**
 	 * Generates the HTML code that will be presented in the browser widget for the provided intro
 	 * page.
-	 * 
+	 *
 	 * @param page
 	 *            the page to generate HTML for
 	 * @param presentation
@@ -70,13 +70,13 @@ public class IntroHTMLGenerator {
 		this.providerSite = providerSite;
 
 		initializeBackgroundSizeWorks();
-		
+
 		// generate and add the appropriate encoding to the top of the document
 		// generateEncoding();
 		// create the main HTML element, and all of its contents.
 		return generateHTMLElement();
 	}
-	
+
 	private void initializeBackgroundSizeWorks() {
 		// Internet Explorer <= 9 doesn't properly handle background-size
 		backgroundSizeWorks = true;
@@ -100,7 +100,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Return the SWT Browser instance being used to render the intro.
-	 * 
+	 *
 	 * @return the browser or {@code null} if the browser could not be determined
 	 */
 	private Browser getBrowser() {
@@ -119,9 +119,9 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates the HTML element and its content:
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                        &lt;HTML&gt;
 	 *                        &lt;HEAD&gt;
 	 *                        head content
@@ -130,9 +130,9 @@ public class IntroHTMLGenerator {
 	 *                        body content
 	 *                        &lt;/BODY&gt;
 	 *                        &lt;/HTML&gt;
-	 *    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @return the html HTMLElement
 	 */
 	private HTMLElement generateHTMLElement() {
@@ -148,10 +148,10 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates the HEAD element and its content:
-	 * 
+	 *
 	 * <pre>
-	 *   
-	 *                
+	 *
+	 *
 	 *                        &lt;HEAD&gt;
 	 *                        &lt;BASE href=&quot;base_plugin_location&gt;
 	 *                        &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
@@ -159,9 +159,9 @@ public class IntroHTMLGenerator {
 	 *                        &lt;LINK href=&quot;style sheet&quot;&gt;
 	 *                        additional head content, if specified
 	 *                        &lt;/HEAD&gt;
-	 *    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param indentLevel
 	 *            the number of indents to insert before the element when it is printed
 	 * @return the head HTMLElement
@@ -228,7 +228,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Add any browser-specific rendering quirks
-	 * 
+	 *
 	 * @param indentLevel
 	 */
 	private void addBrowserRenderingDirectives(HTMLElement head, int indentLevel) {
@@ -272,18 +272,18 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates the BODY element and its content:
-	 * 
+	 *
 	 * <pre>
-	 *   
-	 *               
+	 *
+	 *
 	 *                        &lt;BODY&gt;
 	 *                        &lt;DIV id=&quot;pageId&quot; class=&quot;pageClass&quot;&gt;
 	 *                        page content
 	 *                        &lt;/DIV&gt;
 	 *                        &lt;/BODY&gt;
-	 *    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param indentLevel
 	 *            the number of indents to insert before the element when it is printed
 	 * @return the body HTMLElement
@@ -317,7 +317,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Given an IntroElement, generate the appropriate HTMLElement
-	 * 
+	 *
 	 * @param element
 	 *            the IntroElement
 	 * @param indentLevel
@@ -343,7 +343,7 @@ public class IntroHTMLGenerator {
 		case AbstractIntroElement.IMAGE:
 			return generateIntroImage((IntroImage) element, indentLevel);
 		case AbstractIntroElement.HR:
-			return generateIntroSeparator((IntroSeparator) element, indentLevel);			
+			return generateIntroSeparator((IntroSeparator) element, indentLevel);
 		case AbstractIntroElement.TEXT:
 			return generateIntroText((IntroText) element, indentLevel);
 		case AbstractIntroElement.PAGE_TITLE:
@@ -357,17 +357,17 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Create a div element and its content from an IntroDiv:
-	 * 
+	 *
 	 * <pre>
-	 *   
-	 *                    
+	 *
+	 *
 	 *                        &lt;div id=&quot;attrvalue&quot;&gt;
 	 *                        &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
 	 *                        any defined divs, links, html, images, text, includes
 	 *                        &lt;/div&gt;
-	 *    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param element
 	 *            the IntroDiv
 	 * @param indentLevel
@@ -400,11 +400,11 @@ public class IntroHTMLGenerator {
 				StringBuffer call = new StringBuffer();
 				call.append("return (toggleSection('");//$NON-NLS-1$
 				call.append(clientId);
-				call.append("','");//$NON-NLS-1$ 
+				call.append("','");//$NON-NLS-1$
 				call.append(toggleClosedId);
-				call.append("','");//$NON-NLS-1$ 
+				call.append("','");//$NON-NLS-1$
 				call.append(toggleOpenId);
-				call.append("'))"); //$NON-NLS-1$ 
+				call.append("'))"); //$NON-NLS-1$
 				link.addAttribute("onClick", call.toString()); //$NON-NLS-1$
 				link.addContent(divLabel);
 				divElement.addContent(link);
@@ -427,7 +427,7 @@ public class IntroHTMLGenerator {
 								IIntroConstants.PLUGIN_ID));
 				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-toggle-image-open"); //$NON-NLS-1$
 				if (element.isExpanded())
-					toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, "display: inline"); //$NON-NLS-1$				
+					toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, "display: inline"); //$NON-NLS-1$
 				link.addContent(toggleImageOpen);
 				childContainer = generateDivElement(clientId, indentLevel + 1);
 				childContainer.addAttribute("class", "section-body"); //$NON-NLS-1$//$NON-NLS-2$
@@ -481,17 +481,17 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates an anchor (link) element and its content from an IntroLink:
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                        &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
 	 *                        &lt;IMG src=&quot;blank.gif&quot;&gt;
 	 *                        &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
 	 *                        &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
 	 *                        &lt;/A&gt;
-	 *    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param element
 	 *            the IntroLink
 	 * @param indentLevel
@@ -525,7 +525,7 @@ public class IntroHTMLGenerator {
 		}
 		if (!useTable) {
 			HTMLElement imageDiv = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_DIV, indentBase+1, false);
-			imageDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, 
+			imageDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
 					IIntroHTMLConstants.LINK_EXTRA_DIV);
 			anchor1.addContent(imageDiv);
 		}
@@ -533,7 +533,7 @@ public class IntroHTMLGenerator {
 		if (element.getLabel() != null) {
 			HTMLElement label = generateSpanElement(IIntroHTMLConstants.SPAN_CLASS_LINK_LABEL,
 					indentBase + 2);
-			label.addContent(element.getLabel());			
+			label.addContent(element.getLabel());
 			labelAnchor.addContent(label);
 		}
 		IntroText linkText = element.getIntroText();
@@ -562,7 +562,7 @@ public class IntroHTMLGenerator {
 	 * content from the referenced file is emitted as-is into a div element. If the type is "embed",
 	 * an OBJECT html element is created whose <code>data</code> attribute is equal to the
 	 * IntroHTML's <code>src</code> value
-	 * 
+	 *
 	 * @param element
 	 *            the IntroHTML
 	 * @param indentLevel
@@ -578,13 +578,13 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generate an image element from an IntroImage:
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                        &lt;IMG src=imageSrc id=imageId&gt;
-	 *    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param element
 	 *            the IntroImage
 	 * @param indentLevel
@@ -598,7 +598,7 @@ public class IntroHTMLGenerator {
 			imageElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element.getId());
 		return imageElement;
 	}
-	
+
 	private HTMLElement generateIntroSeparator(IntroSeparator element, int indentLevel) {
 		HTMLElement hrElement = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_HR, indentLevel, false);
 		if (element.getId() != null)
@@ -612,14 +612,14 @@ public class IntroHTMLGenerator {
 	 * Generate a paragraph (&lt;P&gt;) element from an IntroText. The paragraph element will
 	 * contain a span element that will contain the actual text. Providing the span element provides
 	 * additional flexibility for CSS designers.
-	 * 
+	 *
 	 * <pre>
-	 *              
-	 *               
+	 *
+	 *
 	 *                        &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
-	 *                 
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param element
 	 *            the IntroText
 	 * @param indentLevel
@@ -659,16 +659,16 @@ public class IntroHTMLGenerator {
 	/**
 	 * Generate "inline" content from an IntroHTML. The content from the file referenced by the
 	 * IntroHTML's <code>src</code> attribute is emitted as-is into a div element:
-	 * 
+	 *
 	 * <pre>
-	 *               
-	 *                    
+	 *
+	 *
 	 *                        &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
 	 *                        content from file specified in src attribute
 	 *                        &lt;/div&gt;
-	 *                
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param element
 	 *            the IntroHTML
 	 * @param indentLevel
@@ -694,7 +694,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Includes HTML content that is created by an IIntroContentProvider implementation.
-	 * 
+	 *
 	 * @param element
 	 * @param indentLevel
 	 * @return
@@ -739,15 +739,15 @@ public class IntroHTMLGenerator {
 	/**
 	 * Generate "embedded" content from an IntroHTML. An OBJECT html element is created whose
 	 * <code>data</code> attribute is equal to the IntroHTML's <code>src</code> value.
-	 * 
+	 *
 	 * <pre>
-	 *                
+	 *
 	 *                        &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
 	 *                        alternative text in case the object can not be rendered
-	 *                        &lt;/OBJECT&gt; 
-	 *     
+	 *                        &lt;/OBJECT&gt;
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param element
 	 *            the IntroHTML
 	 * @param indentLevel
@@ -786,13 +786,13 @@ public class IntroHTMLGenerator {
 	/**
 	 * Generates the BASE element for the head of the html document. Each document can have only one
 	 * base element
-	 * 
+	 *
 	 * <pre>
-	 *   
-	 *                
+	 *
+	 *
 	 *                      	&lt;BASE href=baseURL&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param indentLevel
 	 * @param baseURL
 	 * @return
@@ -807,13 +807,13 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates the style element that goes into HEAD:
-	 * 
+	 *
 	 * <pre>
-	 *                
+	 *
 	 *                        &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
-	 *                   
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param indentLevel
 	 *            the number of indents to insert before the element when it is printed
 	 * @return the style HTMLElement
@@ -823,9 +823,9 @@ public class IntroHTMLGenerator {
 		style.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TYPE, IIntroHTMLConstants.LINK_STYLE);
 		style.addContent(IIntroHTMLConstants.STYLE_HTML);
 		IntroTheme theme = introPage.getModelRoot().getTheme();
-		if (theme != null && theme.isScalable() 
+		if (theme != null && theme.isScalable()
 				&& FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle())) {
-		    String sizeStyle = FontSelection.generatePageFontStyle(); 
+		    String sizeStyle = FontSelection.generatePageFontStyle();
             style.addContent(sizeStyle);
 		}
 		return style;
@@ -833,13 +833,13 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates the title element and its content:
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                        &lt;TITLE&gt;intro title&lt;/TITLE&gt;
-	 *                     
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param title
 	 *            the title of this intro page
 	 * @param indentLevel
@@ -856,13 +856,13 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates a link element that refers to a cascading style sheet (CSS):
-	 * 
+	 *
 	 * <pre>
-	 *                
-	 *                    
+	 *
+	 *
 	 *                        &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param href
 	 *            the value of the href attribute for this link element
 	 * @param indentLevel
@@ -881,13 +881,13 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generate an anchor element:
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                        &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
-	 *                     
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param link
 	 *            the IntroLink element that contains the value for the id and href attributes
 	 * @param indentLevel
@@ -909,16 +909,16 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates a div block that contains a header and span element:
-	 * 
+	 *
 	 * <pre>
-	 *   
-	 *                      
+	 *
+	 *
 	 *                        &lt;DIV id=divId&gt;
 	 *                        &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
 	 *                        &lt;/DIV&gt;
-	 *                     
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param divId
 	 *            the id of the div to create
 	 * @param divClass
@@ -945,13 +945,13 @@ public class IntroHTMLGenerator {
 	 * Generates a span element inside a text element, where the text element can be a P
 	 * (paragraph), or any of the H (Header) elements. Providing the span element provides
 	 * additional flexibility for CSS designers.
-	 * 
+	 *
 	 * <pre>
-	 *                
+	 *
 	 *                        &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
-	 *                    
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param type
 	 *            the type of text element to create (e.g., P, H1, H2, etc)
 	 * @param spanID
@@ -986,7 +986,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates a DIV element with the provided indent, id, and class.
-	 * 
+	 *
 	 * @param divId
 	 *            value for the div's id attribute
 	 * @param divClass
@@ -1003,7 +1003,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates a DIV element with the provided indent and id.
-	 * 
+	 *
 	 * @param divId
 	 *            value for the div's id attribute
 	 * @param indentLevel
@@ -1019,14 +1019,14 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generates an IMG element:
-	 * 
+	 *
 	 * <pre>
-	 *   
-	 *                      
+	 *
+	 *
 	 *                        &lt;IMG src=imageSrc alt=altText&gt;
-	 *                     
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param imageSrc
 	 *            the value to be supplied to the src attribute
 	 * @param indentLevel
@@ -1068,14 +1068,14 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generate a span element
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                        &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
-	 *      
-	 *    
+	 *
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param spanClass
 	 *            the value to be supplied to the class attribute
 	 * @param indentLevel
@@ -1090,12 +1090,12 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Generate a span element
-	 * 
+	 *
 	 * <pre>
-	 *   
+	 *
 	 *                     &lt;iframe src=&quot;localPage1.xhtml&quot; frameborder=&quot;1&quot; scrolling=&quot;auto&quot; longdesc=&quot;localPage1.xhtml&quot;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param spanClass
 	 *            the value to be supplied to the class attribute
 	 * @param indentLevel
@@ -1129,7 +1129,7 @@ public class IntroHTMLGenerator {
 	 * content in the form of a StringBuffer. If the file read contains substitution segments of the
 	 * form $plugin:plugin_id$ then this method will make the proper substitution (the segment will
 	 * be replaced with the absolute path to the plugin with id plugin_id).
-	 * 
+	 *
 	 * @param src -
 	 *            the file that contains the target conent
 	 * @param charsetName -
@@ -1198,7 +1198,7 @@ public class IntroHTMLGenerator {
 	 * substitution string is of the form: <code>$plugin:plugin_id$</code> where plugin_id is the
 	 * valid id of an installed plugin. The substitution string will be replaced with the absolute
 	 * path to the plugin.
-	 * 
+	 *
 	 * An example usage of the string substution: The html file <code>inline.html</code> is
 	 * included in your intro via the html inline mechanism . This file needs to reference a
 	 * resource that is located in another plugin. The following might be found in inline.html:
@@ -1208,7 +1208,7 @@ public class IntroHTMLGenerator {
 	 * is read in, the relevant section will be replaced as follows: <code>
 	 *   <a href="file:/install_path/plugins/test.plugin/html/test.html">link to file</a>
 	 * </code>
-	 * 
+	 *
 	 */
 	private static class PluginIdParser {
 
@@ -1244,7 +1244,7 @@ public class IntroHTMLGenerator {
 		 * above conditions are not met, no substitution occurs. If the above conditions are met,
 		 * the content between (and including) the opening and closing "$" characters will be
 		 * replaced by the absolute path to the plugin
-		 * 
+		 *
 		 * @return
 		 */
 		protected String parsePluginId() {
@@ -1288,10 +1288,10 @@ public class IntroHTMLGenerator {
 		 * expected characters are found, they will be appended to the tokenContent StringBuffer and
 		 * the method will return true. If they are not found, false is returned and the caller
 		 * should reset the BufferedReader to the position it was in before this method was called.
-		 * 
+		 *
 		 * Resetting the reader ensures that the characters read in this method can be re-examined
 		 * in case one of them happens to be the beginning of a valid substitution segment.
-		 * 
+		 *
 		 * @return true if the next characters match <code>plugin:</code>, and false otherwise.
 		 */
 		private boolean findValidPluginSegment() {
@@ -1320,10 +1320,10 @@ public class IntroHTMLGenerator {
 		 * SUBSTITUTION_END character is found, the method looks up the plugin id that has been
 		 * built up to see if it is a valid id. If so, return the absolute path to that plugin. If
 		 * not, return null.
-		 * 
+		 *
 		 * This method assumes that the reader is positioned just after a valid <code>plugin:</code>
 		 * segment in a substitution string.
-		 * 
+		 *
 		 * @return absolute path of the plugin id, if valid. null otherwise
 		 */
 		private String getPluginPath() {

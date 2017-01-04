@@ -27,7 +27,7 @@ public class IntroTheme extends AbstractIntroIdElement {
 	private String path;
 	private Hashtable<String, String> properties;
 	private boolean scalable;
-	
+
 	public IntroTheme(IConfigurationElement element) {
 		super(element);
 		name = element.getAttribute(ATT_NAME);
@@ -44,11 +44,11 @@ public class IntroTheme extends AbstractIntroIdElement {
 	public IntroTheme(Element element, Bundle bundle, String base) {
 		super(element, bundle, base);
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getPath() {
 		return path;
 	}
@@ -57,15 +57,15 @@ public class IntroTheme extends AbstractIntroIdElement {
 	public int getType() {
 		return THEME;
 	}
-	
+
 	public Map<String, String> getProperties() {
 		return properties;
 	}
-	
+
 	public boolean isScalable() {
 		return scalable;
 	}
-	
+
 	private void loadProperties(IConfigurationElement element) {
 		IConfigurationElement [] children = element.getChildren("property"); //$NON-NLS-1$
 		if (children.length==0)

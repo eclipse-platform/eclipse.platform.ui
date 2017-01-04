@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,17 +20,17 @@ import java.util.Dictionary;
  * description changed.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
- * 
+ *
  * @since 3.1
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  */
 
 public interface IEngineDescriptor {
 	/**
 	 * Returns the unique identifier of this engine instance.
-	 * 
+	 *
 	 * @return the unique engine identifier
 	 */
 	String getId();
@@ -38,14 +38,14 @@ public interface IEngineDescriptor {
 	/**
 	 * Returns the unique identifier of the engine type of which this is an
 	 * instance.
-	 * 
+	 *
 	 * @return the engine type identifier
 	 */
 	String getEngineTypeId();
 
 	/**
 	 * Returns the label of this engine for rendering in the UI.
-	 * 
+	 *
 	 * @return the engine label
 	 */
 	String getLabel();
@@ -53,7 +53,7 @@ public interface IEngineDescriptor {
 	/**
 	 * Changes the label of this engine. This method does nothing for engine
 	 * descriptors that are not user-defined.
-	 * 
+	 *
 	 * @param label
 	 *            the new engine label
 	 */
@@ -69,7 +69,7 @@ public interface IEngineDescriptor {
 	/**
 	 * Changes the description of this engine. This method does nothing for
 	 * engine descriptors that are not user-defined.
-	 * 
+	 *
 	 * @param desc
 	 *            the new engine description
 	 */
@@ -78,7 +78,7 @@ public interface IEngineDescriptor {
 	/**
 	 * Returns the parameters used to configure this engine according to the
 	 * valid parameters for the associated engine type.
-	 * 
+	 *
 	 * @return the parameter dictionary
 	 */
 	Dictionary<String, Object> getParameters();
@@ -87,7 +87,7 @@ public interface IEngineDescriptor {
 	 * Tests whether this engine is provided as an extension point contribution
 	 * or is created by the user in the scope settings dialog. Only user-defined
 	 * engine instances can have their label and/or description changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the engine is user defined, or
 	 *         <code>false</code> otherwise.
 	 */

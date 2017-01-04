@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,11 +27,11 @@ public class ICPreferences {
 
 	public final static String DELIMITER = ","; //$NON-NLS-1$
 
-	
+
 	public static void setICs(List<IC> ics)
 	{
-		String name = "", host = "", path = "", protocol="", port = "", enabled = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
-		
+		String name = "", host = "", path = "", protocol="", port = "", enabled = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+
 		for (int i=0;i<ics.size();i++)
 		{
 			name += ics.get(i).getName() + DELIMITER;
@@ -41,7 +41,7 @@ public class ICPreferences {
 			path += ics.get(i).getPath() + DELIMITER;
 			enabled += ics.get(i).isEnabled() + DELIMITER;
 		}
-		
+
 		// Remove trailing commas
 		if(ics.size()!=0)
 		{
@@ -52,7 +52,7 @@ public class ICPreferences {
 			path = path.substring(0,path.length()-1);
 			enabled = enabled.substring(0,enabled.length()-1);
 		}
-		
+
 		set("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, name); //$NON-NLS-1$
 		set("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, host); //$NON-NLS-1$
 		set("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, path); //$NON-NLS-1$
@@ -62,7 +62,7 @@ public class ICPreferences {
 
 		HelpPlugin.getTocManager().clearCache();
 	}
-	
+
 	public static List<IC> getICs()
 	{
 		return prefsToICs(
@@ -73,15 +73,15 @@ public class ICPreferences {
 				ICPreferences.get("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH).split(DELIMITER), //$NON-NLS-1$
 				ICPreferences.get("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled).split(DELIMITER)); //$NON-NLS-1$
 	}
-	
+
 	public static List<IC> prefsToICs(String names[],String protocols[],String hosts[],String ports[],String paths[],String states[])
 	{
 		List<IC> ics = new ArrayList<>();
-		
+
 		for (int i=0;i<names.length;i++)
 		{
 			if (!names[i].equals("")) //$NON-NLS-1$
-			{				
+			{
 				try {
 					IC ic = new IC(
 						names[i],
@@ -99,11 +99,11 @@ public class ICPreferences {
 		}
 		return ics;
 	}
-	
 
-	
+
+
 	public static List<IC> getDefaultICs()
-	{		
+	{
 		return prefsToICs(
 				getDefault("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME).split(DELIMITER), //$NON-NLS-1$
 				getDefault("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_PROTOCOL).split(DELIMITER), //$NON-NLS-1$
@@ -112,11 +112,11 @@ public class ICPreferences {
 				getDefault("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH).split(DELIMITER), //$NON-NLS-1$
 				getDefault("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled).split(DELIMITER)); //$NON-NLS-1$
 	}
-	
+
 
 	/**
 	 * Returns a default preference for the given name
-	 * 
+	 *
 	 * @param plugin - Name of the plugin containing this preference
 	 * @param name - Name of the preference to retrieve
 	 * @return value, or empty string if no preference found
@@ -125,22 +125,22 @@ public class ICPreferences {
 	{
 		return getDefaultNode(plugin).get(name, ""); //$NON-NLS-1$
 	}
-	
+
 	public static void setRemoteHelp(boolean enabled)
 	{
 		set("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_ON,enabled+""); //$NON-NLS-1$ //$NON-NLS-2$
 		HelpPlugin.getTocManager().clearCache();
 	}
-	
+
 	public static void setRemoteHelpPreferred(boolean remotePreferred)
 	{
 		set("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED,remotePreferred+""); //$NON-NLS-1$ //$NON-NLS-2$
 		HelpPlugin.getTocManager().clearCache();
 	}
-	
+
 	/**
 	 * Sets a preference
-	 * 
+	 *
 	 * @param plugin - Name of the plugin containing this preference
 	 * @param name - Name of the preference
 	 * @param value - Value to set
@@ -148,11 +148,11 @@ public class ICPreferences {
 	public static void set(String plugin,String name,String value)
 	{
 		set(getNode(plugin),name,value);
-	}	
-	
+	}
+
 	/**
 	 * Set a preference in the given node.
-	 * 
+	 *
 	 * @param node
 	 * @param name
 	 * @param value
@@ -163,11 +163,11 @@ public class ICPreferences {
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {} //Nothing we can do, move on
-	}	
-	
+	}
+
 	/**
 	 * Returns the preference found for the given name
-	 * 
+	 *
 	 * @param plugin - Name of the plugin containing this preference
 	 * @param name - Name of the preference to retrieve
 	 * @return value, or empty string if no preference found
@@ -176,10 +176,10 @@ public class ICPreferences {
 	{
 		return getNode(plugin).get(name, ""); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Get the IEclipsePreferences node for the given plugin
-	 * 
+	 *
 	 * @param plugin
 	 * @return
 	 */
@@ -188,17 +188,17 @@ public class ICPreferences {
 		IEclipsePreferences p = InstanceScope.INSTANCE.getNode(plugin);
 		return p;
 	}
-	
+
 
 	/**
 	 * Get the default IEclipsePreferences node for the given plugin
-	 * 
+	 *
 	 * @param plugin
 	 * @return
 	 */
 	public static IEclipsePreferences getDefaultNode(String plugin)
-	{		
+	{
 		IEclipsePreferences p = DefaultScope.INSTANCE.getNode(plugin);
 		return p;
-	}	
+	}
 }

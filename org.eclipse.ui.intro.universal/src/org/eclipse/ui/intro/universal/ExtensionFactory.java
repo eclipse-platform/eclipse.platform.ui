@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.intro.universal.WelcomeCustomizationPreferencePag
  * </ul>
  * <p>This class should be referenced in extensions but not subclassed
  * or instantiated programmatically.
- * 
+ *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -52,7 +52,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory, IExecutabl
 			return configure(new WelcomeCustomizationPreferencePage());
 
 		throw new CoreException(new Status(IStatus.ERROR, UniversalIntroPlugin.PLUGIN_ID, 0,
-				"Unknown id in data argument for " + getClass(), null)); //$NON-NLS-1$        		
+				"Unknown id in data argument for " + getClass(), null)); //$NON-NLS-1$
 	}
 
 	private Object configure(Object obj) throws CoreException {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 public class ScopePreferenceDialog extends PreferenceDialog {
 	private EngineDescriptorManager descManager;
 	private ArrayList<PendingOperation> pendingOperations;
-	
+
 	class PendingOperation {
 		int action;
 		EngineDescriptor desc;
@@ -51,7 +51,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	 * The Remove button id.
 	 */
 	private final static int DELETE_ID = IDialogConstants.CLIENT_ID + 2;
-	
+
 	public ScopePreferenceDialog(Shell parentShell, PreferenceManager manager, EngineDescriptorManager descManager, boolean editable) {
 		super(parentShell, manager);
 		this.descManager = descManager;
@@ -69,10 +69,10 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		gd.horizontalSpan = 2;
 		treeControl.setLayoutData(gd);
 
-		Button lbutton = createButton(container, NEW_ID, Messages.ScopePreferenceDialog_new, false); 
+		Button lbutton = createButton(container, NEW_ID, Messages.ScopePreferenceDialog_new, false);
 		gd = (GridData)lbutton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-		Button rbutton = createButton(container, DELETE_ID, Messages.ScopePreferenceDialog_delete, false); 
+		Button rbutton = createButton(container, DELETE_ID, Messages.ScopePreferenceDialog_delete, false);
 		rbutton.setEnabled(false);
 		gd = (GridData)rbutton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
@@ -82,7 +82,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		treeGd.widthHint = Math.max(treeGd.widthHint, size.x);
 		return container;
 	}
-	
+
 	@Override
 	protected TreeViewer createTreeViewer(Composite parent) {
 		TreeViewer viewer = super.createTreeViewer(parent);
@@ -93,7 +93,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		});
 		return viewer;
 	}
-	
+
 	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
@@ -107,7 +107,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 			super.buttonPressed(buttonId);
 		}
 	}
-	
+
 	private void treeSelectionChanged(Object obj) {
 		boolean removable = false;
 		if (obj instanceof ScopePreferenceManager.EnginePreferenceNode) {
@@ -117,7 +117,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		}
 		getButton(DELETE_ID).setEnabled(removable);
 	}
-	
+
 	private void doNew() {
 		NewEngineWizard wizard = new NewEngineWizard(descManager.getEngineTypes());
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
@@ -147,7 +147,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 			scheduleOperation(DELETE_ID, desc);
 		}
 	}
-	
+
 	private void scheduleOperation(int action, EngineDescriptor desc) {
 		if (pendingOperations==null)
 			pendingOperations = new ArrayList<>();

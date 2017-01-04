@@ -148,7 +148,7 @@ public class FormIntroPartImplementation extends
      * holds the home page, and one that holds all other pages. If the
      * presentation is configured to not show the home page with the Home Page
      * layout, then this page book will only have one page.
-     * 
+     *
      * @param toolkit
      * @param form
      * @return
@@ -230,7 +230,7 @@ public class FormIntroPartImplementation extends
      * Handle model property changes. The UI is notified here of a change to the
      * current page in the model. This happens if an intro URL showPage method
      * is executed.
-     * 
+     *
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
      *      int)
      */
@@ -378,7 +378,7 @@ public class FormIntroPartImplementation extends
      * form from the correct pagebook that refers to the page we need to
      * refresh. This will force a call to createContents on all content
      * providers the next time this page needs to be displayed.
-     * 
+     *
      * @see org.eclipse.ui.intro.config.IIntroContentProviderSite#reflow(org.eclipse.ui.intro.config.IIntroContentProvider,
      *      boolean)
      */
@@ -392,14 +392,14 @@ public class FormIntroPartImplementation extends
             else if (pageFormWithNav.hasPage(page.getId()))
                 pageFormWithNav.reflow();
             else if (mainPageBook.hasPage(page.getId()))
-                mainPageBook.reflow(true);        	
+                mainPageBook.reflow(true);
         }
         else {
         	removeCachedPage(page);
         	showPage(model.getCurrentPage());
         }
     }
-    
+
     @Override
 	public void setFocus() {
         if (model.isDynamic()) {

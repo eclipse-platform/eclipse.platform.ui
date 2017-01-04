@@ -55,7 +55,7 @@ public class Messages extends NLS {
     // -------
     public static String IntroPart_openExternal_tooltip;
     public static String IntroPart_showContentButton_tooltip;
-	
+
     //Always Welcome Checkbox
 	public static String AlwaysWelcomeCheckbox_Text;
 

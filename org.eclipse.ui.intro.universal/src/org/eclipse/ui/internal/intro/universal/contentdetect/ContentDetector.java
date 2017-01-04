@@ -22,12 +22,12 @@ public class ContentDetector extends IntroContentDetector {
 
 	private static Set<String> newContributors;
 	private static boolean detectorCalled = false;
-	
+
 	public ContentDetector() {
 	}
 
 	@Override
-	public boolean isNewContentAvailable() {		
+	public boolean isNewContentAvailable() {
 		try {
 			detectorCalled = true;
 			// If we have previously found new content no need to recompute
@@ -38,7 +38,7 @@ public class ContentDetector extends IntroContentDetector {
 					.getExtensionRegistry()
 					.getExtensionPoint("org.eclipse.ui.intro.configExtension").getExtensions(); //$NON-NLS-1$
 			int numIntroExtensions = extensions.length;
-      
+
 			ContentDetectHelper helper = new ContentDetectHelper();
 			int previous = helper.getExtensionCount();
 			if (numIntroExtensions != previous) {
@@ -55,13 +55,13 @@ public class ContentDetector extends IntroContentDetector {
 				}
 				helper.saveContributors(contributors);
 			}
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			return false;
 		}
 		newContributors = new HashSet<>();
 		return false;
 	}
-	
+
 	/**
 	 * @return The set of the ids of config extensions which are new since the last time
 	 * intro was opened. May be null if there are no contributors.
@@ -73,7 +73,7 @@ public class ContentDetector extends IntroContentDetector {
 	    }
 		return newContributors;
 	}
-	
+
 	/**
 	 * Test to see if this contribution was newly installed
 	 * @param contributionId

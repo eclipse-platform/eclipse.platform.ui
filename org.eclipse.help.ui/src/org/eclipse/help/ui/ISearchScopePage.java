@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,13 +15,13 @@ import org.eclipse.jface.preference.IPreferencePage;
 /**
  * Preference pages that are used for editing help search scope settings should
  * implement this interface.
- * 
+ *
  * @since 3.1
  */
 public interface ISearchScopePage extends IPreferencePage {
 	/**
 	 * Initializes the search scope page.
-	 * 
+	 *
 	 * @param ed
 	 *            the descriptor of the engine associated with this page
 	 * @param scopeSetName

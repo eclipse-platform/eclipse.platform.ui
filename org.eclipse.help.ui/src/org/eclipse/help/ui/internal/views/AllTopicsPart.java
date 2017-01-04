@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -98,15 +98,15 @@ public class AllTopicsPart extends HyperlinkTreePart {
 			boolean expandable = treeViewer.isExpandable(obj);
 			if (obj instanceof Toc){
 				Toc toc = (Toc) obj;
-				Image icon   = HelpUIResources.getImageFromId(toc.getIcon(), expanded, !expandable); 
+				Image icon   = HelpUIResources.getImageFromId(toc.getIcon(), expanded, !expandable);
 				if (icon != null) {
 					return icon;
-				}						
+				}
 			}
-			
+
 			if (obj instanceof Topic) {
-				Topic topic = (Topic) obj;			
-				Image icon   = HelpUIResources.getImageFromId(topic.getIcon(), expanded, !expandable); 
+				Topic topic = (Topic) obj;
+				Image icon   = HelpUIResources.getImageFromId(topic.getIcon(), expanded, !expandable);
 				if (icon != null) {
 					return icon;
 				}
@@ -250,7 +250,7 @@ public class AllTopicsPart extends HyperlinkTreePart {
 			}
 		}
 	}
-	
+
 	public void selectReveal(IHelpResource res) {
 		treeViewer.setSelection(new StructuredSelection(res), true);
 		treeViewer.expandToLevel(res, 1);

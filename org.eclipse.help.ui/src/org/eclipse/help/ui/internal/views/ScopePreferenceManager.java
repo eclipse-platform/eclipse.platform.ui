@@ -20,10 +20,10 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 
 public class ScopePreferenceManager extends PreferenceManager implements IHelpUIConstants {
-	private ScopeSet set;	
+	private ScopeSet set;
 	class SubpagePreferenceNode extends PreferenceNode {
 		private IConfigurationElement config;
-	
+
 		public SubpagePreferenceNode(String id, String label,
 				IConfigurationElement config) {
 			super(id, label, null, null);
@@ -45,7 +45,7 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 	}
 	class EnginePreferenceNode extends PreferenceNode {
 		private EngineDescriptor desc;
-		
+
 		public EnginePreferenceNode(EngineDescriptor desc) {
 			super(desc.getId(), desc.getLabel(), desc.getImageDescriptor(), null);
 			this.desc = desc;
@@ -64,10 +64,10 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 	    }
 	}
 	/**
-	 * 
+	 *
 	 */
 	public ScopePreferenceManager(EngineDescriptorManager descManager, ScopeSet set) {
-		this.set = set;		
+		this.set = set;
 		load(descManager.getDescriptors());
 	}
 
@@ -78,8 +78,8 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 			IConfigurationElement [] pages = desc.getPages();
 			for (int j=0; j<pages.length; j++) {
 				String category = pages[i].getAttribute(ATT_CATEGORY);
-				addNode(category, pages[i].getAttribute(ATT_ID), 
-						pages[i].getAttribute(ATT_LABEL), 
+				addNode(category, pages[i].getAttribute(ATT_ID),
+						pages[i].getAttribute(ATT_LABEL),
 						pages[i]);
 			}
 		}
@@ -95,5 +95,5 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 		if (parent!=null)
 			parent.add(node);
 		return node;
-	}	
+	}
 }

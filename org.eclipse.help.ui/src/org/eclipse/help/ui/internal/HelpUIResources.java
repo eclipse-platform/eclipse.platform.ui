@@ -26,18 +26,18 @@ import org.osgi.framework.Bundle;
  * class needs to properly use the desired locale.
  */
 public class HelpUIResources {
-	
+
 	private static final String LEAF = "_leaf"; //$NON-NLS-1$
 	private static final String CLOSED = "_closed"; //$NON-NLS-1$
 	private static final String OPEN = "_open"; //$NON-NLS-1$
-	private static final String EXT_PT = "org.eclipse.help.toc"; //$NON-NLS-1$ 
+	private static final String EXT_PT = "org.eclipse.help.toc"; //$NON-NLS-1$
 	private static final String TOC_ICON_ELEMENT = "tocIcon"; //$NON-NLS-1$
 	private static final String TOC_ICON_ID = "id"; //$NON-NLS-1$
 	private static final String OPEN_ICON_PATH = "openIcon"; //$NON-NLS-1$
 	private static final String CLOSED_ICON_PATH = "closedIcon"; //$NON-NLS-1$
 	private static final String LEAF_ICON_PATH= "leafIcon"; //$NON-NLS-1$
 	private static boolean iconsInitialized = false;
-	
+
 	/**
 	 * WorkbenchResources constructor comment.
 	 */
@@ -51,7 +51,7 @@ public class HelpUIResources {
 		IPath path = new Path("$nl$/icons/").append(name); //$NON-NLS-1$
 		return FileLocator.find(HelpUIPlugin.getDefault().getBundle(), path, null);
 	}
-	
+
 	/**
 	 * Returns an image descriptor from a property file
 	 * @param name simple image file name
@@ -68,29 +68,29 @@ public class HelpUIResources {
 		}
 		return desc;
 	}
-	
+
 	public static ImageDescriptor getImageDescriptor(String bundleId, String name) {
-		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();		
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
 		ImageDescriptor desc = registry.getDescriptor(name);
 		if (desc==null) {
 			Bundle bundle = Platform.getBundle(bundleId);
 			if (bundle==null) return null;
-			URL url = FileLocator.find(bundle, new Path(name), null);			
+			URL url = FileLocator.find(bundle, new Path(name), null);
 			desc = ImageDescriptor.createFromURL(url);
 			registry.put(name, desc);
 		}
 		return desc;
 	}
-	
+
 	public static ImageDescriptor getIconImageDescriptor(String bundleId, String path, String key) {
-		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();		
-		ImageDescriptor desc = registry.getDescriptor(key);		
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
+		ImageDescriptor desc = registry.getDescriptor(key);
 		if (desc==null) {
 			Bundle bundle = Platform.getBundle(bundleId);
 			if (bundle == null) return null;
-			URL url = FileLocator.find(bundle, new Path(path), null);			
+			URL url = FileLocator.find(bundle, new Path(path), null);
 			desc = ImageDescriptor.createFromURL(url);
-			registry.put(key, desc); 
+			registry.put(key, desc);
 		}
 		return desc;
 	}
@@ -105,7 +105,7 @@ public class HelpUIResources {
 		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
 		return registry.get(key);
 	}
-	
+
 	/**
 	 * Get the image for an icon based upon the id
 	 * @param iconId The id of the icon, may be null, if so a null image is returned
@@ -120,7 +120,7 @@ public class HelpUIResources {
 		initializeTocIcons();
 		String suffix;
 		if (isOpen) {
-			suffix = OPEN; 
+			suffix = OPEN;
 		} else if (isLeaf) {
 			suffix = LEAF;
 		} else {
@@ -132,13 +132,13 @@ public class HelpUIResources {
 		}
 		return lookupImage(iconId + OPEN);
 	}
-	
+
 	private static Image lookupImage(String name) {
 		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
 		return registry.get(name);
 	}
-	
-	private static void initializeTocIcons(){	
+
+	private static void initializeTocIcons(){
 		if (iconsInitialized) {
 			return;
 		}
@@ -147,29 +147,29 @@ public class HelpUIResources {
 		IExtension[] extensionsFound = Platform.getExtensionRegistry().getExtensionPoint(EXT_PT).getExtensions();
 
 		for(int i=0; i < extensionsFound.length; i++){
-			
-			IConfigurationElement[] configElements = extensionsFound[i].getConfigurationElements();		
+
+			IConfigurationElement[] configElements = extensionsFound[i].getConfigurationElements();
 			for(int j=0; j < configElements.length; j++){
-           	  if (configElements[j].getName().equals(TOC_ICON_ELEMENT)){         		   
+           	  if (configElements[j].getName().equals(TOC_ICON_ELEMENT)){
            		   IConfigurationElement iconElem = configElements[j];
            		   String attrs[] = iconElem.getAttributeNames();
            		   String contributorID = iconElem.getContributor().getName();
-           		   
-					for (int k=0; k < attrs.length; k++){						
-						if(attrs[k].equals(OPEN_ICON_PATH))							
-							HelpUIResources.getIconImageDescriptor(contributorID, iconElem.getAttribute(OPEN_ICON_PATH), iconElem.getAttribute(TOC_ICON_ID) + OPEN); 												
+
+					for (int k=0; k < attrs.length; k++){
+						if(attrs[k].equals(OPEN_ICON_PATH))
+							HelpUIResources.getIconImageDescriptor(contributorID, iconElem.getAttribute(OPEN_ICON_PATH), iconElem.getAttribute(TOC_ICON_ID) + OPEN);
 						if(attrs[k].equals(CLOSED_ICON_PATH))
-							HelpUIResources.getIconImageDescriptor(contributorID, iconElem.getAttribute(CLOSED_ICON_PATH), iconElem.getAttribute(TOC_ICON_ID) + CLOSED); 
+							HelpUIResources.getIconImageDescriptor(contributorID, iconElem.getAttribute(CLOSED_ICON_PATH), iconElem.getAttribute(TOC_ICON_ID) + CLOSED);
 						if(attrs[k].equals(LEAF_ICON_PATH))
-							HelpUIResources.getIconImageDescriptor(contributorID, iconElem.getAttribute(LEAF_ICON_PATH), iconElem.getAttribute(TOC_ICON_ID) + LEAF); 
+							HelpUIResources.getIconImageDescriptor(contributorID, iconElem.getAttribute(LEAF_ICON_PATH), iconElem.getAttribute(TOC_ICON_ID) + LEAF);
 					}
-							
+
 				}
-				
-			}	
+
+			}
 		}
 	}
-	
+
 	/**
 	 * Returns an image from a property file
 	 * @param name simple image file name
@@ -183,9 +183,9 @@ public class HelpUIResources {
 		getImageDescriptor(name);
 		return registry.get(name);
 	}
-	
+
 	public static Image getImage(URL url) {
-		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();	
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
 		String name = url.toString();
 		ImageDescriptor desc = registry.getDescriptor(name);
 		if (desc==null) {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Manumitting Technologies Inc - initial API and implementation
  *******************************************************************************/
@@ -70,7 +70,7 @@ import org.osgi.framework.FrameworkUtil;
  * from an extension point. The appearance of these quicklinks is normally taken
  * from the command metadata, including the image icon, but can be tailored.
  * These tailorings can be made optional depending on the current theme.
- * 
+ *
  * This implementation is still experimental and subject to change. Feedback
  * welcome as a <a href="http://eclip.se/9f">bug report on the Eclipse Bugzilla
  * against Platform/User Assistance</a>.
@@ -160,7 +160,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 
 		/**
 		 * Return the list of configured {@link Quicklink} that can be found.
-		 * 
+		 *
 		 * @return
 		 */
 		public List<Quicklink> get() {
@@ -177,7 +177,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 					}
 				}
 			}
-			
+
 			for (IExtension ext : extensions) {
 				if (productBundle == null || !productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
 					for (IConfigurationElement ce : ext.getConfigurationElements()) {
@@ -247,7 +247,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		/**
 		 * Find {@link Quicklink}s whose {@code commandSpec} matches the simple
 		 * wildcard pattern in {@code commandSpecPattern}
-		 * 
+		 *
 		 * @param commandSpecPattern
 		 *            a simple wildcard pattern supporting *, ?
 		 * @return the set of matching Quicklinks
@@ -326,7 +326,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 
 	/**
 	 * Find the current Welcome/Intro identifier
-	 * 
+	 *
 	 * @return the current identifier or {@code null} if no theme
 	 */
 	protected String getCurrentThemeId() {
@@ -396,7 +396,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	 * Rewrite or possible extract the icon at the given URL to a stable URL
 	 * that can be embedded in HTML and rendered in a browser. May create
 	 * temporary files that will be cleaned up on exit.
-	 * 
+	 *
 	 * @param iconURL
 	 * @return stable URL
 	 */
@@ -425,7 +425,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 
 	/**
 	 * Write out the image as a data: URL if possible or to the file-system.
-	 * 
+	 *
 	 * @param descriptor
 	 * @return URL with the resulting image
 	 */
@@ -496,7 +496,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	 * Attempt to populate common fields given other information. For commands,
 	 * we look up information in the ICommandService and ICommandImageService.
 	 * Return false if this quicklink cannot be found and should not be shown.
-	 * 
+	 *
 	 * @return true if should be included
 	 */
 	private boolean populateQuicklink(Quicklink ql) {

@@ -16,20 +16,20 @@ import java.util.Map;
 
 /**
  * This package maintains the mapping between extension ids in the registry and extension ids
- * as defined in extension files. It also allows a configurer to change the page which will be 
+ * as defined in extension files. It also allows a configurer to change the page which will be
  * displayed when the welcome screen is shown.
  */
 
 public class ExtensionMap {
-	
+
 	private static ExtensionMap instance;
 	private static String startPage;
 	private Map<String, String> extensions = new HashMap<>();
-	
+
 	private ExtensionMap() {
-		
+
 	}
-	
+
 	/**
 	 * Get the one and only instance of this class
 	 * @return
@@ -51,9 +51,9 @@ public class ExtensionMap {
 		    extensions.put(anchorId, pluginId);
 		}
 	}
-	
+
 	/**
-	 * Lookup in which plugin 
+	 * Lookup in which plugin
 	 * @param anchorId
 	 * @return the plugin which contributed that anchor
 	 */
@@ -76,9 +76,9 @@ public class ExtensionMap {
 	public String getStartPage() {
 		return startPage;
 	}
-	
+
 	/**
-	 * Allows a configurer to override the page which is displayed when 
+	 * Allows a configurer to override the page which is displayed when
 	 * the welcome screen is first shown
 	 * @param contentPage
 	 */

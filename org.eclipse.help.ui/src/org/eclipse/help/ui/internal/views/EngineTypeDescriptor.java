@@ -33,7 +33,7 @@ public class EngineTypeDescriptor {
 	private Image image;
 	private ISearchScopeFactory factory;
 	/**
-	 * 
+	 *
 	 */
 	public EngineTypeDescriptor(IConfigurationElement config) {
 		this.config = config;
@@ -44,9 +44,9 @@ public class EngineTypeDescriptor {
 	public IConfigurationElement [] getPages() {
 		return config.getChildren("subpage"); //$NON-NLS-1$
 	}
-	
+
 	public String getLabel() {
-		return config.getAttribute(IHelpUIConstants.ATT_LABEL);		
+		return config.getAttribute(IHelpUIConstants.ATT_LABEL);
 	}
 	public String getId() {
 		return config.getAttribute(IHelpUIConstants.ATT_ID);
@@ -64,15 +64,15 @@ public class EngineTypeDescriptor {
 		image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
 		return image;
 	}
-	
+
 	public String getDescription() {
 		String desc = null;
 		IConfigurationElement [] children = config.getChildren(IHelpUIConstants.TAG_DESC);
-		if (children.length==1) 
+		if (children.length==1)
 			desc = children[0].getValue();
 		return desc;
 	}
-	
+
 	public ImageDescriptor getImageDescriptor() {
 		ImageDescriptor desc=null;
 		String icon = config.getAttribute(IHelpUIConstants.ATT_ICON);
@@ -110,7 +110,7 @@ public class EngineTypeDescriptor {
 		}
 		return null;
 	}
-	
+
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
 		if (factory==null) {

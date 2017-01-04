@@ -43,16 +43,16 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private boolean userCanToggleFiltering;
 	private boolean filteringEnabled;
 	private ActivityDescriptor activityDescriptor;
-	
+
 	class ActivityDescriptor {
 		private IConfigurationElement config;
 		private String documentMessage;
 		private boolean needsLiveHelp;
-		
+
 		public ActivityDescriptor() {
 			load();
 		}
-		
+
 		private void load() {
 			IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.activitySupport");//$NON-NLS-1$
 			if (elements.length==1 && elements[0].getName().equals("support")) //$NON-NLS-1$
@@ -60,7 +60,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			else if (elements.length>0) {
 				IProduct product = Platform.getProduct();
 				if (product==null) return;
-				String productId = product.getId(); 
+				String productId = product.getId();
 				for (int i=0; i<elements.length; i++) {
 					IConfigurationElement element = elements[i];
 					if (element.getAttribute("productId").equals(productId)) { //$NON-NLS-1$
@@ -113,13 +113,13 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\""+evalue+"\")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
-	
+
 
 	public HelpActivitySupport(IWorkbench workbench) {
 		activitySupport = workbench.getActivitySupport();
 		activityDescriptor = new ActivityDescriptor();
 
-		String showDisabledActivities = 
+		String showDisabledActivities =
 			Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, PREF_KEY_SHOW_DISABLED_ACTIVITIES, "", null); //$NON-NLS-1$
 		userCanToggleFiltering = SHOW_DISABLED_ACTIVITIES_OFF
 				.equalsIgnoreCase(showDisabledActivities)
@@ -185,7 +185,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * Checks whether topic belongs to a TOC that mathes enabled activity.
 	 * Enabled children TOCs are searched if linked by also enabled TOCs.
 	 * Additionally topic may match description topic of a root TOC.
-	 * 
+	 *
 	 * @return true if topic belongs to an enabled TOC
 	 * @param href
 	 * @param locale

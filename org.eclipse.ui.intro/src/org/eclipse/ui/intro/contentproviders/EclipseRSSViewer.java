@@ -63,18 +63,18 @@ import org.xml.sax.helpers.DefaultHandler;
  * The id for the contentProvider tag must consist of the following attributes. Each of these attributes must be separated by '##'.
  * <ul>
  * <TABLE CELLPADDING=6 FRAME=BOX>
- * 
+ *
  * <THEAD>
  * <TR> <TH>Attribute</TH>     <TH>Description</TH>                         </TR>
  * </THEAD>
- * 
+ *
  * <TBODY>
  * <TR> <TD>url</TD>           <TD>RSS news feed url</TD>                   </TR>
  * <TR> <TD>welcome_items</TD> <TD>Number of news feed to be displayed</TD> </TR>
  * <TR> <TD>no_news_url</TD>   <TD>Alternative url for news feed</TD>       </TR>
  * <TR> <TD>no_news_text</TD>  <TD>Text for the alternative url</TD>        </TR>
  * </TBODY>
- * 
+ *
  * </TABLE>
  * </ul>
  * For example:
@@ -87,7 +87,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * </ul>
  * &lt;/contentProvider&gt;
  * </p>
- * 
+ *
  * @since 3.4
  */
 
@@ -122,7 +122,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	/**
 	 * Initialize the content provider
 	 * @param site an object which allows rcontainer reflows to be requested
-	 */ 
+	 */
 	@Override
 	public void init(IIntroContentProviderSite site) {
 		this.site = site;
@@ -135,16 +135,16 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	 * @param out a writer where the html will be written
 	 */
 	@Override
-	public void createContent(String id, PrintWriter out) {	
+	public void createContent(String id, PrintWriter out) {
 		if (disposed)
 			return;
 		this.id = id;
 		params = setParams(id);
 
-		
+
 		if (items==null)
 			createNewsItems();
-		
+
 		if (items == null || threadRunning) {
 			out.print("<p class=\"status-text\">"); //$NON-NLS-1$
 			out.print(Messages.RSS_Loading);
@@ -200,7 +200,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			return;
 		this.id = id;
 		params = setParams(id);
-		
+
 		if (formText == null) {
 			// a one-time pass
 			formText = toolkit.createFormText(parent, true);
@@ -222,11 +222,11 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<form>"); //$NON-NLS-1$
-		
-		
+
+
 		if (items==null)
 			createNewsItems();
-		
+
 		if (items == null || threadRunning) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(Messages.RSS_Loading);
@@ -255,19 +255,19 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		}
 
 		buffer.append("</form>"); //$NON-NLS-1$
-		
+
 		String text = buffer.toString();
 		text = text.replaceAll("&{1}", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
 		formText.setText(text, true, false);
 	}
 
-	
+
 	private String createExternalURL(String url) {
 		try {
 			return INTRO_SHOW_IN_BROWSER + URLEncoder.encode(url, "UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			return INTRO_SHOW_IN_BROWSER + url;
-		} 
+		}
 	}
 
 	@Override
@@ -281,28 +281,28 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 	/**
 	 * Method is responsible for gathering RSS data.
-	 * 
+	 *
 	 * Kicks off 2 threads:
-	 * 
+	 *
 	 * 	The first (ContentThread) is to actually query the feeds URL to find RSS entries.
 	 *  When it finishes, it calls a refresh to display the entires it found (if any).
-	 * 
+	 *
 	 *  [Esc RATLC00319786]
 	 *  The second (TimeoutThread) waits for SOCKET_TIMEOUT ms to see if the content thread
 	 *  has finished reading RSS.  If it has finished, nothing further happens.  If it has
 	 *  not finished, the TimeoutThread sets the threadRunning boolean to false and refreshes
 	 *  the page (basically telling the UI that no content could be found, and removes
 	 *  the 'Loading...' text).
-	 * 
+	 *
 	 */
 	private void createNewsItems() {
-		
+
 		ContentThread contentThread = new ContentThread();
 		contentThread.start();
 		TimeoutThread timeThread = new TimeoutThread();
 		timeThread.start();
 	}
-	
+
 	/**
 	 * Reflows the page using an UI thread.
 	 */
@@ -313,7 +313,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	}
 
 	private Image createImage(IPath path) {
-		Bundle bundle = Platform.getBundle(IntroPlugin.PLUGIN_ID); 
+		Bundle bundle = Platform.getBundle(IntroPlugin.PLUGIN_ID);
 		URL url = FileLocator.find(bundle, path, null);
 		try {
 			url = FileLocator.toFileURL(url);
@@ -483,7 +483,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	private String getParameter(String name) {
 		return (String) params.get(name);
 	}
-	
+
 	private class ContentThread extends Thread{
 
 		@Override
@@ -506,11 +506,11 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 				parser.parse(in, new RSSHandler());
 				refresh();
-				
+
 			} catch (Exception e) {
 				IntroPlugin.logError(
 						NLS.bind(
-								Messages.RSS_Malformed_feed, 
+								Messages.RSS_Malformed_feed,
 								getParameter("url"))); //$NON-NLS-1$
 				refresh();
 			} finally {
@@ -533,10 +533,10 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
 			} catch (Exception e) {
 			     // If running on a 1.4 JRE an exception is expected, fall through
-			} 
+			}
 		}
 	}
-	
+
 	private class TimeoutThread extends Thread
 	{
 		@Override

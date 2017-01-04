@@ -44,21 +44,21 @@ public class FindSupport {
 	}
 
 	/**
-	 * See doc on @link Platform#find(Bundle, IPath) Platform#find(Bundle, IPath) 
+	 * See doc on @link Platform#find(Bundle, IPath) Platform#find(Bundle, IPath)
 	 */
 	public static URL find(Bundle bundle, IPath path) {
 		return find(bundle, path, null);
 	}
 
     /**
-     * Proposed API for Platform in Eclispe 3.2. 
+     * Proposed API for Platform in Eclispe 3.2.
      * Same as @link #find(Bundle, IPath) except multiple entries can be
-     * returned if more than one entry matches the path in the host and 
+     * returned if more than one entry matches the path in the host and
      * any of its fragments.
-     * 
+     *
      * @param bundle
      * @param path
-     * @return an array of entries which match the given path.  An empty 
+     * @return an array of entries which match the given path.  An empty
      * array is returned if no matches are found.
      */
     public static URL[] findEntries(Bundle bundle, IPath path) {
@@ -69,7 +69,7 @@ public class FindSupport {
 	 * Proposed API for Platform in Eclipse 3.2. Same as @link #find(Bundle, IPath) except multiple
 	 * entries can be returned if more than one entry matches the path in the host and any of its
 	 * fragments.
-	 * 
+	 *
 	 * @param bundle
 	 * @param path
 	 * @param override
@@ -83,12 +83,12 @@ public class FindSupport {
     }
 
 	/**
-	 * See doc on @link Platform#find(Bundle, IPath, Map) Platform#find(Bundle, IPath, Map) 
+	 * See doc on @link Platform#find(Bundle, IPath, Map) Platform#find(Bundle, IPath, Map)
 	 */
 	public static URL find(Bundle b, IPath path, Map<String, String> override) {
         return find(b, path, override, null);
     }
- 
+
 	private static URL find(Bundle b, IPath path, Map<String, String> override, List<URL> multiple) {
 		if (path == null)
 			return null;
@@ -99,7 +99,7 @@ public class FindSupport {
 		if (path.isEmpty() || path.isRoot()) {
 			// Watch for the root case.  It will produce a new
 			// URL which is only the root directory (and not the
-			// root of this plugin).	
+			// root of this plugin).
 			result = findInPlugin(b, Path.EMPTY, multiple);
 			if (result == null || multiple != null)
 				result = findInFragments(b, Path.EMPTY, multiple);
@@ -182,7 +182,7 @@ public class FindSupport {
 			ws = Platform.getWS();
 		IPath filePath = new Path("ws").append(ws).append(path); //$NON-NLS-1$
 		// We know that there is only one segment to the ws path
-		// e.g. ws/win32	
+		// e.g. ws/win32
 		URL result = findInPlugin(b, filePath, multiple);
 		if (result != null && multiple == null)
 			return result;
@@ -252,7 +252,7 @@ public class FindSupport {
 	}
 
 	/**
-	 * See doc on @link Platform#openStream(Bundle, IPath, boolean) Platform#Platform#openStream(Bundle, IPath, boolean) 
+	 * See doc on @link Platform#openStream(Bundle, IPath, boolean) Platform#Platform#openStream(Bundle, IPath, boolean)
 	 */
 	public static final InputStream openStream(Bundle bundle, IPath file, boolean localized) throws IOException {
 		URL url = null;

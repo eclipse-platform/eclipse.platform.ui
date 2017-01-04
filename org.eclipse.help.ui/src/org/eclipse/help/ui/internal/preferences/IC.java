@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
 
 /**
  * Information Center (IC) - stores URL info.
- * 
+ *
  * @author chaustin
  *
  */
@@ -31,7 +31,7 @@ public class IC {
 	private String path;
 	private int port = -1;
 
-	
+
 	public IC(String name,String href,boolean enabled) throws MalformedURLException
 	{
 		this.name = name;
@@ -43,10 +43,10 @@ public class IC {
 	{
 		if (href.startsWith(":")) //$NON-NLS-1$
 			href = "http"+href; //$NON-NLS-1$
-		
+
 		setHref(new URL(href));
 	}
-	
+
 	public void setHref(URL url)
 	{
 		this.protocol = url.getProtocol();
@@ -61,7 +61,7 @@ public class IC {
 				port = 443;
 		}
 	}
-	
+
 	public String getHref()
 	{
 		String portString = ":"+port; //$NON-NLS-1$
@@ -69,17 +69,17 @@ public class IC {
 			portString = ""; //$NON-NLS-1$
 		else if (port==443 && protocol.equals("https")) //$NON-NLS-1$
 			portString = ""; //$NON-NLS-1$
-		
+
 		return protocol+"://"+host+portString+path; //$NON-NLS-1$
 	}
-	
-	
+
+
 	public String getName()
 	{
 		return name;
 	}
-	
-	
+
+
 	public boolean isEnabled()
 	{
 		return enabled;
@@ -133,16 +133,16 @@ public class IC {
 	/**
 	 * Tests to see if 2 ICs are equal.  The state (enabled or disabled) is ignored
 	 * during this operation.
-	 * 
+	 *
 	 */
 	@Override
 	public boolean equals(Object o)
 	{
 		if (!(o instanceof IC))
 			return false;
-		
+
 		IC candidate = (IC)o;
-		
+
 		if (getName().equals(candidate.getName())
 				&& getPath().equals(candidate.getPath())
 				&& getPort()==candidate.getPort()
@@ -151,7 +151,7 @@ public class IC {
 			try {
 				InetAddress host1 = InetAddress.getByName(getHost());
 				InetAddress host2 = InetAddress.getByName(candidate.getHost());
-				
+
 				if (host1.getHostAddress().equals(host2.getHostAddress()))
 					return true;
 			} catch (UnknownHostException e) {
@@ -159,7 +159,7 @@ public class IC {
 					return true;
 			}
 		}
-		
+
 		return false;
 	}
 }

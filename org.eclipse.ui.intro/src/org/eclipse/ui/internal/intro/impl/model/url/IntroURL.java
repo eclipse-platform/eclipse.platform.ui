@@ -123,7 +123,7 @@ public class IntroURL implements IIntroURL {
     /**
      * Prevent creation. Must be created through an IntroURLParser. This
      * constructor assumed we have a valid intro url.
-     * 
+     *
      * @param url
      */
     IntroURL(String action, Properties parameters) {
@@ -133,13 +133,13 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Executes whatever valid Intro action is embedded in this Intro URL.
-     * 
+     *
      */
     @Override
 	public boolean execute() {
         final boolean[] result = new boolean[1];
         Display display = Display.getCurrent();
-        
+
         BusyIndicator.showWhile(display, () -> result[0] = doExecute());
         return result[0];
     }
@@ -189,7 +189,7 @@ public class IntroURL implements IIntroURL {
             // the parameters and the standby state.
             return runAction(getParameter(KEY_PLUGIN_ID),
                 getParameter(KEY_CLASS), parameters, getParameter(KEY_STANDBY));
-        
+
         else if (action.equals(EXECUTE))
 			// execute a serialized command
 			return executeCommand(getParameter(KEY_COMAND), getParameter(KEY_STANDBY));
@@ -220,7 +220,7 @@ public class IntroURL implements IIntroURL {
     /**
      * Sets the into part to standby, and shows the passed standby part, with
      * the given input. Forces the Intro view to open, if not yet created.
-     * 
+     *
      * @param partId
      * @param input
      */
@@ -248,10 +248,10 @@ public class IntroURL implements IIntroURL {
 
     /**
 	 * Set the Workbench Intro Part state. Forces the Intro view to open, if not yet created.
-	 * 
+	 *
 	 * Historically this value was "true" (show standby) or "false" (show normal). In Neon we add
 	 * "close", "standby" and "launchbar".
-	 * 
+	 *
 	 * @param state
 	 * @return true if the intro was shown, or false if the intro could not be shown
 	 */
@@ -315,7 +315,7 @@ public class IntroURL implements IIntroURL {
             return false;
         }
     }
-    
+
     /**
 	 * Executes a serialized <code>ParameterizedCommand</code>. Uses
 	 * {@link ICommandService#deserialize(String)} to convert the <code>command</code> argument
@@ -342,9 +342,9 @@ public class IntroURL implements IIntroURL {
 			return false;
 		}
 	}
-    
+
     private ICommandService getCommandService() {
-		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(ICommandService.class);
 		    if (serviceObject != null) {
@@ -356,7 +356,7 @@ public class IntroURL implements IIntroURL {
 	}
 
 	private IHandlerService getHandlerService() {
-		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(IHandlerService.class);
 		    if (serviceObject != null) {
@@ -475,7 +475,7 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Finds the target page and includes it in passed model.
-     * 
+     *
      * @param pageId
      * @return
      */
@@ -523,7 +523,7 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Searches all loaded models for the first page with the given id.
-     * 
+     *
      * @param pageId
      * @return
      */
@@ -541,7 +541,7 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Navigate foward in the presentation, whichever one it is.
-     * 
+     *
      * @return
      */
     private boolean navigate(String direction) {
@@ -577,7 +577,7 @@ public class IntroURL implements IIntroURL {
      * Return a parameter defined in the Intro URL. Returns null if the
      * parameter is not defined. If this intro url has a decode=true parameter,
      * then all parameters are returned decoded using UTF-8.
-     * 
+     *
      * @param parameterId
      * @return
      */
@@ -633,7 +633,7 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Recreate the initial query passed to this URL.
-     * 
+     *
      * @return
      */
     private String retrieveInitialQuery() {
@@ -675,7 +675,7 @@ public class IntroURL implements IIntroURL {
         Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
             .getParent(), launchBar.getControl().getBounds());
 
-		AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds); 
+		AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds);
         return true;
     }
 }

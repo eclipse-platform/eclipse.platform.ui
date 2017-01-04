@@ -80,7 +80,7 @@ public class BookmarksPart extends HyperlinkTreePart implements Observer {
 		@Override
 		public String getText(Object obj) {
 			if (obj instanceof BookmarkManager)
-				return Messages.BookmarksPart_savedTopics; 
+				return Messages.BookmarksPart_savedTopics;
 			if (obj instanceof IHelpResource)
 				return ((IHelpResource) obj).getLabel();
 			return super.getText(obj);
@@ -131,10 +131,10 @@ public class BookmarksPart extends HyperlinkTreePart implements Observer {
 				}
 			}
 		};
-		deleteAction.setText(Messages.BookmarksPart_delete); 
+		deleteAction.setText(Messages.BookmarksPart_delete);
 		deleteAction.setEnabled(false);
 	}
-	
+
 	@Override
 	protected void handleSelectionChanged(IStructuredSelection sel) {
 		Object obj = sel.getFirstElement();
@@ -165,7 +165,7 @@ public class BookmarksPart extends HyperlinkTreePart implements Observer {
 							() -> BaseHelpSystem.getBookmarkManager().removeAllBookmarks());
 				}
 			};
-			action.setText(Messages.BookmarksPart_deleteAll); 
+			action.setText(Messages.BookmarksPart_deleteAll);
 			manager.add(action);
 			value=true;
 		}
@@ -189,7 +189,7 @@ public class BookmarksPart extends HyperlinkTreePart implements Observer {
 				parent.showURL(res.getHref());
 		}
 	}
-	
+
 	@Override
 	public void update(final Observable o, final Object arg) {
 		treeViewer.getControl().getDisplay().asyncExec(() -> asyncUpdate(o, arg));

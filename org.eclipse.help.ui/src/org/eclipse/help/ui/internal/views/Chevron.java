@@ -24,7 +24,7 @@ public final class Chevron extends ToggleHyperlink {
 
 	/**
 	 * Creates a control in a provided composite.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent
 	 * @param style

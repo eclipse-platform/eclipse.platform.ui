@@ -21,7 +21,7 @@ public final class HTMLUtil {
     /**
      * Creates an HTML opening element of the form <elementName
      * elementAttributes>
-     * 
+     *
      * @param elementName
      *            the name of the element to create
      * @param elementAttributes
@@ -50,7 +50,7 @@ public final class HTMLUtil {
 
     /**
      * Creates an HTML start tag of the form <elementName>
-     * 
+     *
      * @param elementName
      *            the name of the element to create
      * @param insertLineBreak
@@ -65,7 +65,7 @@ public final class HTMLUtil {
     /**
      * Creates an HTML start tag of the form <elementName>and inserts a line
      * break after the start tag
-     * 
+     *
      * @param elementName
      *            the name of the element to create
      * @return
@@ -76,7 +76,7 @@ public final class HTMLUtil {
 
     /**
      * Creates an HTML closing element of the form </elementName>
-     * 
+     *
      * @param elementName
      *            the name of the closing element to create
      * @param addNewLine
@@ -97,7 +97,7 @@ public final class HTMLUtil {
      * Given a map of attribute names and values, this method will create a
      * StringBuffer of the attributes in the form: attrName="attrValue". These
      * attributes can appear in the start tag of an HTML element.
-     * 
+     *
      * @param attributes
      *            the attributes to be converted into a String list
      * @return
@@ -123,7 +123,7 @@ public final class HTMLUtil {
 
     /**
      * Creates an HTML attribute of the form attrName="attrValue"
-     * 
+     *
      * @param attrName
      *            the name of the attribute
      * @param attrValue
@@ -159,7 +159,7 @@ public final class HTMLUtil {
 
     /**
      * Determine if the contents of two character arrays are equal
-     * 
+     *
      * @param a
      * @param b
      * @return

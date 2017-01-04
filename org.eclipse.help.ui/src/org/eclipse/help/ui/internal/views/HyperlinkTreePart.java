@@ -57,7 +57,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		IHelpPart {
-	
+
 	public class ScopeObserver implements Observer {
 
 		@Override
@@ -67,13 +67,13 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 			}
 		}
 	}
-	
+
 	private class ScopeFilter extends ViewerFilter {
-		
+
 		public ScopeFilter(AbstractHelpScope scope) {
 			this.scope = scope;
 		}
-		
+
 		AbstractHelpScope scope;
 
 		@Override
@@ -92,7 +92,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 			}
 			return true;
 		}
-		
+
 	}
 
 	protected ReusableHelpPart parent;
@@ -235,7 +235,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 			}
 			treeViewer.getTree().setCursor(null);
 		});
-		contributeToToolBar(tbm);	
+		contributeToToolBar(tbm);
 		scopeObserver = new ScopeObserver();
 		ScopeState.getInstance().getScopeSetManager().addObserver(scopeObserver);
 	}
@@ -266,7 +266,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		collapseAllAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_COLLAPSE_ALL));
 		collapseAllAction
-				.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip); 
+				.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip);
 		tbm.insertBefore("back", collapseAllAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 	}
@@ -395,7 +395,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		if (lastItem != null && lastItem.isDisposed())
 			lastItem = null;
 	}
-	
+
 	@Override
 	public void refilter() {
 		ScopeSetManager manager = ScopeState.getInstance().getScopeSetManager();

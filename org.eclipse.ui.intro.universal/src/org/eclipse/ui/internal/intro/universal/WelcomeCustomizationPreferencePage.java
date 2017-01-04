@@ -35,7 +35,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	public WelcomeCustomizationPreferencePage(String title, ImageDescriptor image) {
 		super(title, image);
 	}
-	
+
 	private CustomizationContentsArea getContentsArea() {
 		if (contentsArea == null) {
 			contentsArea = new CustomizationContentsArea();
@@ -74,7 +74,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	public void setCurrentPage(String pageId) {
 		getContentsArea().setCurrentPage(pageId);
 	}

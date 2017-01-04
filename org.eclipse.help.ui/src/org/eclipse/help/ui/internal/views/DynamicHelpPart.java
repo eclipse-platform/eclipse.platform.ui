@@ -91,7 +91,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				| Section.TITLE_BAR);
 		// configure section
 		Section section = getSection();
-		section.setText(Messages.SearchPart_title); 
+		section.setText(Messages.SearchPart_title);
 		section.marginWidth = 5;
 		section.addExpansionListener(new ExpansionAdapter() {
 
@@ -117,7 +117,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			}
 		});
 		section.setTextClient(clearLink);
-		*/		
+		*/
 		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(section, false);
 		section.setClient(searchResults);
@@ -134,7 +134,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.equals(CANCEL_HREF)) { 
+				if (href.equals(CANCEL_HREF)) {
 					if (runningJob != null) {
 						runningJob.cancel();
 						runningJob = null;
@@ -167,19 +167,19 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		stop();
 		super.dispose();
 	}
-	
+
 	@Override
 	public void setFocus() {
 		if (searchResults!=null)
 			searchResults.setFocus();
 	}
-	
+
 	@Override
 	public void stop () {
 		if (runningJob!=null) {
 			runningJob.cancel();
 			runningJob=null;
-		}		
+		}
 	}
 
 	@Override
@@ -212,7 +212,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		searchResults.setText("", false, false); //$NON-NLS-1$
 		getManagedForm().reflow(true);
 	}
-	
+
 	public void startSearch(String newPhrase, IContext excludeContext) {
 		if (phrase!=null && phrase.equals(newPhrase))
 			return;
@@ -221,10 +221,10 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		if (getSection().isExpanded())
 			startInPlaceSearch(phrase, excludeContext);
 	}
-	
+
 	private void startInPlaceSearch(final String phrase,
 			final IContext excludeContext) {
-		Job job = new Job(Messages.SearchPart_dynamicJob) { 
+		Job job = new Job(Messages.SearchPart_dynamicJob) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -246,7 +246,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		job.setSystem(true);
 		scheduleSearch(job);
 	}
-	
+
 	private void performSearch(String phrase, IContext excludeContext,
 			IProgressMonitor monitor) {
 		SearchQuery searchQuery = new SearchQuery();
@@ -275,12 +275,12 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		buff.append("<p><span color=\""); //$NON-NLS-1$
 		buff.append(IFormColors.TITLE);
 		buff.append("\">"); //$NON-NLS-1$
-		buff.append(Messages.SearchResultsPart_progress); 
+		buff.append(Messages.SearchResultsPart_progress);
 		buff.append("</span>"); //$NON-NLS-1$
 		buff.append("<a href=\""); //$NON-NLS-1$
 		buff.append(CANCEL_HREF);
 		buff.append("\">"); //$NON-NLS-1$
-		buff.append(Messages.SearchResultsPart_cancel); 
+		buff.append(Messages.SearchResultsPart_cancel);
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
@@ -288,14 +288,14 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		runningJob = job;
 		job.schedule();
 	}
-	
+
 	private void updateResults(final String phrase,
 			final IContext excludeContext, final StringBuffer buffer,
 			final SearchHit[] hits) {
 		if (getSection().isDisposed())
 			return;
 		getSection().getDisplay().asyncExec(() -> doUpdateResults(phrase, excludeContext, buffer, hits));
-	}	
+	}
 
 	private void doUpdateResults(String phrase, IContext excludeContext, StringBuffer buff, SearchHit[] hits) {
 		if (runningJob != null) {
@@ -308,7 +308,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			buff.append("<p><span color=\""); //$NON-NLS-1$
 			buff.append(IFormColors.TITLE);
 			buff.append("\">"); //$NON-NLS-1$
-			buff.append(NLS.bind(Messages.SearchResultsPart_label, phrase)); 
+			buff.append(NLS.bind(Messages.SearchResultsPart_label, phrase));
 			buff.append("</span></p>"); //$NON-NLS-1$
 			resultSorter.sort(null, hits);
 			IHelpResource [] excludedTopics = excludeContext!=null?excludeContext.getRelatedTopics():null;
@@ -345,7 +345,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append(" <a href=\""); //$NON-NLS-1$
 				buff.append(MORE_HREF);
 				buff.append("\">"); //$NON-NLS-1$
-				buff.append(Messages.SearchResultsPart_moreResults); 
+				buff.append(Messages.SearchResultsPart_moreResults);
 				buff.append("</a></p>"); //$NON-NLS-1$
 			}
 			buff.append("</form>"); //$NON-NLS-1$
@@ -353,11 +353,11 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				searchResults.setText(buff.toString(), true, false);
 		} else
 			if (!searchResults.isDisposed())
-				searchResults.setText(NLS.bind(Messages.SearchResultsPart_noHits, phrase) , false, false); 
+				searchResults.setText(NLS.bind(Messages.SearchResultsPart_noHits, phrase) , false, false);
 		if (!searchResults.isDisposed())
 			getManagedForm().reflow(true);
 	}
-	
+
 	private boolean isExcluded(String href, IHelpResource [] excludedTopics) {
 		if (excludedTopics==null) return false;
 		for (int i=0; i<excludedTopics.length; i++) {
@@ -409,7 +409,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	@Override
 	public void refilter() {
 		if (phrase!=null && phrase.length() > 0)
-			startInPlaceSearch(phrase, context);		
+			startInPlaceSearch(phrase, context);
 	}
 
 	@Override

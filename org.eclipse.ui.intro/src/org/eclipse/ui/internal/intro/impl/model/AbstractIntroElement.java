@@ -139,12 +139,12 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Type constant which identifies am injected IFrame model element.
      */
     public static final int INJECTED_IFRAME = 1 << 17;
-    
+
     /**
      * Type constant for the theme element.
      */
     public static final int THEME = 1 << 18;
-    
+
     /**
      * Type constant for the hr element.
      */
@@ -196,7 +196,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Constructor used when model elements are being loaded from an xml content
      * file. Bundle is propagated down the model to enable resolving resources
      * relative to the base of the bundle.
-     * 
+     *
      * @param element
      * @param pd
      */
@@ -214,7 +214,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * In the case of a configExtension, it is set to point to the relative
      * position of the parent folder that holds the extension. Only when needed,
      * the base field is stored in a model element. This saves memory.
-     * 
+     *
      * @param element
      * @param pd
      */
@@ -229,13 +229,13 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Returns the configuration element from which this intro element was
      * loaded. In the case of extension, returns the configuration element of
      * the defining extension.
-     * 
+     *
      * @return
      */
     public IConfigurationElement getCfgElement() {
         return cfgElement instanceof IConfigurationElement?(IConfigurationElement)cfgElement:null;
     }
-    
+
     public Element getElement() {
     	return cfgElement instanceof Element?(Element)cfgElement:null;
     }
@@ -244,7 +244,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * DOM getAttribute retruns an empty string (not null) if attribute is not
      * defined. Override this behavior to be consistent with Intro Model, and
      * IConfiguration element.
-     * 
+     *
      * @param element
      * @param att
      * @return
@@ -264,7 +264,7 @@ public abstract class AbstractIntroElement implements Cloneable {
 
     /**
      * Util method to parse a comma separated list of values
-     * 
+     *
      * @param element
      * @param att
      * @return
@@ -278,7 +278,7 @@ public abstract class AbstractIntroElement implements Cloneable {
             	if (root!=null) {
             		for (int i = 0; i < splitValues.length; i++) {
             			splitValues[i] = root.resolveVariables(splitValues[i]);
-            		}     		
+            		}
             	}
             	return splitValues;
             }
@@ -289,7 +289,7 @@ public abstract class AbstractIntroElement implements Cloneable {
             */
         return null;
     }
-    
+
     protected void loadFromParent() {
     }
 
@@ -298,7 +298,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Returns the plugin descriptor of the plugin from which this intro element
      * was loaded. In the case of extension, returns the plugin descriptor of
      * the plugin defining the extension.
-     * 
+     *
      * @return
      */
     public Bundle getBundle() {
@@ -310,7 +310,7 @@ public abstract class AbstractIntroElement implements Cloneable {
     /**
      * Returns the specific model type of this intro element. To be implemented
      * by all subclasses.
-     * 
+     *
      * @return returns one of the model class types defined in this class.
      */
     public abstract int getType();
@@ -331,7 +331,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * <li>for Head elements that are children of Implementation elements
      * (shared Heads), it returns the holding presentation element.</li>
      * </ul>
-     * 
+     *
      * @return returns the parent of this intro element. Null only for model
      *         root.
      */
@@ -382,7 +382,7 @@ public abstract class AbstractIntroElement implements Cloneable {
             return (AbstractIntroPage) parent;
         return null;
     }
-    
+
     public IntroModelRoot getModelRoot() {
         // return yourself if you are a model root.
         if (isOfType(AbstractIntroElement.MODEL_ROOT))
@@ -397,7 +397,7 @@ public abstract class AbstractIntroElement implements Cloneable {
             parent = parent.getParent();
         if (parent.isOfType(MODEL_ROOT))
             return (IntroModelRoot) parent;
-        return null;    	
+        return null;
     }
 
 
@@ -409,7 +409,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      *  	int elementMask = IntroElement.ABSTRACT_CONTAINER;
      * 		int elementMask = IntroElement.DIV | IntroElement.DEFAULT_LINK;
      * </code>
-     * 
+     *
      * @param elementMask
      *            element mask formed by bitwise OR of element type constants
      *            defined in this class.
@@ -428,7 +428,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * <code>
      * int elementMask = IntroElement.DIV | IntroElement.DEFAULT_LINK;
      * </code>
-     * 
+     *
      * @return <code>true</code> if all elements are of the right type, and
      *         <code>false</code> if the list is empty, or at least one
      *         element is not of the specified types.
@@ -459,13 +459,13 @@ public abstract class AbstractIntroElement implements Cloneable {
     }
 
 
-	
+
 	public String getMixinStyle() {
 		return mixinStyle;
 	}
 
 
-	
+
 	public void setMixinStyle(String mixinStyle) {
 		this.mixinStyle = mixinStyle;
 	}

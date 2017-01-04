@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.widgets.Display;
 
 public class FontUtils {
-	
+
 	private static final int TRAY_FONT_HEIGHT_LIMIT = 17;
 
 	/*
@@ -31,7 +31,7 @@ public class FontUtils {
 			return true;
 		}
 	}
-	
+
 	/*
 	 * Get a sequence of JavaScript which will scale the embedded browser contents
 	 * @param percent The percentage scaling relative to the default size
@@ -46,7 +46,7 @@ public class FontUtils {
 		}
 		return null;  // No rescale in Mozilla browsers
 	}
-	
+
 	/*
 	 * Function to determine whether the browser in the help view supports a zoom command
 	 */

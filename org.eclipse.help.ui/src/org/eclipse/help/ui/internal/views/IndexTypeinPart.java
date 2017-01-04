@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation 2008 - Bug 248079 [Help][Index] unicode sort issue in index view
@@ -120,7 +120,7 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 				return;
 			}
 		}
-		TreeItem item = indexTree.getItem(index); 
+		TreeItem item = indexTree.getItem(index);
 		indexTree.setSelection(new TreeItem[] { item });
 		String text = item.getText();
 		indexText.setText(text);
@@ -139,7 +139,7 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 				return;
 			}
 		}
-		TreeItem item = indexTree.getItem(index); 
+		TreeItem item = indexTree.getItem(index);
 		indexTree.setSelection(new TreeItem[] { item });
 		String text = item.getText();
 		indexText.setText(text);

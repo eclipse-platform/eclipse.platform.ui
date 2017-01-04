@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,22 +39,22 @@ public class ICTable {
 	private Table table;
 	private TableViewer viewer;
 
-	private final String NAME_COLUMN = Messages.RemoteICViewer_Name; 
-	private final String LOCATION_COLUMN = Messages.RemoteICViewer_URL; 
+	private final String NAME_COLUMN = Messages.RemoteICViewer_Name;
+	private final String LOCATION_COLUMN = Messages.RemoteICViewer_URL;
 	private final String STATUS_COLUMN = Messages.RemoteICViewer_Enabled;
 
 	// Set column names
 	private String[] columnNames = new String[] {NAME_COLUMN,
 			LOCATION_COLUMN, STATUS_COLUMN};
-	
-	
+
+
 	public ICTable(Composite parent) {
 
 		// Create the table
 		table = createTable(parent);
 		// Create and setup the TableViewer
 		viewer = createTableViewer();
-		
+
 		loadPreferences();
 	}
 
@@ -88,32 +88,32 @@ public class ICTable {
 		gridData.heightHint =  table.getItemHeight();
 		gridData.horizontalSpan = 1;
 		table.setLayoutData(gridData);
-		
-		
+
+
 
 		ColumnLayoutData[] fTableColumnLayouts= {
 		        new ColumnWeightData(85),
 		        new ColumnWeightData(165),
 		        new ColumnWeightData(60)
-		};  
-		
+		};
+
 		TableColumn column;
-		
+
 		tableLayout.addColumnData(fTableColumnLayouts[0]);
 	    column = new TableColumn(table, SWT.NONE, 0);
 	    column.setResizable(fTableColumnLayouts[0].resizable);
 	    column.setText(NAME_COLUMN);
-	    
+
 	    tableLayout.addColumnData(fTableColumnLayouts[1]);
 	    column = new TableColumn(table, SWT.NONE, 1);
 	    column.setResizable(fTableColumnLayouts[1].resizable);
-	    column.setText(LOCATION_COLUMN); 
-	    
+	    column.setText(LOCATION_COLUMN);
+
 	    tableLayout.addColumnData(fTableColumnLayouts[2]);
 	    column = new TableColumn(table, SWT.NONE, 2);
 	    column.setResizable(fTableColumnLayouts[2].resizable);
-	    column.setText(STATUS_COLUMN); 
-	    
+	    column.setText(STATUS_COLUMN);
+
 	    return table;
 	}
 
@@ -132,13 +132,13 @@ public class ICTable {
 
 	/**
 	 * Proxy for the the RemoteICList which provides content
-	 * for the Table. This class implements IRemoteHelpListViewer interface an 
+	 * for the Table. This class implements IRemoteHelpListViewer interface an
 	 * registers itself with RemoteICList
 	 */
 	class ICContentProvider implements IStructuredContentProvider
 	{
 		private List<IC> content = new ArrayList<>();
-		
+
 		@Override
 		public void dispose() {
 			content = null;
@@ -154,9 +154,9 @@ public class ICTable {
 		public IC[] getElements(Object inputElement) {
 			return content.toArray(new IC[content.size()]);
 		}
-		
+
 	}
-	
+
 	public class ICLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
@@ -179,10 +179,10 @@ public class ICTable {
 		}
 
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * @param rics the ordered remote InfoCenters
 	 */
@@ -190,17 +190,17 @@ public class ICTable {
 		viewer.getContentProvider().inputChanged(viewer, null, ics);
 		refresh();
 	}
-	
+
 	/**
-	 * Make sure the table viewer shows the latest copy of the ordered InfoCenters 
+	 * Make sure the table viewer shows the latest copy of the ordered InfoCenters
 	 */
 	public void refresh() {
 		viewer.refresh(getICs());
 	}
-	
+
 	/**
 	 * Return the column names in a collection
-	 * 
+	 *
 	 * @return List containing column names
 	 */
 	public List<String> getColumnNames() {
@@ -213,7 +213,7 @@ public class ICTable {
 	public ISelection getSelection() {
 		return viewer.getSelection();
 	}
-	
+
 	/**
 	 * Return the RemoteICList
 	 */
@@ -231,11 +231,11 @@ public class ICTable {
 		List<IC> oldICs = getICs();
 		for (int o=0;o<oldICs.size();o++)
 			removeIC(oldICs.get(o));
-			
+
 		for (int i=0;i<ics.size();i++)
 			addIC(ics.get(i));
 	}
-	
+
 	public TableViewer getTableViewer()
 	{
 		return viewer;
@@ -250,7 +250,7 @@ public class ICTable {
 	public Table getTable() {
 		return table;
 	}
-	
+
 	public void addIC(IC ic)
 	{
 		List<IC> content = getICs();
@@ -260,9 +260,9 @@ public class ICTable {
 		getTableViewer().add(ic);
 		refresh();
 	}
-	
+
 	public void editIC(IC ic)
-	{	
+	{
 		List<IC> content = getICs();
 		content.set(getTable().getSelectionIndex(), ic);
 		getTableViewer().replace(ic,getTable().getSelectionIndex());
@@ -270,7 +270,7 @@ public class ICTable {
 				getTableViewer(), null, content);
 		refresh();
 	}
-	
+
 	public void removeIC(IC ic)
 	{
 		List<IC> content = getICs();
@@ -279,7 +279,7 @@ public class ICTable {
 		getTableViewer().remove(ic);
 		refresh();
 	}
-	
+
 	private void loadPreferences()
 	{
 		List<IC> ics = ICPreferences.getICs();

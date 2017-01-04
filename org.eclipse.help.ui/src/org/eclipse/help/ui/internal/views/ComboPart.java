@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class ComboPart {
 
 	public ComboPart() {
 	}
-	
+
 	public ComboPart(Composite parent, FormToolkit toolkit, int style) {
 		createControl(parent, toolkit, style);
 	}
@@ -34,20 +34,20 @@ public class ComboPart {
 		else
 			((CCombo) combo).addSelectionListener(listener);
 	}
-	
+
 	public void addModifyListener(ModifyListener listener) {
 		if (combo instanceof Combo)
 			((Combo) combo).addModifyListener(listener);
 		else
 			((CCombo) combo).addModifyListener(listener);
-	}	
-	
+	}
+
 	public void addKeyListener(KeyListener listener) {
 		if (combo instanceof Combo)
 			((Combo) combo).addKeyListener(listener);
 		else
 			((CCombo) combo).addKeyListener(listener);
-	}	
+	}
 
 	public void createControl(Composite parent, FormToolkit toolkit, int style) {
 		if (toolkit.getBorderStyle() == SWT.BORDER)

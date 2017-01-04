@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 
@@ -20,7 +20,7 @@ import org.eclipse.ui.intro.IIntroSite;
  * Since it is possible for multiple products to use the same intro configuration, this class allows
  * them to customize some aspects of the intro content so that it looks different for different
  * products even though they all share the same intro implementation and content.
- * 
+ *
  * @since 3.2
  */
 
@@ -28,7 +28,7 @@ public abstract class IntroConfigurer {
 
 	/**
 	 * The identifier of the named group where the configurer can contribute local tool bar actions.
-	 * 
+	 *
 	 * @see #init(IIntroSite, Map)
 	 */
 	public static final String TB_ADDITIONS = "additions"; //$NON-NLS-1$
@@ -41,7 +41,7 @@ public abstract class IntroConfigurer {
 	/**
 	 * Provides the opportunity for the configurer to contribute to the action bars and to fetch
 	 * presentation theme properties.
-	 * 
+	 *
 	 * @param site
 	 *            the intro part's site
 	 * @param themeProperties
@@ -57,7 +57,7 @@ public abstract class IntroConfigurer {
 	/**
 	 * Internal method to associate the corresponding intro configuration model. May be called
 	 * independently of {@link #init(IIntroSite, Map)}.
-	 * 
+	 *
 	 * @noreference
 	 */
 	final public void bind(IntroModelRoot model) {
@@ -71,7 +71,7 @@ public abstract class IntroConfigurer {
 
 	/**
 	 * Returns the value of the theme property with a given name.
-	 * 
+	 *
 	 * @param name
 	 *            the theme property name
 	 * @return the value of the property or <code>null</code> if property is not found, the theme
@@ -92,7 +92,7 @@ public abstract class IntroConfigurer {
 	 * content files in attribute names and values of elements. Whenever $variable$ is encountered
 	 * in the content, it is evaluated using this class by passing 'variable' to this method and
 	 * substituting the result in the content.
-	 * 
+	 *
 	 * @param variableName
 	 *            the name of the substitution variable
 	 * @return the value to substitute in place of a variable or <code>null</code> if the variable
@@ -103,7 +103,7 @@ public abstract class IntroConfigurer {
 	/**
 	 * Returns the children of computed groups. Groups marked as computed will be completed at run
 	 * time when the group is asked to provide children.
-	 * 
+	 *
 	 * @param pageId
 	 *            the identifier of the page in which this group appears
 	 * @param groupId
@@ -117,7 +117,7 @@ public abstract class IntroConfigurer {
 	/**
 	 * Returns an array of elements that will be used to build launch bar short cut links. Override
 	 * this method if the intro launch bar has been marked as computed.
-	 * 
+	 *
 	 * @return an array of elements that will be used to dynamically build shortcut links.
 	 */
 	public IntroElement[] getLaunchBarShortcuts() {
@@ -128,7 +128,7 @@ public abstract class IntroConfigurer {
 	 * Resolves an incomplete path in the form "page_id/@" where page_id represents the identifier
 	 * of the target page. The configurator should complete the path according to its internal
 	 * resolution mechanism. The final path must point at an anchor in the referenced page.
-	 * 
+	 *
 	 * @param extensionId
 	 *            the id specified for the config extension
 	 * @param path
@@ -141,7 +141,7 @@ public abstract class IntroConfigurer {
 	/**
 	 * Returns the style value that will be mixed in with the original style of the extension.
 	 * Themes can use this feature to render certain extensions differently.
-	 * 
+	 *
 	 * @param pageId
 	 *            the identifier of the target page that this extension is contributed into
 	 * @param extensionId
@@ -155,7 +155,7 @@ public abstract class IntroConfigurer {
 
 	/**
 	 * Return true if {@code pageId} is the configured start page.
-	 * 
+	 *
 	 * @param pageId
 	 *            the page identifier
 	 * @since 3.5

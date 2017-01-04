@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  * implement the IIntroContentProvider interface. The pluginId attribute can be
  * used if the class doesn't come from the plugin that defined the markup. The
  * text content should be used only if we fail to load the class. <br>
- * 
+ *
  * INTRO: model class has access to style-id attribute but it is not used in the
  * schema.
  */
@@ -44,7 +44,7 @@ public class IntroContentProvider extends AbstractTextElement {
     /**
      * Returns the content provider, which should implement
      * IIntroContentProvider
-     * 
+     *
      * @return Returns the contentProvider.
      */
     public String getClassName() {
@@ -53,7 +53,7 @@ public class IntroContentProvider extends AbstractTextElement {
 
     /**
      * Returns the id of the plugin that contains the content provider class
-     * 
+     *
      * @return Returns the pluginId.
      */
     public String getPluginId() {

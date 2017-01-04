@@ -43,7 +43,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
 
     public static final int TYPE_CONTRIBUTION = 0;
     public static final int TYPE_REPLACEMENT = 1;
-   
+
     protected static final String ATT_PATH = "path"; //$NON-NLS-1$
     protected static final String ATT_ID = "id"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
@@ -87,12 +87,12 @@ public class IntroExtensionContent extends AbstractIntroElement {
                 bundle);
             this.base = newBase;
         }
-        
+
         // Save the mapping between plugin registry id and base/anchor id
         String contributor = configExtElement.getContributor().getName();
         ExtensionMap.getInstance().putPluginId(anchorId, contributor);
     }
-    
+
     public String getId() {
     	return anchorId;
     }
@@ -102,7 +102,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
      * Initialize styles. Take first style in style attribute and make it the
      * page style. Then put other styles in styles vectors. Make sure to resolve
      * each style.
-     * 
+     *
      * @param element
      * @param bundle
      */
@@ -131,7 +131,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     /**
      * Adds the given style to the list. Style is not added if it already exists
      * in the list.
-     * 
+     *
      * @param style
      */
     protected void addStyle(String style) {
@@ -144,7 +144,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     /**
      * Adds the given style to the list.Style is not added if it already exists
      * in the list.
-     * 
+     *
      * @param altStyle
      */
     protected void addAltStyle(String altStyle, Bundle bundle) {
@@ -197,7 +197,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
 	 * that should be inserted for the extension. If it is a file, all child elements
 	 * of body are returned. If it is a file with an id, only the element with the id
 	 * is returned.
-	 * 
+	 *
 	 * @return the elements to be inserted
 	 */
     public Element[] getElements() {
@@ -250,13 +250,13 @@ public class IntroExtensionContent extends AbstractIntroElement {
     public String getBase() {
         return base;
     }
-    
+
 	/**
 	 * Extracts the file and id parts of the content attribute. This attribute has two modes -
 	 * if you specify a file, it will include the body of that file (minus the body element itself).
 	 * If you append an id after the file, only the element with that id will be included. However
 	 * we need to know which mode we're in.
-	 * 
+	 *
 	 * @param bundle the bundle that contributed this extension
 	 */
     private void extractFileAndId(Bundle bundle) {

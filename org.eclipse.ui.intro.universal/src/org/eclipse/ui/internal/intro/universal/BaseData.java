@@ -24,7 +24,7 @@ public abstract class BaseData {
 	public GroupData getParent() {
 		return parent;
 	}
-	
+
 	public abstract void write(PrintWriter writer, String indent);
 
 	public String getId() {

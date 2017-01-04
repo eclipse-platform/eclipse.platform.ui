@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alex Blewitt - Bug 474070 
+ *     Alex Blewitt - Bug 474070
  *******************************************************************************/
 package org.eclipse.help.ui;
 
@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
  * engine name, image and description, as well as the master switch that turns
  * the engine on or off. When the engine master switch is set to false, all the
  * children in the client composite will be disabled.
- * 
+ *
  * @since 3.1
  */
 public abstract class RootScopePage extends PreferencePage implements
@@ -74,7 +74,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * Creates the initial contents of the page and allocates the area for the
 	 * clients. Classes that extend this class should implement
 	 * <code>createScopeContents(Composite)</code> instead.
-	 * 
+	 *
 	 * @param parent
 	 *            the page parent
 	 * @return the page client control
@@ -89,7 +89,7 @@ public abstract class RootScopePage extends PreferencePage implements
 		GridData gd;
 		//if (ed.isUserDefined())
 		layout.numColumns = 2;
-		contentContainer.setLayout(layout);		
+		contentContainer.setLayout(layout);
 		if (isInPreferenceDialog()) {
 			masterButton = new Button(contentContainer, SWT.CHECK);
 			masterButton.setText(Messages.RootScopePage_masterButton);
@@ -153,7 +153,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * Called when the value of the master switch has changed. The default
 	 * implementation disables the scope contents control when the master switch
 	 * is off. Subclass can override this behaviour.
-	 * 
+	 *
 	 * @param value
 	 *            <code>true</code> if the master switch is on,
 	 *            <code>false</code> otherwise.
@@ -185,7 +185,7 @@ public abstract class RootScopePage extends PreferencePage implements
 
 	/**
 	 * Returns the scope set name passed to the page during initialization.
-	 * 
+	 *
 	 * @return the name of the current scope set
 	 */
 
@@ -195,7 +195,7 @@ public abstract class RootScopePage extends PreferencePage implements
 
 	/**
 	 * Returns the descriptor of the engine associated with this page.
-	 * 
+	 *
 	 * @return the engine descriptor
 	 */
 
@@ -206,7 +206,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	/**
 	 * Tests whether the search engine has been selected to participate in the
 	 * search.
-	 * 
+	 *
 	 * @return <code>true</code> if the search engine is enabled, </code>false</code>
 	 *         otherwise.
 	 */
@@ -221,7 +221,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	/**
 	 * Stores the value of the master switch in the preference store. Subclasses
 	 * may override but must call 'super'.
-	 * 
+	 *
 	 * @return <code>true</code> if the wizard can be closed,
 	 *         <code>false</code> otherwise.
 	 */
@@ -270,7 +270,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	/**
 	 * Initializes default values of the store to be used when the user presses
 	 * 'Defaults' button. Subclasses may override but must call 'super'.
-	 * 
+	 *
 	 * @param store
 	 *            the preference store
 	 */
@@ -293,7 +293,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * need for themselves only. Clients that implement this method should
 	 * return the required number of columns so that the root page widgets can
 	 * be adjusted if more columns are needed than initially set.
-	 * 
+	 *
 	 * @param parent
 	 *            the page parent
 	 * @return number of columns required by the client content

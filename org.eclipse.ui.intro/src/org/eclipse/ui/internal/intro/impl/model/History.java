@@ -50,7 +50,7 @@ public class History {
 
         /**
          * returns the history page. If iframe page, updated to correct url.
-         * 
+         *
          * @return
          */
         AbstractIntroPage getPage() {
@@ -91,7 +91,7 @@ public class History {
 
     /**
      * Updates the UI navigation history with either a real URL, or a page ID.
-     * 
+     *
      * @param pageId
      */
     public void updateHistory(String location) {
@@ -104,7 +104,7 @@ public class History {
 
     /**
      * Updates the UI navigation history with either a real URL, or a page ID.
-     * 
+     *
      * @param page
      */
     public void updateHistory(AbstractIntroPage page) {
@@ -162,7 +162,7 @@ public class History {
         // point the nav location to the end of the vector.
         navigationLocation = getHistoryEndPosition();
     }
-    
+
      public void removeLastHistory() {
         history.remove(getHistoryEndPosition());
         // point the nav location to the end of the vector.
@@ -180,7 +180,7 @@ public class History {
     /**
      * Return the position of the last element in the navigation history. If
      * vector is empty, return 0.
-     * 
+     *
      * @param vector
      * @return
      */
@@ -199,7 +199,7 @@ public class History {
 
     /**
      * Navigate forward in the history.
-     * 
+     *
      * @return
      */
     public void navigateHistoryForward() {
@@ -221,7 +221,7 @@ public class History {
     /**
      * Returns true if the current location in the navigation history represents
      * a URL. False if the location is an Intro Page id.
-     * 
+     *
      * @return Returns the locationIsURL.
      */
     private HistoryObject getCurrentLocation() {

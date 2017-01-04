@@ -45,7 +45,7 @@ public class HTMLElement {
 
 	/**
 	 * Add an attribute with the given name and value to this HTMLElement
-	 * 
+	 *
 	 * @param attributeName
 	 * @param attributeValue
 	 */
@@ -64,7 +64,7 @@ public class HTMLElement {
 
 	/**
 	 * Get the attributes associated with this element
-	 * 
+	 *
 	 * @return Returns the elementAttributes.
 	 */
 	public Map<String, String> getElementAttributes() {
@@ -76,7 +76,7 @@ public class HTMLElement {
 
 	/**
 	 * Set the attributes associated with this element
-	 * 
+	 *
 	 * @param elementAttributes
 	 *            The elementAttributes to set.
 	 */
@@ -86,7 +86,7 @@ public class HTMLElement {
 
 	/**
 	 * Get this element's content
-	 * 
+	 *
 	 * @return Returns the elementContent.
 	 */
 	public Vector<Object> getElementContent() {
@@ -98,7 +98,7 @@ public class HTMLElement {
 
 	/**
 	 * Set this element's content
-	 * 
+	 *
 	 * @param elementContent
 	 *            The elementContent to set.
 	 */
@@ -108,7 +108,7 @@ public class HTMLElement {
 
 	/**
 	 * Get the name of this element
-	 * 
+	 *
 	 * @return Returns the elementName.
 	 */
 	public String getElementName() {
@@ -117,7 +117,7 @@ public class HTMLElement {
 
 	/**
 	 * Set the name of this element
-	 * 
+	 *
 	 * @param elementName
 	 *            The elementName to set.
 	 */

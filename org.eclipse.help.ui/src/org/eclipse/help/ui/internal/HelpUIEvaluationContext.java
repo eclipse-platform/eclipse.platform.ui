@@ -23,9 +23,9 @@ public final class HelpUIEvaluationContext {
 
 	private static final String VARIABLE_PLATFORM = "platform"; //$NON-NLS-1$
 	private static final String VARIABLE_WORKBENCH = "workbench"; //$NON-NLS-1$
-	
+
 	private static EvaluationContext context;
-	
+
 	/*
 	 * Returns the evaluation context to use in help documents.
 	 */

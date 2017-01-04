@@ -30,7 +30,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 public class ContentDetectHelper {
-	
+
 	public static final int NO_STATE = -1;
 	private static final String EXTENSION_COUNT_XML = "extensionCount.xml"; //$NON-NLS-1$
 	private static final String EXTENSION_NAMES_XML = "extensionNames.xml"; //$NON-NLS-1$
@@ -39,7 +39,7 @@ public class ContentDetectHelper {
 	private static final String NAME = "name"; //$NON-NLS-1$
 	private static final String ROOT = "root"; //$NON-NLS-1$
 	private static final String PLUGIN_ID = "org.eclipse.ui.intro.universal"; //$NON-NLS-1$
-	
+
 	private File configurationDirectory;
 
 	private File getConfigurationLocation() {
@@ -57,14 +57,14 @@ public class ContentDetectHelper {
 		}
 		return configurationDirectory;
 	}
-	
-	public void saveExtensionCount(int count) {	
+
+	public void saveExtensionCount(int count) {
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ROOT);
 		writeMemento.putInteger(INTROCOUNT, count);
 		saveMemento(writeMemento, EXTENSION_COUNT_XML);
 	}
-	
-	public int getExtensionCount() {	
+
+	public int getExtensionCount() {
 		XMLMemento readMemento = getReadMemento(EXTENSION_COUNT_XML);
 		if (readMemento == null) {
 			return NO_STATE;
@@ -74,7 +74,7 @@ public class ContentDetectHelper {
 		if (extensionCount == null) {
 			return NO_STATE;
 		}
-			
+
 		return extensionCount.intValue();
 	}
 
@@ -86,7 +86,7 @@ public class ContentDetectHelper {
 		}
 		saveMemento(writeMemento, EXTENSION_NAMES_XML);
 	}
-	
+
 	public Set<String> getContributors() {
 		Set<String> contributors = new HashSet<>();
 		XMLMemento readMemento = getReadMemento(EXTENSION_NAMES_XML);
@@ -99,19 +99,19 @@ public class ContentDetectHelper {
 		}
 		return contributors;
 	}
-	
+
 	private XMLMemento getReadMemento(String filename) {
 		XMLMemento memento;
 		InputStreamReader reader = null;
 
 		try {
-			final File stateFile = getStateFile(filename); 
+			final File stateFile = getStateFile(filename);
 
 			FileInputStream input = new FileInputStream(stateFile);
 			reader = new InputStreamReader(input, StandardCharsets.UTF_8);
 			memento = XMLMemento.createReadRoot(reader);
 
-			
+
 		} catch (FileNotFoundException e) {
 			memento = null;
 			// Do nothing, the file will not exist the first time the workbench in used.
@@ -128,10 +128,10 @@ public class ContentDetectHelper {
 		}
 		return memento;
 	}
-	
+
 	private void saveMemento(XMLMemento memento, String filename) {
 		// Save the IMemento to a file.
-		File stateFile = getStateFile(filename); 
+		File stateFile = getStateFile(filename);
 		OutputStreamWriter writer = null;
 		try {
 			FileOutputStream stream = new FileOutputStream(stateFile);
@@ -147,7 +147,7 @@ public class ContentDetectHelper {
 			}
 		}
 	}
-	
+
 	private File getStateFile(String filename) {
 		if (getConfigurationLocation() == null) {
 			return null;
@@ -155,7 +155,7 @@ public class ContentDetectHelper {
 		File stateFile = new File(getConfigurationLocation(), filename);
 		return stateFile;
 	}
-	
+
 	public Set<String> findNewContributors(Set<String> contributors, Set<String> previousContributors) {
 		Set<String> result = new HashSet<>(contributors);
 		for (Iterator<String> iter = previousContributors.iterator(); iter.hasNext();) {
@@ -166,9 +166,9 @@ public class ContentDetectHelper {
 
 	public void deleteStateFiles() {
 		try {
-			File stateFile = new File(getConfigurationLocation(), EXTENSION_COUNT_XML);	
+			File stateFile = new File(getConfigurationLocation(), EXTENSION_COUNT_XML);
 			stateFile.delete();
-			stateFile = new File(getConfigurationLocation(), EXTENSION_NAMES_XML);	
+			stateFile = new File(getConfigurationLocation(), EXTENSION_NAMES_XML);
 			stateFile.delete();
 		} catch (RuntimeException e) {
 		}

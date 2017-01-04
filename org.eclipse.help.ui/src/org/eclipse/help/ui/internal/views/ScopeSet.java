@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,40 +32,40 @@ public class ScopeSet {
 	private PreferenceStore preferenceStore;
 	private boolean needsSaving;
 	private int defaultSet = -1;
-	
+
 	public ScopeSet() {
 		this(Messages.ScopeSet_default);
 		defaultSet = 1;
 	}
-	
+
 	public ScopeSet(String name) {
 		this.needsSaving = true;
 		this.name = name;
 	}
-	
+
 	public boolean isEditable() {
 		return !isDefault();
 	}
-	
+
 	public boolean isDefault() {
 		if (defaultSet==1)
 			return true;
 		return getPreferenceStore().getBoolean(KEY_DEFAULT);
 	}
-	
+
 	public boolean isImplicit() {
 		return false;
 	}
 
 	public ScopeSet(ScopeSet set, String name) {
-		this(name); 
+		this(name);
 		copyFrom(set);
 	}
-	
+
 	public void copyFrom(ScopeSet set) {
 		copy((PreferenceStore)set.getPreferenceStore());
 	}
-	
+
 	public void dispose() {
 		File file = new File(getFileName(name));
 		if (file.exists())
@@ -88,7 +88,7 @@ public class ScopeSet {
 		}
 		return preferenceStore;
 	}
-	
+
 	protected String encodeFileName(String name) {
 		return name;
 	}
@@ -96,10 +96,10 @@ public class ScopeSet {
 	private String getFileName(String name) {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append(SCOPE_DIR_NAME);
-		location = location.append(encodeFileName(name)+getExtension()); 
+		location = location.append(encodeFileName(name)+getExtension());
 		return location.toOSString();
 	}
-	
+
 	protected String getExtension() {
 		return EXT;
 	}

@@ -54,7 +54,7 @@ public class FormattedHTMLElement extends HTMLElement {
 	}
 	/**
 	 * Set whether the end tag is required for this element
-	 * 
+	 *
 	 * @param required
 	 *            true if end tag required, false otherwise
 	 */
@@ -63,7 +63,7 @@ public class FormattedHTMLElement extends HTMLElement {
 	}
 	/**
 	 * Set the indent level that should be applied to this element when printed
-	 * 
+	 *
 	 * @param indentLevel
 	 *            The indentLevel to set.
 	 */
@@ -73,7 +73,7 @@ public class FormattedHTMLElement extends HTMLElement {
 	/**
 	 * Set whether or not this element should be printed over multiple lines,
 	 * or on a single line
-	 * 
+	 *
 	 * @param spanMultipleLines
 	 *            true if the element should be printed over multiple lines,
 	 *            false if it should be printed on a single line
@@ -83,7 +83,7 @@ public class FormattedHTMLElement extends HTMLElement {
 	}
 	/**
 	 * Create a string of tabs to insert before the element is printed
-	 * 
+	 *
 	 * @param indentLevel
 	 *            the number of tabs to insert
 	 * @return

@@ -80,7 +80,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     // DOM representing XHTML content. DOM is only cached in the case of XHTML
     // content.
     private Document dom;
-    
+
     private DocumentProcessor domProcessor;
 
     // set when the content file is loaded (ie: loadChildren is called)
@@ -125,7 +125,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * different from the bundle for all the other pages. Only pages do this
      * logic and so other model objects might have the wrong bundle cached if
      * the resource was loaded from an nl directory.
-     * 
+     *
      * @param element
      */
     AbstractIntroPage(Element element, Bundle bundle, String base) {
@@ -167,20 +167,20 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             url = ModelUtil.resolveURL(base, url, bundle);
 
     }
-    
+
     @Override
 	public void setParent(AbstractIntroElement parent) {
     	super.setParent(parent);
         if (content == null)
             init(element, getBundle(), initialBase);
     }
-    
+
     /**
      * Returns unresolved content value as found in the source file.
      * the source file.
      * @return the unresolved content value
      */
-    
+
     public String getRawContent() {
     	return getAttribute(element, ATT_CONTENT);
     }
@@ -189,7 +189,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Initialize styles. Take first style in style attribute and make it the
      * page style. Then put other styles in styles vectors. Make sure to resolve
      * each style.
-     * 
+     *
      * @param element
      * @param bundle
      */
@@ -225,7 +225,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * The page's title. Each page can have one title.
-     * 
+     *
      * @return Returns the title of this page.
      */
     public String getTitle() {
@@ -267,7 +267,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * <p>
      * Note: this call needs to get all the children of this page, and so it
      * will resolve this page. might be expensive.
-     * 
+     *
      * @return Returns all the inherited styles of this page. Returns an empty
      *         array if page is not expandable or does not have inherited
      *         styles.
@@ -291,7 +291,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * resources from the inherited target plugin. Note: this call needs to get
      * all the children of this page, and so its will resolve this page. might
      * be expensive.
-     * 
+     *
      * @return Returns all the inherited styles of this page. Returns an empty
      *         hashtable if page is not expandable, does not have any includes,
      *         or has includes that do not merge styles.
@@ -306,7 +306,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Adds the given style to the list. Style is not added if it already exists
      * in the list.
-     * 
+     *
      * @param style
      */
     protected void addStyle(String style) {
@@ -330,7 +330,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Adds the given style to the list.Style is not added if it already exists
      * in the list.
-     * 
+     *
      * @param altStyle
      */
     protected void addAltStyle(String altStyle, Bundle bundle) {
@@ -344,7 +344,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Util method to add given styles to the list.
-     * 
+     *
      */
     protected void addStyles(String[] styles) {
         if (styles == null)
@@ -394,7 +394,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Override parent behavior to lazily initialize styles vectors. This will
      * only be called once, if resolved == false. In the case of DOM model,
      * resolve this page's full DOM.
-     * 
+     *
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer#resolveChildren()
      */
     @Override
@@ -411,7 +411,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Override parent behavior to add support for HEAD & Title element in pages
      * only, and not in divs.
-     * 
+     *
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer#getModelChild(org.eclipse.core.runtime.IConfigurationElement)
      */
     @Override
@@ -436,7 +436,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Returns all head contributions in this page. There can be more than one
      * head contribution in the page;
-     * 
+     *
      * @return
      */
     public IntroHead[] getHTMLHeads() {
@@ -501,7 +501,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Load the xml content from the introContent.xml file pointed to by the
      * content attribute, and loaded into the passed DOM. Load the first page
      * with correct id from this content file.
-     * 
+     *
      * @param dom
      */
     private void loadXMLContent(Document dom) {
@@ -563,7 +563,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Returns the DOM representing an external XHTML file. May return null if
      * extension content is 3.0 format. The page is resolved before returning,
      * meaning includes are resolved, and the base of the page is defined.
-     * 
+     *
      * @return
      */
     public Document getResolvedDocument() {
@@ -577,7 +577,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Returns the DOM representing an external XHTML file. May return null if
      * extension content is 3.0 format. The page is NOT resolved before
      * returning. It is retruned as given by the dom parser.
-     * 
+     *
      * @return
      */
     public Document getDocument() {
@@ -592,7 +592,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Returns whether or not we have an XHTML page as the content for this
      * page. The XHTML page is defined through the content attribute. This
      * method forces the content file to be parsed and loaded in memory.
-     * 
+     *
      * @return
      */
     public boolean isXHTMLPage() {
@@ -614,7 +614,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * whether or not an xmlns was used in the xml. note: could not have used
      * inheritance from parent container because return type for parent is intro
      * legacy model.
-     * 
+     *
      */
     public Element findDomChild(String id, String localElementName) {
         if (!loaded)
@@ -626,7 +626,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Search for any element with the given id.
-     * 
+     *
      * @param id
      * @return
      */
@@ -670,7 +670,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
         UAElement element = UAElementFactory.newElement(dom.getDocumentElement());
         domProcessor.process(element, null);
-        
+
         // and resolve includes.
         resolveIncludes();
 
@@ -724,7 +724,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Find the target Element pointed to by the path in the include. It is
      * assumed that configId always points to an external config, and not the
      * same config of the inlcude.
-     * 
+     *
      * @param include
      * @param path
      * @return
@@ -749,7 +749,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Finds the child element that corresponds to the given path in the passed
      * model.
-     * 
+     *
      * @param model
      *            model containing target path.
      * @param path
@@ -814,7 +814,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Used when cloning pages to assign a unique id. Cache original id before
      * setting.
-     * 
+     *
      * @param id
      */
     public void setId(String id) {
@@ -846,7 +846,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Return true if this page is a cloned page that has an IFrame.
-     * 
+     *
      * @return
      */
     public boolean isIFramePage() {
@@ -863,7 +863,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Set the url of the embedded IFrame, if this page is an IFrame page.
-     * 
+     *
      * @param url
      */
     public void setIFrameURL(String url) {
@@ -874,7 +874,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Return the url of the embedded IFrame, if this page is an IFrame page.
-     * 
+     *
      * @param url
      */
     public String getIFrameURL() {
@@ -889,10 +889,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     public String getInitialBase() {
     	return initialBase;
     }
-    
+
     /**
      * Return the url of the embedded IFrame, if this page is an IFrame page.
-     * 
+     *
      * @param url
      */
     public boolean injectSharedStyle() {
@@ -900,13 +900,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     }
 
 	/**
-	 * Returns true if this is a dynamicpage or not. 
+	 * Returns true if this is a dynamicpage or not.
 	 * @return Returns the isDynamic.
 	 */
 	public boolean isDynamic() {
 	    return isDynamic;
 	}
-	
+
 	/**
      * @return Returns the url.
      */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Table;
 public class ICButtons implements SelectionListener{
 
 	private HelpContentPreferencePage page;
-	
+
 	private Button addIC;
 	private Button editIC;
 	private Button removeIC;
@@ -45,7 +45,7 @@ public class ICButtons implements SelectionListener{
 	public ICButtons(Composite parent,HelpContentPreferencePage page)
 	{
 		this.page = page;
-		
+
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -58,7 +58,7 @@ public class ICButtons implements SelectionListener{
 		editIC = createPushButton(container, Messages.HelpContentBlock_editICTitle);
 		removeIC = createPushButton(container, Messages.HelpContentBlock_removeICTitle);
 		testIC = createPushButton(container, Messages.HelpContentBlock_testConnectionTitle);
-		
+
 		String enableTitle = Messages.HelpContentBlock_3.length() > Messages.HelpContentBlock_4.length() ?
 				Messages.HelpContentBlock_3 : Messages.HelpContentBlock_4;
 		enableIC = createPushButton(container, enableTitle);
@@ -66,17 +66,17 @@ public class ICButtons implements SelectionListener{
 		moveDown = createPushButton(container, Messages.HelpContentBlock_downTitle);
 
 		page.getTable().getTable().addSelectionListener(this);
-		
-		
+
+
 		updateButtonStates();
 	}
-	
+
 	public void setEnabled(boolean enabled)
 	{
 		this.enabled  = enabled;
 		updateButtonStates();
 	}
-	
+
 	public Button createPushButton(Composite parent, String buttonText) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
@@ -123,30 +123,30 @@ public class ICButtons implements SelectionListener{
 			updateButtonStates();
 		}
 	}
-	
+
 	public void editIC()
 	{
 		IStructuredSelection selection = (IStructuredSelection)page.getTable().getSelection();
 		IC ic = (IC)selection.getFirstElement();
 		if (ic==null)
 			return;
-		
+
 		ICDialog dialog = new ICDialog(page.getShell(),ic);
-		
+
 		if (dialog.open() == Window.OK) {
 			page.getTable().editIC(dialog.getIC());
 			updateButtonStates();
 		}
 	}
-	
+
 	public void removeIC()
 	{
 		IStructuredSelection selection = (IStructuredSelection)page.getTable().getSelection();
 		List<IC> ics = selection.toList();
 		String remove = ""; //$NON-NLS-1$
-		
+
 		for (int i=0;i<ics.size();i++)
-		{			
+		{
 			remove+="\n"+ics.get(i); //$NON-NLS-1$
 		}
 
@@ -154,7 +154,7 @@ public class ICButtons implements SelectionListener{
 	          MessageDialog.openQuestion(
 	        	page.getShell(),
 	            NLS.bind(Messages.HelpContentBlock_rmvTitle ,""), //$NON-NLS-1$
-	            NLS.bind(Messages.HelpContentBlock_rmvLabel ,remove));	
+	            NLS.bind(Messages.HelpContentBlock_rmvLabel ,remove));
 
 		if (shouldRemove)
 		{
@@ -163,22 +163,22 @@ public class ICButtons implements SelectionListener{
 			updateButtonStates();
 		}
 	}
-	
+
 	public void testIC()
-	{		
+	{
 		IStructuredSelection selection = (IStructuredSelection)page.getTable().getSelection();
 		IC ic = (IC)selection.getFirstElement();
 		if (ic==null)
 			return;
-	
+
 		ICDialog dialog = new ICDialog(page.getShell(),ic,true);
-		
+
 		if (dialog.open() == Window.OK) {
 			page.getTable().editIC(dialog.getIC());
 			updateButtonStates();
-		}		
-		
-		
+		}
+
+
 /*		boolean connected = TestConnectionUtility.testConnection(ic.getHost(),
 					ic.getPort()+"", ic.getPath(),ic.getProtocol());
 		TestICDialog dialog = new TestICDialog(page.getShell(),ic);
@@ -186,50 +186,50 @@ public class ICButtons implements SelectionListener{
 		dialog.open();
 */
 	}
-	
+
 	public void enableIC()
 	{
 		int indexes[] = page.getTable().getTable().getSelectionIndices();
 		IStructuredSelection selection = (IStructuredSelection)page.getTable().getSelection();
 		List<IC> ics = selection.toList();
-		
+
 		boolean enable = enableIC.getText().equals(Messages.HelpContentBlock_4);
-		
+
 		for (int i=0;i<ics.size();i++)
 		{
 			ics.get(i).setEnabled(enable);
 			page.getTable().getTableViewer().replace(ics.get(i), indexes[i]);
 		}
 		page.getTable().refresh();
-		
+
 		updateButtonStates();
 	}
-	
+
 	public void move(int offset)
 	{
 		int index = page.getTable().getTable().getSelectionIndices()[0];
-		
+
 		List<IC> ics = page.getTable().getICs();
 		IC x = ics.get(index);
 		IC y = ics.get(index + offset);
 
 		ics.set(index+offset,x);
 		ics.set(index,y);
-		
+
 
 		page.getTable().getTableViewer().getContentProvider().inputChanged(
 				page.getTable().getTableViewer(), null, ics);
-		
+
 		page.getTable().getTableViewer().replace(x,index+offset);
 		page.getTable().getTableViewer().replace(y,index);
 		page.getTable().refresh();
-		
+
 		page.getTable().getTable().deselectAll();
 		page.getTable().getTable().select(index+offset);
 		updateButtonStates();
-		
+
 	}
-	
+
 	public void updateButtonStates()
 	{
 		if (!enabled)
@@ -243,9 +243,9 @@ public class ICButtons implements SelectionListener{
 			removeIC.setEnabled(false);
 			return;
 		}
-		
+
 		addIC.setEnabled(true);
-		
+
 		IC firstIC = (IC)(((IStructuredSelection)page.getTable().getSelection()).getFirstElement());
 		if (firstIC!=null)
 		{
@@ -260,7 +260,7 @@ public class ICButtons implements SelectionListener{
 				moveDown.setEnabled(index!=page.getTable().getICs().size()-1);
 			}
 			else
-			{	
+			{
 				editIC.setEnabled(false);
 				testIC.setEnabled(false);
 				moveUp.setEnabled(false);

@@ -4,9 +4,9 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
- * 		IBM Corporation - initial API and implementation 
+ *
+ * Contributors:
+ * 		IBM Corporation - initial API and implementation
  * 		Sebastian Davids <sdavids@gmx.de> - bug 93374
  **************************************************************************************************/
 package org.eclipse.help.ui.internal;
@@ -228,14 +228,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			}
 		}
 	}
-	
+
 	public static void showIndex() {
 		HelpView helpView = getHelpView();
         if (helpView != null) {
 		    helpView.showIndex();
         }
 	}
-	
+
 	private static HelpView getHelpView() {
 		HelpView view = null;
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -251,7 +251,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					}
 				} catch (PartInitException e) {
 				}
-			} 
+			}
 		}
 		return view;
 	}
@@ -285,7 +285,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	/**
 	 * Displays context-sensitive help for specified context
-	 * 
+	 *
 	 * @param context
 	 *            the context to display
 	 * @param x
@@ -341,7 +341,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 							if (isSingleChoiceWithoutDescription) {
 								view.showHelp(topics[0].getHref());
 							} else {
-								view.displayContext(context, activePart, c);				
+								view.displayContext(context, activePart, c);
 							}
 						}
 					}
@@ -373,7 +373,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
 	 */
 	private static Shell getActiveShell() {
@@ -415,7 +415,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	private void displayContextAsHelpTray(Shell activeShell, IContext context) {
 		Control controlInFocus = activeShell.getDisplay().getFocusControl();
 		TrayDialog dialog = (TrayDialog)activeShell.getData();
-		
+
 		DialogTray tray = dialog.getTray();
 		if (tray == null) {
 			tray = new HelpTray();
@@ -488,7 +488,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		}
 		return false;
 	}
-	
+
 	public static boolean showInWorkbenchBrowser(String url, boolean onlyInternal) {
 		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 		if (!onlyInternal || support.isInternalWebBrowserAvailable()) {
@@ -512,7 +512,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	/*
 	 * Used to indicate to the HelpView that we are about to pass in a context
 	 */
-	
+
 	public static boolean isOpeningHelpView() {
 		return openingHelpView;
 	}

@@ -60,7 +60,7 @@ public class PageContentForm implements IIntroConstants {
      * Create the form for the root page. Number of columns there is equal to
      * the number of links. Every image link does not cache a model object for
      * data retrieval..
-     * 
+     *
      * @param pageBook
      */
     public void createPartControl(ScrolledPageBook contentPageBook,
@@ -113,11 +113,11 @@ public class PageContentForm implements IIntroConstants {
     /**
      * Creates a composite with TableWrapLayout to hold all page children. The
      * default number of columns is 1.
-     * 
+     *
      * @param parent
      * @return
      */
-    static Composite createPageTableComposite(PageWidgetFactory factory, FormToolkit toolkit, 
+    static Composite createPageTableComposite(PageWidgetFactory factory, FormToolkit toolkit,
     		PageStyleManager styleManager, Composite parent) {
         Composite client = toolkit.createComposite(parent);
         TableWrapLayout layout = new TableWrapLayout();

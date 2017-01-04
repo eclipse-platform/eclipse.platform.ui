@@ -72,7 +72,7 @@ public class Util {
     /**
      * Utility method that will add a debug listener to the given control. All
      * common events are added.
-     * 
+     *
      * @param control
      * @return
      */

@@ -124,11 +124,11 @@ public final class Messages extends NLS {
 	public static String BrowserPart_reduceTooltip;
 	public static String BrowserPart_highlightTooltip;
 	public static String BrowserPart_printTooltip;
-	public static String BrowserPart_syncTocTooltip;	
+	public static String BrowserPart_syncTocTooltip;
 	public static String HelpPreferencePage_wlabel;
 	public static String HelpPreferencePage_view;
 	public static String HelpPreferencePage_helpBrowser;
-	public static String HelpPreferencePage_externalBrowser;	
+	public static String HelpPreferencePage_externalBrowser;
 	public static String HelpPreferencePage_dlabel;
 	public static String HelpPreferencePage_tray;
 	public static String HelpPreferencePage_search;
@@ -150,7 +150,7 @@ public final class Messages extends NLS {
 	public static String AskShowAll_dialogTitle;
 	public static String AskShowAll_message;
 	public static String AskShowAll_toggleMessage;
-	
+
 	public static String DefaultHelpUI_wtitle;
 	public static String DefaultHelpUI_noPerspMessage;
 	public static String ContextHelpDialog_showInDynamicHelp;
@@ -165,7 +165,7 @@ public final class Messages extends NLS {
 	public static String HelpPreferencePage_openInPlace;
 	public static String HelpPreferencePage_openInEditor;
 	public static String HelpPreferencePage_openInBrowser;
-	
+
 	public static String ReusableHelpPart_internalBrowserTitle;
 	public static String ReusableHelpPart_internalWebBrowserError;
 	public static String ScopeSet_errorLoading;
@@ -174,13 +174,13 @@ public final class Messages extends NLS {
 	public static String ScopeSet_selectWorkingSet;
 	public static String IndexInstructions;
 	public static String IndexButton;
-	
+
 	public static String NoWorkbenchForExecuteCommand_msg;
-	
+
 	public static String SearchEmbeddedHelpOnly;
 	public static String SearchEmbeddedHelpFirst;
 	public static String SearchEmbeddedHelpLast;
-	
+
 	// Remote Help Preferences
 	public static String AddICDialog_10;
 
@@ -197,7 +197,7 @@ public final class Messages extends NLS {
 	public static String AddICDialog_7;
 
 	public static String AddICDialog_8;
-	
+
 	public static String AddICDialog_9;
 
 	public static String EditICDialog_10;
@@ -209,7 +209,7 @@ public final class Messages extends NLS {
 	public static String EditICDialog_13;
 
 	public static String EditICDialog_14;
-	
+
 	public static String EditICDialog_15;
 
 	public static String EditICDialog_7;
@@ -255,7 +255,7 @@ public final class Messages extends NLS {
 	public static String ViewICPropsDialog_13;
 
 	public static String ViewICPropsDialog_14;
-	
+
 	public static String ViewICPropsDialog_19;
 
 	public static String ViewICPropsDialog_20;
@@ -277,6 +277,6 @@ public final class Messages extends NLS {
 	public static String See;
 	public static String SeeAlso;
 	public static String SeeList;
-	
+
 	public static String AlternateQueries;
 }

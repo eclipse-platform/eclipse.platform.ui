@@ -22,7 +22,7 @@ public class PreferenceArbiter {
 
 	private Map<Object, int[]> references;
 	private Object leader;
-	
+
 	public void consider(Object obj) {
 		if (obj != null) {
 			if (references == null) {
@@ -44,7 +44,7 @@ public class PreferenceArbiter {
 			}
 		}
 	}
-	
+
 	public Object getWinner() {
 		return leader;
 	}

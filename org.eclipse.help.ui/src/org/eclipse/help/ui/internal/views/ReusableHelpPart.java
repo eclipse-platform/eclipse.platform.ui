@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -122,7 +122,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private static final int STATE_LT_B = 3;
 
 	private static final int STATE_LT_BR = 4;
-	
+
 	/*
 	 * Used as a bridge from live help actions back (e.g. breadcrumb links)
 	 * to the originating help part.
@@ -178,7 +178,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private IStatusLineManager statusLineManager;
 
 	private IActionBars actionBars;
-	
+
 	private EngineDescriptorManager engineManager;
 
 	public IMenuManager menuManager;
@@ -304,7 +304,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		private SubActionBars bars;
 
 		private IToolBarManager subToolBarManager;
-		
+
 		private IMenuManager subMenuManager;
 
 		protected ArrayList<PartRec> partRecs;
@@ -328,7 +328,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					subMenuManager = new SubMenuManager(
 						ReusableHelpPart.this.menuManager);
 				} else {
-			        subMenuManager = null; 
+			        subMenuManager = null;
 			    }
 			}
 		}
@@ -345,7 +345,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				bars = null;
 				subToolBarManager = null;
 				subMenuManager = null;
-			} else {			
+			} else {
 				try {
 					((SubToolBarManager) subToolBarManager).disposeManager();
 					if (subMenuManager != null) {
@@ -413,13 +413,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		public PartRec[] getParts() {
 			return partRecs.toArray(new PartRec[partRecs.size()]);
 		}
-		
+
 		public void refreshPage()
 		{
 			PartRec parts[] = getParts();
 			if (parts==null)
 				return;
-			
+
 			for (int p=0;p<parts.length;p++)
 				if (parts[p]!=null && parts[p].part!=null && parts[p].part.isStale())
 					parts[p].part.refresh();
@@ -460,7 +460,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					rec.part.stop();
 			}
 		}
-		
+
 		@Override
 		public void saveState(IMemento memento) {
 			for (int i = 0; i < partRecs.size(); i++) {
@@ -522,7 +522,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				if (pageAction != null)
 					pageAction.setChecked(visible);
 			}
-			
+
 			if (bars != null) {
 				if (visible)
 					bars.activate();
@@ -537,7 +537,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				ReusableHelpPart.this.toolBarManager.update(true);
 				getControl().getParent().layout();
 			}
-			
+
 		}
 
 		private void hookGlobalAction(String id, IHelpPart part) {
@@ -570,7 +570,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			for (int focusPart = 0; focusPart < partRecs.size(); focusPart++) {
 				PartRec rec = partRecs.get(focusPart);
 				String partId = rec.part.getId();
-				if ( partId != IHelpUIConstants.HV_SEE_ALSO && partId != IHelpUIConstants.HV_MISSING_CONTENT) { 
+				if ( partId != IHelpUIConstants.HV_SEE_ALSO && partId != IHelpUIConstants.HV_MISSING_CONTENT) {
 				    rec.part.setFocus();
 				    return;
 				}
@@ -693,7 +693,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			return HelpBasePlugin.getActivitySupport().isEnabled(href);
 		}
 	}
-	
+
 	class UAFilter extends ViewerFilter {
 
 		@Override
@@ -723,7 +723,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	public static ReusableHelpPart getLastActiveInstance() {
 		return lastActiveInstance;
 	}
-	
+
 	private void ensureHelpIndexed() {
 		// make sure we have the index but
 		// don't schedule the indexer job if one is
@@ -734,20 +734,20 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			indexerJob.schedule();
 		}
 	}
-	
+
 	/**
 	 * Adds the given page to this part.
-	 * 
+	 *
 	 * @param page the page to add
 	 */
 	public void addPage(IHelpPartPage page) {
-		pages.add(page);		
+		pages.add(page);
 	}
-	
+
 	/**
 	 * Adds the given part to this one. The part can then be used inside
 	 * any page and referred to by id.
-	 * 
+	 *
 	 * @param id the part's unique id
 	 * @param part the part to add
 	 */
@@ -755,10 +755,10 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		part.init(this, id, memento);
 		mform.addPart(part);
 	}
-	
+
 	/**
 	 * Creates a new page for this part.
-	 * 
+	 *
 	 * @param id the page's unique id
 	 * @param text the page's heading, or null for none
 	 * @param iconId the page's icon
@@ -767,7 +767,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	public IHelpPartPage createPage(String id, String text, String iconId) {
 		return new HelpPartPage(id, text, iconId);
 	}
-	
+
 	private void definePages() {
 		pages = new ArrayList<>();
 		// federated search page
@@ -784,7 +784,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// all topics page
 		page = new HelpPartPage(HV_ALL_TOPICS_PAGE,
 				Messages.ReusableHelpPart_allTopicsPage_name,
-				IHelpUIConstants.IMAGE_ALL_TOPICS); 
+				IHelpUIConstants.IMAGE_ALL_TOPICS);
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_SEE_ALSO, false);
@@ -795,8 +795,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		// bookmarks page
 		page = new HelpPartPage(HV_BOOKMARKS_PAGE,
-				Messages.ReusableHelpPart_bookmarksPage_name, 
-				IHelpUIConstants.IMAGE_BOOKMARKS); 
+				Messages.ReusableHelpPart_bookmarksPage_name,
+				IHelpUIConstants.IMAGE_BOOKMARKS);
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_SEE_ALSO, false);
@@ -813,7 +813,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// context help page
 		page = new HelpPartPage(HV_CONTEXT_HELP_PAGE,
 				Messages.ReusableHelpPart_contextHelpPage_name,
-				IHelpUIConstants.IMAGE_RELATED_TOPICS); 
+				IHelpUIConstants.IMAGE_RELATED_TOPICS);
 		// page.addPart(HV_CONTEXT_HELP, false);
 		// page.addPart(HV_SEARCH_RESULT, false, true);
 		page.setVerticalSpacing(0);
@@ -826,7 +826,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// index page
 		page = new HelpPartPage(HV_INDEX_PAGE,
 				Messages.ReusableHelpPart_indexPage_name,
-				IHelpUIConstants.IMAGE_INDEX); 
+				IHelpUIConstants.IMAGE_INDEX);
 		page.setVerticalSpacing(0);
 		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_MISSING_CONTENT, false);
@@ -862,8 +862,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backAction.setEnabled(false);
-		backAction.setText(Messages.ReusableHelpPart_back_label); 
-		backAction.setToolTipText(Messages.ReusableHelpPart_back_tooltip); 
+		backAction.setText(Messages.ReusableHelpPart_back_label);
+		backAction.setToolTipText(Messages.ReusableHelpPart_back_tooltip);
 		backAction.setId("back"); //$NON-NLS-1$
 
 		nextAction = new Action("next") { //$NON-NLS-1$
@@ -873,7 +873,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				doNext();
 			}
 		};
-		nextAction.setText(Messages.ReusableHelpPart_forward_label); 
+		nextAction.setText(Messages.ReusableHelpPart_forward_label);
 		nextAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD));
@@ -881,7 +881,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
-		nextAction.setToolTipText(Messages.ReusableHelpPart_forward_tooltip); 
+		nextAction.setToolTipText(Messages.ReusableHelpPart_forward_tooltip);
 		nextAction.setId("next"); //$NON-NLS-1$
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
@@ -894,7 +894,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		};
 		openInfoCenterAction
-				.setText(Messages.ReusableHelpPart_openInfoCenterAction_label); 
+				.setText(Messages.ReusableHelpPart_openInfoCenterAction_label);
 		openAction = new OpenHrefAction("open") { //$NON-NLS-1$
 
 			@Override
@@ -902,7 +902,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				doOpen(getTarget(), getShowDocumentsInPlace());
 			}
 		};
-		openAction.setText(Messages.ReusableHelpPart_openAction_label); 
+		openAction.setText(Messages.ReusableHelpPart_openAction_label);
 		openInHelpAction = new OpenHrefAction("") {//$NON-NLS-1$
 
 			@Override
@@ -911,9 +911,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		};
 		openInHelpAction
-				.setText(Messages.ReusableHelpPart_openInHelpContentsAction_label); 
+				.setText(Messages.ReusableHelpPart_openInHelpContentsAction_label);
 		copyAction = new CopyAction();
-		copyAction.setText(Messages.ReusableHelpPart_copyAction_label); 
+		copyAction.setText(Messages.ReusableHelpPart_copyAction_label);
 		bookmarkAction = new OpenHrefAction("bookmark") { //$NON-NLS-1$
 
 			@Override
@@ -921,12 +921,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				doBookmark(getTarget());
 			}
 		};
-		bookmarkAction.setText(Messages.ReusableHelpPart_bookmarkAction_label); 
+		bookmarkAction.setText(Messages.ReusableHelpPart_bookmarkAction_label);
 		bookmarkAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		if (actionBars != null && actionBars.getMenuManager() != null)
 			contributeToDropDownMenu(actionBars.getMenuManager());
-		
+
 		roleFilter = new RoleFilter();
 		uaFilter = new UAFilter();
 		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
@@ -941,7 +941,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			showAllAction.setImageDescriptor(HelpUIResources
 					.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_ALL));
 			showAllAction
-					.setToolTipText(Messages.AllTopicsPart_showAll_tooltip); 
+					.setToolTipText(Messages.AllTopicsPart_showAll_tooltip);
 			toolBarManager.insertBefore("back", showAllAction); //$NON-NLS-1$
 			toolBarManager.insertBefore("back", new Separator()); //$NON-NLS-1$
 			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()
@@ -962,7 +962,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// pages is null when the activity manager listener is added, and is set to null
 		// prior to the activity manager listener being removed, so very short timeframes in
 		// logic where pages could equals null entering this method
-		if (pages != null){ 
+		if (pages != null){
 			for (int i = 0; i < pages.size(); i++) {
 				HelpPartPage page = (HelpPartPage) pages.get(i);
 				page.refilter();
@@ -1029,7 +1029,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			BrowserPart part = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
 			part.clearBrowser();
 		}
-		
+
 		HelpPartPage page = findPage(id);
 		if (page != null) {
 			page.refreshPage();
@@ -1160,7 +1160,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
 	 */
 	public void setFocus() {
@@ -1180,7 +1180,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	 * @param context
 	 * @param part
 	 * @param control
-	 * @param isExplicitRequest is true if this is the result of a direct user request such as 
+	 * @param isExplicitRequest is true if this is the result of a direct user request such as
 	 * pressing F1 and false if it is in response to a focus change listener
 	 */
 	public void update(IContextProvider provider, IContext context, IWorkbenchPart part,
@@ -1230,7 +1230,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new MissingContentPart(parent, mform.getToolkit());
 		}
 		if (part != null) {
-			mform.addPart(part);			
+			mform.addPart(part);
 			part.init(this, id, memento);
 		}
 		return part;
@@ -1293,7 +1293,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	private boolean openInternalBrowser(String url) {
-		String openMode = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, 
+		String openMode = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID,
 				 IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, IHelpBaseConstants.P_IN_PLACE, null);
 		boolean openInEditor = IHelpBaseConstants.P_IN_EDITOR.equals(openMode);
 		boolean openInBrowser = IHelpBaseConstants.P_IN_BROWSER.equals(openMode);
@@ -1329,9 +1329,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					aurl = aurl.substring(0, aurl.length() - 14);
 				DefaultHelpUI.showInWorkbenchBrowser(aurl, false);
                 */
-				
+
 			    PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(aurl);
-				
+
 			} catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$
 			}
@@ -1672,7 +1672,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			mng.setMessage(null);
 	}
 
-	
+
 
 	private void toggleShowAll(boolean checked) {
 		if (checked) {
@@ -1698,7 +1698,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			page.toggleRoleFilter();
 		}
 	}
-	
+
 	public void saveState(IMemento memento) {
 		for (int i = 0; i < pages.size(); i++) {
 			HelpPartPage page = (HelpPartPage) pages.get(i);
@@ -1743,7 +1743,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 		return buff.toString();
 	}
-	
+
 	EngineDescriptorManager getEngineManager() {
 		if (engineManager==null) {
 			engineManager = new EngineDescriptorManager();
@@ -1772,9 +1772,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		clearBrowser();
 		showURL("/org.eclipse.help.webapp/" + MissingContentManager.MISSING_BOOKS_HELP_VIEW_HREF); //$NON-NLS-1$
 		updateStatusLinks();
-		
+
 	}
-	
+
 	private void clearBrowser() {
 		IHelpPart part = findPart(HV_BROWSER);
 		if ( part == null ) {

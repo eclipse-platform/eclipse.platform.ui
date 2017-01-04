@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  * Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
  **************************************************************************************************/
@@ -68,10 +68,10 @@ import org.eclipse.ui.intro.config.IntroURLFactory;
  * This class is responsible for creating the intro launch bar in the provided parent. It creates
  * 'restore' and 'close' actions, as well as actions for each shortcut element contributed in the
  * extension point.
- * 
+ *
  * Reimplemented as an E4 MToolControl for 4.x. Ideally the intro configuration information would be
  * available from the application IEclipseContext.
- * 
+ *
  * @since 3.1
  */
 public class IntroLaunchBar {
@@ -97,7 +97,7 @@ public class IntroLaunchBar {
 	private IntroLaunchBarElement element;
 
 	protected boolean simple;
-	
+
 	@Inject
 	@Optional
 	private IntroTheme theme;
@@ -178,7 +178,7 @@ public class IntroLaunchBar {
 
 	/**
 	 * Install the Intro Launch Bar into the provided window.
-	 * 
+	 *
 	 * @param window
 	 *            the window to host the launch bar
 	 * @param modelRoot
@@ -191,7 +191,7 @@ public class IntroLaunchBar {
 			IntroLaunchBarElement element) {
 		EModelService modelService = (EModelService) window.getService(EModelService.class);
 		MTrimmedWindow trimmedWindow = (MTrimmedWindow) window.getService(MTrimmedWindow.class);
-		
+
 		MToolControl trimControl = modelService.createModelElement(MToolControl.class);
 		trimControl.setElementId(LAUNCHBAR_ID);
 		trimControl.setContributionURI(BUNDLECLASS_URI);
@@ -212,7 +212,7 @@ public class IntroLaunchBar {
 	 * Remove all traces of any launch bars found in the model. Required on startup as the
 	 * {@linkplain IntroLaunchBar} instances may not be have been rendered yet and so are
 	 * disconnected from the {@link IntroPlugin}'s state.
-	 * 
+	 *
 	 * @param workbench
 	 *            the workbench to process
 	 */
@@ -298,11 +298,11 @@ public class IntroLaunchBar {
 	/**
 	 * Not supported anymore as of the removal of the presentation API
 	 * TODO remove usage, see Bug 446171
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean isPlain() {
-		return true; 
+		return true;
 	}
 
 	public void createControl(Composite parent) {
@@ -478,7 +478,7 @@ public class IntroLaunchBar {
 			}
 		}
 	}
-	
+
 	private String resolveColor(String value) {
 		if (value.indexOf('$')== -1)
 			return value;
@@ -642,7 +642,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
 	public String getId() {
@@ -651,7 +651,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.IWindowTrim#getDisplayName()
 	 */
 	public String getDisplayName() {
@@ -660,7 +660,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
 	 */
 	public boolean isCloseable() {
@@ -669,7 +669,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.internal.IWindowTrim#handleClose()
 	 */
 	public void handleClose() {
@@ -678,7 +678,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWindowTrim#getWidthHint()
 	 */
 	public int getWidthHint() {
@@ -687,7 +687,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWindowTrim#getHeightHint()
 	 */
 	public int getHeightHint() {
@@ -696,7 +696,7 @@ public class IntroLaunchBar {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWindowTrim#isResizeable()
 	 */
 	public boolean isResizeable() {

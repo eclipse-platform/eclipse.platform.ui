@@ -112,14 +112,14 @@ public class EmbeddedBrowser {
 				HelpApplication.stopHelp();
 			}
 		});
-							
+
 		browser = new Browser(shell, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		initialize(browser);
-		
+
 		createStatusBar(shell);
 		initializeStatusBar(browser);
-		
+
 		// use saved location and size
 		x = Platform.getPreferencesService().getInt(HelpUIPlugin.PLUGIN_ID, BROWSER_X, 0, null);
 		y = Platform.getPreferencesService().getInt(HelpUIPlugin.PLUGIN_ID, BROWSER_Y, 0, null);
@@ -184,7 +184,7 @@ public class EmbeddedBrowser {
 	/**
 	 * Constructor for derived help window It is either secondary browser or a
 	 * help dialog
-	 * 
+	 *
 	 * @param event
 	 * @param parent
 	 *            Shell or null
@@ -237,7 +237,7 @@ public class EmbeddedBrowser {
 				}
 			}
 		});
-		
+
 	}
 	private void initialize(Browser browser) {
 		browser.addOpenWindowListener(event -> {
@@ -298,7 +298,7 @@ public class EmbeddedBrowser {
 			}
 		});
 	}
-	
+
 	private void initializeStatusBar(Browser browser) {
 		browser.addStatusTextListener(event -> {
 			event.text = event.text.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -326,7 +326,7 @@ public class EmbeddedBrowser {
 			}
 		});
 	}
-	
+
 	private void createStatusBar(Composite parent) {
 		statusBar = new Composite(parent, SWT.NONE);
 		statusBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -357,7 +357,7 @@ public class EmbeddedBrowser {
 		data.heightHint = Math.max(statusBarText.computeSize(SWT.DEFAULT, SWT.DEFAULT).y, statusBarProgress.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		statusBarSeparator.setLayoutData(data);
 	}
-	
+
 	public void displayUrl(String url) {
 		browser.setUrl(url);
 		shell.setMinimized(false);
@@ -433,7 +433,7 @@ public class EmbeddedBrowser {
 	}
 	/**
 	 * Obtains URLs to product image
-	 * 
+	 *
 	 * @return String[] with URLs as Strings or null
 	 */
 	private static String[] getProductImageURLs() {

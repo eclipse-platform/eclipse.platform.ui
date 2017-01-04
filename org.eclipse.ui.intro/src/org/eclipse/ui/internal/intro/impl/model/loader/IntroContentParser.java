@@ -36,7 +36,7 @@ import org.xml.sax.SAXParseException;
 
 
 /**
- * 
+ *
  */
 public class IntroContentParser {
 
@@ -94,7 +94,7 @@ public class IntroContentParser {
             buffer.append(spe.getLineNumber());
             buffer.append(", uri "); //$NON-NLS-1$
             buffer.append(spe.getSystemId());
-            buffer.append("\n"); //$NON-NLS-1$   
+            buffer.append("\n"); //$NON-NLS-1$
             buffer.append(spe.getMessage());
 
             // Use the contained exception.
@@ -123,7 +123,7 @@ public class IntroContentParser {
     /**
      * Returned the DOM representing the intro xml content file. May return null
      * if parsing the file failed.
-     * 
+     *
      * @return Returns the document.
      */
     public Document getDocument() {

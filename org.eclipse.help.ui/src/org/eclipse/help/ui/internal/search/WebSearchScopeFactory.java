@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,14 +22,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class WebSearchScopeFactory implements ISearchScopeFactory {
 	public final static String P_URL = "url"; //$NON-NLS-1$
-    
+
 	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
         String urlTemplate = getProperty(store, engineId, parameters);
         return new WebSearch.Scope(urlTemplate);
     }
-    
+
 	private String getProperty(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
     	// try the store first

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class ReusableHelpPartHistory {
 
 	public void addEntry(HistoryEntry entry) {
 		if (cursor!= -1) {
-			// If we are adding a new entry while 
+			// If we are adding a new entry while
 			// the cursor is not at the end, discard
 			// all the entries after the cursor.
 			int extra = queue.size()-1 -cursor;
@@ -47,11 +47,11 @@ public class ReusableHelpPartHistory {
 	public boolean hasPrev() {
 		return cursor != -1 && cursor > 0;
 	}
-	
+
 	public HistoryEntry getNext() {
 		return hasNext()?(HistoryEntry)queue.get(cursor+1):null;
 	}
-	
+
 	public HistoryEntry getPrev() {
 		return hasPrev() ? (HistoryEntry)queue.get(cursor-1):null;
 	}

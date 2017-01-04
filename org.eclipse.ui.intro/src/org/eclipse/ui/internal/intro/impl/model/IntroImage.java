@@ -42,7 +42,7 @@ public class IntroImage extends AbstractBaseIntroElement {
     public String getAlt() {
         return getAttribute(element, ATT_ALT);
     }
-    
+
     /**
      * @return Returns the title.
      */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,12 +36,12 @@ public class LocalScopeDialog extends TrayDialog {
 		this.preferenceStore = set.getPreferenceStore();
 		this.scopeSet = set;
 	}
-	
+
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		EngineDescriptor localSearchDesc = null;
@@ -62,7 +62,7 @@ public class LocalScopeDialog extends TrayDialog {
 		helpPageControl.setLayoutData(layoutData);
 		return helpPageControl;
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		localHelpPage.performOk();

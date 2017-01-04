@@ -19,7 +19,7 @@ package org.eclipse.ui.intro.config;
  * reflow.
  * <p>
  * This interface is not intended to be implemented or extended by clients.
- * 
+ *
  * @since 3.0.1
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -30,7 +30,7 @@ public interface IIntroContentProviderSite {
      * that its content has become stale. For an HTML presentation, the whole
      * page should be regenerated. An SWT presentation should cause the page's
      * layout to be updated.
-     * 
+     *
      * @param provider
      *            the content provider that requests a reflow
      * @param incremental

@@ -27,7 +27,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
 	public static final String P_SEARCH_SELECTED = "searchSelected"; //$NON-NLS-1$
 	public static final String P_TOCS = "tocs"; //$NON-NLS-1$
 	public static final String TOC_SEPARATOR = ";"; //$NON-NLS-1$
-    
+
 	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
@@ -50,7 +50,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
         }
         return new InfoCenter.Scope(url, searchSelected, tocs);
     }
-    
+
 	private String getProperty(String key, IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
     	// try the store first

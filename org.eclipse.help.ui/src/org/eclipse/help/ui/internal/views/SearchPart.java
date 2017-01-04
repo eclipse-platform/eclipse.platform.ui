@@ -63,7 +63,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUIConstants {
 
-	
+
 	public class SearchScopeObserver implements Observer {
 
 		@Override
@@ -255,11 +255,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				shellDefaultButton = null;
 			}
 		});
-		
+
 		createScopeSection(toolkit);
-		
+
 //		createAlternateQueriesSection(toolkit);
-		
+
 		toolkit.paintBordersFor(container);
 		jobListener = new JobListener();
 		Job.getJobManager().addJobChangeListener(jobListener);
@@ -284,7 +284,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		scopeObserver = new SearchScopeObserver();
 		scopeSetManager.addObserver(scopeObserver);
 	}
-	
+
 	private void createSearchExpressionSection(FormToolkit toolkit) {
 		TableWrapData td;
 		Section searchExpressionSection = toolkit.createSection(container, Section.TWISTIE | Section.COMPACT
@@ -312,7 +312,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		updateSearchWordText();
 		toolkit.paintBordersFor(detailGroup);
 	}
-	
+
 	private void createAlternateQueriesSection(FormToolkit toolkit){
 
 		TableWrapData td = new TableWrapData();
@@ -320,12 +320,12 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		td.align = TableWrapData.FILL;
 
 		container.setMenu(new Menu(container));
-		
+
 		alternateQuerySection = toolkit.createSection(container, Section.TWISTIE | Section.COMPACT
 				| Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		alternateQuerySection.setLayoutData(td);
 		alternateQuerySection.setText(Messages.AlternateQueries);
-		
+
 		alternateQueryComposite = toolkit.createComposite(alternateQuerySection);
 		alternateQuerySection.setClient(alternateQueryComposite);
 		TableWrapLayout flayout = new TableWrapLayout();
@@ -335,7 +335,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 //		alternateQuerySection.setVisible(false);
 	}
-	
+
 	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
 		advancedLink = toolkit.createHyperlink(parent, Messages.FederatedSearchPart_advanced, SWT.NULL);
 		advancedLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -623,10 +623,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 												}
 											});
 										}
-									}									
+									}
 								}
 							});
-						}						
+						}
 					}
 
 							@Override
@@ -735,7 +735,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			searchPending = false;
 			doSearch(searchWordCombo.getText());
 		}
-		
+
 	}
 
 	@Override

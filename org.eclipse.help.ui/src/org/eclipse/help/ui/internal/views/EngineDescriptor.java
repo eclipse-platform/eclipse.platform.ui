@@ -32,7 +32,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 	private ISearchEngine engine;
 
 	private IConfigurationElement config;
-	
+
 	private EngineDescriptorManager manager;
 
 	private EngineTypeDescriptor etdesc;
@@ -52,12 +52,12 @@ public class EngineDescriptor implements IEngineDescriptor {
 	private boolean userDefined;
 
 	/**
-	 * 
+	 *
 	 */
 	public EngineDescriptor(IConfigurationElement config) {
 		this.config = config;
 	}
-	
+
 	public EngineDescriptor(EngineDescriptorManager manager) {
 		this.manager = manager;
 	}
@@ -65,7 +65,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 	public void setEngineType(EngineTypeDescriptor etdesc) {
 		this.etdesc = etdesc;
 	}
-	
+
 	public void setEngineDescriptorManager(EngineDescriptorManager manager) {
 		this.manager = manager;
 	}

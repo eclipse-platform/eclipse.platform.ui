@@ -69,16 +69,16 @@ public class StringUtil {
 	public static String decode(String s, String enc) throws UnsupportedEncodingException {
 		try {
 			return URLDecoder.decode(s, enc);
-		} 
+		}
 		catch (Exception ex) {
 			// fall back to original string
 			return s;
 		}
 	}
-	
+
     // Removes leading and trailing whitespace and replaces other
-    // occurrences with a single space. 
-	
+    // occurrences with a single space.
+
 	public static String normalizeWhiteSpace(String input) {
 		if (input == null) {
 			return null;

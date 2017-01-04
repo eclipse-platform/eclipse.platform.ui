@@ -293,7 +293,7 @@ public class HyperlinkHandler
 
 	/**
 	 * Sent when an event that the receiver has registered for occurs.
-	 * 
+	 *
 	 * @param event
 	 *            the event which occurred
 	 */

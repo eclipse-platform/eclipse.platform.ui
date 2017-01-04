@@ -54,7 +54,7 @@ import org.eclipse.ui.intro.config.IStandbyContentPart;
  * Intro goes out of standby content mode, and the standby content parts are not
  * shown anymore until the user explicitly asks for a part again. This is
  * accomplished through a data flag on the CustomizableIntroPart control.
- * 
+ *
  */
 public class StandbyPart implements IIntroConstants {
 
@@ -124,7 +124,7 @@ public class StandbyPart implements IIntroConstants {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
      */
     private IMemento getMemento(IMemento memento, String key) {
@@ -174,7 +174,7 @@ public class StandbyPart implements IIntroConstants {
 
     /**
      * Empty content part used as backup for failures.
-     * 
+     *
      */
     private void addAndShowEmptyPart(String message) {
         if (emptyPart == null)
@@ -186,7 +186,7 @@ public class StandbyPart implements IIntroConstants {
 
     /**
      * Tries to create the last content part viewed, based on content part id..
-     * 
+     *
      * @param memento
      * @return
      */
@@ -204,7 +204,7 @@ public class StandbyPart implements IIntroConstants {
     /**
      * Sets the into part to standby, and shows the passed standby part, with
      * the given input.
-     * 
+     *
      * @param partId
      * @param input
      */
@@ -258,7 +258,7 @@ public class StandbyPart implements IIntroConstants {
      * the corresponding part id. This is needed to retrive the control of a
      * given standby part. The IMemento should be passed to the StandbyPart when
      * it is initialized.
-     * 
+     *
      * @param standbyContent
      */
     public Control addStandbyContentPart(String partId,
@@ -350,7 +350,7 @@ public class StandbyPart implements IIntroConstants {
 
     /**
      * Calls dispose on all cached IStandbyContentParts.
-     * 
+     *
      */
     public void dispose() {
 		for (ControlKey controlKey : cachedContentParts.values()) {
@@ -365,7 +365,7 @@ public class StandbyPart implements IIntroConstants {
      * subclass momento to also give the standby content part its own name
      * space. This was momentos saved by different content parts will not
      * conflict.
-     * 
+     *
      * @param memento
      *            the memento in which to store state information
      */
@@ -394,7 +394,7 @@ public class StandbyPart implements IIntroConstants {
     /*
      * Set focus on the IStandbyContentPart that corresponds to the top control
      * in the stack.
-     * 
+     *
      * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
      */
     public void setFocus() {
@@ -410,7 +410,7 @@ public class StandbyPart implements IIntroConstants {
     /**
      * Checks the standby cache stack if we have already created a similar
      * IStandbyContentPart. If not, returns null.
-     * 
+     *
      * @param standbyContent
      * @return
      */

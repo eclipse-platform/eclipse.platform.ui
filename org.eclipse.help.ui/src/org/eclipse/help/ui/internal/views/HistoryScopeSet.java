@@ -30,7 +30,7 @@ public class HistoryScopeSet extends ScopeSet {
 		super(set, set.getName());
 		setExpression(set.getExpression());
 	}
-	
+
 	@Override
 	public void copyFrom(ScopeSet set) {
 		String expression = getExpression();
@@ -42,16 +42,16 @@ public class HistoryScopeSet extends ScopeSet {
 		IPreferenceStore store = getPreferenceStore();
 		return store.getString(KEY_EXPRESSION);
 	}
-	
+
 	@Override
 	public boolean isImplicit() {
 		return true;
-	}	
-	
+	}
+
 	@Override
 	protected String getExtension() {
 		return EXT;
-	}	
+	}
 
 	@Override
 	protected String encodeFileName(String name) {
@@ -72,6 +72,6 @@ public class HistoryScopeSet extends ScopeSet {
 
 	public void setExpression(String expression) {
 		IPreferenceStore store = getPreferenceStore();
-		store.setValue(KEY_EXPRESSION, expression);		
+		store.setValue(KEY_EXPRESSION, expression);
 	}
 }

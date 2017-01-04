@@ -21,7 +21,7 @@ import org.eclipse.ui.intro.IIntroSite;
  * <p>
  * http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&class=x.y.z.someClass
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IIntroAction {
@@ -29,7 +29,7 @@ public interface IIntroAction {
     /**
      * Called to run this intro command. The properties represents the key=value
      * pairs extracted from the intro URL query.
-     * 
+     *
      * @param site
      * @param params
      */

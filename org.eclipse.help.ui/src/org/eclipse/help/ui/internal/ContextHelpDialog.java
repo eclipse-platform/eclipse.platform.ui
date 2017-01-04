@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -86,7 +86,7 @@ public class ContextHelpDialog {
 
 	/**
 	 * Constructor:
-	 * 
+	 *
 	 * @param context
 	 *            an array of String or an array of IContext
 	 * @param x
@@ -167,7 +167,7 @@ public class ContextHelpDialog {
 		// Correct x and y of the shell if it not contained within the screen
 		int width = shell.getBounds().width;
 		int height = shell.getBounds().height;
-		
+
 		Rectangle screen = display.getClientArea();
 		// check lower boundaries
 		x = x >= screen.x ? x : screen.x;
@@ -212,7 +212,7 @@ public class ContextHelpDialog {
 		}
 		return contents;
 	}
-	
+
 	private Control createInfoArea(Composite parent) {
 		// Create the text field.
 		String styledText = null;
@@ -222,7 +222,7 @@ public class ContextHelpDialog {
 		if (styledText == null && context.getText() != null) {
 			styledText = context.getText();
 		    styledText= styledText.replaceAll("<b>","<@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		    styledText= styledText.replaceAll("</b>", "</@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$	
+		    styledText= styledText.replaceAll("</b>", "</@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (styledText == null) { // no description found in context objects.
 			styledText = Messages.ContextHelpPart_noDescription;
@@ -256,7 +256,7 @@ public class ContextHelpDialog {
 
 	/**
 	 * Measures the longest label of related links
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -343,7 +343,7 @@ public class ContextHelpDialog {
 			// create link to the dynamic help
 			createDynamicHelpLink(composite);
 		}
-		
+
 		return composite;
 	}
 
@@ -388,7 +388,7 @@ public class ContextHelpDialog {
 				&& !Constants.OS_WIN32.equalsIgnoreCase(Platform
 								.getOS()));
 	}
-	
+
 	private void openDynamicHelp() {
 		BusyIndicator.showWhile(shell.getDisplay(), () -> {
 			close();

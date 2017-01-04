@@ -31,7 +31,7 @@ public class EngineTypeWizardPage extends WizardPage {
 	private TableViewer tableViewer;
 	private EngineTypeDescriptor [] engineTypes;
 	private EngineTypeDescriptor selection;
-	
+
 	class EngineContentProvider implements IStructuredContentProvider {
 
 		@Override
@@ -47,7 +47,7 @@ public class EngineTypeWizardPage extends WizardPage {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 	class EngineLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
@@ -75,8 +75,8 @@ public class EngineTypeWizardPage extends WizardPage {
 
 	public EngineTypeWizardPage(EngineTypeDescriptor[] engineTypes) {
 		super("engineType"); //$NON-NLS-1$
-		setTitle(Messages.EngineTypeWizardPage_title); 
-		setDescription(Messages.EngineTypeWizardPage_desc); 
+		setTitle(Messages.EngineTypeWizardPage_title);
+		setDescription(Messages.EngineTypeWizardPage_desc);
 		this.engineTypes = engineTypes;
 	}
 

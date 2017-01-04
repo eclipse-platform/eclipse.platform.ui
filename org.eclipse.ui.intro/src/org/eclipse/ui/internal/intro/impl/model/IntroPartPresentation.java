@@ -90,7 +90,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	private IMemento memento;
 
 	/**
-	 * 
+	 *
 	 */
 	IntroPartPresentation(IConfigurationElement element) {
 		super(element);
@@ -131,7 +131,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Returns the styles associated with the Presentation. May be null if no shared presentation
 	 * style is needed, or in the case of static HTML OOBE.
-	 * 
+	 *
 	 * @return Returns the array of styles or null if not defined.
 	 */
 	public String[] getImplementationStyles() {
@@ -140,7 +140,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
 	/**
 	 * Returns the type attribute of the implementation picked by this presentation.
-	 * 
+	 *
 	 * @return Returns the implementationKind.
 	 */
 	public String getImplementationKind() {
@@ -155,7 +155,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Returns the model class for the Head element under an implementation. Returns null if there
 	 * is no head contribution.
-	 * 
+	 *
 	 * @param element
 	 * @return
 	 */
@@ -179,7 +179,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Returns the launch bar element if defined in this presentation, or <code>null</code>
 	 * otherwise.
-	 * 
+	 *
 	 * @since 3.1
 	 * @return
 	 */
@@ -211,7 +211,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
 	/**
 	 * Creates the UI based on the implementation class.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -344,7 +344,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Util method that searches for the given value in a comma separated list of values. The list
 	 * is retrieved as an attribute value of OS, WS.
-	 * 
+	 *
 	 */
 	private boolean listValueHasValue(String stringValue, String value) {
 		String[] attributeValues = StringUtil.split(stringValue, ","); //$NON-NLS-1$
@@ -382,7 +382,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
 	/**
 	 * Creates the actual implementation class. Returns null on failure.
-	 * 
+	 *
 	 */
 	private AbstractIntroPartImplementation createIntroPartImplementation(String implementationType) {
 		// quick exits
@@ -391,14 +391,14 @@ public class IntroPartPresentation extends AbstractIntroElement {
 		if (!implementationType.equals(BROWSER_IMPL_KIND) && !implementationType.equals(FORMS_IMPL_KIND)
 				&& !implementationType.equals(TEXT_IMPL_KIND))
 			return null;
-		if (implementationType.equals(BROWSER_IMPL_KIND) && IntroPlugin.DEBUG_NO_BROWSER) 
+		if (implementationType.equals(BROWSER_IMPL_KIND) && IntroPlugin.DEBUG_NO_BROWSER)
 			return null;
 
 		AbstractIntroPartImplementation implementation = null;
 		try {
 			if (implementationType.equals(BROWSER_IMPL_KIND))
-				implementation = //null; 
-			      new BrowserIntroPartImplementation(); 
+				implementation = //null;
+			      new BrowserIntroPartImplementation();
 			else if (implementationType.equals(FORMS_IMPL_KIND))
 				implementation = new FormIntroPartImplementation();
 			else
@@ -413,7 +413,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Returns the the Customizable Intro Part. may return null if init() has not been called yet on
 	 * the presentation.
-	 * 
+	 *
 	 * @return Returns the introPart.
 	 */
 	public IIntroPart getIntroPart() {
@@ -423,7 +423,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Save the current state of the intro. Delegate to the implementation to do the work, as
 	 * different implementations may have different requirements.
-	 * 
+	 *
 	 * @param memento
 	 *            the memento in which to store state information
 	 */
@@ -480,7 +480,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	/**
 	 * Support dynamic awarness. Clear cached models first, then update UI by delegating to
 	 * implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {

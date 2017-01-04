@@ -12,20 +12,20 @@
 package org.eclipse.help.ui.internal.views;
 
 public class ScopeState  {
-	
+
 	private static ScopeState instance;
 	private ScopeSetManager scopeSetManager;
 	private EngineDescriptorManager engineManager;
-	
-	public static synchronized ScopeState getInstance() {		
+
+	public static synchronized ScopeState getInstance() {
 		if ( instance == null )
 		{
 			instance = new ScopeState();
 		}
 		return instance;
 	}
-	
-	private ScopeState() {	
+
+	private ScopeState() {
 		scopeSetManager = new ScopeSetManager();
 	}
 
@@ -40,5 +40,5 @@ public class ScopeState  {
 	public void setEngineManager(EngineDescriptorManager engineManager) {
 		this.engineManager = engineManager;
 	}
-	
+
 }

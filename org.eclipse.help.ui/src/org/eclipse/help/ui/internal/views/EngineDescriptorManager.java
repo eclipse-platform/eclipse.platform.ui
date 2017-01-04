@@ -48,7 +48,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 
 	private static final String USER_FILE = "userSearches.xml"; //$NON-NLS-1$
 	private static final String ATT_ENGINE_TYPE_ID = "engineTypeId"; //$NON-NLS-1$
-	
+
 	public static class DescriptorEvent {
 		private EngineDescriptor desc;
 		private int kind;
@@ -68,7 +68,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		descriptors = new ArrayList<>();
 		load();
 	}
-	
+
 	public void add(EngineDescriptor desc) {
 		descriptors.add(desc);
 		this.setChanged();
@@ -85,11 +85,11 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		this.setChanged();
 		this.notifyObservers(new DescriptorEvent(desc, CHANGE));
 	}
-	
+
 	public EngineDescriptor[] getDescriptors() {
 		return descriptors.toArray(new EngineDescriptor[descriptors.size()]);
 	}
-	
+
 	public EngineDescriptor findEngine(String engineId) {
 		for (int i=0; i<descriptors.size(); i++) {
 			EngineDescriptor desc = descriptors.get(i);
@@ -124,7 +124,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			writer.flush();
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorSaving, e); 
+			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorSaving, e);
 		}
 		finally {
 			if (osw!=null) {
@@ -152,7 +152,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			load(fileName);
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorLoading, e); 
+			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorLoading, e);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		Hashtable<String, EngineTypeDescriptor> engineTypes = loadEngineTypes(elements);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals(TAG_ENGINE)) { 
+			if (element.getName().equals(TAG_ENGINE)) {
 				EngineDescriptor desc = new EngineDescriptor(element);
 				String engineId = desc.getEngineTypeId();
 				if (engineId != null) {
@@ -279,7 +279,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		}
 		return typeId;
 	}
-	
+
 	private boolean isUsed(int value, ArrayList<Integer> used) {
 		for (int i=0; i<used.size(); i++) {
 			Integer iv = used.get(i);
@@ -304,7 +304,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		}
 		return null;
 	}
-	
+
 	private void save(PrintWriter writer, EngineDescriptor desc) {
 		String indent = "   "; //$NON-NLS-1$
 		String attIndent = indent + indent;
@@ -318,14 +318,14 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		writer.print(indent);
 		writer.println("</engine>"); //$NON-NLS-1$
 	}
-	
+
 	private String getAttribute(Node node, String name) {
 		Node att = node.getAttributes().getNamedItem(name);
 		if (att!=null)
 			return att.getNodeValue();
 		return null;
 	}
-	
+
 	private void saveAttribute(PrintWriter writer, String indent, String name, String value) {
 		if (value==null)
 			return;

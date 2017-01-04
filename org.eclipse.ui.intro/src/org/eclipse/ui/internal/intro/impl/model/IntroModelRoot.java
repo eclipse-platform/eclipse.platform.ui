@@ -46,7 +46,7 @@ import org.w3c.dom.Node;
 /**
  * The root class for the OOBE model. It loads the configuration into the
  * appropriate classes.
- * 
+ *
  * Model rules:
  * <ol>
  * <li>if an attribute is not included in the markup, its value will be null in
@@ -133,7 +133,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 	public ListenerList<IPropertyListener> propChangeListeners = new ListenerList<>();
 
     // a list to hold all loaded DOMs until resolving all configExtensions
-    // is done. 
+    // is done.
 	private List<ExtensionContent> unresolvedConfigExt = new ArrayList<>();
 
 
@@ -172,7 +172,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * extension pages and groups. The presentation is loaded from the
      * IConfiguration element representing the config. All else is loaded from
      * xml content file.
-     * 
+     *
      */
     @Override
 	protected void loadChildren() {
@@ -189,7 +189,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             Log.warning("Could not find presentation element in intro config."); //$NON-NLS-1$
             return;
         }
-        
+
         loadTheme();
         loadConfigurer();
 
@@ -232,7 +232,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * presentation as the first child, so use that fact. This method is used
      * for dynamic awarness to enable replacing the new presentation with the
      * existing one after a model refresh.
-     * 
+     *
      * @param presentation
      */
     public void setPresentation(IntroPartPresentation presentation) {
@@ -262,7 +262,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
     }
-    
+
     private void loadConfigurer() {
     	String cname = getCfgElement().getAttribute(ATT_CONFIGURER);
     	if (cname!=null) {
@@ -277,7 +277,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     		}
     	}
     }
-    
+
     private void determineHomePage() {
     	String pid = Platform.getProduct().getId();
     	startPageId = getProcessPreference("INTRO_START_PAGE", pid); //$NON-NLS-1$
@@ -308,11 +308,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
             standbyPage.setStandbyPage(true);
         }
     }
-    
+
     private void loadTheme() {
     	String pid = Platform.getProduct().getId();
     	String themeId = getProcessPreference("INTRO_THEME", pid); //$NON-NLS-1$
-    	
+
     	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
     	IConfigurationElement themeElement=null;
     	for (int i=0; i<elements.length; i++) {
@@ -389,9 +389,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
         for (int i = 0; i < configExtensionElements.length; i++) {
             processConfigExtension(configExtensionElements[i]);
         }
-        
+
         tryResolvingExtensions();
-        
+
         // At this stage all pages will be resolved, some contributions may not be
 
         // now add all unresolved extensions as model children and log fact.
@@ -471,8 +471,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
 				Bundle bundle = BundleUtil.getBundleFromConfigurationElement(configExtElement);
 				String elementBase = getBase(configExtElement);
                 processOneExtension(configExtElement, elementBase, bundle, extensionContentElement);
-				if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$					
-					stillUnresolved.add(content);				
+				if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
+					stillUnresolved.add(content);
 				}
             }
             unresolvedConfigExt = stillUnresolved;
@@ -486,10 +486,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * not include the page and group contributions as part of the model. If
      * extension content has XHTML content (ie: content attribute is defined) we
      * load extension DOM into target page dom.
-     * 
+     *
      * note: the extension Element is returned to enable creating a child model
      * element on failure.
-     * 
+     *
      * @param
      * @return
      */
@@ -506,7 +506,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         addUnfilteredExtensions(elements, extensionContents);
         addUnfilteredExtensions(elements, replacementContents);
-        
+
         return (Element[])elements.toArray(new Element[elements.size()]);
     }
 
@@ -515,7 +515,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         	Element extensionContentElement = extensionContents[i];
         	if (!UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
         	    elements.add(extensionContentElement);
-            }    	
+            }
         }
 	}
 
@@ -540,7 +540,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * Insert the extension content into the target.
-     * 
+     *
      * @param extensionContent
      * @return
      */
@@ -582,7 +582,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACEMENT) {
             targetElement.getParentNode().removeChild(targetElement);
         }
-        
+
         // now handle style inheritance.
         // Update the parent page styles. skip style if it is null;
         String[] styles = extensionContent.getStyles();
@@ -599,7 +599,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * Insert the extension content (3.0 format) into the target.
-     * 
+     *
      * @param extensionContent
      * @return
      */
@@ -630,7 +630,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         Element [] children = extensionContent.getChildren();
         parent.insertElementsBefore(children, bundle, base, target, mixinStyle);
     }
-    
+
     private String getMixinStyle(IntroExtensionContent extensionContent) {
     	String path = extensionContent.getPath();
     	if (!path.endsWith("/@")) //$NON-NLS-1$
@@ -660,7 +660,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * configExtension. If we are extending a shared group do nothing. For
      * inherited alt-styles, we have to cache the bundle from which we inherited
      * the styles to be able to access resources in that plugin.
-     * 
+     *
      * @param include
      * @param target
      */
@@ -686,7 +686,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * Sets the model state based on all the model classes. 
+     * Sets the model state based on all the model classes.
      */
     private void setModelState(boolean loaded, boolean hasValidConfig) {
         this.loaded = loaded;
@@ -697,7 +697,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * Returns true if there is a valid contribution to
      * org.eclipse.ui.intro.config extension point, with a valid Presentation,
      * and pages.
-     * 
+     *
      * @return Returns the hasValidConfig.
      */
     public boolean hasValidConfig() {
@@ -710,7 +710,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     public IntroPartPresentation getPresentation() {
         return introPartPresentation;
     }
-    
+
     public IntroConfigurer getConfigurer() {
     	return configurer;
     }
@@ -721,7 +721,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     public AbstractIntroPage getHomePage() {
         return homePage;
     }
-    
+
     /**
      * @return Returns the root Page.
      */
@@ -767,7 +767,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     /**
      * Sets the current page. If the model does not have a page with the passed
      * id, the message is logged, and the model retains its old current page.
-     * 
+     *
      * @param currentPageId
      *            The currentPageId to set. *
      * @param fireEvent
@@ -811,7 +811,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     /**
      * Fires a property changed event. Made public because it can be used to
      * trigger a UI refresh.
-     * 
+     *
      * @param propertyId
      *            the id of the property that changed
      */
@@ -872,7 +872,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * the configExt content files. ie: in plugin.xml. <br>
      * This method also sets the base attribute on the root element in the DOM
      * to enable resolving all resources relative to this DOM.
-     * 
+     *
      * @return
      */
     protected Document loadDOM(IConfigurationElement cfgElement) {
@@ -898,7 +898,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         String content = configElement.getAttribute(ATT_CONTENT);
         return ModelUtil.getParentFolderToString(content);
     }
-    
+
     public String resolveVariables(String text) {
     	if (text==null) return null;
     	if (text.indexOf('$')== -1)
@@ -942,20 +942,20 @@ public class IntroModelRoot extends AbstractIntroContainer {
     			return "rtl"; //$NON-NLS-1$
     		} else {
     			return "ltr"; //$NON-NLS-1$
-    		}			
+    		}
     	}
-		
+
     	if (configurer!=null)
     		return configurer.getVariable(variable);
     	return null;
     }
-    
+
     public String resolvePath(String extensionId, String path) {
     	if (configurer==null) return null;
     	return configurer.resolvePath(extensionId, path);
     }
 
-	
+
 	public IntroTheme getTheme() {
 		return theme;
 	}
@@ -963,13 +963,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
 	public String getStartPageId() {
 		return startPageId;
 	}
-	
+
 	private String getProcessPreference(String key, String pid) {
 		String result = Platform.getPreferencesService().getString
-		      (IntroPlugin.PLUGIN_ID,  pid + '_' + key, "", null); //$NON-NLS-1$ 
+		      (IntroPlugin.PLUGIN_ID,  pid + '_' + key, "", null); //$NON-NLS-1$
     	if (result.length() == 0) {
     		result = Platform.getPreferencesService().getString
-		        (IntroPlugin.PLUGIN_ID,  key, "", null); //$NON-NLS-1$ 
+		        (IntroPlugin.PLUGIN_ID,  key, "", null); //$NON-NLS-1$
     	}
     	return result;
 	}

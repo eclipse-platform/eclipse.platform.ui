@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	private Text text;
 	private IStatus status;
 	private boolean isCaseSensitive;
-	
+
     /**
      * Create a new rename dialog instance for the given window.
      * @param shell The parent of the dialog
@@ -47,7 +47,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		initialize();
 		setOldName(oldName);
 	}
-	
+
     /**
      * Create a new rename dialog instance for the given window.
      * @param shell The parent of the dialog
@@ -65,7 +65,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		}
 		setOldName(oldName);
 	}
-	
+
 	public void initialize(){
 		oldNames = new ArrayList<>();
 		setStatusLineAboveButtons(true);
@@ -74,15 +74,15 @@ public class RenameDialog extends SelectionStatusDialog {
 	public void addOldName(String oldName){
 		if (!oldNames.contains(oldName))
 			oldNames.add(oldName);
-		
+
 	}
 	public void setOldName(String oldName) {
 		this.oldName = oldName;
-		if (text!=null) 
+		if (text!=null)
 			text.setText(oldName);
 		this.newName = oldName;
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -90,13 +90,13 @@ public class RenameDialog extends SelectionStatusDialog {
 		layout.numColumns = 2;
         layout.marginHeight = layout.marginWidth = 9;
 		container.setLayout(layout);
-		
+
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
-		
+
 		Label label = new Label(container, SWT.NULL);
-		label.setText(Messages.RenameDialog_label); 
-		
+		label.setText(Messages.RenameDialog_label);
+
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);
 		text.addModifyListener(e -> textChanged(text.getText(), true));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -105,7 +105,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		applyDialogFont(container);
 		return container;
 	}
-	
+
 	@Override
 	public int open() {
 		text.setText(oldName);
@@ -114,7 +114,7 @@ public class RenameDialog extends SelectionStatusDialog {
         textChanged(oldName, false);
 		return super.open();
 	}
-	
+
 	private void textChanged(String text, boolean setStatus) {
 		Button okButton = getButton(IDialogConstants.OK_ID);
 		for (int i=0; i<oldNames.size(); i++){
@@ -145,7 +145,7 @@ public class RenameDialog extends SelectionStatusDialog {
 			IStatus.ERROR,
 			HelpUIPlugin.PLUGIN_ID,
 			IStatus.ERROR,
-			errorMessage, 
+			errorMessage,
 			null);
 		updateStatus(status);
 	}
@@ -159,7 +159,7 @@ public class RenameDialog extends SelectionStatusDialog {
 			null);
 		updateStatus(status);
 	}
-	
+
 	public String getNewName() {
 		return newName;
 	}
@@ -173,7 +173,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	@Override
 	protected void computeResult() {
 	}
-    
+
 	@Override
 	public void setTitle(String title) {
         getShell().setText(title);

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,23 +22,23 @@ import org.eclipse.swt.graphics.FontData;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class FontSelection {
-	
+
 	public static final String VAR_FONT_STYLE = "fontStyle";  //$NON-NLS-1$
 	public static final String FONT_ABSOLUTE = "absolute";  //$NON-NLS-1$
-	public static final String FONT_RELATIVE = "relative";  //$NON-NLS-1$	
+	public static final String FONT_RELATIVE = "relative";  //$NON-NLS-1$
 	private static final String SCALE_FACTOR = "scaleFactor"; //$NON-NLS-1$
 	public static final String ATT_SCALABLE = "scalable"; //$NON-NLS-1$
-	
-	private static final int MIN_HEIGHT = 10;	
+
+	private static final int MIN_HEIGHT = 10;
 	private static final int MAX_HEIGHT = 16;
-	
+
 	/*
 	 * Returns the height in points of the default SWT font
 	 */
 	private static int getDefaultFontHeight() {
        Font defaultFont = JFaceResources.getDefaultFont();
        FontData[] fontData = defaultFont.getFontData();
-       int height = MIN_HEIGHT;	
+       int height = MIN_HEIGHT;
 		for (int i=0; i< fontData.length; i++) {
 			FontData data = fontData[i];
 			height = Math.max(height, data.getHeight());
@@ -58,7 +58,7 @@ public class FontSelection {
 		result += getFontSizeDeclaration("h6", defaultFontHeight, 70, scale); //$NON-NLS-1$
 		return result;
 	}
-	
+
 	public static final int getScalePercentage() {
 		int scale = Platform.getPreferencesService().getInt(IntroPlugin.PLUGIN_ID,  (SCALE_FACTOR), 0, null);
 		return scale;
@@ -72,13 +72,13 @@ public class FontSelection {
 
 	public static void setScalePercentage(int i) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(IntroPlugin.PLUGIN_ID);
-		prefs.putInt(SCALE_FACTOR, i); 
+		prefs.putInt(SCALE_FACTOR, i);
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
-		}	
+		}
 	}
-	
+
 	// Set the scale factor to it's default
 	public static void resetScalePercentage() {
 		IEclipsePreferences iprefs = InstanceScope.INSTANCE.getNode(IntroPlugin.PLUGIN_ID);
@@ -97,7 +97,7 @@ public class FontSelection {
 	    		return style;
 	    	}
 	    	style = Platform.getPreferencesService().getString
-	    	    (IntroPlugin.PLUGIN_ID,  (FontSelection.VAR_FONT_STYLE), "", null); //$NON-NLS-1$ 
+	    	    (IntroPlugin.PLUGIN_ID,  (FontSelection.VAR_FONT_STYLE), "", null); //$NON-NLS-1$
 	    	if (style.length() > 0) {
 	    		return style;
 	    	}

@@ -76,12 +76,12 @@ import org.w3c.dom.NodeList;
 public class BrowserIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener,
         IIntroContentProviderSite {
- 
+
 
     private final class ReduceAction extends Action {
 
 		{
-            setToolTipText(Messages.Browser_reduce_tooltip); 
+            setToolTipText(Messages.Browser_reduce_tooltip);
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("full/elcl16/reduce_font.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
@@ -101,7 +101,7 @@ public class BrowserIntroPartImplementation extends
 	private final class MagnifyAction extends Action {
 
 		{
-            setToolTipText(Messages.Browser_magnify_tooltip); 
+            setToolTipText(Messages.Browser_magnify_tooltip);
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("full/elcl16/magnify_font.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
@@ -120,14 +120,14 @@ public class BrowserIntroPartImplementation extends
 
 	private static final int SCALE_INCREMENT = 20;
 
-	// the browser widget that will display the intro content 
+	// the browser widget that will display the intro content
     protected Browser browser = null;
 
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
-    
+
     private String savedContent = null;
-     
+
     private Action openBrowserAction = new Action() {
 
         {
@@ -143,19 +143,19 @@ public class BrowserIntroPartImplementation extends
 			try {
 				tempFile = File.createTempFile("intro",".html"); //$NON-NLS-1$//$NON-NLS-2$
             	tempFile.deleteOnExit();
-            	BufferedWriter out = new BufferedWriter(new 
+            	BufferedWriter out = new BufferedWriter(new
             			FileWriter(tempFile));
-            	out.write(savedContent);	
+            	out.write(savedContent);
             	out.close();
             	IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
     			IWebBrowser browser =  support.getExternalBrowser();
     			browser.openURL(tempFile.toURI().toURL());
 			} catch (IOException e) {
 			} catch (PartInitException e) {
-			}  
+			}
         }
-    }; 
-    
+    };
+
     private void restartIntro() {
 		IIntroManager manager = PlatformUI.getWorkbench().getIntroManager();
 		IIntroPart part = manager.getIntro();
@@ -255,7 +255,7 @@ public class BrowserIntroPartImplementation extends
             browser.setText(Messages.Browser_invalidConfig);
             return;
         }
-        
+
          // root page is what decides if the model is dynamic or not.
         if (getModel().isDynamic())
             handleDynamicIntro();
@@ -306,7 +306,7 @@ public class BrowserIntroPartImplementation extends
      * Generate dynamic HTML for the provided page, and set it in the browser
      * widget. A cache is used for performance and for having a correct dynamic
      * content life cycle. This method also updates the navigation history.
-     * 
+     *
      * @param page
      *            the page to generate HTML for
      */
@@ -385,7 +385,7 @@ public class BrowserIntroPartImplementation extends
             if (IntroPlugin.DEBUG_TOOLBAR) {
             	savedContent = content;
             }
-            
+
         }
         return success;
     }
@@ -421,7 +421,7 @@ public class BrowserIntroPartImplementation extends
         reinjectDynamicContent(dom, contentProviderElements);
         return content;
     }
-    
+
     private String generateDoctype(boolean strict) {
     	StringWriter swriter = new StringWriter();
     	PrintWriter writer = new PrintWriter(swriter);
@@ -431,7 +431,7 @@ public class BrowserIntroPartImplementation extends
     	}
     	else {
     		writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""); //$NON-NLS-1$
-    		writer.println("\t\t\t\"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$    		
+    		writer.println("\t\t\t\"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$
     	}
     	writer.close();
     	return swriter.toString();
@@ -509,7 +509,7 @@ public class BrowserIntroPartImplementation extends
 
     /**
      * Return the cached IntroHTMLGenerator
-     * 
+     *
      * @return
      */
     private IntroHTMLGenerator getHTMLGenerator() {
@@ -538,7 +538,7 @@ public class BrowserIntroPartImplementation extends
         toolBarManager.add(forwardAction);
         toolBarManager.update(true);
         IntroTheme theme = getModel().getTheme();
-        boolean createZoomButtons = theme != null && theme.isScalable() && !resizeActionsAdded 
+        boolean createZoomButtons = theme != null && theme.isScalable() && !resizeActionsAdded
 		    &&FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle());
         if (createZoomButtons) {
             toolBarManager.add(new ReduceAction());
@@ -589,7 +589,7 @@ public class BrowserIntroPartImplementation extends
     /**
      * Handle model property changes. Property listeners are only added in the
      * dynamic case.
-     * 
+     *
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
      *      int)
      */
@@ -623,7 +623,7 @@ public class BrowserIntroPartImplementation extends
     }
 
     /**
-     * 
+     *
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
     @Override

@@ -39,8 +39,8 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 	private ImageHyperlink statusLink;
 	private boolean wasRemoteHelpUnavailable = false;
 	private boolean wasUnresolvedPlaceholders = false;
-	
-	public MissingContentPart(Composite parent, FormToolkit toolkit) {			
+
+	public MissingContentPart(Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent, SWT.NULL);
 		container.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		GridLayout layout = new GridLayout();
@@ -66,15 +66,15 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 		wasUnresolvedPlaceholders = isUnresolvedPlaceholders;
 		FormToolkit toolkit = new FormToolkit(container.getDisplay());
 		if ( isRemoteHelpUnavailable ) {
-			createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_WARNING, Messages.remoteHelpUnavailable, 
+			createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_WARNING, Messages.remoteHelpUnavailable,
 			        MissingContentManager.getInstance().getRemoteHelpUnavailablePage(true), true);
 		} else if ( isUnresolvedPlaceholders) {
-		    createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_INFO, Messages.ReusableHelpPart_missingContent, 
+		    createHelpMissingLink(container, toolkit, Dialog.DLG_IMG_MESSAGE_INFO, Messages.ReusableHelpPart_missingContent,
 					MissingContentManager.getInstance().getHelpMissingPage(true), false);
 		}
 		toolkit.dispose();
 	}
-	
+
 	private void createHelpMissingLink(Composite container, FormToolkit toolkit, String imageKey, String linkText, String linkTarget, boolean isRemoteUnavailableLink) {
 		final String target = linkTarget;
 		final boolean isRemote = isRemoteUnavailableLink;
@@ -83,7 +83,7 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 		paddingData.heightHint = 2;
 		padding.setLayoutData(paddingData);
 		toolkit.adapt(padding);
-        Image warningImage = JFaceResources.getImage(imageKey);	
+        Image warningImage = JFaceResources.getImage(imageKey);
 		statusLink = toolkit.createImageHyperlink(container, SWT.NULL);
 		statusLink.setText(linkText);
 		statusLink.setImage(warningImage);
@@ -91,7 +91,7 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				helpPart.showURL(target); 
+				helpPart.showURL(target);
 				if ( isRemote ) {
 				    helpPart.checkRemoteStatus();
 				} else {
@@ -102,17 +102,17 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 		GridData statusData = new GridData(GridData.BEGINNING, GridData.CENTER, false, false);
 		statusLink.setLayoutData(statusData);
 	}
-	
+
 	private void disposeLink() {
 		if (statusLink != null) {
 		    statusLink.dispose();
 		}
 		statusLink = null;
 	}
-	
+
 	public void setSubsequentPage(String subsequentPage) {
-		
-	}	
+
+	}
 
 	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
@@ -158,22 +158,22 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 
 	@Override
 	public void stop() {
-		
+
 	}
 
 	@Override
 	public void toggleRoleFilter() {
-		
+
 	}
 
 	@Override
 	public void refilter() {
-			
+
 	}
-	
+
 	@Override
 	public void dispose() {
 		disposeLink();
 	}
-		
+
 }

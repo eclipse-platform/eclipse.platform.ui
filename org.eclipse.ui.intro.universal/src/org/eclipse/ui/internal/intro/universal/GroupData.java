@@ -24,7 +24,7 @@ public class GroupData {
 	boolean fDefault=false;
 	private String path;
 	private ArrayList<BaseData> children = new ArrayList<>();
-	
+
 	public GroupData(String path, boolean defaultGroup) {
 		fDefault = defaultGroup;
 		this.path = path;
@@ -42,7 +42,7 @@ public class GroupData {
 				if (child.getNodeName().equals("extension")) { //$NON-NLS-1$
 					loadExtension((Element) child);
 				}
-				else if (child.getNodeName().equals("separator")) {//$NON-NLS-1$" 
+				else if (child.getNodeName().equals("separator")) {//$NON-NLS-1$"
 					loadSeparator((Element)child);
 				}
 			}
@@ -51,11 +51,11 @@ public class GroupData {
 		if (df!=null && df.equalsIgnoreCase("true")) //$NON-NLS-1$
 			fDefault = true;
 	}
-	
+
 	public boolean isHidden() {
 		return (path.equals(IUniversalIntroConstants.HIDDEN));
 	}
-	
+
 	public boolean isDefault() {
 		return fDefault;
 	}
@@ -73,7 +73,7 @@ public class GroupData {
 			result.add(element);
 		}
 	}
-	
+
 	public void add(BaseData ed) {
 		children.add(ed);
 		ed.setParent(this);
@@ -86,12 +86,12 @@ public class GroupData {
 		children.remove(ed);
 		ed.setParent(null);
 	}
-	
+
 	public void addImplicitExtension(String id, String name) {
 		ExtensionData ed = new ExtensionData(id, name, IUniversalIntroConstants.LOW, true);
 		add(ed);
 	}
-	
+
 	private void loadSeparator(Element element) {
 		String id = element.getAttribute("id"); //$NON-NLS-1$
 		SeparatorData sd = new SeparatorData(id);
@@ -105,7 +105,7 @@ public class GroupData {
 		ExtensionData ed = new ExtensionData(id, name, importance, false);
 		add(ed);
 	}
-	
+
 	public BaseData[] getChildren() {
 		return children.toArray(new BaseData[children.size()]);
 	}
@@ -138,7 +138,7 @@ public class GroupData {
 	public boolean contains(String id) {
 		return find(id)!=null;
 	}
-	
+
 	BaseData find(String extensionId) {
 		for (int i = 0; i < children.size(); i++) {
 			BaseData data = children.get(i);
@@ -151,7 +151,7 @@ public class GroupData {
 	public int getIndexOf(BaseData ed) {
 		return children.indexOf(ed);
 	}
-	
+
 	public int getIndexOf(String baseId) {
 		for (int i = 0; i < children.size(); i++) {
 			BaseData bd = children.get(i);
@@ -160,17 +160,17 @@ public class GroupData {
 		}
 		return -1;
 	}
-	
+
 	public boolean canMoveUp(BaseData ed) {
 		int index = children.indexOf(ed);
 		return (index>0);
 	}
-	
+
 	public boolean canMoveDown(BaseData ed) {
 		int index = children.indexOf(ed);
 		return (index!= -1 && index < children.size()-1);
 	}
-	
+
 	public void moveUp(BaseData ed) {
 		int index = children.indexOf(ed);
 		BaseData swapped = children.get(index-1);
@@ -182,9 +182,9 @@ public class GroupData {
 		int index = children.indexOf(ed);
 		BaseData swapped = children.get(index+1);
 		children.set(index, swapped);
-		children.set(index+1, ed);		
+		children.set(index+1, ed);
 	}
-	
+
 	public void addSeparator(BaseData after) {
 		SeparatorData sd = new SeparatorData();
 		sd.id = ""+sd.hashCode(); //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class GroupData {
 		}
 		children.add(sd);
 	}
-	
+
 	public void write(PrintWriter writer, String indent) {
 		writer.print(indent);
 		if (isHidden())

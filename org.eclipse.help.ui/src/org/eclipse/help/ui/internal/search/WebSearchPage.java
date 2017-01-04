@@ -38,7 +38,7 @@ public class WebSearchPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(Messages.WebSearchPage_label); 
+		label.setText(Messages.WebSearchPage_label);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		urlText = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL
@@ -51,7 +51,7 @@ public class WebSearchPage extends RootScopePage {
 		urlText.setEditable(getEngineDescriptor().isUserDefined());
 		new Label(parent, SWT.NULL);
 		label = new Label(parent, SWT.WRAP);
-		label.setText(Messages.WebSearchPage_info); 
+		label.setText(Messages.WebSearchPage_info);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);

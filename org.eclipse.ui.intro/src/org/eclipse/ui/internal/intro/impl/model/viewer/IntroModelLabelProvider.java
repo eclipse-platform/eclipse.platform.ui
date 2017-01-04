@@ -123,10 +123,10 @@ public class IntroModelLabelProvider extends LabelProvider {
         case AbstractIntroElement.CONTAINER_EXTENSION:
             label = "Unresolved ConfigExtension: " //$NON-NLS-1$
                     + ((IntroExtensionContent) introElement).getPath();
-            break; 
+            break;
         case AbstractIntroElement.ANCHOR:
             label = "ANCHOR: " //$NON-NLS-1$
-                    + getPath(introElement.getParent(), ((IntroAnchor) introElement).getId()); 
+                    + getPath(introElement.getParent(), ((IntroAnchor) introElement).getId());
             break;
         case AbstractIntroElement.PAGE_TITLE:
             label = "Title: " //$NON-NLS-1$

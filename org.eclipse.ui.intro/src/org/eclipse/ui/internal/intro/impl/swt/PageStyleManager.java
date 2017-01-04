@@ -49,14 +49,14 @@ public class PageStyleManager extends SharedStyleManager {
      * is retrieved from the page model class. The default properties are
      * assumed to be the presentation shared properties. The inherrited
      * properties are properties that we got from included and extension styles.
-     * 
+     *
      * @param modelRoot
      */
     public PageStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
         context = new StyleContext();
         context.bundle = page.getBundle();
-        
+
         // honor shared-style.
         if (page.injectSharedStyle())
             properties = new Properties(sharedProperties);
@@ -115,7 +115,7 @@ public class PageStyleManager extends SharedStyleManager {
      * current pages style. If the given key is not found, the pageId is trimmed
      * from the begining of the key, and the key is looked up again. If key does
      * not start with a pageId, lookup only the key as is.
-     * 
+     *
      * @param key
      * @return
      */
@@ -138,11 +138,11 @@ public class PageStyleManager extends SharedStyleManager {
     /**
      * Finds the context from which this key was loaded. If the key is not from
      * an inherited alt style, then use the context corresponding to this page.
-     * 
+     *
      * @param key
      * @return
      */
-   
+
     @Override
 	protected StyleContext getAssociatedContext(String key) {
         Properties aProperties = findPropertyOwner(key);
@@ -167,7 +167,7 @@ public class PageStyleManager extends SharedStyleManager {
     public int getNumberOfColumns(IntroGroup group) {
         return getIntProperty(group, ".layout.ncolumns", 0); //$NON-NLS-1$
     }
-    
+
     public boolean getEqualWidth(IntroGroup group) {
     	return getBooleanProperty(group, ".layout.equalWidth", false); //$NON-NLS-1$
     }
@@ -204,7 +204,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = buff.append(qualifier).toString();
         return getIntProperty(key, defaultValue);
     }
-    
+
     private boolean getBooleanProperty(AbstractBaseIntroElement element,
             String qualifier, boolean defaultValue) {
         StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
@@ -227,7 +227,7 @@ public class PageStyleManager extends SharedStyleManager {
         }
         return intValue;
     }
-    
+
     private boolean getBooleanProperty(String key, boolean defaultValue) {
         boolean booleanValue = defaultValue;
         String value = getProperty(key);
@@ -245,9 +245,9 @@ public class PageStyleManager extends SharedStyleManager {
      * element>
      * </p>
      * If not found, use the default description style.
-     * 
+     *
      * Returns null if no default style found, or any id in path is null.
-     * 
+     *
      * @param group
      * @return
      */
@@ -267,9 +267,9 @@ public class PageStyleManager extends SharedStyleManager {
      * <pageId>.description-id= <id of child description Text element>
      * </p>
      * If not found, use the default description style.
-     * 
+     *
      * Returns null if no default style found, or any id in path is null.
-     * 
+     *
      * @param group
      * @return
      */
@@ -302,7 +302,7 @@ public class PageStyleManager extends SharedStyleManager {
      * <pageId>.description-id= <id of child description Text element>
      * </p>
      * If not found, use the default description style.
-     * 
+     *
      * @param group
      * @return
      */
@@ -333,7 +333,7 @@ public class PageStyleManager extends SharedStyleManager {
 
     /**
      * Returns the first direct child text element with the given style-id.
-     * 
+     *
      * @return
      */
     private String findTextFromStyleId(AbstractIntroContainer parent,
@@ -355,7 +355,7 @@ public class PageStyleManager extends SharedStyleManager {
     /**
      * Util method to check model type, and filter model element out if it is of
      * the correct type.
-     * 
+     *
      * @param element
      */
     private AbstractIntroElement makeFiltered(AbstractIntroElement element) {
@@ -398,7 +398,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = buff.append(".font.fg").toString(); //$NON-NLS-1$
         return getColor(toolkit, key);
     }
-    
+
     public Color getBackgrond(FormToolkit toolkit, AbstractBaseIntroElement element) {
         StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
         if (buff == null)
@@ -431,7 +431,7 @@ public class PageStyleManager extends SharedStyleManager {
         }
         return false;
     }
-    
+
     private String getPropertyValue(AbstractIntroIdElement element, String suffix) {
         StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
         if (buff != null) {
@@ -461,7 +461,7 @@ public class PageStyleManager extends SharedStyleManager {
     /**
      * Retrieves an image for a link in a page. If not found, uses the page's
      * default link image. If still not found, uses the passed default.
-     * 
+     *
      * @param link
      * @param qualifier
      * @return
@@ -502,7 +502,7 @@ public class PageStyleManager extends SharedStyleManager {
         buff.append(qualifier);
         return buff.toString();
     }
-    
+
     private String createImageByIdKey(AbstractIntroPage page, IntroLink link,
             String qualifier) {
     	if (link==null || link.getId()==null)

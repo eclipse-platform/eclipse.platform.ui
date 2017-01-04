@@ -70,7 +70,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * Get the children of this container. Loading children and resolving
      * includes and extension is delayed until this method call.
-     * 
+     *
      * @return Returns all the children of this container.
      */
     public AbstractIntroElement[] getChildren() {
@@ -86,7 +86,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             resolveChildren();
 
         Vector filtered = filterChildren(children);
-        
+
         AbstractIntroElement[] childrenElements = (AbstractIntroElement[]) convertToModelArray(
         	filtered, AbstractIntroElement.ELEMENT);
         return childrenElements;
@@ -99,7 +99,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * <p>
      * <code>
      * 		int elementMask = IntroElement.IMAGE | IntroElement.DEFAULT_LINK;
-     * 		int elementMask = IntroElement.ABSTRACT_CONTAINER; 
+     * 		int elementMask = IntroElement.ABSTRACT_CONTAINER;
      * </code>
      * The return type is determined depending on the mask. If the mask is a
      * predefined constant in the IntroElement, and it does not correspond to an
@@ -111,7 +111,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * <code>
      * 		Introgroup[] groups  = (IntroGroup[])page.getChildrenOfType(IntroElement.GROUP);
      * </code>
-     * 
+     *
      * However, if the element mask is not homogenous (for example: LINKS |
      * GROUP) then the returned array must be cast to an array of
      * IntroElements.For exmaple, the following code gets all images and links
@@ -120,10 +120,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * <p>
      * <code>
      * 		int elementMask = IntroElement.IMAGE | IntroElement.DEFAULT_LINK;
-     * 		IntroElement[] imagesAndLinks  = 
+     * 		IntroElement[] imagesAndLinks  =
      * 			(IntroElement[])page.getChildrenOfType(elementMask);
      * </code>
-     * 
+     *
      * @return An array of elements of the right type. If the container has no
      *         children, or no children of the specified types, returns an empty
      *         array.
@@ -149,7 +149,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * IntroElement instances. If elementMask is a predefined model type (ie:
      * homogenous), then return array of corresponding type. Else, returns an
      * array of IntroElements.
-     * 
+     *
      * @param vector
      */
     private Object[] convertToModelArray(Vector vector, int elementMask) {
@@ -205,7 +205,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             src = new AbstractIntroElement[size];
             break;
         }
-        
+
         vector.copyInto(src);
         return src;
 
@@ -219,7 +219,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected void loadChildren() {
         // init the children vector. old children are disposed automatically.
 		children = new Vector<>();
-        
+
 
         NodeList nodeList = element.getChildNodes();
 		Vector<Node> vector = new Vector<>();
@@ -241,7 +241,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * Adds the given elements as children of this container, before the
      * specified index.
-     * 
+     *
      * @param childElements
      */
     protected void insertElementsBefore(Element[] childElements, Bundle bundle,
@@ -263,7 +263,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * Adds the given elements as children of this container, before the
      * specified element. The element must be a direct child of this container.
-     * 
+     *
      * @param childElements
      */
     protected void insertElementsBefore(Element[] childElements, Bundle bundle,
@@ -280,7 +280,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * Adds a child to this container, depending on its type. Subclasses may
      * override if there is a child specific to the subclass.
-     * 
+     *
      * @param childElements
      */
     protected AbstractIntroElement getModelChild(Element childElement,
@@ -340,7 +340,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * and adds it as a child of this current container. If target is not a
      * group, or any element that can be included in a group, ignore this
      * include.
-     * 
+     *
      * @param include
      */
     private void resolveInclude(IntroInclude include) {
@@ -361,7 +361,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * Filters the appropriate elements from the given Vector, according to the current
      * environment. For example, if one of the elements has a tag to filter for os=linux and
      * the os is win32, the element will not be returned in the resulting Vector.
-     * 
+     *
      * @param unfiltered the unfiltered elements
      * @return a new Vector with elements filtered
      */
@@ -376,12 +376,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     	}
     	return filtered;
     }
-    
+
     /**
      * Find the target element pointed to by the path in the include. It is
      * assumed that configId always points to an external config, and not the
      * same config of the inlcude.
-     * 
+     *
      * @param include
      * @param path
      * @return
@@ -406,7 +406,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * model.<br>
      * ps: This method could be a static method, but left as instance for model
      * enhancements.
-     * 
+     *
      * @param model
      * @param path
      * @return
@@ -417,7 +417,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         String[] pathSegments = StringUtil.split(path, "/"); //$NON-NLS-1$
         if (container == null)
             return null;
-        
+
         AbstractIntroElement target = container.findChild(pathSegments[0]);
         if (target == null)
             // there is no direct child with the specified first path segment.
@@ -437,7 +437,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         }
         return target;
     }
-    
+
     public AbstractIntroElement findTarget(AbstractIntroContainer container,
             String path, String extensionId) {
         // resolve path segments if they are incomplete.
@@ -465,7 +465,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * searches direct children for the first child with the given id. The type
      * of the child can be any model element that has an id. ie:
      * AbstractIntroIdElement
-     * 
+     *
      * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
      */
     public AbstractIntroElement findChild(String elementId) {
@@ -477,7 +477,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * of the child must be of the passed model types mask. This method handles
      * the 3.0 style model for content. Pages enhance this behavior with DOM
      * apis.
-     * 
+     *
      * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
      */
     public AbstractIntroElement findChild(String elementId, int elementMask) {
@@ -537,7 +537,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * plugin. Also note that when including a container, it must be resolved
      * otherwise reparenting will cause includes in this target container to
      * fail.
-     * 
+     *
      * @param include
      * @param target
      */
@@ -579,11 +579,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * Creates a clone of the given target node. A clone is create by simply
      * recreating that protion of the model.
-     * 
+     *
      * Note: looked into the clonable interface in Java, but it was not used
      * because it makes modifications/additions to the model harder to maintain.
      * Will revisit later.
-     * 
+     *
      * @param targer
      * @return
      */
@@ -617,7 +617,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
     /**
      * Returns the element.
-     * 
+     *
      * @return
      */
     @Override
@@ -642,13 +642,13 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * Adds a model element as a child. Caller is responsible for inserting
      * model elements that rea valid as children.
-     * 
+     *
      * @param child
      */
     public void addChild(AbstractIntroElement child) {
         children.add(child);
     }
-    
+
     public void removeChild(AbstractIntroElement child) {
     	children.remove(child);
     }

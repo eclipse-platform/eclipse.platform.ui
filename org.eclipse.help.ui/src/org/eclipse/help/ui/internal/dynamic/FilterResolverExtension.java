@@ -29,7 +29,7 @@ public class FilterResolverExtension implements Extension {
 	public boolean isHandled(String name) {
 		return (name.equals(NAME_ACTIVITY) || name.equals(NAME_CATEGORY));
 	}
-	
+
 	@Override
 	public boolean isFiltered(String name, String value) {
 		if (name.equals(NAME_ACTIVITY)) {

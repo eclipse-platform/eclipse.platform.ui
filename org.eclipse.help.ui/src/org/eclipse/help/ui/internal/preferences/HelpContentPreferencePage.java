@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class HelpContentPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
-	
+
 	private ICTable table;
 	private ICButtons buttons;
 
@@ -63,27 +63,27 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	{
 		return table;
 	}
-	
+
 	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IHelpUIConstants.PREF_PAGE_HELP_CONTENT);
 
 		initializeDialogUnits(parent);
-		
+
 		descLabel = new Label(parent, SWT.NONE);
 		descLabel.setText(Messages.HelpContentPage_title);
 		Dialog.applyDialogFont(descLabel);
-		
+
 		createSearchLocalHelpOnly(parent);
 		createSearchLocalHelpFirst(parent);
 		createSearchLocalHelpLast(parent);
-		
+
 /*		remoteICPage = new InfocenterDisplay(this);
 		remoteICPage.createContents(parent);
 */
 		initializeTableEnablement(parent,searchLocalHelpOnly.getSelection());
-		
+
 		return parent;
 	}
 
@@ -93,8 +93,8 @@ public class HelpContentPreferencePage extends PreferencePage implements
 
 		List<IC> ics = ICPreferences.getDefaultICs();
 		table.setICs(ics);
-		
-		// Restore Defaults functionality here		
+
+		// Restore Defaults functionality here
 /*		HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
 		currentBlock.getRemoteICviewer().getRemoteICList().removeAllRemoteICs(currentBlock.getRemoteICList());
 		currentBlock.getRemoteICviewer().getRemoteICList().loadDefaultPreferences();
@@ -114,12 +114,12 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 		 */
 		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, !(searchLocalHelpOnly.getSelection()));
 		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, searchLocalHelpLast.getSelection());
-	
+
 
 		List<IC> ics = table.getICs();
 		ICPreferences.setICs(ics);
@@ -140,45 +140,45 @@ public class HelpContentPreferencePage extends PreferencePage implements
 
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
 		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
-		
+
 		searchLocalHelpOnly.setSelection(!isRemoteOn);
-		Dialog.applyDialogFont(searchLocalHelpOnly);	
+		Dialog.applyDialogFont(searchLocalHelpOnly);
 	}
-	
+
 	private void createSearchLocalHelpFirst(Composite parent) {
 		searchLocalHelpFirst = new Button(parent, SWT.RADIO);
 		searchLocalHelpFirst.setText(Messages.SearchEmbeddedHelpFirst);
 		searchLocalHelpFirst.addListener(SWT.Selection, changeListener);
-		
+
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
 	    	(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
 	    	(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
-		
+
 		searchLocalHelpFirst.setSelection(isRemoteOn && !isRemotePreferred);
 		Dialog.applyDialogFont(searchLocalHelpFirst);
 	}
-	
+
 	private void createSearchLocalHelpLast(Composite parent) {
 		searchLocalHelpLast = new Button(parent, SWT.RADIO);
 		searchLocalHelpLast.setText(Messages.SearchEmbeddedHelpLast);
 		searchLocalHelpLast.addListener(SWT.Selection, changeListener);
-		
+
 		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
 			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
 			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
-		
+
 		searchLocalHelpLast.setSelection(isRemoteOn && isRemotePreferred);
 		Dialog.applyDialogFont(searchLocalHelpLast);
 	}
-	
+
 	/*
-	 * Initialize the table enablement with the current checkbox selection 
+	 * Initialize the table enablement with the current checkbox selection
 	 */
-	
+
 	private void initializeTableEnablement(Composite parent, boolean isRemoteHelpDisabled)
-	{		
+	{
 		Composite top = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
@@ -191,7 +191,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 
 		table = new ICTable(top);
 		buttons = new ICButtons(top,this);
-		
+
 		changeListener.handleEvent(null);
 	}
 
@@ -202,10 +202,10 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	private Listener changeListener = event -> {
 
 		boolean isRemoteHelpEnabled = !(searchLocalHelpOnly.getSelection());
-		
+
 		// Disable/Enable table
 		table.getTable().setEnabled(isRemoteHelpEnabled);
 		buttons.setEnabled(isRemoteHelpEnabled);
 	};
-	
+
 }

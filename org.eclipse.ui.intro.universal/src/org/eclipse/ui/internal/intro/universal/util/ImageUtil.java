@@ -68,7 +68,7 @@ public final class ImageUtil {
 
 	/**
 	 * Convenience method to create an image descriptor from the Intro plugin.
-	 * 
+	 *
 	 * Method assumes that images are under the "icons" directory, so don't
 	 * append that directory name for "imageName".
 	 */
@@ -79,7 +79,7 @@ public final class ImageUtil {
 
 	/**
 	 * Convenience method to create an image descriptor.
-	 * 
+	 *
 	 */
 	public static ImageDescriptor createImageDescriptor(Bundle bundle,
 			String imageName) {
@@ -100,7 +100,7 @@ public final class ImageUtil {
 
 	/**
 	 * Convenience method to create an image descriptor.
-	 * 
+	 *
 	 */
 	public static ImageDescriptor createImageDescriptor(IPath base,
 			String imageName) {
@@ -118,7 +118,7 @@ public final class ImageUtil {
 
 	/**
 	 * Convenience method to create an image from the Intro plugin.
-	 * 
+	 *
 	 * Method assumes that images are under the "icons" directory, so don't
 	 * append that directory name for "imageName".
 	 */
@@ -135,7 +135,7 @@ public final class ImageUtil {
 
 	/**
 	 * Util method for image re-use in Intro Plugin.
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -157,7 +157,7 @@ public final class ImageUtil {
 	/**
 	 * Register an image descriptor in the Intro Plugin image registry. Has no
 	 * effect if the key has already been registered.
-	 * 
+	 *
 	 * @param key
 	 * @param imageName
 	 */
@@ -188,11 +188,11 @@ public final class ImageUtil {
 			return;
 		registry.put(key, createImageDescriptor(base, imageName));
 	}
-	
+
 	/**
 	 * Tests for high contrast mode. Returns false if not called from a
 	 * UI thread (causes deadlocks during junit tests).
-	 * 
+	 *
 	 * @return whether or not the display is in high contrast mode
 	 */
 	public static boolean isHighContrast() {

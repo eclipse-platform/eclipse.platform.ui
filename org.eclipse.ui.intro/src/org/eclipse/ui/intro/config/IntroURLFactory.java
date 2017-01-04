@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
  * This class provides all its functionality via static members. It is not
  * intended to be instantiated.
  * </p>
- * 
+ *
  * @see IIntroURL
  * @since 3.0
  */
@@ -39,7 +39,7 @@ public final class IntroURLFactory {
     /**
      * Parses the given string, and returns an IntroURL if the string is a valid
      * Intro URL. Returns null in all other cases. Example usage:
-     * 
+     *
      * <pre>
      * StringBuffer url = new StringBuffer();
      * url.append(&quot;http://org.eclipse.ui.intro/showStandby?&quot;);
@@ -54,7 +54,7 @@ public final class IntroURLFactory {
      *     introURL.execute();
      * }
      * </pre>
-     * 
+     *
      * @param url
      *            the url to construct an IntroURL from
      * @return an IntroURL, or <code>null</code> if the url is invalid

@@ -26,34 +26,34 @@ import org.eclipse.ui.PlatformUI;
  */
 
 public class ShowIndexHandler extends AbstractHandler {
-	
+
 	/*
 	 * Currently returns true, could be controlled by a preference
 	 * in the future
 	 */
     private boolean isOpenInHelpView() {
-    	boolean searchFromBrowser = 
+    	boolean searchFromBrowser =
     		Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, false, null);
 	    return !searchFromBrowser;
 	}
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (isOpenInHelpView()) { 
+		if (isOpenInHelpView()) {
 			openInHelpView();
 		} else {
 			openInBrowser();
 		}
 		return null;
 	}
-	
+
 	private void openInBrowser() {
 		PlatformUI.getWorkbench().getHelpSystem();
 		BaseHelpSystem.getHelpDisplay().displayHelpResource("tab=index", false); //$NON-NLS-1$
 	}
-	
+
 	private void openInHelpView() {
-		DefaultHelpUI.showIndex();		
+		DefaultHelpUI.showIndex();
 	}
 
 }

@@ -4,12 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 163558 Dynamic content support for all UA
  *     IBM Corporation - Support for see elements
- *     Andreas Meissner - Fix Bug 351272 
+ *     Andreas Meissner - Fix Bug 351272
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -87,7 +87,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			if (obj instanceof IndexSee) {
 				IndexSee see = (IndexSee) obj;
 				return getSeeString(see);
-			} 
+			}
 			return super.getText(obj);
 		}
 
@@ -96,7 +96,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			return super.getImage(obj);
 		}
 	}
-	
+
 	public String getSeeString(IIndexSee see) {
 		String seeText = see.isSeeAlso() ? Messages.SeeAlso : Messages.See;
 		String message = NLS.bind(seeText, see.getKeyword());
@@ -215,16 +215,16 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 	private Object[] getChildren(IIndexEntry entry) {
 		/*
 		 * Index entry has two types of children: topics and subentries.
-		 * 
+		 *
 		 * The method returns topics among children only if number of the topics
 		 * more than 1.
-		 * 
+		 *
 		 * In case when the entry owns only one topic, this topic is not returned
 		 * as child because the entry will represent this topic by its keyword.
 		 */
 		IHelpResource[] topics = entry.getTopics();
 		IIndexEntry[] subentries = entry.getSubentries();
-		IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : 
+		IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() :
 			               new IIndexSee[0];
 
 		if (topics.length <= 1 && subentries.length == 0 && sees.length == 0) {
@@ -244,9 +244,9 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			System.arraycopy(sees, 0, children, topics.length + subentries.length, sees.length);
 		}
 
-		return children; 
+		return children;
 	}
-	
+
 
 	protected Tree getTreeWidget() {
 		return treeViewer.getTree();

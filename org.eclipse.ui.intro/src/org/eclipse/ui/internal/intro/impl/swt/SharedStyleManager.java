@@ -30,7 +30,7 @@ public class SharedStyleManager {
 
     protected Properties properties;
     protected StyleContext context;
-    
+
     class StyleContext {
     	IPath path;
     	Bundle bundle;
@@ -44,7 +44,7 @@ public class SharedStyleManager {
     /**
      * Constructor used when shared styles need to be loaded. The bundle is
      * retrieved from the model root.
-     * 
+     *
      * @param modelRoot
      */
     public SharedStyleManager(IntroModelRoot modelRoot) {
@@ -67,7 +67,7 @@ public class SharedStyleManager {
             InputStream is = styleURL.openStream();
             properties.load(is);
             is.close();
-           	context.path = new Path(style).removeLastSegments(1); 
+           	context.path = new Path(style).removeLastSegments(1);
             String t = (String)properties.get("theme"); //$NON-NLS-1$
             if (t!=null && t.trim().equalsIgnoreCase("true")) //$NON-NLS-1$
             	context.inTheme = true;
@@ -79,7 +79,7 @@ public class SharedStyleManager {
 
     /**
      * Get the property from the shared properties.
-     * 
+     *
      * @param key
      * @return
      */
@@ -110,7 +110,7 @@ public class SharedStyleManager {
      * A utility method that creates RGB object from a value encoded in the
      * following format: #rrggbb, where r, g and b are hex color values in the
      * range from 00 to ff.
-     * 
+     *
      * @param value
      * @return
      */
@@ -135,14 +135,14 @@ public class SharedStyleManager {
     /**
      * Finds the bundle from which this key was loaded. This is the bundle from
      * which shared styles where loaded.
-     * 
+     *
      * @param key
      * @return
      */
     protected Bundle getAssociatedBundle(String key) {
         return context.bundle;
     }
-    
+
     protected StyleContext getAssociatedContext(String key) {
     	return context;
     }
@@ -158,8 +158,8 @@ public class SharedStyleManager {
 
 
     /**
-     * 
-     * 
+     *
+     *
      * @param toolkit
      * @param key
      * @return color. May return null.
@@ -179,7 +179,7 @@ public class SharedStyleManager {
 
     /**
      * Retrieve an image from this page's properties, given a key.
-     * 
+     *
      * @param key
      * @param defaultPageKey
      * @param defaultKey
@@ -200,7 +200,7 @@ public class SharedStyleManager {
             if (ccontext.inTheme) {
             	// if 'theme' key is set, load image
             	// relative to the file, not relative to the bundle
-            	ImageUtil.registerImage(currentKey, ccontext.path, value); 
+            	ImageUtil.registerImage(currentKey, ccontext.path, value);
             }
             else {
             	Bundle bundle = ccontext.bundle;

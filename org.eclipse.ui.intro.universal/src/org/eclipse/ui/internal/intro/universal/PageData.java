@@ -30,11 +30,11 @@ public class PageData {
 	private String id;
 	private ArrayList<GroupData> groups = new ArrayList<>();
 	private GroupData hidden=null;
-	
+
 	public PageData(String id) {
 		this.id = id;
 	}
-	
+
 	public PageData(Element page) {
 		this.id = page.getAttribute("id"); //$NON-NLS-1$
 		NodeList children = page.getChildNodes();
@@ -51,7 +51,7 @@ public class PageData {
 			}
 		}
 	}
-	
+
 	public void add(GroupData gd) {
 		if (gd.isHidden())
 			hidden = gd;
@@ -95,7 +95,7 @@ public class PageData {
 	public boolean isHidden(String extensionId) {
 		return hidden!=null && hidden.contains(extensionId);
 	}
-	
+
 	public GroupData findGroup(String groupId) {
 		if (groupId.equals(IUniversalIntroConstants.HIDDEN))
 			return hidden;
@@ -107,14 +107,14 @@ public class PageData {
 		}
 		return null;
 	}
-	
+
 	private void addGroup(Element element, boolean hide) {
 		GroupData gd = new GroupData(element);
 		if (hide) hidden = gd;
 		else
 			groups.add(gd);
 	}
-	
+
 	public void addImplicitExtension(String extensionId, String name) {
 		ExtensionData ed = findExtension(extensionId, true);
 		if (ed!=null) {
@@ -148,11 +148,11 @@ public class PageData {
 		}
 		return defaultGroup;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public ExtensionData findExtension(String extensionId, boolean checkHidden) {
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = groups.get(i);
@@ -165,7 +165,7 @@ public class PageData {
 			return find (hidden, extensionId);
 		return null;
 	}
-		
+
 	private ExtensionData find(GroupData gd, String extensionId) {
 		BaseData bd = gd.find(extensionId);
 		if (bd!=null && bd instanceof ExtensionData)
@@ -189,7 +189,7 @@ public class PageData {
 		GroupData last = groups.get(groups.size()-1);
 		return id + "/" + last.getPath() + "/" + IUniversalIntroConstants.DEFAULT_ANCHOR;  //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	public void write(PrintWriter writer, String indent) {
 		writer.print(indent);
 		String indent2 = indent+"   "; //$NON-NLS-1$

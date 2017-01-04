@@ -68,7 +68,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		rlayout.justify = false;
 		rlayout.wrap = true;
 		linkContainer.setLayout(rlayout);
-		
+
 		hyperlinkGroup = new HyperlinkGroup(container.getDisplay());
 		hyperlinkGroup.setHyperlinkUnderlineMode(toolkit.getHyperlinkGroup().getHyperlinkUnderlineMode());
 	}
@@ -84,7 +84,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			} else {
 	            link.setFont(JFaceResources.getDefaultFont());
 			}
-			data.exclude = false; 
+			data.exclude = false;
 			link.setVisible(!data.exclude);
 		}
 		linkContainer.layout();
@@ -101,24 +101,24 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			}
 		};
 		if ((helpPart.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
-			addPageLink(container, toolkit, Messages.SeeAlsoPart_allTopics, IHelpUIConstants.HV_ALL_TOPICS_PAGE, 
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_allTopics, IHelpUIConstants.HV_ALL_TOPICS_PAGE,
 				IHelpUIConstants.IMAGE_ALL_TOPICS, listener);
 		if ((helpPart.getStyle() & ReusableHelpPart.SEARCH) != 0) {
-			addPageLink(container, toolkit, Messages.SeeAlsoPart_search, IHelpUIConstants.HV_FSEARCH_PAGE, 
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_search, IHelpUIConstants.HV_FSEARCH_PAGE,
 				IHelpUIConstants.IMAGE_HELP_SEARCH, listener);
 		}
 		if ((helpPart.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
-			addPageLink(container, toolkit, Messages.SeeAlsoPart_contextHelp, 
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_contextHelp,
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
 				IHelpUIConstants.IMAGE_RELATED_TOPICS, listener);
 		}
 		if ((helpPart.getStyle() & ReusableHelpPart.BOOKMARKS) != 0) {
-			addPageLink(container, toolkit, Messages.SeeAlsoPart_bookmarks, 
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_bookmarks,
 				IHelpUIConstants.HV_BOOKMARKS_PAGE,
 				IHelpUIConstants.IMAGE_BOOKMARKS, listener);
 		}
 		if ((helpPart.getStyle() & ReusableHelpPart.INDEX) != 0) {
-			addPageLink(container, toolkit, Messages.SeeAlsoPart_index, 
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_index,
 				IHelpUIConstants.HV_INDEX_PAGE,
 				IHelpUIConstants.IMAGE_INDEX, listener);
 		}
@@ -183,7 +183,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			bgImage.dispose();
 		}
 	}
-	
+
 	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
@@ -222,8 +222,8 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 
 	@Override
 	public void saveState(IMemento memento) {
-	}	
-	
+	}
+
 	@Override
 	public void setFocus() {
 		if (linkContainer!=null)

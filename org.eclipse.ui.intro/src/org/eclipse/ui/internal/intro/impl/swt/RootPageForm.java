@@ -155,7 +155,7 @@ public class RootPageForm implements IIntroConstants {
     };
 
     /**
-     * 
+     *
      */
     public RootPageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
             Form parentForm) {
@@ -167,7 +167,7 @@ public class RootPageForm implements IIntroConstants {
     /**
      * Create the form for the root page. Number of columns there is equal to
      * the number of links.
-     * 
+     *
      * @param pageBook
      */
     public void createPartControl(ScrolledPageBook mainPageBook,
@@ -277,7 +277,7 @@ public class RootPageForm implements IIntroConstants {
     /**
      * Creates an Image Hyperlink from an IntroLink. Model object is cached in
      * link.
-     * 
+     *
      * @param body
      * @param link
      */
@@ -318,7 +318,7 @@ public class RootPageForm implements IIntroConstants {
     /**
      * Creates a label to display the link description when you hover over a
      * hyperlink.
-     * 
+     *
      * @param body
      */
     private Label createHoverLabel(Composite body) {
@@ -333,7 +333,7 @@ public class RootPageForm implements IIntroConstants {
         label.setFont(PageStyleManager.getBannerFont());
         return label;
     }
-    
+
     private void createContentProvider(Composite parent, IntroContentProvider providerElement) {
     	if (factory==null) {
     		factory = new PageWidgetFactory(toolkit, rootPageStyleManager);

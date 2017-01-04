@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -113,7 +113,7 @@ public class ScopeSetManager extends Observable {
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				String name = file.getName();
-				int loc = name.lastIndexOf(ScopeSet.EXT); 
+				int loc = name.lastIndexOf(ScopeSet.EXT);
 				if (loc != -1) {
 					ScopeSet set = new ScopeSet(name.substring(0, loc));
 					sets.add(set);
@@ -121,7 +121,7 @@ public class ScopeSetManager extends Observable {
 						defSet = set;
 					continue;
 				}
-				loc = name.lastIndexOf(HistoryScopeSet.EXT); 
+				loc = name.lastIndexOf(HistoryScopeSet.EXT);
 				if (loc != -1) {
 					HistoryScopeSet set = new HistoryScopeSet(name.substring(0,
 							loc), null);
@@ -138,7 +138,7 @@ public class ScopeSetManager extends Observable {
 		}
 
 	}
-	
+
 	public ScopeSet getDefaultScope() {
 		return defSet;
 	}

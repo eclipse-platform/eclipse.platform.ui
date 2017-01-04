@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -110,7 +110,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		results = new ArrayList<>();
 		contributeToToolBar(tbm);
 	}
-	
+
 	void updateSeparatorVisibility() {
 		ScrollBar scrollBar = innerForm.getVerticalBar();
 		separator.setVisible(scrollBar.getSelection()>0);
@@ -127,9 +127,9 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		 */
 
 		boolean descOn = Platform.getPreferencesService().getBoolean
-			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, false, null);			
+			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, false, null);
 		boolean showCategories = Platform.getPreferencesService().getBoolean
-			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, false, null);			
+			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, false, null);
 		showCategoriesAction = new Action() {
 
 			@Override
@@ -146,7 +146,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showCategoriesAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(showCategories);
-		showCategoriesAction.setToolTipText(Messages.SearchResultsPart_showCategoriesAction_tooltip); 
+		showCategoriesAction.setToolTipText(Messages.SearchResultsPart_showCategoriesAction_tooltip);
 		showCategoriesAction.setId("categories"); //$NON-NLS-1$
 		tbm.insertBefore("back", showCategoriesAction); //$NON-NLS-1$
 
@@ -166,7 +166,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showDescriptionAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
 		showDescriptionAction.setChecked(descOn);
-		showDescriptionAction.setToolTipText(Messages.SearchResultsPart_showDescriptionAction_tooltip); 
+		showDescriptionAction.setToolTipText(Messages.SearchResultsPart_showDescriptionAction_tooltip);
 		showDescriptionAction.setId("description"); //$NON-NLS-1$
 		tbm.insertAfter("categories", showDescriptionAction); //$NON-NLS-1$
 		tbm.insertAfter("description", new Separator()); //$NON-NLS-1$
@@ -216,7 +216,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
 	}
-	
+
 	void clearResults() {
 		clearResultSections();
 		separator.setVisible(false);
@@ -247,7 +247,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		}
 		reflow();
 	}
-	
+
 	private EngineDescriptor findLocalHelp(ArrayList<EngineDescriptor> eds) {
 		for (int i=0; i<eds.size(); i++) {
 			EngineDescriptor ed = eds.get(i);
@@ -256,14 +256,14 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		}
 		return null;
 	}
-	
+
 	void completed() {
 		for (int i = 0; i < results.size(); i++) {
 			EngineResultSection section = results.get(i);
 			section.completed();
 		}
 	}
-	
+
 	void canceling() {
 		for (int i = 0; i < results.size(); i++) {
 			EngineResultSection section = results.get(i);
@@ -279,7 +279,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		} else
 			parent.showURL(url);
 	}
-	
+
 	void doCategoryLink(String href) {
 		parent.showPage(IHelpUIConstants.HV_ALL_TOPICS_PAGE);
 		AllTopicsPart part = (AllTopicsPart) parent

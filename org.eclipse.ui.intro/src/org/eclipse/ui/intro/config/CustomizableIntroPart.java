@@ -62,12 +62,12 @@ import org.eclipse.ui.part.IntroPart;
  * creation on load, and leaves restoring state to content part. Same with
  * saving state. The memento is passed shortly before shutdown to enable storing
  * of part specific data.
- * 
+ *
  * Note: This class was made public for re-use, as-is, as a valid class for the
  * <code>org.eclipse.ui.intro</code> extension point. It is not intended to be
  * subclassed or used otherwise.
  * </p>
- * 
+ *
  * @since 3.0
  */
 
@@ -155,7 +155,7 @@ public final class CustomizableIntroPart extends IntroPart implements
             boolean startAtHomePage = ReopenUtil.isReopenPreference();
 			if (startAtHomePage) {
     			PlatformUI.getPreferenceStore().setValue(
-    	        		IWorkbenchPreferenceConstants.SHOW_INTRO, true);	
+    	        		IWorkbenchPreferenceConstants.SHOW_INTRO, true);
     			memento = null;
     		}
             // we have a valid config contribution, get presentation. Make sure
@@ -186,7 +186,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
     /**
      * Creates the UI based on how the InroPart has been configured.
-     * 
+     *
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     @Override
@@ -217,7 +217,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * Determine if we need to recreate a standby part. Return true if we have a
      * standby part memento that is not for the empty part AND stangby memento
      * has been tagged for restore, ie: it was open when workbench closed.
-     * 
+     *
      * @param memento
      * @return <code>true</code> if we need to recreate a standby part
      */
@@ -242,7 +242,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     /*
      * Handled state changes. Recreates the standby part if workbench was shut
      * down with one.
-     * 
+     *
      * @see org.eclipse.ui.IIntroPart#standbyStateChanged(boolean)
      */
     @Override
@@ -282,7 +282,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * cases. This basically overrides the workbench behavior of Standby/normal
      * states. The design here is that if the showStandbyPart flag is set, then
      * we always need to show the standby part.
-     * 
+     *
      * @return <code>true</code> if we need to show the standby part
      */
     private boolean isStandbyPartNeeded() {
@@ -368,7 +368,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
     /**
      * Returns the primary control associated with this Intro part.
-     * 
+     *
      * @return the SWT control which displays this Intro part's content, or
      *         <code>null</code> if this standby part's controls have not yet
      *         been created.
@@ -413,7 +413,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
     /**
      * Support dynamic awarness.
-     * 
+     *
      * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
      */
     @Override

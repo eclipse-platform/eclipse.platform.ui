@@ -28,7 +28,7 @@ import org.eclipse.ui.handlers.IHandlerService;
  * service. This class is intended to be called by the
  * <code>executeCommand</code> function in <code>livehelp.js</code> (defined
  * in <code>org.eclipse.help</code> plugin).
- * 
+ *
  * @since 3.2
  */
 public class ExecuteCommandAction implements ILiveHelpAction {
@@ -51,7 +51,7 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 			// No command to execute!
 			return;
 		}
-		
+
 		// workaround problem described in https://bugs.eclipse.org/bugs/show_bug.cgi?id=133694
 		// by making sure we can get the workbench before running the command.  In standalone
 		// help mode the attempt to get the workbench will fail and we will show an error dialog.
@@ -74,7 +74,7 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 		});
 
 	}
-	
+
 	/**
 	 * This was introduced to work around the behavior described in
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=130206
@@ -125,7 +125,7 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 	}
 
 	private IHandlerService getHandlerService() {
-		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(IHandlerService.class);
 		    if (serviceObject != null) {

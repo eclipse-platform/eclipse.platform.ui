@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -41,12 +41,12 @@ import org.osgi.framework.Bundle;
 /**
  * This class provides for dynamic configuration of the shared intro
  * implementation based on the data file associated with the product.
- * 
+ *
  * @since 3.2
  */
 public class UniversalIntroConfigurer extends IntroConfigurer implements
 		IUniversalIntroConstants {
-	
+
 	private IntroData primaryIntroData;
 	private IntroData[] secondaryIntroData;
 	private SequenceResolver<IntroElement> sequenceResolver;
@@ -99,7 +99,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.intro.config.IntroConfigurer#getMixinStyle(java.lang.String)
 	 */
 	@Override
@@ -216,7 +216,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	 * <ul>
 	 * <li>foo &rarr; org.eclipse.ui.intro.universal.solstice/foo
 	 * </ul>
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return same path with a prefixed theme directory component
@@ -297,7 +297,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	private IntroElement[] getRootPageActionLinks(boolean standby) {
 		String wb = getVariable(VAR_WORKBENCH_AS_ROOT_LINK);
-		// only create the workbench link if 
+		// only create the workbench link if
 		// not already configured as a root link
 		if (wb==null || !wb.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			IntroElement page = createRootPageLink(ID_WORKBENCH, standby);
@@ -309,9 +309,9 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	private IntroElement[] getNavLinks(String pageId) {
 		ArrayList<IntroElement> links = new ArrayList<>();
-		String ids = getVariable(VAR_INTRO_ROOT_PAGES);		
+		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		/*
-		 * In high contrast mode the workbench link must be generated in the nav links 
+		 * In high contrast mode the workbench link must be generated in the nav links
 		 * otherwise it will not show
 		 */
 		if (ImageUtil.isHighContrast()) {
@@ -397,7 +397,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	private IntroElement createNavLink(String id, String pageId, int [] counter) {
 		if (id.equals(ID_OVERVIEW))
 			return createNavLink(Messages.SharedIntroConfigurer_overview_nav,
-					createPageURL(id, false), id, "left nav_link"+(++counter[0])); //$NON-NLS-1$ 
+					createPageURL(id, false), id, "left nav_link"+(++counter[0])); //$NON-NLS-1$
 		if (id.equals(ID_FIRSTSTEPS))
 			return createNavLink(Messages.SharedIntroConfigurer_firststeps_nav,
 					createPageURL(id, false), id, "left  nav_link"+(++counter[0])); //$NON-NLS-1$
@@ -421,7 +421,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			return createNavLink(
 					Messages.SharedIntroConfigurer_workbench_name,
 					"http://org.eclipse.ui.intro/switchToLaunchBar", //$NON-NLS-1$
-					id, 
+					id,
 					"right nav_link"+(++counter[0])); //$NON-NLS-1$
 		return null;
 	}
@@ -436,31 +436,31 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	private IntroElement createLaunchBarShortcut(String id) {
 		if (id.equals(ID_OVERVIEW))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_OVERVIEW_ICON), Messages.SharedIntroConfigurer_overview_nav, 
+					getThemeProperty(LAUNCHBAR_OVERVIEW_ICON), Messages.SharedIntroConfigurer_overview_nav,
 					id);
 		if (id.equals(ID_FIRSTSTEPS))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_FIRSTSTEPS_ICON), Messages.SharedIntroConfigurer_firststeps_nav, 
+					getThemeProperty(LAUNCHBAR_FIRSTSTEPS_ICON), Messages.SharedIntroConfigurer_firststeps_nav,
 					id);
 		if (id.equals(ID_TUTORIALS))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_TUTORIALS_ICON), Messages.SharedIntroConfigurer_tutorials_nav, 
+					getThemeProperty(LAUNCHBAR_TUTORIALS_ICON), Messages.SharedIntroConfigurer_tutorials_nav,
 					id);
 		if (id.equals(ID_SAMPLES))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_SAMPLES_ICON), Messages.SharedIntroConfigurer_samples_nav, 
+					getThemeProperty(LAUNCHBAR_SAMPLES_ICON), Messages.SharedIntroConfigurer_samples_nav,
 					id);
 		if (id.equals(ID_WHATSNEW))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_WHATSNEW_ICON), Messages.SharedIntroConfigurer_whatsnew_nav, 
+					getThemeProperty(LAUNCHBAR_WHATSNEW_ICON), Messages.SharedIntroConfigurer_whatsnew_nav,
 					id);
 		if (id.equals(ID_MIGRATE))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_MIGRATE_ICON), Messages.SharedIntroConfigurer_migrate_nav, 
+					getThemeProperty(LAUNCHBAR_MIGRATE_ICON), Messages.SharedIntroConfigurer_migrate_nav,
 					id);
 		if (id.equals(ID_WEBRESOURCES))
 			return createShortcutLink(
-					getThemeProperty(LAUNCHBAR_WEBRESOURCES_ICON), Messages.SharedIntroConfigurer_webresources_nav, 
+					getThemeProperty(LAUNCHBAR_WEBRESOURCES_ICON), Messages.SharedIntroConfigurer_webresources_nav,
 					id);
 		return null;
 	}
@@ -508,7 +508,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			if (value!=null)
 				img.setAttribute("src", value); //$NON-NLS-1$
 			img.setAttribute("alt", label); //$NON-NLS-1$
-			element.addChild(img);		
+			element.addChild(img);
 			styleId += " "+HIGH_CONTRAST; //$NON-NLS-1$
 		}
 		element.setAttribute("style-id", styleId); //$NON-NLS-1$
@@ -594,7 +594,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		}
 		return sequenceResolver.getSequence(primaryAnchors, secondaryAnchors);
 	}
-	
+
 	private List<IntroElement> getAnchors(IntroData data, String pageId, String groupId) {
 		PageData pdata = data.getPage(pageId);
 		if (pdata != null) {
@@ -604,7 +604,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String resolvePath(String extensionId, String path) {
 		boolean extensionRelativePath = false;
@@ -662,7 +662,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		// there was no clear winner; fall back to the default
 		return resolveDefaultPath(pageId, extensionId);
 	}
-	
+
 	private String resolveDefaultPath(String pageId, String extensionId) {
 		String pluginId = ExtensionMap.getInstance().getPluginId(extensionId);
 		if (ContentDetector.isNew(pluginId)) {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ public class HelpviewProtocol  {
 	public static final String HELPVIEW_PROTOCOL = "helpview:"; //$NON-NLS-1$
 	public static final String CHECK_REMOTE_STATUS = "checkremote"; //$NON-NLS-1$
 	public static final String IGNORE_MISSING_BOOKS = "ignoreMissingBooks"; //$NON-NLS-1$
-	
+
 	public static void handleProtocolCall(String url, ReusableHelpPart part) {
 		int index = url.indexOf(HELPVIEW_PROTOCOL);
 		if (index == -1) {

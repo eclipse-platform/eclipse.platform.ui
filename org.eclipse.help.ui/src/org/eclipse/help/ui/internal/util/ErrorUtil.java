@@ -38,7 +38,7 @@ public class ErrorUtil implements IErrorUtil {
 
 	/**
 	 * Immediately displays error dialog with a given string
-	 * 
+	 *
 	 * @param msg
 	 *            error message to display and log.
 	 */
@@ -56,7 +56,7 @@ public class ErrorUtil implements IErrorUtil {
 
 	/**
 	 * Immediately displays an Information dialog with a given string
-	 * 
+	 *
 	 * @param msg
 	 *            error message to display.
 	 */
@@ -74,7 +74,7 @@ public class ErrorUtil implements IErrorUtil {
 
 	/**
 	 * Immediately displays a Question dialog with a given string (question).
-	 * 
+	 *
 	 * @return which button(Yes/No) was pressed by user
 	 */
 	public static boolean displayQuestionDialog(String msg) {

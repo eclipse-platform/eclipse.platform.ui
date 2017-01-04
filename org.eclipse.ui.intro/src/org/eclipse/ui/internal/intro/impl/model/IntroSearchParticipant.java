@@ -34,13 +34,13 @@ import org.osgi.framework.Bundle;
 /**
  * An implementation of SearchParticipant that adds Welcome content into the local help
  * index so that it can be searched.
- * 
+ *
  */
 
 public class IntroSearchParticipant extends SearchParticipant {
 
 	private IntroModelRoot model;
-	
+
 	private class TitleAndSummary {
 		String title;
 		String summary;
@@ -165,7 +165,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 			     addTitle(titleSummary.title, doc);
             }
             if (titleSummary.summary != null) {
-            	doc.setSummary(titleSummary.summary); 
+            	doc.setSummary(titleSummary.summary);
             }
             doc.addContents(contents);
 			return Status.OK_STATUS;
@@ -195,11 +195,11 @@ public class IntroSearchParticipant extends SearchParticipant {
 				}
 				if (title != null) {
 					titleSummary.title = title;
-				}				
-				if  ("page-description".equals(childId)) { //$NON-NLS-1$
-					titleSummary.summary = childIntroText.getText(); 
 				}
-			} 
+				if  ("page-description".equals(childId)) { //$NON-NLS-1$
+					titleSummary.summary = childIntroText.getText();
+				}
+			}
             if (child instanceof AbstractIntroContainer) {
 				AbstractIntroContainer container = (AbstractIntroContainer) child;
 				if (!"navigation-links".equals(container.getId())) { //$NON-NLS-1$

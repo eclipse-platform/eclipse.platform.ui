@@ -89,7 +89,7 @@ public class ContentProviderManager {
 
 	/**
 	 * Retrieve an existing content provider class, or null if never created before.
-	 * 
+	 *
 	 * @param provider
 	 * @return
 	 */
@@ -107,7 +107,7 @@ public class ContentProviderManager {
 	/**
 	 * Tries to create an intro content provider class. may return null if creation fails. This will
 	 * be logged.
-	 * 
+	 *
 	 * @param provider
 	 * @param site
 	 * @return

@@ -33,7 +33,7 @@ package org.eclipse.ui.intro.config;
  * There is a number of supported Intro commands. Check docs for more details.
  * Calling execute runs the command if it is one of the supported commands.
  * </p>
- * 
+ *
  * @see IntroURLFactory
  * @see IIntroAction
  * @since 3.0
@@ -45,7 +45,7 @@ public interface IIntroURL {
     /**
      * Executes whatever valid Intro command is embedded in this Intro URL.
      * Returns true if action succeeded, and false otherwise.
-     * 
+     *
      */
     public boolean execute();
 
@@ -57,7 +57,7 @@ public interface IIntroURL {
     /**
      * Return a parameter defined in the Intro URL. Returns null if the
      * parameter is not defined.
-     * 
+     *
      * @param parameterId
      *            the id of the parameter being requested
      * @return the value of the parameter, or <code>null</code> if the

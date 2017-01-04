@@ -266,7 +266,7 @@ public class CustomizationContentsArea {
 			sel = null;
 		}
 	}
-	
+
 	CustomizationContentsArea() {
 	}
 
@@ -349,7 +349,7 @@ public class CustomizationContentsArea {
 			}
 			return super.getText(obj);
 		}
-		
+
 		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof ExtensionData) {
@@ -397,7 +397,7 @@ public class CustomizationContentsArea {
 		public String getId() {
 			return element.getAttribute("id"); //$NON-NLS-1$
 		}
-		
+
 		public boolean isScalable() {
 			return "true".equals(element.getAttribute(FontSelection.ATT_SCALABLE)); //$NON-NLS-1$
 		}
@@ -405,7 +405,7 @@ public class CustomizationContentsArea {
 		public IntroTheme(IConfigurationElement element) {
 			this.element = element;
 		}
-		
+
 		public Image getPreviewImage() {
 			if (previewImage==null) {
 				String path = element.getAttribute("previewImage"); //$NON-NLS-1$
@@ -420,7 +420,7 @@ public class CustomizationContentsArea {
 			}
 			return previewImage;
 		}
-		
+
 		public void dispose() {
 			if (previewImage!=null) {
 				previewImage.dispose();
@@ -552,7 +552,7 @@ public class CustomizationContentsArea {
 		gd.verticalSpan = 3;
 		gd.widthHint = 10;
 		label.setLayoutData(gd);
-		
+
 		label = new Label(pageContainer, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_left);
 		label = new Label(pageContainer, SWT.NULL);
@@ -581,7 +581,7 @@ public class CustomizationContentsArea {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 100;
 		bottomLeft.getControl().setLayoutData(gd);
-		
+
 		bottomRight = createTableViewer(pageContainer, "bottom-right"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 100;
@@ -716,7 +716,7 @@ public class CustomizationContentsArea {
 	private void enableFontsButton() {
 		if (introTheme != null) {
 			useRelativeFonts.setEnabled(introTheme.isScalable());
-		}	
+		}
 	}
 
 	private void updateThemePreview() {
@@ -739,7 +739,7 @@ public class CustomizationContentsArea {
 
 	/**
 	 * Remember the current page, close intro, reopen it and show the saved page.
-	 * 
+	 *
 	 */
 	private void restartIntro() {
 		IIntroManager manager = PlatformUI.getWorkbench().getIntroManager();
@@ -943,7 +943,7 @@ public class CustomizationContentsArea {
 		});
 		item.setControl(container);
 	}
-	
+
 	private void loadThemes() {
 		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
 		for (int i=0; i<elements.length; i++) {
@@ -1077,7 +1077,7 @@ public class CustomizationContentsArea {
 
 	private void fillPopupMenu(IMenuManager manager, final TableViewer viewer) {
 		StructuredSelection ssel = (StructuredSelection) viewer.getSelection();
-		
+
 		manager.add(new Separator());
 		Action addSeparator = new Action(Messages.WelcomeCustomizationPreferencePage_addSeparator) {
 			@Override
@@ -1085,7 +1085,7 @@ public class CustomizationContentsArea {
 				doAddSeparator(viewer);
 			}
 		};
-		
+
 		manager.add(addSeparator);
 		manager.add(new Separator());
 
@@ -1121,9 +1121,9 @@ public class CustomizationContentsArea {
 			addMoveToAction(menu, bottomLeft, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom_left);
 			addMoveToAction(menu, bottomRight, viewer, Messages.WelcomeCustomizationPreferencePage_menu_bottom_right);
 			manager.add(menu);
-			
+
 			boolean addDeleteSeparator=false;
-			
+
 			for (Iterator<?> iter=ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof SeparatorData)
@@ -1168,7 +1168,7 @@ public class CustomizationContentsArea {
 			gd.moveDown((BaseData) obj);
 		viewer.refresh();
 	}
-	
+
 	private void doAddSeparator(Viewer viewer) {
 		Object obj = ((StructuredSelection) viewer.getSelection()).getFirstElement();
 		GroupData gd = (GroupData) viewer.getInput();

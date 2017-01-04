@@ -13,10 +13,10 @@ package org.eclipse.ui.internal.intro.universal;
 import java.io.PrintWriter;
 
 public class SeparatorData extends BaseData {
-	
+
 	public SeparatorData() {
 	}
-	
+
 	public SeparatorData(String id) {
 		this.id = id;
 	}

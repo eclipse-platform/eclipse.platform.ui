@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * engines. Search engine and scope factory are defined together in the same
  * extension point, hence the actual implementation of ISearchScope is up to the
  * contributor.
- * 
+ *
  * @since 3.1
  */
 public interface ISearchScopeFactory {
@@ -35,7 +35,7 @@ public interface ISearchScopeFactory {
 	 * In cases where conflicting values can be found in the preference store
 	 * and parameters, preference store should win i.e. parameters should be
 	 * treated as default values only.
-	 * 
+	 *
 	 * @param store
 	 *            the preference store that holds the scope data
 	 * @param engineId

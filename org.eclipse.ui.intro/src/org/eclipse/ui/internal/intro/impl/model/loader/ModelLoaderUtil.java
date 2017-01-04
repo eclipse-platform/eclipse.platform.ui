@@ -29,7 +29,7 @@ public class ModelLoaderUtil {
 
     /**
      * Utility method to validate an elements name.
-     * 
+     *
      * @param element
      * @param validName
      * @return
@@ -48,7 +48,7 @@ public class ModelLoaderUtil {
      * passed array of elements. If the array is empty, null is returned. If
      * there is more than one element in the array, the first one is picked, but
      * this fact is logged. Attribute passed is used for logging.
-     * 
+     *
      * @param configElements
      * @return the first configElement in the array, or null if the array is
      *         empty.
@@ -127,7 +127,7 @@ public class ModelLoaderUtil {
 
     /**
      * Util class for creating class instances from plugins.
-     * 
+     *
      * @param pluginId
      * @param className
      * @return
@@ -158,7 +158,7 @@ public class ModelLoaderUtil {
     /**
      * Creates a key for the given element. Returns null if any id is null along
      * the path.
-     * 
+     *
      * @param element
      * @return
      */

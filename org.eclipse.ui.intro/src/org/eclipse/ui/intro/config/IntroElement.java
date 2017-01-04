@@ -4,7 +4,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  **************************************************************************************************/
 
@@ -20,7 +20,7 @@ import java.util.List;
  * instances of this class from <code>IntroConfigurer</code> to dynamically complete the intro
  * content. Attribute and element names, as well as content model must match the intro
  * schema.
- * 
+ *
  * @since 3.2
  */
 public class IntroElement {
@@ -32,7 +32,7 @@ public class IntroElement {
 
 	/**
 	 * Creates a new intro element with the provided name.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the new intro element
 	 */
@@ -42,7 +42,7 @@ public class IntroElement {
 
 	/**
 	 * Sets the value of the named attribute.
-	 * 
+	 *
 	 * @param name
 	 *            attribute name
 	 * @param value
@@ -54,7 +54,7 @@ public class IntroElement {
 
 	/**
 	 * Returns the value of the attribute with a given name.
-	 * 
+	 *
 	 * @param name
 	 *            the attribute name
 	 * @return value of the attribute with a given name or <code>null</code> if not set.
@@ -65,7 +65,7 @@ public class IntroElement {
 
 	/**
 	 * Returns the names of all the attributes defined in this element.
-	 * 
+	 *
 	 * @return an enumeration of all the element names
 	 */
 
@@ -75,7 +75,7 @@ public class IntroElement {
 
 	/**
 	 * Returns the name of the element.
-	 * 
+	 *
 	 * @return name of the element
 	 */
 	public String getName() {
@@ -84,7 +84,7 @@ public class IntroElement {
 
 	/**
 	 * Returns the value of the element.
-	 * 
+	 *
 	 * @return value of the element or <code>null</code> if not set.
 	 */
 	public String getValue() {
@@ -93,7 +93,7 @@ public class IntroElement {
 
 	/**
 	 * Sets the value of the element.
-	 * 
+	 *
 	 * @param value
 	 *            the value of this element
 	 */
@@ -103,7 +103,7 @@ public class IntroElement {
 
 	/**
 	 * Adds a child to this element.
-	 * 
+	 *
 	 * @param child
 	 *            the new child of this element
 	 */
@@ -115,7 +115,7 @@ public class IntroElement {
 
 	/**
 	 * Returns the children of this element.
-	 * 
+	 *
 	 * @return an array of child elements or an empty array of there are no children.
 	 */
 	public IntroElement[] getChildren() {
@@ -123,7 +123,7 @@ public class IntroElement {
 			return new IntroElement[0];
 		return (IntroElement[]) children.toArray(new IntroElement[children.size()]);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IntroElement) {

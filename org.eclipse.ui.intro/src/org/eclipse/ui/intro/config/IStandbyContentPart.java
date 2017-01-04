@@ -28,17 +28,17 @@ import org.eclipse.ui.intro.IIntroPart;
  *       		pluginId=&quot;com.x.y.somePluginId&quot;
  *       		class=&quot;com.x.y.someClass&quot;
  *       		id=&quot;com.x.y.someContentPartId&quot;&gt;
- *       	&lt;/standbyPart&gt; 
+ *       	&lt;/standbyPart&gt;
  *         &lt;/extension&gt;
  * </pre>
- * 
+ *
  * </p>
  * Standby content parts have a life cycle that starts with a call to init,
  * shortly after part construction, followed by a call to createPartControl.
  * During these two calls, the part is responsible for creating its content and
  * using the memento to try to recreate its previous state. SetInput is the last
  * method called when trying to create a standby part.
- * 
+ *
  * @since 3.0
  */
 public interface IStandbyContentPart {
@@ -48,7 +48,7 @@ public interface IStandbyContentPart {
      * <p>
      * Clients should not call this method. The intro framework calls this
      * method when it needs to.
-     * 
+     *
      * @param parent
      *            the parent control
      * @param toolkit
@@ -60,7 +60,7 @@ public interface IStandbyContentPart {
      * Returns the primary control associated with this standby part. The
      * control is typically set during the createPartControl() call when this
      * part is being created.
-     * 
+     *
      * @return the SWT control which displays this standby part's content, or
      *         <code>null</code> if this standby part's controls have not yet
      *         been created.
@@ -77,7 +77,7 @@ public interface IStandbyContentPart {
      * construction. It marks the start of this parts' lifecycle. Clients must
      * not call this method.
      * </p>
-     * 
+     *
      * @param introPart
      *            the intro part hosting this stanndby content part.
      * @param memento
@@ -95,7 +95,7 @@ public interface IStandbyContentPart {
      * an input specified, or when this standby part is being recreated from a
      * previous workbench session. In this case, the standby part is responsible
      * for handling a null input, and recreating itself from a cached IMemento.
-     * 
+     *
      * @param input
      *            the input object to be used by this standby part.
      */
@@ -125,7 +125,7 @@ public interface IStandbyContentPart {
      * This method is automatically called by the workbench at appropriate
      * times. Clients must not call this method directly.
      * </p>
-     * 
+     *
      * @param memento
      *            a memento to receive the object state
      */

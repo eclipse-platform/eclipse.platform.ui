@@ -22,9 +22,9 @@ public final class IntroEvaluationContext {
 
 	private static final String VARIABLE_PLATFORM = "platform"; //$NON-NLS-1$
 	private static final String VARIABLE_WORKBENCH = "workbench"; //$NON-NLS-1$
-	
+
 	private static EvaluationContext context;
-	
+
 	/*
 	 * Returns the evaluation context to use in intro documents.
 	 */
@@ -36,7 +36,7 @@ public final class IntroEvaluationContext {
 		}
 		return context;
 	}
-	
+
 	/*
 	 * Not meant to be instantiated.
 	 */

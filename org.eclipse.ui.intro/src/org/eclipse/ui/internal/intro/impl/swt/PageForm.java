@@ -79,7 +79,7 @@ public class PageForm implements IIntroConstants {
     };
 
     /**
-     * 
+     *
      */
     public PageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
             Form parentForm) {
@@ -90,7 +90,7 @@ public class PageForm implements IIntroConstants {
 
     /**
      * Create a Form for holding pages without navigation.
-     * 
+     *
      * @param pageBook
      */
     public void createPartControl(ScrolledPageBook mainPageBook,
@@ -129,7 +129,7 @@ public class PageForm implements IIntroConstants {
      * This method is called when the current page changes. It creates the
      * PageContentForm if necessary, and handles showing the page in the Page
      * Book. It creates a model PageContentForm for the current page.
-     * 
+     *
      * @param pageID
      */
     public void showPage(AbstractIntroPage page,
@@ -159,7 +159,7 @@ public class PageForm implements IIntroConstants {
         // a few methods like 'setFocus()' etc.
         // DG
     }
-    
+
     public void reflow() {
     	categoryPageBook.reflow(true);
     }

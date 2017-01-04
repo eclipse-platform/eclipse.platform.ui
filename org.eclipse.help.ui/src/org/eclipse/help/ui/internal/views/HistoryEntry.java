@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ public class HistoryEntry {
 	private String target;
 	private Object data;
 	/**
-	 * 
+	 *
 	 */
 	public HistoryEntry(int type, String target, Object data) {
 		this.type = type;

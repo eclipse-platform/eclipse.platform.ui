@@ -42,7 +42,7 @@ public class IntroModelSerializer {
     public IntroModelSerializer(IntroModelRoot root) {
         this(root, false);
     }
-    
+
     public IntroModelSerializer(IntroModelRoot root, boolean filter) {
         this.buffer = new StringBuffer();
         this.filter = filter;
@@ -73,7 +73,7 @@ public class IntroModelSerializer {
         }
         return url;
     }
-    
+
     private void printModelRootInfo(IntroModelRoot model, StringBuffer text) {
         text.append("\nIntro Model Content:"); //$NON-NLS-1$
         text.append("\n======================"); //$NON-NLS-1$
@@ -224,7 +224,7 @@ public class IntroModelSerializer {
         text.append(indent + "alt = " + image.getAlt()); //$NON-NLS-1$
         text.append(indent + "style-id = " + image.getStyleId()); //$NON-NLS-1$
     }
-    
+
     private void printSeparator(StringBuffer text, IntroSeparator sep, String indent) {
         text.append(indent + "HR: id = " + sep.getId()); //$NON-NLS-1$
         indent = indent + "\t\t"; //$NON-NLS-1$
@@ -282,7 +282,7 @@ public class IntroModelSerializer {
 
     /**
      * Appends a given page's categories to the Text buffer.
-     * 
+     *
      * @param text
      */
     private void printPages(IntroPage[] pages, StringBuffer text) {

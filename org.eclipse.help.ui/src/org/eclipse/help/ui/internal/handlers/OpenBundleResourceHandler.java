@@ -44,15 +44,15 @@ public class OpenBundleResourceHandler extends AbstractHandler {
 				if(pluginPath.startsWith("/")) //$NON-NLS-1$
 					pluginPath = pluginPath.substring(1);
 				url = new URL(Platform.getInstanceLocation().getURL().toString()+pluginId+"/"+pluginPath); //$NON-NLS-1$
-				workspaceFile = new File(url.getFile());	
+				workspaceFile = new File(url.getFile());
 				if(!workspaceFile.exists())
-				{	
+				{
 					url = BaseHelpSystem.resolve("/" + pluginId + '/' + pluginPath , true); //$NON-NLS-1$
 					if (url == null)
 					{
 						errorMessage="file not found:" + pluginId+"/"+pluginPath; //$NON-NLS-1$ //$NON-NLS-2$
 						throw new ExecutionException(errorMessage);
-					}		
+					}
 				}
 			}
 			catch (Exception ex) {
@@ -64,8 +64,8 @@ public class OpenBundleResourceHandler extends AbstractHandler {
 		try {
 			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench()
 					.getBrowserSupport();
-			
-			IWebBrowser browser = browserSupport.createBrowser(browserId); 
+
+			IWebBrowser browser = browserSupport.createBrowser(browserId);
 			browser.openURL(url);
 		} catch (PartInitException ex) {
 			throw new ExecutionException("error opening browser", ex); //$NON-NLS-1$

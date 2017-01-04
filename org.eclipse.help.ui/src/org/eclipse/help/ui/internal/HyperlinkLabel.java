@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
 
 /**
- * 
+ *
  * A canvas holding a hyperlink label. Need this to deal with focus selection.
  */
 public class HyperlinkLabel extends Canvas {
@@ -50,7 +50,7 @@ public class HyperlinkLabel extends Canvas {
 
 	/**
 	 * Constructor for Hyperlink.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */

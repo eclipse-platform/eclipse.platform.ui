@@ -32,8 +32,8 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
-	
-	
+
+
 	public class ScopeObserver implements Observer {
 
 		@Override
@@ -49,14 +49,14 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 	private String id;
 	private ScopeObserver scopeObserver;
 
-	public ScopeSelectPart(Composite parent, FormToolkit toolkit) {	
+	public ScopeSelectPart(Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 1;
 		container.setLayout(layout);
 		ScopeSetManager scopeSetManager = ScopeState.getInstance().getScopeSetManager();
 		String name = scopeSetManager.getActiveSet().getName();
-		scopeSetLink = toolkit.createFormText(container, false); 
+		scopeSetLink = toolkit.createFormText(container, false);
 		setScopeLink(name);
 		scopeSetLink.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -70,13 +70,13 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 		td.valign = TableWrapData.MIDDLE;
 		scopeSetLink.setLayoutData(td);
 		scopeObserver = new ScopeObserver();
-		scopeSetManager.addObserver(scopeObserver);	
+		scopeSetManager.addObserver(scopeObserver);
 	}
-	
+
 	private void doChangeScopeSet() {
 		ScopeSetManager scopeSetManager = ScopeState.getInstance().getScopeSetManager();
-		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(), 
-				scopeSetManager, 
+		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(),
+				scopeSetManager,
 				ScopeState.getInstance().getEngineManager(), true);
 		dialog.setInput(scopeSetManager);
 		dialog.create();
@@ -90,7 +90,7 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 			scopeSetManager.notifyObservers();
 		}
 	}
-	
+
 	private void setActiveScopeSet(ScopeSet set) {
 		setScopeLink(set.getName());
 		ScopeState.getInstance().getScopeSetManager().setActiveSet(set);
@@ -106,7 +106,7 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 			nameBuff.append(Messages.FederatedSearchPart_changeScopeSet);
 			nameBuff.append("\""); //$NON-NLS-1$
 		}
-			
+
 		nameBuff.append(">");  //$NON-NLS-1$
 		nameBuff.append(EscapeUtils.escapeSpecialChars(name ));
 		nameBuff.append(" </a><b>"); //$NON-NLS-1$
@@ -159,19 +159,19 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 
 	@Override
 	public void stop() {
-		
+
 	}
 
 	@Override
 	public void toggleRoleFilter() {
-		
+
 	}
 
 	@Override
 	public void refilter() {
-			
+
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (scopeObserver != null) {
@@ -179,5 +179,5 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 		}
 		super.dispose();
 	}
-		
+
 }

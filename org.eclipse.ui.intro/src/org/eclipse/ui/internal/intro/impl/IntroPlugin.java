@@ -30,11 +30,11 @@ public class IntroPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
 
 	// Debug control variables
-	public static boolean LOG_WARN = 
+	public static boolean LOG_WARN =
 		"true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID+"/debug/warn")); //$NON-NLS-1$ //$NON-NLS-2$
-	public static boolean LOG_INFO = 
+	public static boolean LOG_INFO =
 		"true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID+"/debug/info")); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
     // The static shared instance.
     private static IntroPlugin inst;
 
@@ -45,12 +45,12 @@ public class IntroPlugin extends AbstractUIPlugin {
     // used for performance logging. Time when the constructor of
     // CustomizableIntroPart is called.
     private long uiCreationStartTime;
-    
+
     // image registry that can be disposed while the
     // plug-in is still active. This is important for
     // switching themes after the plug-in has been loaded.
     private ImageRegistry volatileImageRegistry;
-    
+
     // debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_NO_BROWSER = false;
@@ -69,7 +69,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     public static IntroPlugin getDefault() {
         return inst;
     }
-    
+
     public ImageRegistry getVolatileImageRegistry() {
     	if (volatileImageRegistry==null) {
     		volatileImageRegistry = createImageRegistry();
@@ -77,7 +77,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     	}
     	return volatileImageRegistry;
     }
-    
+
     public void resetVolatileImageRegistry() {
     	if (volatileImageRegistry!=null) {
     		volatileImageRegistry.dispose();
@@ -108,7 +108,7 @@ public class IntroPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the model root. Will always guarantee that model is loaded.
-     * 
+     *
      * @return Returns the introModelRoot.
      */
     public IntroModelRoot getIntroModelRoot() {
@@ -201,8 +201,8 @@ public class IntroPlugin extends AbstractUIPlugin {
 	 */
 	public static synchronized void logError(String message) {
 		logError(message,null);
-	}		
-	
+	}
+
 	/**
 	 * Logs an Error message with an exception.  To print errors to console,
 	 * run eclipse with the -console -consolelog arguments
@@ -213,13 +213,13 @@ public class IntroPlugin extends AbstractUIPlugin {
 		}
 		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, message, ex);
 		IntroPlugin.getDefault().getLog().log(errorStatus);
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Logs a Warning message with an exception.  To print warnings to console,
 	 * run eclipse with the -console -consolelog arguments
-	 * 
+	 *
 	 * Only logs if the following conditions are true:
 	 * 	-debug switch is enabled at the command line
 	 *  .options file is placed at the eclipse work directory with the contents:
@@ -229,7 +229,7 @@ public class IntroPlugin extends AbstractUIPlugin {
 	public static synchronized void logWarning(String message) {
 		logWarning(message,null);
 	}
-	
+
 
 	public static synchronized void logWarning(String message,Throwable ex) {
 		if (IntroPlugin.getDefault().isDebugging() && LOG_WARN) {
@@ -240,11 +240,11 @@ public class IntroPlugin extends AbstractUIPlugin {
 			getDefault().getLog().log(warningStatus);
 		}
 	}
-	
+
 	/**
 	 * Logs a debug message.  To print messages to console,
 	 * run eclipse with the -console -consolelog arguments
-	 * 
+	 *
 	 * Only logs if the following conditions are true:
 	 * 	-debug switch is enabled at the command line
 	 *  .options file is placed at the eclipse work directory with the contents:

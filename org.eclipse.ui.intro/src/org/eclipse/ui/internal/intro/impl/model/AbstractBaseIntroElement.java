@@ -51,7 +51,7 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
 
     /**
      * Filter this element out based on the presentation kind.
-     * 
+     *
      */
     private boolean checkFilterState() {
         if (this.isOfType(AbstractIntroElement.MODEL_ROOT))
@@ -69,7 +69,7 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
     public String getStyleId() {
         return style_id;
     }
-    
+
     @Override
 	protected void loadFromParent() {
         style_id = getAttribute(getElement(), ATT_STYLE_ID);
@@ -88,7 +88,7 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
      * this element has been added to the model, and it has a parent. Also, this
      * method will not be valid if the UI has not been loaded yet because it it
      * the creation of the UI that determines the presentation details.
-     * 
+     *
      * @return Returns the isFiltered.
      */
     public boolean isFiltered() {

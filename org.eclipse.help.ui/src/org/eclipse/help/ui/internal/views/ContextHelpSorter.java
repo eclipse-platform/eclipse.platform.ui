@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,13 @@ import org.eclipse.jface.viewers.ViewerComparator;
 public class ContextHelpSorter extends ViewerComparator {
 	private IContext2 context;
 	private LinkedList<String> list;
-	
+
 	public ContextHelpSorter(IContext2 context) {
 		super(ReusableHelpPart.SHARED_COLLATOR);
 		list = new LinkedList<>();
 		this.context = context;
 	}
-	
+
 	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		for (int i = 0; i < elements.length; i++) {

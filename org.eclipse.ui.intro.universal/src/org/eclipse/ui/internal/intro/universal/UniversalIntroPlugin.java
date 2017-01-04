@@ -29,12 +29,12 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
     // used for performance logging. Time when the constructor of
     // CustomizableIntroPart is called.
     private long uiCreationStartTime;
-    
+
     // image registry that can be disposed while the
     // plug-in is still active. This is important for
     // switching themes after the plug-in has been loaded.
     private ImageRegistry volatileImageRegistry;
-    
+
     /**
      * The constructor.
      */
@@ -48,7 +48,7 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
     public static UniversalIntroPlugin getDefault() {
         return inst;
     }
-    
+
     /**
      * Returns the Intro Part.
      */
@@ -96,7 +96,7 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
         return PlatformUI.getWorkbench().getIntroManager().closeIntro(
             getIntro());
     }
-    
+
     public ImageRegistry getVolatileImageRegistry() {
     	if (volatileImageRegistry==null) {
     		volatileImageRegistry = createImageRegistry();
@@ -104,7 +104,7 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
     	}
     	return volatileImageRegistry;
     }
-    
+
     public void resetVolatileImageRegistry() {
     	if (volatileImageRegistry!=null) {
     		volatileImageRegistry.dispose();

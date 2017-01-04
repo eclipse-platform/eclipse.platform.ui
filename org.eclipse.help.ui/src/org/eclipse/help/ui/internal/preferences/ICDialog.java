@@ -43,7 +43,7 @@ import org.eclipse.ui.PlatformUI;
 public class ICDialog extends StatusDialog implements Listener, SelectionListener {
 
 	private IC ic = null;
-	
+
 	private Text nameText;
 	private Text hrefText;
 
@@ -80,25 +80,25 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 		topGroup.setLayout(layout);
 		topGroup.setFont(top.getFont());
 		topGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		
+
 		Label label = new Label(topGroup, SWT.NONE);
 		label.setText(Messages.AddICDialog_4);
-		
+
 		nameText = new Text(topGroup, SWT.BORDER);
 		nameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		if (nameText.getOrientation() == SWT.RIGHT_TO_LEFT)
 			nameText.setOrientation(SWT.LEFT_TO_RIGHT);
 		nameText.addListener(SWT.Modify, this);
-		
+
 		label = new Label(topGroup, SWT.NONE);
 		label.setText(Messages.InfoCenterPage_url);
-		
+
 		hrefText = new Text(topGroup, SWT.BORDER);
 		hrefText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		if (hrefText.getOrientation() == SWT.RIGHT_TO_LEFT)
 			hrefText.setOrientation(SWT.LEFT_TO_RIGHT);
 		hrefText.addListener(SWT.Modify, this);
-		
+
 
 		if (ic!=null)
 		{
@@ -108,9 +108,9 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 		}
 		else
 			this.getShell().setText(Messages.AddICDialog_2);
-		
 
-		Dialog.applyDialogFont(top);	
+
+		Dialog.applyDialogFont(top);
 		return top;
 
 	}
@@ -119,22 +119,22 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 	protected void createButtonsForButtonBar(Composite parent) {
 
 		testButton = this.createButton(
-				parent, 
-				IDialogConstants.CLIENT_ID, 
-				Messages.HelpContentBlock_testConnectionTitle, 
+				parent,
+				IDialogConstants.CLIENT_ID,
+				Messages.HelpContentBlock_testConnectionTitle,
 				true);
 		testButton.addSelectionListener(this);
 		super.createButtonsForButtonBar(parent);
-		
+
 
 		//Initialize validity
 		updateValidity();
-		
+
 		if (testConnect)
 			testConnection();
 	}
-	
-	
+
+
 	@Override
 	public void initializeBounds() {
 		Point size = getInitialSize();
@@ -142,28 +142,28 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 		this.getShell().setBounds(location.x, location.y,
 				size.x + 180, size.y);
 	}
-	
+
 	@Override
 	public void okPressed() {
 		try {
 			String href = formalizeHref(hrefText.getText());
-			
+
 			ic = new IC(nameText.getText(),href,true);
 		} catch (MalformedURLException e) {}  // This should never happen since we test in updateValidity
 		this.setReturnCode(OK);
 		this.close();
 	}
-	
+
 	public String formalizeHref(String href)
 	{
 		if (href.endsWith("/index.jsp")) //$NON-NLS-1$
 			href = href.substring(0,href.lastIndexOf("/index.jsp")); //$NON-NLS-1$
 		else if (href.endsWith("/site/site.xml")) //$NON-NLS-1$
 			href = href.substring(0,href.lastIndexOf("/site/site.xml")); //$NON-NLS-1$
-		
+
 		return href;
 	}
-	
+
 	/*
 	 * Checks for errors in the user input and shows/clears the error message
 	 * as appropriate.
@@ -182,18 +182,18 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 
 				if (!href.matches(".*\\://.+/.+")) //$NON-NLS-1$
 					status = new Status(IStatus.ERROR,"org.eclipse.help.ui",Messages.InfoCenterPage_invalidURL); //$NON-NLS-1$
-									
+
 			} catch (MalformedURLException e) {
 				status = new Status(IStatus.ERROR,"org.eclipse.help.ui",Messages.InfoCenterPage_invalidURL); //$NON-NLS-1$
 			}
 		}
-		
+
 //		if (testButton!=null)
 //			testButton.setEnabled(status.isOK());
-		
+
 		this.updateStatus(status);
 	}
-	
+
 	private boolean areFieldsValid()
 	{
 		if (nameText!=null && nameText.getText().equals(""))  //$NON-NLS-1$
@@ -206,14 +206,14 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 
 				if (!href.matches(".*\\://.+/.+")) //$NON-NLS-1$
 					return false;
-									
+
 			} catch (MalformedURLException e) {
 				return false;
 			}
-		}	
+		}
 		return true;
 	}
-	
+
 	private void testConnection()
 	{
 		IC testIC;
@@ -222,13 +222,13 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 			testIC = new IC(nameText.getText(),formalizeHref(hrefText.getText()),true);
 			boolean connected = TestConnectionUtility.testConnection(testIC.getHost(),
 						testIC.getPort()+"", testIC.getPath(),testIC.getProtocol()); //$NON-NLS-1$
-			
+
 
 			if(connected)
 				status = new Status(IStatus.INFO,"org.eclipse.help.ui",Messages.TestConnectionDialog_12); //$NON-NLS-1$
 			else
 				status = new Status(IStatus.WARNING,"org.eclipse.help.ui",Messages.TestConnectionDialog_13); //$NON-NLS-1$
-			
+
 		} catch (MalformedURLException e) {
 
 			status = new Status(IStatus.WARNING,"org.eclipse.help.ui",Messages.TestConnectionDialog_13); //$NON-NLS-1$

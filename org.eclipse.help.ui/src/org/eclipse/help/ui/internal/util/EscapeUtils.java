@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class EscapeUtils {
 	public static String escapeSpecialChars(String value) {
 		return escapeSpecialChars(value, false);
 	}
-	
+
 	/**
 	 * Replace every occurrence of &, <, >, ', " by an escape character
 	 * but allow <b> and </b> through
@@ -38,11 +38,11 @@ public class EscapeUtils {
 	public static String escapeSpecialCharsLeavinggBold(String value) {
 		return escapeSpecialChars(value, true);
 	}
-	
+
 	public static String escapeAmpersand(String value) {
 		return value.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	* Escape any ampersands used in a label
 	**/
@@ -52,7 +52,7 @@ public class EscapeUtils {
 		if (message.indexOf('&') < 0) {
 			return message;
 		}
-		
+
 		int next = 0;
 		StringBuffer result = new StringBuffer();
 		int index = message.indexOf('&');
@@ -108,7 +108,7 @@ public class EscapeUtils {
 							buf.append("<br/>"); //$NON-NLS-1$
 							i+= 3;
 							continue;
-						}					
+						}
 					}
 					if (i + 2 < length) {
 						String tag = value.substring(i, i + 3);

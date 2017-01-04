@@ -44,7 +44,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	private String id;
 
 	private int VSPACE = 10;
-	
+
 	private static boolean dynamicHelpPreferenceRead = false;
 	private static boolean useDynamicHelp = false;
 
@@ -55,7 +55,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 				boolean flushCache) {
 			Point topSize = contextHelpPart.getControl().computeSize(wHint,
 					hHint, flushCache);
-		   
+
 			Point botSize = dynamicHelpPart == null ? new Point(0, 0) :
 			    dynamicHelpPart.getControl().computeSize(wHint,
 					hHint, flushCache);
@@ -87,7 +87,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 			int bot = dynamicHelpPart == null ? 0 : computeMinimumWidth(dynamicHelpPart, parent, changed);
 			return Math.max(top, bot);
 		}
-		
+
 		private int computeMinimumWidth(IHelpPart part, Composite parent, boolean changed) {
 			ILayoutExtension le = (ILayoutExtension)((Composite)part.getControl()).getLayout();
 			return le.computeMinimumWidth(parent, changed);
@@ -123,22 +123,22 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		contextHelpPart.init(parent, IHelpUIConstants.HV_CONTEXT_HELP, memento);
 		mform.addPart(contextHelpPart);
 		if (isUseDynamicHelp()) {
-		    dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);	
+		    dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);
 		    mform.addPart(dynamicHelpPart);
 		}
 		mform.initialize();
 	}
-	
+
 	@Override
 	public void dispose() {
 		mform.dispose();
 	}
-	
+
 	public void handleActivation(Control c, IWorkbenchPart wpart) {
 		IContextProvider provider = (wpart == null) ? null : (IContextProvider) wpart.getAdapter(IContextProvider.class);
 		contextHelpPart.handleActivation(provider, null, c, wpart, false);
 	}
-	
+
 	public void setDefaultText(String defaultText) {
 		contextHelpPart.setDefaultText(defaultText);
 	}
@@ -227,7 +227,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	    	// Preference created in case anyone complains about the removal of
 	    	// the dynamic help section. This is not API, not documented and may
 	    	// be removed in a future release.
-	    	useDynamicHelp = 
+	    	useDynamicHelp =
 	    		Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, "show_dynamic_help", false, null); //$NON-NLS-1$
 	    }
 		return useDynamicHelp;

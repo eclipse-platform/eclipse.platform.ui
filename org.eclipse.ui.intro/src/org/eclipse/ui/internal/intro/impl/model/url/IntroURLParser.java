@@ -97,7 +97,7 @@ public class IntroURLParser {
      * Checks to see if tha passed URL is an Intro URL. An intro URL is an http
      * URL that has the intro plugin id as a host. eg:
      * "http://org.eclipse.ui.intro/test".
-     * 
+     *
      * @param url
      * @return true if url is an intro URL.
      */
@@ -136,7 +136,7 @@ public class IntroURLParser {
     /**
      * Retruns the path attribute of the passed URL, stripped out of the leading
      * "/". Returns null if the url does not have a path.
-     * 
+     *
      * @param url
      * @return
      */
@@ -151,7 +151,7 @@ public class IntroURLParser {
 
     /**
      * Retruns the Query part of the URL as an instance of a Properties class.
-     * 
+     *
      * @param url
      * @return
      */
@@ -176,7 +176,7 @@ public class IntroURLParser {
                         + params[i]);
                 continue;
             }
-            
+
             String key = urlDecode(keyValuePair[0]);
 			if (key == null) {
 				Log.warning("Failed to URL decode key: " + keyValuePair[0]); //$NON-NLS-1$
@@ -188,7 +188,7 @@ public class IntroURLParser {
 				Log.warning("Failed to URL decode value: " + keyValuePair[1]); //$NON-NLS-1$
 				continue;
 			}
-            
+
             properties.setProperty(key, value);
         }
         return properties;

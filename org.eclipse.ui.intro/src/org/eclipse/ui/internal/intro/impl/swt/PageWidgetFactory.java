@@ -174,7 +174,7 @@ public class PageWidgetFactory {
             c = createSeparator(parent, sep);
             updateLayoutData(c, element);
             break;
-        	
+
         default:
             break;
         }
@@ -238,7 +238,7 @@ public class PageWidgetFactory {
 
     /**
      * Creates an Image Hyperlink from an IntroLink. Model object is NOT cached.
-     * 
+     *
      * @param body
      * @param link
      */
@@ -306,7 +306,7 @@ public class PageWidgetFactory {
 
     /**
      * Creates a forms Text or FormattedText.
-     * 
+     *
      * @param body
      * @param link
      */
@@ -366,7 +366,7 @@ public class PageWidgetFactory {
         }
         return ilabel;
     }
-    
+
     public Control createContentProvider(Composite parent,
             IntroContentProvider provider) {
         // If we've already loaded the content provider for this element,
@@ -411,7 +411,7 @@ public class PageWidgetFactory {
         }
         return container;
     }
-    
+
     protected Control createSeparator(Composite parent, IntroSeparator sep) {
     	String key = sep.getParentPage().getId()+".separator.fg"; //$NON-NLS-1$
         Color fg = styleManager.getColor(toolkit, key);
@@ -462,7 +462,7 @@ public class PageWidgetFactory {
 
     /**
      * Will be only called for non formatted text.
-     * 
+     *
      * @param text
      * @return
      */
@@ -481,7 +481,7 @@ public class PageWidgetFactory {
     /**
      * Check the filter state of the element. Only base elements have the filter
      * attribute.
-     * 
+     *
      * @param element
      * @return
      */

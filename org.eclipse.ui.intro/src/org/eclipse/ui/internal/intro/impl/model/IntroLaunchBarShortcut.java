@@ -20,7 +20,7 @@ import org.eclipse.ui.intro.config.IntroElement;
 
 /**
  * An Intro Config component that captures launch bar shortcut information.
- * 
+ *
  * @since 3.1
  */
 public class IntroLaunchBarShortcut extends AbstractIntroElement {
@@ -30,14 +30,14 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
     private static final String ATT_TOOLTIP = "tooltip"; //$NON-NLS-1$
     private static final String ATT_ICON = "icon"; //$NON-NLS-1$
     private static final String ATT_URL = "url"; //$NON-NLS-1$
-    
+
     private IntroElement ielement;
-    
+
     IntroLaunchBarShortcut(IConfigurationElement element, IntroElement ielement) {
     	super(element);
     	this.ielement = ielement;
     }
-    
+
     IntroLaunchBarShortcut(IConfigurationElement element) {
         super(element);
     }
@@ -47,7 +47,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
 	public int getType() {
         return AbstractIntroElement.LAUNCH_BAR_SHORTCUT;
     }
-    
+
     private String getAttribute(String name) {
     	if (ielement!=null)
     		return ielement.getAttribute(name);
@@ -56,7 +56,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
 
     /**
      * Returns the URL of this shortcut.
-     * 
+     *
      * @return
      */
     public String getURL() {
@@ -65,7 +65,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
 
     /**
      * Returns the tooltip of this shortcut.
-     * 
+     *
      * @return
      */
     public String getToolTip() {
@@ -74,7 +74,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
 
     /**
      * Returns the relative icon path of this shortcut.
-     * 
+     *
      * @return
      */
     private String getIcon() {
@@ -84,7 +84,7 @@ public class IntroLaunchBarShortcut extends AbstractIntroElement {
     /**
      * Returns the icon image of this shortcut, or <code>null</code> if not
      * found.
-     * 
+     *
      * @return
      */
     public ImageDescriptor getImageDescriptor() {

@@ -44,7 +44,7 @@ import org.eclipse.ui.part.ViewPart;
 public class HelpView extends ViewPart implements IPartListener2,
 		ISelectionChangedListener, IPageChangedListener {
 	private FormToolkit toolkit;
-	
+
 	private String firstPageId;
 
 	private ReusableHelpPart reusableHelpPart;
@@ -56,7 +56,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	private boolean visible;
 
 	/**
-	 * 
+	 *
 	 */
 	public HelpView() {
 	}
@@ -69,7 +69,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		// toolkit.setBackground(toolkit.getColors().createNoContentBackground());
 		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
-		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); 
+		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText);
 		reusableHelpPart.showPage(getFirstPage());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 	         "org.eclipse.help.ui.helpView"); //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		IPartService service = window.getPartService();
 		service.addPartListener(this);
 	}
-	
+
 	@Override
 	public void saveState(IMemento memento) {
     	if (reusableHelpPart!=null && memento!=null) {
@@ -154,7 +154,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		} else {
 			if (HelpPlugin.DEBUG_CONTEXT) {
 				if (c == null) {
-				    System.out.println("Context: focus control is null " ); //$NON-NLS-1$			  
+				    System.out.println("Context: focus control is null " ); //$NON-NLS-1$
 				}
 				if (!c.isVisible()) {
 				    System.out.println("Context: focus control not visible " ); //$NON-NLS-1$
@@ -168,7 +168,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 			((IPageChangeProvider)part).addPageChangedListener(this);
 		monitoredPart = part;
 	}
-	
+
 	private void uninstallPageListener(IWorkbenchPart part) {
 		if (part instanceof IPageChangeProvider)
 			((IPageChangeProvider)part).removePageChangedListener(this);
@@ -313,7 +313,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getFirstPage()
 	 */
 	protected String getFirstPage() {
@@ -348,7 +348,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getHelpPartStyle()
 	 */
 	protected int getHelpPartStyle() {
@@ -365,17 +365,17 @@ public class HelpView extends ViewPart implements IPartListener2,
 		if (reusableHelpPart != null)
 			reusableHelpPart.startSearch(phrase);
 	}
-	
+
 	public void showIndex() {
 		if (reusableHelpPart != null)
 			reusableHelpPart.showPage(IHelpUIConstants.HV_INDEX_PAGE, true);
 	}
-	
+
 	public void showHelp(String href) {
 		if (reusableHelpPart != null)
 			reusableHelpPart.showURL(href);
 	}
-	
+
 	public void showDynamicHelp(IWorkbenchPart part, Control c) {
 		if (reusableHelpPart != null)
 			reusableHelpPart.showDynamicHelp(part, c);

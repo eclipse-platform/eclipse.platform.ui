@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,9 +25,9 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	private UIThread2 secondThread;
 	private String browserType;
 	class UIThread2 extends Thread {
-		
+
 		Display d;
-		
+
 		boolean runEventLoop = true;
 
 		public UIThread2() {
@@ -103,7 +103,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	}
 	/**
 	 * Must be run on UI thread
-	 * 
+	 *
 	 * @param url
 	 */
 	private void uiDisplayURL(final String url) {
@@ -131,7 +131,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		}
 	}
 	/**
-	 *  
+	 *
 	 */
 	private EmbeddedBrowser getBrowser() {
 		if (browser == null || browser.isDisposed()) {

@@ -89,7 +89,7 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_menu_top_left;
 	public static String WelcomeCustomizationPreferencePage_menu_top_right;
 	public static String WelcomeCustomizationPreferencePage_menu_bottom_left;
-	public static String WelcomeCustomizationPreferencePage_menu_bottom_right;	
+	public static String WelcomeCustomizationPreferencePage_menu_bottom_right;
 	public static String WelcomeCustomizationPreferencePage_browse;
 	public static String WelcomeCustomizationPreferencePage_browseTitle;
 	public static String SharedIntroConfigurer_customize_label;

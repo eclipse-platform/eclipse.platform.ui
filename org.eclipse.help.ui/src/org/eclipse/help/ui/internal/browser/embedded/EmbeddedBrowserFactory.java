@@ -59,7 +59,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 
 	/**
 	 * Must run on UI thread
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean test() {
@@ -79,7 +79,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 					// Browser not implemented
 					available = false;
 				} else {
-					Status errorStatus = new Status(IStatus.WARNING, HelpUIPlugin.PLUGIN_ID, IStatus.OK, 
+					Status errorStatus = new Status(IStatus.WARNING, HelpUIPlugin.PLUGIN_ID, IStatus.OK,
 							"An error occurred during creation of embedded help browser.", new Exception(se)); //$NON-NLS-1$
 					HelpPlugin.getDefault().getLog().log(errorStatus);
 				}

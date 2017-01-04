@@ -60,7 +60,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Provides access to singleton
-	 * 
+	 *
 	 * @return HelpUIPlugin
 	 */
 	public static HelpUIPlugin getDefault() {
