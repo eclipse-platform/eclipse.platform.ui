@@ -1,3 +1,4 @@
 # To force a version qualifier update add the bug here
 Bug 403352 - Update all parent versions to match our build stream
 https://bugs.eclipse.org/bugs/show_bug.cgi?id=492238#c12
+Bug 509973 - Comparator errors in I20170105-0320
