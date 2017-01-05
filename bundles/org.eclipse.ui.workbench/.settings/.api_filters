@@ -233,5 +233,11 @@
                 <message_argument value="3.108.1"/>
             </message_arguments>
         </filter>
+        <filter comment="API was backported to 4.6.2" id="926941240">
+            <message_arguments>
+                <message_argument value="3.109.0"/>
+                <message_argument value="3.108.2"/>
+            </message_arguments>
+        </filter>
     </resource>
 </component>
