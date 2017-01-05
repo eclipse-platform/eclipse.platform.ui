@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.editors" version="2">
-    <resource path="src/org/eclipse/ui/texteditor/DefaultMarkerAnnotationAccess.java" type="org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess">
-        <filter id="643842064">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="API was backported to 4.6.2" id="926941240">
             <message_arguments>
-                <message_argument value="AnnotationTypeHierarchy"/>
-                <message_argument value="DefaultMarkerAnnotationAccess"/>
-                <message_argument value="getAnnotationTypeHierarchy()"/>
+                <message_argument value="3.11.0"/>
+                <message_argument value="3.10.1"/>
             </message_arguments>
         </filter>
     </resource>
@@ -14,6 +13,15 @@
             <message_arguments>
                 <message_argument value="IAbstractTextEditorHelpContextIds"/>
                 <message_argument value="ITextEditorHelpContextIds"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/texteditor/DefaultMarkerAnnotationAccess.java" type="org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess">
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="AnnotationTypeHierarchy"/>
+                <message_argument value="DefaultMarkerAnnotationAccess"/>
+                <message_argument value="getAnnotationTypeHierarchy()"/>
             </message_arguments>
         </filter>
     </resource>
