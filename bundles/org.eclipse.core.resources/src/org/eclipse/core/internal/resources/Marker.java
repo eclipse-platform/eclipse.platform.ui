@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.Map;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -336,5 +338,35 @@ public class Marker extends PlatformObject implements IMarker {
 		} finally {
 			workspace.endOperation(null, false);
 		}
+	}
+
+	/** For debugging only */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Marker ["); //$NON-NLS-1$
+		sb.append("on: ").append(resource.getFullPath()); //$NON-NLS-1$
+		MarkerInfo info = getInfo();
+		if (info == null) {
+			sb.append(", not found]"); //$NON-NLS-1$
+			return sb.toString();
+		}
+		sb.append(", id: ").append(info.getId()); //$NON-NLS-1$
+		sb.append(", type: ").append(info.getType()); //$NON-NLS-1$
+		Map<String, Object> attributes = info.getAttributes();
+		if (attributes != null) {
+			TreeMap<String, Object> tm = new TreeMap<>(attributes);
+			Set<Entry<String, Object>> set = tm.entrySet();
+			if (!set.isEmpty()) {
+				sb.append(", attributes: ["); //$NON-NLS-1$
+				for (Entry<String, Object> entry : set) {
+					sb.append(entry.getKey()).append(": ").append(entry.getValue()).append(", "); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				sb.setLength(sb.length() - 2);
+				sb.append(']');
+			}
+		}
+		sb.append(", created: ").append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date(info.getCreationTime()))); //$NON-NLS-1$
+		sb.append(']');
+		return sb.toString();
 	}
 }
