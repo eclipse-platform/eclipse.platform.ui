@@ -59,6 +59,11 @@ final class Line implements IRegion {
 	public int getLength() {
 		return length;
 	}
+
+	@Override
+	public String toString() {
+		return "Line [offset: " + offset + ", length: " + length + ", delimiter: '" + delimiter + "']"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
 }
 
 
