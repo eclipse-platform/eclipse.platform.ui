@@ -10,7 +10,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 454143, 461063, 495917
  *     Friederike Schertel <friederike@schertel.org> - Bug 478336
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504089
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504089, 509224
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -67,23 +67,26 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 			}
 			if (part.getTags().contains("Editor")) { //$NON-NLS-1$
 				if (includeEditor.getAndSet(false)) {
-					refs.add(findReference(part));
+					addExistingReference(refs, part);
 				}
 			} else {
-				refs.add(findReference(part));
+				addExistingReference(refs, part);
 			}
 		});
 		return refs;
 
 	}
 
-	protected IWorkbenchPartReference findReference(MPart part) {
-		IWorkbenchPartReference ref = null;
+	/**
+	 * Adds the {@link IWorkbenchPartReference} contained in part's transient
+	 * data, if exists.
+	 */
+	protected void addExistingReference(List<IWorkbenchPartReference> refs, MPart part) {
 		Object tData = part.getTransientData().get(IWorkbenchPartReference.class.getName());
 		if (tData instanceof IWorkbenchPartReference) {
-			ref = ((IWorkbenchPartReference) tData);
+			// instanceof checks also for non null values
+			refs.add((IWorkbenchPartReference) tData);
 		}
-		return ref;
 	}
 
 	@Override
