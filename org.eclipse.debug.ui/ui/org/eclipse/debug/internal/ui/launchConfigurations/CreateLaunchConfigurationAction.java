@@ -35,14 +35,14 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 * Action identifier for IDebugView#getAction(String)
 	 */
 	public static final String ID_CREATE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_CREATE_ACTION"; //$NON-NLS-1$
-	
+
 	/**
-	 * Constructs an action to create a launch configuration 
+	 * Constructs an action to create a launch configuration
 	 * @param viewer the viewer
 	 * @param mode the mode the action applies to
 	 */
 	public CreateLaunchConfigurationAction(Viewer viewer, String mode) {
-		super(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_Ne_w_1, viewer, mode); 
+		super(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_Ne_w_1, viewer, mode);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 				type = (ILaunchConfigurationType) object;
 			}
 			try {
-				ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)); 
+				ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2));
 				ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc, getMode());
 				// this only works because this action is only present when the dialog is open
 				ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();

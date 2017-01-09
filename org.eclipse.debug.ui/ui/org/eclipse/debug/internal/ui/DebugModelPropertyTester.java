@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems (Pawel Piech) - added support for IDebugModelProvider (Bug 212314)
@@ -34,7 +34,7 @@ public class DebugModelPropertyTester extends PropertyTester {
 
 	public static final String MODEL_TYPE_PROPERTY = "getModelIdentifier"; //$NON-NLS-1$
 	public static final String IS_TERMINATED_OR_DISCONNECTED_PROPERTY = "isTerminatedOrDisconnected"; //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
@@ -45,7 +45,7 @@ public class DebugModelPropertyTester extends PropertyTester {
 			if(receiver instanceof IProcess) {
 				target = ((IProcess)receiver).getAdapter(IDebugTarget.class);
 			}
-			else if(receiver instanceof IDebugElement) { 
+			else if(receiver instanceof IDebugElement) {
 				target = ((IDebugElement)receiver).getAdapter(IDebugTarget.class);
 			}
 			if(target != null) {
@@ -53,7 +53,7 @@ public class DebugModelPropertyTester extends PropertyTester {
 				if (expectedValue == null || expectedValue.equals(IInternalDebugCoreConstants.EMPTY_STRING)){
 					return false;
 				}
-				//!target.isTerminated() && !target.isDisconnected() 
+				//!target.isTerminated() && !target.isDisconnected()
 				if(expectedValue.equals(target.getModelIdentifier())) {
 					return true;
 				}
@@ -75,8 +75,8 @@ public class DebugModelPropertyTester extends PropertyTester {
 		        }
 		        return false;
 		    }
-			// There is no element selected with an associated debug model.  
-			// Return true iff the expected value is an empty string.  
+			// There is no element selected with an associated debug model.
+			// Return true iff the expected value is an empty string.
 			return "".equals(expectedValue); //$NON-NLS-1$
 		} else if (IS_TERMINATED_OR_DISCONNECTED_PROPERTY.equals(property)){
 			if (receiver instanceof ITerminate && ((ITerminate)receiver).isTerminated()){

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -54,23 +54,23 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_TRIGGER_BREAKPOINTS, true);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, true);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_EXPRESSIONS, true);
-		
+
 		/**
 		 * Context launching preferences. Appear on the the Launching preference page
-		 * 
+		 *
 		 * @since 3.3.0
 		 */
 		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, true);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, false);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE, true);
-		
+
 		prefs.setDefault(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION, false);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_BREAKPOINT_SORTING_ORDER, IInternalDebugUIConstants.BREAKPOINT_SORTING_ORDER_NAME);
 
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_TRACK_VIEWS, true);
-		
+
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WIDTH, 80);
@@ -91,19 +91,19 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		//Launching Preference Page
 		prefs.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY, true);
-		
+
 		//VariableViewsPreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR, new RGB(255, 0, 0));
 		prefs.setDefault(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
 		prefs.setDefault(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, 10000);
-		
+
 		//Registers View
 		prefs.setDefault(IDebugPreferenceConstants.REGISTERS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		
+
 		// Breakpoints view default settings
 		prefs.setDefault(IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		
+
 		// Expression View
 		prefs.setDefault(IDebugPreferenceConstants.EXPRESSIONS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 
@@ -115,37 +115,37 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
 		prefs.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false); //$NON-NLS-1$
 		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false);		 //$NON-NLS-1$
-		
+
 		// set default for column size preference
 		prefs.setDefault(IDebugPreferenceConstants.PREF_COLUMN_SIZE,
 				IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
-		
+
 		// set default for row size preference
 		prefs.setDefault(IDebugPreferenceConstants.PREF_ROW_SIZE,
 				IDebugPreferenceConstants.PREF_ROW_SIZE_DEFAULT);
-		
+
 		// set default padded string
 		prefs.setDefault(IDebugUIConstants.PREF_PADDED_STR,
 				IDebugPreferenceConstants.PREF_PADDED_STR_DEFAULT);
-		
+
 		// set default code page for ascii and ebcdic
 		prefs.setDefault(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE,
 				IDebugPreferenceConstants.DEFAULT_ASCII_CP);
 		prefs.setDefault(IDebugUIConstants.PREF_DEFAULT_EBCDIC_CODE_PAGE,
 				IDebugPreferenceConstants.DEFAULT_EBCDIC_CP);
-		
+
 		if (MemoryViewUtil.isLinuxGTK()) {
 			prefs.setDefault(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM, false);
 		}
 		else {
 			prefs.setDefault(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM, true);
 		}
-		
+
 		prefs.setDefault(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE, IDebugPreferenceConstants.DEFAULT_PAGE_SIZE);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_RESET_MEMORY_BLOCK, IDebugPreferenceConstants.RESET_VISIBLE);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE,IDebugPreferenceConstants.DEFAULT_PAGE_SIZE);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE,IDebugPreferenceConstants.DEFAULT_PAGE_SIZE);
-		
+
 		/**
 		 * new launch configuration filtering options
 		 * @since 3.2
@@ -154,10 +154,10 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, true);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, false);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, false);
-		
+
 		/**
 		 * Debug view mode default
-		 * 
+		 *
 		 * @since 3.5
 		 */
         prefs.setDefault(IDebugPreferenceConstants.DEBUG_VIEW_MODE, IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO);
@@ -165,7 +165,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 
 	/**
 	 * Returns the RGB for the given key in the given color registry.
-	 * 
+	 *
 	 * @param registry the color registry
 	 * @param key the key for the constant in the registry
 	 * @param defaultRGB the default RGB if no entry is found
@@ -176,19 +176,19 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		if (registry == null) {
 			return defaultRGB;
 		}
-			
+
 		RGB rgb= registry.getRGB(key);
 		if (rgb != null) {
 			return rgb;
 		}
-		
+
 		return defaultRGB;
 	}
 
 	/**
 	 * Sets the default value and fires a property
 	 * change event if necessary.
-	 * 
+	 *
 	 * @param store	the preference store
 	 * @param key the preference key
 	 * @param newValue the new value
@@ -203,9 +203,9 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 			if (store.isDefault(key)) {
 				oldValue= PreferenceConverter.getDefaultColor(store, key);
 			}
-		
+
 			PreferenceConverter.setDefault(store, key, newValue);
-		
+
 			if (oldValue != null && !oldValue.equals(newValue)) {
 				store.firePropertyChangeEvent(key, oldValue, newValue);
 			}

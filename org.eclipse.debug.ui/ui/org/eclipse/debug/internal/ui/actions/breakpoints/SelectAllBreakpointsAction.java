@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -33,13 +33,13 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 	}
 
 	@Override
-	public void run(IAction action) {	
+	public void run(IAction action) {
 		Viewer viewer = ((AbstractDebugView) getView()).getViewer();
 		((Tree) viewer.getControl()).selectAll();
 		// ensure that the selection change callback is fired
 		viewer.setSelection(viewer.getSelection());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */

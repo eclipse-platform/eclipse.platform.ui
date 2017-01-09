@@ -30,16 +30,16 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This class provides the framework for a general selection dialog class.
- * 
+ *
  * @see AbstractDebugListSelectionDialog
  * @see AbstractDebugCheckboxSelectionDialog
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 
 	protected StructuredViewer fViewer = null;
-	
+
 	/**
 	 * Constructor
 	 * @param parentShell the parent shell
@@ -48,37 +48,37 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		super(parentShell);
 		setDialogBoundsSettings(getDialogBoundsSettings(), Dialog.DIALOG_PERSISTSIZE);
 	}
-	
+
 	/**
 	 * returns the dialog settings area id
 	 * @return the id of the dialog settings area
 	 */
 	protected abstract String getDialogSettingsId();
-	
+
 	/**
 	 * Returns the object to use as input for the viewer
 	 * @return the object to use as input for the viewer
 	 */
 	protected abstract Object getViewerInput();
-	
+
 	/**
 	 * Create and return a viewer to use in this dialog.
-	 * 
+	 *
 	 * @param parent the composite the viewer should be created in
 	 * @return the viewer to use in the dialog
 	 */
 	protected abstract StructuredViewer createViewer(Composite parent);
-	
+
 	/**
 	 * Returns if the dialog and/or current selection is/are valid.
 	 * This method is polled when selection changes are made to update the enablement
-	 * of the OK button by default 
+	 * of the OK button by default
 	 * @return true if the dialog is in a valid state, false otherwise
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected abstract boolean isValid();
-	
+
 	/**
 	 * Returns the content provider for the viewer
 	 * @return the content provider for the viewer
@@ -87,7 +87,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		//by default return a simple array content provider
 		return new ArrayContentProvider();
 	}
-	
+
 	/**
 	 * Returns the label provider used by the viewer
 	 * @return the label provider used in the viewer
@@ -95,13 +95,13 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	protected IBaseLabelProvider getLabelProvider() {
 		return new DefaultLabelProvider();
 	}
-	
+
 	/**
 	 * Returns the help context id for this dialog
 	 * @return the help context id for this dialog
 	 */
 	abstract protected String getHelpContextId();
-	
+
 	/**
 	 * This method allows listeners to be added to the viewer after it
 	 * is created.
@@ -109,13 +109,13 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	/**
 	 * This method allows listeners to be added to the viewer.  Called
 	 * after the viewer has been created and its input set.
-	 * 
+	 *
 	 * @param viewer the viewer returned by createViewer()
 	 */
 	protected void addViewerListeners(StructuredViewer viewer){
 		//do nothing by default
 	}
-	
+
 	/**
 	 * This method allows custom controls to be added before the viewer
 	 * @param parent the parent composite to add these custom controls to
@@ -123,7 +123,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	protected void addCustomHeaderControls(Composite parent) {
 		//do nothing by default
 	}
-	
+
 	/**
 	 * This method allows custom controls to be added after the viewer
 	 * @param parent the parent composite to add these controls to
@@ -131,18 +131,18 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	protected void addCustomFooterControls(Composite parent) {
 		//do nothing by default
 	}
-	
+
 	/**
 	 * This method allows the newly created controls to be initialized.
-	 * This method is called only once all controls have been created from the 
+	 * This method is called only once all controls have been created from the
 	 * <code>createContents</code> method.
-	 * 
+	 *
 	 * By default this method initializes the OK button control.
 	 */
 	protected void initializeControls() {
 		getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 	}
-	
+
 	/**
 	 * Returns the viewer used to display information in this dialog.
 	 * Can be <code>null</code> if the viewer has not been created.
@@ -151,7 +151,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	protected Viewer getViewer(){
     	return fViewer;
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -161,7 +161,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		initializeControls();
 		return comp;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -195,14 +195,14 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		}
 		return comp;
 	}
-	
+
 	/**
 	 * This method returns the label describing what to do with the viewer. Typically this label
 	 * will include the key accelerator to get to the viewer via the keyboard
 	 * @return the label for the viewer
 	 */
 	abstract protected String getViewerLabel();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
 	 */
@@ -212,7 +212,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		IDialogSettings section = settings.getSection(getDialogSettingsId());
 		if (section == null) {
 			section = settings.addNewSection(getDialogSettingsId());
-		} 
+		}
 		return section;
 	}
 }

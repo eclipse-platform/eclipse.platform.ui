@@ -46,7 +46,7 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * This class creates a simplified debug view that can be used in wizards etc., to emulate the current debug view
- * 
+ *
  * @see WizardExportBreakpointsPage
  * @see WizardImportBreakpointsPage
  *
@@ -65,10 +65,10 @@ public class EmbeddedBreakpointsViewer {
 			updateCheckedState(event.getElement(), event.getChecked());
 		}
 	};
-	
+
 	/**
 	 * This constructor allows a specific selection to be used in stead of the default
-	 * 
+	 *
 	 * @param parent the parent composite to add this one to
 	 * @param input the input to the viewer
 	 * @param selection the selection to set on the viewer
@@ -78,11 +78,11 @@ public class EmbeddedBreakpointsViewer {
 		Assert.isNotNull(input);
 		createControl(parent, input, selection);
 	}
-	
+
 	/**
 	 * Creates the control initialized to the current view, selection, and organization of the breakpoints view
 	 * @param parent the parent composite to add this one to.
-	 * 
+	 *
 	 * @param parent the parent composite to add this one to
 	 * @param input the input for the viewer
 	 * @param selection the selection for the viewer to be initialized to. If null the selection from the breakpoints view is used
@@ -99,7 +99,7 @@ public class EmbeddedBreakpointsViewer {
 			}
 		}
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-		
+
 		// create the treeview
 		fTree = new Tree(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -110,7 +110,7 @@ public class EmbeddedBreakpointsViewer {
 		fViewer = new BreakpointsViewer(fTree);
 		BreakpointsLabelProvider labelprovider = new BreakpointsLabelProvider();
 		if(view != null) {
-			//if we have handle to the view try get the current attributes, that way the 
+			//if we have handle to the view try get the current attributes, that way the
 			//presentation of the embedded viewer matches the current view
 			Map<String, Object> map = null;
 			IDebugModelPresentation current = view.getAdapter(IDebugModelPresentation.class);
@@ -138,7 +138,7 @@ public class EmbeddedBreakpointsViewer {
 		fProvider.setOrganizers(orgs);
 		initViewerState();
 	}
-	
+
 	/**
 	 * Performs the initialization of the viewer from a selection
 	 */
@@ -161,7 +161,7 @@ public class EmbeddedBreakpointsViewer {
 			updateCheckedState(list.get(i), true);
 		}
 	}
-	
+
 	/**
 	 * FInds the breakpoints of a given container
 	 * @param container the container to get breakpoints from
@@ -174,7 +174,7 @@ public class EmbeddedBreakpointsViewer {
             list.add(bps[j]);
         }
 	}
-	
+
 	/**
 	 * Returns the selection from the viewer with no duplicates
 	 * @return the selection from the viewer with no duplicates
@@ -189,7 +189,7 @@ public class EmbeddedBreakpointsViewer {
 		}
 		return new StructuredSelection(selected);
 	}
-	
+
 	/**
 	 * Allows access to the viewer
 	 * @return the viewer
@@ -197,7 +197,7 @@ public class EmbeddedBreakpointsViewer {
 	public BreakpointsViewer getViewer() {
 		return fViewer;
 	}
-   
+
 	/**
 	 * finds all occurrences of a widget to update
 	 * @param element the element to search for when finding occurrences
@@ -211,7 +211,7 @@ public class EmbeddedBreakpointsViewer {
         }
         return list.toArray(new Widget[0]);
     }
-    
+
     /**
      * performs the actual search for items in the tree
      * @param list the list to add matches to
@@ -227,10 +227,10 @@ public class EmbeddedBreakpointsViewer {
         	findAllOccurrences(items[i], element, list);
         }
     }
-    
+
 	 /**
      * Update the checked state of the given element and all of its children.
-     * 
+     *
      * @param obj the object that has been changed
      * @param enable the checked status of the obj
      */
@@ -282,7 +282,7 @@ public class EmbeddedBreakpointsViewer {
     		parent = parent.getParentItem();
     	}
     }
-    
+
     /**
      * Gets the number of grayed children for this parent
      * @param parent the parent to inspect
@@ -298,7 +298,7 @@ public class EmbeddedBreakpointsViewer {
     	}
     	return count;
     }
-    
+
     /**
      * Checks to see if all of the children under an given parent are checked or not
      * @param children the children to check

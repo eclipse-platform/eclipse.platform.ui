@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IAction;
  * An action which clears (sets the null) the default breakpoint group.
  */
 public class ClearDefaultBreakpointGroupAction extends BreakpointWorkingSetAction {
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */

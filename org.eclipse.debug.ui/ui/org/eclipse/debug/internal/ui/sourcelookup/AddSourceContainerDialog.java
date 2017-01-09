@@ -46,25 +46,25 @@ import org.eclipse.ui.PlatformUI;
 /**
  * The dialog for adding new source containers. Presents the user with a list of
  * source container types and allows them to select one.
- * 
+ *
  * @since 3.0
  */
 public class AddSourceContainerDialog extends TitleAreaDialog {
-	
+
 	private TableViewer fViewer;
 	private SourceContainerViewer fSourceContainerViewer;
 	private ISourceLookupDirector fDirector;
-	
+
 	/**
 	 * Constructor
 	 * @param shell the shell to open this dialog on
 	 * @param viewer the view associated with this dialog
 	 * @param director the backing director
 	 */
-	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ISourceLookupDirector director) {		
+	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ISourceLookupDirector director) {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fSourceContainerViewer=viewer;		
+		fSourceContainerViewer=viewer;
 		fDirector = director;
 	}
 
@@ -72,22 +72,22 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	protected Control createDialogArea(Composite parent) {			
-		
-		getShell().setText(SourceLookupUIMessages.addSourceLocation_title); 
-		setTitle(SourceLookupUIMessages.addSourceLocation_description); 
+	protected Control createDialogArea(Composite parent) {
+
+		getShell().setText(SourceLookupUIMessages.addSourceLocation_title);
+		setTitle(SourceLookupUIMessages.addSourceLocation_description);
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_LOC_WIZ));
 		setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
-		
+
 		Composite comp = (Composite) super.createDialogArea(parent);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		comp.setLayout(topLayout);
-		comp.setLayoutData(gd);	
-				
+		comp.setLayoutData(gd);
+
 		ISourceContainerType[] types = filterTypes(DebugPlugin.getDefault().getLaunchManager().getSourceContainerTypes());
-		
+
 		fViewer = new TableViewer(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
 		final Table table = fViewer.getTable();
 		gd = new GridData(GridData.FILL_BOTH);
@@ -99,9 +99,9 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				okPressed();
 			}
 		});
-		
+
 		fViewer.setLabelProvider(new SourceContainerLabelProvider());
-		fViewer.setContentProvider(new ArrayContentProvider());			
+		fViewer.setContentProvider(new ArrayContentProvider());
 		fViewer.setComparator(new ViewerComparator());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
@@ -118,13 +118,13 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				}
 			}
 		});
-		if(types.length != 0) {	
+		if(types.length != 0) {
 			fViewer.setInput(types);
 		}
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
 		return comp;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
@@ -132,12 +132,12 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		Table table = fViewer.getTable(); 
+		Table table = fViewer.getTable();
 		if(table.getItemCount() > 0) {
 			fViewer.setSelection(new StructuredSelection(table.getItem(0).getData()));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -159,7 +159,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
         }
 		super.okPressed();
 	}
-	
+
 	/**
 	 * Removes types without browsers from the provided list of types.
 	 * @param types the complete list of source container types
@@ -175,8 +175,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 					validTypes.add(type);
 				}
 			}
-		}	
+		}
 		return validTypes.toArray(new ISourceContainerType[validTypes.size()]);
-		
+
 	}
 }

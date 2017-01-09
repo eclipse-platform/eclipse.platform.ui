@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
- 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +50,7 @@ import org.eclipse.ui.handlers.IHandlerService;
  * Proxy to a launch shortcut extension
  */
 public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContribution {
-	
+
 	private ImageDescriptor fImageDescriptor = null;
 	private List<String> fPerspectives = null;
 	private ILaunchShortcut fDelegate = null;
@@ -60,7 +60,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	private IConfigurationElement fContextualLaunchConfigurationElement = null;
 	private Expression fContextualLaunchExpr = null;
 	private Expression fStandardLaunchExpr = null;
-	
+
 	/**
 	 * Command handler for launch shortcut key binding.
 	 */
@@ -68,10 +68,10 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	    // the shortcut to invoke
 	    private LaunchShortcutExtension fShortcut;
 	    private String fMode;
-	    
+
 	    /**
 	     * Constructs a new command handler for the given shortcut
-	     * 
+	     *
 	     * @param shortcut
 	     */
 	    public LaunchCommandHandler(LaunchShortcutExtension shortcut, String mode) {
@@ -93,17 +93,17 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
             return null;
 		}
 	}
-	
+
 	/**
 	 * The configuration element defining this tab.
 	 */
 	private IConfigurationElement fConfig;
 	private/* <Pair> */List<Pair> fContextLabels;
-	
+
 	/**
 	 * Constructs a launch configuration tab extension based
 	 * on the given configuration element
-	 * 
+	 *
 	 * @param element the configuration element defining the
 	 *  attributes of this launch configuration tab extension
 	 * @return a new launch configuration tab extension
@@ -112,7 +112,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		setConfigurationElement(element);
 		registerLaunchCommandHandlers();
 	}
-	
+
 	/**
 	 * Registers command handlers for launch shortcut key bindings
 	 */
@@ -125,39 +125,39 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		        handlerService.activateHandler(id, handler);
 	        }
         }
-    }	
-	
+    }
+
 	/**
 	 * Sets the configuration element that defines the attributes
 	 * for this extension.
-	 * 
+	 *
 	 * @param element configuration element
 	 */
 	private void setConfigurationElement(IConfigurationElement element) {
 		fConfig = element;
 	}
-	
+
 	/**
 	 * Returns the configuration element that defines the attributes
 	 * for this extension.
-	 * 
+	 *
 	 * @param configuration element that defines the attributes
 	 *  for this launch configuration tab extension
 	 */
 	public IConfigurationElement getConfigurationElement() {
 		return fConfig;
 	}
-	
+
 	/**
 	 * Returns the label of this shortcut
-	 * 
+	 *
 	 * @return the label of this shortcut, or <code>null</code> if not
 	 *  specified
 	 */
 	public String getLabel() {
 		return getConfigurationElement().getAttribute(IConfigurationElementConstants.LABEL);
 	}
-	
+
 	/**
 	 * Returns the configuration element for the optional Contextual Launch
 	 * element of this Launch Configuration description.
@@ -173,7 +173,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return fContextualLaunchConfigurationElement;
 	}
-	
+
 	/**
 	 * Returns the contextual launch label of this shortcut for the named mode.
 	 * <pre>
@@ -185,7 +185,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	 *   &lt;/contextualLaunch&gt;
 	 * &lt;/launchShortcut&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @return the contextual label of this shortcut, or <code>null</code> if
 	 *         not specified
 	 */
@@ -211,10 +211,10 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return getLabel();
 	}
-	
+
 	/**
 	 * Returns the set of associated launch configuration type ids.
-	 * 
+	 *
 	 * @return the set of associated launch configuration type ids
 	 * @since 3.3
 	 */
@@ -232,13 +232,13 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return fAssociatedTypes;
 	}
-	
+
 	/**
 	 * Returns the contributed description of the launch delegate or <code>null</code>
 	 * if one has not been provided
 	 * @param mode the mode to get the description for
 	 * @return the description of the shortcut for that specific mode or <code>null</code> if one was not provided
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public String getShortcutDescription(String mode) {
@@ -264,13 +264,13 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return fDescriptions.get(mode);
 	}
-	
+
 	/**
 	 * Evaluate the given expression within the given context and return
 	 * the result. Returns <code>true</code> iff result is either TRUE or NOT_LOADED.
 	 * This allows optimistic inclusion of shortcuts before plugins are loaded.
 	 * Returns <code>false</code> if exp is <code>null</code>.
-	 * 
+	 *
 	 * @param exp the enablement expression to evaluate or <code>null</code>
 	 * @param context the context of the evaluation. Usually, the
 	 *  user's selection.
@@ -280,7 +280,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	public boolean evalEnablementExpression(IEvaluationContext context, Expression exp) throws CoreException {
 		return (exp != null) ? ((exp.evaluate(context)) != EvaluationResult.FALSE) : false;
 	}
-	
+
 	/**
 	 * Returns an expression that represents the enablement logic for the
 	 * contextual launch element of this launch shortcut description or
@@ -300,7 +300,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 				return null;
 			}
 			IConfigurationElement[] elements = contextualLaunchElement.getChildren(ExpressionTagNames.ENABLEMENT);
-			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
 				fContextualLaunchExpr= ExpressionConverter.getDefault().perform(enablement);
@@ -308,7 +308,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return fContextualLaunchExpr;
 	}
-	
+
 	/**
 	 * Returns an expression that represents the enablement logic for the
 	 * launch shortcut description or <code>null</code> if none.
@@ -322,35 +322,35 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		// all of this stuff is optional, so...tedious testing is required
 		if (fStandardLaunchExpr == null) {
 			IConfigurationElement[] elements = getConfigurationElement().getChildren(ExpressionTagNames.ENABLEMENT);
-			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 			if (enablement != null) {
 				fStandardLaunchExpr= ExpressionConverter.getDefault().perform(enablement);
 			}
 		}
 		return fStandardLaunchExpr;
-	}	
-	
+	}
+
 	/**
 	 * Returns the id of this shortcut
-	 * 
+	 *
 	 * @return the id of this shortcut, or <code>null</code> if not specified
 	 */
 	public String getId() {
 		return getConfigurationElement().getAttribute(IConfigurationElementConstants.ID);
 	}
-	
+
 	/**
 	 * Returns the identifier of the help context associated with this launch
 	 * shortcut, or <code>null</code> if one was not specified.
-	 * 
+	 *
 	 * @return the identifier of this launch shortcut's help context or
 	 * <code>null</code>
 	 * @since 2.1
-	 */	
+	 */
 	public String getHelpContextId() {
-		return getConfigurationElement().getAttribute(IConfigurationElementConstants.HELP_CONTEXT_ID);		
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.HELP_CONTEXT_ID);
 	}
-	
+
 	/**
 	 * Returns the category of this shortcut
 	 *
@@ -359,11 +359,11 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	 */
 	public String getCategory() {
 		return getConfigurationElement().getAttribute(IConfigurationElementConstants.CATEGORY);
-	}	
-	
+	}
+
 	/**
 	 * Returns the image for this shortcut, or <code>null</code> if none
-	 * 
+	 *
 	 * @return the image for this shortcut, or <code>null</code> if none
 	 */
 	public ImageDescriptor getImageDescriptor() {
@@ -375,11 +375,11 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return fImageDescriptor;
 	}
-	
+
 	/**
 	 * Returns the perspectives this shortcut is registered for.
-	 * 
-	 * @return list of Strings representing perspective identifiers 
+	 *
+	 * @return list of Strings representing perspective identifiers
 	 * @deprecated The use of the perspectives element has been deprecated since 3.1.
 	 */
 	@Deprecated
@@ -388,15 +388,15 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 			IConfigurationElement[] perspectives = getConfigurationElement().getChildren(IConfigurationElementConstants.PERSPECTIVE);
 			fPerspectives = new ArrayList<String>(perspectives.length);
 			for (int i = 0; i < perspectives.length; i++) {
-				fPerspectives.add(perspectives[i].getAttribute(IConfigurationElementConstants.ID)); 
+				fPerspectives.add(perspectives[i].getAttribute(IConfigurationElementConstants.ID));
 			}
 		}
 		return fPerspectives;
 	}
-	
+
 	/**
 	 * Returns this shortcut's delegate, or <code>null</code> if none
-	 * 
+	 *
 	 * @return this shortcut's delegate, or <code>null</code> if none
 	 */
 	protected ILaunchShortcut getDelegate() {
@@ -404,12 +404,12 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 			try {
 				fDelegate = (ILaunchShortcut)fConfig.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			} catch (CoreException e) {
-				DebugUIPlugin.log(e); 
+				DebugUIPlugin.log(e);
 			}
 		}
 		return fDelegate;
 	}
-	
+
 	/**
 	 * @see ILaunchShortcut#launch(IEditorPart, String)
 	 */
@@ -435,7 +435,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 
 	/**
 	 * Returns the set of modes this shortcut supports.
-	 * 
+	 *
 	 * @return the set of modes this shortcut supports
 	 */
 	public Set<String> getModes() {
@@ -452,17 +452,17 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return fModes;
 	}
-	
+
 	/**
 	 * Returns the menu path attribute this shortcut, or <code>null</code> if none
-	 * 
+	 *
 	 * @return the menu path attribute this shortcut, or <code>null</code> if none
 	 * @since 3.0.1
 	 */
 	public String getMenuPath() {
 		return getConfigurationElement().getAttribute(IConfigurationElementConstants.PATH);
-	}	
-	
+	}
+
 	/*
 	 * Only for debugging
 	 * @see java.lang.Object#toString()
@@ -535,11 +535,11 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns if the underlying delegate is a <code>ILaunchShortcut2</code>
 	 * @return if the underlying delegate is a <code>ILaunchShortcut2</code>
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public boolean isParticipant() {

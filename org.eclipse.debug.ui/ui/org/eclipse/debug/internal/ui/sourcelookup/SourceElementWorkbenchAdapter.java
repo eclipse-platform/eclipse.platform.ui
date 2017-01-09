@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Workbench adapter for source elements.
- * 
+ *
  * @since 3.0
  */
 public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
@@ -71,7 +71,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 	public Object getParent(Object o) {
 		return null;
 	}
-	
+
 	public static String getQualifiedName(IPath path) {
 		StringBuffer buffer = new StringBuffer();
 		String[] segments = path.segments();
@@ -80,7 +80,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 			if (segments.length > 1) {
 				buffer.append(" - "); //$NON-NLS-1$
 				if (path.getDevice() != null) {
-					buffer.append(path.getDevice());	
+					buffer.append(path.getDevice());
 				}
 				for (int i = 0; i < segments.length - 1; i++) {
 					buffer.append(File.separatorChar);

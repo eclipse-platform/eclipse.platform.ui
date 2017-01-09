@@ -19,32 +19,32 @@ import org.eclipse.core.runtime.CoreException;
  * Clients contributing a rendering usually
  * implement {@link org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate}
  * and {@link org.eclipse.debug.ui.memory.IMemoryRendering}. Clients providing
- * dynamic rendering bindings via an 
+ * dynamic rendering bindings via an
  * {@link org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider}
  * may implement this interface.
  * </p>
  * @since 3.1
  */
 public interface IMemoryRenderingType {
-    
+
     /**
      * Returns a label for this type of memory rendering.
-     * 
+     *
      * @return a label for this type of memory rendering
      */
     public String getLabel();
-    
+
     /**
      * Returns the unique identifier for this rendering type.
-     * 
+     *
      * @return the unique identifier for this rendering type
      */
     public String getId();
-    
+
     /**
      * Creates and returns a new rendering of this type or <code>null</code>
      * if none.
-     * 
+     *
      * @return a new rendering of this type
      * @exception CoreException if an exception occurs creating
      *  the rendering

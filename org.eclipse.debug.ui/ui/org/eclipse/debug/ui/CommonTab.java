@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
- 
+
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ import com.ibm.icu.text.MessageFormat;
  * switching behavior for an associated launch.
  * <p>
  * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
- * creation to alter the default context help associated with this tab. 
+ * creation to alter the default context help associated with this tab.
  * </p>
  * <p>
  * Clients may instantiate this class.
@@ -100,16 +100,16 @@ import com.ibm.icu.text.MessageFormat;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CommonTab extends AbstractLaunchConfigurationTab {
-	
+
 	/**
 	 * Constant representing the id of the {@link IDialogSettings} location for the {@link ContainerSelectionDialog} used
 	 * on this tab
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private final String SHARED_LAUNCH_CONFIGURATON_DIALOG = IDebugUIConstants.PLUGIN_ID + ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
 	private final String WORKSPACE_SELECTION_DIALOG = IDebugUIConstants.PLUGIN_ID + ".WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
-	
+
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
 	 * can be revertible. This attribute is not saveable and will never appear in a saved
@@ -117,7 +117,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @since 3.3
 	 */
 	private static final String BAD_CONTAINER = "bad_container_name"; //$NON-NLS-1$
-	
+
 	// Local/shared UI widgets
 	private Button fLocalRadioButton;
 	private Button fSharedRadioButton;
@@ -140,12 +140,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Button fInputFileBrowse;
 	private Button fInputVariables;
 	private Button fInputWorkspaceBrowse;
-	
+
 	/**
 	 * Check box list for specifying favorites
 	 */
 	private CheckboxTableViewer fFavoritesTable;
-			
+
 	/**
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
@@ -155,36 +155,36 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			scheduleUpdateJob();
 		}
 	};
-	
+
     /**
 	 * Constructs a new tab with default context help.
 	 */
 	public CommonTab() {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void createControl(Composite parent) {		
+	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		comp.setLayout(new GridLayout(2, true));
 		comp.setFont(parent.getFont());
-		
+
 		createSharedConfigComponent(comp);
 		createFavoritesComponent(comp);
 		createEncodingComponent(comp);
 		createOutputCaptureComponent(comp);
 		createLaunchInBackgroundComponent(comp);
 	}
-	
+
 	/**
 	 * Returns the {@link IDialogSettings} for the given id
-	 * 
+	 *
 	 * @param id the id of the dialog settings to get
 	 * @return the {@link IDialogSettings} to pass into the {@link ContainerSelectionDialog}
 	 * @since 3.6
@@ -194,10 +194,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		IDialogSettings section = settings.getSection(id);
 		if (section == null) {
 			section = settings.addNewSection(id);
-		} 
+		}
 		return section;
 	}
-	
+
 	/**
 	 * Creates the favorites control
 	 * @param parent the parent composite to add this one to
@@ -219,7 +219,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 	}
-	
+
 	/**
 	 * Creates the shared config component
 	 * @param parent the parent composite to add this component to
@@ -247,18 +247,18 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
-		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
+		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
 			}
-		});	
+		});
 
 		fLocalRadioButton.setSelection(true);
-		setSharedEnabled(false);	
+		setSharedEnabled(false);
 	}
-	
+
     /**
      * Creates the component set for the capture output composite
      * @param parent the parent to add this component to
@@ -284,19 +284,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         	}
         });
         fFileText.addModifyListener(fBasicModifyListener);
-        
+
         Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
 		GridLayout ld = (GridLayout)bcomp.getLayout();
         ld.marginHeight = 1;
         ld.marginWidth = 0;
-        fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null); 
+        fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null);
         fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-                dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13); 
-                dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14); 
-                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
+                dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
+                dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14);
+                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
                 dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
                 dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
                 if (dialog.open() == IDialogConstants.OK_ID) {
@@ -321,7 +321,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 }
             }
         });
-        fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null); 
+        fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null);
         fVariables.addSelectionListener(new SelectionListener() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
@@ -335,7 +335,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             @Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
         });
-        fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11); 
+        fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11);
 
 		GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
         gd.horizontalSpan = 4;
@@ -345,7 +345,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent e) {
 		        updateLaunchConfigurationDialog();
 		    }
-		});   
+		});
     }
 
     private void createInputCaptureComponent(Composite parent){
@@ -462,12 +462,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fVariables.setEnabled(enable);
         fAppend.setEnabled(enable);
     }
-    
+
     /**
      * Returns the default encoding for the specified config
      * @param config the configuration to get the encoding for
      * @return the default encoding
-     * 
+     *
      * @since 3.4
      */
     private String getDefaultEncoding(ILaunchConfiguration config) {
@@ -478,7 +478,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				if(res instanceof IFile) {
 					return ((IFile)res).getCharset();
 				}
-				else if(res instanceof IContainer) { 
+				else if(res instanceof IContainer) {
 					return ((IContainer)res).getDefaultCharset();
 				}
 			}
@@ -488,22 +488,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     	}
     	return ResourcesPlugin.getEncoding();
     }
-    
+
     /**
      * Creates the encoding component
      * @param parent the parent to add this composite to
      */
     private void createEncodingComponent(Composite parent) {
 	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
-	
-	    fDefaultEncodingButton = createRadioButton(group, IInternalDebugCoreConstants.EMPTY_STRING); 
+
+	    fDefaultEncodingButton = createRadioButton(group, IInternalDebugCoreConstants.EMPTY_STRING);
 	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
 	    gd.horizontalSpan = 2;
 	    fDefaultEncodingButton.setLayoutData(gd);
-	   
-	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);  
+
+	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);
 	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-	    
+
 	    fEncodingCombo = new Combo(group, SWT.NONE);
 	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fEncodingCombo.setFont(parent.getFont());
@@ -511,7 +511,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         String[] encodingArray = allEncodings.toArray(new String[0]);
 	    fEncodingCombo.setItems(encodingArray);
         if (encodingArray.length > 0) {
-            fEncodingCombo.select(0); 
+            fEncodingCombo.select(0);
         }
         fEncodingCombo.getAccessible().addAccessibleListener(new AccessibleAdapter() {
         	@Override
@@ -540,7 +540,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fEncodingCombo.addKeyListener(new KeyAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
 			@Override
@@ -549,10 +549,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
-    
+
 	/**
 	 * Returns whether or not the given encoding is valid.
-	 * 
+	 *
 	 * @param enc
 	 *            the encoding to validate
 	 * @return <code>true</code> if the encoding is valid, <code>false</code>
@@ -574,7 +574,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLaunchInBackgroundComponent(Composite parent) {
-		fLaunchInBackgroundButton = createCheckButton(parent, LaunchConfigurationsMessages.CommonTab_10); 
+		fLaunchInBackgroundButton = createCheckButton(parent, LaunchConfigurationsMessages.CommonTab_10);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
@@ -594,7 +594,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedEnabled(isShared());
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * handles the input file  being selected
 	 */
@@ -605,13 +605,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Sets the widgets for specifying that a launch configuration is to be shared to the enable value
-	 * @param enable the enabled value for 
+	 * @param enable the enabled value for
 	 */
 	private void setSharedEnabled(boolean enable) {
 		fSharedLocationText.setEnabled(enable);
 		fSharedLocationButton.setEnabled(enable);
 	}
-	
+
 	private void setInputFileEnabled(boolean enable) {
 		fInputFileLocationText.setEnabled(enable);
 		fInputFileBrowse.setEnabled(enable);
@@ -632,11 +632,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 					}
 				}
 			}
-		} 
+		}
 		catch (CoreException e) {DebugUIPlugin.log(e);}
 		return path;
 	}
-	
+
 	/**
 	 * if the shared radio button is selected, indicating that the launch configuration is to be shared
 	 * @return true if the radio button is selected, false otherwise
@@ -644,11 +644,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private boolean isShared() {
 		return fSharedRadioButton.getSelection();
 	}
-	
+
 	/**
 	 * if the input file button is selected, indicating that the launch will
 	 * take input file as stdin
-	 * 
+	 *
 	 * @return true if the check button is selected, false otherwise
 	 */
 	private boolean isInputFile() {
@@ -658,7 +658,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Handles the shared location button being selected
 	 */
-	private void handleSharedLocationButtonSelected() { 
+	private void handleSharedLocationButtonSelected() {
 		String currentContainerString = fSharedLocationText.getText();
 		IContainer currentContainer = getContainer(currentContainerString);
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
@@ -668,14 +668,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		dialog.showClosedProjects(false);
 		dialog.setDialogBoundsSettings(getDialogBoundsSettings(SHARED_LAUNCH_CONFIGURATON_DIALOG), Dialog.DIALOG_PERSISTSIZE);
 		dialog.open();
-		Object[] results = dialog.getResult();	
+		Object[] results = dialog.getResult();
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
 			IPath path = (IPath)results[0];
 			String containerName = path.toOSString();
 			fSharedLocationText.setText(containerName);
-		}		
+		}
 	}
-	
+
 	/**
 	 * gets the container form the specified path
 	 * @param path the path to get the container from
@@ -685,7 +685,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		Path containerPath = new Path(path);
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -712,7 +712,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateEncoding(configuration);
 		updateConsoleOutput(configuration);
 	}
-	
+
     /**
      * Updates the console output form the local configuration
      * @param configuration the local configuration
@@ -722,7 +722,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		String stdinFromFile = null;
         String outputFile = null;
         boolean append = false;
-        
+
         try {
             outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
 			stdinFromFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, (String) null);
@@ -731,7 +731,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
         } catch (CoreException e) {
         }
-        
+
 		fConsoleOutput.setSelection(outputToConsole);
         fAppend.setSelection(append);
         boolean haveOutputFile= outputFile != null;
@@ -753,10 +753,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      * Updates the launch on background check button
      * @param configuration the local launch configuration
      */
-    protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
+    protected void updateLaunchInBackground(ILaunchConfiguration configuration) {
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
-	
+
 	/**
 	 * Updates the encoding
 	 * @param configuration the local configuration
@@ -781,10 +781,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             fEncodingCombo.setEnabled(false);
         }
 	}
-	
+
 	/**
 	 * Returns whether the given configuration should be launched in the background.
-	 * 
+	 *
 	 * @param configuration the configuration
 	 * @return whether the configuration is configured to launch in the background
 	 */
@@ -851,7 +851,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			config.setContainer(null);
 		}
 	}
-	
+
 	/**
 	 * Convenience accessor
 	 * @return the singleton {@link LaunchConfigurationManager}
@@ -859,10 +859,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
-	
+
 	/**
 	 * Update the favorite settings.
-	 * 
+	 *
 	 * NOTE: set to <code>null</code> instead of <code>false</code> for backwards compatibility
 	 *  when comparing if content is equal, since 'false' is default
 	 * 	and will be missing for older configurations.
@@ -899,7 +899,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 						return;
 					}
 				}
-			} 
+			}
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
 			List<String> groups = null;
@@ -913,9 +913,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			config.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Convenience method for getting the workspace root.
 	 * @return the singleton {@link IWorkspaceRoot}
@@ -923,7 +923,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -931,10 +931,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
 		setErrorMessage(null);
-		
+
 		return validateLocalShared() && validateRedirectFile() && validateEncoding() && validateStdinFile();
 	}
-	
+
     /**
      * validates the encoding selection
      * @return true if the validate encoding is allowable, false otherwise
@@ -959,7 +959,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         if(fFileOutput.getSelection()) {
             int len = fFileText.getText().trim().length();
             if (len == 0) {
-                setErrorMessage(LaunchConfigurationsMessages.CommonTab_8); 
+                setErrorMessage(LaunchConfigurationsMessages.CommonTab_8);
                 return false;
             }
         }
@@ -975,19 +975,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
 			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_shared_configuration_location_14); 
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_shared_configuration_location_14);
 				return false;
 			} else if (!container.getProject().isOpen()) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1); 
-				return false;				
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1);
+				return false;
 			}
 		}
-		return true;		
+		return true;
 	}
 
 	/**
 	 * validates the stdin file location
-	 * 
+	 *
 	 * @return true if the stdin file exists, false otherwise
 	 */
 	private boolean validateStdinFile() {
@@ -1047,7 +1047,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		} else {
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
 		}
-		
+
 		if (!captureOutput) {
 		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
 		} else {
@@ -1060,19 +1060,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public String getName() {
-		return LaunchConfigurationsMessages.CommonTab__Common_15; 
+		return LaunchConfigurationsMessages.CommonTab__Common_15;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
@@ -1088,7 +1088,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -1116,7 +1116,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				LaunchHistory history = getLaunchConfigurationManager().getLaunchHistory(extension.getIdentifier());
 				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);
-				} 
+				}
 			}
 			return possibleGroups.toArray();
 		}
@@ -1128,13 +1128,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
 	}
-	
+
 	/**
 	 * Provides the labels for the favorites table
 	 *
 	 */
 	class FavoritesLabelProvider implements ITableLabelProvider {
-		
+
 		private Map<Object, Image> fImages = new HashMap<Object, Image>();
 
 		@Override
@@ -1170,7 +1170,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		public boolean isLabelProperty(Object element, String property) {return false;}
 
 		@Override
-		public void removeListener(ILabelProviderListener listener) {}		
+		public void removeListener(ILabelProviderListener listener) {}
 	}
 
 }

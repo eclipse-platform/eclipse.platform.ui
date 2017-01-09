@@ -20,7 +20,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Used to listen for preference imports that include changes to preferred
  * launch delegates.
- * 
+ *
  * @since 3.6 TODO can we roll this into general preference listening?
  */
 public class PreferredDelegateModifyListener extends PreferenceModifyListener {

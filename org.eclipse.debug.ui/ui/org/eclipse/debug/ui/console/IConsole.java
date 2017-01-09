@@ -35,21 +35,21 @@ public interface IConsole {
 	 * Connects this console to the given streams proxy. This associates the
 	 * standard in, out, and error streams with the console. Keyboard input will
 	 * be written to the given proxy.
-	 * 
+	 *
 	 * @param streamsProxy the proxy to connect this console to
 	 */
 	public void connect(IStreamsProxy streamsProxy);
-	
+
 	/**
 	 * Connects this console to the given stream monitor, uniquely identified by
 	 * the given identifier. This allows for more than the standard (in, out,
 	 * error) streams to be connected to the console.
-	 * 
+	 *
 	 * @param streamMonitor the monitor to connect this console to
 	 * @param streamIdentifer the stream identifier to connect this console to
 	 */
 	public void connect(IStreamMonitor streamMonitor, String streamIdentifer);
-	
+
 	/**
 	 * Adds the given hyperlink to this console. The link will be notified when
 	 * entered, exited, and activated.
@@ -58,7 +58,7 @@ public interface IConsole {
 	 * current bounds, it is added immediately. Otherwise, the link is added
 	 * when the console's document grows to contain the link's region.
 	 * </p>
-	 * @param link the hyperlink to add 
+	 * @param link the hyperlink to add
 	 * @param offset the character offset within the console document where the
 	 * text associated with the hyperlink begins
 	 * @param length the length of the associated hyperlink text
@@ -75,19 +75,19 @@ public interface IConsole {
 	 * current bounds, it is added immediately. Otherwise, the link is added
 	 * when the console's document grows to contain the link's region.
 	 * </p>
-	 * @param link the hyperlink to add 
+	 * @param link the hyperlink to add
 	 * @param offset the character offset within the console document where the
 	 * text associated with the hyperlink begins
 	 * @param length the length of the associated hyperlink text
 	 * @since 3.1
 	 */
 	public void addLink(IHyperlink link, int offset, int length);
-	
+
 	/**
 	 * Returns the region of text associated with the given hyperlink, or
 	 * <code>null</code> if the given hyperlink is not contained in this
 	 * console.
-	 * 
+	 *
 	 * @param link a console hyperlink
 	 * @return region of text associated with the hyperlink, or <code>null</code>
 	 * @deprecated replaced with getRegion(IHyperlink link) instead
@@ -99,27 +99,27 @@ public interface IConsole {
 	 * Returns the region of text associated with the given hyperlink, or
 	 * <code>null</code> if the given hyperlink is not contained in this
 	 * console.
-	 * 
+	 *
 	 * @param link a console hyperlink
 	 * @return region of text associated with the hyperlink, or <code>null</code>
 	 * @since 3.1
 	 */
 	public IRegion getRegion(IHyperlink link);
-	
+
 	/**
 	 * Returns the document associated with this console.
-	 * 
+	 *
 	 * @return document
 	 */
-	public IDocument getDocument(); 
-	
+	public IDocument getDocument();
+
 	/**
 	 * Returns the process associated with this console.
-	 * 
+	 *
 	 * @return the process associated with this console
 	 */
 	public IProcess getProcess();
-	
+
 	/**
 	 * Adds the given pattern match listener to this console. The listener will
      * be connected and receive match notifications.
@@ -127,18 +127,18 @@ public interface IConsole {
 	 * @since 3.1
 	 */
 	public void addPatternMatchListener(IPatternMatchListener matchListener);
-	
+
     /**
      * Removes the given pattern match listener from this console. The listener will be
-     * disconnected and will no longer receive match notifications. 
+     * disconnected and will no longer receive match notifications.
      * @param matchListener the pattern match listener to remove.
      * @since 3.1
      */
 	public void removePatternMatchListener(IPatternMatchListener matchListener);
-	
+
 	/**
 	 * Returns the stream associated with the specified stream identifier.
-     * @param streamIdentifier Uniquely identifies the required stream 
+     * @param streamIdentifier Uniquely identifies the required stream
      * @return The stream or <code>null</code> if none found with matching streamIdentifier
      * @since 3.1
      */

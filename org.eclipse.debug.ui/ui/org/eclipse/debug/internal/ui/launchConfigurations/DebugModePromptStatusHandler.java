@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 public class DebugModePromptStatusHandler implements IStatusHandler {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
@@ -35,33 +35,33 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			ILaunchConfiguration config = (ILaunchConfiguration)source;
 			if (DebugUITools.isPrivate(config)) {
 				return Boolean.FALSE;
-			}	
+			}
 		}
-		
+
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         ILaunchConfiguration configuration = (ILaunchConfiguration)source;
-        String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
+        String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE);
         if (pref != null) {
             if (pref.equals(MessageDialogWithToggle.NEVER)) {
                 return Boolean.FALSE;
-            } else if (pref.equals(MessageDialogWithToggle.ALWAYS)) { 
+            } else if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
                 relaunchInDebugMode(configuration);
                 return Boolean.TRUE;
             }
         }
-        
+
 		Shell activeShell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.DebugModePromptStatusHandler_0; 
-		String message = LaunchConfigurationsMessages.DebugModePromptStatusHandler_1; 
-		
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
+		String title = LaunchConfigurationsMessages.DebugModePromptStatusHandler_0;
+		String message = LaunchConfigurationsMessages.DebugModePromptStatusHandler_1;
+
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(activeShell, title, message, null, false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE);
 		int buttonId = dialog.getReturnCode();
-		if (buttonId == IDialogConstants.YES_ID) { 
+		if (buttonId == IDialogConstants.YES_ID) {
 			relaunchInDebugMode(configuration);
 			return Boolean.TRUE; // stops launch
 		} else if (buttonId == IDialogConstants.NO_ID) {
 			return Boolean.FALSE; // continue launch
-		} else { //CANCEL 
+		} else { //CANCEL
 			return Boolean.TRUE; // stops the launch
 		}
 	}

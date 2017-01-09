@@ -18,7 +18,7 @@ import org.eclipse.ui.IEditorPart;
  * A debug model presentation may implement this interface to override
  * standard editor positioning and annotations associated with
  * source code display for stack frames.
- * 
+ *
  * @since 3.0
  */
 public interface IDebugEditorPresentation {
@@ -30,25 +30,25 @@ public interface IDebugEditorPresentation {
 	 * <code>false</code> is returned, the debugger will position and add
 	 * standard annotations to the editor, and a corresponding call to remove
 	 * annotations will not be made. This method is called when the debugger is
-	 * has opened an editor to display source for the given stack frame. 
-	 * 
+	 * has opened an editor to display source for the given stack frame.
+	 *
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 * @return <code>true</code> if annotations were added to the given editor part <code>false</code> otherwise
 	 */
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame);
-	
+
 	/**
 	 * Removes any debug related annotations from the given editor.
 	 * This method is called when the debugger clears the source selection
 	 * in an editor opened by the debugger. For example, when a debug
 	 * session is resumed or terminated.
-	 *   
+	 *
 	 * @param editorPart an editor that annotations were added to for
 	 *  a stack frame
 	 * @param thread the thread for which stack frame annotations were
 	 *  added to the editor
 	 */
-	public void removeAnnotations(IEditorPart editorPart, IThread thread);	
+	public void removeAnnotations(IEditorPart editorPart, IThread thread);
 }

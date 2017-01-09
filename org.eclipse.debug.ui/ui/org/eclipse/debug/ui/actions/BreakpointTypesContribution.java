@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -34,21 +34,21 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Breakpoint ruler pop-up action that creates a sub-menu to select the currently 
- * active breakpoint type. This menu contribution can be added to an editor 
- * with the <code>org.eclipse.ui.menus</code> extension point.  The breakpoint 
- * types are calculated based on the toggle breakpoint target factories 
+ * Breakpoint ruler pop-up action that creates a sub-menu to select the currently
+ * active breakpoint type. This menu contribution can be added to an editor
+ * with the <code>org.eclipse.ui.menus</code> extension point.  The breakpoint
+ * types are calculated based on the toggle breakpoint target factories
  * contributed through the <code>toggleBreakpointsTargetFactories</code> extension point.
  * <p>
  * Following is example plug-in XML used to contribute this action to an editor's
- * vertical ruler context menu.  
+ * vertical ruler context menu.
  * <pre>
  * &lt;extension point="org.eclipse.ui.menus"&gt;
  *   &lt;menuContribution
  *     locationURI="popup:#CEditorRulerContext?after=additions"
  *     id="example.RulerPopupActions"&gt;
  *       &lt;menu\
- *         id="breakpointTypes" 
+ *         id="breakpointTypes"
  *         label="Toggle Breakpoint"&gt;
  *         &lt;dynamic\
  *           id="example.rulerContextMenu.breakpointTypesAction"&gt;
@@ -66,7 +66,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class BreakpointTypesContribution extends CompoundContributionItem implements IWorkbenchContribution {
-    
+
     private class SelectTargetAction extends Action {
 		private final Set<String> fPossibleIDs;
         private final String fID;
@@ -86,10 +86,10 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
             }
         }
     }
- 
+
     private IServiceLocator fServiceLocator;
 
-    private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
+    private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] {
     	new ContributionItem() {
 			@Override
 			public void fill(Menu menu, int index) {
@@ -97,14 +97,14 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
 				item.setEnabled(false);
 				item.setText(Messages.BreakpointTypesContribution_0);
 			}
-	
+
 			@Override
 			public boolean isEnabled() {
 				return false;
 			}
     	}
     };
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
      */
@@ -112,8 +112,8 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
 	protected IContributionItem[] getContributionItems() {
         IWorkbenchPart part = null;
         ISelection selection = null;
-        
-        ISelectionService selectionService = 
+
+        ISelectionService selectionService =
             fServiceLocator.getService(ISelectionService.class);
         if (selectionService != null) {
             selection = selectionService.getSelection();
@@ -127,9 +127,9 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         if (part == null || selection == null) {
             return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
         }
-        
+
         // Get breakpoint toggle target IDs.
-        IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager(); 
+        IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager();
 		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(part, selection);
         String preferredId = manager.getPreferredToggleBreakpointsTargetID(part, selection);
 
@@ -141,18 +141,18 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
             }
             actions.add(action);
         }
-        
+
         if ( enabledIDs.isEmpty() ) {
             return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
         }
-        
+
         IContributionItem[] items = new IContributionItem[enabledIDs.size()];
         for (int i = 0; i < actions.size(); i++) {
             items[i] = new ActionContributionItem(actions.get(i));
         }
         return items;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.menus.IWorkbenchContribution#initialize(org.eclipse.ui.services.IServiceLocator)
      */

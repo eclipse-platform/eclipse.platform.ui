@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Handler for the Restart action
- * 
+ *
  * @since 3.6
  */
 public class RestartCommandAction extends DebugCommandAction {
@@ -28,7 +28,7 @@ public class RestartCommandAction extends DebugCommandAction {
     public RestartCommandAction() {
         setActionDefinitionId("org.eclipse.debug.ui.commands.Restart"); //$NON-NLS-1$
     }
-    
+
     @Override
 	protected Class<IRestartHandler> getCommandType() {
         return IRestartHandler.class;
@@ -69,5 +69,5 @@ public class RestartCommandAction extends DebugCommandAction {
         return ActionMessages.RestartCommandAction_tooltip;
     }
 
-    
+
 }

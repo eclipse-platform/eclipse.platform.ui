@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -66,7 +66,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Tab group for Launch Group.
- * 
+ *
  * @since 3.12
  */
 public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
@@ -118,7 +118,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
 				}
-				
+
 				try {
 	                String key = el.data.getType().getIdentifier();
 	                return DebugPluginImages.getImage(key);
@@ -136,7 +136,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				return null;
 			}
 			GroupLaunchElement el = (GroupLaunchElement) element;
-			
+
 			// launch name
 			if (columnIndex == 0) {
 				try {
@@ -146,11 +146,11 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 			}
 
-			// launch mode 
+			// launch mode
 			if (columnIndex == 1) {
 				return el.mode + (el.adoptIfRunning ? DebugUIMessages.GroupLaunchConfigurationTabGroup_lblAdopt : ""); //$NON-NLS-1$
 			}
-			
+
 			// launch post action
 			if (columnIndex == 2) {
 				GroupElementPostLaunchAction action = el.action;
@@ -172,7 +172,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return null;
 		}
 	}
-	
+
 	static class CheckStateProvider implements ICheckStateProvider {
 
 		/* (non-Javadoc)
@@ -212,10 +212,10 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		}
 
 		protected abstract void updateWidgetEnablement();
-		
+
 		/**
 		 * Helper method to create a push button.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent control
 		 * @param key
@@ -252,7 +252,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		protected abstract void addPressed();
 
 		protected abstract void editPressed();
-		
+
 		protected abstract void deletePressed();
 
 		protected abstract void downPressed();
@@ -292,12 +292,12 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			TreeColumn col3 = new TreeColumn(table, SWT.NONE);
 			col3.setText(DebugUIMessages.GroupLaunchConfigurationTabGroup_12);
 			col3.setWidth(100);
-		
+
 			treeViewer.setInput(input);
 			final ButtonComposite buts = new ButtonComposite(comp, SWT.NONE) {
 				@Override
 				protected void addPressed() {
-					GroupLaunchConfigurationSelectionDialog dialog = 
+					GroupLaunchConfigurationSelectionDialog dialog =
 						GroupLaunchConfigurationSelectionDialog.createDialog(
 									treeViewer.getControl().getShell(), GroupLaunchElement.MODE_INHERIT, false, self);
 					if (dialog.open() == Window.OK) {
@@ -327,7 +327,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					editButton.setEnabled(selectionCount == 1);
 					deleteButton.setEnabled(selectionCount > 0);
 				}
-				
+
 
 				@Override
 				protected void editPressed() {
@@ -336,7 +336,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						return;
 					}
 					GroupLaunchElement el = input.get(index);
-					GroupLaunchConfigurationSelectionDialog dialog = 
+					GroupLaunchConfigurationSelectionDialog dialog =
 						GroupLaunchConfigurationSelectionDialog.createDialog(
 									treeViewer.getControl().getShell(), el.mode, true, self);
 					if (isValidLaunchReference(el.data)) {
@@ -401,11 +401,11 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				private int[] getMultiSelectionIndices() {
 					StructuredSelection sel = (StructuredSelection) treeViewer.getSelection();
 					List<Integer> indices = new ArrayList<Integer>();
-					
+
 					for (Iterator<?> iter = sel.iterator(); iter.hasNext(); ) {
 						GroupLaunchElement el = (GroupLaunchElement) iter.next();
 						indices.add(input.indexOf(el));
-						
+
 					}
 					int[] result = new int[indices.size()];
 					for (int i = 0; i < result.length; i++) {
@@ -417,7 +417,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				private int getSelectionCount() {
 					return ((StructuredSelection)treeViewer.getSelection()).size();
 				}
-				
+
 
 				@Override
 				protected void downPressed() {
@@ -425,7 +425,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						return;
 					}
 					int index = getSingleSelectionIndex();
-					
+
 					GroupLaunchElement x = input.get(index);
 					input.set(index, input.get(index + 1));
 					input.set(index + 1, x);
@@ -433,12 +433,12 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					updateWidgetEnablement();
 					updateLaunchConfigurationDialog();
 				}
-				
+
 				protected boolean isDownEnabled() {
 					final int index = getSingleSelectionIndex();
 	                return (index >= 0) && (index != input.size() - 1);
                 }
-				
+
 				protected boolean isUpEnabled(){
 					return getSingleSelectionIndex() > 0;
 				}
@@ -463,14 +463,14 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					buts.updateWidgetEnablement();
 				}
 			});
-			
+
 			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					buts.editPressed();
 				}
 			});
-			
+
 			treeViewer.addCheckStateListener(new ICheckStateListener(){
 				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
@@ -502,7 +502,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				DebugPlugin.log(e);
 			}
 
-			// replace the input from previously shown launch configurations 
+			// replace the input from previously shown launch configurations
 			input = GroupLaunchConfigurationDelegate.createLaunchElements(configuration);
 			if (treeViewer != null) {
 				treeViewer.setInput(input);
@@ -529,7 +529,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			int validLaunches = 0;
 			// test if each launch is valid
 			for (GroupLaunchElement element : input) {
-				if (element.enabled) { 
+				if (element.enabled) {
 					if ( element.data == null) {
 						// error referencing invalid launch
 						setErrorMessage(MessageFormat.format(DebugUIMessages.GroupLaunchConfigurationTabGroup_14,
@@ -542,12 +542,12 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						return false;
 					}
 					validLaunches++;
-				} 
+				}
 			}
 			if (validLaunches < 1) {
 				// must have at least one valid and enabled launch
 				setErrorMessage(DebugUIMessages.GroupLaunchConfigurationTabGroup_16);
-				return false;				
+				return false;
 			}
 			return true;
 		}
@@ -559,7 +559,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	/**
 	 * Test if a launch configuration is a valid reference.
-	 * 
+	 *
 	 * @param config configuration reference
 	 * @return <code>true</code> if it is a valid reference, <code>false</code>
 	 *         if launch configuration should be filtered

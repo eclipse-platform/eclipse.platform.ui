@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,11 +33,11 @@ import org.eclipse.debug.core.model.IVariable;
  * @since 3.2
  */
 public interface IWatchExpressionFactoryAdapter {
-	
+
 	/**
 	 * Creates and returns an expression for the specified variable
 	 * which is used to created an {@link org.eclipse.debug.core.model.IWatchExpression}.
-	 * 
+	 *
 	 * @param variable variable a watch expression is required for
 	 * @return text used to create a watch expression
 	 * @exception org.eclipse.core.runtime.CoreException if unable to create a watch

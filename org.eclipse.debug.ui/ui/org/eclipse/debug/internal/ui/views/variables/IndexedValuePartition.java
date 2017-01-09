@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,22 +18,22 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 /**
- * A parition (subrange) of values of an indexed value 
+ * A parition (subrange) of values of an indexed value
  */
 public class IndexedValuePartition implements IIndexedValue {
 
 	// the starting offset of this parition, into the associated collection
 	private int fOffset;
-	
+
 	// the length of this partition
 	private int fLength;
 
 	// the indexed value
 	private IIndexedValue fValue;
-	
+
 	/**
 	 * Creates a parition for an indexed value.
-	 * 
+	 *
 	 * @param value indexed value
 	 * @param offset beginning offset of this partition (into the value)
 	 * @param length the length of this parition
@@ -42,8 +42,8 @@ public class IndexedValuePartition implements IIndexedValue {
 		fValue = value;
 		fOffset = offset;
 		fLength = length;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */

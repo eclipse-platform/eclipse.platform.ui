@@ -25,16 +25,16 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Editor input for a stack frame for which source could not be located.
- * 
+ *
  * @since 2.1
  */
 public class SourceNotFoundEditorInput extends PlatformObject implements IEditorInput {
-	
+
 	/**
 	 * Associated stack frame
 	 */
 	private IStackFrame fFrame;
-	
+
 	/**
 	 * Stack frame text (cached on creation)
 	 */
@@ -43,7 +43,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 	/**
 	 * Constructs an editor input for the given stack frame,
 	 * to indicate source could not be found.
-	 * 
+	 *
 	 * @param frame stack frame
 	 */
 	public SourceNotFoundEditorInput(IStackFrame frame) {
@@ -77,7 +77,7 @@ public class SourceNotFoundEditorInput extends PlatformObject implements IEditor
 		try {
 			return fFrame.getName();
 		} catch (DebugException e) {
-			return DebugUIViewsMessages.SourceNotFoundEditorInput_Source_Not_Found_1; 
+			return DebugUIViewsMessages.SourceNotFoundEditorInput_Source_Not_Found_1;
 		}
 	}
 

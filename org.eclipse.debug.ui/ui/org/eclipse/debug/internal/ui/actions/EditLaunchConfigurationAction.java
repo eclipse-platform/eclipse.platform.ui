@@ -36,7 +36,7 @@ import com.ibm.icu.text.MessageFormat;
  * on the the launch associated with the selected element.
  */
 public class EditLaunchConfigurationAction extends SelectionListenerAction {
-	
+
 	private ILaunchConfiguration fConfiguration = null;
 	private String fMode = null;
 	private boolean fTerminated = false;
@@ -61,7 +61,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 			Object object = selection.getFirstElement();
 			ILaunch launch = null;
 			if (object instanceof IAdaptable) {
-				launch = ((IAdaptable)object).getAdapter(ILaunch.class); 
+				launch = ((IAdaptable)object).getAdapter(ILaunch.class);
 			}
 			if (launch == null) {
 				if (object instanceof ILaunch) {
@@ -88,7 +88,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 							}
 						}
 					} catch (CoreException e1) {
-					}	
+					}
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
 					setIsTerminated(launch.isTerminated());
@@ -103,7 +103,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 				}
 			}
 		}
-		
+
 		// Disable the action if the launch config is private
 		ILaunchConfiguration config = getLaunchConfiguration();
 		if (config == null) {
@@ -115,27 +115,27 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {
 		fConfiguration = configuration;
 	}
-	
+
 	protected ILaunchConfiguration getLaunchConfiguration() {
 		return fConfiguration;
 	}
-	
+
 	protected void setMode(String mode) {
 		fMode = mode;
 	}
-	
+
 	protected String getMode() {
 		return fMode;
 	}
-	
+
 	protected boolean isTerminated() {
 		return fTerminated;
 	}
-	
+
 	protected void setIsTerminated(boolean terminated) {
 		fTerminated = terminated;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */

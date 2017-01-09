@@ -16,7 +16,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Breakpoint manager input memento provider.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointManagerInputMementoProvider extends DebugElementMementoProvider {

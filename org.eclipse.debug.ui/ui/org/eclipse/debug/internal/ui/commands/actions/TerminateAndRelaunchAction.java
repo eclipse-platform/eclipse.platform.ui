@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * Action which terminates a launch and then re-launches it.
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
-	
+
     @Override
 	public void postExecute(IRequest request, final Object[] targets) {
         if (request.getStatus() == null || request.getStatus().isOK()) {
@@ -51,7 +51,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
                         }
                     }
                 }
-            }); 
+            });
         }
     }
 
@@ -72,7 +72,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
         }
         return super.getContext();
     }
-    
+
 
 	@Override
 	protected Class<ITerminateHandler> getCommandType() {
@@ -89,7 +89,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 					setEnabled(false);
 					return;
 				}
-			} 
+			}
 		}
 		super.debugContextChanged(event);
 	}
@@ -102,7 +102,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
     			return LaunchConfigurationManager.isVisible(configuration);
     		}
     	}
-		return false; 
+		return false;
     }
 
     @Override

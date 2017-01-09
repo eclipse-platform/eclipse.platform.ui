@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -56,13 +56,13 @@ public class DefaultEndianessAction implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection == null)
 			return;
-		
+
 		if (selection instanceof IStructuredSelection)
 		{
 			Object obj = ((IStructuredSelection)selection).getFirstElement();
 			if (obj == null)
 				return;
-			
+
 			if (obj instanceof AbstractIntegerRendering)
 			{
 				fRendering = (AbstractIntegerRendering)obj;

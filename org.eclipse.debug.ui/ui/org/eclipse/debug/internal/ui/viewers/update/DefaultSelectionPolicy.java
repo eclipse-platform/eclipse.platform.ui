@@ -24,17 +24,17 @@ import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Default selection policy for the debug view.
- *  
+ *
  * @since 3.2
  */
 public class DefaultSelectionPolicy implements IModelSelectionPolicy {
-	
+
 	private IDebugElement fDebugElement;
-	
+
 	/**
 	 * Constructs a new selection policy for the given debug
 	 * element.
-	 * 
+	 *
 	 * @param element the backing debug element
 	 */
 	public DefaultSelectionPolicy(IDebugElement element) {
@@ -54,7 +54,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 					IDebugElement debugElement = (IDebugElement) element;
 					return fDebugElement.getDebugTarget().equals(debugElement.getDebugTarget());
 				}
-			} 
+			}
 		}
 		return false;
 	}
@@ -64,7 +64,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	 */
 	@Override
 	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
-		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {	
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (existing instanceof IStructuredSelection && candidate instanceof IStructuredSelection) {
 				IStructuredSelection ssExisting = (IStructuredSelection) existing;
 				IStructuredSelection ssCandidate = (IStructuredSelection) candidate;
@@ -73,7 +73,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		}
 		return true;
 	}
-	
+
 	protected boolean overrides(Object existing, Object candidate) {
 		if (existing == null) {
 			return true;
@@ -94,14 +94,14 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	 */
 	@Override
 	public boolean isSticky(ISelection selection, IPresentationContext context) {
-		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {	
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (selection instanceof IStructuredSelection) {
 				return isSticky(((IStructuredSelection)selection).getFirstElement());
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns if the selection should remain on the given selection
 	 * @param element the element to check
@@ -116,14 +116,14 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	}
 
     /**
-     * If an attempt is made to select an invalid element, it usually indicates that the 
-     * currently selected element was removed from the model.  Instead of leaving the 
+     * If an attempt is made to select an invalid element, it usually indicates that the
+     * currently selected element was removed from the model.  Instead of leaving the
      * selection empty, attempt to select the parent element instead.
-     * 
+     *
      * @param selection the selection to replace
      * @param newSelection the selection to use if the given selection is not an {@link ITreeSelection}
      * @return the replaced selection or <code>newSelection</code> if the given selection is not an {@link ITreeSelection}
-     * 
+     *
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#replaceInvalidSelection(ISelection, ISelection)
      */
     @Override

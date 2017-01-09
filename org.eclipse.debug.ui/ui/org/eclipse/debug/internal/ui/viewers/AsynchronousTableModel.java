@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 
 	/**
 	 * Constructs a new table model.
-	 * 
+	 *
 	 * @param viewer the backing viewer
 	 */
 	public AsynchronousTableModel(AsynchronousViewer viewer) {
@@ -34,10 +34,10 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	 */
 	@Override
 	protected void add(ModelNode parent, Object element) {}
-	
+
 	/**
 	 * Adds the given elements to the table.
-	 * 
+	 *
 	 * @param elements the new elements to add
 	 */
 	public void add(Object[] elements) {
@@ -45,10 +45,10 @@ public class AsynchronousTableModel extends AsynchronousModel {
 		requestScheduled(update);
 		update.done();
 	}
-	
+
 	/**
 	 * Notification add request is complete.
-	 * 
+	 *
 	 * @param elements elements to add
 	 */
 	protected void added(Object[] elements) {
@@ -75,10 +75,10 @@ public class AsynchronousTableModel extends AsynchronousModel {
     		setChildren(getRootNode(), kids);
     	}
 	}
-	
+
 	/**
 	 * Inserts the given elements to the table.
-	 * 
+	 *
 	 * @param elements the new elements to insert
 	 * @param index the index to insert the elements at
 	 */
@@ -87,10 +87,10 @@ public class AsynchronousTableModel extends AsynchronousModel {
 		requestScheduled(update);
 		update.done();
 	}
-	
+
 	/**
 	 * Notification insert request is complete.
-	 * 
+	 *
 	 * @param elements elements to add
 	 * @param index index to insert at
 	 */
@@ -118,22 +118,22 @@ public class AsynchronousTableModel extends AsynchronousModel {
     	if (changed) {
     		setChildren(getRootNode(), kids);
     	}
-	}	
+	}
 
 	/**
 	 * Removes the given elements from the table.
-	 * 
+	 *
 	 * @param elements the elements to remove
 	 */
 	public void remove(Object[] elements) {
 		TableRemoveRequestMonitor update = new TableRemoveRequestMonitor(getRootNode(), elements, this);
 		requestScheduled(update);
 		update.done();
-	}	
-	
+	}
+
 	/**
 	 * Notification remove request is complete.
-	 * 
+	 *
 	 * @param elements elements to remove
 	 */
 	protected void removed(Object[] elements) {
@@ -156,11 +156,11 @@ public class AsynchronousTableModel extends AsynchronousModel {
     	if (changed) {
     		setChildren(getRootNode(), kids);
     	}
-	}	
-	
+	}
+
 	/**
 	 * Adds the given elements to the table.
-	 * @param element the element to replace 
+	 * @param element the element to replace
 	 * @param replacement the element to replace the old element with
 	 */
 	public void replace(Object element, Object replacement) {
@@ -168,10 +168,10 @@ public class AsynchronousTableModel extends AsynchronousModel {
 		requestScheduled(update);
 		update.done();
 	}
-	
+
 	/**
 	 * Notification add request is complete.
-	 * @param element the element to be replaced 
+	 * @param element the element to be replaced
 	 * @param replacement the element that replaced the old element
 	 */
 	protected void replaced(Object element, Object replacement) {
@@ -179,7 +179,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
         if (filtered.length == 0) {
             remove(new Object[]{element});
             return;
-        }		
+        }
 		List<ModelNode> list = new ArrayList<ModelNode>();
     	synchronized (this) {
     		ModelNode[] nodes = getNodes(element);
@@ -194,5 +194,5 @@ public class AsynchronousTableModel extends AsynchronousModel {
     			getViewer().nodeChanged(node);
     		}
     	}
-	}	
+	}
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public interface IDynamicVariableResolver {
 	/**
 	 * Resolves and returns a value for the specified variable when referenced
 	 * with the given argument, possibly <code>null</code>
-	 *  
+	 *
 	 * @param variable variable to resolve a value for
 	 * @param argument argument present in expression or <code>null</code> if none
 	 * @return variable value, possibly <code>null</code>

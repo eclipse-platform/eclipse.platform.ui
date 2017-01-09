@@ -20,9 +20,9 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 public interface IDetailPaneContainer2 extends IDetailPaneContainer {
 
 	/**
-	 * Set the selection provider of the detail pane.  Allows the container to 
+	 * Set the selection provider of the detail pane.  Allows the container to
 	 * forward the selection provider events to the container's workbench site.
-	 * 
+	 *
 	 * @param provider  the selection provider or <code>null</code>
 	 */
 	public void setSelectionProvider(ISelectionProvider provider);

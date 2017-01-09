@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation = bug fixing
@@ -24,15 +24,15 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Copy action for debug view.  This action is specialized from the standard 
+ * Copy action for debug view.  This action is specialized from the standard
  * copy action in a couple of ways:
  * <ul>
- *   <li>If debug view is in debug mode, then the selected element in 
+ *   <li>If debug view is in debug mode, then the selected element in
  *   breadcrumb is translated into the tree viewer, and then copied</li>
- *   <li> If an item is selected all the item's children are copied into 
+ *   <li> If an item is selected all the item's children are copied into
  *   clipbard.</li>
  * </ul>
- * 
+ *
  * @since 3.5
  */
 public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipboardActionDelegate {
@@ -76,10 +76,10 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
         	}
         } else if (item instanceof Tree) {
         	collectChildItems(set, ((Tree)item).getItems());
-        } 
+        }
         return set.toArray(new TreeItem[set.size()]);
     }
-    
+
 	private void collectChildItems(Set<Widget> set, TreeItem[] items) {
     	if (items == null) {
     		return;

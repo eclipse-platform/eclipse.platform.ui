@@ -16,13 +16,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
- * This content provider is required in order to have selection maintained properly 
+ * This content provider is required in order to have selection maintained properly
  * when swtiching between session.  The problem is, when swtich debug session, the memory view reset the input
  * to the viewer.
- * 
+ *
  * After the input is set, viewer's doInitialRestore is called.  At this time, the elemtns
  * are not mapped in the viewer yet, as a result, the selection cannot be maintained.
- * 
+ *
  * The viewer tries to restore selection again after elements are added to the view.  This is done
  * in the HasChildrenJob.  However, this job will not get scheduled unless the element provides a content
  * provider adapter.  As a result, the job is never scheduled and the selection cannot be maintained.

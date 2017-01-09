@@ -75,7 +75,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 	private Image fGradientBackground;
 	private BreadcrumbItem fSelectedItem;
-	
+
 	/**
 	 * Create a new <code>BreadcrumbViewer</code>.
 	 * <p>
@@ -150,17 +150,17 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	int getStyle() {
 	    return fStyle;
 	}
-	
+
     /**
      * Configure the given drop down viewer. The given input is used for the viewers input. Clients
      * must at least set the label and the content provider for the viewer.
-     * @param parent the parent composite 
+     * @param parent the parent composite
      * @param site the site to create the drop down for
      * @param path the path to show
      * @return the drop down control
      */
 	protected abstract Control createDropDown(Composite parent, IBreadcrumbDropDownSite site, TreePath path);
-	
+
 	/*
 	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
@@ -319,7 +319,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		myDoUpdateItem(widget, element, fullMap);
 	}
-	
+
 	private boolean myDoUpdateItem(Widget widget, Object element, boolean fullMap) {
 		if (widget instanceof BreadcrumbItem) {
 			final BreadcrumbItem item= (BreadcrumbItem) widget;
@@ -371,7 +371,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
         }
         return null;
     }
-    
+
 	/*
  	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
@@ -399,7 +399,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		disableRedraw();
 		try {
 		    boolean layoutChanged = false;
-		    
+
 			BreadcrumbItem item= (BreadcrumbItem) doFindItem(element);
 			if (item == null || element != null && element.equals(getInput())) {
 				for (int i= 0, size= fBreadcrumbItems.size(); i < size; i++) {
@@ -409,7 +409,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			} else {
 			    layoutChanged = refreshItem(item) || layoutChanged;
 			}
-			
+
 			if (layoutChanged) {
 			    updateSize();
 			    fContainer.layout(true, true);
@@ -426,7 +426,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	protected void setSelectionToWidget(List l, boolean reveal) {
 		BreadcrumbItem focusItem= null;
 
-		// Unselect the currently selected items, and remember the focused item.  
+		// Unselect the currently selected items, and remember the focused item.
 		for (int i= 0, size= fBreadcrumbItems.size(); i < size; i++) {
 			BreadcrumbItem item= fBreadcrumbItems.get(i);
 			if (item.hasFocus()) {
@@ -453,8 +453,8 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 				}
 			}
 		}
-		
-		// If there is a new selection, and it does not overlap the old selection, 
+
+		// If there is a new selection, and it does not overlap the old selection,
 		// remove the focus marker from the old focus item.
 		if (fSelectedItem != null && focusItem != null) {
 		    focusItem.setFocus(false);
@@ -590,41 +590,41 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			BreadcrumbItem last= fBreadcrumbItems.get(fBreadcrumbItems.size() - 1);
 			last.setIsLastItem(false);
 		}
-		
+
         int index = 0;
         boolean updateLayout = false;
 		if (input != null) {
 	        ITreePathContentProvider contentProvider= (ITreePathContentProvider) getContentProvider();
 	        TreePath path = new TreePath(new Object[0]);
-	
-	        // Top level elements need to be retrieved using getElements(), rest 
+
+	        // Top level elements need to be retrieved using getElements(), rest
 	        // using getChildren().
 	        Object[] children = contentProvider.getElements(input);
 	        Object element = children != null && children.length != 0 ? children[0] : null;
 	        while (element != null) {
 	            path = path.createChildPath(element);
-	            
+
 	            // All but last item are hidden if the viewer is in a vertical toolbar.
 	            children = contentProvider.getChildren(path);
 	            if ((getStyle() & SWT.VERTICAL) == 0 || children == null || children.length == 0) {
 	                updateLayout = updateOrCreateItem(index++, path, element) || updateLayout;
 	            }
-	            
+
 	            if (children != null && children.length != 0) {
 	                element = children[0];
 	            } else {
 	                break;
 	            }
-	                
-	        }	
+
+	        }
 		}
-		
+
         BreadcrumbItem last = null;
         if (index <= fBreadcrumbItems.size()) {
         	last = (fBreadcrumbItems.get(index - 1));
         	last.setIsLastItem(true);
         }
-        
+
 		while (index < fBreadcrumbItems.size()) {
 			updateLayout = true;
 			BreadcrumbItem item= fBreadcrumbItems.remove(fBreadcrumbItems.size() - 1);
@@ -646,13 +646,13 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		}
 	}
 
-	/** 
+	/**
 	 * @param item Item to refresh.
 	 * @return returns whether the item's size and layout needs to be updated.
 	 */
 	private boolean refreshItem(BreadcrumbItem item) {
 	    boolean layoutChanged = false;
-	    
+
 	    TreePath path = getTreePathFromItem(item);
 
 	    ViewerLabel label = new ViewerLabel(item.getText(), item.getImage());
@@ -671,10 +671,10 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	    }
 	    return layoutChanged;
 	}
-	
+
 	/**
 	 * Creates or updates a breadcrumb item.
-	 * @param index the index 
+	 * @param index the index
 	 * @param path the path
 	 * @param element the element
 	 *
@@ -693,7 +693,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	    }
 
 		boolean updateLayout = false;
-		
+
 	    if (equals(element, item.getData())) {
 	        item.setPath(path);
             updateLayout = myDoUpdateItem(item, element, false);
@@ -703,7 +703,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
     	    mapElement(element, item);
             updateLayout = refreshItem(item);
         }
-	    
+
         return updateLayout;
 	}
 
@@ -864,7 +864,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 	/**
 	 * Blends c1 and c2 based in the provided ratio.
-	 * 
+	 *
 	 * @param c1
 	 *            first color
 	 * @param c2
@@ -880,10 +880,10 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		int b = blend(c1.blue, c2.blue, ratio);
 		return new RGB(r, g, b);
 	}
-	
+
 	/**
 	 * Blends two primary color components based on the provided ratio.
-	 * 
+	 *
 	 * @param v1
 	 *            first component
 	 * @param v2
@@ -900,7 +900,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	/*
 	 * @see
 	 * org.eclipse.jface.viewers.StructuredViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	@Override

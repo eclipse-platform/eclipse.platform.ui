@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,23 +37,23 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 {
 	@Override
 	public void modelChanged(IModelDelta node, IModelProxy proxy) {
-		
+
 		// clear current cache as it becomes invalid when the memory block is changed
 		AbstractVirtualContentTableModel model = getTableViewer().getVirtualContentModel();
-		
+
 		if (model != null)
 		{
 			IContentChangeComputer computer = null;
 			if (model instanceof IContentChangeComputer)
 				computer = (IContentChangeComputer)model;
-			
+
 			clearCache(computer);
-			
+
 			if (!containsEvent())
 			{
 				return;
 			}
-			
+
 			if (node.getElement() instanceof IMemoryBlock && (node.getFlags() & IModelDelta.CONTENT) != 0)
 			{
 				if (computer != null && getTableViewer() != null)
@@ -72,17 +72,17 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 				notifyRendering(node, proxy);
 				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
 				return;
-				
+
 			}
 			else if (node.getElement() instanceof IMemoryBlock && (node.getFlags() & IModelDelta.STATE) != 0)
 			{
 				// override handling of state change event
 				// let the super class deals with the rest of the changes
 				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
-				return;				
-			}				
+				return;
+			}
 		}
-		
+
 		super.modelChanged(node, proxy);
 	}
 
@@ -102,7 +102,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 				listener.modelChanged(node, proxy);
 		}
 	}
-	
+
 	protected void handleMemoryBlockChanged(IMemoryBlock mb, IModelDelta delta)
 	{
 		try {
@@ -115,7 +115,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 					if ((delta.getFlags() & IModelDelta.CONTENT) != 0)
 					{
 						TableRenderingContentDescriptor descriptor = rendering.getAdapter(TableRenderingContentDescriptor.class);
-						
+
 						if (descriptor != null)
 						{
 							final BigInteger address = getMemoryBlockBaseAddress(mb);
@@ -123,7 +123,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 							{
 								descriptor.updateContentBaseAddress();
 								UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
-			
+
 									@Override
 									public IStatus runInUIThread(IProgressMonitor monitor) {
 										try {
@@ -154,7 +154,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 				getTableViewer().handlePresentationFailure(null, e.getStatus());
 		}
 	}
-	
+
 	private BigInteger getMemoryBlockBaseAddress(IMemoryBlock mb) throws DebugException
 	{
 		if (mb instanceof IMemoryBlockExtension)
@@ -162,14 +162,14 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 		else
 			return BigInteger.valueOf(mb.getStartAddress());
 	}
-	
+
 	private AsyncTableRenderingViewer getTableViewer()
 	{
 		if (getViewer() instanceof AsyncTableRenderingViewer)
 			return (AsyncTableRenderingViewer)getViewer();
 		return null;
 	}
-	
+
 	private boolean containsEvent()
 	{
 		if (getViewer().getPresentationContext() instanceof MemoryViewPresentationContext)
@@ -184,7 +184,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 		}
 		return true;
 	}
-	
+
 	protected AbstractAsyncTableRendering getTableRendering(MemoryViewPresentationContext context)
 	{
 		IMemoryRendering memRendering = context.getRendering();

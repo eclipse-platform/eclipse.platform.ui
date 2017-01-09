@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,11 +18,11 @@ import org.eclipse.ui.IEditorPart;
  * A reminder to remove any annotations created by an editor presentation
  */
 public class StandardDecoration extends Decoration {
-	
+
 	private IThread fThread;
 	private IEditorPart fEditor;
 	private IDebugEditorPresentation fPresentation;
-	
+
 	public StandardDecoration(IDebugEditorPresentation presentation, IEditorPart editorPart, IThread thread) {
 		fThread = thread;
 		fEditor = editorPart;

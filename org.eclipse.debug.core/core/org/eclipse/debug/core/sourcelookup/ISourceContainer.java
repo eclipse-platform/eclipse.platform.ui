@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.IAdaptable;
  * @since 3.0
  */
 public interface ISourceContainer extends IAdaptable {
-	
+
 	/**
 	 * Notification this source container has been added to the given
 	 * source lookup director.
-	 * 
+	 *
 	 * @param director the director this container has been added to
 	 */
 	public void init(ISourceLookupDirector director);
@@ -66,7 +66,7 @@ public interface ISourceContainer extends IAdaptable {
 	/**
 	 * The name of this source container that can be used for presentation purposes.
 	 * For example, the name of a project.
-	 *  
+	 *
 	 * @return the name of this source container
 	 */
 	public String getName();
@@ -76,7 +76,7 @@ public interface ISourceContainer extends IAdaptable {
 	 * collection is returned if this container is not a composite container.
 	 * For example, a workspace source container may be composed of project source
 	 * containers.
-	 * 
+	 *
 	 * @return the source containers this container is composed of, possibly
 	 *  an empty collection
 	 * @exception CoreException if unable to retrieve source containers
@@ -87,22 +87,22 @@ public interface ISourceContainer extends IAdaptable {
 	 * Returns whether this container is a composite container. A composite
 	 * container is composed of other source containers. For example, a workspace
 	 * source container may be composed of project source containers.
-	 * 
+	 *
 	 * @return whether this container is a composite container
-	 */ 	
+	 */
 	public boolean isComposite();
-	
+
 	/**
 	 * Returns this container's type.
-	 * 
-	 * @return this container's type 
+	 *
+	 * @return this container's type
 	 */
 	public ISourceContainerType getType();
-	
+
 	/**
 	 * Disposes this source container. This method is called when the source
 	 * director associated with this source container is disposed.
 	 */
 	public void dispose();
-	
+
 }

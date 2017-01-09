@@ -32,12 +32,12 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 * Action identifier for IDebugView#getAction(String)
 	 */
 	public static final String ID_DELETE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DELETE_ACTION"; //$NON-NLS-1$
-	
+
 	/**
-	 * Constructs an action to delete launch configuration(s) 
+	 * Constructs an action to delete launch configuration(s)
 	 */
 	public DeleteLaunchConfigurationAction(Viewer viewer, String mode) {
-		super(LaunchConfigurationsMessages.DeleteLaunchConfigurationAction_Dele_te_1, viewer, mode); 
+		super(LaunchConfigurationsMessages.DeleteLaunchConfigurationAction_Dele_te_1, viewer, mode);
 	}
 
 	/**
@@ -48,10 +48,10 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	protected boolean shouldDelete() {
 		IStructuredSelection selection = getStructuredSelection();
 		// Make the user confirm the deletion
-		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; // 
-		return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage); 
+		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; //
+		return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage);
 	}
-	
+
 	/**
 	 * @see AbstractLaunchConfigurationAction#performAction()
 	 */

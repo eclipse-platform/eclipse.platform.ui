@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 369012 - [expr] Modifying a variable value using cell editor is not reflected in view. 
+ *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 369012 - [expr] Modifying a variable value using cell editor is not reflected in view.
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.viewers.update;
@@ -22,7 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 
 /**
  * Event handler for an expression.
- * 
+ *
  * @since 3.2
  *
  */
@@ -49,7 +49,7 @@ public class ExpressionEventHandler extends DebugEventHandler {
     		}
     		if ((event.getDetail() & DebugEvent.CONTENT) != 0) {
     			flags = flags | IModelDelta.CONTENT;
-    		} 
+    		}
 	    	delta.addNode(expression, flags);
 			fireDelta(delta);
 		}
@@ -58,7 +58,7 @@ public class ExpressionEventHandler extends DebugEventHandler {
     		int flags = IModelDelta.NO_CHANGE;
     		if (event.getDetail()==DebugEvent.CONTENT) {
     			flags = flags | IModelDelta.CONTENT;
-    		} 
+    		}
 	    	delta.addNode(variable, flags);
 			fireDelta(delta);
 		}
@@ -69,5 +69,5 @@ public class ExpressionEventHandler extends DebugEventHandler {
         ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getExpressionManager(), IModelDelta.CONTENT);
         fireDelta(delta);
     }
-    
+
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -43,7 +43,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	private Shell fShell;
 	private TreeModelViewer fViewer;
 	private TestModelUpdatesListener fListener;
-	private boolean fResized = false; 
+	private boolean fResized = false;
 
 	public ColumnPresentationTests(String name) {
 		super(name);
@@ -76,7 +76,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			public void controlResized(ControlEvent e) {
                 fResized = true;
             }
-            
+
             @Override
 			public void controlMoved(ControlEvent e) {
             }
@@ -117,7 +117,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
             }
             return columnIds;
 		}
-		
+
 		MyColumnPresentation(String[] columnIds) {
 			this.columnIds = columnIds;
 		}
@@ -274,7 +274,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			Thread.sleep(0);
 		}
         fResized = false;
-	    
+
 		MyColumnPresentation colPre = new MyColumnPresentation();
 		makeModel(colPre, "m1"); //$NON-NLS-1$
 		Tree tree = fViewer.getTree();
@@ -290,7 +290,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		for (int i = 0; i < columns.length - 1; i++) {
 			assertEquals(avgWidth, columns[i].getWidth());
 		}
-		// Checking of the width of the last column is not reliable.  
+		// Checking of the width of the last column is not reliable.
 		// I.e. it's handled differenty on different platforms.
         //int remainder = treeWidth % columns.length;
         //assertEquals(avgWidth + remainder, columns[columns.length - 1].getWidth());
@@ -312,12 +312,12 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		makeModel(colPre, "m2"); //$NON-NLS-1$
 		Tree tree = fViewer.getTree();
 		TreeColumn[] columns = tree.getColumns();
-		
+
         // Resizing the tree invalidates the test.
 		if (fResized) {
 		    return;
 		}
-		
+
 		for (int i = 0; i < columns.length; i++) {
 			int width = colPre.repliedWidths[i];
 			if (width != -1) {
@@ -411,14 +411,14 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			assertEquals(newWidths[i], columns[i].getWidth());
 		}
 	}
-	
+
 	/**
-     * In this test: verify that tree viewer can handle the column presentation changing 
+     * In this test: verify that tree viewer can handle the column presentation changing
      * its available column IDs between runs (bug 360015).
      */
     public void testChangedColumnIds() throws InterruptedException {
         MyColumnPresentation colPre = new MyColumnPresentation();
-        
+
 		makeModel(colPre, "m1"); //$NON-NLS-1$
         TreeColumn[] columns = fViewer.getTree().getColumns();
         // Select visible columns
@@ -428,18 +428,18 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
                 Thread.sleep(0);
             }
         } while (fViewer.getTree().getColumns().length != 1);
-        
+
         // get InternalTreeModelViewer to rebuild columns due to change of
         // model and presentation - first set to another model and column
         // presentation, then switch to a model with original presentation.
 		makeModel(new MyColumnPresentation2(), "m2"); //$NON-NLS-1$
-        
+
         String[] newColumnIds = MyColumnPresentation.makeDefaultColumnIds();
 		newColumnIds[0] = "new_column_id"; //$NON-NLS-1$
         colPre = new MyColumnPresentation(newColumnIds);
-        
+
 		makeModel(colPre, "m3"); //$NON-NLS-1$
-        
+
         // verify user resized widths are used instead of the initial widths from IColumnPresentation2
         columns = fViewer.getTree().getColumns();
         for (int i = 0; i < columns.length; i++) {

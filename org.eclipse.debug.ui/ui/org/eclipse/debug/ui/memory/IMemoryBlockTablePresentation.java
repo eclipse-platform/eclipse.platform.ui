@@ -25,7 +25,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
  * presentation as documented in <code>org.eclipse.debug.ui.IDebugModelPresentation</code>.
  * In addition, implement this interface in your debug model presentation.  Your model
  * presentation will be called when <code>org.eclipse.debug.ui.memory.AbstractTableRendering</code>
- * constructs its column and row labels. 
+ * constructs its column and row labels.
  * </p>
  * <p>
  * Clients may implement this interface.
@@ -34,29 +34,29 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
  */
 public interface IMemoryBlockTablePresentation extends IDebugModelPresentation
 {
-	
+
 	/**
      * Returns a collection of labels to head columns in a <code>AbstractTableRendering</code>
      * rendering, or <code>null</code> if default labels should be used.
-     *  
+     *
 	 * @param blk memory block
 	 * @param bytesPerLine the number if bytes to be displayed
-	 * @param numColumns the number of columns the bytes are divided into 
+	 * @param numColumns the number of columns the bytes are divided into
 	 * @return a collection of labels to head columns in a <code>AbstractTableRendering</code>
      * rendering, or <code>null</code> if default labels should be used
 	 */
 	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns);
-	
-	
+
+
 	/**
      * Renders and returns a label for a row starting at the given address within the given
      * memory block, or <code>null</code> if default rendering should be used.
-     * 
+     *
 	 * @param blk memory block
 	 * @param address an address in the memory block
 	 * @return a label for a row starting at the given address within the given
      * memory block, or <code>null</code> if default rendering should be used
 	 */
 	public String getRowLabel(IMemoryBlock blk, BigInteger address);
-	
+
 }

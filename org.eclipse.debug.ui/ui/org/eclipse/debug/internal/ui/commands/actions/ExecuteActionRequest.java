@@ -18,14 +18,14 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * Plain status collector for actions. Has no result.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ExecuteActionRequest extends DebugCommandRequest {
-	
+
 	private ICommandParticipant fParticipant = null;
-	
+
 	public ExecuteActionRequest(Object[] elements) {
 		super(elements);
 	}
@@ -68,7 +68,7 @@ public class ExecuteActionRequest extends DebugCommandRequest {
             }
         }
     }
-    
+
 	public void setCommandParticipant(ICommandParticipant participant) {
 		fParticipant = participant;
 	}

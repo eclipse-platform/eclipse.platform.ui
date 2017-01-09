@@ -42,7 +42,7 @@ import org.eclipse.debug.core.IBreakpointListener;
 public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect, IMemoryBlockRetrieval {
 	/**
 	 * Returns the system process associated with this debug target.
-	 * 
+	 *
 	 * @return the system process associated with this debug target
 	 */
 	public IProcess getProcess();
@@ -50,7 +50,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * Returns the threads contained in this debug target. An
 	 * empty collection is returned if this debug target contains
 	 * no threads.
-	 * 
+	 *
 	 * @return a collection of threads
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -59,10 +59,10 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * @since 2.0
 	 */
 	public IThread[] getThreads() throws DebugException;
-	
+
 	/**
 	 * Returns whether this debug target currently contains any threads.
-	 * 
+	 *
 	 * @return whether this debug target currently contains any threads
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -71,7 +71,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * @since 2.0
 	 */
 	public boolean hasThreads() throws DebugException;
-	
+
 	/**
 	 * Returns the name of this debug target. Name format is debug model
 	 * specific, and should be specified by a debug model.
@@ -83,10 +83,10 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * the failure.</li></ul>
 	 */
 	public String getName() throws DebugException;
-	
+
 	/**
-	 * Returns whether this target can install the given breakpoint. 
-	 * 
+	 * Returns whether this target can install the given breakpoint.
+	 *
 	 * @param breakpoint breakpoint to consider
 	 * @return whether this target can install the given breakpoint
 	 */

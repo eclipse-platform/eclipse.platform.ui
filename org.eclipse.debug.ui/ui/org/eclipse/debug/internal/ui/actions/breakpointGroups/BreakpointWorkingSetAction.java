@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -22,8 +22,8 @@ import org.eclipse.ui.IViewPart;
  * An action which clears (sets the null) the default breakpoint group.
  */
 public abstract class BreakpointWorkingSetAction extends AbstractBreakpointsViewAction implements IPropertyChangeListener {
-    
-    protected IAction fAction; 
+
+    protected IAction fAction;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
@@ -41,7 +41,7 @@ public abstract class BreakpointWorkingSetAction extends AbstractBreakpointsView
         super.init(view);
         DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
@@ -59,7 +59,7 @@ public abstract class BreakpointWorkingSetAction extends AbstractBreakpointsView
         super.init(action);
         update();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */

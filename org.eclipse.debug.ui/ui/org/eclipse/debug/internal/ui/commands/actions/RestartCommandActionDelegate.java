@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,13 +21,13 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Restart action delegate.
- * 
+ *
  * @since 3.6
  */
 public class RestartCommandActionDelegate implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
     private DebugCommandAction fDebugAction = new RestartCommandAction();
-    
+
     @Override
 	public void dispose() {
         fDebugAction.dispose();
@@ -51,7 +51,7 @@ public class RestartCommandActionDelegate implements IWorkbenchWindowActionDeleg
     @Override
 	public void init(IAction action) {
         fDebugAction.setActionProxy(action);
-        
+
     }
 
     @Override

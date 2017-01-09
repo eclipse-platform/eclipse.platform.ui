@@ -52,14 +52,14 @@ public class ExternalToolsCoreUtil {
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, code, message, exception));
 	}
-	
+
 	/**
 	 * Expands and returns the location attribute of the given launch
 	 * configuration. The location is
 	 * verified to point to an existing file, in the local file system.
-	 * 
+	 *
 	 * @param configuration launch configuration
-	 * @return an absolute path to a file in the local file system  
+	 * @return an absolute path to a file in the local file system
 	 * @throws CoreException if unable to retrieve the associated launch
 	 * configuration attribute, if unable to resolve any variables, or if the
 	 * resolved location does not point to an existing file in the local file
@@ -78,8 +78,8 @@ public class ExternalToolsCoreUtil {
 				File file = new File(expandedLocation);
 				if (file.isFile()) {
 					return new Path(expandedLocation);
-				} 
-				
+				}
+
 				String msg = NLS.bind(ExternalToolsProgramMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
 				abort(msg, null, 0);
 			}
@@ -87,11 +87,11 @@ public class ExternalToolsCoreUtil {
 		// execution will not reach here
 		return null;
 	}
-	
+
 	/**
 	 * Returns a boolean specifying whether or not output should be captured for
 	 * the given configuration
-	 * 
+	 *
 	 * @param configuration the configuration from which the value will be
 	 * extracted
 	 * @return boolean specifying whether or not output should be captured
@@ -106,7 +106,7 @@ public class ExternalToolsCoreUtil {
 	 * configuration. Returns <code>null</code> if a working directory is not
 	 * specified. If specified, the working is verified to point to an existing
 	 * directory in the local file system.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return an absolute path to a directory in the local file system, or
 	 * <code>null</code> if unspecified
@@ -123,7 +123,7 @@ public class ExternalToolsCoreUtil {
 				File path = new File(expandedLocation);
 				if (path.isDirectory()) {
 					return new Path(expandedLocation);
-				} 
+				}
 				String msg = NLS.bind(ExternalToolsProgramMessages.ExternalToolsUtil_invalidDirectory__0_, new Object[] { expandedLocation, configuration.getName()});
 				abort(msg, null, 0);
 			}
@@ -134,7 +134,7 @@ public class ExternalToolsCoreUtil {
 	/**
 	 * Expands and returns the arguments attribute of the given launch
 	 * configuration. Returns <code>null</code> if arguments are not specified.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return an array of resolved arguments, or <code>null</code> if
 	 * unspecified
@@ -153,13 +153,13 @@ public class ExternalToolsCoreUtil {
 	private static IStringVariableManager getStringVariableManager() {
 		return VariablesPlugin.getDefault().getStringVariableManager();
 	}
-	
+
 	/**
 	 * Returns whether the given launch configuration is enabled. This property
 	 * is intended only to apply to external tool builder configurations and
 	 * determines whether the project builder will launch the configuration
 	 * when it builds.
-	 *  
+	 *
 	 * @param configuration the configuration for which the enabled state should
 	 * 		be determined.
 	 * @return whether the given configuration is enabled to be run when a build occurs.
@@ -168,10 +168,10 @@ public class ExternalToolsCoreUtil {
 	public static boolean isBuilderEnabled(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, true);
 	}
-	
+
 	/**
 	 * Returns the collection of resources for the build scope as specified by the given launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @throws CoreException if an exception occurs while retrieving the resources
 	 */
@@ -180,18 +180,18 @@ public class ExternalToolsCoreUtil {
 		if (scope == null) {
 			return null;
 		}
-	
+
 		return RefreshUtil.toResources(scope);
 	}
-	
+
 	/**
 	 * Parses the argument text into an array of individual
 	 * strings using the space character as the delimiter.
 	 * An individual argument containing spaces must have a
-	 * double quote (") at the start and end. Two double 
+	 * double quote (") at the start and end. Two double
 	 * quotes together is taken to mean an embedded double
 	 * quote in the argument text.
-	 * 
+	 *
 	 * @param arguments the arguments as one string
 	 * @return the array of arguments
 	 */
@@ -200,15 +200,15 @@ public class ExternalToolsCoreUtil {
 			return new String[0];
 		}
 		String[] res= DebugPlugin.parseArguments(arguments);
-		return res;		
-	}	
+		return res;
+	}
 	/**
 	 * Returns a collection of projects referenced by a build scope attribute.
-	 * 
+	 *
 	 * @return collection of projects referred to by configuration
 	 */
 	public static IProject[] getBuildProjects(ILaunchConfiguration configuration, String buildScopeId) {
-		
+
 		String scope = null;
 		String id = buildScopeId ;
 		if (id == null) {
@@ -247,11 +247,11 @@ public class ExternalToolsCoreUtil {
 		}
 		return new IProject[0];
 	}
-	
+
 	/**
 	 * Whether referenced projects should be considered when building. Only valid
 	 * when a set of projects is to be built.
-	 * 
+	 *
 	 * @param configuration
 	 * @return whether referenced projects should be considerd when building
 	 * @throws CoreException if unable to access the associated attribute
@@ -263,10 +263,10 @@ public class ExternalToolsCoreUtil {
 		}
 		return configuration.getAttribute(id, true);
 	}
-	
+
 	/**
 	 * Returns whether the given external builder configuration should build asynchronously.
-	 * 
+	 *
 	 * @param configuration the configuration
 	 * @return whether the configuration is configured to build asynchronously
 	 */

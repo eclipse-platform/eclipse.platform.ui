@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.debug.core.DebugException;
  * across iterative suspensions may display more desirable behavior in
  * some clients. For example, if stack frames are preserved
  * while stepping, a UI client would be able to update the UI incrementally,
- * rather than collapse and redraw the entire list. 
+ * rather than collapse and redraw the entire list.
  * </p>
  * <p>
  * Clients may implement this interface.
@@ -47,7 +47,7 @@ import org.eclipse.debug.core.DebugException;
 public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerminate {
 	/**
 	 * Returns the thread this stack frame is contained in.
-	 * 
+	 *
 	 * @return thread
 	 * @since 2.0
 	 */
@@ -55,7 +55,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	/**
 	 * Returns the visible variables in this stack frame. An empty
 	 * collection is returned if there are no visible variables.
-	 * 
+	 *
 	 * @return collection of visible variables
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -65,10 +65,10 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * @since 2.0
 	 */
 	public IVariable[] getVariables() throws DebugException;
-	
+
 	/**
 	 * Returns whether this stack frame currently contains any visible variables.
-	 * 
+	 *
 	 * @return whether this stack frame currently contains any visible variables
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -78,14 +78,14 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * @since 2.0
 	 */
 	public boolean hasVariables() throws DebugException;
-		
+
 	/**
-	 * Returns the line number of the instruction pointer in 
+	 * Returns the line number of the instruction pointer in
 	 * this stack frame that corresponds to a line in an associated source
 	 * element, or <code>-1</code> if line number information
 	 * is unavailable.
 	 *
-	 * @return line number of instruction pointer in this stack frame, or 
+	 * @return line number of instruction pointer in this stack frame, or
 	 * <code>-1</code> if line number information is unavailable
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -94,7 +94,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 */
 	public int getLineNumber() throws DebugException;
-	
+
 	/**
 	 * Returns the index of the first character in the associated source
 	 * element that corresponds to the current location of the instruction pointer
@@ -115,7 +115,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * @since 2.0
 	 */
 	public int getCharStart() throws DebugException;
-	
+
 	/**
 	 * Returns the index of the last character in the associated source
 	 * element that corresponds to the current location of the instruction pointer
@@ -135,8 +135,8 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public int getCharEnd() throws DebugException;	
-		
+	public int getCharEnd() throws DebugException;
+
 	/**
 	 * Returns the name of this stack frame. Name format is debug model
 	 * specific, and should be specified by a debug model.
@@ -149,12 +149,12 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 */
 	public String getName() throws DebugException;
-	
+
 	/**
 	 * Returns the register groups assigned to this stack frame,
 	 * or an empty collection if no register groups are assigned
 	 * to this stack frame.
-	 * 
+	 *
 	 * @return the register groups assigned to this stack frame
 	 *  or an empty collection if no register groups are assigned
 	 *  to this stack frame
@@ -166,10 +166,10 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * @since 2.0
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException;
-	
+
 	/**
 	 * Returns whether this stack frame contains any register groups.
-	 * 
+	 *
 	 * @return whether this stack frame contains any visible register groups
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -178,5 +178,5 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean hasRegisterGroups() throws DebugException;	
+	public boolean hasRegisterGroups() throws DebugException;
 }

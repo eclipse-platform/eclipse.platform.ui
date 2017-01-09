@@ -26,7 +26,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * @since 2.0
  */
 public final class RunAction extends ExecutionAction {
-	
+
 	public RunAction() {
 		super(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 	}

@@ -31,15 +31,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * 
+ *
  */
 public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction implements IMenuCreator {
 
 	private IAction fAction= null;
-	
+
 	public GroupBreakpointsByAction() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -79,7 +79,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 				}
 				fillMenu(m);
 			}
-		});		
+		});
 		return menu;
     }
 
@@ -88,8 +88,8 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	 */
 	private void fillMenu(Menu menu) {
 		// determine which item should be checked
-		IBreakpointOrganizer[] organizers = fView.getBreakpointOrganizers();					
-		
+		IBreakpointOrganizer[] organizers = fView.getBreakpointOrganizers();
+
 		boolean none = false;
 		boolean advanced = false;
 		IBreakpointOrganizer organizer = null;
@@ -100,11 +100,11 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 		} else {
 			organizer = organizers[0];
 		}
-		
+
         int accel = 1;
         // Add hard-coded action for flat breakpoints list
         IAction action = new GroupBreakpointsAction(null, fView);
-        addAccel(accel, action, BreakpointGroupMessages.GroupBreakpointsByAction_0); 
+        addAccel(accel, action, BreakpointGroupMessages.GroupBreakpointsByAction_0);
         accel++;
         action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_VIEW_BREAKPOINTS));
         action.setChecked(none);
@@ -121,16 +121,16 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 			item= new ActionContributionItem(bpAction);
 			item.fill(menu, -1);
 	    }
-	                    
+
         // advanced action
         AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
-        addAccel(accel, advancedAction,BreakpointGroupMessages.GroupBreakpointsByAction_1); 
+        addAccel(accel, advancedAction,BreakpointGroupMessages.GroupBreakpointsByAction_1);
         advancedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL));
         advancedAction.setChecked(advanced);
 		item= new ActionContributionItem(advancedAction);
 		item.fill(menu, -1);
 	}
-    
+
 	public List<IAction> getActions(int accel) {
 		List<IAction> actions = new ArrayList<IAction>();
         IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
@@ -141,10 +141,10 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
             accel++;
             action.setImageDescriptor(organizer.getImageDescriptor());
             actions.add(action);
-        }        
+        }
         return actions;
     }
-    
+
     private void addAccel(int accel, IAction action, String label) {
         StringBuffer actionLabel= new StringBuffer();
         if (accel != 10) {
@@ -159,9 +159,9 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         accel++;
         actionLabel.append(' ');
         actionLabel.append(label);
-        action.setText(actionLabel.toString());        
+        action.setText(actionLabel.toString());
     }
-    
+
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

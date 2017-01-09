@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
- *                 display memory blocks that do not reference IDebugTarget     
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
+ *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 
 package org.eclipse.debug.ui.actions;
@@ -49,20 +49,20 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * A cascade menu to add a memory rendering to the memory view. This action delegate can be
- * contributed to a an editor, view or object via standard workbench extension points. 
- * The action works on the {@link IAddMemoryRenderingsTarget} adapter provided 
+ * contributed to a an editor, view or object via standard workbench extension points.
+ * The action works on the {@link IAddMemoryRenderingsTarget} adapter provided
  * by the active debug context, creating a context menu to add applicable renderings
  * to the memory view.
  * <p>
  * Clients may reference/contribute this class as an action delegate
- * in plug-in XML. 
+ * in plug-in XML.
  * </p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class AddMemoryRenderingActionDelegate extends Action implements IViewActionDelegate, IEditorActionDelegate, IObjectActionDelegate, IActionDelegate2{
-	
+
 	private IAction fAction;
 	private IWorkbenchPart fPart;
 	private ISelection fCurrentSelection;
@@ -71,7 +71,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	private IAdaptable fDebugContext;
 	private IWorkbenchWindow fWindow;
 	private DebugContextListener fDebugContextListener = new DebugContextListener();
-	
+
 	private class AddMemoryRenderingAction extends Action
 	{
 		private IMemoryRenderingType fRenderingType;			// type of rendering to add
@@ -93,13 +93,13 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			}
 		}
 	}
-	
+
 	private class AddMemoryRenderingMenuCreator implements IMenuCreator
 	{
 
 		@Override
 		public void dispose() {
-			
+
 		}
 
 		@Override
@@ -120,16 +120,16 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 					}
 					fillMenu(m);
 				}
-			});		
+			});
 			return menu;
 		}
-		
+
 		private void fillMenu(Menu parent)
 		{
 			if (fActionDelegate != null)
 			{
 				IMemoryRenderingType[] types = fActionDelegate.getMemoryRenderingTypes(fPart, fCurrentSelection);
-				
+
 				for (int i=0; i<types.length; i++)
 				{
 					AddMemoryRenderingAction action = new AddMemoryRenderingAction(types[i]);
@@ -138,14 +138,14 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				}
 			}
 		}
-	}	
-	
+	}
+
 	private class DebugContextListener implements IDebugContextListener
 	{
 
 		private void contextActivated(ISelection selection) {
 			setupActionDelegate(selection);
-			
+
 			if(fAction != null)
 				updateAction(fAction, fCurrentSelection);
 		}
@@ -155,9 +155,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			contextActivated(event.getContext());
 		}
 
-		
+
 	}
-	
+
 	private void setupActionDelegate(ISelection context)
 	{
 		IAdaptable debugContext = null;
@@ -166,23 +166,23 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			if (((IStructuredSelection)context).getFirstElement() instanceof IAdaptable)
 				debugContext = (IAdaptable)((IStructuredSelection)context).getFirstElement();
 		}
-		
+
 		if (debugContext == null)
 			fActionDelegate = null;
-		
+
 		if (debugContext == fDebugContext)
 			return;
-		
+
 		fDebugContext = debugContext;
-		
+
 		if (fDebugContext == null)
 			return;
-		
+
 		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(fDebugContext);
-		
+
 		if (retrieval == null)
 			return;
-		
+
 		IAddMemoryRenderingsTarget target = null;
 		if (fCurrentSelection instanceof IStructuredSelection)
 		{
@@ -201,7 +201,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			// try to get target from memory block retrieval
 			target = getAddMemoryRenderingTarget(retrieval);
 		}
-		
+
 		fActionDelegate = target;
 	}
 
@@ -210,7 +210,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	 */
 	@Override
 	public void init(IViewPart view) {
-		bindPart(view);	
+		bindPart(view);
 	}
 
 	/* (non-Javadoc)
@@ -227,13 +227,13 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fCurrentSelection = selection;
-		
+
 		if(action != null) {
 			bindAction(action);
 			updateAction(action, selection);
 		}
 	}
-	
+
 	/**
 	 * @param action - the action to bind with the menu and to update enablement, must not be null
 	 * @param selection the current selection
@@ -265,7 +265,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 
 	private IAddMemoryRenderingsTarget getAddMemoryRenderingTarget(Object elmt) {
 		IAddMemoryRenderingsTarget target = null;
-		
+
 		if (elmt instanceof IAddMemoryRenderingsTarget)
 		{
 			target = (IAddMemoryRenderingsTarget)elmt;
@@ -283,7 +283,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		bindPart(targetEditor);
-		
+
 		if(action != null) {
 			bindAction(action);
 			updateAction(action, fCurrentSelection);
@@ -296,7 +296,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		bindPart(targetPart);
-		
+
 		if(action != null) {
 			bindAction(action);
 			updateAction(action, fCurrentSelection);
@@ -307,7 +307,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void init(IAction action) {		
+	public void init(IAction action) {
 		if (action != null) {
 			bindAction(action);
 
@@ -315,7 +315,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 			action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_ADD));
 			action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -328,7 +328,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		fPart = null;
 		fCurrentSelection = null;
 		fActionDelegate = null;
-		
+
 		// remove debug context listener
 		bindPart(null);
 	}
@@ -340,7 +340,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	public void runWithEvent(IAction action, Event event) {
 		// do nothing
 	}
-	
+
 	private void bindPart(IWorkbenchPart part)
 	{
 		IWorkbenchWindow window = null;
@@ -350,22 +350,22 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		}
 		if (window != fWindow)
 		{
-				
+
 			if (fWindow != null)
 			{
 				DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fDebugContextListener);
 			}
-			
+
 			if (window != null)
 			{
 				DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(fDebugContextListener);
 			}
 			fWindow = window;
 		}
-		
+
 		if (part != fPart)
 			fPart = part;
-		
+
 		if (fWindow != null)
 			setupActionDelegate(DebugUITools.getDebugContextManager().getContextService(fWindow).getActiveContext());
 	}

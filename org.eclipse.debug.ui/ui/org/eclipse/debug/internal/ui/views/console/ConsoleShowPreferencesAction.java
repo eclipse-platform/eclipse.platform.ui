@@ -19,14 +19,14 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * ConsoleShowPreferencesAction Displays the Console's Preference page
- * 
+ *
  * @since 3.2
  */
 public class ConsoleShowPreferencesAction extends Action implements IViewActionDelegate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
     @Override
@@ -34,7 +34,7 @@ public class ConsoleShowPreferencesAction extends Action implements IViewActionD
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
@@ -44,7 +44,7 @@ public class ConsoleShowPreferencesAction extends Action implements IViewActionD
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
      *      org.eclipse.jface.viewers.ISelection)
      */

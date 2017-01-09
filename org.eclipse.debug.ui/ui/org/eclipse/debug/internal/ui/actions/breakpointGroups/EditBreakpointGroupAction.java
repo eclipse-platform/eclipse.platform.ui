@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -27,12 +27,12 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
  * An action to edit a breakpoint working set.
  */
 public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
-	
+
 	/**
 	 * The currently selected breakpoints
 	 */
 	private IWorkingSet fSet = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -48,10 +48,10 @@ public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-		fSet = null;		
+		fSet = null;
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection selection= (IStructuredSelection) sel;
-	        
+
 	        if (selection.size() == 1) {
 	            Object element = selection.getFirstElement();
 				if (element instanceof IBreakpointContainer) {

@@ -42,23 +42,23 @@ import com.ibm.icu.text.MessageFormat;
  * The singleton manager is accessible from the debug UI plugin.
  */
 public class ProcessConsoleManager implements ILaunchListener {
-    
+
     /**
      * Console document content provider extensions, keyed by extension id
      */
 	private Map<String, IConfigurationElement> fColorProviders;
-    
+
     /**
      * The default color provider. Used if no color provider is contributed
      * for the given process type.
      */
     private IConsoleColorProvider fDefaultColorProvider;
-    
+
     /**
-     * Console line trackers; keyed by process type to list of trackers (1:N) 
+     * Console line trackers; keyed by process type to list of trackers (1:N)
      */
 	private Map<String, List<IConfigurationElement>> fLineTrackers;
-    
+
     /**
      * Map of processes for a launch to compute removed processes
      */
@@ -75,40 +75,40 @@ public class ProcessConsoleManager implements ILaunchListener {
 	public void launchRemoved(ILaunch launch) {
         removeLaunch(launch);
     }
-    
+
     protected void removeLaunch(ILaunch launch) {
-        IProcess[] processes= launch.getProcesses(); 
+        IProcess[] processes= launch.getProcesses();
         for (int i= 0; i < processes.length; i++) {
             IProcess iProcess = processes[i];
             removeProcess(iProcess);
-        }		
+        }
         if (fProcesses != null) {
             fProcesses.remove(launch);
         }
     }
-    
+
     /**
      * Removes the console and document associated with the given process.
-     * 
+     *
      * @param iProcess process to clean up
      */
     private void removeProcess(IProcess iProcess) {
         IConsole console = getConsole(iProcess);
-        
+
         if (console != null) {
             IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
             manager.removeConsoles(new IConsole[]{console});
         }
     }
-    
+
     /**
      * Returns the console for the given process, or <code>null</code> if none.
-     * 
+     *
      * @param process
      * @return the console for the given process, or <code>null</code> if none
      */
     public IConsole getConsole(IProcess process) {
-        IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager(); 
+        IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         IConsole[] consoles = manager.getConsoles();
         for (int i = 0; i < consoles.length; i++) {
             IConsole console = consoles[i];
@@ -121,7 +121,7 @@ public class ProcessConsoleManager implements ILaunchListener {
         }
         return null;
     }
-    
+
     /**
      * @see ILaunchListener#launchAdded(ILaunch)
      */
@@ -129,7 +129,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 	public void launchAdded(ILaunch launch) {
         launchChanged(launch);
     }
-    
+
     /**
      * @see ILaunchListener#launchChanged(ILaunch)
      */
@@ -160,7 +160,7 @@ public class ProcessConsoleManager implements ILaunchListener {
             }
         }
     }
-    
+
     /**
      * Returns the document for the process, or <code>null</code>
      * if none.
@@ -168,8 +168,8 @@ public class ProcessConsoleManager implements ILaunchListener {
     public IDocument getConsoleDocument(IProcess process) {
         ProcessConsole console = (ProcessConsole) getConsole(process);
         return (console != null ? console.getDocument() : null);
-    } 
-    
+    }
+
     /**
      * Called by the debug ui plug-in on startup.
      * The console document manager starts listening for
@@ -178,18 +178,18 @@ public class ProcessConsoleManager implements ILaunchListener {
      */
     public void startup() {
         ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-        launchManager.addLaunchListener(this);	
-        
+        launchManager.addLaunchListener(this);
+
         //set up the docs for launches already registered
         ILaunch[] launches= launchManager.getLaunches();
         for (int i = 0; i < launches.length; i++) {
             launchAdded(launches[i]);
         }
     }
-    
+
     /**
      * Called by the debug ui plug-in on shutdown.
-     * The console document manager de-registers as a 
+     * The console document manager de-registers as a
      * launch listener and kills all existing console documents.
      */
     public void shutdown() {
@@ -204,11 +204,11 @@ public class ProcessConsoleManager implements ILaunchListener {
             fProcesses.clear();
         }
     }
-          
+
     /**
      * Returns a new console document color provider extension for the given
      * process type, or <code>null</code> if none.
-     * 
+     *
      * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>
      * @return IConsoleColorProvider
      */
@@ -228,7 +228,7 @@ public class ProcessConsoleManager implements ILaunchListener {
                 Object colorProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
                 if (colorProvider instanceof IConsoleColorProvider) {
                     return (IConsoleColorProvider)colorProvider;
-                } 
+                }
                 DebugUIPlugin.logErrorMessage(MessageFormat.format(
                 		"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
 						new Object[] { extension.getDeclaringExtension().getUniqueIdentifier() }));
@@ -241,8 +241,8 @@ public class ProcessConsoleManager implements ILaunchListener {
             fDefaultColorProvider = new ConsoleColorProvider();
         }
         return fDefaultColorProvider;
-    } 
-    
+    }
+
     /**
      * Returns the Line Trackers for a given process type.
      * @param process The process for which line trackers are required.
@@ -250,7 +250,7 @@ public class ProcessConsoleManager implements ILaunchListener {
      */
     public IConsoleLineTracker[] getLineTrackers(IProcess process) {
         String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
-        
+
         if (fLineTrackers == null) {
 			synchronized (fLineTrackersLock) { // can't use fLineTrackers as lock as it is null here
 				fLineTrackers = new HashMap<String, List<IConfigurationElement>>();
@@ -268,14 +268,14 @@ public class ProcessConsoleManager implements ILaunchListener {
 				}
 			}
         }
-        
+
 		ArrayList<IConsoleLineTracker> trackers = new ArrayList<IConsoleLineTracker>();
         if (type != null) {
 			List<IConfigurationElement> lineTrackerExtensions;
 			synchronized (fLineTrackers) {// need to synchronize as the update to list might be still happening
 				lineTrackerExtensions = fLineTrackers.get(type);
 			}
-            if(lineTrackerExtensions != null) {   
+            if(lineTrackerExtensions != null) {
 				for (IConfigurationElement element : lineTrackerExtensions) {
 					try {
 						trackers.add((IConsoleLineTracker) element.createExecutableExtension("class")); //$NON-NLS-1$
@@ -287,11 +287,11 @@ public class ProcessConsoleManager implements ILaunchListener {
         }
         return trackers.toArray(new IConsoleLineTracker[0]);
     }
-    
+
     /**
      * Returns the processes that have been removed from the given
      * launch, or <code>null</code> if none.
-     * 
+     *
      * @param launch launch that has changed
      * @return removed processes or <code>null</code>
      */
@@ -317,10 +317,10 @@ public class ProcessConsoleManager implements ILaunchListener {
         fProcesses.put(launch, curr);
         return removed;
     }
-    
+
     /**
      * Returns whether the given object is contained in the list.
-     * 
+     *
      * @param list list to search
      * @param object object to search for
      * @return whether the given object is contained in the list

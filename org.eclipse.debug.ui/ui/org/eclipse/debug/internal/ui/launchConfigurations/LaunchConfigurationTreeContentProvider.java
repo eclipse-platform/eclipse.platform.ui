@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
- 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Content provider for representing launch configuration types & launch configurations in a tree.
- * 
+ *
  * @since 2.1
  */
 public class LaunchConfigurationTreeContentProvider implements ITreeContentProvider {
@@ -36,20 +36,20 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	/**
 	 * Empty Object array
 	 */
-	private static final Object[] EMPTY_ARRAY = new Object[0];	
-	
+	private static final Object[] EMPTY_ARRAY = new Object[0];
+
 	/**
-	 * The mode in which the tree is being shown, one of <code>RUN_MODE</code> 
+	 * The mode in which the tree is being shown, one of <code>RUN_MODE</code>
 	 * or <code>DEBUG_MODE</code> defined in <code>ILaunchManager</code>.
 	 * If this is <code>null</code>, then it means both modes are being shown.
 	 */
 	private String fMode;
-	
+
 	/**
 	 * The Shell context
 	 */
 	private Shell fShell;
-	
+
 	/**
 	 * Constructor
 	 * @param mode the mode
@@ -62,14 +62,14 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 
 	/**
 	 * Actual launch configurations have no children.  Launch configuration types have
-	 * all configurations of that type as children, minus any configurations that are 
+	 * all configurations of that type as children, minus any configurations that are
 	 * marked as private.
 	 * <p>
 	 * In 2.1, the <code>category</code> attribute was added to launch config
 	 * types. The debug UI only displays those configs that do not specify a
 	 * category.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	@Override
@@ -81,7 +81,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 				ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
 				return getLaunchManager().getLaunchConfigurations(type);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); // 
+				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //
 			}
 		} else {
 			return getLaunchManager().getLaunchConfigurationTypes();
@@ -101,7 +101,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 			try {
 				return ((ILaunchConfiguration)element).getType();
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); // 
+				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //
 			}
 		} else if (element instanceof ILaunchConfigurationType) {
 			return ResourcesPlugin.getWorkspace().getRoot();
@@ -116,14 +116,14 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	public boolean hasChildren(Object element) {
 		if (element instanceof ILaunchConfiguration) {
 			return false;
-		} 
+		}
 		return getChildren(element).length > 0;
 	}
 
 	/**
 	 * Return only the launch configuration types that support the current mode AND
 	 * are marked as 'public'.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 * Returns a list containing the given types minus any types that
 	 * should not be visible. A type should not be visible if it doesn't match
 	 * the current mode or if it matches a disabled activity.
-	 * 
+	 *
 	 * @param allTypes the types
 	 * @return the given types minus any types that should not be visible.
 	 */
@@ -153,7 +153,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		}
 		return filteredTypes;
 	}
-	
+
 	/**
 	 * Return <code>true</code> if the specified launch configuration type should
 	 * be visible in the specified mode, <code>false</code> otherwise.
@@ -181,7 +181,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	private void setMode(String mode) {
 		fMode = mode;
 	}
-	
+
 	/**
 	 * Read accessor for the mode value
 	 */
@@ -195,7 +195,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	private void setShell(Shell shell) {
 		fShell = shell;
 	}
-	
+
 	/**
 	 * Read accessor for the shell value
 	 */

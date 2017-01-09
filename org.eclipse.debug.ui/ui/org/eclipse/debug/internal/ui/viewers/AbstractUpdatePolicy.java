@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers;
 
 /**
  * An update policy updates a viewer based on deltas reported by a model proxy.
- *  
+ *
  * @since 3.2
  *
  */
@@ -27,7 +27,7 @@ public abstract class AbstractUpdatePolicy {
 	public void init(AsynchronousViewer viewer) {
 		fViewer = viewer;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IUpdatePolicy#dispose()
 	 */
@@ -38,13 +38,13 @@ public abstract class AbstractUpdatePolicy {
 	/**
 	 * Returns the viewer this policy is installed on or <code>null</code>
 	 * if disposed.
-	 * 
+	 *
 	 * @return presentation to update
 	 */
 	public AsynchronousViewer getViewer() {
 		return fViewer;
 	}
-	
+
 	protected synchronized boolean isDisposed() {
 		return fViewer == null;
 	}

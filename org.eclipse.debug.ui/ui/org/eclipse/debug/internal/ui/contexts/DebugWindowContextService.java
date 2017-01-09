@@ -4,11 +4,11 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River - Pawel Piech - added an evaluation context source provider (bug 229219)
- *     Patrick Chuong (Texas Instruments) and Pawel Piech (Wind River) - 
+ *     Patrick Chuong (Texas Instruments) and Pawel Piech (Wind River) -
  *     		Allow multiple debug views and multiple debug context providers (Bug 327263)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
@@ -40,24 +40,24 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Context service for a specific window.
- * 
+ *
  * @since 3.2
  */
 public class DebugWindowContextService implements IDebugContextService, IPartListener2, IDebugContextListener {
-	
+
 	private Map<String, ListenerList<IDebugContextListener>> fListenersByPartId = new HashMap<>();
 	private Map<String, IDebugContextProvider> fProvidersByPartId = new HashMap<String, IDebugContextProvider>();
 	private Map<String, ListenerList<IDebugContextListener>> fPostListenersByPartId = new HashMap<>();
-	
+
 	private IWorkbenchWindow fWindow;
 	private List<IDebugContextProvider> fProviders = new ArrayList<IDebugContextProvider>();
-	
+
 	private DebugContextSourceProvider fSourceProvider;
 
 	public DebugWindowContextService(IWorkbenchWindow window, final IEvaluationService evaluationService) {
 		fWindow = window;
 		fWindow.getPartService().addPartListener(this);
-		
+
 		// need to register source provider on the UI thread (bug 438396)
 		window.getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -68,7 +68,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			}
 		});
 	}
-	
+
 	public void dispose() {
 		if (fSourceProvider != null) {
 			fSourceProvider.dispose();
@@ -76,14 +76,14 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		fWindow.getPartService().removePartListener(this);
 		fWindow = null;
 	}
-	
+
 	@Override
 	public synchronized void addDebugContextProvider(IDebugContextProvider provider) {
 	    if (fWindow == null)
 		 {
 			return; // disposed
 		}
-	    
+
 		IWorkbenchPart part = provider.getPart();
 		fProvidersByPartId.put( getCombinedPartId(part), provider );
 
@@ -92,17 +92,17 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
         if (provider instanceof IDebugContextProvider2) {
             canSetActive = ((IDebugContextProvider2) provider).isWindowContextProvider();
         }
-        // Make the provider active if matches the active part. Otherwise, it 
-        // may still become the active provider if fProviders.isEmpty(). 
+        // Make the provider active if matches the active part. Otherwise, it
+        // may still become the active provider if fProviders.isEmpty().
 		if (canSetActive) {
 	        IWorkbenchPart activePart = null;
 	        IWorkbenchPage activePage = fWindow.getActivePage();
 	        if (activePage != null) {
 	            activePart = activePage.getActivePart();
-	        }        
+	        }
 	        canSetActive = (activePart == null && part == null) || (activePart != null && activePart.equals(part));
 		}
-		
+
 		if (canSetActive) {
 		    fProviders.add(0, provider);
 		} else {
@@ -111,7 +111,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
         notify(provider);
 		provider.addDebugContextListener(this);
 	}
-	
+
 	@Override
 	public synchronized void removeDebugContextProvider(IDebugContextProvider provider) {
 		int index = fProviders.indexOf(provider);
@@ -128,13 +128,13 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
     			}
 			} else {
 			    // Notify listeners of the removed provider with the active window context.
-			    notifyPart(provider.getPart(), 
+			    notifyPart(provider.getPart(),
 			        new DebugContextEvent(activeProvider, getActiveContext(), DebugContextEvent.ACTIVATED));
 			}
 		}
 		provider.removeDebugContextListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextService#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener)
 	 */
@@ -142,7 +142,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	public void addDebugContextListener(IDebugContextListener listener) {
 		addDebugContextListener(listener, null);
 	}
-	
+
 	@Override
 	public void addPostDebugContextListener(IDebugContextListener listener, String partId) {
 		ListenerList<IDebugContextListener> list = fPostListenersByPartId.get(partId);
@@ -150,14 +150,14 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			list = new ListenerList<>();
 			fPostListenersByPartId.put(partId, list);
 		}
-		list.add(listener);	
+		list.add(listener);
 	}
 
 	@Override
 	public void addPostDebugContextListener(IDebugContextListener listener) {
 		addPostDebugContextListener(listener, null);
 	}
-	
+
 	@Override
 	public void removePostDebugContextListener(IDebugContextListener listener, String partId) {
 		ListenerList<IDebugContextListener> list = fPostListenersByPartId.get(partId);
@@ -178,10 +178,10 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	public void removeDebugContextListener(IDebugContextListener listener) {
 		removeDebugContextListener(listener, null);
 	}
-	
+
 	/**
 	 * Notifies listeners of the context in the specified provider.
-	 * 
+	 *
 	 * @param provdier context provider
 	 */
 	protected void notify(IDebugContextProvider provdier) {
@@ -191,22 +191,22 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		}
 		notify(new DebugContextEvent(provdier, activeContext, DebugContextEvent.ACTIVATED));
 	}
-	
+
 	protected void notify(DebugContextEvent event) {
 	    // Allow handling for case where getActiveProvider() == null.
-	    // This can happen upon removeContextProvider() called on last available 
+	    // This can happen upon removeContextProvider() called on last available
 	    // provider (bug 360637).
 		IDebugContextProvider provider = getActiveProvider();
 		IWorkbenchPart part = event.getDebugContextProvider().getPart();
-		
+
 		// Once for listeners
-		if (provider == null || provider == event.getDebugContextProvider()) {		
+		if (provider == null || provider == event.getDebugContextProvider()) {
 			notify(event, getListeners(null));
-		}		
+		}
 		if (part != null) {
 			notify(event, getListeners(part));
 		}
-		
+
 		// Again for post-listeners
 		if (provider == null || provider == event.getDebugContextProvider()) {
 			notify(event, getPostListeners(null));
@@ -237,14 +237,14 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			});
 		}
 	}
-	
+
 	protected ListenerList<IDebugContextListener> getListeners(IWorkbenchPart part) {
-        String id = null; 
-        if (part != null) { 
-            id = getCombinedPartId(part); 
+        String id = null;
+        if (part != null) {
+            id = getCombinedPartId(part);
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(id);
 			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
-        } else { 
+        } else {
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(null);
 			ListenerList<IDebugContextListener> retVal = new ListenerList<>();
 			for (IDebugContextListener iDebugContextListener : listenerList) {
@@ -252,21 +252,21 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			}
 
 			outer: for (Iterator<String> itr = fListenersByPartId.keySet().iterator(); itr.hasNext();) {
-                String listenerPartId = itr.next(); 
-                for (int i = 0; i < fProviders.size(); i++) { 
+                String listenerPartId = itr.next();
+                for (int i = 0; i < fProviders.size(); i++) {
                     String providerPartId = getCombinedPartId(fProviders.get(i).getPart());
-                    if ((listenerPartId == null && providerPartId == null) || 
-                        (listenerPartId != null && listenerPartId.equals(providerPartId)))  
-                    { 
-                        continue outer; 
-                    } 
+                    if ((listenerPartId == null && providerPartId == null) ||
+                        (listenerPartId != null && listenerPartId.equals(providerPartId)))
+                    {
+                        continue outer;
+                    }
                 }
 				for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
 					retVal.add(iDebugContextListener); // no effect if listener already present
 				}
 			}
 			return retVal;
-        } 
+        }
 	}
 
 	protected ListenerList<IDebugContextListener> getPostListeners(IWorkbenchPart part) {
@@ -345,10 +345,10 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the active provider or <code>null</code>
-	 * 
+	 *
 	 * @return active provider or <code>null</code>
 	 */
 	private IDebugContextProvider getActiveProvider() {
@@ -369,7 +369,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			if (provider instanceof IDebugContextProvider2) {
 				canSetActive = ((IDebugContextProvider2) provider).isWindowContextProvider();
 			}
-			
+
 			if (canSetActive) {
 				int index = fProviders.indexOf(provider);
 				if (index > 0) {
@@ -379,14 +379,14 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 				}
 			}
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	@Override
-	public void partBroughtToTop(IWorkbenchPartReference partRef) {		
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
@@ -407,7 +407,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	@Override
-	public void partOpened(IWorkbenchPartReference partRef) {		
+	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
@@ -435,26 +435,26 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
 	 */
 	@Override
-	public void debugContextChanged(DebugContextEvent event) {	
+	public void debugContextChanged(DebugContextEvent event) {
 		notify(event);
 	}
-	
+
 	private String getCombinedPartId(IWorkbenchPart part) {
 	    if (part == null) {
 	        return null;
-	    } else if (part.getSite() instanceof IViewSite) { 
+	    } else if (part.getSite() instanceof IViewSite) {
             IViewSite site = (IViewSite)part.getSite();
             return getCombinedPartId(site.getId(), site.getSecondaryId());
-            
-        } else { 
-            return part.getSite().getId(); 
-        } 
-    }	
+
+        } else {
+            return part.getSite().getId();
+        }
+    }
 
 	private String getCombinedPartId(String id, String secondaryId) {
 		return id + (secondaryId != null ? ":" + secondaryId : "");   //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextService2#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener, java.lang.String, java.lang.String)
 	 */
@@ -491,7 +491,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextService2#getActiveContext(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ISelection getActiveContext(String partId, String partSecondaryId) {		
+	public ISelection getActiveContext(String partId, String partSecondaryId) {
 		return getActiveContext(getCombinedPartId(partId, partSecondaryId));
-	} 
+	}
 }

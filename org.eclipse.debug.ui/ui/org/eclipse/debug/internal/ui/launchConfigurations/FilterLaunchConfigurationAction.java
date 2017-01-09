@@ -20,7 +20,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * provides the implementation of the filtering action for the launch configuration view within the 
+ * provides the implementation of the filtering action for the launch configuration view within the
  * Launch Configuration Dialog
  * @since 3.2
  */
@@ -30,12 +30,12 @@ public class FilterLaunchConfigurationAction extends Action {
 	 * Action identifier for IDebugView#getAction(String)
 	 */
 	public static final String ID_FILTER_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_FILTER_ACTION"; //$NON-NLS-1$
-	
+
 	/**
 	 * the menu for this drop down style action
 	 */
 	private FilterDropDownMenuCreator fMenuCreator;
-	
+
 	/**
 	 * Constructor
 	 * @param text the text for the action

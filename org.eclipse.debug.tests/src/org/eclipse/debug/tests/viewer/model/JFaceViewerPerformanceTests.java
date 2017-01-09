@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.6
  */
 public class JFaceViewerPerformanceTests extends PerformanceTests {
-    
+
     public JFaceViewerPerformanceTests(String name) {
         super(name);
     }
@@ -30,7 +30,7 @@ public class JFaceViewerPerformanceTests extends PerformanceTests {
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
-    
+
     @Override
 	protected int getTestModelDepth() {
         return 5;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,14 +22,14 @@ import org.eclipse.jface.window.Window;
  * view.
  */
 public class AdvancedGroupBreakpointsByAction extends Action {
-	
+
 	private BreakpointsView fView;
-	
+
 	public AdvancedGroupBreakpointsByAction(BreakpointsView view) {
         super(IInternalDebugCoreConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
 		fView= view;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */

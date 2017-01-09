@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,13 +21,13 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Resume action delegate.
- * 
+ *
  * @since 3.3
  */
 public class ResumeCommandActionDelegate implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
     private DebugCommandAction fDebugAction = new ResumeCommandAction();
-    
+
     @Override
 	public void dispose() {
         fDebugAction.dispose();
@@ -51,7 +51,7 @@ public class ResumeCommandActionDelegate implements IWorkbenchWindowActionDelega
     @Override
 	public void init(IAction action) {
         fDebugAction.setActionProxy(action);
-        
+
     }
 
     @Override

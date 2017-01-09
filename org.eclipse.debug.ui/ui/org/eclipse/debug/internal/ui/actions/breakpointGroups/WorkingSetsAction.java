@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -20,15 +20,15 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * Allows the user to manage working sets.
  */
 public class WorkingSetsAction extends AbstractBreakpointsViewAction {
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
 	public void run(IAction action) {
         IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(
-        		DebugUIPlugin.getShell(), 
-        		false, 
+        		DebugUIPlugin.getShell(),
+        		false,
         		new String[] {IDebugUIConstants.BREAKPOINT_WORKINGSET_ID});
         selectionDialog.open();
     }

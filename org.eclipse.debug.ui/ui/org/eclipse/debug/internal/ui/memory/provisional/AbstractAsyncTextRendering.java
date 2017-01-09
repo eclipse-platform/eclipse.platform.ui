@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * Clients should subclass from this class if they wish to provide a table text
  * rendering with a specific code page.
  * </p>
- * 
+ *
  * @since 3.2
  */
 abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRendering {
@@ -34,7 +34,7 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 
 	/**
 	 * Constructs a text rendering of the specified type.
-	 * 
+	 *
 	 * @param renderingId memory rendering type identifier
 	 */
 	public AbstractAsyncTextRendering(String renderingId) {
@@ -43,7 +43,7 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 
 	/**
 	 * Constructs a text rendering of the specified type on the given code page.
-	 * 
+	 *
 	 * @param renderingId memory rendering type identifier
 	 * @param codePage the name of a supported {@link java.nio.charset.Charset
 	 *            </code>charset<code>}, for example <code>CP1252</code>
@@ -57,7 +57,7 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 	 * Sets the code page for this rendering. This does not cause the rendering
 	 * to be updated with the new code page. Clients need to update the
 	 * rendering manually when the code page is changed.
-	 * 
+	 *
 	 * @param codePage the name of a supported {@link java.nio.charset.Charset
 	 *            </code>charset<code>}, for example <code>CP1252</code>
 	 */
@@ -68,7 +68,7 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 	/**
 	 * Returns the current code page used by this rendering. Returns null if not
 	 * set.
-	 * 
+	 *
 	 * @return Returns the current code page used by this rendering. Returns
 	 *         null if not set.
 	 */

@@ -69,7 +69,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * The preference page for selecting and changing launch perspectives
- * 
+ *
  * @since 3.3
  */
 public class LaunchPerspectivePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IActivityManagerListener {
@@ -82,14 +82,14 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		private ILaunchDelegate fDelegate = null;
 		private Set<String> fModes = null;
 		private String fPid = null;
-		
+
 		public PerspectiveChange(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes, String perspectiveid) {
 			fType = type;
 			fDelegate = delegate;
 			fModes = modes;
 			fPid = perspectiveid;
 		}
-		
+
 		public ILaunchConfigurationType getType() {return fType;}
 		public ILaunchDelegate getDelegate() {return fDelegate;}
 		public String getPerspectiveId() {return fPid;}
@@ -113,7 +113,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			return (fDelegate != null ? fDelegate.hashCode() : 0) + fType.hashCode() + fModes.hashCode();
 		}
 	}
-	
+
 	/**
 	 * Implementation to expose use of getFilteredChildren method
 	 */
@@ -124,7 +124,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		@Override
 		public Object[] getFilteredChildren(Object o) {return super.getFilteredChildren(o);}
 	}
-	
+
 	/**
 	 * Provides content for the configuration tree viewer
 	 */
@@ -146,29 +146,29 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		@Override
 		public Object getParent(Object element) {return null;}
 	}
-	
+
 	/**
 	 * Panel container that is reused to present series of combo boxes to users for perspective selections
 	 */
 	class PerspectivesPanel {
-		
+
 		private Composite fMainComposite = null;
 		private Label fMessage = null;
-		
+
 		public PerspectivesPanel(Composite parent, String heading) {
 			createPanel(parent, heading);
 		}
-		
+
 		protected void createPanel(Composite parent, String heading) {
 			fMainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 			SWTFactory.createWrapLabel(fMainComposite, heading, 2);
 			fMessage = SWTFactory.createWrapLabel(fMainComposite, IInternalDebugCoreConstants.EMPTY_STRING, 2, 250);
 		}
-		
+
 		public void setMessage(String msg) {
 			fMessage.setText((msg == null ? IInternalDebugCoreConstants.EMPTY_STRING : msg));
 		}
-		
+
 		public void refreshPanel(IStructuredSelection selection) {
 			//get rid of any existing children, but leave the first two (the label for the control, and the message area)
 			Control[] children = fMainComposite.getChildren();
@@ -189,7 +189,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			fMainComposite.layout();
 		}
 	}
-	
+
 	/**
 	 * Widgets
 	 */
@@ -198,7 +198,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	private Tree fTree = null;
 	private PerspectivesTreeViewer fTreeViewer = null;
 	private PerspectivesPanel fPerspectivesPanel = null;
-	
+
 	/**
 	 * Caches
 	 */
@@ -206,7 +206,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	private static Map<String, String> fgPerspectiveIdMap = null;
 	private static HashSet<PerspectiveChange> fgChangeSet = null;
 	private static HashSet<Object> fgCurrentWorkingContext = null;
-	
+
 	/**
 	 * A default selection listener to be reused by all combo boxes presenting perspective data
 	 */
@@ -246,12 +246,12 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			}
 		}
 	};
-	
+
 	/**
 	 * Constructor
 	 */
 	public LaunchPerspectivePreferencePage() {}
-	
+
 	/**
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
@@ -278,23 +278,23 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.PERSPECTIVE_PREFERENCE_PAGE);
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		
+
 		SWTFactory.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_0, 2, 300);
-		
+
 		SWTFactory.createVerticalSpacer(parent, 1);
-		
+
 		fSwitchLaunch = new RadioGroupFieldEditor(
 				IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
 				DebugPreferencesMessages.LaunchingPreferencePage_11, 3,
 				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_12, MessageDialogWithToggle.ALWAYS },
 							{ DebugPreferencesMessages.LaunchingPreferencePage_13, MessageDialogWithToggle.NEVER },
-							{ DebugPreferencesMessages.LaunchingPreferencePage_14, MessageDialogWithToggle.PROMPT } }, 
+							{ DebugPreferencesMessages.LaunchingPreferencePage_14, MessageDialogWithToggle.PROMPT } },
 							SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL),
 							true);
 		fSwitchLaunch.setPreferenceName(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE);
@@ -304,12 +304,12 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				DebugPreferencesMessages.DebugPreferencePage_21, 3,
 				new String[][] {{ DebugPreferencesMessages.DebugPreferencePage_22, MessageDialogWithToggle.ALWAYS },
 								{ DebugPreferencesMessages.DebugPreferencePage_23, MessageDialogWithToggle.NEVER },
-								{ DebugPreferencesMessages.DebugPreferencePage_24, MessageDialogWithToggle.PROMPT } }, 
+								{ DebugPreferencesMessages.DebugPreferencePage_24, MessageDialogWithToggle.PROMPT } },
 								SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL),
 								true);
 		fSwitchSuspend.setPreferenceName(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND);
 		fSwitchSuspend.setPreferenceStore(getPreferenceStore());
-		
+
 		SWTFactory.createVerticalSpacer(parent, 1);
 		SWTFactory.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_5, 2, 300);
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
@@ -320,7 +320,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		Dialog.applyDialogFont(parent);
 		return parent;
 	}
-	
+
 	/**
 	 * Creates the <code>Tree</code> and <code>TreeViewer</code> widgets
 	 * @param parent the parent to add these components to
@@ -357,7 +357,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fTreeViewer.addFilter(new LaunchCategoryFilter(IInternalDebugUIConstants.ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY));
 		fTreeViewer.setInput(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
 	}
-	
+
 	/**
 	 * Creates a set of combo boxes on a per-selection basis that display a listing of available perspectives to switch to
 	 * @param parent the parent to add the created combo boxes to
@@ -393,11 +393,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the text item to select for the current combo context given the current working set context
-	 * @param modes the set of modes 
-	 * @return the text to select in the current combo / current working set context, or "None" 
+	 * @param modes the set of modes
+	 * @return the text to select in the current combo / current working set context, or "None"
 	 */
 	private String getComboSelection(Set<String> modes) {
 		String text = DebugPreferencesMessages.PerspectivePreferencePage_4;
@@ -441,12 +441,12 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				}
 			}
 		}
-			
+
 		return text;
 	}
-	
+
 	/**
-	 * Traverses the current change set to find a matching change. Matching in this context considers only the 
+	 * Traverses the current change set to find a matching change. Matching in this context considers only the
 	 * type, delegate and mode set, we do not compare perspective ids, as they can change many times.
 	 * @param type the type
 	 * @param delegate the delegate, possibly <code>null</code>
@@ -462,11 +462,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Collects a list of mode sets that are common to the current selection
 	 * context. It is possible that there are no mode sets in common.
-	 * 
+	 *
 	 * @param selection the current selection context
 	 * @return a list of mode sets or an empty list, never <code>null</code>
 	 */
@@ -503,9 +503,9 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		}
 		return common;
 	}
-	
+
 	/**
-	 * Returns if the specified mode set is common to the listing of delegates, at the same time adding any not common 
+	 * Returns if the specified mode set is common to the listing of delegates, at the same time adding any not common
 	 * mode sets to a listing used to prune the search as we go along
 	 * @param modeset the set to test for commonality
 	 * @param delegates the listing to test against
@@ -527,7 +527,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Restores the widget state from the preference store, called after all of the widgets have been created and triggers
 	 * a selection changed event from the tree viewer
@@ -542,7 +542,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fSwitchLaunch.load();
 		fSwitchSuspend.load();
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -551,7 +551,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fgChangeSet.clear();
 		fSwitchLaunch.loadDefault();
 		fSwitchSuspend.loadDefault();
-		
+
 		PerspectiveManager pm = DebugUIPlugin.getDefault().getPerspectiveManager();
 		TreeItem[] items = fTree.getItems();
 		ILaunchConfigurationType type = null;
@@ -613,7 +613,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			fTreeViewer.refresh();
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */

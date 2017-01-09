@@ -21,13 +21,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * The default detail pane factory is contributed to the <code>org.eclipse.debug.ui.detailPaneFactories</code>
  * extension without an enablement expression so it is always loaded.  For any given selection (even
  * null or empty selections), the factory can produce a <code>SourceDetailsPane</code>
- * 
+ *
  * @since 3.3
  */
 public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 
 	public static final String DEFAULT_DETAIL_PANE_ID = DefaultDetailPane.ID;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
 	 */
@@ -52,7 +52,7 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 		possibleIDs.add(DefaultDetailPane.ID);
 		return possibleIDs;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -75,7 +75,7 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 		}
 		return null;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)

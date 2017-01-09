@@ -41,7 +41,7 @@ import org.eclipse.ui.IMemento;
  * that do not change across stack frame selection to avoid register groups collapsing
  * while stepping between frames.
  * <p>
- * The standard debug model {@link IStackFrame} uses an 
+ * The standard debug model {@link IStackFrame} uses an
  * {@link org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider} to
  * create a register group proxy for the register view's input.
  * </p>
@@ -59,12 +59,12 @@ import org.eclipse.ui.IMemento;
  * @since 3.4
  */
 public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentationFactory, IElementContentProvider, IElementMementoProvider {
-	
+
 	private IRegisterGroup[] fGroups;
 	private IStackFrame fFrame;
-	
+
 	private static final String HASH_CODE = "HASH_CODE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Local implementation of a viewer update request. This class delegates to the underlying frame
 	 * for viewer requests. The requests have to be wrapped such that the request's element provided
@@ -73,7 +73,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 */
 	private class Update extends Request implements IViewerUpdate {
 		private IViewerUpdate fViewerUpdate;
-		
+
 		Update(IViewerUpdate update) {
 			fViewerUpdate = update;
 		}
@@ -109,7 +109,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			fViewerUpdate.setStatus(getStatus());
 			fViewerUpdate.done();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
 		 */
@@ -117,18 +117,18 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		public Object getViewerInput() {
 			return fFrame;
 		}
-		
+
 	}
-	
+
 	private class CountUpdate extends Update implements IChildrenCountUpdate {
 
 		private IChildrenCountUpdate fUpdate;
-		
+
 		CountUpdate(IChildrenCountUpdate delegate) {
 			super(delegate);
 			fUpdate = delegate;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate#setChildCount(int)
 		 */
@@ -136,18 +136,18 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		public void setChildCount(int numChildren) {
 			fUpdate.setChildCount(numChildren);
 		}
-		
+
 	}
-	
+
 	private class HasUpdate extends Update implements IHasChildrenUpdate {
 
 		private IHasChildrenUpdate fUpdate;
-		
+
 		HasUpdate(IHasChildrenUpdate delegate) {
 			super(delegate);
 			fUpdate = delegate;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate#setHasChilren(boolean)
 		 */
@@ -155,13 +155,13 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		public void setHasChilren(boolean hasChildren) {
 			fUpdate.setHasChilren(hasChildren);
 		}
-		
+
 	}
-	
+
 	private class ChildrenUpdate extends Update implements IChildrenUpdate {
 
 		private IChildrenUpdate fUpdate;
-		
+
 		ChildrenUpdate(IChildrenUpdate delegate) {
 			super(delegate);
 			fUpdate = delegate;
@@ -189,9 +189,9 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		public void setChild(Object child, int offset) {
 			fUpdate.setChild(child, offset);
 		}
-		
+
 	}
-	
+
 	/**
 	 * The memento request has to override {@link #getElement()} to provide the element
 	 * that a memento is requested for (which could be any element in the view, not just
@@ -219,9 +219,9 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		public TreePath getElementPath() {
 			return fUpdate.getElementPath();
 		}
-		
+
 	}
-	
+
 	private class ElementCompare extends MementoRequest implements IElementCompareRequest {
 
 		private IElementCompareRequest fRequest;
@@ -236,12 +236,12 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		public void setEqual(boolean equal) {
 			fRequest.setEqual(equal);
 		}
-		
+
 	}
 
 	/**
 	 * Creates a new register group proxy for the given stack frame.
-	 * 
+	 *
 	 * @param frame stack frame
 	 * @throws DebugException exception if unable to retrieve register groups
 	 */
@@ -249,12 +249,12 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		fFrame = frame;
 		init(frame);
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * A register group proxy is equal to other stack frames that have the same
 	 * register groups.
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -279,7 +279,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 
 	/**
 	 * Initializes the register groups for this stack frame.
-	 * 
+	 *
 	 * @param frame stack frame
 	 */
 	private void init(IStackFrame frame) throws DebugException {
@@ -288,7 +288,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 
 	/**
 	 * Returns cached register groups for this stack frame.
-	 * 
+	 *
 	 * @return register groups
 	 */
 	protected IRegisterGroup[] getRegisterGroups() {
@@ -329,7 +329,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			return factory.getColumnPresentationId(context, fFrame);
 		}
 		return null;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
@@ -363,7 +363,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		} else {
 			cancelUpdates(updates);
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -381,11 +381,11 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		} else {
 			cancelUpdates(updates);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Cancels a collection of update requests.
-	 * 
+	 *
 	 * @param updates updates to cancel
 	 */
 	private void cancelUpdates(IViewerUpdate[] updates) {
@@ -448,6 +448,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		} else {
 			cancelUpdates(requests);
 		}
-	}	
-		
+	}
+
 }

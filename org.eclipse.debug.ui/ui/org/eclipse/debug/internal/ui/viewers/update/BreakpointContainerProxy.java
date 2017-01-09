@@ -20,25 +20,25 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Breakpoint container model proxy.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointContainerProxy extends AbstractModelProxy implements	ICheckboxModelProxy {
-	
+
 	/**
 	 * The breakpoint container
 	 */
 	private IBreakpointContainer fContainer;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param container the breakpoint container.
 	 */
 	public BreakpointContainerProxy(IBreakpointContainer container) {
 		fContainer = container;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy#setChecked(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object, org.eclipse.jface.viewers.TreePath, boolean)
 	 */

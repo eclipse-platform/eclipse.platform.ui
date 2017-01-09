@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,12 +21,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Test the utilization of launch histories: sizing, ordering, completeness and correctness
- * 
+ *
  * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory
  * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager
  * @see org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener
  * @see org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction
- * 
+ *
  * @since 3.3
  */
 public class LaunchHistoryTests extends AbstractLaunchTest {
@@ -38,7 +38,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	public LaunchHistoryTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns the run launch history
 	 * @return
@@ -46,7 +46,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	private LaunchHistory getRunLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 	}
-	
+
 	/**
 	 * Returns the maximum allowed size of the launch histories
 	 * @return the maximum size of the launch histories
@@ -54,7 +54,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	private int getMaxHistorySize() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
 	}
-	
+
 	/**
 	 * Sets the maximum size of the launch history to the specified value
 	 * @param value the new maximum size for launch histories
@@ -62,7 +62,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	private void setMaxHistorySize(int value) {
 		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, value);
 	}
-	
+
 	/**
 	 * Returns the debug launch history
 	 * @return
@@ -70,7 +70,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	private LaunchHistory getDebugLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 	}
-	
+
 	/**
 	 * This method tests that an item added to the history is added to the head of
 	 * history.
@@ -84,7 +84,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		assertTrue("The run history should contain the LaunchHistoryTest config", runhistory.contains(config)); //$NON-NLS-1$
 		assertEquals("The most recent launch should be LaunchHistoryTest", runhistory.getRecentLaunch(), config); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * As both the run and the debug launch histories will accept a java application
 	 * launch config, both launch histories should contain the test launch configuration
@@ -103,7 +103,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		assertTrue("the debug history should contain LaunchHistoryTest", debughistory.contains(config)); //$NON-NLS-1$
 		assertEquals("the debug recent launch should be LaunchHistoryTest", debughistory.getRecentLaunch(), config); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * If we launch config A, then config B, and then config A again, A should be the most recent launch
 	 */
@@ -126,9 +126,9 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		assertTrue("The run history should contain the LaunchHistoryTest config", runhistory.contains(config)); //$NON-NLS-1$
 		assertEquals("The most recent launch should be LaunchHistoryTest", runhistory.getRecentLaunch(), config); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * If we rename a launch configuration it should not effect the launch history if the renamed configuration 
+	 * If we rename a launch configuration it should not effect the launch history if the renamed configuration
 	 * is present in the history.
 	 */
 	public void testRenameConfigHistoryUpdate() throws CoreException {
@@ -143,16 +143,16 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		copy.rename("RenamedLaunchHistoryItem"); //$NON-NLS-1$
 		config = copy.doSave();
 		assertEquals("the renamed config should still be the first on in the history", runhistory.getRecentLaunch(), config); //$NON-NLS-1$
-		
+
 		//rename the configuration back to what it was
 		copy = config.getWorkingCopy();
 		copy.rename("LaunchHistoryTest"); //$NON-NLS-1$
 		config = copy.doSave();
 	}
-	
+
 	/**
 	 * If we delete a launch configuration and the configuration is present in the launch history, it should be removed
-	 * from the history and the history should be shifted up one place. 
+	 * from the history and the history should be shifted up one place.
 	 */
 	public void testDeleteLaunchConfigurationHistoryUpdate() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
@@ -171,7 +171,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		config = getLaunchConfiguration("LaunchHistoryTest"); //$NON-NLS-1$
 		assertEquals("the run history should have LaunchHistoryTest as the recent launch after delete", runhistory.getRecentLaunch(), config); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that setting the size of the launch history appropriately changes what will be returned
 	 * when the history is queried for it contents
@@ -190,7 +190,7 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 		config.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 		assertTrue("there should only be two items in the history", runhistory.getHistory().length == getMaxHistorySize()); //$NON-NLS-1$
 		assertTrue("the complete launch history should be greater than or equal to the history size", runhistory.getCompleteLaunchHistory().length >= runhistory.getHistory().length); //$NON-NLS-1$
-		
+
 		//reset the history size
 		setMaxHistorySize(oldsize);
 	}

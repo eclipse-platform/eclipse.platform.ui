@@ -29,40 +29,40 @@ import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 
 /**
  * Breakpoint element comparator.
- * 
+ *
  * @since 3.6
  */
 public class ElementComparator implements Comparator<Object> {
 	final private static String SPACE = " "; //$NON-NLS-1$
-	
+
 	protected DebugModelPresentationContext fContext;
-	
+
 	public ElementComparator(IPresentationContext context) {
 		if (context instanceof DebugModelPresentationContext) {
 			fContext = (DebugModelPresentationContext) context;
 		}
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public int compare(Object arg0, Object arg1) {
-        IBreakpoint bp0 = (IBreakpoint)DebugPlugin.getAdapter(arg0, IBreakpoint.class);            
-        IBreakpoint bp1 = (IBreakpoint)DebugPlugin.getAdapter(arg1, IBreakpoint.class);            
+        IBreakpoint bp0 = (IBreakpoint)DebugPlugin.getAdapter(arg0, IBreakpoint.class);
+        IBreakpoint bp1 = (IBreakpoint)DebugPlugin.getAdapter(arg1, IBreakpoint.class);
 	    if (bp0 != null && bp1 != null) {
 			return doCompare(bp0, bp1);
 		} else if (arg0 instanceof IBreakpointContainer && arg1 instanceof IBreakpointContainer) {
 			return doCompare((IBreakpointContainer) arg0, (IBreakpointContainer) arg1);
-		} else {		
+		} else {
 			return -1; // just return -1 if the two objects are not IBreakpoint type
 		}
 	}
-    
+
 	/**
 	 * Compares two breakpoint containers.
-	 * 
+	 *
 	 * @param c1
 	 * @param c2
 	 * @return
@@ -78,21 +78,21 @@ public class ElementComparator implements Comparator<Object> {
 	    } else if (c2.getCategory() instanceof OtherBreakpointCategory) {
 	        return -1;
 	    }
-	    
+
 	    // Rest of categories should be listed alphabetically.
 		if (fContext != null) {
 			String name1 = fContext.getModelPresentation().getText(c1);
 			String name2 = fContext.getModelPresentation().getText(c2);
-			
+
 			return name1.compareTo(name2);
 		}
-		
+
 		return -1;
-	}	
-	
+	}
+
 	/**
 	 * Compares two breakpoints.
-	 * 
+	 *
 	 * @param b1
 	 * @param b2
 	 * @return
@@ -118,12 +118,12 @@ public class ElementComparator implements Comparator<Object> {
 		}
 		String text1 = IInternalDebugCoreConstants.EMPTY_STRING;
 		String text2 = IInternalDebugCoreConstants.EMPTY_STRING;
-		
+
 		text1 += b1.getModelIdentifier();
 		text2 += b2.getModelIdentifier();
-		
 
-		try {		
+
+		try {
 			if (marker1.exists() && marker2.exists()) {
 				text1 += SPACE + marker1.getType();
 				text2 += SPACE + marker2.getType();
@@ -131,17 +131,17 @@ public class ElementComparator implements Comparator<Object> {
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
-	
+
 		int result = text1.compareTo(text2);
 		if (result != 0) {
 			return result;
 		}
-	
-		// model and type are the same	
+
+		// model and type are the same
 		if (fContext != null) {
 			String name1 = fContext.getModelPresentation().getText(b1);
 			String name2 = fContext.getModelPresentation().getText(b2);
-	
+
 			boolean lineBreakpoint = false;
 			try {
 				lineBreakpoint = marker1.isSubtypeOf(IBreakpoint.LINE_BREAKPOINT_MARKER);
@@ -149,17 +149,17 @@ public class ElementComparator implements Comparator<Object> {
 			}
 			if (lineBreakpoint) {
 				return compareLineBreakpoints(b1, b2, name1,name2);
-			} 
-			
+			}
+
 			return name1.compareTo(name2);
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Compares two line breakpoints.
-	 * 
+	 *
 	 * @param b1
 	 * @param b2
 	 * @param name1
@@ -176,12 +176,12 @@ public class ElementComparator implements Comparator<Object> {
 					int l1 = 0;
 					int l2 = 0;
 					try {
-						l1 = ((ILineBreakpoint)b1).getLineNumber();	
+						l1 = ((ILineBreakpoint)b1).getLineNumber();
 					} catch (CoreException e) {
 						DebugUIPlugin.log(e);
 					}
 					try {
-						l2 = ((ILineBreakpoint)b2).getLineNumber();	
+						l2 = ((ILineBreakpoint)b2).getLineNumber();
 					} catch (CoreException e) {
 						DebugUIPlugin.log(e);
 					}
@@ -190,6 +190,6 @@ public class ElementComparator implements Comparator<Object> {
 			}
 		}
 		return name1.compareTo(name2);
-	}     
+	}
 
 }

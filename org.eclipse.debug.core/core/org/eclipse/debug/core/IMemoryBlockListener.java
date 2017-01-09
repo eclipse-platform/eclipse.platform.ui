@@ -23,11 +23,11 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * @since 3.1
  */
 public interface IMemoryBlockListener {
-	
+
 	/**
 	 * Notification the given memory blocks have been added to the
 	 * memory block manager.
-	 * 
+	 *
 	 * @param memory blocks added to the memory block manager
 	 */
 	void memoryBlocksAdded(IMemoryBlock[] memory);
@@ -35,9 +35,9 @@ public interface IMemoryBlockListener {
 	/**
 	 * Notification the given memory blocks have been removed from
 	 * the memory block manager.
-	 * 
+	 *
 	 * @param memory blocks removed from the memory block manager
 	 */
 	void memoryBlocksRemoved(IMemoryBlock[] memory);
-	
+
 }

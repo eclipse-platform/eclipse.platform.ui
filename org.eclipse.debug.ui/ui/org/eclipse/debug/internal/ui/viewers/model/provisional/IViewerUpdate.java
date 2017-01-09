@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * A context sensitive viewer update request.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
@@ -23,30 +23,30 @@ public interface IViewerUpdate extends IRequest {
 
 	/**
 	 * Returns the context this update was requested in.
-	 * 
+	 *
 	 * @return context this update was requested in
 	 */
 	public IPresentationContext getPresentationContext();
-    
+
     /**
      * Returns the model element associated with this request.
-     * 
+     *
      * @return associated model element
      */
     public Object getElement();
-    
+
     /**
      * Returns the viewer tree path to the model element associated with this
      * request. An empty path indicates a root element.
-     * 
+     *
      * @return tree path, possibly empty
      */
     public TreePath getElementPath();
-    
+
     /**
      * Returns the element that was the viewer input at the time the
      * request was made, possibly <code>null</code>.
-     * 
+     *
      * @return viewer input element, possibly <code>null</code>
      * @since 3.4
      */

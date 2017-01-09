@@ -33,9 +33,9 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class provides the action for toggling step filters on or off for the debug view
  */
 public class ToggleStepFiltersAction extends DebugCommandAction implements IPreferenceChangeListener {
-	
+
 	private boolean fInitialized = !DebugUITools.isUseStepFilters();
-	
+
 	/**
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getDisabledImageDescriptor()
 	 */
@@ -88,7 +88,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getToolTipText()
 	 */
 	@Override
-	public String getToolTipText() {		
+	public String getToolTipText() {
 		return ActionMessages.ToggleStepFiltersAction_0;
 	}
 
@@ -122,7 +122,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
     		fInitialized = true;
     	}
     }
-	
+
     /**
      * @see org.eclipse.jface.action.Action#getStyle()
      */
@@ -161,9 +161,9 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IPref
 		super.init(window);
 		initState();
 	}
-    
+
     /**
-     * Initializes the state, by adding this action as a property listener 
+     * Initializes the state, by adding this action as a property listener
      */
     protected void initState() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());

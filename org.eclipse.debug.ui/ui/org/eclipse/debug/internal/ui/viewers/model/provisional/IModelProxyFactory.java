@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
- * A model proxy factory creates model proxies for elements based on 
+ * A model proxy factory creates model proxies for elements based on
  * specific presentation contexts. A model proxy factory is provided for
  * a model element by registering a model proxy factory adapter for
  * an element.
@@ -26,7 +26,7 @@ public interface IModelProxyFactory {
 	/**
 	 * Creates and returns a model proxy for the given element in the specified
 	 * context or <code>null</code> if none.
-	 * 
+	 *
 	 * @param element model element to create a model proxy for
 	 * @param context presentation context
 	 * @return model proxy or <code>null</code>

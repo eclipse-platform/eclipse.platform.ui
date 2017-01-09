@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,22 +21,22 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Generic color manager.
  */
-public class ColorManager {	
-	
+public class ColorManager {
+
 	private static ColorManager fgColorManager;
-	
+
 	private ColorManager() {
 	}
-	
+
 	public static ColorManager getDefault() {
 		if (fgColorManager == null) {
 			fgColorManager= new ColorManager();
 		}
 		return fgColorManager;
 	}
-	
+
 	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
-	
+
 	public Color getColor(RGB rgb) {
 		Color color= fColorTable.get(rgb);
 		if (color == null) {
@@ -45,7 +45,7 @@ public class ColorManager {
 		}
 		return color;
 	}
-	
+
 	public void dispose() {
 		for (Color color : fColorTable.values()) {
 			color.dispose();

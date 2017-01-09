@@ -61,26 +61,26 @@ import com.ibm.icu.text.MessageFormat;
 public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPage {
 
 	/**
-	 * Represents a debug view of the file system, in that we only care about folders and files with the 
+	 * Represents a debug view of the file system, in that we only care about folders and files with the
 	 * extension *.launch
 	 * @since 3.4.0
 	 */
 	class DebugFileSystemElement extends FileSystemElement {
-		
+
 		private boolean populated = false;
-		
+
 		public DebugFileSystemElement(String name, FileSystemElement parent, boolean isDirectory) {
 			super(name, parent, isDirectory);
 		}
-		
+
 		public void setPopulated() {
 			populated = true;
 		}
-		
+
 		public boolean isPopulated() {
 			return populated;
 		}
-		
+
 		@Override
 		public AdaptableList getFiles() {
 			if(!populated) {
@@ -88,7 +88,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			}
 			return super.getFiles();
 		}
-		
+
 		@Override
 		public AdaptableList getFolders() {
 			if(!populated) {
@@ -96,7 +96,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			}
 			return super.getFolders();
 		}
-		
+
 		/**
 		 * Populates the children of the specified parent <code>FileSystemElement</code>
 		 * @param element
@@ -123,13 +123,13 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			setPopulated();
 		}
 	}
-	
+
 	private String OVERWRITE = "import_config_overwrite"; //$NON-NLS-1$
 	private String OLD_PATH = "import_config_oldpath"; //$NON-NLS-1$
-	
+
 	private Text fFromDirectory = null;
 	private Button fOverwrite = null;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -179,11 +179,11 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			if(newconfig.exists() & !overwrite) {
 				if(nowall) {
 					continue;
-				}								
+				}
 				if(!owall) {
-					dialog = new MessageDialog(DebugUIPlugin.getShell(), 
-							WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
-							null, 
+					dialog = new MessageDialog(DebugUIPlugin.getShell(),
+							WizardMessages.ExportLaunchConfigurationsWizardPage_11,
+							null,
  MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new Object[] { config.getName() }),
 							MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
 					int ret = dialog.open();
@@ -233,7 +233,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		return true;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getImage()
 	 */
@@ -249,7 +249,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 	protected void updateWidgetEnablements() {
 		setPageComplete(determinePageCompletion());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#determinePageCompletion()
 	 */
@@ -267,13 +267,13 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		setMessage(WizardMessages.ImportLaunchConfigurationsWizardPage_5);
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#createSourceGroup(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected void createSourceGroup(Composite parent) {}
-	
+
 	/**
      *	Create the group for creating the root directory
      */
@@ -313,8 +313,8 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 				File file = new File(path.toOSString());
 				DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING, null, true);
 				dummyparent.setPopulated();
-				DebugFileSystemElement element = new DebugFileSystemElement(FileSystemStructureProvider.INSTANCE.getLabel(file), 
-						dummyparent, 
+				DebugFileSystemElement element = new DebugFileSystemElement(FileSystemStructureProvider.INSTANCE.getLabel(file),
+						dummyparent,
 						file.isDirectory());
 				element.setFileSystemObject(file);
 				element.getFiles();
@@ -322,7 +322,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			}
     	});
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#getFileProvider()
 	 */
@@ -339,7 +339,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
             }
         };
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#getFolderProvider()
 	 */
@@ -369,5 +369,5 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
             }
         };
 	}
-	
+
 }

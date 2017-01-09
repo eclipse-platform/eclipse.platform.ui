@@ -27,7 +27,7 @@ import org.eclipse.ui.PlatformUI;
  * Class to cache the breakpoint to working set information in its underlying
  * marker as breakpoints are moved between breakpoint working sets. It resolves
  * the need for constant attribute lookup and parsing to fix bug 103731
- * 
+ *
  * @since 3.2
  */
 public class BreakpointWorkingSetCache {
@@ -38,14 +38,14 @@ public class BreakpointWorkingSetCache {
 	 * value: vector of working sets the marker belongs to
 	 */
 	HashMap<IMarker, Vector<Object>> fCache = null;
-	
+
 	/**
 	 * Default constructor
 	 */
 	public BreakpointWorkingSetCache() {
 		fCache = new HashMap<IMarker, Vector<Object>>(15);
 	}
-	
+
 	/**
 	 * Adds an entry into the cache
 	 * @param marker the marker to add the workingset information about
@@ -64,7 +64,7 @@ public class BreakpointWorkingSetCache {
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes an item from the list contained under the marker key, not the marker entry
 	 * @param marker the marker key to remove the item from
@@ -76,7 +76,7 @@ public class BreakpointWorkingSetCache {
 			list.remove(entry);
 		}
 	}
-	
+
 	/**
 	 * Flushes the cache of only the specified marker
 	 * @param marker the marker whose cache is to be flushed
@@ -102,5 +102,5 @@ public class BreakpointWorkingSetCache {
 			catch(CoreException e) {DebugPlugin.log(e);}
 		}
 	}
-	
+
 }

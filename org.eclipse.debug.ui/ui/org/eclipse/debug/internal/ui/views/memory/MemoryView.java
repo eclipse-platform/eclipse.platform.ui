@@ -70,7 +70,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * 
+ *
  * @since 3.0
  */
 public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
@@ -459,7 +459,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createMemoryBlocksTreeViewPane(Composite parent) {
 
@@ -501,7 +501,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 	/**
 	 * @return an activate listener for the given view pane
-	 * 
+	 *
 	 */
 	private Listener createDeactivateListener(final IMemoryViewPane viewPane) {
 		Listener deactivateListener = new Listener() {
@@ -534,7 +534,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void createRenderingViewPane(final String paneId) {
 		final RenderingViewPane renderingPane = new RenderingViewPane(this);

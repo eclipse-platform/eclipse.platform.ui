@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
- 
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
@@ -22,14 +22,14 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * This class is a base implementation of a 'remove all' debug action
- * 
+ *
  * This class is intended to be extended by clients
  * @see IViewActionDelegate
  * @see IActionDelegate2
  * @see IWorkbenchWindowActionDelegate
  */
 public abstract class AbstractRemoveAllActionDelegate implements IViewActionDelegate, IActionDelegate2, IWorkbenchWindowActionDelegate {
-	
+
 	/**
 	 * The underlying <code>IAction</code>
 	 */
@@ -39,7 +39,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	 * Needed for reflective creation
 	 */
 	public AbstractRemoveAllActionDelegate() {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
@@ -58,13 +58,13 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 
 	/**
 	 * Returns this delegate's action.
-	 * 
+	 *
 	 * @return the underlying <code>IAction</code>
 	 */
 	protected IAction getAction() {
 		return fAction;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
@@ -95,7 +95,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	 * Initializes any listeners, etc.
 	 */
 	protected abstract void initialize();
-	
+
 	/**
 	 * Update enablement.
 	 */
@@ -105,14 +105,14 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 			action.setEnabled(isEnabled());
 		}
 	}
-	
+
 	/**
 	 * Returns whether this action is enabled
-	 * 
+	 *
 	 * @return true if this action is enabled, false otherwise
 	 */
 	protected abstract boolean isEnabled();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

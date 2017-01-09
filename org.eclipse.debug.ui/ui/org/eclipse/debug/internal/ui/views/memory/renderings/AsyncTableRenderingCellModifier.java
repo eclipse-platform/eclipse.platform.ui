@@ -39,13 +39,13 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
     private AbstractAsyncTableRendering fRendering;
     private boolean fMBSupportsValueModification = false;
-    
+
     private ICellModifier fCustomModifier;
 
     public AsyncTableRenderingCellModifier(AbstractAsyncTableRendering rendering, ICellModifier customModifier) {
         fRendering = rendering;
         fCustomModifier = customModifier;
-        
+
         Job job = new Job("AsyncTableRenderingCellModifier"){ //$NON-NLS-1$
 
 			@Override
@@ -59,7 +59,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
      *      java.lang.String)
      */
@@ -78,7 +78,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             if (TableRenderingLine.P_ADDRESS.equals(property)) {
                 return false;
             }
-            
+
             // property is stored as number of addressable unit away from the
             // line address
             // to calculate offset to the memory line array, offset =
@@ -93,7 +93,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             {
             	BigInteger address = line.getAddress().add(BigInteger.valueOf(offset));
             	MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, bytes);
-            	return fCustomModifier.canModify(mElement, null);       
+            	return fCustomModifier.canModify(mElement, null);
             }
 
             for (int i = 0; i < bytes.length; i++) {
@@ -120,13 +120,13 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
      *      java.lang.String)
      */
     @Override
 	public Object getValue(Object element, String property) {
-    	
+
         // give back the value of the column
 
         if (!(element instanceof MemorySegment))
@@ -137,16 +137,16 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             if (TableRenderingLine.P_ADDRESS.equals(property))
                 return line.getAddress();
 
-            int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();            
+            int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();
             MemoryByte[] memory = line.getBytes(offsetToLineBuffer, fRendering.getBytesPerColumn());
 
             int offsetFromLineAddress = Integer.valueOf(property, 16).intValue();
             BigInteger address = line.getAddress().add(BigInteger.valueOf(offsetFromLineAddress));
-            
+
             if (fCustomModifier != null)
             {
             	MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, memory);
-            	return fCustomModifier.getValue(mElement, null);       
+            	return fCustomModifier.getValue(mElement, null);
             }
 
             // ask the rendering for a string representation of the bytes
@@ -159,28 +159,28 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
      *      java.lang.String, java.lang.Object)
      */
     @Override
 	public void modify(Object element, final String property, final Object value) {
-    	
+
         MemorySegment segment = null;
         if (element instanceof TableItem) {
         	Object data = ((TableItem)element).getData();
         	if (data != null && data instanceof MemorySegment)
         		segment = (MemorySegment)data;
-        	
+
         } else if (element instanceof MemorySegment){
         	segment = (MemorySegment) element;
         }
-        
+
         if (segment == null)
         	return;
-        
+
         final MemorySegment line = segment;
-        
+
         Job job = new Job("Set Values"){ //$NON-NLS-1$
 
 			@Override
@@ -211,15 +211,15 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 						fCustomModifier.modify(mElement, null, value);
 						return Status.OK_STATUS;
 					}
-					
+
 					if (!(value instanceof String))
 					{
 						DebugUIPlugin.logErrorMessage("Cell modifier cannot handle non-string values."); //$NON-NLS-1$
 						return Status.OK_STATUS;
 					}
-					
-	              byte[] bytes = null;	                
-			      String oldValue = (String) getValue(line, property);		                
+
+	              byte[] bytes = null;
+			      String oldValue = (String) getValue(line, property);
 		          if (!oldValue.equals(value)) {
 		                bytes = fRendering.getBytes(fRendering.getRenderingId(), address, oldArray, (String) value);
 
@@ -245,13 +245,13 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 		                // return if value has not changed
 		            	 return Status.OK_STATUS;
 		            }
-		            
+
 		            final byte[] newByteValues = bytes;
-		            
+
 		            if (memoryBlk instanceof IMemoryBlockExtension)
 		                ((IMemoryBlockExtension) memoryBlk).setValue(offsetFromMBBase, newByteValues);
 		            else
-		                memoryBlk.setValue(offsetFromMBBase.longValue(), newByteValues);				
+		                memoryBlk.setValue(offsetFromMBBase.longValue(), newByteValues);
 		        } catch (DebugException e) {
 		            MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed, e);
 		        } catch (NumberFormatException e) {
@@ -279,7 +279,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
         return lineAddress.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
     }
-    
+
     private boolean isValueModificationSupported()
     {
     	return fMBSupportsValueModification;

@@ -34,16 +34,16 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Toobar Copy View Tab to Clipboard action
- * 
+ *
  * @since 3.0
  */
 public class CopyTableRenderingToClipboardAction extends Action
 {
 	private final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
-	
+
 	protected AbstractBaseTableRendering fRendering;
 	protected StructuredViewer fViewer;
-	
+
 	public CopyTableRenderingToClipboardAction(AbstractBaseTableRendering rendering, StructuredViewer viewer)
 	{
 		super();
@@ -61,31 +61,31 @@ public class CopyTableRenderingToClipboardAction extends Action
 		if (itemList.length == 0) return null;
 
 		StringBuffer tableContents = new StringBuffer();
-		
+
 		Table table = (Table)fViewer.getControl();
 		int numColumns = table.getColumnCount();
-		ITableLabelProvider labelProvider = (ITableLabelProvider)fViewer.getLabelProvider();		
+		ITableLabelProvider labelProvider = (ITableLabelProvider)fViewer.getLabelProvider();
 		TableColumn columns[] = table.getColumns();
-		
+
 		// get title of view tab
 		String label = fRendering.getLabel();
 		tableContents.append(label);
 		tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		tableContents.append(COLUMN_SEPERATOR);
-		
+
 		int charsPerByte = fRendering.getNumCharsPerByte();
 		if (charsPerByte < 0)
 			charsPerByte = 4;
-		
+
 		//get the column headers and line them up properly
 		for (int k=0; k < numColumns; k++) {
-			
+
 			StringBuffer columnLabel = new StringBuffer(columns[k].getText());
 			int numBytes = 0;
 			int numChars = 0;
-			
+
 			if (k > 0)
-			{	
+			{
 				numBytes = fRendering.getBytesPerColumn();
 				numChars = numBytes * charsPerByte;
 			}
@@ -106,7 +106,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 					}
 					else
 						numBytes = descriptor.getAddressSize();
-					
+
 					// check address size
 					if (numBytes <= 0)
 						numBytes = 4;
@@ -116,30 +116,30 @@ public class CopyTableRenderingToClipboardAction extends Action
 					numBytes = 4;
 				}
 				numChars = numBytes*2;
-				
+
 			}
-			
+
 			 while (columnLabel.length() < numChars)
 			 {
 				 columnLabel.append(" "); //$NON-NLS-1$
 			 }
-				
-			tableContents.append(columnLabel);	
+
+			tableContents.append(columnLabel);
 			tableContents.append(COLUMN_SEPERATOR);
 		}
-		
+
 		tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		StringBuffer temp;
-			
+
 		//get the column contents from all the rows
 		for (int i=0; i < itemList.length; i++) {
 			for (int j=0; j < numColumns; j++) {
 				tableContents.append(COLUMN_SEPERATOR);
-				
+
 				temp = new StringBuffer(labelProvider.getColumnText(itemList[i].getData(), j));
-				
+
 				if (j>0)
-				{	
+				{
 					int numBytes = fRendering.getBytesPerColumn();
 					int numChars = numBytes * charsPerByte;
 					while (temp.length() < numChars)
@@ -147,28 +147,28 @@ public class CopyTableRenderingToClipboardAction extends Action
 						temp.append(" "); //$NON-NLS-1$
 					}
 				}
-				
+
 				tableContents.append(temp);
 			}
 			tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		}
 		return tableContents.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
-		
+
 		if (fRendering == null)
 			return;
-		
+
 		if (! (fViewer.getControl() instanceof Table))
 			return;
-		
+
 		Table table = (Table)fViewer.getControl();
-		
+
 		if (table == null)
 			return;
 		Clipboard clip= null;

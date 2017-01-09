@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
@@ -26,13 +26,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Retargettable breakpoint action.
- * 
+ *
  * @since 3.0
  */
 public abstract class RetargetBreakpointAction extends RetargetAction implements IToggleBreakpointsTargetManagerListener {
-	
+
     private IAction fAction;
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
 	 */
@@ -40,7 +40,7 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 	protected Class<?> getAdapterClass() {
 		return IToggleBreakpointsTarget.class;
 	}
-	
+
     @Override
 	protected Object getAdapter(IAdaptable adaptable) {
         IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager();
@@ -56,25 +56,25 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
         super.init(window);
         DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(this);
     }
-    
+
     @Override
 	public void init(IAction action) {
         super.init(action);
         DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(this);
     }
-    
+
     @Override
 	public void dispose() {
         DebugUITools.getToggleBreakpointsTargetManager().removeChangedListener(this);
         super.dispose();
     }
-    
+
     @Override
 	public void selectionChanged(IAction action, ISelection selection) {
         fAction = action;
         super.selectionChanged(action, selection);
     }
-    
+
     @Override
 	public void preferredTargetsChanged() {
         if (fAction != null) {

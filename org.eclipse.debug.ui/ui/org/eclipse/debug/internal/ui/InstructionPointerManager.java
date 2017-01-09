@@ -51,29 +51,29 @@ public class InstructionPointerManager{
 	 * Set containing all instruction pointer contexts this class manages
 	 */
 	private Set<InstructionPointerContext> fIPCSet = new HashSet<InstructionPointerContext>();
-	
+
 	/**
 	 * Maps ITextEditors to the set of instruction pointer contexts that are displayed in the editor
 	 */
 	private Map<ITextEditor, Set<InstructionPointerContext>> fEditorMap = new HashMap<ITextEditor, Set<InstructionPointerContext>>();
-	
+
 	/**
 	 * Part listener added to editors that contain annotations.  Allows instruction pointer contexts to
 	 * be removed when the editor they are displayed in is removed.
 	 */
 	private IPartListener2 fPartListener;
-	
+
 	/**
-	 * Page listener added to the workbench window to remove part listeners when the page is closed.  
+	 * Page listener added to the workbench window to remove part listeners when the page is closed.
 	 */
 	private IPageListener fPageListener;
-	
+
 	/**
 	 * Clients must not instantiate this class.
 	 */
 	private InstructionPointerManager() {
 	}
-	
+
 	/**
 	 * Return the singleton instance of this class, creating it if necessary.
 	 */
@@ -83,25 +83,25 @@ public class InstructionPointerManager{
 		}
 		return fgDefault;
 	}
-	
+
 	/**
-	 * Adds an instruction pointer annotation in the specified editor for the 
+	 * Adds an instruction pointer annotation in the specified editor for the
 	 * specified stack frame.
 	 */
 	public void addAnnotation(ITextEditor textEditor, IStackFrame frame, Annotation annotation) {
-		
+
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		IEditorInput editorInput = textEditor.getEditorInput();
         // If there is no annotation model, there's nothing more to do
         IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
         if (annModel == null) {
             return;
-        }        
-		
+        }
+
 		// Create the Position object that specifies a location for the annotation
 		Position position = null;
 		int charStart = -1;
-		int length = -1; 
+		int length = -1;
 		try {
 			charStart = frame.getCharStart();
 			length = frame.getCharEnd() - charStart;
@@ -127,20 +127,20 @@ public class InstructionPointerManager{
 			return;
 		}
 		position = new Position(charStart, length);
-		
+
 		if (frame.isTerminated()) {
 			return;
 		}
-		
+
 		synchronized (fIPCSet) {
-					
+
 			// Add the annotation at the position to the editor's annotation model.
 			annModel.removeAnnotation(annotation);
 			annModel.addAnnotation(annotation, position);
-			
+
 			// Create the instruction pointer context
 			InstructionPointerContext ipc = new InstructionPointerContext(frame.getDebugTarget(), frame.getThread(), textEditor, annotation);
-			
+
 			// Add the IPC to the set and map
 			Set<InstructionPointerContext> editorIPCs = fEditorMap.get(textEditor);
 			if (editorIPCs == null){
@@ -152,13 +152,13 @@ public class InstructionPointerManager{
 			editorIPCs.add(ipc);
 			fIPCSet.remove(ipc);
 			fIPCSet.add(ipc);
-			
+
 			// Add a listener to the editor so we can remove the IPC when the editor is closed
 			textEditor.getSite().getPage().addPartListener(getPartListener());
 			textEditor.getSite().getPage().getWorkbenchWindow().addPageListener(getPageListener());
 		}
 	}
-	
+
 	/**
 	 * Remove all annotations associated with the specified debug target that this class
 	 * is tracking.
@@ -176,7 +176,7 @@ public class InstructionPointerManager{
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove all annotations associated with the specified thread that this class
 	 * is tracking.
@@ -194,7 +194,7 @@ public class InstructionPointerManager{
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove all annotations associated with the specified editor that this class
 	 * is tracking.
@@ -225,9 +225,9 @@ public class InstructionPointerManager{
 				fEditorMap.remove(ipc.getEditor());
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Remove the annotation from the document model.
 	 */
@@ -240,29 +240,29 @@ public class InstructionPointerManager{
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the number of instruction pointers.
 	 * Used by the test suite.
-	 * 
+	 *
 	 * @return the number of instruction pointers
 	 * @since 3.2
 	 */
 	public int getInstructionPointerCount() {
 		return fIPCSet.size();
 	}
-	
+
 	/**
 	 * Returns the number of keys in the editor to IPC mapping
 	 * Used by the test suite.
-	 * 
+	 *
 	 * @return the number of keys in the editor mapping
 	 * @since 3.3
 	 */
 	public int getEditorMappingCount() {
 		return fEditorMap.size();
 	}
-	
+
 	/**
 	 * @return the page listener to add to workbench window.
 	 */
@@ -272,7 +272,7 @@ public class InstructionPointerManager{
 		}
 		return fPageListener;
 	}
-	
+
 	/**
 	 * @return the part listener to add to editors.
 	 */
@@ -300,7 +300,7 @@ public class InstructionPointerManager{
 		public void partVisible(IWorkbenchPartReference partRef) {}
 		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 		 */
@@ -310,9 +310,9 @@ public class InstructionPointerManager{
 			if (part instanceof ITextEditor){
 				removeAnnotations((ITextEditor)part);
 			}
-			
+
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 		 */
@@ -324,7 +324,7 @@ public class InstructionPointerManager{
 			}
 		}
 	}
-	
+
 	/**
 	 * Page listener that is added to the workbench to remove the part listener when the page is closed.
 	 */
@@ -343,7 +343,7 @@ public class InstructionPointerManager{
 			page.removePartListener(getPartListener());
 			page.getWorkbenchWindow().removePageListener(getPageListener());
 		}
-		
+
 	}
-	
+
 }

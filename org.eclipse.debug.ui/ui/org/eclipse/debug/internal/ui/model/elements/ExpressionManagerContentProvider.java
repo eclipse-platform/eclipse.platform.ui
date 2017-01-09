@@ -43,13 +43,13 @@ import org.eclipse.swt.widgets.Composite;
 public class ExpressionManagerContentProvider extends ElementContentProvider {
 
     /**
-     * An element representing the "Add new expression" entry in the 
+     * An element representing the "Add new expression" entry in the
      * expressions view.
-     * 
+     *
      * @since 3.6
      */
     private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier {
-        
+
         @Override
 		public void update(ILabelUpdate[] updates) {
             for (int i = 0; i < updates.length; i++) {
@@ -65,58 +65,58 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                         }
                     }
                 }
-                    
+
                 updates[i].done();
             }
         }
-        
+
 		@SuppressWarnings("deprecation")
 		private void updateLabel(ILabelUpdate update, int columnIndex) {
             update.setLabel(DebugUIMessages.ExpressionManagerContentProvider_1, columnIndex);
             update.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION), columnIndex);
-            
-            // Display the "Add new expression" element in italic to 
+
+            // Display the "Add new expression" element in italic to
             // distinguish it from user elements in view.
             FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
-            fontData.setStyle(SWT.ITALIC);            
+            fontData.setStyle(SWT.ITALIC);
             update.setFontData(fontData, columnIndex);
         }
-        
+
         @Override
 		public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
             return new TextCellEditor(parent);
         }
-        
+
         @Override
 		public ICellModifier getCellModifier(IPresentationContext context, Object element) {
             return this;
         }
-        
+
         @Override
 		public boolean canModify(Object element, String property) {
             return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
         }
-        
+
         @Override
 		public Object getValue(Object element, String property) {
             return IInternalDebugCoreConstants.EMPTY_STRING;
         }
-        
+
         @Override
 		public void modify(Object element, String property, Object value) {
-            // If an expression is entered, add a new watch expression to the 
-            // manager. 
-            if (value instanceof String && 
-                !IInternalDebugCoreConstants.EMPTY_STRING.equals( ((String)value).trim()) ) 
+            // If an expression is entered, add a new watch expression to the
+            // manager.
+            if (value instanceof String &&
+                !IInternalDebugCoreConstants.EMPTY_STRING.equals( ((String)value).trim()) )
             {
                 String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
-                IWatchExpression newExpression= 
+                IWatchExpression newExpression=
                     DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionText);
                 DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
                 newExpression.setExpressionContext(getContext());
             }
         }
-        
+
         private IDebugElement getContext() {
             IAdaptable object = DebugUITools.getDebugContext();
             IDebugElement context = null;
@@ -129,7 +129,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
         }
 
     }
-    
+
     private static final AddNewExpressionElement ADD_NEW_EXPRESSION_ELEMENT = new AddNewExpressionElement();
 
 	/* (non-Javadoc)
@@ -138,8 +138,8 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    // Add the "Add new expression" element only if columns are displayed.
-		return ((IExpressionManager) element).getExpressions().length + 
-		    (context.getColumns() != null ? 1 : 0); 
+		return ((IExpressionManager) element).getExpressions().length +
+		    (context.getColumns() != null ? 1 : 0);
 	}
 
 	/* (non-Javadoc)
@@ -156,9 +156,9 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 
 	/**
 	 * Returns a subrange of elements from the given elements array plus the last element.
-	 * 
+	 *
 	 * @see ElementContentProvider#getElements(Object[], int, int)
-	 * 
+	 *
 	 * @since 3.6
 	 */
     private Object[] getElements(Object[] elements, Object lastElement, int index, int length) {
@@ -178,7 +178,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
         return null;
     }
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
@@ -194,5 +194,5 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    return true;
 	}
-	
+
 }

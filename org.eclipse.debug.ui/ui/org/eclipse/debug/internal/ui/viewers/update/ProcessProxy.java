@@ -31,7 +31,7 @@ public class ProcessProxy extends EventHandlerModelProxy {
 
 		@Override
 		protected void handleChange(DebugEvent event) {
-			fireProcessDelta(IModelDelta.STATE);        			
+			fireProcessDelta(IModelDelta.STATE);
         }
 
         @Override
@@ -43,8 +43,8 @@ public class ProcessProxy extends EventHandlerModelProxy {
 		protected void handleTerminate(DebugEvent event) {
 			fireProcessDelta(IModelDelta.STATE | IModelDelta.UNINSTALL);
 		}
-        
-        
+
+
     };
 
     private void fireProcessDelta(int flags) {
@@ -54,12 +54,12 @@ public class ProcessProxy extends EventHandlerModelProxy {
                 delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
                 ModelDelta node = delta;
                 node = node.addNode(fProcess.getLaunch(), IModelDelta.NO_CHANGE);
-                node.addNode(fProcess, flags);                  
+                node.addNode(fProcess, flags);
             }
         }
         if (delta != null && !isDisposed()) {
             fireModelChanged(delta);
-        }           
+        }
     }
 
     /* (non-Javadoc)
@@ -103,7 +103,7 @@ public class ProcessProxy extends EventHandlerModelProxy {
     				ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
     				ModelDelta node = delta.addNode(process.getLaunch(), IModelDelta.NO_CHANGE);
     				node = node.addNode(process, IModelDelta.SELECT);
-    				fireModelChanged(delta);					
+    				fireModelChanged(delta);
     			}
 		    }
 		}

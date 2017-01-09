@@ -21,13 +21,13 @@ import org.eclipse.ui.IWorkbench;
 /**
  * This class provides a wizard for exporting launch configurations to the local
  * file system
- * 
+ *
  * @since 3.4.0
  */
 public class ExportLaunchConfigurationsWizard extends Wizard implements IExportWizard {
 
 	private String EXPORT_DIALOG_SETTINGS = "ExportLaunchConfigurations"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 */
@@ -49,7 +49,7 @@ public class ExportLaunchConfigurationsWizard extends Wizard implements IExportW
 		IWizardPage page = new ExportLaunchConfigurationsWizardPage();
 		addPage(page);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */

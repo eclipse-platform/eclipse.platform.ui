@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - ongoing bug fixes and enhancements
@@ -22,19 +22,19 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * This interface must be implemented by the viewer which uses the
  * {@link TreeModelContentProvider} content provider.  It allows the content
- * provider to update the viewer with information retrieved from the 
+ * provider to update the viewer with information retrieved from the
  * content, proxy, memento, and other element-based providers.
- * 
+ *
  * @since 3.8
  */
 public interface IInternalTreeModelViewer extends ITreeModelViewer {
 
     /**
      * Returns this viewer's filters.
-     * 
+     *
      * @return an array of viewer filters
      * @see org.eclipse.jface.viewers.StructuredViewer#setFilters(ViewerFilter[])
-     */    
+     */
     @Override
 	public ViewerFilter[] getFilters();
 
@@ -44,11 +44,11 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param index Index of the element to be revealed.
      */
     public void reveal(TreePath path, int index);
-        
+
     /**
-     * Triggers an update of the given element's state.  If multiple instances 
+     * Triggers an update of the given element's state.  If multiple instances
      * of the given element are found in the tree, they will all be updated.
-     * 
+     *
      * @param element Element to update.
      */
     public void update(Object element);
@@ -58,36 +58,36 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * <p>
      * This method should only be called by the viewer framework.
      * </p>
-     * 
+     *
      * @param parentOrTreePath Parent object, or a tree path of the parent element.
      * @param index Index at which to set the new element.
      * @param element Element object.
      * @noreference This method is not intended to be referenced by clients.
      */
     public void replace(Object parentOrTreePath, final int index, Object element);
-    
+
     /**
-     * Set the number of children of the given element or tree path. To set the 
-     * number of children of the invisible root of the tree, you can pass the 
+     * Set the number of children of the given element or tree path. To set the
+     * number of children of the invisible root of the tree, you can pass the
      * input object or an empty tree path.
      * <p>
      * This method should only be called by the viewer framework.
      * </p>
-     * 
+     *
      * @param elementOrTreePath The element, or tree path.
      * @param count new value
      * @noreference This method is not intended to be referenced by clients.
      */
     public void setChildCount(final Object elementOrTreePath, final int count);
-    
+
     /**
-     * Inform the viewer about whether the given element or tree path has 
-     * children. Avoid calling this method if the number of children has 
+     * Inform the viewer about whether the given element or tree path has
+     * children. Avoid calling this method if the number of children has
      * already been set.
      * <p>
      * This method should only be called by the viewer framework.
      * </p>
-     * 
+     *
      * @param elementOrTreePath the element, or tree path
      * @param hasChildren new value.
      * @noreference This method is not intended to be referenced by clients.
@@ -100,7 +100,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * <p>
      * This method should only be called by the viewer framework.
      * </p>
-     * 
+     *
      * @param elementPath tree path to element to consider for expansion
      * @noreference This method is not intended to be referenced by clients.
      */
@@ -118,7 +118,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param expanded
      *            <code>true</code> if the node is expanded, and
      *            <code>false</code> if collapsed
-     *            
+     *
      * @noreference This method is not intended to be referenced by clients.
      */
     public void setExpandedState(Object elementOrTreePath, boolean expanded);
@@ -136,7 +136,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param level
      *            non-negative level, or <code>ALL_LEVELS</code> to expand all
      *            levels of the tree
-     *            
+     *
      * @noreference This method is not intended to be referenced by clients.
      */
     public void expandToLevel(Object elementOrTreePath, int level);
@@ -149,7 +149,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * </p>
      * @param elementOrTreePath the element, or the tree path to the element
      * @noreference This method is not intended to be referenced by clients.
-     */    
+     */
     public void remove(Object elementOrTreePath);
 
     /**
@@ -161,7 +161,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param parentOrTreePath the parent element, the input element, or a tree path to the parent element
      * @param index child index
      * @noreference This method is not intended to be referenced by clients.
-     */    
+     */
     public void remove(Object parentOrTreePath, final int index);
 
     /**
@@ -172,19 +172,19 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * <p>
      * This method should only be called by the viewer framework.
      * </p>
-     * @param parentOrTreePath the parent element, or the tree path to the parent 
+     * @param parentOrTreePath the parent element, or the tree path to the parent
      *
      * @param element the element
      * @param position a 0-based position relative to the model, or -1 to indicate
      * the last position
      * @noreference This method is not intended to be referenced by clients.
-     */    
+     */
     public void insert(Object parentOrTreePath, Object element, int position);
 
     /**
      * Returns whether the candidate selection should override the current
      * selection.
-     * @param current Current selection in viewer. 
+     * @param current Current selection in viewer.
      * @param candidate Proposed new selection.
      * @return whether new selection should override the current
      */
@@ -200,22 +200,22 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      *         <code>false</code> if collapsed
      */
     public boolean getExpandedState(Object elementOrTreePath);
-    
+
     /**
      * Returns whether the node corresponding to the given element or tree path
      * has any child elements.
-     * 
+     *
      * @param elementOrTreePath Path to element
      * @return Returns whether the given element has children.
      */
     public boolean getHasChildren(Object elementOrTreePath);
-    
+
     /**
      * Returns the child count of the element at the given path. <br>
      * Note: The child count may be incorrect if the element is not
      * expanded in the tree.
-     * 
-     * @param path Path to get count for. 
+     *
+     * @param path Path to get count for.
      * @return The child count.
      */
     public int getChildCount(TreePath path);
@@ -223,98 +223,98 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
     /**
      * Returns the element which is a child of the element at the
      * given path, with the given index.
-     * 
+     *
      * @param path Path to parent element.
      * @param index Index of child element.
      * @return Child element.
      */
     public Object getChildElement(TreePath path, int index);
-    
+
     /**
-     * Returns the tree path of the element that is at the top of the 
+     * Returns the tree path of the element that is at the top of the
      * viewer.
-     * 
-     * @return the tree path of the element at the top of the 
+     *
+     * @return the tree path of the element at the top of the
      * viewer.
      */
     public TreePath getTopElementPath();
-    
-    /** 
+
+    /**
      * Finds the index of the given element with a parent of given path.
-     * 
-     * @param parentPath Path of parent element. 
+     *
+     * @param parentPath Path of parent element.
      * @param element Element to find.
-     * 
+     *
      * @return The element's index, or -1 if not found.
      */
     public int findElementIndex(TreePath parentPath, Object element);
 
     /**
-     * Returns a boolean indicating whether all the child elements of the 
+     * Returns a boolean indicating whether all the child elements of the
      * given parent have been realized already.
-     * 
+     *
      * @param parentPath Path of parent element.
      * @return true if all children realized
      */
     public boolean getElementChildrenRealized(TreePath parentPath);
-    
+
     /**
      * Clears the selection in the viewer, if any, without firing
      * selection change notification. This is only to be used by
      * the platform.
      */
     public void clearSelectionQuiet();
-    
+
     /**
      * Sets the element's display information.
      * <p>
      * This method should only be called by the viewer framework.
      * </p>
-     * 
-     * @param path Element path. 
+     *
+     * @param path Element path.
      * @param numColumns Number of columns in the data.
-     * @param labels Array of labels.  The array cannot to be 
+     * @param labels Array of labels.  The array cannot to be
      * <code>null</code>, but values within the array may be.
      * @param images Array of image descriptors, may be <code>null</code>.
      * @param fontDatas Array of fond data objects, may be <code>null</code>.
-     * @param foregrounds Array of RGB values for foreground colors, may be 
+     * @param foregrounds Array of RGB values for foreground colors, may be
      * <code>null</code>.
-     * @param backgrounds Array of RGB values for background colors, may be 
+     * @param backgrounds Array of RGB values for background colors, may be
      * <code>null</code>.
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images, FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds); 
+    public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images, FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds);
 
     /**
      * Returns identifiers of the visible columns in this viewer, or <code>null</code>
      * if there is currently no column presentation.
-     *  
+     *
      * @return visible columns or <code>null</code>
      */
-    public String[] getVisibleColumns();    
-    
+    public String[] getVisibleColumns();
+
     /**
      * Sets the element check state data.
-     * 
+     *
      * @param path Path of element to check.
      * @param checked if true, item will be checked
      * @param grayed if true item will be grayed
      */
-    public void setElementChecked(TreePath path, boolean checked, boolean grayed);    
+    public void setElementChecked(TreePath path, boolean checked, boolean grayed);
 
     /**
      * Retrieves the element check state.
-     * 
+     *
      * @param path Path of element to return check state for.
      * @return the element checked state
      */
-    public boolean getElementChecked(TreePath path);    
+    public boolean getElementChecked(TreePath path);
 
     /**
      * Retrieves the element's check box grayed state.
-     * 
+     *
      * @param path Path of element to return grayed state for.
      * @return the element grayed state
      */
-    public boolean getElementGrayed(TreePath path);        
+    public boolean getElementGrayed(TreePath path);
 }

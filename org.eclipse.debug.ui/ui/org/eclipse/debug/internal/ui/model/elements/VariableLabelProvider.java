@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Provides context sensitive labels for debug variables.
- * 
+ *
  * @since 3.3
  */
 public class VariableLabelProvider extends DebugElementLabelProvider {
@@ -82,7 +82,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId)	throws CoreException {
 		return JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
@@ -92,14 +92,14 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 			return super.getLabel(elementPath, context, columnId);
 		} else {
 			IVariable variable = (IVariable) elementPath.getLastSegment();
-			IValue value = variable.getValue();		
+			IValue value = variable.getValue();
 			return getColumnText(variable, value, context, columnId);
 		}
 	}
-	
+
 	/**
 	 * Returns text for a specific columns for the variable/value.
-	 * 
+	 *
 	 * @param variable variable to retrieve text for
 	 * @param value the value associated with the variable
 	 * @param context presentation context specifying how to display the text
@@ -116,13 +116,13 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 			return getValueText(variable, value, context);
 		} else if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE.equals(columnId)) {
 			return getValueTypeName(variable, value, context);
-		}	
+		}
 		return null;
 	}
 
 	/**
 	 * Returns the name of the given variable to display in <code>COLUMN_VARIABLE_NAME</code>.
-	 * 
+	 *
 	 * @param variable Variable to get the name for.
 	 * @param context View context.
 	 * @return variable name
@@ -131,10 +131,10 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	protected String getVariableName(IVariable variable, IPresentationContext context) throws CoreException {
 		return variable.getName();
 	}
-	
+
 	/**
 	 * Returns the type name of the given variable to display in <code>COLUMN_VARIABLE_TYPE</code>.
-	 * 
+	 *
 	 * @param variable Variable to get the type for.
 	 * @param context View context.
 	 * @return variable type name
@@ -143,10 +143,10 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	protected String getVariableTypeName(IVariable variable, IPresentationContext context) throws CoreException {
 		return variable.getReferenceTypeName();
 	}
-	
+
 	/**
 	 * Returns the label for the given value's type to display in <code>COLUMN_VARIABLE_VALUE</code>
-	 * 
+	 *
 	 * @param variable Variable to get the value type for.
 	 * @param value Variable value to get type label for.
 	 * @param context View context.
@@ -156,10 +156,10 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	protected String getValueTypeName(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		return value.getReferenceTypeName();
 	}
-	
+
 	/**
 	 * Returns the label for the given value to display in <code>COLUMN_VALUE_TYPE</code>
-	 * 
+	 *
 	 * @param variable Variable to get the value for.
 	 * @param value Variable value to get value label for.
 	 * @param context View context.
@@ -169,14 +169,14 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		return escapeSpecialChars(value.getValueString());
 	}
-	
+
 	/**
 	 * Escapes special characters using the default label provider
-	 * 
+	 *
 	 * @param label the text to escape
 	 * @return the string with special characters escaped
 	 */
 	protected String escapeSpecialChars(String label) {
 		return DefaultLabelProvider.escapeSpecialChars(label);
-	}	
+	}
 }

@@ -25,7 +25,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 
 	/**
 	 * Constructs an event handler for a debug target on the given viewer.
-	 * 
+	 *
 	 * @param viewer
 	 */
 	public DebugTargetEventHandler(AbstractModelProxy proxy) {
@@ -75,5 +75,5 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 		delta.addNode(target, flags);
 		fireDelta(root);
 	}
-	
+
 }

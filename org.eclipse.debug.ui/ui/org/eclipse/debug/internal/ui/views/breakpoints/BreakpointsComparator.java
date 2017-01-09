@@ -38,21 +38,21 @@ public class BreakpointsComparator extends ViewerComparator {
 	public boolean isSorterProperty(Object element,String propertyId) {
 		return propertyId.equals(IBasicPropertyConstants.P_TEXT);
 	}
-	
+
 	/**
 	 * Returns a negative, zero, or positive number depending on whether
 	 * the first element is less than, equal to, or greater than
 	 * the second element.
 	 * <p>
 	 * Group breakpoints by debug model
-	 * 	within debug model, group breakpoints by type 
+	 * 	within debug model, group breakpoints by type
 	 * 		within type groups, sort by line number (if applicable) and then
 	 * 		alphabetically by label
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param e1 the first element
 	 * @param e2 the second element
-	 * @return a negative number if the first element is less than the 
+	 * @return a negative number if the first element is less than the
 	 *  second element; the value <code>0</code> if the first element is
 	 *  equal to the second element; and a positive number if the first
 	 *  element is greater than the second element
@@ -87,21 +87,21 @@ public class BreakpointsComparator extends ViewerComparator {
 			if (!marker2.exists()) {
 				return 0;
 			}
-			type2= marker2.getType();	
+			type2= marker2.getType();
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
-	
+
 		result= type1.compareTo(type2);
 		if (result != 0) {
 			return result;
 		}
 
-		// model and type are the same		
+		// model and type are the same
 		ILabelProvider lprov = (ILabelProvider) ((StructuredViewer)viewer).getLabelProvider();
 		String name1= lprov.getText(e1);
 		String name2= lprov.getText(e2);
-		
+
 		result = numericalStringCompare(name1, name2);
 
 		if (result != 0) {
@@ -114,14 +114,14 @@ public class BreakpointsComparator extends ViewerComparator {
 		// Note: intentionally using line 0 if not a line breakpoint or if ILineBreakpoint.getLineNumber throws.
 		if (b1 instanceof ILineBreakpoint) {
 			try {
-				l1 = ((ILineBreakpoint)b1).getLineNumber();	
+				l1 = ((ILineBreakpoint)b1).getLineNumber();
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
 		}
 		if (b2 instanceof ILineBreakpoint) {
 			try {
-				l2 = ((ILineBreakpoint)b2).getLineNumber();	
+				l2 = ((ILineBreakpoint)b2).getLineNumber();
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
@@ -131,20 +131,20 @@ public class BreakpointsComparator extends ViewerComparator {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Utility routine to order strings with respect to numerical values.
-	 * 
+	 *
 	 * E.g.
 	 * <p><code>
 	 * "0", "1", "9", "11"
      * <p></code>
 	 *
-	 * Note that String.compareTo orders "11" before "9". 
+	 * Note that String.compareTo orders "11" before "9".
 	 *
 	 * The function also supports mixed numbers and values. It uses the string comparison except when both strings differ by a number only,
-	 * in this case the numerical value is compared. 
-	 * E.g. 
+	 * in this case the numerical value is compared.
+	 * E.g.
 	 * <p><code>
      * stringNumberCompareTo("a_01", "a_1") returns 0.
      * <p></code>
@@ -152,7 +152,7 @@ public class BreakpointsComparator extends ViewerComparator {
      *
 	 * @param n1 the first string to compare
 	 * @param n2 the second string to compare
-	 * @return 
+	 * @return
 	 * 			< 0, negative - if n1 < n2
 	 * 			== 0, zero - if n1 == n2 (with a a special comparison, not identical or equals)
 	 * 			> 0, negative - if n1 > n2
@@ -164,23 +164,23 @@ public class BreakpointsComparator extends ViewerComparator {
 		for (; index1 < n1.length() && index2 < n2.length(); ) {
 		    char c1 = n1.charAt(index1);
 		    char c2 = n2.charAt(index2);
-		    
+
 			if (c1 != c2) {
 				// Strings are different starting at index.
 				// If both strings have a number at this location, compare it.
 				boolean isDig1 = Character.isDigit(c1);
 				boolean isDig2 = Character.isDigit(c2);
-				
+
 				if (isDig1 && isDig2 || digitLen > 0 && (isDig1 || isDig2)) {
 					// Have 2 numbers if either the different characters are both digits or if there are common digits before the difference.
-					DecimalFormat format = new DecimalFormat();					
+					DecimalFormat format = new DecimalFormat();
 					ParsePosition p1 = new ParsePosition(index1 - digitLen);
 					Number num1 = format.parse(n1, p1);
 					ParsePosition p2 = new ParsePosition(index2 - digitLen);
 					Number num2 = format.parse(n2, p2);
 					if (num1 == null || num2 == null) {
 						// Failed to parse number. Should not happen
-						return c1 - c2;						
+						return c1 - c2;
 					}
 					int cmp;
 					if (num1 instanceof Long && num2 instanceof Long) {

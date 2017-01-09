@@ -72,58 +72,58 @@ import org.eclipse.ui.IMemento;
 
 /**
  * A tree viewer that displays a model.
- * 
+ *
  * @since 3.3
  */
 @SuppressWarnings("deprecation")
 public class InternalTreeModelViewer extends TreeViewer implements IInternalTreeModelViewer, org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer
 {
-	
+
 	private final IPresentationContext fContext;
-	
+
     /**
      * Current column presentation or <code>null</code>
      */
-    private IColumnPresentation fColumnPresentation = null;	
-    
+    private IColumnPresentation fColumnPresentation = null;
+
     /**
      * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
 	private final Map<String, String[]> fVisibleColumns = new HashMap<String, String[]>();
-    
+
     /**
      * Map of column id's to persisted sizes
      */
 	private final Map<Object, Integer> fColumnSizes = new HashMap<Object, Integer>();
-    
+
     /**
      * Map of column presentation id's to an array of integers representing the column order
      * for that presentation, or <code>null</code> if default.
      */
 	private final Map<String, int[]> fColumnOrder = new HashMap<String, int[]>();
-    
+
     /**
      * Map of column presentation id to whether columns should be displayed
-     * for that presentation (the user can toggle columns on/off when a 
+     * for that presentation (the user can toggle columns on/off when a
      * presentation is optional.
      */
 	private final Map<String, Boolean> fShowColumns = new HashMap<String, Boolean>();
-    
+
     /**
-     * Item's tree path cache 
+     * Item's tree path cache
      */
     private static final String TREE_PATH_KEY = "TREE_PATH_KEY"; //$NON-NLS-1$
-    
+
     /**
-	 * Memento type for column sizes. Sizes are keyed by column presentation id 
+	 * Memento type for column sizes. Sizes are keyed by column presentation id
 	 */
 	private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
 	/**
 	 * Memento type for the column order for a presentation context.
 	 * A memento is created for each column presentation
 	 */
-	private static final String COLUMN_ORDER = "COLUMN_ORDER";     //$NON-NLS-1$	
+	private static final String COLUMN_ORDER = "COLUMN_ORDER";     //$NON-NLS-1$
 	/**
 	 * Memento type for the visible columns for a presentation context.
 	 * A memento is created for each column presentation keyed by column number
@@ -133,7 +133,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * Memento type for whether columns are visible for a presentation context.
 	 * Booleans are keyed by column presentation id
 	 */
-	private static final String SHOW_COLUMNS = "SHOW_COLUMNS";     //$NON-NLS-1$	
+	private static final String SHOW_COLUMNS = "SHOW_COLUMNS";     //$NON-NLS-1$
 	/**
 	 * Memento key for the number of visible columns in a VISIBLE_COLUMNS memento
 	 * or for the width of a column
@@ -142,21 +142,21 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/**
 	 * Memento key prefix a visible column
 	 */
-	private static final String COLUMN = "COLUMN";	 //$NON-NLS-1$	    
-	
+	private static final String COLUMN = "COLUMN";	 //$NON-NLS-1$
+
 	/**
 	 * True while performing an insert... we allow insert with filters
 	 */
 	private boolean fInserting = false;
-	
+
 	/**
 	 * Whether to notify the content provider when an element is unmapped
 	 */
 	private boolean fNotifyUnmap = true;
-	
+
 	/**
 	 * Persist column sizes when they change.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	class ColumnListener implements ControlListener {
@@ -176,14 +176,14 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			persistColumnSizes();
 		}
 	}
-	
-	private final ColumnListener fListener = new ColumnListener();    
+
+	private final ColumnListener fListener = new ColumnListener();
 
 	/**
 	 * Proxy to cell modifier/editor support
 	 */
 	class CellModifierProxy implements ICellModifier {
-		
+
 		private ICellModifier fModifier;
 
 		/* (non-Javadoc)
@@ -236,7 +236,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				fModifier.modify(element, property, value);
 			}
 		}
-		
+
 		/**
 		 * Clears client's column editor and cell editors
 		 */
@@ -260,12 +260,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				}
 			}
 		}
-		
+
 	}
-	
+
 	private final CellModifierProxy fCellModifier;
-	
-	
+
+
 	/**
 	 * @param parent the parent composite
 	 * @param style the widget style bits
@@ -281,9 +281,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		fContext = context;
 		setContentProvider(createContentProvider());
 		setLabelProvider(createLabelProvider());
-		
+
 		// A pop-up viewer is transient and does not automatically expand
-		// and select elements up when requested by the model  
+		// and select elements up when requested by the model
 		if ((style & SWT.POP_UP) != 0) {
 		    ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
 		        ~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
@@ -292,7 +292,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             context.setProperty(ICheckUpdate.PROP_CHECK, Boolean.TRUE);
         }
 	}
-	
+
 	/**
 	 * @return content provider for this tree viewer
 	 */
@@ -300,7 +300,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	{
 		return new TreeModelContentProvider();
 	}
-	
+
 	/**
 	 * @return label provider for this tree viewer
 	 */
@@ -308,12 +308,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	{
 		return new TreeModelLabelProvider(this);
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Workaround for bug 159461: when an item is cleared it's label is cleared. To avoid
 	 * flashing, restore its label to its previous value.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.TreeViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
 	@Override
@@ -329,9 +329,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		});
 		super.hookControl(control);
 	}
-	
+
 	/**
-	 * @param item the item 
+	 * @param item the item
 	 */
 	private void preserveItem(TreeItem item) {
 		Object[] labels = (Object[]) item.getData(PREV_LABEL_KEY);
@@ -378,8 +378,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.StructuredViewer#handleInvalidSelection
-     * 
-     * Override the default handler for invalid selection to allow model 
+     *
+     * Override the default handler for invalid selection to allow model
      * selection policy to select the new selection.
      */
 	@Override
@@ -402,7 +402,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	    }
 	    super.handleInvalidSelection(selection, newSelection);
 	}
-        
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
@@ -413,20 +413,20 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			fColumnPresentation.dispose();
 		}
 		fCellModifier.clear();
-		
+
 		super.handleDispose(event);
 	}
-	
+
 	/**
 	 * Returns this viewer's presentation context.
-	 * 
+	 *
 	 * @return presentation context
 	 */
 	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
-	
+
 	@Override
 	protected void unmapElement(Object element, Widget widget) {
 		if (fNotifyUnmap) {
@@ -435,7 +435,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		super.unmapElement(element, widget);
 	}
-	
+
 	@Override
 	protected void associate(Object element, Item item) {
 		// see AbstractTreeViewer.associate(...)
@@ -455,9 +455,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * We need tree paths when disposed/unmapped in any order so cache the tree path.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.TreeViewer#mapElement(java.lang.Object, org.eclipse.swt.widgets.Widget)
 	 */
 	@Override
@@ -469,11 +469,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			widget.setData(TREE_PATH_KEY, TreeModelContentProvider.EMPTY_TREE_PATH);
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Override because we allow inserting with filters present.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#insert(java.lang.Object, java.lang.Object, int)
 	 */
 	@Override
@@ -485,11 +485,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			fInserting = false;
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Override because we allow inserting with filters present.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#hasFilters()
 	 */
 	@Override
@@ -499,17 +499,17 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		return super.hasFilters();
 	}
-	
+
 	@Override
 	protected void unmapAllElements() {
-	    // Do nothing when called from StructuredViewer.setInput(), to avoid 
+	    // Do nothing when called from StructuredViewer.setInput(), to avoid
 	    // clearing elements before viewer state is saved.
 	    // Bug 326917
 	    if (getControl().isDisposed()) {
 	        unmapAllElements();
 	    }
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
@@ -521,13 +521,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         super.unmapAllElements();
 		((ITreeModelContentProvider)getContentProvider()).postInputChanged(this, oldInput, input);
 		super.inputChanged(input, oldInput);
-		
-		resetColumns(input);		
+
+		resetColumns(input);
 	}
 
 	/**
      * Configures the columns for the given viewer input.
-     * 
+     *
      * @param input the viewer input
      */
     protected void resetColumns(Object input) {
@@ -562,8 +562,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				}
 			}
     	}
-    }    
-        
+    }
+
     /**
      * Configures the columns based on the current settings.
      */
@@ -573,16 +573,16 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			if (isShowColumns(fColumnPresentation.getId())) {
 				build = fColumnPresentation;
 			}
-			buildColumns(build);					
+			buildColumns(build);
 		} else {
 			// get rid of columns
 			buildColumns(null);
 		}
     }
-    
+
 	/**
 	 * Toggles columns on/off for the current column presentation, if any.
-	 * 
+	 *
 	 * @param show whether to show columns if the current input supports
 	 * 	columns
 	 */
@@ -598,7 +598,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		refreshColumns();
 	}
-	
+
 	/**
 	 * Resets any persisted column size for the given columns
 	 * @param columnIds the identifiers of the columns to reset
@@ -608,11 +608,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			fColumnSizes.remove(columnIds[i]);
 		}
 	}
-	
+
 	/**
 	 * Sets the id's of visible columns, or <code>null</code> to set default columns.
 	 * Only affects the current column presentation.
-	 * 
+	 *
 	 * @param ids visible columns
 	 */
 	public void setVisibleColumns(String[] ids) {
@@ -641,12 +641,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			presentationContext.setColumns(getVisibleColumns());
 			refreshColumns();
 		}
-	}	
+	}
 
 	@Override
 	protected void internalRefresh(Object element, boolean updateLabels) {
-	    ITreeModelContentProvider contentProvider = (ITreeModelContentProvider)getContentProvider(); 
-	    
+	    ITreeModelContentProvider contentProvider = (ITreeModelContentProvider)getContentProvider();
+
         if (element == null) {
             internalRefresh(getControl(), getRoot(), true, updateLabels);
             contentProvider.preserveState(TreePath.EMPTY);
@@ -664,7 +664,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
 	    super.internalRefresh(element, updateLabels);
 	}
-	
+
     /**
      * Refreshes the columns in the view, based on the viewer input.
      */
@@ -672,11 +672,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
     	configureColumns();
     	refresh();
     }
-    
+
 	/**
 	 * Returns whether columns are being displayed currently.
-	 * 
-	 * @return if columns are being shown 
+	 *
+	 * @return if columns are being shown
 	 */
 	public boolean isShowColumns() {
 		if (fColumnPresentation != null) {
@@ -684,29 +684,29 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether columns can be toggled on/off for the current input.
-	 * 
+	 *
 	 * @return whether columns can be toggled on/off for the current input
 	 */
 	public boolean canToggleColumns() {
 		return fColumnPresentation != null && fColumnPresentation.isOptional();
 	}
-	
+
 	protected boolean isShowColumns(String columnPresentationId) {
 		Boolean bool = fShowColumns.get(columnPresentationId);
 		if (bool == null) {
 			return true;
 		}
 		return bool.booleanValue();
-	}    
-    
+	}
+
     /**
      * Creates new columns for the given presentation.
-     * 
+     *
      * TODO: does this need to be asynchronous?
-     * 
+     *
      * @param presentation the column presentation to build from
      */
     protected void buildColumns(IColumnPresentation presentation) {
@@ -722,7 +722,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			columns[i].dispose();
 		}
     	PresentationContext presentationContext = (PresentationContext) getPresentationContext();
-    	if (presentation != null) {	    	
+    	if (presentation != null) {
 	    	for (int i = 0; i < visibleColumnIds.length; i++) {
 				String id = visibleColumnIds[i];
 				String header = presentation.getHeader(id);
@@ -753,13 +753,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
     		setCellModifier(null);
     		setColumnProperties(null);
     	}
-    	
+
     	int treeWidgetWidth = tree.getSize().x;
     	int avg = treeWidgetWidth;
     	if (visibleColumnIds != null) {
 			avg /= visibleColumnIds.length;
 		}
-    	
+
         if (avg == 0) {
             tree.addPaintListener(new PaintListener() {
                 @Override
@@ -784,7 +784,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         for (int i = 0; i < columns.length; i++) {
             TreeColumn treeColumn = columns[i];
             Object colData = treeColumn.getData();
-            String columnId = colData instanceof String ? (String) colData : null;            
+            String columnId = colData instanceof String ? (String) colData : null;
             Integer width = fColumnSizes.get(colData);
             if (width == null) {
             	int ans = getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
@@ -798,22 +798,22 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             }
             treeColumn.addControlListener(fListener);
         }
-    }    
-    
+    }
+
 	/**
 	 * Returns the current column presentation for this viewer, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return column presentation or <code>null</code>
 	 */
 	public IColumnPresentation getColumnPresentation() {
 		return fColumnPresentation;
 	}
-	
+
 	/**
 	 * Returns identifiers of the visible columns in this viewer, or <code>null</code>
 	 * if there is currently no column presentation.
-	 *  
+	 *
 	 * @return visible columns or <code>null</code>
 	 */
 	@Override
@@ -833,7 +833,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 								columnAvailable = true;
 							}
 				        }
-				        
+
 				        if (!columnAvailable || presentation.getHeader(columns[i]) == null) {
     				        // We found a column ID which is not in current list of available column IDs.
 				            // Or the presentation cannot return a header title for the given column.
@@ -849,14 +849,14 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			}
 		}
 		return null;
-	}    
-	
+	}
+
 	/**
 	 * Returns initial column width of a given column, or -1
 	 * @param columnId column Id
 	 * @param treeWidgetWidth tree widget width
 	 * @param visibleColumnIds visible columns
-	 *  
+	 *
 	 * @return column width
 	 */
 	public int getInitialColumnWidth(String columnId, int treeWidgetWidth, String[] visibleColumnIds) {
@@ -873,7 +873,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/**
      * Persists column sizes in cache
      */
-    protected void persistColumnSizes() { 
+    protected void persistColumnSizes() {
 		Tree tree = getTree();
 		TreeColumn[] columns = tree.getColumns();
 		for (int i = 0; i < columns.length; i++) {
@@ -882,7 +882,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			fColumnSizes.put(id, Integer.valueOf(treeColumn.getWidth()));
 		}
     }
-    
+
     /**
      * Persists column ordering
      */
@@ -904,10 +904,10 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	    	fColumnOrder.remove(presentation.getId());
     	}
     }
-    
+
 	/**
 	 * Save viewer state into the given memento.
-	 * 
+	 *
 	 * @param memento the {@link IMemento} to save to
 	 */
 	public void saveState(IMemento memento) {
@@ -921,7 +921,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			for (Entry<String, Boolean> entry : fShowColumns.entrySet()) {
 				IMemento sizes = memento.createChild(SHOW_COLUMNS, entry.getKey());
 				sizes.putString(SHOW_COLUMNS, entry.getValue().toString());
-			}			
+			}
 		}
 		if (!fVisibleColumns.isEmpty()) {
 			for (Entry<String, String[]> entry : fVisibleColumns.entrySet()) {
@@ -950,13 +950,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		if (context instanceof PresentationContext) {
 			PresentationContext pc = (PresentationContext) context;
 			pc.saveProperites(memento);
-			
+
 		}
-	}    
-	
+	}
+
 	/**
 	 * Initializes viewer state from the memento
-	 * 
+	 *
 	 * @param memento the {@link IMemento} to read from
 	 */
 	public void initState(IMemento memento) {
@@ -1014,7 +1014,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			pc.initProperties(memento);
 		}
 	}
-	
+
 	/**
 	 * Returns whether the candidate selection should override the current
 	 * selection.
@@ -1035,9 +1035,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Consider selection policy
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
 	@Override
@@ -1047,7 +1047,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		super.setSelection(selection, reveal);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
@@ -1056,7 +1056,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	public void setSelection(ISelection selection, boolean reveal, boolean force) {
 		trySelection(selection, reveal, force);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#trySelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
 	 */
@@ -1070,17 +1070,17 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 	/**
  	 * Registers the specified listener for view update notifications.
-	 * 
+	 *
 	 * @param listener listener
 	 */
 	@Override
 	public void addViewerUpdateListener(IViewerUpdateListener listener) {
 		((ITreeModelContentProvider)getContentProvider()).addViewerUpdateListener(listener);
 	}
-	
+
 	/**
 	 * Removes the specified listener from update notifications.
-	 * 
+	 *
 	 * @param listener listener
 	 */
 	@Override
@@ -1090,20 +1090,20 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			cp.removeViewerUpdateListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Registers the given listener for model delta notification.
-	 * 
+	 *
 	 * @param listener model delta listener
 	 */
 	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
-		((ITreeModelContentProvider)getContentProvider()).addModelChangedListener(listener); 
+		((ITreeModelContentProvider)getContentProvider()).addModelChangedListener(listener);
 	}
-	
+
 	/**
 	 * Unregisters the given listener from model delta notification.
-	 * 
+	 *
 	 * @param listener model delta listener
 	 */
 	@Override
@@ -1118,7 +1118,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	public void addStateUpdateListener(IStateUpdateListener listener) {
         ((ITreeModelContentProvider)getContentProvider()).addStateUpdateListener(listener);
     }
-    
+
     @Override
 	public void removeStateUpdateListener(IStateUpdateListener listener) {
         ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
@@ -1126,7 +1126,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             cp.removeStateUpdateListener(listener);
         }
     }
-    
+
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
@@ -1140,13 +1140,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			unmapElement(element, treeItem);
 			return;
 		}
-		
+
 		if ( !((ITreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item)) ) {
             if (element instanceof String) {
                 item.setData(PREV_LABEL_KEY, new String[] { (String)element } );
-            }		    
+            }
 		}
-		    
+
 
 		// As it is possible for user code to run the event
 		// loop check here.
@@ -1154,23 +1154,23 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			unmapElement(element, item);
 		}
 	}
-	
+
 	@Override
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
 	    ((ITreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
 	}
-	
+
 	@Override
 	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
 	    if (!getControl().isDisposed()) {
 	        ((ITreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
 	    }
 	}
-	
+
 	/**
 	 * Returns the item for the element at the given tree path or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param path tree path
 	 * @return item or <code>null</code>
 	 */
@@ -1189,12 +1189,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Item[] getChildren(Widget widget) {
 		return super.getChildren(widget);
 	}
-	
+
 	/**
 	 * Returns the tree path for the given item.
 	 * @param item the item to compute the {@link TreePath} for
@@ -1203,17 +1203,17 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	@Override
 	protected TreePath getTreePathFromItem(Item item) {
 		return super.getTreePathFromItem(item);
-	}	
+	}
 
-//**************************************************************************	
+//**************************************************************************
 // These methods were copied from TreeViewer as a workaround for bug 183463:
 // 		Expanded nodes in tree viewer flash on refresh
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * workaround for bug 183463
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefreshStruct(org.eclipse.swt.widgets.Widget,
 	 *      java.lang.Object, boolean)
 	 */
@@ -1241,8 +1241,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			}
 		}
 		virtualRefreshExpandedItems(parent, widget, element, index);
-	}	
-	
+	}
+
 	/**
 	 * Traverses the visible (expanded) part of the tree and updates child
 	 * counts.
@@ -1276,10 +1276,10 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			virtualRefreshExpandedItems(widget, item, data, i);
 		}
 	}
-	
+
 	/**
 	 * workaround for bug 183463
-	 * 
+	 *
 	 * Update the child count
 	 * @param widget the widget
 	 * @param currentChildCount the current child count
@@ -1294,7 +1294,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		((ILazyTreePathContentProvider) getContentProvider())
 				.updateChildCount(treePath, currentChildCount);
 	}
-	
+
 	/**
 	 * Update the widget at index.
 	 * <p>
@@ -1321,11 +1321,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 		((ILazyTreePathContentProvider) getContentProvider())
 				.updateElement(treePath, index);
-	}	
-	
-//**************************************************************************    
+	}
+
+//**************************************************************************
 // Another couple of methods copied from TreeViewer to workaround the UI bug 266189.
-// 	
+//
     @Override
 	protected void createChildren(Widget widget) {
         Object element = widget.getData();
@@ -1375,7 +1375,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	/**
 	 * Performs auto expand on an element at the specified path if the auto expand
 	 * level dictates the element should be expanded.
-	 * 
+	 *
 	 * @param elementPath tree path to element to consider for expansion
 	 */
 	@Override
@@ -1417,7 +1417,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
         return true;
     }
-    
+
     @Override
 	public Display getDisplay() {
         Control control = getControl();
@@ -1428,12 +1428,12 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
     }
 
     protected static final String[] STATE_PROPERTIES = new String[]{ IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
-    
+
     @Override
 	public void update(Object element) {
         update(element, STATE_PROPERTIES);
     }
-    
+
     /**
      * Label data cache keys
      * TODO: workaround for bug 159461
@@ -1448,11 +1448,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
     @Override
 	public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] imageDescriptors,
-        FontData[] fontDatas, RGB[] _foregrounds, RGB[] _backgrounds) 
+        FontData[] fontDatas, RGB[] _foregrounds, RGB[] _backgrounds)
     {
         Widget widget = findItem(path);
         String[] columnIds = getVisibleColumns();
-        
+
         if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
             TreeItem item = (TreeItem)widget;
             /*Object data = item.getData();
@@ -1460,13 +1460,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             item.clearAll(false);
             item.setData(data);
             item.setItemCount(itemCount);*/
-            
+
             for (int i=0; i<numColumns; i++){
                 // text might be null if the launch has been terminated
                 item.setText(i,(labels[i] == null ? IInternalDebugCoreConstants.EMPTY_STRING : labels[i]));
             }
             item.setData(PREV_LABEL_KEY, labels);
-            
+
             if (imageDescriptors == null) {
                 for (int i=0; i<numColumns; i++){
                     item.setImage(i,null);
@@ -1484,8 +1484,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
                 }
                 item.setData(PREV_IMAGE_KEY, images);
             }
-            
-            if (_foregrounds == null) { 
+
+            if (_foregrounds == null) {
                 for (int i=0; i<numColumns; i++){
                     item.setForeground(i,null);
                 }
@@ -1504,7 +1504,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
                 }
                 item.setData(PREV_FOREGROUND_KEY, foregrounds);
             }
-            
+
             if (_backgrounds == null) {
                 for (int i=0; i<numColumns; i++){
                     item.setBackground(i,null);
@@ -1524,7 +1524,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
                 }
                 item.setData(PREV_BACKGROUND_KEY, backgrounds);
             }
-            
+
             if (fontDatas == null) {
                 for (int i=0; i<numColumns; i++){
                     item.setFont(i,null);
@@ -1546,13 +1546,13 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             }
         }
     }
-    
+
     @Override
 	public ViewerLabel getElementLabel(TreePath path, String columnId) {
         if (path.getSegmentCount() == 0) {
             return null;
         }
-        
+
         int columnIdx = -1;
         String[] visibleColumns = getVisibleColumns();
         if (columnId != null && visibleColumns != null) {
@@ -1570,7 +1570,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             columnIdx = 0;
         }
         TreeItem item = (TreeItem)findItem(path);
-        
+
         if (item != null) {
             ViewerLabel label = new ViewerLabel(item.getText(columnIdx), item.getImage(columnIdx));
             label.setFont(item.getFont(columnIdx));
@@ -1594,7 +1594,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             getTree().setTopItem(children[index]);
         }
     }
-    
+
     @Override
 	public int getChildCount(TreePath path) {
         if (path.getSegmentCount() == 0) {
@@ -1605,11 +1605,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
                 if (items[0] instanceof TreeItem) {
                     return ((TreeItem)items[0]).getItemCount();
                 }
-            }   
+            }
         }
         return -1;
     }
-    
+
     @Override
 	public Object getChildElement(TreePath path, int index) {
         TreeItem childItem = null;
@@ -1630,7 +1630,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
         if (childItem != null) {
             return childItem.getData();
-        } 
+        }
         return null;
     }
 
@@ -1642,7 +1642,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
         return null;
     }
-    
+
     @Override
 	public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         Tree tree = (Tree) getControl();
@@ -1651,7 +1651,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         for (int i = 0; i < selection.length; i++) {
             set.add(selection[i]);
         }
-        
+
         TreeItem[] items = null;
         Widget w = internalGetWidgetToSelect(path);
         if (w instanceof Tree) {
@@ -1660,7 +1660,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             if ((flagsToSave & IModelDelta.EXPAND) != 0) {
                 delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
             }
-            items = tree.getItems(); 
+            items = tree.getItems();
         } else if (w instanceof TreeItem) {
             TreeItem item = (TreeItem)w;
             if (item.getExpanded()) {
@@ -1672,7 +1672,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             } else if ((flagsToSave & IModelDelta.COLLAPSE) != 0){
                 delta.setFlags(delta.getFlags() | IModelDelta.COLLAPSE);
             }
-            
+
             if (set.contains(item) && (flagsToSave & IModelDelta.SELECT) != 0) {
                 delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
             }
@@ -1687,7 +1687,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             return false;
         }
     }
-    
+
 	private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection<TreeItem> set, int index, int flagsToSave) {
         Object element = item.getData();
         if (element != null) {
@@ -1696,7 +1696,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             int flags = IModelDelta.NO_CHANGE;
             if (expanded && (flagsToSave & IModelDelta.EXPAND) != 0) {
                 flags = flags | IModelDelta.EXPAND;
-            } 
+            }
             if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0) {
                 flags = flags | IModelDelta.COLLAPSE;
             }
@@ -1710,7 +1710,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
                 if (expanded) {
                     // Only get the item count if the item is expanded.  Getting
                     // item count triggers an update of the element (bug 335734).
-                    int itemCount = item.getItemCount();                
+                    int itemCount = item.getItemCount();
                     int numChildren = ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, itemCount);
                     childDelta.setChildCount(numChildren);
                     TreeItem[] items = item.getItems();
@@ -1721,7 +1721,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             }
         }
     }
-    
+
     @Override
 	public void updateViewer(IModelDelta delta) {
         ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
@@ -1734,56 +1734,56 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	@Override
 	public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
 	   	 Widget widget = findItem(path);
-		 
+
 		 if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
 	         TreeItem item = (TreeItem)widget;
-	         
+
 	         item.setChecked(checked);
 	         item.setGrayed(grayed);
-	         
+
 	         item.setData(PREV_CHECKED_KEY, checked ? Boolean.TRUE : Boolean.FALSE);
              item.setData(PREV_GRAYED_KEY, grayed ? Boolean.TRUE : Boolean.FALSE);
 		 }
 	}
-	
+
     @Override
 	public boolean getElementChecked(TreePath path) {
         Widget widget = findItem(path);
-        
+
         if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
             TreeItem item = (TreeItem)widget;
-            
+
             return item.getChecked();
-        }        
+        }
         return false;
     }
 
     /**
      * Retrieves the element's check box grayed state.
-     * 
+     *
      * @param path the path of the element to set grayed
      * @return grayed
      */
     @Override
 	public boolean getElementGrayed(TreePath path) {
         Widget widget = findItem(path);
-        
+
         if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
             TreeItem item = (TreeItem)widget;
-            
+
             return item.getGrayed();
-        }        
+        }
         return false;
     }
 
     @Override
 	public boolean getHasChildren(Object elementOrTreePath) {
-        if (elementOrTreePath instanceof TreePath && 
-            ((TreePath)elementOrTreePath).getSegmentCount() == 0) 
+        if (elementOrTreePath instanceof TreePath &&
+            ((TreePath)elementOrTreePath).getSegmentCount() == 0)
         {
             return getTree().getItemCount() > 0;
         }
-        
+
         Widget[] items = internalFindItems(elementOrTreePath);
         if (items != null && items.length > 0) {
             if (items[0] instanceof TreeItem) {
@@ -1792,10 +1792,10 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
                 return ((Tree)items[0]).getItemCount() > 0;
             }
         }
-        
+
         return false;
     }
-    
+
     @Override
 	public TreePath[] getElementPaths(Object element) {
         Widget[] items = internalFindItems(element);
@@ -1809,7 +1809,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
         return paths;
     }
-    
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
@@ -1819,16 +1819,16 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         super.handleSelect(event);
 
         TreeItem item = (TreeItem) event.item;
-        if (item != null) { // item can be null when de-selected (bug 296703) 
+        if (item != null) { // item can be null when de-selected (bug 296703)
 	        Object element = item.getData();
 	        IContentProvider contentProvider = getContentProvider();
 	        if (element != null && contentProvider instanceof TreeModelContentProvider) {
 	            TreePath path = getTreePathFromItem(item);
-	
+
 	            if (event.detail == SWT.CHECK) {
-	                boolean checked = item.getChecked();	            	
+	                boolean checked = item.getChecked();
 	            	boolean accepted = ((ITreeModelContentProvider) contentProvider).setChecked(path, checked);
-	
+
 	        	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
 	            	if (!accepted) {
 	            		item.setChecked(!checked);
@@ -1841,7 +1841,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	        }
         }
 	}
-	
+
 	@Override
 	protected void handleTreeExpand(TreeEvent event) {
         super.handleTreeExpand(event);
@@ -1851,7 +1851,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.COLLAPSE);
         }
 	}
-	
+
 	@Override
 	protected void handleTreeCollapse(TreeEvent event) {
 	    super.handleTreeCollapse(event);
@@ -1861,7 +1861,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
             ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.EXPAND);
         }
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
 	 */

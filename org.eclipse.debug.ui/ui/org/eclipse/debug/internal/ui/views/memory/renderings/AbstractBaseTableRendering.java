@@ -32,7 +32,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 
 	/**
 	 * Format view tab based on the bytes per line and column.
-	 * 
+	 *
 	 * @param bytesPerLine - number of bytes per line, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
 	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
 	 * @return true if format is successful, false, otherwise
@@ -41,7 +41,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 
 	/**
 	 * Returns the addressible size of this rendering's memory block in bytes.
-	 * 
+	 *
 	 * @return the addressible size of this rendering's memory block in bytes
 	 */
 	abstract public int getAddressableSize();
@@ -53,28 +53,28 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 
 	/**
 	 * Returns the number of addressable units per row.
-	 *  
+	 *
 	 * @return number of addressable units per row
 	 */
 	abstract public int getAddressableUnitPerLine();
 
 	/**
 	 * Returns the number of addressable units per column.
-	 * 
+	 *
 	 * @return number of addressable units per column
 	 */
 	abstract public int getAddressableUnitPerColumn();
 
 	/**
 	 * Returns the number of bytes displayed in a single column cell.
-	 * 
+	 *
 	 * @return the number of bytes displayed in a single column cell
 	 */
 	abstract public int getBytesPerColumn();
 
 	/**
 	 * Returns the number of bytes displayed in a row.
-	 * 
+	 *
 	 * @return the number of bytes displayed in a row
 	 */
 	abstract public int getBytesPerLine();
@@ -99,7 +99,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	/**
 	 * Moves the cursor to the specified address.
 	 * Will load more memory if the address is not currently visible.
-	 * 
+	 *
 	 * @param address address to position cursor at
 	 * @throws DebugException if an exception occurrs
 	 */
@@ -108,7 +108,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 
 	/**
 	 * Returns the currently selected address in this rendering.
-	 * 
+	 *
 	 * @return the currently selected address in this rendering
 	 */
 	@Override
@@ -116,15 +116,15 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 
 	/**
 	 * Returns the currently selected content in this rendering as a String.
-	 * 
+	 *
 	 * @return the currently selected content in this rendering
 	 */
 	abstract public String getSelectedAsString();
 
 	/**
 	 * Returns the currently selected content in this rendering as MemoryByte.
-	 * 
-	 * @return the currently selected content in array of MemoryByte.  
+	 *
+	 * @return the currently selected content in array of MemoryByte.
 	 * Returns an empty array if the selected address is out of buffered range.
 	 */
 	@Override
@@ -133,7 +133,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	/**
 	 * Returns the number of characters a byte will convert to
 	 * or -1 if unknown.
-	 * 
+	 *
 	 * @return the number of characters a byte will convert to
 	 *  or -1 if unknown
 	 */
@@ -148,7 +148,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	 * Returns text for the given memory bytes at the specified address for the specified
 	 * rendering type. This is called by the label provider for.
 	 * Subclasses must override.
-	 * 
+	 *
 	 * @param renderingTypeId rendering type identifier
 	 * @param address address where the bytes belong to
 	 * @param data the bytes
@@ -166,7 +166,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	 * Subclasses must convert the string value to an array of bytes.  The bytes will
 	 * be passed to the debug adapter for memory block modification.
 	 * Returns <code>null</code> if the bytes cannot be formatted properly.
-	 * 
+	 *
 	 * @param renderingTypeId rendering type identifier
 	 * @param address address the bytes begin at
 	 * @param currentValues current values of the data in bytes format

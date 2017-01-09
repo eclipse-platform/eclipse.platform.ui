@@ -26,7 +26,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * <p>
  * The implementation uses some static variables to keep track as
  * IStatusHandlers are instantiated from scratch for each state change.
- * 
+ *
  * @since 3.12
  */
 public class GroupLaunchHandler implements IStatusHandler {

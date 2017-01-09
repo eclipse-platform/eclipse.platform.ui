@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IStatus;
  * Clients are expected to poll a request (using <code>isCanceled</code>)
  * periodically and abort at their earliest convenience calling <code>done()</code>.
  * A request can be canceled by the originator of the request or a client
- * fulfilling a request. 
+ * fulfilling a request.
  * </p>
  * <p>
  * Clients that invoke request handlers may implement this interface.
@@ -40,19 +40,19 @@ public interface IRequest {
      * indicates why the request failed. A <code>null</code> status is considered
      * to be successful. Only clients fulfilling a request should call this
      * method. Clients making a request are not intended to call this method.
-     * 
+     *
      * @param status request status or <code>null</code>
      */
     public void setStatus(IStatus status);
-    
+
     /**
      * Returns the status of this request, or <code>null</code>.
-     * 
+     *
      * @return request status - <code>null</code> is equivalent
      *  to an OK status
      */
     public IStatus getStatus();
-    
+
     /**
      * Indicates this request is complete. Clients must call this method
      * whether the request succeeds, fails, or is cancelled to indicate that
@@ -60,7 +60,7 @@ public interface IRequest {
      * method. Clients making a request are not intended to call this method.
      */
     public void done();
-    
+
     /**
      * Cancels this request. A request may be canceled by the originator of request
      * or a client fulfilling a request. Optionally a canceled status may be set on
@@ -68,17 +68,17 @@ public interface IRequest {
      * <code>done()</code> to indicate the request is complete.
      */
     public void cancel();
-    
+
     /**
      * Returns whether this request has been canceled.
      * <p>
      * Clients fulfilling a request are expected to poll a request (using <code>isCanceled</code>)
      * periodically and abort at their earliest convenience calling <code>done()</code>.
      * A request can be canceled by the originator of the request or a processor fulfilling a
-     * request. 
+     * request.
      * </p>
      * @return whether this request has been canceled
      */
     public boolean isCanceled();
-    
+
 }

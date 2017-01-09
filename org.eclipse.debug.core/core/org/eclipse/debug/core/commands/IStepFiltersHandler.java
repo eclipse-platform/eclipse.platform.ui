@@ -16,7 +16,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * A step filters handler typically toggles the use of step filters
  * in a debug session based on the user preference setting. To determine if step filters
  * should be enabled use the method <code>isUseStepFilters()</code> in
- * {@link DebugPlugin}. 
+ * {@link DebugPlugin}.
  * <p>
  * Clients may implement this interface. The debug platform provides a
  * toggle step filters action that delegates to this handler interface. As well, the

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.8
  */
 public class VirtualViewerFilterTests extends FilterTests {
-    
+
     public VirtualViewerFilterTests(String name) {
         super(name);
     }

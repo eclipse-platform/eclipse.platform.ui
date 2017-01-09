@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 
 /**
  * Default update for variables view.
- * 
+ *
  * @since 3.2
  */
 public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
@@ -29,7 +29,7 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
 
 	/**
 	 * Constructs an update policy on the given target.
-	 * 
+	 *
 	 * @param target
 	 */
 	public DefaultVariableViewModelProxy(IStackFrame frame) {
@@ -47,7 +47,7 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[] { new VariablesViewEventHandler(this, fFrame) };
 	}
-	
+
    /* (non-Javadoc)
     * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
     */
@@ -65,5 +65,5 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
 		}
         return false;
     }
-	
+
 }

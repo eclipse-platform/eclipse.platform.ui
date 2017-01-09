@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
- 
+
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,8 +42,8 @@ public class RemoveAllTriggerPointsAction extends AbstractRemoveAllActionDelegat
 	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getBreakpointManager().getTriggerPoints().length > 0;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
@@ -69,7 +69,7 @@ public class RemoveAllTriggerPointsAction extends AbstractRemoveAllActionDelegat
 			update();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
 	 */
@@ -77,7 +77,7 @@ public class RemoveAllTriggerPointsAction extends AbstractRemoveAllActionDelegat
 	protected void initialize() {
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */

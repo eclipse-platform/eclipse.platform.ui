@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 class BreadcrumbItem extends Item {
 
     private TreePath fPath;
-    
+
 	private final BreadcrumbViewer fParent;
 	private Composite fContainer;
 
@@ -92,11 +92,11 @@ class BreadcrumbItem extends Item {
 	public TreePath getPath() {
 	    return fPath;
 	}
-	
+
 	public void setPath(TreePath path) {
 	    fPath = path;
 	}
-	
+
 	/**
 	 * Should this item show a text label.
 	 *

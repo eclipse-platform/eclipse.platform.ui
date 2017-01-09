@@ -30,7 +30,7 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 	public void dispose() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -56,11 +56,11 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		RemoveAllTerminatedAction.removeTerminatedLaunches(launches);
 	}
-	
+
 	public ConsoleRemoveAllTerminatedAction() {
-		super(ConsoleMessages.ConsoleRemoveAllTerminatedAction_0); 
+		super(ConsoleMessages.ConsoleRemoveAllTerminatedAction_0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_REMOVE_ALL_TERMINATED);
-		setToolTipText(ConsoleMessages.ConsoleRemoveAllTerminatedAction_1); 
+		setToolTipText(ConsoleMessages.ConsoleRemoveAllTerminatedAction_1);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
@@ -98,5 +98,5 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		update();
-	}	
+	}
 }

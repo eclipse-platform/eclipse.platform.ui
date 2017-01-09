@@ -26,9 +26,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @since 3.1
  */
 public class ASCIIRendering extends AbstractAsyncTextRendering{
-	
+
 	private final int numCharsPerByte = 1;
-	
+
 
 	public ASCIIRendering(String renderingId)
 	{
@@ -36,12 +36,12 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 		String codepage = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE);
 		setCodePage(codepage);
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractMemoryRendering#getNumCharsPerByte()
 	 */
@@ -49,7 +49,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 	public int getNumCharsPerByte() {
 		return numCharsPerByte;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
@@ -60,9 +60,9 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 		BigInteger address,
 		MemoryByte[] currentValues,
 		String data) {
-		
+
 		byte[] bytes =  super.getBytes(renderingId, address, currentValues, data);
-		
+
 		// undo the replacement of 1's to 0's.
 		for (int i=0; i<bytes.length && i < currentValues.length; i++)
 		{
@@ -71,9 +71,9 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 				bytes[i] = 0;
 			}
 		}
-		
+
 		return bytes;
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +84,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 		String renderingId,
 		BigInteger address,
 		MemoryByte[] data) {
-		
+
 		MemoryByte[] copy = new MemoryByte[data.length];
 
 		// If a byte equals zero, it represents null in a string
@@ -102,7 +102,7 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 			}
 			copy[i].setFlags(data[i].getFlags());
 		}
-		
+
 		return super.getString(renderingId, address, copy);
 	}
 
@@ -111,18 +111,18 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		
+
 		// handle code page changed event
 		if (event.getProperty().equals(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE))
 		{
 			String codePage = (String)event.getNewValue();
 			setCodePage(codePage);
-			
+
 			if (isVisible())
 				// just update labels, don't need to reget memory
 				updateLabels();
 		}
-		
+
 		super.propertyChange(event);
 	}
 }

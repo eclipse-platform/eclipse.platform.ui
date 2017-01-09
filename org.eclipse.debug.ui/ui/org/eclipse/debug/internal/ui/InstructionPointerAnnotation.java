@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
- 
+
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.swt.graphics.Image;
 
@@ -18,15 +18,15 @@ import org.eclipse.swt.graphics.Image;
  * Default instruction pointer annotation.
  */
 public class InstructionPointerAnnotation extends DynamicInstructionPointerAnnotation {
-	
+
 	/**
 	 * The image for this annotation.
 	 */
 	private Image fImage;
-	
+
 	/**
 	 * Constructs an instruction pointer image.
-	 * 
+	 *
 	 * @param frame stack frame the instruction pointer is associated with
 	 * @param annotationType the type of annotation to display (annotation identifier)
 	 * @param text the message to display with the annotation as hover help
@@ -36,10 +36,10 @@ public class InstructionPointerAnnotation extends DynamicInstructionPointerAnnot
 		super(frame, annotationType, text);
 		fImage = image;
 	}
-		
+
 	/**
 	 * Returns this annotation's image.
-	 * 
+	 *
 	 * @return image
 	 */
 	protected Image getImage() {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -37,7 +37,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for creating a watch expression.
- * 
+ *
  * @since 3.4
  */
 public class WatchHandler extends AbstractHandler {
@@ -93,10 +93,10 @@ public class WatchHandler extends AbstractHandler {
                 }
             }
         } catch (CoreException e) {
-            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); // 
+            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); //
             return;
         }
-        
+
         IWatchExpression expression;
             expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionString);
         DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
@@ -114,17 +114,17 @@ public class WatchHandler extends AbstractHandler {
 
     /**
      * Returns the factory adapter for the given variable or <code>null</code> if none.
-     * 
+     *
      * @param variable the variable to get the factory for
      * @return factory or <code>null</code>
      */
     static IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
-        return variable.getAdapter(IWatchExpressionFactoryAdapter.class);      
+        return variable.getAdapter(IWatchExpressionFactoryAdapter.class);
     }
 
     /**
      * Returns the factory adapter for the given variable or <code>null</code> if none.
-     * 
+     *
      * @param element the element to try and adapt
      * @return factory or <code>null</code>
      */

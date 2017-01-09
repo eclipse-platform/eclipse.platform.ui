@@ -31,12 +31,12 @@ import org.eclipse.jface.viewers.Viewer;
  * Content provider for the breakpoints view
  */
 public class BreakpointsContentProvider implements ITreeContentProvider, IPropertyChangeListener {
-    
+
     private IBreakpointOrganizer[] fOrganizers = null;
     private BreakpointsViewer fViewer;
     private Object[] fElements;
     private boolean fDisposed = false;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
      */
@@ -94,13 +94,13 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             reorganize();
         }
     }
-    
+
     /**
      * Sets the nested order of breakpoint organizers, or <code>null</code>
      * if none.
-     * 
+     *
      * @param organizers the nested order of breakpoint organizers, or <code>null</code>
-     * if none 
+     * if none
      */
     public void setOrganizers(IBreakpointOrganizer[] organizers) {
     	// remove previous listeners
@@ -138,17 +138,17 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                             break;
                         }
                     }
-                    
+
                 }
             }
             fViewer.getControl().setRedraw(true);
         }
     }
-    
+
     /**
      * Returns the root containers containing the given breakpoint, or <code>null</code>
      * if none
-     * 
+     *
      * @param breakpoint the breakpoint to get containers for
      * @return root containers containing the given breakpoint or <code>null</code>
      */
@@ -165,18 +165,18 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
         }
         return null;
     }
-    
+
     /**
      * Returns the nested order of breakpoint organizers being used, or <code>null</code>
      * if none.
-     * 
+     *
      * @return the nested order of breakpoint organizers being used, or <code>null</code>
      * if none
      */
     IBreakpointOrganizer[] getOrganizers() {
         return fOrganizers;
     }
-    
+
     /**
      * Organizes the breakpoints based on nested categories, if any.
      */
@@ -237,10 +237,10 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 			reorganize();
 		}
 	}
-    
+
     /**
      * Returns the existing containers the given breakpoint is contained in, or <code>null</code>.
-     * 
+     *
      * @param breakpoint the breakpoint to get containers for
      * @return the existing containers the given breakpoint is contained in, or <code>null</code>
      */
@@ -269,7 +269,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 
     /**
      * Returns whether content is grouped by categories.
-     * 
+     *
      * @return whether content is grouped by categories
      */
     protected boolean isShowingGroups() {

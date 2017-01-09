@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
- 
+
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -42,7 +42,7 @@ import org.eclipse.debug.core.DebugException;
 public interface IVariable extends IDebugElement, IValueModification {
 	/**
 	 * Returns the value of this variable.
-	 * 
+	 *
 	 * @return this variable's value
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
@@ -60,7 +60,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getName() throws DebugException;	
+	public String getName() throws DebugException;
 	/**
 	 * Returns a description of the type of data this variable is
 	 * declared to reference. Note that the declared type of a
@@ -74,22 +74,22 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * the failure.</li>
 	 */
 	public String getReferenceTypeName() throws DebugException;
-	
-	/** 
-	 * Returns whether this variable's value has changed since the last suspend event. 
-	 * Implementations may choose whether the last suspend event is the last suspend 
-	 * event in this variable's debug target, or within the thread(s) in which this variable 
-	 * is visible. 
+
+	/**
+	 * Returns whether this variable's value has changed since the last suspend event.
+	 * Implementations may choose whether the last suspend event is the last suspend
+	 * event in this variable's debug target, or within the thread(s) in which this variable
+	 * is visible.
 	 * <p>
 	 * Implementations that choose not to implement this function should always
 	 * return <code>false</code>.
 	 * </p>
-	 * 
-	 * @return whether this variable's value has changed since the last suspend event 
-	 * @exception DebugException if an exception occurs determining if this variable's 
-	 *   value has changed since the last suspend event 
-	 */ 
-	public boolean hasValueChanged() throws DebugException; 
+	 *
+	 * @return whether this variable's value has changed since the last suspend event
+	 * @exception DebugException if an exception occurs determining if this variable's
+	 *   value has changed since the last suspend event
+	 */
+	public boolean hasValueChanged() throws DebugException;
 
-	
+
 }

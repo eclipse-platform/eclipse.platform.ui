@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
- 
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -118,17 +118,17 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Debug UI Plug-in.
- * 
+ *
  * Since 3.3 this plug-in registers an <code>ISaveParticipant</code>, allowing this plug-in to participate
  * in workspace persistence life-cycles
- * 
+ *
  * @see ISaveParticipant
  * @see ILaunchListener
  * @see LaunchConfigurationManager
  * @see PerspectiveManager
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, DebugOptionsListener {
-	
+
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_BREAKPOINT_DELTAS = false;
 	public static boolean DEBUG_MODEL = false;
@@ -141,7 +141,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public static boolean DEBUG_STATE_SAVE_RESTORE = false;
 	public static String DEBUG_PRESENTATION_ID = null;
 	public static boolean DEBUG_DYNAMIC_LOADING = false;
-	
+
 	static final String DEBUG_FLAG = "org.eclipse.debug.ui/debug"; //$NON-NLS-1$
 	static final String DEBUG_BREAKPOINT_DELTAS_FLAG = "org.eclipse.debug.ui/debug/viewers/breakpointDeltas"; //$NON-NLS-1$
 	static final String DEBUG_MODEL_FLAG = "org.eclipse.debug.ui/debug/viewers/model"; //$NON-NLS-1$
@@ -159,12 +159,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @since 3.8
 	 */
 	private static DebugTrace fgDebugTrace;
-	
+
 	/**
 	 * The singleton debug plug-in instance
 	 */
 	private static DebugUIPlugin fgDebugUIPlugin = null;
-	
+
 	/**
 	 * A utility presentation used to obtain labels
 	 */
@@ -174,7 +174,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * Default label provider
 	 */
 	private static DefaultLabelProvider fgDefaultLabelProvider;
-	
+
 	/**
 	 * Launch configuration attribute - used by the stand-in launch
 	 * config working copies that are created while a launch is waiting
@@ -182,48 +182,48 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * to access the original config if the user asks to edit it.
 	 */
 	public static String ATTR_LAUNCHING_CONFIG_HANDLE= getUniqueIdentifier() + "launching_config_handle"; //$NON-NLS-1$
-	
+
 	/**
 	 * Singleton console document manager
 	 */
 	private ProcessConsoleManager fProcessConsoleManager = null;
-	
+
 	/**
 	 * Perspective manager
 	 */
 	private PerspectiveManager fPerspectiveManager = null;
-	
+
 	/**
 	 * Launch configuration manager
 	 */
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
-    
+
 	/**
 	 * Context launching manager
 	 */
 	private LaunchingResourceManager fContextLaunchingManager = null;
-	
+
     /**
      * Image descriptor registry used for images with common overlays.
-     * 
+     *
      * @since 3.1
      */
     private ImageDescriptorRegistry fImageDescriptorRegistry;
-    
+
     /**
      * A set of <code>ISaveParticipant</code>s that want to contribute to saving via this plugin
-     * 
+     *
      * @since 3.3
      */
 	private Set<ISaveParticipant> fSaveParticipants = new HashSet<ISaveParticipant>();
-    
+
 	/**
 	 * Theme listener.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private IPropertyChangeListener fThemeListener;
-    
+
     /**
      * Dummy launch node representing a launch that is waiting
      * for a build to finish before proceeding. This node exists
@@ -249,7 +249,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
             fJob.cancel();
         }
     }
-	
+
 	/**
 	 * Constructs the debug UI plug-in
 	 */
@@ -257,7 +257,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		super();
 		fgDebugUIPlugin= this;
 	}
-	
+
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if started)
 	 * @param option the option or <code>null</code>
@@ -271,17 +271,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			fgDebugTrace.trace(option, message, throwable);
 		}
 	}
-	
+
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
-	 * 
+	 *
 	 * @param message the message or <code>null</code>
 	 * @since 3.8
 	 */
 	public static void trace(String message) {
 		trace(null, message, null);
 	}
-	
+
 	/**
 	 * Returns the singleton instance of the debug plug-in.
 	 * @return the singleton {@link DebugUIPlugin}
@@ -292,7 +292,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return fgDebugUIPlugin;
 	}
-	
+
 	/**
 	 * Convenience method which returns the unique identifier of this plug-in.
 	 * @return the identifier of the plug-in
@@ -311,7 +311,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return fgPresentation;
 	}
-	
+
 	/**
 	 * Returns the launch configuration manager
 	 * @return the launch configuration manager
@@ -322,12 +322,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return fLaunchConfigurationManager;
 	}
-	
+
 	/**
 	 * Returns the context launching resource manager. If one has not been created prior to this
 	 * method call, a new manager is created and initialized, by calling its startup() method.
 	 * @return the context launching resource manager
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public LaunchingResourceManager getLaunchingResourceManager() {
@@ -337,21 +337,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return fContextLaunchingManager;
 	}
-	
+
 	/**
 	 * Returns the currently active workbench window or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window or <code>null</code>
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {
@@ -413,7 +413,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return ret[0];
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
@@ -431,9 +431,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
             if (fProcessConsoleManager != null) {
                 fProcessConsoleManager.shutdown();
             }
-            
+
             BreakpointOrganizerManager.getDefault().shutdown();
-            
+
 			if (fPerspectiveManager != null) {
 				fPerspectiveManager.shutdown();
 			}
@@ -443,36 +443,36 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			if(fContextLaunchingManager != null) {
 				fContextLaunchingManager.shutdown();
 			}
-	
+
 			ColorManager.getDefault().dispose();
-			
+
 			if (fgPresentation != null) {
 				fgPresentation.dispose();
 			}
-            
+
             if (fImageDescriptorRegistry != null) {
                 fImageDescriptorRegistry.dispose();
             }
-            
+
             if (fgDefaultLabelProvider != null) {
             	fgDefaultLabelProvider.dispose();
             }
-            
+
             SourceLookupFacility.shutdown();
-			
+
 			DebugElementHelper.dispose();
-			
+
 			fSaveParticipants.clear();
-			
+
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(getUniqueIdentifier());
-			
+
 			if (fThemeListener != null) {
 				if (PlatformUI.isWorkbenchRunning()) {
 					PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
 				}
 				fThemeListener= null;
 			}
-			
+
 		} finally {
 			super.stop(context);
 		}
@@ -488,19 +488,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public boolean addSaveParticipant(ISaveParticipant participant) {
 		return fSaveParticipants.add(participant);
 	}
-	
+
 	/**
 	 * Removes the specified <code>ISaveParticipant</code> from the current listing of registered
 	 * participants
 	 * @param participant the save participant to remove
 	 * @return true if the set contained the specified element
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public boolean removeSaveParticipant(ISaveParticipant participant) {
 		return fSaveParticipants.remove(participant);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
@@ -545,14 +545,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 						}
 					}
 				});
-		
+
 		// make sure the perspective manager is created
 		// and be the first debug event listener
 		fPerspectiveManager = new PerspectiveManager();
 		fPerspectiveManager.startup();
-		
+
 		getLaunchingResourceManager();
-		
+
 		// Listen to launches to lazily create "launch processors"
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches = launchManager.getLaunches();
@@ -563,12 +563,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			// if no launches, wait for first launch to initialize processors
 			launchManager.addLaunchListener(this);
 		}
-        
+
         // start the breakpoint organizer manager
         BreakpointOrganizerManager.getDefault();
-				
+
 		getLaunchConfigurationManager().startup();
-		
+
 		if (PlatformUI.isWorkbenchRunning()) {
 			fThemeListener= new IPropertyChangeListener() {
 
@@ -581,7 +581,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
 		}
-		
+
 		// do the asynchronous exec last - see bug 209920
 		getStandardDisplay().asyncExec(
 				new Runnable() {
@@ -619,7 +619,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			}
 		}
 	}
-	
+
 	/**
 	 * Utility method with conventions
 	 * @param shell the shell to open the dialog on
@@ -635,7 +635,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		ErrorDialog.openError(shell, title, message, s);
 	}
-	
+
 	/**
 	 * Utility method with conventions
 	 * @param shell the shell to open the dialog on
@@ -661,25 +661,25 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		log(newErrorStatus("Error logged from Debug UI: ", t)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
@@ -687,7 +687,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		// be due to the resource bundle itself
 		log(newErrorStatus("Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns a new error status for this plug-in with the given message
 	 * @param message the message to be included in the status
@@ -697,7 +697,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, message, exception);
 	}
-	
+
 	/**
      * Open the launch configuration dialog on the specified launch
      * configuration. The dialog displays the tabs for a single configuration
@@ -716,7 +716,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
      * @param showCancel if the cancel button should be shown in the particular instance of the dialog
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
-     * 
+     *
      * @since 3.3
      *
      */
@@ -729,7 +729,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
     	}
     	return Window.CANCEL;
     }
-	
+
     /**
      * Open the launch configuration dialog on the specified launch
      * configuration. The dialog displays the tabs for a single configuration
@@ -750,9 +750,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
      * @param setDefaults whether to set default values in the configuration
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
-     * 
+     *
      * @since 3.3
-     * 
+     *
      */
 	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, Set<String> reservednames, IStatus status, boolean setDefaults) {
     	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
@@ -764,7 +764,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
     	}
     	return Window.CANCEL;
     }
-    
+
     /**
      * Opens the {@link LaunchConfigurationsDialog} on the given selection for the given group. A status
      * can be provided or <code>null</code> and the dialog can initialize the given {@link ILaunchConfiguration}
@@ -787,12 +787,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
     	}
     	return Window.CANCEL;
     }
-    
+
 	/**
 	 * Save all dirty editors in the workbench.
 	 * Returns whether the operation succeeded.
 	 * @param confirm if the user should be asked before saving
-	 * 
+	 *
 	 * @return whether all saving was completed
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
@@ -804,12 +804,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return PlatformUI.getWorkbench().saveAllEditors(confirm);
 	}
-	
+
 	/**
 	 * Save & build the workspace according to the user-specified preferences.  Return <code>false</code> if
 	 * any problems were encountered, <code>true</code> otherwise.
 	 * @return <code>false</code> if any problems were encountered, <code>true</code> otherwise.
-	 * 
+	 *
 	 * @deprecated this method is no longer to be used. It is an artifact from 2.0, and all saving is now done with the
 	 * launch delegate <code>LaunchConfigurationDelegate</code>
 	 */
@@ -818,7 +818,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		boolean status = true;
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
-		
+
 		// If we're ignoring dirty editors, check if we need to build
 		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
 			if (buildBeforeLaunch) {
@@ -830,10 +830,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				status = doBuild();
 			}
 		}
-				
+
 		return status;
 	}
-	
+
 	private static boolean doBuild() {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
@@ -858,15 +858,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the workbench's display.
-	 * @return the standard display 
+	 * @return the standard display
 	 */
 	public static Display getStandardDisplay() {
 		return PlatformUI.getWorkbench().getDisplay();
 	}
-	
+
 	/**
 	 * Returns the a color based on the type of output.
 	 * Valid types:
@@ -884,7 +884,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/**
 	 * Returns the process console manager. The manager will be created lazily on
 	 * the first access.
-	 * 
+	 *
 	 * @return ProcessConsoleManager
 	 */
 	public ProcessConsoleManager getProcessConsoleManager() {
@@ -893,7 +893,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return fProcessConsoleManager;
 	}
-	
+
 	/**
 	 * Returns a Document that can be used to build a DOM tree
 	 * @return the Document
@@ -907,11 +907,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		Document doc= docBuilder.newDocument();
 		return doc;
 	}
-		
+
 	/**
 	 * When the first launch is added, instantiate launch processors,
 	 * and stop listening to launch notifications.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
 	@Override
@@ -919,7 +919,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		initializeLaunchListeners();
 	}
-	
+
 	/**
 	 * Creates/starts launch listeners after a launch has been added.
 	 * <p>
@@ -934,10 +934,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		getProcessConsoleManager().startup();
 		SourceLookupManager.getDefault();
 	}
-	
+
 	/**
 	 * Returns the perspective manager.
-	 * 
+	 *
 	 * @return the singleton {@link PerspectiveManager}
 	 */
 	public PerspectiveManager getPerspectiveManager() {
@@ -957,18 +957,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public void launchRemoved(ILaunch launch) {}
 
 	/**
-	 * Formats the given key stroke or click name and the modifier keys 
-	 * to a key binding string that can be used in action texts. 
-	 * 
+	 * Formats the given key stroke or click name and the modifier keys
+	 * to a key binding string that can be used in action texts.
+	 *
 	 * @param modifierKeys the modifier keys
 	 * @param keyOrClick a key stroke or click, e.g. "Double Click"
 	 * @return the formatted keyboard shortcut string, e.g. "Shift+Double Click"
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	public static final String formatKeyBindingString(int modifierKeys, String keyOrClick) {
 		// this should actually all be delegated to KeyStroke class
-		return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick; 
+		return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick;
 	}
 
 	public static boolean DEBUG_TEST_PRESENTATION_ID(IPresentationContext context) {
@@ -981,7 +981,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/**
      * Return the ILaunch associated with a model element, or null if there is
      * no such association.
-     * 
+     *
      * @param element the model element
      * @return the ILaunch associated with the element, or null.
      * @since 3.6
@@ -1001,11 +1001,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
         }
         return launch;
     }
-    
+
 
     /**
 	 * Save dirty editors before launching, according to preferences.
-	 * 
+	 *
 	 * @return whether to proceed with launch
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
@@ -1018,12 +1018,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
 	}
-	
+
 	/**
 	 * Builds the workspace (according to preferences) and launches the given launch
 	 * configuration in the specified mode. May return null if auto build is in process and
 	 * user cancels the launch.
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @param monitor progress monitor
@@ -1032,7 +1032,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 */
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
-		
+
 		monitor.beginTask(IInternalDebugCoreConstants.EMPTY_STRING, 1);
 		try
 		{
@@ -1046,13 +1046,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * Saves and builds the workspace according to current preference settings and
 	 * launches the given launch configuration in the specified mode in the
 	 * foreground with a progress dialog. Reports any exceptions that occur
 	 * in an error dialog.
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode
 	 * @since 3.0
@@ -1061,13 +1061,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		final IJobManager jobManager = Job.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		boolean wait = false;
-		
+
 		if (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0 || jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length >0) {
 			String waitForBuild = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 
 			if (waitForBuild.equals(MessageDialogWithToggle.PROMPT)) {
 				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //
-				
+
 				switch (dialog.getReturnCode()) {
 					case IDialogConstants.CANCEL_ID:
 						return;
@@ -1143,7 +1143,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
 		}
 	}
-	
+
 	private static void handleInvocationTargetException(InvocationTargetException e, ILaunchConfiguration configuration, String mode) {
 		Throwable targetException = e.getTargetException();
 		Throwable t = e;
@@ -1168,13 +1168,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, DebugUIMessages.DebugUITools_Exception_occurred_during_launch_2, t); //
 	}
-	
+
 	/**
 	 * Saves and builds the workspace according to current preference settings and
 	 * launches the given launch configuration in the specified mode in a background
 	 * Job with progress reported via the Job. Exceptions are reported in the Progress
 	 * view.
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode
 	 * @since 3.0
@@ -1276,7 +1276,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				finally	{
 					monitor.done();
 				}
-				
+
 				return Status.OK_STATUS;
 			}
 		};
@@ -1287,7 +1287,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		job.setPriority(Job.INTERACTIVE);
 		job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
 		job.setName(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}));
-		
+
 		if (wait) {
 			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job);
 		}
@@ -1297,7 +1297,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/**
 	 * Returns the label with any accelerators removed.
 	 * @param label the label to remove accelerators from
-	 * 
+	 *
 	 * @return label without accelerators
 	 */
     public static String removeAccelerators(String label) {
@@ -1322,12 +1322,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
         }
         return title;
     }
-    
+
 	/**
 	 * Returns the label with any DBCS accelerator moved to the end of the string.
 	 * See bug 186921.
 	 * @param label the label to be adjusted
-	 * 
+	 *
 	 * @return label with moved accelerator
 	 */
     public static String adjustDBCSAccelerator(String label) {
@@ -1357,7 +1357,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
     /**
      * Returns the image descriptor registry used for this plug-in.
      * @return the singleton {@link ImageDescriptorRegistry}
-     * 
+     *
      * @since 3.1
      */
     public static ImageDescriptorRegistry getImageDescriptorRegistry() {
@@ -1366,11 +1366,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
         }
         return getDefault().fImageDescriptorRegistry;
     }
-    
+
     /**
      * Returns an image descriptor for the icon referenced by the given attribute
      * and configuration element, or <code>null</code> if none.
-     * 
+     *
      * @param element the configuration element
      * @param attr the name of the attribute
      * @return image descriptor or <code>null</code>
@@ -1395,11 +1395,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return null;
     }
-    
+
     /**
      * Returns an image descriptor for the icon referenced by the given path
      * and contributor name, or <code>null</code> if none.
-     * 
+     *
      * @param name the name of the contributor
      * @param path the path of the icon (from the configuration element)
      * @return image descriptor or <code>null</code>
@@ -1415,7 +1415,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return null;
     }
-    
+
     /**
 	 * Performs extra filtering for launch configurations based on the preferences set on the
 	 * Launch Configurations page
@@ -1441,12 +1441,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Creates a new {@link IEvaluationContext} initialized with the current platform state if the
 	 * {@link IEvaluationService} can be acquired, otherwise the new context is created with no
 	 * parent context
-	 * 
+	 *
 	 * @param defaultvar the default variable for the new context
 	 * @return a new {@link IEvaluationContext}
 	 * @since 3.7

@@ -21,13 +21,13 @@ import org.eclipse.debug.core.model.IValue;
 
 /**
  * Manage logical structure provider extensions
- * 
+ *
  * @see IConfigurationElementConstants
  */
 public class LogicalStructureProvider {
 
 	private IConfigurationElement fConfigurationElement;
-	
+
 	private String fModelIdentifier;
 
 	private ILogicalStructureProvider fDelegate;
@@ -43,11 +43,11 @@ public class LogicalStructureProvider {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LogicalStructureProvider_1, null));
 		}
 	}
-	
+
 	/**
 	 * Return the logical structure type able to provide a logical structure for
 	 * the given value.
-	 * 
+	 *
 	 * @param value value for which structure types are requested
 	 * @return logical structure types
 	 */

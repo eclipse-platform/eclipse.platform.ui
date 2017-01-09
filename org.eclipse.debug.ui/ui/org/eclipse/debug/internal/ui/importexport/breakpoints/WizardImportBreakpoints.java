@@ -37,10 +37,10 @@ import org.eclipse.ui.IWorkbench;
  * WizardDialog wizdialog = new WizardDialog(shell, wiz);
  * wizdialog.open();
  * </pre>
- * 
- * This class uses <code>WizardImportBreakpointsPage</code> and 
+ *
+ * This class uses <code>WizardImportBreakpointsPage</code> and
  * <code>WizardImportBreakpointsSelectionPage</code>.
- * 
+ *
  * @since 3.2
  *
  */
@@ -52,12 +52,12 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	private WizardImportBreakpointsPage fMainPage;
 
 	private WizardImportBreakpointsSelectionPage fSelectionPage;
-	
+
 	/**
-	 * Identifier for dialog settings section for the import wizard. 
+	 * Identifier for dialog settings section for the import wizard.
 	 */
 	private static final String IMPORT_DIALOG_SETTINGS = "BreakpointImportSettings"; //$NON-NLS-1$
-	
+
 	/**
 	 * This is the default constructor
 	 */

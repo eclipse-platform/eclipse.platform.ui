@@ -44,7 +44,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
 
     /**
      * @since 3.6
-     * Element object used to wrap the expression error message.  It displays 
+     * Element object used to wrap the expression error message.  It displays
      * the error message only in the first column if columns are visible.
      */
     private static class ErrorMessageElement implements IElementLabelProvider {
@@ -52,9 +52,9 @@ public class ExpressionContentProvider extends VariableContentProvider {
         public ErrorMessageElement(String message) {
             fMessage = message;
         }
-        
+
         private final String fMessage;
-        
+
         @Override
 		public void update(ILabelUpdate[] updates) {
             for (int i = 0; i < updates.length; i++) {
@@ -70,7 +70,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
                         }
                     }
                 }
-                    
+
                 updates[i].done();
             }
         }
@@ -78,11 +78,11 @@ public class ExpressionContentProvider extends VariableContentProvider {
         private void updateLabel(ILabelUpdate update, int columnIndex) {
             update.setLabel(fMessage, columnIndex);
             FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
-            fontData.setStyle(SWT.ITALIC);                
-            
+            fontData.setStyle(SWT.ITALIC);
+
         }
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
 	 */
@@ -92,7 +92,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
 		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
 		findDelegates(delegateMap, notDelegated, updates);
-		
+
 		// Batch the updates and send them to the delegates
 		for (IElementContentProvider delegate : delegateMap.keySet()) {
 			List<IViewerUpdate> updateList = delegateMap.get(delegate);
@@ -102,7 +102,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
 			super.update(notDelegated.toArray(new IChildrenCountUpdate[notDelegated.size()]));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
 	 */
@@ -112,7 +112,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
 		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
 		findDelegates(delegateMap, notDelegated, updates);
-		
+
 		// Batch the updates and send them to the delegates
 		for (IElementContentProvider delegate : delegateMap.keySet()) {
 			List<IViewerUpdate> updateList = delegateMap.get(delegate);
@@ -132,7 +132,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
 		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
 		findDelegates(delegateMap, notDelegated, updates);
-		
+
 		// Batch the updates and send them to the delegates
 		for (IElementContentProvider delegate : delegateMap.keySet()) {
 			List<IViewerUpdate> updateList = delegateMap.get(delegate);
@@ -142,12 +142,12 @@ public class ExpressionContentProvider extends VariableContentProvider {
 			super.update(notDelegated.toArray(new IChildrenUpdate[notDelegated.size()]));
 		}
 	}
-	
+
 	/**
 	 * Finds all possibly delegate content providers for the given set of updates.  Found delegates are added
 	 * to the given map as the key while the list of updates to be sent to that delegate are set as the value.
 	 * Any updates that are not to be delegated are put in the notDelegated list.
-	 * 
+	 *
 	 * @param delegateMap map to add delegates to
 	 * @param notDelegated list of updates that should not be delegated
 	 * @param updates array of updates that can be handled by delegates
@@ -193,9 +193,9 @@ public class ExpressionContentProvider extends VariableContentProvider {
                 return getValueChildren(expression, value, context);
             }
         }
-        return EMPTY;	
+        return EMPTY;
 	}
-	
+
 	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (element instanceof IErrorReportingExpression) {
@@ -212,5 +212,5 @@ public class ExpressionContentProvider extends VariableContentProvider {
 			return value.hasVariables();
 		}
 		return false;
-	}	
+	}
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -23,9 +23,9 @@ import org.eclipse.ui.IWorkingSet;
  * Toggles the default breakpoint group based on selection.
  */
 public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
-    
+
     private IWorkingSet fSelectedSet;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */

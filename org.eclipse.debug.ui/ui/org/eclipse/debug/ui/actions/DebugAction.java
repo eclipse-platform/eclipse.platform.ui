@@ -25,7 +25,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * @since 2.0
  */
 public final class DebugAction extends ExecutionAction {
-	
+
 	public DebugAction() {
 		super(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 	}
@@ -37,5 +37,5 @@ public final class DebugAction extends ExecutionAction {
 	protected String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
-	
+
 }

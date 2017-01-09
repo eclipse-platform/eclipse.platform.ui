@@ -4,10 +4,10 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Patrick Chuong (Texas Instruments) - Allow multiple debug views and 
+ *     Patrick Chuong (Texas Instruments) - Allow multiple debug views and
  *     		multiple debug context providers (Bug 327263)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
@@ -32,11 +32,11 @@ import org.eclipse.ui.services.IEvaluationService;
  * @since 3.2
  */
 public class DebugContextManager implements IDebugContextManager {
-	
+
 	private static DebugContextManager fgDefault;
 	private Map<IWorkbenchWindow, DebugWindowContextService> fServices = new HashMap<IWorkbenchWindow, DebugWindowContextService>();
 	private ListenerList<IDebugContextListener> fGlobalListeners = new ListenerList<>();
-	
+
 	/**
 	 * A debug context service that does nothing (used for windows that have been closed)
 	 */
@@ -81,12 +81,12 @@ public class DebugContextManager implements IDebugContextManager {
 		}
 		@Override
 		public void addDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
-			
+
 		}
 		@Override
 		public void removeDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 		}
-		
+
 		@Override
 		public ISelection getActiveContext(String partId, String partSecondaryId) {
 			return null;
@@ -99,7 +99,7 @@ public class DebugContextManager implements IDebugContextManager {
 		public void removePostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 		}
 	};
-	
+
 	private class WindowListener implements IWindowListener {
 
 		/* (non-Javadoc)
@@ -113,7 +113,7 @@ public class DebugContextManager implements IDebugContextManager {
 		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 		 */
 		@Override
-		public void windowDeactivated(IWorkbenchWindow window) {			
+		public void windowDeactivated(IWorkbenchWindow window) {
 		}
 
 		/* (non-Javadoc)
@@ -134,24 +134,24 @@ public class DebugContextManager implements IDebugContextManager {
 		@Override
 		public void windowOpened(IWorkbenchWindow window) {
 		}
-		
+
 	}
-	
+
 	private DebugContextManager() {
 		PlatformUI.getWorkbench().addWindowListener(new WindowListener());
 	}
-	
+
 	public static IDebugContextManager getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new DebugContextManager();
 			// create the model context bindigg manager at the same time
 			DebugModelContextBindingManager.getDefault();
 			// create view manager
-			ViewContextManager.getDefault();			
+			ViewContextManager.getDefault();
 		}
 		return fgDefault;
 	}
-	
+
 	protected IDebugContextService createService(IWorkbenchWindow window) {
 		DebugWindowContextService service = fServices.get(window);
 		if (service == null) {
@@ -170,10 +170,10 @@ public class DebugContextManager implements IDebugContextManager {
 		}
 		return service;
 	}
-	
+
 	protected IDebugContextService getService(IWorkbenchWindow window) {
 		return fServices.get(window);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextManager#addDebugContextListener(org.eclipse.debug.internal.ui.contexts.IDebugContextListener)
@@ -200,10 +200,10 @@ public class DebugContextManager implements IDebugContextManager {
 			service.removeDebugContextListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Returns the existing context services.
-	 * 
+	 *
 	 * @return existing context services
 	 */
 	private DebugWindowContextService[] getServices() {
@@ -218,5 +218,5 @@ public class DebugContextManager implements IDebugContextManager {
 	public IDebugContextService getContextService(IWorkbenchWindow window) {
 		return createService(window);
 	}
-	
+
 }

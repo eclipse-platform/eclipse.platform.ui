@@ -64,9 +64,9 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * Provides the Launch Configuration preference page to the Run/Debug preferences
- * 
+ *
  * This page allows users to set filtering options as well as perform migration tasks.
- * This class is not intended to be sub-classed 
+ * This class is not intended to be sub-classed
  * @since 3.2
  */
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -76,9 +76,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 * @since 3.2
 	 */
 	class LaunchConfigurationMigrationSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
-		
+
 		private Object fInput;
-		
+
 		public LaunchConfigurationMigrationSelectionDialog(Shell parentShell, Object input) {
 			super(parentShell);
 			fInput = input;
@@ -116,15 +116,15 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		protected String getViewerLabel() {
 			return DebugPreferencesMessages.LaunchingPreferencePage_0;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 		 */
 		@Override
 		protected IContentProvider getContentProvider() {
-			return new WorkbenchContentProvider();	
+			return new WorkbenchContentProvider();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
@@ -133,7 +133,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			return DebugUITools.newDebugModelPresentation();
 		}
 	}
-	
+
 	/**
 	 * Content provider for the launch configuration type table
 	 */
@@ -150,32 +150,32 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
-		
+
 	/**
 	 * to monitor the progress of the migration process
 	 */
 	private ProgressMonitorPart fMonitor;
-	
+
 	/**
 	 * the migrate now button
 	 */
 	private Button fMigrateNow;
-	
+
 	/**
 	 * a list of the field editors
 	 */
 	private List<FieldEditor> fFieldEditors;
-	
+
 	/**
 	 * Boolean editor for debug core plug-in preference
 	 */
 	private Button fDeleteConfigs;
-	
+
 	/**
 	 * The table for the launch configuration types
 	 */
 	private Table fTable;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -184,7 +184,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 		setTitle(DebugPreferencesMessages.LaunchConfigurationsPreferencePage_1);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -211,10 +211,10 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_3, SWT.NONE, spacer);
 		fFieldEditors.add(edit);
 		fDeleteConfigs = SWTFactory.createCheckButton(comp, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_2, null, false, 3);
-		
+
 		//add table options
 		createTypeFiltering(group);
-		
+
 		//migration
 		group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_35, 1, 1, GridData.FILL_HORIZONTAL);
 		Label label = new Label(group, SWT.LEFT | SWT.WRAP);
@@ -233,15 +233,15 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleMigrateNowSelected();
-			}			
+			}
 		});
-	
+
 		//init field editors
 		initFieldEditors();
 		fTable.setEnabled(getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES));
 		return comp;
 	}
-	
+
 	/**
 	 * @param parent the parent to add this composite to
 	 * @return the new composite with the type selection table in it
@@ -265,7 +265,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				else {
 					fTable.setEnabled(false);
 				}
-			}	
+			}
 		});
 		fFieldEditors.add(editor);
 		fTable = new Table(comp, SWT.CHECK | SWT.BORDER);
@@ -282,7 +282,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		fTable.setFont(parent.getFont());
 		return comp;
 	}
-	
+
 	/**
 	 * returns the launch configuration types
 	 * @return the launch configuration types
@@ -290,7 +290,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private ILaunchConfigurationType[] getLaunchConfigurationTypes() {
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
 	}
-	
+
 	/**
 	 * handles the Migrate button being clicked
 	 *
@@ -300,7 +300,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		try {
 			ILaunchManager lmanager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfiguration[] configurations = lmanager.getMigrationCandidates();
-			//separate the private from the public 
+			//separate the private from the public
 			List<ILaunchConfiguration> pub = new ArrayList<ILaunchConfiguration>();
 			for(int i = 0; i < configurations.length; i++) {
 				if(DebugUITools.isPrivate(configurations[i])) {
@@ -334,7 +334,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		}
 		catch (CoreException e) {DebugUIPlugin.log(e);}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
@@ -368,7 +368,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -383,9 +383,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				fTable.setEnabled(((BooleanFieldEditor2)editor).getBooleanValue());
 			}
 		}
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */

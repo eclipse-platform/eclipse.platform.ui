@@ -71,7 +71,7 @@ public class ResourceExtender extends PropertyTester {
 		        }
         	}
         } else {
-            if (PROPERTY_MATCHES_PATTERN.equals(method)) { 
+            if (PROPERTY_MATCHES_PATTERN.equals(method)) {
                 String fileName = resource.getName();
                 String expected = (String) expectedValue;
                 expected = expected.replaceAll("\\.", "\\\\.");  //$NON-NLS-1$//$NON-NLS-2$
@@ -92,11 +92,11 @@ public class ResourceExtender extends PropertyTester {
         }
         return false;
     }
-    
+
     /**
-     * Returns whether the given type or one of its base types matches the 
+     * Returns whether the given type or one of its base types matches the
      * given content type identifier.
-     *  
+     *
      * @param type content type or <code>null</code>
      * @param typeId content type identifier
      * @return
@@ -114,9 +114,9 @@ public class ResourceExtender extends PropertyTester {
     /**
      * Returns whether or not the given file's content type matches the
      * specified content type.
-     * 
+     *
      * Content types are looked up in the content type registry.
-     * 
+     *
      * @return whether or not the given resource has the given content type
      */
     private boolean matchesContentType(IResource resource, String contentType) {

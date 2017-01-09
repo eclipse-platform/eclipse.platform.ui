@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,20 +22,20 @@ import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 
 /**
  * Proxy to contributed source path computer extension.
- * 
+ *
  * @see IConfigurationElementConstants
  */
 public class SourcePathComputer implements ISourcePathComputer {
-	
+
 	// lazily instantiated delegate
 	private ISourcePathComputerDelegate fDelegate = null;
-	
+
 	// extension definition
 	private IConfigurationElement fElement = null;
-	
+
 	/**
 	 * Constructs a source path computer on the given extension.
-	 * 
+	 *
 	 * @param element extension definition
 	 */
 	public SourcePathComputer(IConfigurationElement element) {
@@ -47,9 +47,9 @@ public class SourcePathComputer implements ISourcePathComputer {
 	 */
 	@Override
 	public String getId() {
-		return fElement.getAttribute(IConfigurationElementConstants.ID); 
+		return fElement.getAttribute(IConfigurationElementConstants.ID);
 	}
-	
+
 	/**
 	 * Lazily instantiates and returns the underlying source container type.
 	 * @return the {@link ISourcePathComputerDelegate}

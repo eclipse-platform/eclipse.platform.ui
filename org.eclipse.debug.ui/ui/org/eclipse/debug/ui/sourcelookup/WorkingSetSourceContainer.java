@@ -35,22 +35,22 @@ import org.eclipse.ui.IWorkingSet;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkingSetSourceContainer extends CompositeSourceContainer{
-	
+
 	private IWorkingSet fWorkingSet;
 	/**
 	 * Unique identifier for the working set source container type
 	 * (value <code>org.eclipse.debug.ui.containerType.workingSet</code>.)
 	 */
 	public static final String TYPE_ID = DebugUIPlugin.getUniqueIdentifier()+".containerType.workingSet"; //$NON-NLS-1$
-		
+
 	/**
 	 * Creates a source container for the working set.
 	 * @param workingSet the working set represented by this container
 	 */
 	public WorkingSetSourceContainer(IWorkingSet workingSet) {
-		fWorkingSet = workingSet;		
+		fWorkingSet = workingSet;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
@@ -58,23 +58,23 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	public String getName() {
 		return fWorkingSet.getName();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof WorkingSetSourceContainer) {			
-			return ((WorkingSetSourceContainer)obj).fWorkingSet.equals(fWorkingSet);			
-		}				
+		if (obj != null && obj instanceof WorkingSetSourceContainer) {
+			return ((WorkingSetSourceContainer)obj).fWorkingSet.equals(fWorkingSet);
+		}
 		return false;
-	}		
+	}
 
 	@Override
 	public int hashCode() {
 		return fWorkingSet.hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
@@ -82,29 +82,29 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IAdaptable[] elements = fWorkingSet.getElements();
-		
+
 		if(elements == null) {
 			return new ISourceContainer[0];
 		}
-		
+
 		ArrayList<ISourceContainer> locationList = new ArrayList<ISourceContainer>();
 		for (int i = 0; i < elements.length; i++) {
 			IResource resource = elements[i].getAdapter(IResource.class);
-			
+
 			if (resource != null) {
 				switch (resource.getType()) {
-				case IResource.FOLDER:							
-					locationList.add(new FolderSourceContainer((IFolder)resource, true));											
+				case IResource.FOLDER:
+					locationList.add(new FolderSourceContainer((IFolder)resource, true));
 					break;
 				case IResource.PROJECT:
-					locationList.add(new ProjectSourceContainer((IProject)resource, true));			
+					locationList.add(new ProjectSourceContainer((IProject)resource, true));
 					break;
 					//if the element corresponds to an IFile, do nothing
 					default:

@@ -32,10 +32,10 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Handles a run to line operation. Clients implementing a run to line action
- * can use this handler to carry out a run to line operation implemented with 
+ * can use this handler to carry out a run to line operation implemented with
  * a breakpoint. Handles the user preference to skip breakpoints while performing
  * a run to line operation, and cancelling the run to line operation if another
- * breakpoint is encountered before the operation is completed. 
+ * breakpoint is encountered before the operation is completed.
  * <p>
  * Clients may instantiate this class.
  * </p>
@@ -43,15 +43,15 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RunToLineHandler implements IDebugEventSetListener, IBreakpointManagerListener, IWorkspaceRunnable {
-    
+
     private IDebugTarget fTarget;
     private ISuspendResume fResumee;
     private IBreakpoint fBreakpoint;
     private boolean fAutoSkip = false;
-    
+
     /**
      * Constructs a handler to perform a run to line operation.
-     * 
+     *
      * @param target the debug target in which the operation is to be performed
      * @param suspendResume the element to be resumed to begin the operation
      * @param breakpoint the run to line breakpoint
@@ -86,7 +86,7 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
                 }
             }
         }
-        
+
     }
 
     /* (non-Javadoc)
@@ -97,15 +97,15 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
         // if the user changes the breakpoint manager enablement, don't restore it
         fAutoSkip = false;
     }
-    
+
     private IBreakpointManager getBreakpointManager() {
         return getDebugPlugin().getBreakpointManager();
     }
-    
+
     private DebugPlugin getDebugPlugin() {
         return DebugPlugin.getDefault();
     }
-    
+
     /**
      * Cancels the run to line operation.
      */
@@ -134,7 +134,7 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
             getBreakpointManager().setEnabled(false);
             breakpointManager.addBreakpointManagerListener(this);
         }
-        Job job = new Job(ActionMessages.RunToLineHandler_0) { 
+        Job job = new Job(ActionMessages.RunToLineHandler_0) {
             @Override
 			protected IStatus run(IProgressMonitor jobMonitor) {
                 if (!jobMonitor.isCanceled()) {
@@ -147,9 +147,9 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
                     }
                 }
                 return Status.OK_STATUS;
-            }  
+            }
         };
         job.schedule();
     }
-    
+
 }

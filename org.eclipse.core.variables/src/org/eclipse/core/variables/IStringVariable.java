@@ -42,16 +42,16 @@ public interface IStringVariable {
 	/**
 	 * Returns the name of this variable. A variable is uniquely identified by
 	 * its name.
-	 * 
+	 *
 	 * @return variable name
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns a human readable description of this variable, possibly <code>null</code>
-	 * 
+	 *
 	 * @return a description of this variable, or <code>null</code> if none
 	 */
 	public String getDescription();
-	
+
 }

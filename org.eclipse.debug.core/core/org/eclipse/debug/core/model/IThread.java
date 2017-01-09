@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * empty collection is returned if this thread contains
 	 * no stack frames, or is not currently suspended. Stack frames
 	 * are returned in top down order.
-	 * 
+	 *
 	 * @return a collection of stack frames
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
@@ -48,11 +48,11 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * @since 2.0
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException;
-	
+
 	/**
 	 * Returns whether this thread currently contains any stack
 	 * frames.
-	 * 
+	 *
 	 * @return whether this thread currently contains any stack frames
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -62,7 +62,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * @since 2.0
 	 */
 	public boolean hasStackFrames() throws DebugException;
-	
+
 	/**
 	 * Returns the priority of this thread. The meaning of this
 	 * number is operating-system dependent.
@@ -74,7 +74,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * the failure.</li>
 	 */
 	public int getPriority() throws DebugException;
-	/** 
+	/**
 	 * Returns the top stack frame or <code>null</code> if there is
 	 * currently no top stack frame.
 	 *
@@ -107,5 +107,5 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 *
 	 * @return the collection of breakpoints that caused this thread to suspend
 	 */
-	public IBreakpoint[] getBreakpoints();	
+	public IBreakpoint[] getBreakpoints();
 }

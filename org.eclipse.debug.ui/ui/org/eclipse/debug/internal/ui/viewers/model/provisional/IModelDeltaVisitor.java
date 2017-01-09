@@ -13,14 +13,14 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
  * An objects that visits model deltas.
- * 
+ *
  * @since 3.3
  */
 public interface IModelDeltaVisitor {
-	
-	/** 
+
+	/**
 	 * Visits the given model delta.
-	 * 
+	 *
 	 * @param delta the delta to visit
 	 * @param depth depth in the delta where 0 == root node
 	 * @return <code>true</code> if the model delta's children should

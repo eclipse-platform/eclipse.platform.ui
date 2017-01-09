@@ -36,7 +36,7 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
 		fLaunchManager.addLaunchListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
@@ -53,7 +53,7 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
 	 */
 	@Override
-	public synchronized void dispose() {	
+	public synchronized void dispose() {
 		super.dispose();
 		if (fLaunchManager != null) {
 			fLaunchManager.removeLaunchListener(this);
@@ -88,20 +88,20 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
 	@Override
-	public void launchesChanged(ILaunch[] launches) {	
+	public void launchesChanged(ILaunch[] launches) {
 	}
-	
+
 	/**
-	 * Convenience method for firing a delta 
+	 * Convenience method for firing a delta
 	 * @param launches the launches to set in the delta
 	 * @param launchFlags the flags for the delta
 	 */
 	protected void fireDelta(ILaunch[] launches, int launchFlags) {
 		ModelDelta delta = new ModelDelta(fLaunchManager, IModelDelta.NO_CHANGE);
 		for (int i = 0; i < launches.length; i++) {
-			delta.addNode(launches[i], launchFlags);	
+			delta.addNode(launches[i], launchFlags);
 		}
-		fireModelChanged(delta);		
+		fireModelChanged(delta);
 	}
 
 }

@@ -18,7 +18,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 public class MemoryViewElementMementoProvider extends ElementMementoProvider {
-	
+
 	private static final String OBJECT_ID = "OBJECT_ID"; //$NON-NLS-1$
 
 	@Override

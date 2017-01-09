@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *  Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
@@ -290,12 +290,12 @@ public class DebugUIMessages extends NLS {
 	public static String WorkingDirectoryBlock_20;
 	public static String WorkingDirectoryBlock_1;
 	public static String WorkingDirectoryBlock_Exception_occurred_reading_configuration___15;
-		
+
 	//
 	// Elements
-	// 
+	//
     public static String ExpressionManagerContentProvider_1;
-	
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);

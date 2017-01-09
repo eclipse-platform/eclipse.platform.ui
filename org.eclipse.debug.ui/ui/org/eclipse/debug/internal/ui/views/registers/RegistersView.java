@@ -4,8 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.debug.internal.ui.views.registers;
@@ -21,7 +21,7 @@ import org.eclipse.jface.action.Separator;
  * Displays registers and their values with a detail area.
  */
 public class RegistersView extends VariablesView {
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
@@ -36,7 +36,7 @@ public class RegistersView extends VariablesView {
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		super.configureToolBar(tbm);
-		tbm.add(new Separator(IDebugUIConstants.EMPTY_REGISTER_GROUP));		
+		tbm.add(new Separator(IDebugUIConstants.EMPTY_REGISTER_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.REGISTER_GROUP));
 	}
 
@@ -53,15 +53,15 @@ public class RegistersView extends VariablesView {
 	 */
 	@Override
 	protected String getToggleActionLabel() {
-		return RegistersViewMessages.RegistersView_0; 
+		return RegistersViewMessages.RegistersView_0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
 	 */
 	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_REGISTER_VIEW;
-	}	
+	}
 
 }

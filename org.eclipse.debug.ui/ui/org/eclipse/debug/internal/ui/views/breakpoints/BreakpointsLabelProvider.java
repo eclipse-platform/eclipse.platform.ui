@@ -29,7 +29,7 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
 
     private WorkbenchLabelProvider fWorkbenchLabelProvider;
     private IDebugModelPresentation fPresentation;
-    
+
     /**
      * Constructs a new label provide for the breakpoints view.
      */
@@ -37,7 +37,7 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         fWorkbenchLabelProvider = new WorkbenchLabelProvider();
         fPresentation = DebugUITools.newDebugModelPresentation();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
@@ -47,7 +47,7 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         fPresentation.dispose();
         super.dispose();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
@@ -64,12 +64,12 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
                 return DebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
             }
         }
-        return image;        
+        return image;
     }
-    
+
 	/**
      * Computes and return common adornment flags for the given category.
-     * 
+     *
      * @return adornment flags defined in CompositeDebugImageDescriptor
      */
     private int computeAdornmentFlags() {
@@ -77,8 +77,8 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
             return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
         }
         return 0;
-    }    
-    
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
@@ -100,10 +100,10 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         }
         return fWorkbenchLabelProvider.getFont(element);
     }
-    
+
     /**
      * Returns the debug model presentation used by this label provider.
-     * 
+     *
      * @return the debug model presentation used by this label provider
      */
     public IDebugModelPresentation getPresentation() {

@@ -20,15 +20,15 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * A dialog used to select elements from a list.
- * 
+ *
  * @since 3.3
  *
  */
 public class FindElementDialog extends ElementListSelectionDialog {
-	
+
 	/**
 	 * Constructs a dialog to navigate to an element in the given viewer.
-	 * 
+	 *
 	 * @param shell shell to open on
 	 * @param provider label provider
 	 * @param elements elements to choose from
@@ -48,5 +48,5 @@ public class FindElementDialog extends ElementListSelectionDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.FIND_ELEMENT_DIALOG);
 		return comp;
 	}
-	
+
 }

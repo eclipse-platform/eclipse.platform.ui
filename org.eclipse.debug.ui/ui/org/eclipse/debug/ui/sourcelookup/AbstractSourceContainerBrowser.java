@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,10 +31,10 @@ public class AbstractSourceContainerBrowser implements ISourceContainerBrowser {
 		return new ISourceContainer[0];
 	}
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Generally, a source container browser can add source containers. Subclasses
 	 * should override as required.
-	 * 
+	 *
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#canAddSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	@Override
@@ -49,10 +49,10 @@ public class AbstractSourceContainerBrowser implements ISourceContainerBrowser {
 		return new ISourceContainer[0];
 	}
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Not all source containers can be edited. Subclasses should override
 	 * as required.
-	 * 
+	 *
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
 	@Override

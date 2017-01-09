@@ -20,7 +20,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * Provides a proxy to a launchConfigurationTabs extension point
- * 
+ *
  * @since 3.3
  */
 public final class LaunchConfigurationTabExtension {
@@ -30,7 +30,7 @@ public final class LaunchConfigurationTabExtension {
 	 */
 	IConfigurationElement fElement = null;
 	private Set<String> fDelegates = null;
-	
+
 	/**
 	 * Constructor
 	 * @param element the <code>IConfigurationElement</code> for this proxy
@@ -38,7 +38,7 @@ public final class LaunchConfigurationTabExtension {
 	public LaunchConfigurationTabExtension(IConfigurationElement element) {
 		fElement = element;
 	}
-	
+
 	/**
 	 * Returns the unique id of the tab
 	 * @return the unique id of the tab
@@ -76,11 +76,11 @@ public final class LaunchConfigurationTabExtension {
 	public String getTabGroupId() {
 		return fElement.getAttribute(IConfigurationElementConstants.GROUP);
 	}
-	
+
 	/**
 	 * This method returns the id of the tab that this tab should be placed immediately after.
 	 * @return the id of the relative tab or <code>null</code> if one has not been specified
-	 * 
+	 *
 	 */
 	public String getRelativeTabId() {
 		IConfigurationElement[] elems = fElement.getChildren(IConfigurationElementConstants.PLACEMENT);
@@ -89,7 +89,7 @@ public final class LaunchConfigurationTabExtension {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the id of the plugin that contributed this tab extension
 	 * @return the id of the plugin tat contributed this tab
@@ -97,7 +97,7 @@ public final class LaunchConfigurationTabExtension {
 	public String getPluginIdentifier() {
 		return fElement.getContributor().getName();
 	}
-	
+
 	/**
 	 * Returns a set of strings of the launch delegates that this tab contribution is associated with
 	 * @return the set of strings of the associated launch delegates, which can be an empty collection, never <code>null</code>.

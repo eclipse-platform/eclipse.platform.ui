@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public interface IWatchExpressionResult {
 	 * <code>null</code>
 	 */
 	public IValue getValue();
-	
+
 	/**
 	 * Returns whether the evaluation had any problems
 	 * or if an exception occurred while performing the
@@ -46,7 +46,7 @@ public interface IWatchExpressionResult {
 	 * @see #getException()
 	 */
 	public boolean hasErrors();
-		
+
 	/**
 	 * Returns an array of problem messages. Each message describes a problem that
 	 * occurred while compiling the snippet.
@@ -54,14 +54,14 @@ public interface IWatchExpressionResult {
 	 * @return evaluation error messages, or an empty array if no errors occurred
 	 */
 	public String[] getErrorMessages();
-		
+
 	/**
 	 * Returns the expression that was evaluated.
 	 *
 	 * @return The string expression.
 	 */
 	public String getExpressionText();
-	
+
 	/**
 	 * Returns any exception that occurred while performing the evaluation
 	 * or <code>null</code> if an exception did not occur.

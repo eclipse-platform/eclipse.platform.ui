@@ -13,37 +13,37 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
  * Listener for viewer state updates.
- * 
+ *
  * @since 3.6
  */
 public interface IStateUpdateListener {
 
 	/**
 	 * Notification that a sequence of state saving updates are starting.
-	 * 
+	 *
 	 * @param input Input object for the state operation.
 	 */
 	public void stateSaveUpdatesBegin(Object input);
-	
+
 	/**
 	 * Notification that viewer updates are complete. Corresponds to
 	 * a <code>viewerUpdatesBegin()</code> notification.
-	 * 
+	 *
      * @param input Input object for the state operation.
 	 */
 	public void stateSaveUpdatesComplete(Object input);
 
 	/**
      * Notification that a sequence of viewer updates are starting.
-     * 
+     *
      * @param input Input object for the state operation.
      */
     public void stateRestoreUpdatesBegin(Object input);
-    
+
     /**
      * Notification that viewer updates are complete. Corresponds to
      * a <code>viewerUpdatesBegin()</code> notification.
-     * 
+     *
      * @param input Input object for the state operation.
      */
     public void stateRestoreUpdatesComplete(Object input);
@@ -51,16 +51,16 @@ public interface IStateUpdateListener {
 	/**
 	 * Notification that a specific update has started within
 	 * a sequence of updates.
-	 * 
+	 *
      * @param input Input object for the state operation.
 	 * @param update update
 	 */
 	public void stateUpdateStarted(Object input, IViewerUpdate update);
-	
+
 	/**
 	 * Notification that a specific update has completed within a
 	 * sequence of updates.
-	 * 
+	 *
      * @param input Input object for the state operation.
 	 * @param update update
 	 */

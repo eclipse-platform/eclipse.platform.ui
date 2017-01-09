@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
- 
+
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -40,7 +40,7 @@ public interface ISuspendResume {
 	 */
 	public boolean isSuspended();
 	/**
-	 * Causes this element to resume its execution, generating a <code>RESUME</code> event. 
+	 * Causes this element to resume its execution, generating a <code>RESUME</code> event.
 	 * Has no effect on an element that is not suspended. This call is non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>

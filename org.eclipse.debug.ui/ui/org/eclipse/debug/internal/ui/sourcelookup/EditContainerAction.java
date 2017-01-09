@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,20 +23,20 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * Action used to edit source containers on a source lookup path
  */
 public class EditContainerAction extends SourceContainerAction {
-	
+
 	private ISourceLookupDirector fDirector;
 	private ISourceContainer[] fContainers;
 	private ISourceContainerBrowser fBrowser;
-	
+
 	public EditContainerAction() {
-		super(SourceLookupUIMessages.EditContainerAction_0); 
+		super(SourceLookupUIMessages.EditContainerAction_0);
 	}
-	
+
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
 		ISourceContainer[] replacements = fBrowser.editSourceContainers(getShell(), fDirector, fContainers);
@@ -52,11 +52,11 @@ public class EditContainerAction extends SourceContainerAction {
 		}
 		getViewer().setEntries(existing);
 	}
-	
+
 	public void setSourceLookupDirector(ISourceLookupDirector director) {
 		fDirector = director;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

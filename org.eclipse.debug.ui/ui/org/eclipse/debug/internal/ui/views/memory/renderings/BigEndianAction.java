@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class BigEndianAction implements IObjectActionDelegate {
 
 	AbstractIntegerRendering fRendering;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -39,7 +39,7 @@ public class BigEndianAction implements IObjectActionDelegate {
 
 		if (fRendering == null)
 			return;
-		
+
 		if (fRendering.getDisplayEndianess() != RenderingsUtil.BIG_ENDIAN){
 			fRendering.setDisplayEndianess(RenderingsUtil.BIG_ENDIAN);
 			fRendering.refresh();
@@ -51,21 +51,21 @@ public class BigEndianAction implements IObjectActionDelegate {
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		
+
 		if (selection == null)
 			return;
-		
+
 		if (selection instanceof IStructuredSelection)
 		{
 			Object obj = ((IStructuredSelection)selection).getFirstElement();
 			if (obj == null)
 				return;
-			
+
 			if (obj instanceof AbstractIntegerRendering)
 			{
 				fRendering = (AbstractIntegerRendering)obj;
 			}
-			
+
 			int endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
 			if (fRendering.getDisplayEndianess() == RenderingsUtil.ENDIANESS_UNKNOWN)
 			{
@@ -94,7 +94,7 @@ public class BigEndianAction implements IObjectActionDelegate {
 			}
 			else
 				endianess = fRendering.getDisplayEndianess();
-			
+
 			if (endianess == RenderingsUtil.BIG_ENDIAN)
 				action.setChecked(true);
 			else

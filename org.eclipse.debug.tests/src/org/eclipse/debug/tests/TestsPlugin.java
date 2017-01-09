@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM - ongoing enhancements
@@ -28,7 +28,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * 
+ *
  * @since 3.6
  */
 public class TestsPlugin extends AbstractUIPlugin {
@@ -38,7 +38,7 @@ public class TestsPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static TestsPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -73,7 +73,7 @@ public class TestsPlugin extends AbstractUIPlugin {
 	public static TestsPlugin getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Returns the file corresponding to the specified path from within this bundle
 	 * @param path
@@ -90,7 +90,7 @@ public class TestsPlugin extends AbstractUIPlugin {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Creates a new project with the specified name
 	 * @param projectName
@@ -105,11 +105,11 @@ public class TestsPlugin extends AbstractUIPlugin {
 		} else {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		}
-		
+
 		if (!project.isOpen()) {
 			project.open(null);
 		}
 		return project;
-	}	
+	}
 
 }

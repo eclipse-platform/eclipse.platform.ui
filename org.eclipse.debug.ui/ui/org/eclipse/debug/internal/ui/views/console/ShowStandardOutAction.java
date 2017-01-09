@@ -20,11 +20,11 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Toggles preference show the console when output is written
  * to standard output stream.
- * 
+ *
  * @since 3.3
  */
 public class ShowStandardOutAction extends ShowWhenContentChangesAction {
-	
+
 	/**
 	 * Constructs an action to toggle console auto activation preferences
 	 */

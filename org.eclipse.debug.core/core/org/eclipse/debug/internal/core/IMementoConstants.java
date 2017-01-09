@@ -14,7 +14,7 @@ public interface IMementoConstants {
 	// These persistence constant is stored in XML. Do not
 	// change it.
 	public static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
-	
+
 	public static final String TAG_EDITOR_STATE = "editorState"; //$NON-NLS-1$
 
 	public static final String MEMENTO_ITEM = "item"; //$NON-NLS-1$

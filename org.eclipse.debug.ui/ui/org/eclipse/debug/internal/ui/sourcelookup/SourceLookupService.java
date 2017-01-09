@@ -27,20 +27,20 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Performs source lookup in a window.
- * 
+ *
  * @since 3.2
  */
 public class SourceLookupService implements IDebugContextListener, ISourceDisplay {
-	
+
 	private IWorkbenchWindow fWindow;
 	private IDebugContextService fDebugContextService;
-	
+
 	public SourceLookupService(IWorkbenchWindow window) {
 		fWindow = window;
-		fDebugContextService = DebugUITools.getDebugContextManager().getContextService(window); 
+		fDebugContextService = DebugUITools.getDebugContextManager().getContextService(window);
 		fDebugContextService.addDebugContextListener(this);
 	}
-	
+
 	public void dispose() {
 		fDebugContextService.removeDebugContextListener(this);
 		fWindow = null;
@@ -52,18 +52,18 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 			displaySource(event.getContext(), event.getDebugContextProvider().getPart(), false);
 		}
 	}
-		
+
 	/**
 	 * Displays source for the given selection and part, optionally forcing
 	 * a source lookup.
-	 * 
+	 *
 	 * @param selection
 	 * @param part
 	 * @param force
 	 */
 	protected synchronized void displaySource(ISelection selection, IWorkbenchPart part, boolean force) {
 	    if (fWindow == null) return; // disposed
-	    
+
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 			if (structuredSelection.size() == 1) {
@@ -73,11 +73,11 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 					page = fWindow.getActivePage();
 				} else {
 					page = part.getSite().getPage();
-				} 
+				}
 				displaySource(context, page, force);
 			}
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
@@ -92,9 +92,9 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	        	// adapters, just delegate to the adapter factory
 	        	adapter = new DebugElementAdapterFactory().getAdapter(context, ISourceDisplay.class);
 	        }
-			if (adapter != null) {						
+			if (adapter != null) {
 				adapter.displaySource(context, page, forceSourceLookup);
 			}
 		}
-	}	
+	}
 }

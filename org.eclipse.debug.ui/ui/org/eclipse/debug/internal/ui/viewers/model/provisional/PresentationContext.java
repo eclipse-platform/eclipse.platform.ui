@@ -36,13 +36,13 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.2
  */
 public class PresentationContext implements IPresentationContext {
-    
+
     private static final String PRESENTATION_CONTEXT_PROPERTIES = "PRESENTATION_CONTEXT_PROPERTIES";  //$NON-NLS-1$
     private static final String BOOLEAN = "BOOLEAN";  //$NON-NLS-1$
     private static final String STRING = "STRING";  //$NON-NLS-1$
     private static final String INTEGER = "INTEGER";  //$NON-NLS-1$
     private static final String PERSISTABLE = "PERSISTABLE";  //$NON-NLS-1$
-    
+
     final private String fId;
 	final private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
 	final private Map<String, Object> fProperties = new HashMap<String, Object>();
@@ -51,7 +51,7 @@ public class PresentationContext implements IPresentationContext {
 
     /**
      * Constructs a presentation context for the given id.
-     * 
+     *
      * @param id presentation context id
      */
     public PresentationContext(String id) {
@@ -60,7 +60,7 @@ public class PresentationContext implements IPresentationContext {
 
     /**
      * Constructs a presentation context for the given id and window.
-     * 
+     *
      * @param id presentation context id
      * @param window presentation context window, may be <code>null</code>
      */
@@ -71,7 +71,7 @@ public class PresentationContext implements IPresentationContext {
     /**
      * Constructs a presentation context for the given id and part.
      * The presentation context window is derived from the part.
-     * 
+     *
      * @param id presentation context id
      * @param part presentation context part, may be <code>null</code>
      */
@@ -82,7 +82,7 @@ public class PresentationContext implements IPresentationContext {
     /**
      * Constructs a presentation context for the given id and part.
      * The presentation context id and window are derived from the part.
-     * 
+     *
      * @param part presentation context part, can NOT be <code>null</code>
      */
     public PresentationContext(IWorkbenchPart part) {
@@ -102,10 +102,10 @@ public class PresentationContext implements IPresentationContext {
 	public String[] getColumns() {
 		return (String[]) getProperty(IPresentationContext.PROPERTY_COLUMNS);
 	}
-	
+
 	/**
 	 * Fires a property change event to all registered listeners
-	 * 
+	 *
 	 * @param property property name
 	 * @param oldValue old value or <code>null</code>
 	 * @param newValue new value or <code>null</code>
@@ -124,16 +124,16 @@ public class PresentationContext implements IPresentationContext {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the visible column ids.
-	 * 
+	 *
 	 * @param ids column identifiers
 	 */
 	public void setColumns(String[] ids) {
 		setProperty(IPresentationContext.PROPERTY_COLUMNS, ids);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#dispose()
@@ -196,19 +196,19 @@ public class PresentationContext implements IPresentationContext {
 				fProperties.put(property, value);
 			}
 		}
-		
+
 		if (propertySet) {
 		    firePropertyChange(property, oldValue, value);
 		}
 	}
-	
+
 	/**
 	 * Restores the presentation context properties from the given memento.
 	 * @param memento Memento to restore from.
 	 */
 	public void initProperties(IMemento memento) {
 	    IMemento presentationMemento = null;
-	    
+
         IMemento[] mementos = memento.getChildren(PRESENTATION_CONTEXT_PROPERTIES);
         for (int i = 0; i < mementos.length; i++) {
             if (getId().equals(mementos[i].getID())) {
@@ -222,24 +222,24 @@ public class PresentationContext implements IPresentationContext {
             for (int i = 0; i < stringProperties.length; i++) {
                 fProperties.put(stringProperties[i].getID(), stringProperties[i].getString(STRING));
             }
-            
+
             IMemento[] integerMementos = presentationMemento.getChildren(INTEGER);
             for (int i = 0; i < integerMementos.length; i++) {
                 fProperties.put(integerMementos[i].getID(), integerMementos[i].getInteger(INTEGER));
             }
-            
+
             IMemento[] booleanMementos = presentationMemento.getChildren(BOOLEAN);
             for (int i = 0; i < booleanMementos.length; i++) {
                 fProperties.put(booleanMementos[i].getID(), booleanMementos[i].getBoolean(BOOLEAN));
             }
-            
+
             IMemento[] persistableMementos = presentationMemento.getChildren(PERSISTABLE);
             for (int i = 0; i < persistableMementos.length; i++) {
                 String factoryID = persistableMementos[i].getString(PERSISTABLE);
                 if (factoryID != null) {
                     IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
                     if (factory != null) {
-                        Object element = factory.createElement(persistableMementos[i]); 
+                        Object element = factory.createElement(persistableMementos[i]);
                         if (element != null) {
                             fProperties.put(persistableMementos[i].getID(), element);
                         }
@@ -248,9 +248,9 @@ public class PresentationContext implements IPresentationContext {
             }
         }
 	}
-	
+
 	/**
-	 * Saves the current presentation context properties to the given memento. 
+	 * Saves the current presentation context properties to the given memento.
 	 * @param memento Memento to save to.
 	 */
 	public void saveProperites(IMemento memento) {
@@ -276,7 +276,7 @@ public class PresentationContext implements IPresentationContext {
             }
         }
 	}
-	
+
 	private boolean isEqual(Object a, Object b) {
 		if (a == null) {
 			return b == null;
@@ -304,6 +304,6 @@ public class PresentationContext implements IPresentationContext {
 	public IWorkbenchWindow getWindow() {
         return fWindow;
     }
-	
+
 
 }

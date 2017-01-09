@@ -23,10 +23,10 @@ package org.eclipse.debug.ui.contexts;
  * @since 3.3
  */
 public interface IDebugContextListener {
-	
+
 	/**
 	 * Notification the debug context has changed as specified by the given event.
-	 * 
+	 *
 	 * @param event debug context event
 	 */
 	public void debugContextChanged(DebugContextEvent event);

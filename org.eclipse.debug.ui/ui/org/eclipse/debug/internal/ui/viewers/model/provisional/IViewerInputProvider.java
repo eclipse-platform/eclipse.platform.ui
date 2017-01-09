@@ -24,15 +24,15 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * @see ViewerInputService
  */
 public interface IViewerInputProvider {
-	
+
 	/**
 	 * Asynchronously determine the viewer input to the based on the active
 	 * debug context and presentation context.
-	 * 
-	 * @param update provides details about the request and stores the newly 
+	 *
+	 * @param update provides details about the request and stores the newly
 	 * 	computed viewer input
 	 */
 	public void update(IViewerInputUpdate update);
-	 
+
 
 }

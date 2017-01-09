@@ -36,33 +36,33 @@ public class SelectedResourceManager  {
 
 	// singleton
 	private static SelectedResourceManager fgDefault;
-	
+
 	/**
 	 * Returns the singleton resource selection manager
-	 * 
+	 *
 	 * @return VariableContextManager
 	 */
 	public static SelectedResourceManager getDefault() {
 		if (fgDefault == null) {
-			fgDefault = new SelectedResourceManager(); 
+			fgDefault = new SelectedResourceManager();
 		}
 		return fgDefault;
 	}
-	
+
 	/**
 	 * Returns the selection from the currently active part. If the active part is an
-	 * editor a new selection of the editor part is made, otherwise the selection 
+	 * editor a new selection of the editor part is made, otherwise the selection
 	 * from the parts' selection provider is returned if it is a structured selection. Otherwise
 	 * and empty selection is returned, never <code>null</code>.
 	 * <br>
 	 * <p>
 	 * This method is intended to be called from the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @return the <code>IStructuredSelection</code> from the current parts' selection provider, or
 	 * a new <code>IStructuredSelection</code> of the current editor part, depending on what the current part
 	 * is.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public IStructuredSelection getCurrentSelection() {
@@ -80,11 +80,11 @@ public class SelectedResourceManager  {
 			return selection[0];
 		}
 	}
-	
+
 	/**
 	 * Underlying implementation of <code>getCurrentSelection</code>
 	 * @return the current selection
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private IStructuredSelection getCurrentSelection0() {
@@ -112,12 +112,12 @@ public class SelectedResourceManager  {
 		}
 		return StructuredSelection.EMPTY;
 	}
-		
+
 	/**
 	 * Returns the currently selected resource in the active workbench window,
 	 * or <code>null</code> if none. If an editor is active, the resource adapter
 	 * associated with the editor is returned.
-	 * 
+	 *
 	 * @return selected resource or <code>null</code>
 	 */
 	public IResource getSelectedResource() {
@@ -135,7 +135,7 @@ public class SelectedResourceManager  {
 			return resource[0];
 		}
 	}
-	
+
 	/**
 	 * Returns the currently selected resource from the active part, or <code>null</code> if one cannot be
 	 * resolved.
@@ -176,11 +176,11 @@ public class SelectedResourceManager  {
 		}
 		return resource;
 	}
-	
+
 	/**
 	 * Returns the current text selection as a <code>String</code>, or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @return the current text selection as a <code>String</code> or <code>null</code>
 	 */
 	public String getSelectedText() {
@@ -198,12 +198,12 @@ public class SelectedResourceManager  {
 			return text[0];
 		}
 	}
-	
+
 	/**
-	 * Returns the selected text from the most currently active editor. The editor does not have to 
+	 * Returns the selected text from the most currently active editor. The editor does not have to
 	 * have focus at the time this method is called.
 	 * @return the currently selected text in the most recent active editor.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected String getSelectedText0() {
@@ -228,10 +228,10 @@ public class SelectedResourceManager  {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the active workbench window, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the active workbench window, or <code>null</code> if none
 	 * @since 3.2
 	 */

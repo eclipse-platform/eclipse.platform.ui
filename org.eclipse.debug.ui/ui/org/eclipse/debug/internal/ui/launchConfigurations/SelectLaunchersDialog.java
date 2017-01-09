@@ -47,9 +47,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This dialog is used to select a preferred launcher, and also provides access to the 
+ * This dialog is used to select a preferred launcher, and also provides access to the
  * workspace defaults for preferred launchers
- * 
+ *
  *  @since 3.3
  */
 public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
@@ -81,13 +81,13 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		@Override
 		public void removeListener(ILabelProviderListener listener) {}
 	}
-	
+
 	Text description = null;
 	Button configspecific = null;
 	private ILaunchDelegate[] fDelegates = null;
 	private ILaunchConfigurationWorkingCopy fConfiguration = null;
 	private String fLaunchMode = null;
-	
+
 	/**
 	 * Constructor
 	 * @param parentShell
@@ -121,7 +121,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		}
 		return new Point(450, 450);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
@@ -153,7 +153,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 	protected Object getViewerInput() {
 		return fDelegates;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomHeaderControls(org.eclipse.swt.widgets.Composite)
 	 */
@@ -161,9 +161,9 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 	protected void addCustomHeaderControls(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		SWTFactory.createWrapLabel(comp, LaunchConfigurationsMessages.SelectLaunchersDialog_2, 2);
-		
+
 		SWTFactory.createVerticalSpacer(comp, 1);
-		
+
 		this.configspecific = SWTFactory.createCheckButton(comp, LaunchConfigurationsMessages.SelectLaunchersDialog_1, null, true, 1);
 		this.configspecific.setSelection(false);
 		GridData gd = (GridData) this.configspecific.getLayoutData();
@@ -176,7 +176,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 				resetDelegate();
 			}
 		});
-		
+
 		Link link = new Link(comp, SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.SelectLaunchersDialog_4);
 		link.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
@@ -190,7 +190,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns the currently checked launch delegate
 	 * @return the currently selected launch delegate or <code>null</code> if none are checked
@@ -199,7 +199,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
 		return (ILaunchDelegate) selection.getFirstElement();
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -208,7 +208,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		ILaunchDelegate delegate = null;
 		Set<String> modes = getCurrentModeSet();
 		if(configspecific.getSelection()) {
-			delegate = getSelectedDelegate();	
+			delegate = getSelectedDelegate();
 			if(delegate != null) {
 				fConfiguration.setPreferredLaunchDelegate(modes, delegate.getId());
 			}
@@ -219,7 +219,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		if(fConfiguration.isDirty()) {
 			try {
 				fConfiguration.doSave();
-			} 
+			}
 			catch (CoreException e) {DebugUIPlugin.log(e);}
 		}
 		super.okPressed();
@@ -242,7 +242,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		}
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 	 */
@@ -265,7 +265,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		return modes;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
@@ -286,7 +286,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		});
 		super.addViewerListeners(viewer);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#initializeControls()
 	 */

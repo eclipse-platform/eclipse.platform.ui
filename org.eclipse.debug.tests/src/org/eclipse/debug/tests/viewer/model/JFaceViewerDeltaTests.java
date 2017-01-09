@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.6
  */
 public class JFaceViewerDeltaTests extends DeltaTests {
-    
+
     public JFaceViewerDeltaTests(String name) {
         super(name);
     }
@@ -31,7 +31,7 @@ public class JFaceViewerDeltaTests extends DeltaTests {
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
-    
+
     /**
      * TODO: remove this method when bug 292322 gets fixed in TreeViewer
      */

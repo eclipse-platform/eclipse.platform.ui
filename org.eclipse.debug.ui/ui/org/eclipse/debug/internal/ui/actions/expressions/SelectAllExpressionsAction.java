@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class SelectAllExpressionsAction extends SelectAllAction implements IExpr
 	protected String getActionId() {
 		return IDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#initialize()
 	 */
@@ -62,9 +62,9 @@ public class SelectAllExpressionsAction extends SelectAllAction implements IExpr
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
 	 */
 	@Override
-	public void expressionsChanged(IExpression[] expressions) {		
+	public void expressionsChanged(IExpression[] expressions) {
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#dispose()
      */

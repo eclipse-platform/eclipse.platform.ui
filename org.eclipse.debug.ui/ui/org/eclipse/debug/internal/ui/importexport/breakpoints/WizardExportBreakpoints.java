@@ -33,9 +33,9 @@ import org.eclipse.ui.IWorkbench;
  * WizardDialog wizdialog = new WizardDialog(shell, wiz);
  * wizdialog.open();
  * </pre>
- * 
+ *
  * This class uses <code>WizardExportBreakpointsPage</code>
- * 
+ *
  * @since 3.2
  *
  */
@@ -45,17 +45,17 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 	 * The main page
 	 */
 	private WizardExportBreakpointsPage fMainPage = null;
-	
+
 	/**
 	 * The existing selection
 	 */
 	private IStructuredSelection fSelection = null;
-	
+
 	/**
-	 * Identifier for dialog settings section for the export wizard. 
+	 * Identifier for dialog settings section for the export wizard.
 	 */
 	private static final String EXPORT_DIALOG_SETTINGS = "BreakpointExportSettings"; //$NON-NLS-1$
-	
+
 	/**
 	 * This is the default constructor
 	 */
@@ -75,7 +75,7 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		fMainPage = new WizardExportBreakpointsPage(ImportExportMessages.WizardExportBreakpoints_0, fSelection); 
+		fMainPage = new WizardExportBreakpointsPage(ImportExportMessages.WizardExportBreakpoints_0, fSelection);
 		addPage(fMainPage);
 	}
 

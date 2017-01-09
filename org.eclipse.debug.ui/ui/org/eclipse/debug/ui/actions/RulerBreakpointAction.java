@@ -34,14 +34,14 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
  * @since 3.2
  */
 public abstract class RulerBreakpointAction extends Action {
-	
+
 	private ITextEditor fEditor;
 	private IVerticalRulerInfo fRulerInfo;
-	
+
 	/**
 	 * Constructs an action to work on breakpoints in the specified
 	 * text editor with the specified vertical ruler information.
-	 * 
+	 *
 	 * @param editor text editor
 	 * @param info vertical ruler information
 	 */
@@ -53,7 +53,7 @@ public abstract class RulerBreakpointAction extends Action {
 	/**
 	 * Returns the breakpoint at the last line of mouse activity in the ruler
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {
@@ -85,19 +85,19 @@ public abstract class RulerBreakpointAction extends Action {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the editor this action was created for.
-	 * 
+	 *
 	 * @return editor
 	 */
 	protected ITextEditor getEditor() {
 		return fEditor;
 	}
-	
+
 	/**
 	 * Returns the vertical ruler information this action was created for.
-	 * 
+	 *
 	 * @return vertical ruler information
 	 */
 	protected IVerticalRulerInfo getVerticalRulerInfo() {

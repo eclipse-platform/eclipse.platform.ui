@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchPartConstants;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.6
  */
 public interface IDetailPane3 extends IDetailPane, ISaveablePart {
@@ -35,12 +35,12 @@ public interface IDetailPane3 extends IDetailPane, ISaveablePart {
 	 * @param listener a property listener
 	 */
 	public void addPropertyListener(IPropertyListener listener);
-	
+
 	/**
 	 * Removes the given property listener from this workbench part.
 	 * Has no effect if an identical listener is not registered.
 	 *
 	 * @param listener a property listener
 	 */
-    public void removePropertyListener(IPropertyListener listener);	
+    public void removePropertyListener(IPropertyListener listener);
 }

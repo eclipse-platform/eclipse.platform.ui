@@ -52,7 +52,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for adding memory block.
- * 
+ *
  * @since 3.0
  */
 public class AddMemoryBlockAction extends Action implements IDebugContextListener, IDebugEventSetListener {
@@ -98,7 +98,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_ADD));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".addMemoryMonitorAction_context"); //$NON-NLS-1$		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".addMemoryMonitorAction_context"); //$NON-NLS-1$
 
 		// listen for context changed
 		DebugUITools.addPartDebugContextListener(fSite.getSite(), this);
@@ -321,7 +321,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	/**
 	 * Return the last memory block added to memory block manager via this
 	 * action.
-	 * 
+	 *
 	 * @return Returns the fLastMemoryBlock.
 	 */
 	public IMemoryBlock getLastMemoryBlock() {

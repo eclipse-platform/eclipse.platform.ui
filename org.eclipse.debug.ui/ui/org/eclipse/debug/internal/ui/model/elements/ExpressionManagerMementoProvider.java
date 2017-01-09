@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * Memento provider for expression manager.
- * 
+ *
  * @since 3.4
  */
 public class ExpressionManagerMementoProvider extends DebugElementMementoProvider {

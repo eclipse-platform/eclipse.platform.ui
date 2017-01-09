@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - integration with non-standard debug models (Bug 209883)
@@ -27,7 +27,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ *
  */
 public class EnableWatchExpressionAction implements IViewActionDelegate, IActionDelegate2, IDebugEventSetListener {
 
@@ -143,6 +143,6 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 				}
 			}
 		}
-		
+
 	}
 }

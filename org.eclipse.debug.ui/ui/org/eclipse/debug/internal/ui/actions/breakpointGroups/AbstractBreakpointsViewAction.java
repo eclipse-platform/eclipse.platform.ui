@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.ui.IViewPart;
  * Abstract implementation of an action contributed to the breakpoints view.
  */
 public abstract class AbstractBreakpointsViewAction implements IViewActionDelegate, IActionDelegate2 {
-    
+
     /**
      * The breakpoints view that this action has been contributed to.
      */
@@ -35,7 +35,7 @@ public abstract class AbstractBreakpointsViewAction implements IViewActionDelega
 	public void init(IViewPart view) {
         fView= (BreakpointsView) view;
     }
-    
+
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -49,14 +49,14 @@ public abstract class AbstractBreakpointsViewAction implements IViewActionDelega
     @Override
 	public void dispose() {
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
     @Override
 	public void init(IAction action) {
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
      */

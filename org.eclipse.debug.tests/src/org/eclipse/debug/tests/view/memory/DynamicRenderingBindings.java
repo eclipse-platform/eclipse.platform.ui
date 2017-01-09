@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,10 +20,10 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
  * @since 3.1
  */
 public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsProvider {
-	
+
 	//
 	private static DynamicRenderingBindings fgSingleton = null;
-	
+
 	// id of rendering type bound by this provider
 	private String fId = "rendering_type_1"; //$NON-NLS-1$
 
@@ -33,7 +33,7 @@ public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsPro
 	public DynamicRenderingBindings() {
 		fgSingleton = this;
 	}
-	
+
     /**
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
@@ -57,11 +57,11 @@ public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsPro
 	public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
         return DebugUITools.getMemoryRenderingManager().getRenderingType(fId);
     }
-	
+
 	/**
 	 * Sets the current rendering bound to this provider, and notifies
 	 * listeners of the change.
-	 * 
+	 *
 	 * @param id rendering id
 	 */
 	public static void setBinding(String id) {

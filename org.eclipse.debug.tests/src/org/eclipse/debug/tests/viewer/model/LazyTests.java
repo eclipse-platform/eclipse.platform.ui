@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - clean-up
@@ -27,18 +27,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Tests that verify that the viewer property retrieves all the content 
+ * Tests that verify that the viewer property retrieves all the content
  * from the model.
- * 
+ *
  * @since 3.6
  */
 abstract public class LazyTests extends TestCase implements ITestModelUpdatesListenerConstants {
-    
+
     Display fDisplay;
     Shell fShell;
     IInternalTreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public LazyTests(String name) {
         super(name);
     }
@@ -54,7 +54,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, true, true);
 
         fShell.open ();
@@ -68,7 +68,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {
@@ -86,10 +86,10 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
-    
+
     /**
      * Creates a model in the pattern of:
-     * 
+     *
      * root
      *   1
      *     1.1
@@ -106,23 +106,23 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         }
 		TestElement element = new TestElement(model, "1", children); //$NON-NLS-1$
 		model.setRoot(new TestElement(model, "root", new TestElement[] { element })); //$NON-NLS-1$
-        
+
         return model;
     }
 
     /**
-     * Test to make sure that if an element is expanded its children are 
+     * Test to make sure that if an element is expanded its children are
      * not automatically materialized.
      * (bug 305739 and bug 304277)
      */
     public void testExpandLargeSubTree() throws InterruptedException {
         // Create test model with lots of children.
-        TestModel model = largeSubtreeModel(1000); 
-        
+        TestModel model = largeSubtreeModel(1000);
+
         // NOTE: WE ARE NOT EXPANDING ANY CHILDREN
 
         // Populate initial view content
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, true); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, true);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
 			if (!fDisplay.readAndDispatch ()) {
@@ -138,7 +138,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         expandDelta.addNode(expandElement, 0, IModelDelta.EXPAND, expandElement.getChildren().length);
 
         // Add first 250 elements as acceptable to materialize
-        fListener.reset(); 
+        fListener.reset();
         fListener.setFailOnRedundantUpdates(true);
 		TreePath expandElementPath = model.findElement("1"); //$NON-NLS-1$
         fListener.addChildreCountUpdate(expandElementPath);
@@ -159,23 +159,23 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
     }
 
     /**
-     * Test to make sure that if an element that is previously selected, is 
+     * Test to make sure that if an element that is previously selected, is
      * then selected and replaced, that no extra elements are retrieved.
      * (bug 304277 comment #24, and bug 305739 comment #9).
      */
     public void testReplaceAndSelectInSubTreeTree() throws InterruptedException {
         // Create test model with lots of children.
-        TestModel model = largeSubtreeModel(1000); 
-        
+        TestModel model = largeSubtreeModel(1000);
+
         // Expand all children
         fViewer.setAutoExpandLevel(-1);
-        
-        // Populate initial view content, watch for all updates but only wait 
+
+        // Populate initial view content, watch for all updates but only wait
         // for the content update sequence to finish (elements off screen will
         // not be updated).
         // TODO: child count for element 1 is updated multiple times.
         fListener.reset();
-        fListener.setFailOnMultipleModelUpdateSequences(true); 
+        fListener.setFailOnMultipleModelUpdateSequences(true);
         fListener.setFailOnRedundantUpdates(false);
         fViewer.setInput(model.getRootElement());
 		fListener.addLabelUpdate(model.findElement("1.0")); //$NON-NLS-1$
@@ -187,7 +187,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 
         // Set selection so that the initial selection is not empty
 		fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("1.0") })); //$NON-NLS-1$
-        
+
         // Create delta to select the "1" element.
         TestElement rootElement = model.getRootElement();
         ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.NO_CHANGE);
@@ -202,7 +202,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         _1Delta.addNode(_1_0_newElement, 0, IModelDelta.SELECT);
 
         // Add element label update and post the delta
-        fListener.reset(); 
+        fListener.reset();
         fListener.setFailOnRedundantUpdates(true);
 		TreePath _1_0_newElementPath = model.findElement("1.0 - new"); //$NON-NLS-1$
         fListener.addLabelUpdate(_1_0_newElementPath);
@@ -222,13 +222,13 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
      */
     public void testContentRefresh() throws InterruptedException {
         // Create test model with lots of children.
-        TestModel model = largeSubtreeModel(1000); 
-        
+        TestModel model = largeSubtreeModel(1000);
+
         // Expand children all
         fViewer.setAutoExpandLevel(-1);
 
         // Populate initial view content
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) {
 			if (!fDisplay.readAndDispatch ()) {
@@ -248,7 +248,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 				Thread.sleep(0);
 			}
 		}
-        
+
         // Create delta to refresh the "1" element.
         TestElement rootElement = model.getRootElement();
         ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.NO_CHANGE);
@@ -256,11 +256,11 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         TestElement expandElement = rootElement.getChildren()[0];
         expandDelta.addNode(expandElement, 0, IModelDelta.CONTENT, expandElement.getChildren().length);
 
-        // Rinse and repeast.  The refresh in bug 335734 is only triggered 
+        // Rinse and repeast.  The refresh in bug 335734 is only triggered
         // only on the second time.
         for (int repeatCount = 0; repeatCount < 3; repeatCount++) {
             // Add first 250 elements (after element 500) as acceptable to materialize
-            fListener.reset(); 
+            fListener.reset();
             fListener.setFailOnRedundantUpdates(true);
 			TreePath refreshElementPath = model.findElement("1"); //$NON-NLS-1$
             fListener.addRedundantExceptionChildCount(refreshElementPath);
@@ -276,7 +276,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
                 fListener.addHasChildrenUpdate(childPath);
             }
             model.postDelta(rootDelta);
-    
+
             while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE)) {
 				if (!fDisplay.readAndDispatch ()) {
 					Thread.sleep(0);

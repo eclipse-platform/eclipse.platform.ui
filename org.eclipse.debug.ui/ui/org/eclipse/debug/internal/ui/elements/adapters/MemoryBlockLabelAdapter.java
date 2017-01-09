@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,12 +20,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class MemoryBlockLabelAdapter extends AsynchronousDebugLabelAdapter {
-	
+
 	@Override
 	protected ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IMemoryBlock)
 			return new ImageDescriptor[]{DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_VARIABLE)};
-		
+
 		return new ImageDescriptor[0];
 	}
 
@@ -34,7 +34,7 @@ public class MemoryBlockLabelAdapter extends AsynchronousDebugLabelAdapter {
 	 * @return
 	 */
 	private String getLabel(IMemoryBlock memoryBlock) {
-		
+
 		String memoryBlockLabel = " "; //$NON-NLS-1$
 		if (memoryBlock instanceof IMemoryBlockExtension)
 		{

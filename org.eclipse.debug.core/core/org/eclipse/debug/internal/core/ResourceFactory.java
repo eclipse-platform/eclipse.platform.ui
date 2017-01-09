@@ -32,7 +32,7 @@ public class ResourceFactory {
 
     /**
      * Creates and returns an element based on the given memento
-     * 
+     *
      * @param memento element memento
      * @return associated element
      */
@@ -47,7 +47,7 @@ public class ResourceFactory {
         String type = memento.getString(TAG_TYPE);
         IResource res = null;
         if (type == null) {
-            // Old format memento. Create an IResource using findMember. 
+            // Old format memento. Create an IResource using findMember.
             // Will return null for resources in closed projects.
             res = root.findMember(new Path(fileName));
         } else {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,16 +33,16 @@ package org.eclipse.debug.core.model;
  * </p>
  * @see org.eclipse.debug.core.model.IWatchExpression
  * @see org.eclipse.debug.core.model.IWatchExpressionListener
- * 
+ *
  * @since 3.0
  */
 public interface IWatchExpressionDelegate {
-	
+
 	/**
 	 * Evaluates the given expression in the given context asynchronously and
 	 * notifies the given listener when the evaluation finishes.
-	 * 
-	 * @param expression the expression to evaluate 
+	 *
+	 * @param expression the expression to evaluate
 	 * @param context the context for the evaluation
 	 * @param listener the listener to notify when the evaluation completes
 	 */

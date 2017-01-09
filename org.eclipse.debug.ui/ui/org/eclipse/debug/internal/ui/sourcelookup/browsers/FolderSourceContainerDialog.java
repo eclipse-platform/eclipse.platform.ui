@@ -35,35 +35,35 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * The dialog for selecting the folder for which a source container will be created.
- * 
+ *
  * @since 3.0
  */
-public class FolderSourceContainerDialog extends ElementTreeSelectionDialog { 
-	
+public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
+
 	/**
 	 * Constant to persist the state of the search subfolders button
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String LAST_SUBDIR_SETTING = "EXT_FOLDER_SOURCE_LAST_SUBDIR_SETTING"; //$NON-NLS-1$
-	
+
 	/**
 	 * Lets us control searching subfolders
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private Button fSubfoldersButton;
-	
+
 	/**
 	 * stored value whether to search subfolders or not
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private boolean fSearchSubfolders = false;
-	
+
 	/**
 	 * We need to add in the new control for indicating whether to search sub folders or not
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -83,7 +83,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 	 */
 	public FolderSourceContainerDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
 		super(parent, labelProvider, contentProvider);
-		setTitle(SourceLookupUIMessages.folderSelection_title);	//	
+		setTitle(SourceLookupUIMessages.folderSelection_title);	//
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
         setComparator(new ResourceComparator(ResourceComparator.NAME));
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
@@ -91,16 +91,16 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IFolder)) {
-						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); // 
-					} 				
+						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); //
+					}
 				}
 				return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-			}			
+			}
 		};
-		setValidator(validator);	
+		setValidator(validator);
 		setDoubleClickSelects(true);
 		setAllowMultiple(true);
-		setMessage(SourceLookupUIMessages.folderSelection_label); 
+		setMessage(SourceLookupUIMessages.folderSelection_label);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
 		setSearchSubfolders(DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
 		addFilter(new ViewerFilter() {
@@ -116,27 +116,27 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns whether the 'search subfolders' option is selected.
-	 * 
+	 *
 	 * @since 3.2
 	 * @return true if the search subfolders button is selected, false otherwise.
 	 */
 	public boolean isSearchSubfolders() {
 		return fSearchSubfolders;
 	}
-	
+
 	/**
 	 * Sets whether the 'search subfolders' option is selected.
-	 * 
+	 *
 	 * @param subfolders
 	 * @since 3.2
 	 */
 	public void setSearchSubfolders(boolean subfolders) {
 		fSearchSubfolders = subfolders;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
 	 */
@@ -146,5 +146,5 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);
 		super.okPressed();
 	}
-	
+
 }

@@ -17,7 +17,7 @@ import java.math.BigInteger;
  * Util functions for data conversions
  */
 public class RenderingsUtil {
-	
+
 	public static final int LITTLE_ENDIAN = 0;
 	public static final int BIG_ENDIAN = 1;
 	public static final int ENDIANESS_UNKNOWN = 2;
@@ -35,28 +35,28 @@ public class RenderingsUtil {
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
 			byte[] temp = new byte[size];
-			
+
 			for (int i=0; i<array.length; i++)
 			{
 				temp[i] = array[i];
 			}
-			
+
 			// fill up the rest of the array
 			for (int i=array.length; i<size; i++)
 			{
 				temp[i] = 0;
 			}
-			
+
 			array = temp;
 			return array;
 		}
         byte[] temp = new byte[size];
-        
+
         for (int i=0; i<size - array.length; i++)
         {
         	temp[i] = 0;
         }
-        
+
         int j=0;
         // fill up the rest of the array
         for (int i=size - array.length; i<size; i++)
@@ -64,18 +64,18 @@ public class RenderingsUtil {
         	temp[i] = array[j];
         	j++;
         }
-        
+
         array = temp;
         return array;
 	}
-	
+
 	static public BigInteger convertByteArrayToUnsignedLong(byte[] array, int endianess)
 	{
 		if (array.length < 8)
 		{
 			array = fillArray(array, 8, endianess);
 		}
-		
+
 		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
@@ -87,10 +87,10 @@ public class RenderingsUtil {
 				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft(i*8);
 				value = value.or(b);
-			}			
+			}
 		}
 		else
-		{	
+		{
 			for (int i=0; i< 8; i++)
 			{
 				byte[] temp = new byte[1];
@@ -103,7 +103,7 @@ public class RenderingsUtil {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * Convert byte array to long.
 	 * @param array
@@ -111,14 +111,14 @@ public class RenderingsUtil {
 	 * @return result of the conversion in long
 	 */
 	static public long convertByteArrayToLong(byte[] array, int endianess)
-	{	
+	{
 		if (array.length < 8)
 		{
 			array = fillArray(array, 8, endianess);
 		}
-		
+
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
-		{	
+		{
 			long value = 0;
 			for (int i = 0; i < 8; i++) {
 				long b = array[i];
@@ -134,27 +134,27 @@ public class RenderingsUtil {
         	b &= 0xff;
         	value |= (b<<((7-i)*8));
         }
-        
+
         return value;
 	}
-	
+
 	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess)
-	{	
+	{
 		if (array.length < 16)
 		{
 			array = fillArray(array, 16, endianess);
 		}
-		
+
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
-		{	
+		{
 			// reverse bytes
 			byte[] holder = new byte[16];
 			int j=15;
 			for (int i=0; i<16; i++, j--)
-			{	
+			{
 				holder[i] = array[j];
 			}
-			
+
 			// create BigInteger
 			BigInteger value = new BigInteger(holder);
 			return value;
@@ -162,24 +162,24 @@ public class RenderingsUtil {
         BigInteger value = new BigInteger(array);
         return value;
 	}
-	
+
 	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess, int arraySize)
-	{	
+	{
 		if (array.length < arraySize)
 		{
 			array = fillArray(array, arraySize, endianess);
 		}
-		
+
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
-		{	
+		{
 			// reverse bytes
 			byte[] holder = new byte[arraySize];
 			int j=arraySize-1;
 			for (int i=0; i<arraySize; i++, j--)
-			{	
+			{
 				holder[i] = array[j];
 			}
-			
+
 			// create BigInteger
 			BigInteger value = new BigInteger(holder);
 			return value;
@@ -187,14 +187,14 @@ public class RenderingsUtil {
         BigInteger value = new BigInteger(array);
         return value;
 	}
-	
+
 	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess)
 	{
 		if (array.length < 16)
 		{
 			array = fillArray(array, 16, endianess);
 		}
-		
+
 		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
@@ -206,10 +206,10 @@ public class RenderingsUtil {
 				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft(i*8);
 				value = value.or(b);
-			}			
+			}
 		}
 		else
-		{	
+		{
 			for (int i=0; i< 16; i++)
 			{
 				byte[] temp = new byte[1];
@@ -220,16 +220,16 @@ public class RenderingsUtil {
 				value = value.or(b);
 			}
 		}
-		return value;	
+		return value;
 	}
-	
+
 	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess, int arraySize)
 	{
 		if (array.length < arraySize)
 		{
 			array = fillArray(array, arraySize, endianess);
 		}
-		
+
 		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
@@ -241,10 +241,10 @@ public class RenderingsUtil {
 				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
 				b = b.shiftLeft(i*8);
 				value = value.or(b);
-			}			
+			}
 		}
 		else
-		{	
+		{
 			for (int i=0; i< arraySize; i++)
 			{
 				byte[] temp = new byte[1];
@@ -255,9 +255,9 @@ public class RenderingsUtil {
 				value = value.or(b);
 			}
 		}
-		return value;			
+		return value;
 	}
-	
+
 	/**
 	 * Convert byte array to integer.
 	 * @param array
@@ -265,12 +265,12 @@ public class RenderingsUtil {
 	 * @return result of the conversion in int
 	 */
 	static public int convertByteArrayToInt(byte[] array, int endianess)
-	{	
+	{
 		if (array.length < 4)
 		{
 			array = fillArray(array, 4, endianess);
 		}
-		
+
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
 			int value = 0;
@@ -288,10 +288,10 @@ public class RenderingsUtil {
         	b &= 0xff;
         	value |= (b<<((3-i)*8));
         }
-        
+
         return value;
 	}
-	
+
 	/**
 	 * Convert byte array to short.
 	 * @param array
@@ -299,12 +299,12 @@ public class RenderingsUtil {
 	 * @return result of teh conversion in short
 	 */
 	static public short convertByteArrayToShort(byte[] array, int endianess)
-	{	
+	{
 		if (array.length < 2)
 		{
 			array = fillArray(array, 2, endianess);
 		}
-		
+
 		if (endianess == RenderingsUtil.LITTLE_ENDIAN)
 		{
 			short value = 0;
@@ -324,7 +324,7 @@ public class RenderingsUtil {
         }
         return value;
 	}
-	
+
 	/**
 	 * Convert big integer to byte array.
 	 * @param i
@@ -349,9 +349,9 @@ public class RenderingsUtil {
         	BigInteger x = i.shiftRight((15-j)*8);
         	buf[j] = x.byteValue();
         }
-        return buf;		
+        return buf;
 	}
-	
+
 	static public byte[] convertSignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
 	{
 		byte buf[]=new byte[arraySize];
@@ -370,9 +370,9 @@ public class RenderingsUtil {
         	BigInteger x = i.shiftRight((arraySize-1-j)*8);
         	buf[j] = x.byteValue();
         }
-        return buf;				
+        return buf;
 	}
-	
+
 	/**
 	 * Convert big integer to byte array.
 	 * @param i
@@ -397,9 +397,9 @@ public class RenderingsUtil {
         	BigInteger x = i.shiftRight((31-j)*8);
         	buf[j] = x.byteValue();
         }
-        return buf;		
+        return buf;
 	}
-	
+
 	static public byte[] convertUnsignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
 	{
 		byte buf[]=new byte[arraySize*2];
@@ -418,9 +418,9 @@ public class RenderingsUtil {
         	BigInteger x = i.shiftRight(((arraySize*2)-1-j)*8);
         	buf[j] = x.byteValue();
         }
-        return buf;				
+        return buf;
 	}
-	
+
 	/**
 	 * Convert long to byte array.
 	 * @param i
@@ -445,7 +445,7 @@ public class RenderingsUtil {
         }
         return buf;
 	}
-	
+
 	/**
 	 * Convert integer to byte array.
 	 * @param i
@@ -470,7 +470,7 @@ public class RenderingsUtil {
 		}
 		return buf;
 	}
-	
+
 	/**
 	 * Convert short to byte array.
 	 * @param i
@@ -505,13 +505,13 @@ public class RenderingsUtil {
 	{
 		StringBuffer strBuffer = new StringBuffer();
 		char charArray[];
-		
+
 		for (int i=0; i<byteArray.length;i ++)
 		{
 			charArray = RenderingsUtil.convertByteToCharArray(byteArray[i]);
-			strBuffer.append(charArray);			
+			strBuffer.append(charArray);
 		}
-		
+
 		return strBuffer.toString();
 	}
 
@@ -522,7 +522,7 @@ public class RenderingsUtil {
 		if (val<0) val += 256;
 		charArray[0] = Character.forDigit(val/16, 16);
 		charArray[1] = Character.forDigit(val%16, 16);
-		
+
 		return charArray;
 	}
 
@@ -536,35 +536,35 @@ public class RenderingsUtil {
 	 */
 	public static byte[] convertHexStringToByteArray(String str, int numBytes, int numCharsPerByte) throws NumberFormatException
 	{
-	    if (str.length() == 0) 
+	    if (str.length() == 0)
 	        return null;
-		
+
 		StringBuffer buf = new StringBuffer(str);
-	    
+
 	    // pad string with zeros
 	    int requiredPadding =  numBytes * numCharsPerByte - str.length();
 	    while (requiredPadding > 0) {
 	        buf.insert(0, "0"); //$NON-NLS-1$
 	        requiredPadding--;
 	    }
-		
+
 		byte[] bytes = new byte[numBytes];
 		str = buf.toString();
-	
+
 		// set data in memory
 		for (int i=0; i<bytes.length; i++)
 		{
 			// convert string to byte
 			String oneByte = str.substring(i*2, i*2+2);
-			
+
 			Integer number = Integer.valueOf(oneByte, 16);
 			if (number.compareTo(Integer.valueOf(Byte.toString(Byte.MAX_VALUE))) > 0)
 			{
 				int temp = number.intValue();
 				temp = temp - 256;
-	
+
 				String tempStr = Integer.toString(temp);
-		
+
 				Byte myByte = Byte.valueOf(tempStr);
 				bytes[i] = myByte.byteValue();
 			}
@@ -574,7 +574,7 @@ public class RenderingsUtil {
 				bytes[i] = myByte.byteValue();
 			}
 		}
-		
+
 		return bytes;
-	} 	
+	}
 }

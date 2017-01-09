@@ -4,14 +4,14 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - refactored on top of VirtualTreeModelViewer
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
- 
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,29 +50,29 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
-	
+
 	private TreeModelViewer fClientViewer;
 	private static final String TAB = "\t"; //$NON-NLS-1$
 	private static final String SEPARATOR = "line.separator"; //$NON-NLS-1$
-	
+
 	/**
 	 * Virtual viewer listener.  It tracks progress of copy and increments
 	 * the progress monitor.
 	 */
 	private class VirtualViewerListener implements ILabelUpdateListener, IVirtualItemListener {
-        
+
 		VirtualTreeModelViewer fVirtualViewer;
 	    IProgressMonitor fProgressMonitor;
         int fSelectionRootDepth;
 		Set<VirtualItem> fItemsToUpdate;
-        
+
         @Override
 		public void labelUpdateStarted(ILabelUpdate update) {}
         @Override
 		public void labelUpdateComplete(ILabelUpdate update) {
         	VirtualItem updatedItem = fVirtualViewer.findItem(update.getElementPath());
         	if (fItemsToUpdate.remove(updatedItem)) {
-                incrementProgress(1);            
+                incrementProgress(1);
         	}
         }
         @Override
@@ -81,18 +81,18 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
         @Override
 		public void labelUpdatesComplete() {
         }
-        
+
         @Override
 		public void revealed(VirtualItem item) {
         }
-        
+
         @Override
 		public void disposed(VirtualItem item) {
         	if (fItemsToUpdate.remove(item)) {
         		incrementProgress(1);
         	}
         }
-        
+
         private void incrementProgress(int count) {
             IProgressMonitor pm;
             synchronized (VirtualCopyToClipboardActionDelegate.this) {
@@ -102,7 +102,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
                 pm.worked(count);
                 if (fItemsToUpdate.isEmpty()) {
                     pm.done();
-                }            
+                }
             }
         }
     }
@@ -121,7 +121,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 				adapter.setAction(getActionId(), action);
 			}
 			return super.initialize(action, selection);
-		} 
+		}
 		return false;
 	}
 
@@ -129,7 +129,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		return IDebugView.COPY_ACTION;
 	}
 
-	/** 
+	/**
 	 * Appends the representation of the specified element (using the label provider and indent)
 	 * to the buffer.  For elements down to stack frames, children representations
 	 * are append to the buffer as well.
@@ -154,19 +154,19 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	}
 
 	private class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {
-	    
+
 		Set<VirtualItem> fItemsToCopy = Collections.EMPTY_SET;
 		Set<VirtualItem> fItemsToValidate = Collections.EMPTY_SET;
-	    
+
 	    @Override
 		public boolean isItemVisible(VirtualItem item) {
 	        return fItemsToValidate.contains(item);
 	    }
-	    
+
 	    @Override
 		public void showItem(VirtualItem item) {
 	    }
-	    
+
 		void setItemsToCopy(Set<VirtualItem> itemsToCopy) {
 	        fItemsToCopy = itemsToCopy;
 			fItemsToValidate = new HashSet<VirtualItem>();
@@ -175,19 +175,19 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	                fItemsToValidate.add(itemToCopy);
 	                itemToCopy = itemToCopy.getParent();
 	            }
-	        }	   
+	        }
 	    }
 	}
-	
+
 	private VirtualTreeModelViewer initVirtualViewer(TreeModelViewer clientViewer, VirtualViewerListener listener, ItemsToCopyVirtualItemValidator validator) {
         Object input = clientViewer.getInput();
         ModelDelta stateDelta = new ModelDelta(input, IModelDelta.NO_CHANGE);
         clientViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND);
         VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
-            clientViewer.getDisplay(), 
-            SWT.VIRTUAL, 
-            clientViewer.getPresentationContext(), 
-            validator); 
+            clientViewer.getDisplay(),
+            SWT.VIRTUAL,
+            clientViewer.getPresentationContext(),
+            validator);
         virtualViewer.setFilters(clientViewer.getFilters());
         virtualViewer.addLabelUpdateListener(listener);
         virtualViewer.getTree().addItemListener(listener);
@@ -198,7 +198,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
             virtualViewer.setVisibleColumns(columns);
         }
         virtualViewer.updateViewer(stateDelta);
-        
+
         // Parse selected items from client viewer and add them to the virtual viewer selection.
         listener.fSelectionRootDepth = Integer.MAX_VALUE;
         TreeItem[] selection = getSelectedItems(clientViewer);
@@ -225,11 +225,11 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
         virtualViewer.getTree().validate();
         return virtualViewer;
 	}
-	
+
 	protected TreeItem[] getSelectedItems(TreeModelViewer clientViewer) {
 	    return clientViewer.getTree().getSelection();
 	}
-	
+
 	/**
 	 * Do the specific action using the current selection.
 	 * @param action Action that is running.
@@ -239,16 +239,16 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	    if (fClientViewer.getSelection().isEmpty()) {
 	        return;
 	    }
-	    
+
 		final VirtualViewerListener listener = new VirtualViewerListener();
 		ItemsToCopyVirtualItemValidator validator = new ItemsToCopyVirtualItemValidator();
 		VirtualTreeModelViewer virtualViewer = initVirtualViewer(fClientViewer, listener, validator);
 		listener.fVirtualViewer = virtualViewer;
-		
+
 		ProgressMonitorDialog dialog = new TimeTriggeredProgressMonitorDialog(fClientViewer.getControl().getShell(), 500);
 		final IProgressMonitor monitor = dialog.getProgressMonitor();
 		dialog.setCancelable(true);
-				 
+
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			@Override
 			public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
@@ -256,10 +256,10 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	                listener.fProgressMonitor = m;
 	                listener.fProgressMonitor.beginTask(DebugUIPlugin.removeAccelerators(getAction().getText()), listener.fItemsToUpdate.size());
 	            }
-	            
+
 	            while (!listener.fItemsToUpdate.isEmpty() && !listener.fProgressMonitor.isCanceled()) {
 	                Thread.sleep(1);
-	            } 
+	            }
 	            synchronized(listener) {
 	                listener.fProgressMonitor = null;
 	            }
@@ -277,7 +277,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		if (!monitor.isCanceled()) {
 		    copySelectionToClipboard(virtualViewer, validator.fItemsToCopy, listener.fSelectionRootDepth);
 		}
-		
+
         virtualViewer.removeLabelUpdateListener(listener);
         virtualViewer.getTree().removeItemListener(listener);
 		virtualViewer.dispose();
@@ -288,7 +288,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
         writeItemToBuffer (virtualViewer.getTree(), itemsToCopy, buffer, -selectionRootDepth);
         writeBufferToClipboard(buffer);
 	}
-	
+
 	protected void writeItemToBuffer(VirtualItem item, Set<VirtualItem> itemsToCopy, StringBuffer buffer, int indent) {
 	    if (itemsToCopy.contains(item)) {
 	        append(item, buffer, indent);
@@ -305,25 +305,25 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		if (buffer.length() == 0) {
 			return;
 		}
-		
+
         TextTransfer plainTextTransfer = TextTransfer.getInstance();
-        Clipboard clipboard= new Clipboard(fClientViewer.getControl().getDisplay());        
+        Clipboard clipboard= new Clipboard(fClientViewer.getControl().getDisplay());
 		try {
 			clipboard.setContents(
-					new String[]{buffer.toString()}, 
+					new String[]{buffer.toString()},
 					new Transfer[]{plainTextTransfer});
 		} catch (SWTError e){
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw e;
 			}
-			if (MessageDialog.openQuestion(fClientViewer.getControl().getShell(), ActionMessages.CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1, ActionMessages.CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2)) { // 
+			if (MessageDialog.openQuestion(fClientViewer.getControl().getShell(), ActionMessages.CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1, ActionMessages.CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2)) { //
 				writeBufferToClipboard(buffer);
 			}
 		} finally {
 		    clipboard.dispose();
 		}
 	}
-	
+
 	protected TreeModelViewer getViewer() {
 		return fClientViewer;
 	}
@@ -338,7 +338,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	protected void doAction(Object element) {
 		//not used
 	}
-	
+
 	@Override
 	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
 	    if (selection.isEmpty()) {

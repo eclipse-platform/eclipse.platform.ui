@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,18 +15,18 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Columns for Java variables.
- * 
+ *
  * @since 3.2
  */
 public class VariableColumnPresentation extends AbstractColumnPresentation {
-	
+
 	/**
 	 * Constant identifier for the default variable column presentation.
 	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_PRESENTATION_ID_VARIABLE}
 	 */
 	@Deprecated
 	public final static String DEFAULT_VARIABLE_COLUMN_PRESENTATION = IDebugUIConstants.COLUMN_PRESENTATION_ID_VARIABLE;
-	
+
 	/**
 	 * Default column identifiers
 	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_ID_VARIABLE_NAME}
@@ -48,12 +48,12 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 	 */
 	@Deprecated
 	public final static String COLUMN_VALUE_TYPE = IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE;
-	
-	private static final String[] ALL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME, 
+
+	private static final String[] ALL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME,
 		IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE, IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE, IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE};
-	private static final String[] INITIAL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME, 
-		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE}; 
-	
+	private static final String[] INITIAL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME,
+		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE};
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getColumns()
 	 */

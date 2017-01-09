@@ -73,10 +73,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	private Map<String, ILaunchGroup> fGroupsByCategory = null;
 	// whether to re-fill the menu (reset on selection change)
 	private boolean fFillMenu = true;
-	
+
 	/**
 	 * Constructs a contextual launch action for the given launch mode.
-	 * 
+	 *
 	 * @param mode launch mode
 	 */
 	public ContextualLaunchAction(String mode) {
@@ -94,7 +94,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			}
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -126,7 +126,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		Menu menu = new Menu(parent);
 		/**
 		 * Add listener to re-populate the menu each time
-		 * it is shown because MenuManager.update(boolean, boolean) 
+		 * it is shown because MenuManager.update(boolean, boolean)
 		 * doesn't dispose pull-down ActionContribution items for each popup menu.
 		 */
 		menu.addMenuListener(new MenuAdapter() {
@@ -153,7 +153,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	public void run(IAction action) {
 		// Never called because we become a menu.
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -172,7 +172,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		}
 		action.setEnabled(false);
 	}
-	
+
 	/**
 	 * Returns the launch manager
 	 * @return the launch manager
@@ -181,7 +181,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
     /**
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
@@ -218,14 +218,14 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				if (!WorkbenchActivityHelper.filterItem(ext) && isApplicable(ext, context)) {
 					filteredShortCuts.add(ext);
 				}
-			} 
+			}
 			catch (CoreException e) {
 				IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Launch shortcut '" + ext.getId() + "' enablement expression caused exception. Shortcut was removed.", e); //$NON-NLS-1$ //$NON-NLS-2$
 				DebugUIPlugin.log(status);
 				iter.remove();
 			}
 		}
-	
+
 	//we need a separator iff the shared config entry has been added and there are following shortcuts
 		if(menu.getItemCount() > 0 && filteredShortCuts.size() > 0) {
 			 new MenuItem(menu, SWT.SEPARATOR);
@@ -243,7 +243,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				}
 			}
 		}
-		
+
 	// add in the open ... dialog shortcut(s)
 		if (categories.isEmpty()) {
 			if (accelerator > 1) {

@@ -54,7 +54,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
 			return DebugElementHelper.getFont(element, debugContext.getModelPresentation());
-			
+
 		}
 		return DebugElementHelper.getFont(element);
 	}
@@ -64,7 +64,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
-			return DebugElementHelper.getForeground(element, debugContext.getModelPresentation());	
+			return DebugElementHelper.getForeground(element, debugContext.getModelPresentation());
 		}
 		return DebugElementHelper.getForeground(element);
 	}
@@ -74,17 +74,17 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
-			return DebugElementHelper.getImageDescriptor(element, debugContext.getModelPresentation());	
+			return DebugElementHelper.getImageDescriptor(element, debugContext.getModelPresentation());
 		}
 		return DebugElementHelper.getImageDescriptor(element);
 	}
-	
+
 	/**
 	 * Returns the model presentation for the specified model, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param context presentation context
 	 * @param modelId debug model identifier
-	 * @return debug model presentation or <code>null</code> 
+	 * @return debug model presentation or <code>null</code>
 	 */
 	protected IDebugModelPresentation getModelPresentation(IPresentationContext context, String modelId) {
 		if (context instanceof DebugModelPresentationContext) {
@@ -96,7 +96,7 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		}
 		return null;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#requiresUIJob(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
@@ -119,6 +119,6 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 			}
     	}
 		return false;
-    }	
+    }
 
 }

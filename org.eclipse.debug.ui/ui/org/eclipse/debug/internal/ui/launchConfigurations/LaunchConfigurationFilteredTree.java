@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Eike Stepper    - bug 343228
@@ -38,11 +38,11 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * Overrides the default filtered tree to use our own tree viewer which supports preserving selection after filtering
- * 
+ *
  * @see LaunchConfigurationView
  * @see LaunchConfigurationViewer
- * 
- * @since 3.3 
+ *
+ * @since 3.3
  */
 public final class LaunchConfigurationFilteredTree extends FilteredTree {
 
@@ -50,7 +50,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	private ViewerFilter[] fFilters = null;
 	private int fTreeStyle = -1;
 	private PatternFilter fPatternFilter = null;
-	
+
 	/**
 	 * Constructor
 	 * @param parent the parent {@link Composite}
@@ -66,7 +66,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		fPatternFilter = filter;
 		fTreeStyle = treeStyle;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
 	 */
@@ -92,7 +92,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		});
 		return treeViewer;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredTree#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
@@ -115,7 +115,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	public void createViewControl() {
 		super.init(fTreeStyle, fPatternFilter);
 	}
-	
+
 	/**
 	 * Handle help events locally rather than deferring to WorkbenchHelp.  This
 	 * allows help specific to the selected config type to be presented.
@@ -132,7 +132,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		}
 		PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredTree#textChanged()
 	 */
@@ -182,7 +182,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 			super.textChanged();
 		}
 	}
-	
+
 	/**
 	 * Computes the context id for this viewer
 	 * @return the context id
@@ -196,7 +196,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 				ILaunchConfigurationType configType = null;
 				if (firstSelected instanceof ILaunchConfigurationType) {
 					configType = (ILaunchConfigurationType) firstSelected;
-				} 
+				}
 				else if (firstSelected instanceof ILaunchConfiguration) {
 					configType = ((ILaunchConfiguration) firstSelected).getType();
 				}
@@ -207,11 +207,11 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 					}
 				}
 			}
-		} 
+		}
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the launch configuration viewer for this filtered tree
 	 * @return the tree viewer appropriately cast
@@ -221,10 +221,10 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Called after a re-filter due to user typing text. Update the filter count
 	 * in the LCD
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
 	 */
 	@Override

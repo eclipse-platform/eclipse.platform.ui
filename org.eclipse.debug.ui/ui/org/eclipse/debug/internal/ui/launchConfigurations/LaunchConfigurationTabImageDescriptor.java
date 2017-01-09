@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,26 +23,26 @@ import org.eclipse.swt.graphics.Point;
  * are computed according to flags set on creation of the descriptor.
  */
 public class LaunchConfigurationTabImageDescriptor extends CompositeImageDescriptor {
-	
+
 	/** Flag to render the error adornment */
 	public final static int ERROR= 		0x001;
 
 	private Image fBaseImage;
 	private int fFlags;
 	private Point fSize;
-	
+
 	/**
 	 * Create a new JDIImageDescriptor.
-	 * 
+	 *
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered
-	 * 
+	 *
 	 */
 	public LaunchConfigurationTabImageDescriptor(Image baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
@@ -54,7 +54,7 @@ public class LaunchConfigurationTabImageDescriptor extends CompositeImageDescrip
 		}
 		return fSize;
 	}
-	
+
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
@@ -63,11 +63,11 @@ public class LaunchConfigurationTabImageDescriptor extends CompositeImageDescrip
 		if (!(object instanceof LaunchConfigurationTabImageDescriptor)){
 			return false;
 		}
-			
+
 		LaunchConfigurationTabImageDescriptor other= (LaunchConfigurationTabImageDescriptor)object;
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
-	
+
 	/**
 	 * @see Object#hashCode()
 	 */
@@ -75,7 +75,7 @@ public class LaunchConfigurationTabImageDescriptor extends CompositeImageDescrip
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
@@ -100,7 +100,7 @@ public class LaunchConfigurationTabImageDescriptor extends CompositeImageDescrip
 			drawImage(data, 0, 0);
 		}
 	}
-	
+
 	protected Image getBaseImage() {
 		return fBaseImage;
 	}

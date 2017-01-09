@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
- 
+
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
@@ -54,8 +54,8 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
@@ -80,7 +80,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 			update();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
 	 */
@@ -88,7 +88,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	protected void initialize() {
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -116,7 +116,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		boolean prompt = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS);
 		boolean proceed = true;
 		if(prompt) {
-			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, 
+			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0,
 					ActionMessages.RemoveAllBreakpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
 			if(mdwt.getReturnCode() !=  IDialogConstants.YES_ID){
 				proceed = false;
@@ -124,7 +124,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 			else {
 				store.setValue(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS, !mdwt.getToggleState());
 			}
-		}  
+		}
 		if (proceed) {
 			new Job(ActionMessages.RemoveAllBreakpointsAction_2) {
 				@Override

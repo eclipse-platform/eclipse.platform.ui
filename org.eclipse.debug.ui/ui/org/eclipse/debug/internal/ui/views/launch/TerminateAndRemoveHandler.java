@@ -18,7 +18,7 @@ import org.eclipse.debug.internal.ui.commands.actions.DebugActionHandler;
  * @since 3.6
  */
 public class TerminateAndRemoveHandler extends DebugActionHandler {
-	
+
 	public TerminateAndRemoveHandler() {
 		super(LaunchView.TERMINATE_AND_REMOVE);
 	}

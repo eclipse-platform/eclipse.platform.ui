@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Color;
  * @since 3.0
  */
 public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProvider implements IColorProvider {
-	
+
 	private IMemoryBlockTablePresentation fTablePresentation;
 
 	/**
@@ -32,13 +32,13 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 	public TableRenderingLabelProvider() {
 		super();
 	}
-	
+
 	public TableRenderingLabelProvider(AbstractTableRendering rendering){
 		super(rendering);
 		fTablePresentation = rendering.getAdapter(IMemoryBlockTablePresentation.class);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
@@ -59,7 +59,7 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 		if (element instanceof TableRenderingLine)
 		{
 			TableRenderingLine line = (TableRenderingLine)element;
-			
+
 			if (line.isMonitored) {
 				return DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR);
 			}
@@ -73,28 +73,28 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 	 */
 	@Override
 	public Color getBackground(Object element) {
-		
+
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		
+
 		String label = super.getColumnText(element, columnIndex);
-		
+
 		// consult model presentation for address presentation
 		if (columnIndex == 0)
-		{	
+		{
 			if (fTablePresentation != null)
-			{	
+			{
 				String address = ((TableRenderingLine)element).getAddress();
-				
+
 				// get address presentation
 				String tempLabel = fTablePresentation.getRowLabel(fRendering.getMemoryBlock(), new BigInteger(address, 16));
-				
+
 				if (tempLabel != null)
 					return tempLabel;
 			}

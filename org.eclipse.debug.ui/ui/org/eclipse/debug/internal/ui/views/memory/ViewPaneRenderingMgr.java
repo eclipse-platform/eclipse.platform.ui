@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
  * be persisted when the memory view is disposed. If the view is opened again,
  * the same set of renderings will be created in the view pane if the renderings
  * are still valid.
- * 
+ *
  * @since 3.1
  */
 public class ViewPaneRenderingMgr implements IDebugEventSetListener {
@@ -283,7 +283,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 
 	/**
 	 * Convert renderings to xml text
-	 * 
+	 *
 	 * @return
 	 * @throws IOException
 	 * @throws ParserConfigurationException

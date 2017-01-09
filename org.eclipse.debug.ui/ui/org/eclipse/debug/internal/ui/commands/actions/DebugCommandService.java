@@ -31,34 +31,34 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Updates commands for a window. Coalesces update requests by command type.
- * 
+ *
  * @since 3.3
  */
 public class DebugCommandService implements IDebugContextListener {
-	
+
 	/**
 	 * Maps command types to actions to update
 	 */
 	private Map<Class<?>, List<IEnabledTarget>> fCommandUpdates = new HashMap<Class<?>, List<IEnabledTarget>>();
-	
+
 	/**
 	 * Window this service is for.
 	 */
 	private IWorkbenchWindow fWindow = null;
-	
+
 	/**
 	 * The context service for this command service.
 	 */
 	private IDebugContextService fContextService = null;
-	
+
 	/**
 	 * Service per window
 	 */
 	private static Map<IWorkbenchWindow, DebugCommandService> fgServices = new HashMap<IWorkbenchWindow, DebugCommandService>();
-		
+
 	/**
 	 * Returns the service for a window.
-	 * 
+	 *
 	 * @param window the window
 	 * @return service
 	 */
@@ -70,45 +70,45 @@ public class DebugCommandService implements IDebugContextListener {
 		}
 		return service;
 	}
-	
+
 	public DebugCommandService(IWorkbenchWindow window) {
 		fWindow = window;
 		fContextService = DebugUITools.getDebugContextManager().getContextService(window);
 		fContextService.addPostDebugContextListener(this);
 		PlatformUI.getWorkbench().addWindowListener(new IWindowListener() {
-		
+
 			@Override
 			public void windowOpened(IWorkbenchWindow w) {
 			}
-		
+
 			@Override
 			public void windowDeactivated(IWorkbenchWindow w) {
 			}
-		
+
 			@Override
 			public void windowClosed(IWorkbenchWindow w) {
 				if (fWindow == w) {
 					dispose();
 				}
 			}
-		
+
 			@Override
 			public void windowActivated(IWorkbenchWindow w) {
 			}
-		
+
 		});
 	}
-	
+
 	private void dispose() {
 		fContextService.removeDebugContextListener(this);
 		fgServices.remove(fWindow);
 		fCommandUpdates.clear();
 		fWindow = null;
 	}
-	
+
 	/**
 	 * Updates the given command type after the next context change.
-	 * 
+	 *
 	 * @param commandType the command class
 	 * @param action the action to add to the update list
 	 */
@@ -120,13 +120,13 @@ public class DebugCommandService implements IDebugContextListener {
 				actions = new ArrayList<IEnabledTarget>();
 				fCommandUpdates.put(commandType, actions);
 			}
-			actions.add(action);					
+			actions.add(action);
 		}
 	}
-	
+
 	/**
 	 * Updates the given command type based on the active context.
-	 * 
+	 *
 	 * @param commandType the command class
 	 * @param action the action to update
 	 */
@@ -138,8 +138,8 @@ public class DebugCommandService implements IDebugContextListener {
 		} else {
 			action.setEnabled(false);
 		}
-	}	
-	
+	}
+
 	private void postUpdate(ISelection context) {
 		Map<Class<?>, List<IEnabledTarget>> commands = null;
 		synchronized (fCommandUpdates) {
@@ -159,12 +159,12 @@ public class DebugCommandService implements IDebugContextListener {
 				}
 			}
 		}
-		commands.clear();		
+		commands.clear();
 	}
-	
+
 	/**
 	 * Updates the given command type for the specified elements.
-	 * @param handlerType the handle type class 
+	 * @param handlerType the handle type class
 	 * @param elements elements to update for
 	 * @param actions the actions to update
 	 */
@@ -194,10 +194,10 @@ public class DebugCommandService implements IDebugContextListener {
 			actions[i].setEnabled(false);
 		}
 	}
-	
+
 	/**
 	 * Updates the given command type for the specified elements.
-	 * @param handlerType the handler type class 
+	 * @param handlerType the handler type class
 	 * @param elements elements to update for
 	 * @param participant the participant
 	 * @return if the command stays enabled while the command executes
@@ -227,17 +227,17 @@ public class DebugCommandService implements IDebugContextListener {
 		}
 		// ABORT - no command processors
 		return false;
-	}	
+	}
 
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		postUpdate(event.getContext());
-	}	
-	
+	}
+
 	/**
-	 * Returns a map of command handlers to associated elements, or <code>null</code> if 
+	 * Returns a map of command handlers to associated elements, or <code>null</code> if
 	 * one is missing.
-	 * 
+	 *
 	 * @param elements the elements
 	 * @param handlerType the handler type class
 	 * @return map of command handlers to associated elements or <code>null</code>
@@ -260,7 +260,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 		}
 		return map;
 	}
-	
+
 	private IDebugCommandHandler getHandler(Object element, Class<?> handlerType) {
 		return (IDebugCommandHandler)DebugPlugin.getAdapter(element, handlerType);
 	}

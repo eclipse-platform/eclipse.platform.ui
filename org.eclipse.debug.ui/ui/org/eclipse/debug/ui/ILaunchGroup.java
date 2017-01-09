@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.ui;
- 
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * a launch group, and a launch history is maintained for each group.
  * A launch group is defined in plug-in XML via the <code>launchGroups</code>
  * extension point.
- * <p> 
+ * <p>
  * Following is an example of a launch group contribution:
  * <pre>
  * 	&lt;extension point="org.eclipse.debug.ui.launchGroups"&gt;
@@ -45,58 +45,58 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ILaunchGroup {
-	
+
 	/**
 	 * Returns the image for this launch group, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the image for this launch group, or <code>null</code> if none
 	 */
 	public ImageDescriptor getImageDescriptor();
-	
+
 	/**
 	 * Returns the banner image for this launch group, or <code>null</code> if
 	 * none
-	 * 
+	 *
 	 * @return the banner image for this launch group, or <code>null</code> if
 	 * none
 	 */
 	public ImageDescriptor getBannerImageDescriptor();
-	
+
 	/**
 	 * Returns the label for this launch group
-	 * 
+	 *
 	 * @return the label for this launch group
 	 */
 	public String getLabel();
-		
+
 	/**
 	 * Returns the id for this launch group
-	 * 
+	 *
 	 * @return the id for this launch group
 	 */
 	public String getIdentifier();
-	
+
 	/**
 	 * Returns the category for this launch group, possibly <code>null</code>
-	 * 
+	 *
 	 * @return the category for this launch group, possibly <code>null</code>
 	 */
 	public String getCategory();
-	
+
 	/**
 	 * Returns the mode for this launch group
-	 * 
+	 *
 	 * @return the mode for this launch group
 	 */
 	public String getMode();
-	
+
 	/**
 	 * Returns whether this launch group is public
-	 *  
+	 *
 	 * @return boolean
 	 */
 	public boolean isPublic();
-	
+
 }
 

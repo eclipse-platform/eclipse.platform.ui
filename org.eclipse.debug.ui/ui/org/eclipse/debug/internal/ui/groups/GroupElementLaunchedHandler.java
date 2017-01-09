@@ -19,7 +19,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 /**
  * Handles additionally required actions when a member of a group has been
  * launched
- * 
+ *
  * @since 3.12
  */
 public class GroupElementLaunchedHandler implements IStatusHandler {

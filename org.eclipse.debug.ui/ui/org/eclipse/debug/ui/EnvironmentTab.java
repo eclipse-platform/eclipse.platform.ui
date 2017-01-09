@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2013 Keith Seitz and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
@@ -76,11 +76,11 @@ import com.ibm.icu.text.MessageFormat;
  * into Runtime.exec(...) when a config is launched.
  * <p>
  * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
- * creation to alter the default context help associated with this tab. 
+ * creation to alter the default context help associated with this tab.
  * </p>
  * <p>
  * This class may be instantiated.
- * </p> 
+ * </p>
  * @since 3.0
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -88,11 +88,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 	protected TableViewer environmentTable;
 	protected String[] envTableColumnHeaders = {
-		LaunchConfigurationsMessages.EnvironmentTab_Variable_1, 
-		LaunchConfigurationsMessages.EnvironmentTab_Value_2, 
+		LaunchConfigurationsMessages.EnvironmentTab_Variable_1,
+		LaunchConfigurationsMessages.EnvironmentTab_Value_2,
 	};
-	private static final String NAME_LABEL= LaunchConfigurationsMessages.EnvironmentTab_8; 
-	private static final String VALUE_LABEL= LaunchConfigurationsMessages.EnvironmentTab_9; 
+	private static final String NAME_LABEL= LaunchConfigurationsMessages.EnvironmentTab_8;
+	private static final String VALUE_LABEL= LaunchConfigurationsMessages.EnvironmentTab_9;
 	protected static final String P_VARIABLE = "variable"; //$NON-NLS-1$
 	protected static final String P_VALUE = "value"; //$NON-NLS-1$
 	protected Button envAddButton;
@@ -101,7 +101,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected Button appendEnvironment;
 	protected Button replaceEnvironment;
 	protected Button envSelectButton;
-	
+
 	/**
 	 * Content provider for the environment table
 	 */
@@ -155,7 +155,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 	}
-	
+
 	/**
 	 * Label provider for the environment table
 	 */
@@ -193,7 +193,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public EnvironmentTab() {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -203,11 +203,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		Composite mainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
 		setControl(mainComposite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
-		
+
 		createEnvironmentTable(mainComposite);
 		createTableButtons(mainComposite);
 		createAppendReplace(mainComposite);
-		
+
 		Dialog.applyDialogFont(mainComposite);
 	}
 
@@ -219,16 +219,16 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void createAppendReplace(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL);
-		appendEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_16); 
+		appendEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_16);
 		appendEnvironment.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		replaceEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_17); 
+		replaceEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_17);
 	}
-	
+
 	/**
 	 * Updates the enablement of the append/replace widgets. The
 	 * widgets should disable when there are no environment variables specified.
@@ -238,7 +238,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		appendEnvironment.setEnabled(enable);
 		replaceEnvironment.setEnabled(enable);
 	}
-	
+
 	/**
 	 * Creates and configures the table that displayed the key/value
 	 * pairs that comprise the environment.
@@ -286,7 +286,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		tableColumnLayout.setColumnData(tc2, new ColumnWeightData(2, pixelConverter.convertWidthInCharsToPixels(20)));
 		tableComposite.setLayout(tableColumnLayout);
 	}
-	
+
 	/**
 	 * Responds to a selection changed event in the environment table
 	 * @param event the selection change event
@@ -296,7 +296,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		envEditButton.setEnabled(size == 1);
 		envRemoveButton.setEnabled(size > 0);
 	}
-	
+
 	/**
 	 * Creates the add/edit/remove buttons for the environment table
 	 * @param parent the composite in which the buttons should be created
@@ -306,21 +306,21 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		Composite buttonComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END, 0, 0);
 
 		// Create buttons
-		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null); 
+		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null);
 		envAddButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvAddButtonSelected();
 			}
 		});
-		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_18, null); 
+		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_18, null);
 		envSelectButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvSelectButtonSelected();
 			}
 		});
-		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Edit_5, null); 
+		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Edit_5, null);
 		envEditButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -328,7 +328,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Remove_6, null); 
+		envRemoveButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Remove_6, null);
 		envRemoveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -337,28 +337,28 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		});
 		envRemoveButton.setEnabled(false);
 	}
-	
+
 	/**
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_22); 
+		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_22);
 		dialog.addTextField(NAME_LABEL, null, false);
 		dialog.addVariablesField(VALUE_LABEL, null, true);
-		
+
 		if (dialog.open() != Window.OK) {
 			return;
 		}
-		
+
 		String name = dialog.getStringValue(NAME_LABEL);
 		String value = dialog.getStringValue(VALUE_LABEL);
-		
+
 		if (name != null && value != null && name.length() > 0 && value.length() >0) {
 			addVariable(new EnvironmentVariable(name.trim(), value.trim()));
 			updateAppendReplace();
 		}
 	}
-	
+
 	/**
 	 * Attempts to add the given variable. Returns whether the variable
 	 * was added or not (as when the user answers not to overwrite an
@@ -384,33 +384,33 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		updateLaunchConfigurationDialog();
 		return true;
 	}
-	
+
 	/**
-	 * Displays a dialog that allows user to select native environment variables 
+	 * Displays a dialog that allows user to select native environment variables
 	 * to add to the table.
 	 */
 	private void handleEnvSelectButtonSelected() {
 		//get Environment Variables from the OS
 		Map<String, EnvironmentVariable> envVariables = getNativeEnvironment();
-		
+
 		//get Environment Variables from the table
 		TableItem[] items = environmentTable.getTable().getItems();
 		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 			envVariables.remove(var.getName());
 		}
-		
-		NativeEnvironmentSelectionDialog dialog = new NativeEnvironmentSelectionDialog(getShell(), envVariables); 
-		dialog.setTitle(LaunchConfigurationsMessages.EnvironmentTab_20); 
-		
+
+		NativeEnvironmentSelectionDialog dialog = new NativeEnvironmentSelectionDialog(getShell(), envVariables);
+		dialog.setTitle(LaunchConfigurationsMessages.EnvironmentTab_20);
+
 		int button = dialog.open();
 		if (button == Window.OK) {
-			Object[] selected = dialog.getResult();		
+			Object[] selected = dialog.getResult();
 			for (int i = 0; i < selected.length; i++) {
-				environmentTable.add(selected[i]);				
+				environmentTable.add(selected[i]);
 			}
 		}
-		
+
 		updateAppendReplace();
 		updateLaunchConfigurationDialog();
 	}
@@ -439,7 +439,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		String originalName= var.getName();
 		String value= var.getValue();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_11); 
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_11);
 		dialog.addTextField(NAME_LABEL, originalName, false);
 		if(value != null && value.indexOf(System.getProperty("line.separator")) > -1) { //$NON-NLS-1$
 			dialog.addMultilinedVariablesField(VALUE_LABEL, value, true);
@@ -447,7 +447,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		else {
 			dialog.addVariablesField(VALUE_LABEL, value, true);
 		}
-		
+
 		if (dialog.open() != Window.OK) {
 			return;
 		}
@@ -519,13 +519,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		updateEnvironment(configuration);
 		updateAppendReplace();
 	}
-	
+
 	/**
 	 * Stores the environment in the given configuration
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		// Convert the table's items into a Map so that this can be saved in the
 		// configuration's attributes.
 		TableItem[] items = environmentTable.getTable().getItems();
@@ -533,13 +533,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 			map.put(var.getName(), var.getValue());
-		} 
+		}
 		if (map.size() == 0) {
 			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map<String, String>) null);
 		} else {
 			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		}
-		
+
 		if(appendEnvironment.getSelection()) {
 			ILaunchConfiguration orig = configuration.getOriginal();
 			boolean hasTrueValue = false;
@@ -566,19 +566,19 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public String getName() {
-		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7; 
+		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.environmentTab"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
@@ -602,21 +602,21 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
 	}
-	
+
 	/**
 	 * This dialog allows users to select one or more known native environment variables from a list.
 	 */
 	private class NativeEnvironmentSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
-		
+
 		private Object fInput;
-		
+
 		public NativeEnvironmentSelectionDialog(Shell parentShell, Object input) {
 			super(parentShell);
 			fInput = input;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setShowSelectAllButtons(true);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
@@ -648,7 +648,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		protected String getViewerLabel() {
 			return LaunchConfigurationsMessages.EnvironmentTab_19;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
@@ -677,10 +677,10 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				}
 				@Override
 				public void removeListener(ILabelProviderListener listener) {
-				}				
+				}
 			};
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 		 */
@@ -711,7 +711,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 					return elements;
 				}
 				@Override
-				public void dispose() {	
+				public void dispose() {
 				}
 				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

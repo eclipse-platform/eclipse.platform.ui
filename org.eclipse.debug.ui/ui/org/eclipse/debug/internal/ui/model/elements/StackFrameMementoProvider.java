@@ -17,7 +17,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Memento provider for stack frames.
- * 
+ *
  * @since 3.4
  */
 public class StackFrameMementoProvider extends DebugElementMementoProvider {

@@ -58,34 +58,34 @@ public interface IValueVariable extends IStringVariable {
 	 * @param value variable value
 	 */
 	public void setValue(String value);
-	
+
 	/**
 	 * Returns the value of this variable, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the value of this variable, or <code>null</code> if none
 	 */
 	public String getValue();
-	
+
 	/**
 	 * Returns whether this variable was contributed by an extension.
-	 * 
+	 *
 	 * @return whether this variable was contributed by an extension
 	 */
 	public boolean isContributed();
-	
+
 	/**
 	 * Returns whether this variable is read only.
-	 * 
+	 *
 	 * @return whether this variable is read only
 	 * @since 3.3
 	 */
 	public boolean isReadOnly();
-	
+
 	/**
 	 * Sets the description of this variable to the given value.
-	 * 
+	 *
 	 * @param description variable description, possibly <code>null</code>
 	 */
-	public void setDescription(String description);	
-	
+	public void setDescription(String description);
+
 }

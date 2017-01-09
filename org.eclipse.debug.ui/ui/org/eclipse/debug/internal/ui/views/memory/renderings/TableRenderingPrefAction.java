@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,10 +42,10 @@ public class TableRenderingPrefAction extends ActionDelegate implements IViewAct
 	@Override
 	public void init(IViewPart view) {
 	}
-	
+
 	protected void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
-		
+
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
@@ -57,7 +57,7 @@ public class TableRenderingPrefAction extends ActionDelegate implements IViewAct
 				dialog.setMessage(targetNode.getLabelText());
 				result[0]= (dialog.open() == Window.OK);
 			}
-		});		
+		});
 	}
 
 }

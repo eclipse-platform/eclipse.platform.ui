@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - bug 227877
@@ -48,7 +48,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Re-launches the last launch.
- * 
+ *
  * @see ContextRunner
  * @see ILaunchConfiguration
  * @see RunLastAction
@@ -69,11 +69,11 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			}
 		}
 	}
-	
+
 	private Listener fListener = new Listener();
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IAction fAction;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -150,17 +150,17 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 					DebugUITools.launch(configuration, getMode(), isShift);
 				} else {
 					String configName = configuration.getName();
-					String title = ActionMessages.RelaunchLastAction_Cannot_relaunch_1; 
+					String title = ActionMessages.RelaunchLastAction_Cannot_relaunch_1;
 					String message = MessageFormat.format(ActionMessages.RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2, new Object[] {
 							configName, getMode() });
-					MessageDialog.openError(getShell(), title, message);				
+					MessageDialog.openError(getShell(), title, message);
 				}
 			} else {
 				// If the history is empty, just open the launch config dialog
 				openLaunchConfigurationDialog();
 			}
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), ActionMessages.RelaunchLastAction_Error_relaunching_3, ActionMessages.RelaunchLastAction_Error_encountered_attempting_to_relaunch_4, ce); // 
+			DebugUIPlugin.errorDialog(getShell(), ActionMessages.RelaunchLastAction_Error_relaunching_3, ActionMessages.RelaunchLastAction_Error_encountered_attempting_to_relaunch_4, ce); //
 		}
 	}
 
@@ -172,11 +172,11 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		if (dwindow == null) {
 			return;
 		}
-		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLaunchGroup(getMode()));		
+		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLaunchGroup(getMode()));
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
 		dialog.open();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -184,9 +184,9 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	public void selectionChanged(IAction action, ISelection selection){
 		if (fAction == null) {
 			initialize(action);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Set the enabled state of the underlying action based on whether there are any
 	 * registered launch configuration types that understand how to launch in the
@@ -209,11 +209,11 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			}
 		}
 	}
-	
+
 	/**
 	 * Return whether there are any registered launch configuration types for
 	 * the mode of this action.
-	 * 
+	 *
 	 * @return whether there are any registered launch configuration types for
 	 * the mode of this action
 	 */
@@ -224,10 +224,10 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			if (configType.supportsMode(getMode())) {
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
-	
+
 	/**
 	 * Return the last launch that occurred in the workspace.
 	 * @return the filtered last launch
@@ -235,54 +235,54 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	protected ILaunchConfiguration getLastLaunch() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupId());
 	}
-	
+
 	/**
 	 * Returns the parent shell for this menu item
-	 * 
+	 *
 	 * @return the parent shell
 	 */
 	protected Shell getShell() {
 		return fWorkbenchWindow.getShell();
 	}
-	
+
 	/**
 	 * Returns the mode (run or debug) of this action.
-	 * @return the mode 
+	 * @return the mode
 	 */
 	protected abstract String getMode();
-	
+
 	/**
 	 * Returns the launch group id of this action.
-	 * 
+	 *
 	 * @return  the launch group id
 	 */
-	protected abstract String getLaunchGroupId();	
+	protected abstract String getLaunchGroupId();
 
 	/**
 	 * Returns the text to display on the menu item.
-	 * 
+	 *
 	 * @return the text for the menu item
 	 */
 	protected abstract String getText();
-	
+
 	/**
 	 * Returns the text to display in the menu item tooltip
-	 * 
+	 *
 	 * @return the text for the tooltip
 	 */
 	protected abstract String getTooltipText();
-	
+
 	/**
 	 * Returns the command id this action is associated with.
-	 * 
+	 *
 	 * @return command id
 	 */
 	protected abstract String getCommandId();
-	
+
 	/**
 	 * Returns a description for this action (to associate with command).
-	 * 
+	 *
 	 * @return command description
 	 */
-	protected abstract String getDescription();	
+	protected abstract String getDescription();
 }

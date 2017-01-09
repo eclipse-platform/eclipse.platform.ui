@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Reest MemoryViewTab to the base address of a memory block
- * 
+ *
  * @since 3.0
  */
 public class ResetToBaseAddressAction extends Action {

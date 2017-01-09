@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,14 +25,14 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * This class provides a mechanism to prompt users in the UI thread from debug.core in the case where
  * duplicate launch delegates have been detected and a preferred delegate needs to be selected.
- * 
+ *
  * As this handler is used once a launch has been started, and only prompts in the event that the launch <i>can</i>
  * continue with further input, it must be a blocking operation.
- * 
+ *
  * @since 3.3
  */
 public class DuplicateLaunchDelegatesStatusHandler implements IStatusHandler {
-	
+
 	/**
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */

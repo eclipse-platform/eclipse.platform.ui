@@ -23,7 +23,7 @@ public class TableRenderingLine extends PlatformObject {
 	private String fAddress;
 	private String fStrRep;
 	private MemoryByte[] fBytes;
-	private byte[] fByteArray; 
+	private byte[] fByteArray;
 	private int fTableIndex = -1;
 	private String fPaddedString;
 	public boolean isMonitored;
@@ -47,35 +47,35 @@ public class TableRenderingLine extends PlatformObject {
 	public void setAddress(String address) {
 		fAddress = address;
 	}
-	
+
 	public MemoryByte[] getBytes()
 	{
 		return fBytes;
 	}
-	
+
 	public MemoryByte getByte(int offset)
 	{
 		if (fBytes == null)
 			return null;
-		
+
 		if (offset < fBytes.length) {
 			return fBytes[offset];
 		}
-		
-		return null;		
+
+		return null;
 	}
-	
+
 	public MemoryByte[] getBytes(int start, int end)
 	{
 		ArrayList<MemoryByte> ret = new ArrayList<MemoryByte>();
-		
+
 		for (int i=start; i<end; i++)
 		{
 			ret.add(fBytes[i]);
 		}
 		return ret.toArray(new MemoryByte[ret.size()]);
 	}
-	
+
 	public String getRawMemoryString()
 	{
 		if (fStrRep == null)
@@ -83,32 +83,32 @@ public class TableRenderingLine extends PlatformObject {
 			StringBuffer buffer = new StringBuffer();
 			fStrRep = RenderingsUtil.convertByteArrayToHexString(getByteArray());
 			fStrRep = fStrRep.toUpperCase();
-			
+
 			buffer = buffer.append(fStrRep);
-			
+
 			// pad unavailable bytes with padded string from memory block
 			String paddedString = null;
 			int bufferCounter = 0;
 			for (int i=0; i<fBytes.length; i++)
-			{ 
+			{
 				// if byte is invalid
 				if (!fBytes[i].isReadable())
 				{
 					if (paddedString == null)
 					{
 						paddedString = fPaddedString;
-						
+
 						if (paddedString.length() > TableRenderingLine.numCharPerByteForHex)
 							paddedString = paddedString.substring(0, TableRenderingLine.numCharPerByteForHex);
 					}
-					buffer.replace(bufferCounter, bufferCounter+TableRenderingLine.numCharPerByteForHex, paddedString);		
+					buffer.replace(bufferCounter, bufferCounter+TableRenderingLine.numCharPerByteForHex, paddedString);
 				}
 				bufferCounter += TableRenderingLine.numCharPerByteForHex;
 			}
-			
+
 			fStrRep = buffer.toString();
 		}
-		
+
 		return fStrRep;
 	}
 
@@ -120,9 +120,9 @@ public class TableRenderingLine extends PlatformObject {
 	public boolean isAvailable(int start, int end) {
 		boolean available = true;
 		for (int i=start; i<end; i++)
-		{	
+		{
 			if (!fBytes[i].isReadable())
-			{	
+			{
 				available = false;
 				break;
 			}
@@ -139,17 +139,17 @@ public class TableRenderingLine extends PlatformObject {
 			for (int i=0; i<fBytes.length; i++)
 			{
 				fByteArray[i] = fBytes[i].getValue();
-			}			
+			}
 		}
-		
+
 		return fByteArray;
 	}
-	
+
 	public byte[] getByteArray(int start, int end)
 	{
 		byte[] ret = new byte[end-start];
 		int j=0;
-		
+
 		for (int i=start; i<end; i++)
 		{
 			ret[j] = fBytes[i].getValue();
@@ -157,16 +157,16 @@ public class TableRenderingLine extends PlatformObject {
 		}
 		return ret;
 	}
-	
+
 	public void markDeltas(TableRenderingLine oldData)
 	{
 		if (oldData == null)
 			return;
-		
+
 		// if address is not the same, no need to compare
 		if (!oldData.getAddress().equals(this.getAddress()))
 			return;
-		
+
 		// if the string representation is the same, no need to compare
 		if (oldData.getRawMemoryString().equals(getRawMemoryString()))
 		{
@@ -177,23 +177,23 @@ public class TableRenderingLine extends PlatformObject {
 			}
 			return;
 		}
-		
+
 		MemoryByte[] oldMemory = oldData.getBytes();
-		
+
 		if (oldMemory.length != fBytes.length)
 			return;
-			
+
 		for (int i=0; i<fBytes.length; i++)
 		{
 			// turn on known bit
 			fBytes[i].setHistoryKnown(true);
-			
+
 			if ((fBytes[i].getFlags() & MemoryByte.READABLE) != (oldMemory[i].getFlags() & MemoryByte.READABLE))
 			{
 				fBytes[i].setChanged(true);
 				continue;
 			}
-				
+
 			if (fBytes[i].isReadable() && oldMemory[i].isReadable())
 			{
 				if (fBytes[i].getValue() != oldMemory[i].getValue())
@@ -203,55 +203,55 @@ public class TableRenderingLine extends PlatformObject {
 			}
 		}
 	}
-	
+
 	public void copyDeltas(TableRenderingLine oldData)
 	{
 		if (oldData == null)
 			return;
-		
+
 		// if address is not the same, do not copy
 		if (!oldData.getAddress().equals(this.getAddress()))
 			return;
-		
+
 		// reuse delta information from old data
 		MemoryByte[] oldMemory = oldData.getBytes();
-		
+
 		if (oldMemory.length != fBytes.length)
 			return;
-			
+
 		for (int i=0; i<fBytes.length; i++)
 		{
 			fBytes[i].setFlags(oldMemory[i].getFlags());
-		}		
+		}
 	}
-	
+
 	public boolean isLineChanged(TableRenderingLine oldData)
 	{
 		if (oldData == null)
 			return false;
-		
+
 		// if address is not the same, no need to compare
 		if (!oldData.getAddress().equals(this.getAddress()))
 			return false;
-		
+
 		// if the string representation is not the same, this line has changed
 		if (oldData.getRawMemoryString().equals(getRawMemoryString())) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param offset
 	 * @param endOffset
 	 * @return true if the specified range of memory has changed, false otherwise
 	 * */
-	
+
 	public boolean isRangeChange(int offset, int endOffset)
-	{	
+	{
 		boolean allBytesKnown = true;
 		boolean allBytesUnchanged = true;
-		
+
 		for (int i=offset; i<=endOffset; i++)
 		{
 			if (!fBytes[i].isHistoryKnown())
@@ -259,13 +259,13 @@ public class TableRenderingLine extends PlatformObject {
 			if (fBytes[i].isChanged())
 				allBytesUnchanged = false;
 		}
-		
+
 		if (allBytesKnown && !allBytesUnchanged) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void unmarkDeltas()
 	{
 		for (int i=0; i<fBytes.length; i++)
@@ -275,7 +275,7 @@ public class TableRenderingLine extends PlatformObject {
 				fBytes[i].setChanged(false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -284,19 +284,19 @@ public class TableRenderingLine extends PlatformObject {
 	{
 		StringBuffer buf = new StringBuffer();
 		buf.append(getAddress());
-		
+
 		buf.append(": "); //$NON-NLS-1$
-		
+
 		buf.append(getRawMemoryString());
-		
+
 		return buf.toString();
 	}
-	
+
 	public int getTableIndex()
 	{
 		return fTableIndex;
 	}
-	
+
 	public int getLength()
 	{
 		return fBytes.length;

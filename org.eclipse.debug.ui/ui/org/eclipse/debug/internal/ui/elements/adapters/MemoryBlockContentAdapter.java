@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
  *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 
@@ -219,7 +219,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 
 	/**
 	 * Get memory to fit table
-	 * 
+	 *
 	 * @param startingAddress
 	 * @param numberOfLines
 	 * @param updateDelta

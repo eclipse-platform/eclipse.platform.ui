@@ -42,9 +42,9 @@ import org.eclipse.ui.IEditorPart;
  * Launch shortcut action (proxy to a launch shortcut extension)
  */
 public class LaunchShortcutAction extends Action {
-	
+
 	private String fMode;
-	private LaunchShortcutExtension fShortcut; 
+	private LaunchShortcutExtension fShortcut;
 
 
 	/**
@@ -59,10 +59,10 @@ public class LaunchShortcutAction extends Action {
 		fMode = mode;
 		updateEnablement();
 	}
-	
+
 	/**
 	 * Runs with either the active editor or workbench selection.
-	 * 
+	 *
 	 * @see IAction#run()
 	 */
 	@Override
@@ -86,7 +86,7 @@ public class LaunchShortcutAction extends Action {
 			DebugUITools.removeLaunchToggleTerminate(ss);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
@@ -135,7 +135,7 @@ public class LaunchShortcutAction extends Action {
 			runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
 		}
 	}
-	
+
 	/**
 	 * Since these actions are re-created each time the run/debug as menu is
 	 * filled, the enablement of this action is static.

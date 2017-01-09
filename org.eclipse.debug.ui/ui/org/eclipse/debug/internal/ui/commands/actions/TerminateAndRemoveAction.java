@@ -34,17 +34,17 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Terminate and remove action.
- * 
+ *
  * @since 3.3
  */
 public class TerminateAndRemoveAction extends DebugCommandAction {
-	
+
 	/**
 	 * Whether the target can be terminated. The action is always enabled,
 	 * but does not always need to terminate the target first.
 	 */
 	private boolean fCanTerminate = false;
-	
+
 	/**
 	 * Local copy of part, possibly null
 	 */
@@ -101,11 +101,11 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
                     isAllTerminated = false;
                     break;
                 }
-            } 
+            }
         }
-        // IF all elements are terminated, we don't need to query the terminate handler, just 
+        // IF all elements are terminated, we don't need to query the terminate handler, just
         // enable the action, which whill just remove the terminated launches (bug 324959).
-        fCanTerminate = !isAllTerminated; 
+        fCanTerminate = !isAllTerminated;
         if (isAllTerminated) {
             setEnabled(true);
         } else {
@@ -118,10 +118,10 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
         if (launch != null) {
             return launch.isTerminated();
         }
-        return false; 
+        return false;
     }
 
-    
+
     @Override
 	protected void postExecute(IRequest request, Object[] targets) {
         IStatus status = request.getStatus();
@@ -130,11 +130,11 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
                 ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
                 if (launch != null) {
 					DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
-				}                   
+				}
             }
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.DebugCommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
      */
@@ -143,7 +143,7 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     	if (fCanTerminate) {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	    	if (window != null) {
-		    	if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {  
+		    	if (!MessageDialog.openQuestion(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) {
 					return;
 				}
 	    	}
@@ -163,7 +163,7 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
             }
     	}
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.DebugCommandAction#init(org.eclipse.ui.IWorkbenchPart)
      */

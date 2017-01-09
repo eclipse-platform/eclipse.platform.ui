@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkingSetElementAdapter;
  * Consulted by workbench pull down actions that add/remove selected elements to/from
  * working sets. Allows breakpoint working sets to select which elements are applicable
  * for adding/removing.
- *  
+ *
  * @since 3.3
  */
 public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAdapter {
@@ -34,18 +34,18 @@ public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAda
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		for (int i = 0; i < elements.length; i++) {
-	        IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);			
+	        IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);
 			if (breakpoint != null) {
 				return selectBreakpoints(elements);
 			}
 		}
 		return elements;
 	}
-	
+
 	private IAdaptable[] selectBreakpoints(IAdaptable[] elements) {
 		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
-            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);            
+            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(elements[i], IBreakpoint.class);
 			if (breakpoint != null) {
 				breakpoints.add(breakpoint);
 			}

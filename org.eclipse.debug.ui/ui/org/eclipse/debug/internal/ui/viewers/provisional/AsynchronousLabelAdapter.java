@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.2
  */
 public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdapter {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.IAsynchronousLabelAdapter#retrieveLabel(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.ILabelRequestMonitor)
 	 */
@@ -61,10 +61,10 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 		job.setRule(getLabelRule(element, context));
 		job.schedule();
 	}
-	
+
     /**
      * Returns the scheduling rule for label jobs.
-     * 
+     *
      * @param element the element context
      * @param context the presentation context
      * @return scheduling rule or <code>null</code>
@@ -72,22 +72,22 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
     protected ISchedulingRule getLabelRule(Object element, IPresentationContext context) {
     	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
     }
-	
+
 	/**
 	 * Returns whether this label adapter requires to be run in the UI thread.
 	 * By default, label jobs are not run in the UI thread. Subclasses should
 	 * override if required.
 	 * @param object the object context
-	 * 
+	 *
 	 * @return whether this label adapter requires to be run in the UI thread.
 	 */
 	protected boolean requiresUIJob(Object object) {
 		return !DebugElementHelper.requiresUIThread(object);
 	}
-	
+
 	/**
 	 * Computes label attributes for the given element in the specified context.
-	 * 
+	 *
 	 * @param element element to compute label for
 	 * @param context presentation context
 	 * @param monitor monitor to report results to
@@ -117,55 +117,55 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 				monitor.done();
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns a label for the give element in the specified context.
-	 * 
+	 *
 	 * @param element element to compute label for
 	 * @param context presentation context
 	 * @return label
 	 * @exception CoreException if an exception occurs computing label
 	 */
     protected abstract String[] getLabels(Object element, IPresentationContext context) throws CoreException;
-    
+
     /**
      * Returns an image descriptor for the given element in the specified context
      * or <code>null</code>.
-     * 
+     *
      * @param element element to compute image descriptor for
      * @param context presentation context
      * @return image descriptor or <code>null</code>
      * @throws CoreException if an exception occurs computing image descriptor
      */
     protected abstract ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException;
-    
+
     /**
      * Returns font data for the given element in the specified context or <code>null</code>
      * to use the default font.
-     * 
+     *
      * @param element element to compute font data for
      * @param context presentation context
      * @return font data or <code>null</code>
      * @throws CoreException if an exception occurs computing font data
      */
     protected abstract FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException;
-    
+
     /**
      * Returns a foreground color for the given element in the specified context or <code>null</code>
      * to use the default color.
-     * 
+     *
      * @param element element to compute color for
      * @param context presentation context
      * @return color or <code>null</code>
      * @throws CoreException if an exception occurs computing color
      */
     protected abstract RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException;
-    
+
     /**
      * Returns a background color for the given element in the specified context or <code>null</code>
      * to use the default color.
-     * 
+     *
      * @param element element to compute color for
      * @param context presentation context
      * @return color or <code>null</code>

@@ -67,7 +67,7 @@ import org.eclipse.ui.progress.UIJob;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * This calls provides the one and only wizard page to the 
+ * This calls provides the one and only wizard page to the
  * export launch configurations wizard.
  * @since 3.4.0
  */
@@ -80,7 +80,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	class ConfigContentProvider implements ITreeContentProvider {
 
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		
+
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {
@@ -133,7 +133,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
-	  //add the check table 
+	  //add the check table
 		createViewer(comp);
 	  //add the file path and browse button
 		createFilePath(comp);
@@ -141,7 +141,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fOverwrite = SWTFactory.createCheckButton(comp, WizardMessages.ExportLaunchConfigurationsWizardPage_1, null, getDialogSettings().getBoolean(OVERWRITE), 2);
 		setControl(comp);
 		PlatformUI .getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.EXPORT_LAUNCH_CONFIGURATIONS_PAGE);
-		setMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_7); 
+		setMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_7);
 		//do not set page complete, Eclipse UI guidelines states wizards cannot start off with an error showing
 		setPageComplete(false);
 	}
@@ -175,7 +175,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			}
 		});
 		Composite buttoncomp = SWTFactory.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
-		Button button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_8, null); 
+		Button button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_8, null);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -186,7 +186,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 				setPageComplete(isComplete());
 			}
 		});
-		button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_9, null); 
+		button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_9, null);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -198,7 +198,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			}
 		});
 	}
-	
+
 	/**
 	 * Updates the checked state of child launch configurations if the parent type is checked
 	 * @param item
@@ -229,7 +229,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			fViewer.setChecked(parent, checked | onechecked);
 		}
 	}
-	
+
 	/**
 	 * Creates the controls for the file path selection area of the page
 	 * @param parent
@@ -294,7 +294,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		setMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_7);
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getImage()
 	 */
@@ -302,7 +302,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_CONFIGS);
 	}
-	
+
 	/**
 	 * This method performs the work of the page
 	 * @return if the export job was successful or not
@@ -426,7 +426,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		exportjob.schedule();
 		return true;
 	}
-	
+
 	/**
 	 * Copies a file from one location to another
 	 * @param in the file to copy

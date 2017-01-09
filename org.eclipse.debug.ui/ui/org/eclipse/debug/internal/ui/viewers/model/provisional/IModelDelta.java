@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,14 +16,14 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * Describes a change within a model. A delta is a hierarchical description of changes
  * within a model. It consists of a tree of nodes. Each node references an element
  * from a model describing how that element changed. A model proxy fires model deltas
- * as its model changes in order to update views displaying that model. 
+ * as its model changes in order to update views displaying that model.
  * <p>
  * Each node in a model delta describes the following:
  * <ul>
  * <li>the type of change - for example, whether an element was added, removed,
  *  or whether its content or state changed</li>
  * <li>action to consider - for example, select or reveal the element</li>
- * </ul> 
+ * </ul>
  * </p>
  * <p>
  * @noimplement Clients are not intended to implement this interface directly. Instead, clients
@@ -32,9 +32,9 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * @since 3.2
  */
 public interface IModelDelta {
-	
+
 	// types of changes
-	
+
 	/**
 	 * Indicates an element has not changed, but has children that have
 	 * changed in some way.
@@ -54,16 +54,16 @@ public interface IModelDelta {
 	 * Indicates an element has been replaced in the model, as described by
 	 * its path. In this case a replacement element is also specified in the
 	 * model delta node.
-	 */	
+	 */
 	public static int REPLACED = 1 << 3;
 	/**
 	 * Indicates an element has been inserted into the model, as described
 	 * by its path and index.
 	 */
 	public static int INSERTED = 1 << 4;
-	
+
 	// how an element changed
-	
+
 	/**
 	 * Indicates an elements content has changed (i.e. its children).
 	 */
@@ -72,9 +72,9 @@ public interface IModelDelta {
 	 * Indicates an elements state has changed (i.e. label)
 	 */
 	public static int STATE = 1 << 11;
-	
+
 	// Suggested actions
-	
+
 	/**
 	 * Suggests that the element should be expanded, as described by its path.
 	 */
@@ -83,79 +83,79 @@ public interface IModelDelta {
 	 * Suggests that the element should be selected, as described by its path.
 	 */
 	public static int SELECT = 1 << 21;
-	
+
 	/**
 	 * Suggests that the element should be revealed, as described by its path.
 	 * @since 3.3
 	 */
-	public static int REVEAL = 1 << 24;	
-	
+	public static int REVEAL = 1 << 24;
+
 	/**
 	 * Indicates a model proxy should be installed for the given element
 	 * @since 3.3
 	 */
 	public static int INSTALL = 1 << 22;
-	
+
 	/**
 	 * Indicates a model proxy should be uninstalled for the given element
 	 * @since 3.3
 	 */
 	public static int UNINSTALL = 1 << 23;
-	
+
 	/**
 	 * Suggests that the element should be collapsed, as described by its path.
 	 * @since 3.3
 	 */
-	public static int COLLAPSE = 1 << 25;	
-	
+	public static int COLLAPSE = 1 << 25;
+
 	/**
-	 * Flag indicating that the view layout deltas should override the 
+	 * Flag indicating that the view layout deltas should override the
 	 * model selection policy.  This flag can be used in conjunction with
-	 * SELECT and REVEAL flags. 
-	 * 
+	 * SELECT and REVEAL flags.
+	 *
 	 * @see IModelSelectionPolicy
 =	 * @since 3.5
 	 */
 	public static int FORCE = 1 << 26;
-	
+
 	/**
 	 * Returns the parent of this node, or <code>null</code> if this is
 	 * a root node.
-	 * 
+	 *
 	 * @return parent node or <code>null</code> if this is a root node
 	 */
 	public IModelDelta getParentDelta();
-	
+
 	/**
 	 * Returns the model element this node describes.
-	 * 
+	 *
 	 * @return associated model element
 	 */
 	public Object getElement();
-	
+
 	/**
 	 * Returns flags describing how this element changed. A bit mask of the
 	 * change type constants described in {@link IModelDelta}.
-	 * 
+	 *
 	 * @return change flags
 	 */
 	public int getFlags();
-	
+
 	/**
 	 * Returns nodes describing changed children, possibly an empty collection.
-	 *  
+	 *
 	 * @return changed children, possibly empty
 	 */
 	public IModelDelta[] getChildDeltas();
-	
+
 	/**
 	 * When a node indicates the <code>IModelDelta.REPLACED</code> flag, this method
 	 * returns the replacement element, otherwise <code>null</code>.
-	 *  
+	 *
 	 * @return replacement element or <code>null</code>
 	 */
 	public Object getReplacementElement();
-	
+
 	/**
 	 * Returns this node's index in its parents child collection or -1 if unknown.
 	 * This attribute is required when expanding or selecting an element.
@@ -167,7 +167,7 @@ public interface IModelDelta {
 	 * @return insertion index or -1
 	 */
 	public int getIndex();
-	
+
 	/**
 	 * Returns the total number of children this element has, or -1 if unknown. Note
 	 * that this number may be greater than the number of child delta nodes for this
@@ -175,17 +175,17 @@ public interface IModelDelta {
 	 * <p>
 	 * This attribute is required when expanding or selecting an element.
 	 * </p>
-	 * 
+	 *
 	 * @return total number of child elements this element has
 	 */
 	public int getChildCount();
-	
+
 	/**
 	 * Accepts the given visitor.
-	 * 
+	 *
 	 * @param visitor delta visitor to accept
 	 * @since 3.3
 	 */
 	public void accept(IModelDeltaVisitor visitor);
-	
+
 }

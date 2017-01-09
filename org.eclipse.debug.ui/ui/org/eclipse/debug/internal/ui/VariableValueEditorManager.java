@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -24,12 +24,12 @@ import org.eclipse.debug.ui.actions.IVariableValueEditor;
  * Manager which provides the variable value editors contributed
  * via the org.eclipse.debug.ui.variableValueEditors extension
  * point.
- * 
+ *
  * @see org.eclipse.debug.ui.actions.IVariableValueEditor
  * @since 3.1
  */
 public class VariableValueEditorManager {
-    
+
     /**
      * Mapping of debug model identifiers to variable value editors.
      * The keys in this map are always Strings (model ids).
@@ -38,7 +38,7 @@ public class VariableValueEditorManager {
      * are instantiated (editors are loaded lazily, then cached).
      */
 	private Map<String, Object> fEditorMap = new HashMap<String, Object>();
-    
+
     /**
      * The singleton instance of this manager.
      */
@@ -63,7 +63,7 @@ public class VariableValueEditorManager {
         }
         return fgManager;
     }
-    
+
     /**
      * Returns the variable value editor associated with the given debug
      * model identifier or <code>null</code> if no editor has been supplied
@@ -89,7 +89,7 @@ public class VariableValueEditorManager {
         }
         return editor;
     }
-	
+
 	/**
 	 * Loads contributors to the org.eclipse.debug.ui.variableValueEditors extension point,
 	 * for use when the user runs this action.

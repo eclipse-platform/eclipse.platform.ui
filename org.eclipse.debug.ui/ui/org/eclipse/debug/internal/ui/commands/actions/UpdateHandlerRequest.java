@@ -17,15 +17,15 @@ import org.eclipse.debug.internal.core.commands.DebugCommandRequest;
  * Collects whether a handler is enabled for a set of elements and
  * reports its vote to an action updater collecting results from
  * other handlers.
- * 
+ *
  * @since 3.3
  *
  */
 public class UpdateHandlerRequest extends DebugCommandRequest implements IEnabledStateRequest {
-	
+
 	private boolean fEnabled = false;
 	private ActionsUpdater fUpdater;
-	
+
 	public UpdateHandlerRequest(Object[] elements, ActionsUpdater updater) {
 		super(elements);
 		fUpdater = updater;

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 272367: "Show Type Names" attribute is not available in the IPresentationContext properties 
+ *     WindRiver - Bug 272367: "Show Type Names" attribute is not available in the IPresentationContext properties
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
@@ -38,9 +38,9 @@ public class ShowTypesAction extends Action {
 	private IDebugView fView;
 
 	public ShowTypesAction(IDebugView view) {
-		super(ActionMessages.ShowTypesAction_Show__Type_Names_1, IAction.AS_CHECK_BOX); 
+		super(ActionMessages.ShowTypesAction_Show__Type_Names_1, IAction.AS_CHECK_BOX);
 		setView(view);
-		setToolTipText(ActionMessages.ShowTypesAction_Show_Type_Names); 
+		setToolTipText(ActionMessages.ShowTypesAction_Show_Type_Names);
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
@@ -61,7 +61,7 @@ public class ShowTypesAction extends Action {
 		if (viewer.getControl().isDisposed()) {
 			return;
 		}
-		
+
 		IDebugModelPresentation debugLabelProvider= getView().getAdapter(IDebugModelPresentation.class);
 		if (debugLabelProvider != null) {
 			Boolean typesStatus = on ? Boolean.TRUE : Boolean.FALSE;
@@ -73,12 +73,12 @@ public class ShowTypesAction extends Action {
 			BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
 				@Override
 				public void run() {
-					viewer.refresh();					
+					viewer.refresh();
 				}
 			});
 		}
 	}
-	
+
 	protected IDebugView getView() {
 		return fView;
 	}
@@ -99,8 +99,8 @@ public class ShowTypesAction extends Action {
 			setToolTipText(ActionMessages.ShowTypesAction_0);
 		}
 	}
-	
-	
+
+
 }
 
 

@@ -29,8 +29,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * the user invokes an associated action. If an adapter does not exist
  * for the part, the retargettable actions asks selected objects in the
  * active part for an adapter. Generally, a debug implementation will
- * provide breakpoint adapters for relevant editors and model objects. 
- * </p> 
+ * provide breakpoint adapters for relevant editors and model objects.
+ * </p>
  * <p>
  * Clients are intended to implement this interface and provide instances as
  * an adapter on applicable parts (for example, editors) and objects (for
@@ -39,25 +39,25 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.0
  */
 public interface IToggleBreakpointsTarget {
-	
+
 	/**
 	 * Creates new line breakpoints or removes existing breakpoints.
 	 * The selection varies depending on the given part. For example,
 	 * a text selection is provided for text editors, and a structured
 	 * selection is provided for tree views, and may be a multi-selection.
-	 * 
-	 * @param part the part on which the action has been invoked  
+	 *
+	 * @param part the part on which the action has been invoked
 	 * @param selection selection on which line breakpoints should be toggled
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
-	
+
 	/**
 	 * Returns whether line breakpoints can be toggled on the given selection.
 	 * The selection varies depending on the given part. For example,
 	 * a text selection is provided for text editors, and a structured
 	 * selection is provided for tree views, and may be a multi-selection.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection selection on which line breakpoints may be toggled
 	 * @return whether line breakpoints can be toggled on the given selection
@@ -69,46 +69,46 @@ public interface IToggleBreakpointsTarget {
 	 * The selection varies depending on the given part. For example,
 	 * a text selection is provided for text editors, and a structured
 	 * selection is provided for tree views, and may be a multi-selection.
-	 * 
-	 * @param part the part on which the action has been invoked  
+	 *
+	 * @param part the part on which the action has been invoked
 	 * @param selection selection on which method breakpoints should be toggled
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
-	
+
 	/**
 	 * Returns whether method breakpoints can be toggled on the given selection.
 	 * The selection varies depending on the given part. For example,
 	 * a text selection is provided for text editors, and a structured
 	 * selection is provided for tree views, and may be a multi-selection.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection selection on which method breakpoints may be toggled
 	 * @return whether method breakpoints can be toggled on the given selection
 	 */
 	public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection);
-	
+
 	/**
 	 * Creates new watchpoints or removes existing breakpoints.
 	 * The selection varies depending on the given part. For example,
 	 * a text selection is provided for text editors, and a structured
 	 * selection is provided for tree views, and may be a multi-selection.
-	 * 
-	 * @param part the part on which the action has been invoked  
+	 *
+	 * @param part the part on which the action has been invoked
 	 * @param selection selection on which watchpoints should be toggled
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
-	
+
 	/**
 	 * Returns whether watchpoints can be toggled on the given selection.
 	 * The selection varies depending on the given part. For example,
 	 * a text selection is provided for text editors, and a structured
 	 * selection is provided for tree views, and may be a multi-selection.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection selection on which watchpoints may be toggled
 	 * @return whether watchpoints can be toggled on the given selection
 	 */
-	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection);	
+	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection);
 }

@@ -4,10 +4,10 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Wind River Systems - Fix for viewer state save/restore [188704]
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
@@ -40,7 +40,7 @@ public class ModelDelta implements IModelDelta {
 
 	/**
 	 * Constructs a new delta for the given element.
-	 * 
+	 *
 	 * @param element model element
 	 * @param flags change flags
 	 */
@@ -52,7 +52,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Constructs a new delta for the given element to be replaced
 	 * with the specified replacement element.
-	 * 
+	 *
 	 * @param element model element
 	 * @param replacement replacement element
 	 * @param flags change flags
@@ -66,7 +66,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Constructs a new delta for the given element to be inserted at
 	 * the specified index.
-	 * 
+	 *
 	 * @param element model element
 	 * @param index insertion position
 	 * @param flags change flags
@@ -76,11 +76,11 @@ public class ModelDelta implements IModelDelta {
         fIndex = index;
         fFlags = flags;
     }
-    
+
 	/**
 	 * Constructs a new delta for the given element at the specified index
 	 * relative to its parent with the given number of children.
-	 * 
+	 *
 	 * @param element model element
 	 * @param index insertion position
 	 * @param flags change flags
@@ -112,7 +112,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Adds a child node to this delta with the given element and change flags,
 	 * and returns the child delta.
-	 * 
+	 *
 	 * @param element child element to add
 	 * @param flags change flags for child
 	 * @return newly created child delta
@@ -123,10 +123,10 @@ public class ModelDelta implements IModelDelta {
 		addDelta(node);
 		return node;
 	}
-	
+
 	/**
 	 * Returns the child delta for the given element, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param element child element
 	 * @return corresponding delta node, or <code>null</code>
 	 */
@@ -145,11 +145,11 @@ public class ModelDelta implements IModelDelta {
 
 	/**
      * Returns the child delta for the given element and index, or <code>null</code> if none.
-     * 
+     *
      * @param element Element of the child delta to find
      * @param index Index of the child delta to find.
      * @return corresponding delta node, or <code>null</code>
-     * 
+     *
      * @since 3.8
      */
     public ModelDelta getChildDelta(Object element, int index) {
@@ -184,7 +184,7 @@ public class ModelDelta implements IModelDelta {
 	        mapNode( fNodesList.get(i) );
 	    }
 	}
-	
+
 	private void mapNode(ModelDelta node) {
         Object oldValue = fNodesMap.put(node.getElement(), node);
         if (oldValue instanceof ModelDelta) {
@@ -200,13 +200,13 @@ public class ModelDelta implements IModelDelta {
             fNodesMap.put(node.getElement(), newNodes);
         }
 	}
-	
+
 
 	/**
 	 * Adds a child node to this delta to replace the given element with the
-	 * specified replacement element and change flags, and returns the 
+	 * specified replacement element and change flags, and returns the
 	 * newly created child delta.
-	 * 
+	 *
 	 * @param element child element to add to this delta
 	 * @param replacement replacement element for the child element
 	 * @param flags change flags
@@ -222,7 +222,7 @@ public class ModelDelta implements IModelDelta {
     /**
      * Adds a child delta to this delta to insert the specified element at
      * the given index, and returns the newly created child delta.
-     * 
+     *
      * @param element child element in insert
      * @param index index of insertion
      * @param flags change flags
@@ -234,11 +234,11 @@ public class ModelDelta implements IModelDelta {
         addDelta(node);
         return node;
     }
-    
+
     /**
      * Adds a child delta to this delta at the specified index with the
      * given number of children, and returns the newly created child delta.
-     * 
+     *
      * @param element child element in insert
      * @param index index of the element relative to parent
      * @param flags change flags
@@ -251,16 +251,16 @@ public class ModelDelta implements IModelDelta {
         addDelta(node);
         return node;
     }
-    
+
     /**
      * Sets the parent delta of this delta
-     * 
+     *
      * @param node parent delta
      */
 	void setParent(ModelDelta node) {
 		fParent = node;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getParent()
 	 */
@@ -284,7 +284,7 @@ public class ModelDelta implements IModelDelta {
 	public int getIndex() {
         return fIndex;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
@@ -295,7 +295,7 @@ public class ModelDelta implements IModelDelta {
 	    }
 		return fNodes;
 	}
-	
+
 	private void addDelta(ModelDelta delta) {
 		if (fNodesList == null) {
 			fNodesList = new ArrayList<ModelDelta>(4);
@@ -306,7 +306,7 @@ public class ModelDelta implements IModelDelta {
 	        mapNode(delta);
 	    }
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
@@ -315,7 +315,7 @@ public class ModelDelta implements IModelDelta {
 		buf.append("Model Delta End\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
+
 	private void appendDetail(String indent, StringBuffer buf, IModelDelta delta) {
         buf.append(indent);
 		buf.append("Element: "); //$NON-NLS-1$
@@ -396,7 +396,7 @@ public class ModelDelta implements IModelDelta {
 	public void accept(IModelDeltaVisitor visitor) {
 		doAccept(visitor, 0);
 	}
-	
+
 	protected void doAccept(IModelDeltaVisitor visitor, int depth) {
 		if (visitor.visit(this, depth)) {
 			IModelDelta[] childDeltas = getChildDeltas();
@@ -405,19 +405,19 @@ public class ModelDelta implements IModelDelta {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets this delta's element
-	 * 
+	 *
 	 * @param element element to set
 	 */
 	public void setElement(Object element) {
 		fElement = element;
 	}
-	
+
 	/**
 	 * Sets this delta's flags.
-	 * 
+	 *
 	 * @param flagsnew flags to set
 	 */
 	public void setFlags(int flags) {
@@ -426,17 +426,17 @@ public class ModelDelta implements IModelDelta {
 
     /**
      * Sets this delta's index
-     * 
+     *
      * @param index new index to set
      * @since 3.6
      */
     public void setIndex(int index) {
         fIndex = index;
     }
-	
+
 	/**
      * Sets this delta's child count.
-     * 
+     *
      * @param count new child count to set
      */
     public void setChildCount(int count) {

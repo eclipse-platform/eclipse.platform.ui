@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,13 +28,13 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Model proxy for launch object.
- * 
+ *
  * @since 3.3
  */
 public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener2 {
 
 	private ILaunch fLaunch;
-	
+
 	/**
 	 * Set of launch's previous children. When a child is added,
 	 * its model proxy is installed.
@@ -43,13 +43,13 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 
 	/**
 	 * Constructs a new model proxy for the given launch.
-	 * 
+	 *
 	 * @param launch
 	 */
 	public LaunchProxy(ILaunch launch) {
 		fLaunch = launch;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
@@ -58,7 +58,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		super.init(context);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
@@ -72,7 +72,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
 	 */
 	@Override
-	public void dispose() {	
+	public void dispose() {
 		super.dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		fPrevChildren.clear();
@@ -89,7 +89,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.UNINSTALL);
 				break;
 			}
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -125,10 +125,10 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 			}
 		}
 	}
-	
+
 	/**
 	 * Installs model proxies for any new children in the given launch.
-	 * 
+	 *
 	 * @param launch
 	 */
 	protected void installModelProxies() {
@@ -160,7 +160,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 			fireModelChanged(root);
 		}
 	}
-	
+
 	/**
 	 * Finds the index of the selected element in the given list
 	 * @param element the element to get the index for
@@ -175,15 +175,15 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Convenience method to fire a delta
 	 * @param flags the flags to set on the delta
 	 */
 	protected void fireDelta(int flags) {
 		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
-		delta.addNode(fLaunch, flags);	
-		fireModelChanged(delta);		
+		delta.addNode(fLaunch, flags);
+		fireModelChanged(delta);
 	}
 
 }

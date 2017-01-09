@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ import org.eclipse.debug.ui.actions.RelaunchLastAction;
 
 /**
  * Re-launches the last run-mode launch
- * 
+ *
  * This menu item appears in the main 'Run' menu
- * 
+ *
  * @see RelaunchLastAction
  * @see DebugLastAction
  * @see ProfileLastAction
@@ -34,8 +34,8 @@ public class RunLastAction extends RelaunchLastAction {
 	@Override
 	public String getMode() {
 		return ILaunchManager.RUN_MODE;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getLaunchGroupId()
 	 */
@@ -64,7 +64,7 @@ public class RunLastAction extends RelaunchLastAction {
 	protected String getTooltipText() {
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getCommandId()
 	 */
@@ -72,7 +72,7 @@ public class RunLastAction extends RelaunchLastAction {
 	protected String getCommandId() {
 		return "org.eclipse.debug.ui.commands.RunLast"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getDescription()
 	 */
@@ -84,5 +84,5 @@ public class RunLastAction extends RelaunchLastAction {
 		else {
 			return ActionMessages.RunLastAction_3;
 		}
-	}	
+	}
 }

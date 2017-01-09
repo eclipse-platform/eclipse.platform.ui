@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech - Wind River - adapted to use in Debug view
@@ -20,13 +20,13 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Fake part to used to create the breadcrumb page.
- * 
+ *
  * @since 3.5
  */
 class BreadcrumbWorkbenchPart implements IWorkbenchPart {
 
     private IWorkbenchPartSite fSite = null;
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */

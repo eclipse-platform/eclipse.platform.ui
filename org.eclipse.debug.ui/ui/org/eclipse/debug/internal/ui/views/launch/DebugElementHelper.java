@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * Translates images, colors, and fonts into image descriptors, RGBs, and font
  * data for workbench adapters. Also provides labels.
- * 
+ *
  * @since 3.1
  */
 public class DebugElementHelper {
@@ -51,7 +51,7 @@ public class DebugElementHelper {
 
 	/**
 	 * Returns an image descriptor for the given debug element.
-	 * 
+	 *
 	 * @param object object for which an image descriptor is required
 	 */
 	public static ImageDescriptor getImageDescriptor(Object object) {
@@ -61,7 +61,7 @@ public class DebugElementHelper {
 
 	/**
 	 * Returns an image descriptor for the given debug element.
-	 * 
+	 *
 	 * @param presentation presentation to obtain image from
 	 * @param object object for which an image descriptor is required
 	 * @since 3.3
@@ -85,7 +85,7 @@ public class DebugElementHelper {
 
 	/**
 	 * Returns a label for the given debug element.
-	 * 
+	 *
 	 * @param o object for which a label is required
 	 */
 	public static String getLabel(Object o) {
@@ -94,7 +94,7 @@ public class DebugElementHelper {
 
 	/**
 	 * Returns a model presentation to use to retrieve lables & images.
-	 * 
+	 *
 	 * @return a model presentation to use to retrieve lables & images
 	 */
 	public static DelegatingModelPresentation getPresentation() {
@@ -107,7 +107,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns the RGB of the foreground color for the given element, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param element object for which a foreground color is required
 	 * @return the RGB of the foreground color for the given element, or
 	 *         <code>null</code> if none
@@ -123,7 +123,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns the RGB of the foreground color for the given element, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param element object for which a foreground color is required
 	 * @param presentation presentation to obtain color from
 	 * @return the RGB of the foreground color for the given element, or
@@ -147,7 +147,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns the RGB of the background color for the given element, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param element object for which a background color is required
 	 * @return the RGB of the background color for the given element, or
 	 *         <code>null</code> if none
@@ -163,7 +163,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns the RGB of the background color for the given element, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param element object for which a background color is required
 	 * @param presentation presentation to use to retrieve color
 	 * @return the RGB of the background color for the given element, or
@@ -187,7 +187,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns the font data for the given element, or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @param element object for which font data is required
 	 * @return the font data for the given element, or <code>null</code> if none
 	 */
@@ -202,7 +202,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns the font data for the given element, or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @param element object for which font data is required
 	 * @param presentation presentation to obtain font from
 	 * @return the font data for the given element, or <code>null</code> if none
@@ -225,7 +225,7 @@ public class DebugElementHelper {
 	/**
 	 * Returns whether the UI thread is required for computing the label for the
 	 * given object.
-	 * 
+	 *
 	 * @param object object a label is being computed for
 	 * @return whether the UI thread is required
 	 */

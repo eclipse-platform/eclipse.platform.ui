@@ -40,7 +40,7 @@ import com.ibm.icu.text.DateFormat;
 public class ProcessPropertyPage extends PropertyPage {
 
 	private static Font fHeadingFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
-	
+
 	/**
 	 * Constructor for ProcessPropertyPage
 	 */
@@ -55,9 +55,9 @@ public class ProcessPropertyPage extends PropertyPage {
 	protected Control createContents(Composite ancestor) {
 		noDefaultAndApplyButton();
 		Composite parent = SWTFactory.createComposite(ancestor, ancestor.getFont(), 1, 1, GridData.FILL_BOTH);
-		
+
 		IProcess proc = getProcess();
-		
+
 	//create the process time section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_0, fHeadingFont, 1);
 		Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
@@ -66,9 +66,9 @@ public class ProcessPropertyPage extends PropertyPage {
 		text.setText(getTimeText(proc));
 		text.setBackground(parent.getBackground());
 		SWTFactory.createVerticalSpacer(parent, 2);
-		
+
 	//create the path name section
-		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_1, fHeadingFont, 1);		
+		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_1, fHeadingFont, 1);
 		text = SWTFactory.createText(parent, SWT.WRAP | SWT.READ_ONLY, 1);
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		text.setText(getPathText(proc));
@@ -82,12 +82,12 @@ public class ProcessPropertyPage extends PropertyPage {
 		text.setText(getWorkingDirectory(proc));
 		text.setBackground(parent.getBackground());
 		SWTFactory.createVerticalSpacer(parent, 2);
-		
+
 	//create command line section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1, fHeadingFont, 1);
-		StyledText styledText = SWTFactory.createStyledText(parent, 
-				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
-				1, 
+		StyledText styledText = SWTFactory.createStyledText(parent,
+				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL,
+				1,
 				convertWidthInCharsToPixels(13),
 				convertHeightInCharsToPixels(10),
 				GridData.FILL_BOTH);
@@ -102,13 +102,13 @@ public class ProcessPropertyPage extends PropertyPage {
 				// render as one argument per line, but don't copy line delimiters to clipboard:
 				final int[] segments = new int[count - 1];
 				commandLineText = DebugPlugin.renderArguments(arguments, segments);
-				
+
 				styledText.addBidiSegmentListener(new BidiSegmentListener() {
 					@Override
 					public void lineGetSegments(BidiSegmentEvent event) {
 						int offset = event.lineOffset;
 						int end = offset + event.lineText.length();
-						
+
 						// extract segments for the current line:
 						int iStart = Arrays.binarySearch(segments, offset);
 						if (iStart < 0) {
@@ -138,27 +138,27 @@ public class ProcessPropertyPage extends PropertyPage {
 		if(commandLineText != null) {
 			styledText.setText(commandLineText);
 		}
-		
+
 	//create environment section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_7, fHeadingFont, 1);
-		text = SWTFactory.createText(parent, 
-				SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
-				1, 
+		text = SWTFactory.createText(parent,
+				SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL,
+				1,
 				convertWidthInCharsToPixels(13),
 				convertHeightInCharsToPixels(8),
 				GridData.FILL_BOTH);
 		text.setBackground(parent.getBackground());
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		text.setText(getEnvironment(proc));
-		
+
 		setTitle(DebugPreferencesMessages.ProcessPropertyPage_2);
 		return parent;
 	}
-	
+
 	/**
 	 * Gets the process from the selected element
 	 * @return the process or null if the element is not a process
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private IProcess getProcess() {
@@ -172,12 +172,12 @@ public class ProcessPropertyPage extends PropertyPage {
 		}
 		return proc;
 	}
-	
+
 	/**
 	 * returns the path text
 	 * @param proc the process to extract the path text from
 	 * @return the path text or a message indicating no path text available
-	 * 
+	 *
 	 * @see DebugPlugin#ATTR_PATH
 	 * @since 3.2
 	 */
@@ -197,14 +197,14 @@ public class ProcessPropertyPage extends PropertyPage {
 		}
 		return text;
 	}
-	
+
 	/**
 	 * gets the pattern of text from the process label specified by RegEx
 	 * @param proc the process to compile the RegEx against
 	 * @param deftext the default text to return if the process is null
 	 * @param regex the RegEx to match in the process label
 	 * @return the RegEx matched text or the default supplied text if the process is null
-	 * 
+	 *
 	 * @see DebugPlugin#ATTR_RUN_AT_TIME
 	 * @since 3.2
 	 */
@@ -238,12 +238,12 @@ public class ProcessPropertyPage extends PropertyPage {
 		}
 		return text;
 	}
-	
+
 	/**
 	 * Initializes the text to be displayed in the environment text widget
 	 * @param proc
 	 * @return the environment path or a default string never <code>null</code>
-	 * 
+	 *
 	 * @see DebugPlugin#ATTR_ENVIRONMENT
 	 * @since 3.8
 	 */
@@ -257,13 +257,13 @@ public class ProcessPropertyPage extends PropertyPage {
 		}
 		return env;
 	}
-	
+
 	/**
 	 * Initializes the text to be displayed in the working directory text widget
-	 * 
+	 *
 	 * @param proc
 	 * @return the text to display or a default {@link String} never <code>null</code>
-	 * 
+	 *
 	 * @see DebugPlugin#ATTR_WORKING_DIRECTORY
 	 * @since 3.8
 	 */
@@ -277,7 +277,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		}
 		return wd;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */

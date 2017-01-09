@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.5
  */
 public interface IDetailPane2 extends IDetailPane {
@@ -31,7 +31,7 @@ public interface IDetailPane2 extends IDetailPane {
 	 * returned by {@link #createControl(org.eclipse.swt.widgets.Composite)
 	 * createControl(Composite)}.
 	 * </p>
-	 * 
+	 *
 	 * @return the selection provider of this detail pane or <code>null</code>
 	 */
 	public ISelectionProvider getSelectionProvider();

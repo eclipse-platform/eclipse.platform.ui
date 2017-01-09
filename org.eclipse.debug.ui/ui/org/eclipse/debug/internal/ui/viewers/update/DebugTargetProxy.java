@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Default model proxy for a debug target.
- * 
+ *
  * @since 3.2
  */
 public class DebugTargetProxy extends EventHandlerModelProxy {
@@ -93,13 +93,13 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
                 } catch (DebugException e) {
                     // In case of exception do not fire delta
                     return;
-                } 
+                }
 			}
 			// expand the target if no suspended thread
 			fireModelChanged(delta);
 		}
 	}
-    
+
     protected ModelDelta getNextSuspendedThreadDelta(IThread currentThread, boolean reverse) {
         IDebugTarget target = fDebugTarget;
         if (target != null) {

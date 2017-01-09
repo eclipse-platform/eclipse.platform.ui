@@ -14,7 +14,7 @@ package org.eclipse.debug.ui;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
- 
+
 /**
  * A launch configuration tab group is used to edit/view attributes
  * of a specific type of launch configuration. Launch
@@ -27,9 +27,9 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * <p>
  * A tab group has the following lifecycle methods:
  * <ul>
- * <li><code>createTabs(ILaunchConfigurationDialog, String)</code> - 
+ * <li><code>createTabs(ILaunchConfigurationDialog, String)</code> -
  *  this is the first method called on a tab group after it is instantiated.</li>
- * <li><code>initializeFrom(ILaunchConfiguration)</code> - called when a 
+ * <li><code>initializeFrom(ILaunchConfiguration)</code> - called when a
  *  launch configuration is selected to be displayed.</li>
  * <li><code>performApply(ILaunchConfigurationWorkingCopy)</code> - called when
  *  a tab group's values are to be written to a launch configuration.</li>
@@ -56,7 +56,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * group extension.
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
- *   &lt;launchConfigurationTabGroup 
+ *   &lt;launchConfigurationTabGroup
  *      id="com.example.ExampleTabGroup"
  *      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
  *      class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
@@ -88,17 +88,17 @@ public interface ILaunchConfigurationTabGroup {
 	 * Creates the tabs contained in this tab group for the specified
 	 * launch mode. The tabs control's are not created. This is the
 	 * fist method called in the lifecycle of a tab group.
-	 * 
+	 *
 	 * @param dialog the launch configuration dialog this tab group
 	 *  is contained in
 	 * @param mode the mode the launch configuration dialog was
 	 *  opened in
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode);
-	
+
 	/**
 	 * Returns the tabs contained in this tab group.
-	 * 
+	 *
 	 * @return the tabs contained in this tab group
 	 */
 	public ILaunchConfigurationTab[] getTabs();
@@ -110,7 +110,7 @@ public interface ILaunchConfigurationTabGroup {
 	 * perform any cleanup required.
 	 */
 	public void dispose();
-			
+
 	/**
 	 * Initializes the given launch configuration with
 	 * default values for this tab group. This method
@@ -118,34 +118,34 @@ public interface ILaunchConfigurationTabGroup {
 	 * such that the configuration can be initialized with
 	 * meaningful values. This method may be called before
 	 * tab controls are created.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 */
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);	
-	
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);
+
 	/**
 	 * Initializes this group's tab controls with values from the given
 	 * launch configuration. This method is called when
 	 * a configuration is selected to view or edit.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 */
-	public void initializeFrom(ILaunchConfiguration configuration);		
-		
+	public void initializeFrom(ILaunchConfiguration configuration);
+
 	/**
-	 * Copies values from this group's tabs into the given 
+	 * Copies values from this group's tabs into the given
 	 * launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration);
-	
+
 	/**
 	 * Notifies this tab that a configuration has been
 	 * launched, resulting in the given launch. This method can be
 	 * called when a tab's control does not exist, to support single-click
 	 * launching.
-	 * 
+	 *
 	 * @param launch the result of launching the current
 	 *  launch configuration
 	 * @deprecated As of R3.0, this method is no longer called by the launch

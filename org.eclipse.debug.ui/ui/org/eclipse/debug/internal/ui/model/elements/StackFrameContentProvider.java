@@ -36,7 +36,7 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(getAllChildren(parent, context, monitor), index, length);
 	}
-	
+
 	/**
 	 * This method retrieves all of the children for the specified parent given the current context
 	 * @param parent the parent ot get the children for
@@ -82,5 +82,5 @@ public class StackFrameContentProvider extends ElementContentProvider {
         }
         return false;
 	}
-	
+
 }

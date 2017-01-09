@@ -22,19 +22,19 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * @since 3.1
  */
 public interface IMemoryRenderingSynchronizationService {
-    
+
     /**
      * Adds a listener for property changes notification for the specified properties.
-     * Specifying <code>null</code> indicates that the listener is interested in all 
+     * Specifying <code>null</code> indicates that the listener is interested in all
      * properties. If an identical listener is already registered, the properties
      * it is registered to listen for are updated.
      *
      * @param listener a property change listener
      * @param properties properties the listener is interested in, or <code>null</code>
      *  to indicate all properties.
-     */    
+     */
     public void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties);
-    
+
     /**
      * Removes the given listener for property change notification.
      * Has no effect if the identical listener is not registered.
@@ -42,31 +42,31 @@ public interface IMemoryRenderingSynchronizationService {
      * @param listener a property change listener
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener);
-    
+
     /**
      * Returns the current value of the specified property for the given memory block, or
      * <code>null</code> if none.
-     * 
+     *
      * @param block memory block for which a property is requested
      * @param property the name of the property
      * @return the property value or <code>null</code>
      */
     public Object getProperty(IMemoryBlock block, String property);
-	
+
     /**
      * Sets the rendering currently providing sychronization information for
      * this synchronization service, or <code>null</code> if none.
-     * 
+     *
      * @param rendering active rendering providing synchronization information or
      *  <code>null</code>
      */
     public void setSynchronizationProvider(IMemoryRendering rendering);
-    
+
     /**
      * Returns the rendering currently providing synchronization information for
      * this synchronization service, or <code>null</code if none.
-     * 
+     *
      * @return rendering providing synchronization information or <code>null</code>
      */
-    public IMemoryRendering getSynchronizationProvider(); 
+    public IMemoryRendering getSynchronizationProvider();
 }

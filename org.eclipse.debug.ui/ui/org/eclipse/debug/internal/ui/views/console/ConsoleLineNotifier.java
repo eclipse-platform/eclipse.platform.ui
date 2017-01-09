@@ -39,10 +39,10 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	private List<IConsoleLineTracker> fListeners = new ArrayList<IConsoleLineTracker>(2);
 
 	/**
-	 * The console this notifier is tracking 
+	 * The console this notifier is tracking
 	 */
 	private ProcessConsole fConsole = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
 	 */
@@ -56,11 +56,11 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	            lineTrackers[i].init(fConsole);
                 addConsoleListener(lineTrackers[i]);
             }
-	        
+
 	        fConsole.addPropertyChangeListener(this);
 	    }
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
 	 */
@@ -95,19 +95,19 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
         fConsole = null;
         fListeners = null;
     }
-	
+
 	/**
      * Adds the given listener to the list of listeners notified when a line of
      * text is appended to the console.
-     * 
-     * @param listener the listener to add 
+     *
+     * @param listener the listener to add
      */
 	public void addConsoleListener(IConsoleLineTracker listener) {
         if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
 		}
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
@@ -118,11 +118,11 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
             int lineOfOffset = document.getLineOfOffset(event.getOffset());
             String delimiter = document.getLineDelimiter(lineOfOffset);
             int strip = delimiter==null ? 0 : delimiter.length();
-            Region region = new Region(event.getOffset(), event.getLength()-strip); 
+            Region region = new Region(event.getOffset(), event.getLength()-strip);
             lineAppended(region);
         } catch (BadLocationException e) {}
     }
-    
+
     public void lineAppended(IRegion region) {
         int size = fListeners.size();
         for (int i=0; i<size; i++) {

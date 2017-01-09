@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * A progress monitor that accepts a status. This common base interface is used
  * to make non-blocking requests on models that may reply asynchronously. A request
- * may be cancelled by the caller or by the client fulfilling the request (by 
+ * may be cancelled by the caller or by the client fulfilling the request (by
  * calling <code>setCancelled(true)</code> on the request). Failure and error
  * states are reported by setting a status on a monitor. When a request
  * is complete, the client fulfilling the request must call <code>done()</code> on the
@@ -43,14 +43,14 @@ public interface IStatusMonitor extends IProgressMonitor {
      * Sets the status for a request, possibly <code>null</code>.
      * When a request fails, the status indicates why the request failed.
      * A <code>null</code> status is considered to be successful.
-     * 
+     *
      * @param status request status
      */
     public void setStatus(IStatus status);
-    
+
     /**
      * Returns the status of this request, or <code>null</code>.
-     * 
+     *
      * @return request status - <code>null</code> is equivalent
      *  to an OK status
      */

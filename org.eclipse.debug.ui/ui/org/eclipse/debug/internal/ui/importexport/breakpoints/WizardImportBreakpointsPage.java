@@ -47,28 +47,28 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * The import breakpoints wizard page.
- * 
+ *
  * This class is used in <code>WizardImportBreakpoints</code>.
- * 
+ *
  * @since 3.2
  */
 public class WizardImportBreakpointsPage extends WizardPage implements Listener {
-	
+
 	//widgets
 	private Button fAutoRemoveDuplicates = null;
 	private Button fAutoCreateWorkingSets = null;
 	private Text fFileNameField = null;
 	private Button fBrowseForFileButton = null;
-	
+
 //	state constants
 	private static final String REMOVE_DUPS = "overwrite"; //$NON-NLS-1$
 	private static final String CREATE_WORKING_SETS = "createws"; //$NON-NLS-1$
 	private static final String SOURCE_FILE_NAME = "filename"; //$NON-NLS-1$
-	
+
 	/**
 	 * This is the default constructor. It accepts the name for the tab as a
 	 * parameter
-	 * 
+	 *
 	 * @param pageName the name of the page
 	 */
 	public WizardImportBreakpointsPage(String pageName) {
@@ -98,7 +98,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			fFileNameField.setText(file);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -121,11 +121,11 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_BREAKPOINTS);
 	}
-	
+
 	/**
 	 * This method is used to determine if the page can be "finished".
 	 * To be determined "finishable" there must be an import path.
-	 * 
+	 *
 	 * @return if the prerequisites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
@@ -139,24 +139,24 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			setMessage(MessageFormat.format(ImportExportMessages.WizardImportBreakpointsPage_1, new Object[] { fileName }), ERROR);
 			return false;
 		}
-		
-		setMessage(ImportExportMessages.WizardImportBreakpointsPage_2); 
+
+		setMessage(ImportExportMessages.WizardImportBreakpointsPage_2);
 		return true;
 	}
 
 	/**
 	 * Create the options specification widgets.
-	 * 
+	 *
 	 * @param parent the parent composite to add this one to
 	 */
 	protected void createOptionsGroup(Composite parent) {
 		fAutoRemoveDuplicates = SWTFactory.createCheckButton(parent, ImportExportMessages.WizardImportBreakpointsPage_3, null, false, 1);
 		fAutoCreateWorkingSets = SWTFactory.createCheckButton(parent, ImportExportMessages.WizardImportBreakpointsPage_5, null, false, 1);
 	}
-	
+
 	/**
 	 * Create the export destination specification widgets
-	 * 
+	 *
 	 * @param parent the parent composite to add this one to
 	 */
 	protected void createDestinationGroup(Composite parent) {
@@ -166,12 +166,12 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		// file name entry field
 		fFileNameField = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE, 1, GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		fFileNameField.addListener(SWT.Modify, this);
-		
+
 		// destination browse button
 		fBrowseForFileButton = SWTFactory.createPushButton(comp, ImportExportMessages.WizardBreakpointsPage_8, null);
 		fBrowseForFileButton.addListener(SWT.Selection, this);
 	}
-	
+
 	/**
 	 * Save the state of the widgets select, for successive invocations of the wizard
 	 */
@@ -183,7 +183,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			settings.put(SOURCE_FILE_NAME, fFileNameField.getText().trim());
 		}
 	}
-	
+
 	/**
 	 * Restores the state of the wizard from previous invocations
 	 */
@@ -198,7 +198,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * This method is called when the Finish button is click on the main wizard
@@ -207,20 +207,20 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * </p>
 	 * @return if the import operation was successful or not
 	 */
-	public boolean finish() {	
+	public boolean finish() {
 		return finish(null);
 	}
 
 	public boolean finish(final List<IMarker> selectedMarkers) {
 		try {
 			saveWidgetState();
-			getContainer().run(false, true, 
+			getContainer().run(false, true,
 					new IRunnableWithProgress() {
 						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
-									fFileNameField.getText().trim(), 
-									fAutoRemoveDuplicates.getSelection(), 
+									fFileNameField.getText().trim(),
+									fAutoRemoveDuplicates.getSelection(),
 									fAutoCreateWorkingSets.getSelection());
 							operation.run(monitor);
 							if(selectedMarkers != null) {

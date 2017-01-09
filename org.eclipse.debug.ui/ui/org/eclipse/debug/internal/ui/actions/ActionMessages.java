@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *  Mike Morearty - Bug 271411
@@ -25,7 +25,7 @@ public class ActionMessages extends NLS {
 	public static String AbstractLaunchHistoryAction_5;
 
 	public static String AbstractLaunchHistoryAction_6;
-    
+
     public static String AddToFavoritesAction_1;
     public static String AddToFavoritesAction_2;
     public static String AddToFavoritesAction_3;
@@ -44,7 +44,7 @@ public class ActionMessages extends NLS {
     public static String ConfigureColumnsAction_0;
 	public static String ConfigureColumnsAction_1;
 	public static String ConfigureColumnsAction_2;
-    
+
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
 
@@ -91,7 +91,7 @@ public class ActionMessages extends NLS {
     public static String RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2;
     public static String RelaunchLastAction_Error_relaunching_3;
     public static String RelaunchLastAction_Error_encountered_attempting_to_relaunch_4;
-    
+
     public static String RemoveAllBreakpointsAction_0;
     public static String RemoveAllBreakpointsAction_1;
     public static String RemoveAllBreakpointsAction_2;
@@ -108,7 +108,7 @@ public class ActionMessages extends NLS {
 
 	public static String RemoveAllTriggerPointsAction_0;
 	public static String RemoveAllTriggerPointsAction_1;
-	
+
 	public static String DeleteBreakpointOperationName;
 	public static String DeleteBreakpointsOperationName;
 
@@ -128,13 +128,13 @@ public class ActionMessages extends NLS {
 
     public static String SkipAllBreakpointsAction_0;
     public static String SkipAllBreakpointsAction_2;
-    
+
     public static String TerminateAndRelaunchAction_0;
     public static String TerminateAndRelaunchAction_3;
     public static String TerminateAndRelaunchAction_4;
     public static String TerminateAndRemoveAction_0;
     public static String TerminateAndRemoveAction_3;
-    
+
     public static String ToggleDetailPaneAction_0;
 
 	public static String ToggleDetailPaneAction_1;
@@ -163,7 +163,7 @@ public class ActionMessages extends NLS {
 	public static String WatchExpressionDialogMenu_2;
     public static String WatchAction_0;
     public static String WatchAction_1;
-    
+
     public static String RunToLineAction_0;
     public static String RunToLineAction_1;
     public static String RunToLineHandler_0;
@@ -237,7 +237,7 @@ public class ActionMessages extends NLS {
 
 	public static String VirtualFindAction_0;
 	public static String VirtualFindAction_1;
-	
+
 	public static String ToggleBreakpointsTargetManager_defaultToggleTarget_name;
-    public static String ToggleBreakpointsTargetManager_defaultToggleTarget_description;	
+    public static String ToggleBreakpointsTargetManager_defaultToggleTarget_description;
 }

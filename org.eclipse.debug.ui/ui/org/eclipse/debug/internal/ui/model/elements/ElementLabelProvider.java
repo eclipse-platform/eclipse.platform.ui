@@ -32,40 +32,40 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Implementation of a context sensitive label provider, which provides
- * base functionality for subclasses such as label jobs and a basic label updater. 
- * 
+ * base functionality for subclasses such as label jobs and a basic label updater.
+ *
  * @since 3.3.0.qualifier
  */
 public abstract class ElementLabelProvider implements IElementLabelProvider {
 
 	private Job fLabelJob = null;
-	
+
 	/**
 	 * Describes a label job
 	 */
 	interface ILabelJob {
 		/**
 		 * Returns whether the updates were queued.
-		 * 
+		 *
 		 * @param updates updates
 		 * @return whether the updates were queued
 		 */
 		public boolean queue(ILabelUpdate[] updates);
 	}
-	
+
 	/**
 	 * A <code>Job</code> to update labels. This <code>Job</code> can run
 	 * in a non-UI thread.
 	 */
 	class LabelJob extends Job implements ILabelJob {
-		
+
 		private LabelUpdater fUpdater = new LabelUpdater();
 
 		public LabelJob() {
 			super("Label Job"); //$NON-NLS-1$
 			setSystem(true);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -90,22 +90,22 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		public boolean shouldRun() {
 			return fUpdater.shouldRun();
 		}
-		
+
 	}
-	
+
 	/**
 	 * A <code>Job</code> to update labels. This <code>Job</code> runs
 	 * only in the UI thread.
 	 */
 	class UILabelJob extends UIJob implements ILabelJob {
-		
+
 		private LabelUpdater fUpdater = new LabelUpdater();
 
 		public UILabelJob() {
 			super("Label Job"); //$NON-NLS-1$
 			setSystem(true);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -114,7 +114,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			fUpdater.run();
 			return Status.OK_STATUS;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 		 */
@@ -122,16 +122,16 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		public boolean queue(ILabelUpdate[] updates) {
 			return fUpdater.queue(updates);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
 		@Override
 		public boolean shouldRun() {
 			return fUpdater.shouldRun();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Queue of label updates
 	 */
@@ -175,9 +175,9 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 				update = getNextUpdate();
 			}
 		}
-		
+
 		/**
-		 * Returns the next update to process, if there is one in the 
+		 * Returns the next update to process, if there is one in the
 		 * queue. If there are no queued items <code>null</code> is returned
 		 * @return the next queued item or <code>null</code> if the queue is empty.
 		 */
@@ -191,15 +191,15 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			}
 			return fQueue.removeFirst();
 		}
-		
+
 		public boolean shouldRun() {
 			return fQueue != null;
 		}
 	}
-	
+
 	/**
 	 * Retrieves label attributes for the specified update.
-	 * 
+	 *
 	 * @param update
 	 */
 	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
@@ -220,8 +220,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			update.setBackground(getBackground(elementPath, presentationContext, columnId), i);
 			update.setForeground(getForeground(elementPath, presentationContext, columnId), i);
 			update.setFontData(getFontData(elementPath, presentationContext, columnId), i);
-			if (update instanceof ICheckUpdate && 
-			    Boolean.TRUE.equals(presentationContext.getProperty(ICheckUpdate.PROP_CHECK))) 
+			if (update instanceof ICheckUpdate &&
+			    Boolean.TRUE.equals(presentationContext.getProperty(ICheckUpdate.PROP_CHECK)))
 			{
 				((ICheckUpdate) update).setChecked(
 				    getChecked(elementPath, presentationContext), getGrayed(elementPath, presentationContext));
@@ -235,7 +235,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return font information or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
@@ -247,7 +247,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return color or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
@@ -259,7 +259,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return color or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
@@ -271,12 +271,12 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return image descriptor or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the <code>ImageDescriptor</code> for the path in the given column with the current presentation
 	 * @param elementPath
@@ -285,7 +285,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnIndex
 	 * @return image descriptor or <code>null</code>
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId, int columnIndex) throws CoreException {
@@ -299,7 +299,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @return label
 	 */
-	protected abstract String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException;	
+	protected abstract String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException;
 
 	/**
 	 * Returns the label for the path in the given column with the current presentation.
@@ -308,43 +308,43 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @param columnIndex
 	 * @return label
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId, int columnIndex) throws CoreException {
 		return getLabel(elementPath, presentationContext, columnId);
 	}
-	
+
 	/**
 	 * Returns the checked state for the given path.
-	 * 
+	 *
      * @param path Path of the element to retrieve the grayed state for.
-     * @param presentationContext Presentation context where the element is 
+     * @param presentationContext Presentation context where the element is
      * displayed.
      * @return <code>true<code> if the element check box should be checked
-     * @throws CoreException 
-	 * 
+     * @throws CoreException
+	 *
 	 * @since 3.6
 	 */
 	protected boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		return false;
 	}
-	
+
 	/**
 	 * Returns the grayed state for the given path.
-	 * 
+	 *
 	 * @param path Path of the element to retrieve the grayed state for.
-     * @param presentationContext Presentation context where the element is 
+     * @param presentationContext Presentation context where the element is
      * displayed.
 	 * @return <code>true<code> if the element check box should be grayed
-	 * @throws CoreException 
-     * 
+	 * @throws CoreException
+     *
      * @since 3.6
 	 */
 	protected boolean getGrayed(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		return false;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
@@ -360,7 +360,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		// TODO: rule
 		fLabelJob.schedule();
 	}
-    
+
     /**
      * Returns a new <code>Job</code> to update the specified labels. This method
      * is used to determine if a UI job is needed or not, in the event the request for an update
@@ -375,8 +375,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			return new LabelJob();
 		}
     }
-    
-    /** 
+
+    /**
      * Returns whether a UI job should be used for updates versus a non-UI job.
      * @param updates
      * @return true if the array of updates requires a UI job to update the labels, false otherwise
@@ -384,16 +384,16 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
     protected boolean requiresUIJob(ILabelUpdate[] updates) {
     	return false;
     }
-    
+
     /**
      * Returns the scheduling rule for the given update or <code>null</code>
      * it none.
-     * 
+     *
      * @param update label update
      * @return associated scheduling rule, or <code>null</code>
      */
     protected ISchedulingRule getRule(ILabelUpdate update) {
     	return null;
     }
-	
+
 }

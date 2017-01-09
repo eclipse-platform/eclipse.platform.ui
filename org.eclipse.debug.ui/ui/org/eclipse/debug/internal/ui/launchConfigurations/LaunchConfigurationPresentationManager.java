@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
- 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,18 +43,18 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Manages contributed launch configuration tabs
- * 
+ *
  * @see LaunchConfigurationTabGroupWrapper
  * @see LaunchConfigurationTabExtension
  * @see LaunchConfigurationTabGroupExtension
- */ 
+ */
 public class LaunchConfigurationPresentationManager {
-	
+
 	/**
 	 * The singleton launch configuration presentation manager
 	 */
 	private static LaunchConfigurationPresentationManager fgDefault;
-			
+
 	/**
 	 * Collection of launch configuration tab group extensions
 	 * defined in plug-in xml. Entries are keyed by launch
@@ -64,17 +64,17 @@ public class LaunchConfigurationPresentationManager {
 	 * used to represent the default tab group (i.e. unspecified mode).
 	 */
 	private Hashtable<String, Map<Set<String>, LaunchConfigurationTabGroupExtension>> fTabGroupExtensions;
-	
+
 	/**
 	 * contributed tabs are stored by the tab group id that they contribute to.
 	 * each entry is a <code>Hashtable</code> consisting of the corresponding
-	 * <code>LaunchConfigurationTabExtension</code> objects for each contributed tab stored by their 
+	 * <code>LaunchConfigurationTabExtension</code> objects for each contributed tab stored by their
 	 * id
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private Hashtable<String, Hashtable<String, LaunchConfigurationTabExtension>> fContributedTabs;
-			
+
 	private static Set<String> ALL_MODES = new HashSet<String>(1);
 
 	static {
@@ -98,7 +98,7 @@ public class LaunchConfigurationPresentationManager {
 		}
 		return fgDefault;
 	}
-		
+
 	/**
 	 * Creates launch configuration tab group extensions for each extension
 	 * defined in XML, and adds them to the table of tab group extensions.
@@ -129,26 +129,26 @@ public class LaunchConfigurationPresentationManager {
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Reports if a tab group extension has been replaced by another contribution
 	 * @param oldext the old tab group extension from the cache
 	 * @param newext the new one being cached
 	 * @param mode the mode(s) the group applies to
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	void reportReplacement(LaunchConfigurationTabGroupExtension oldext, LaunchConfigurationTabGroupExtension newext, Object mode) {
 		if(oldext != null) {
-			Status status = new Status(IStatus.ERROR, 
-					DebugUIPlugin.getUniqueIdentifier(), 
-					NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
+			Status status = new Status(IStatus.ERROR,
+					DebugUIPlugin.getUniqueIdentifier(),
+					NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0,
 							new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), mode.toString(), newext.getIdentifier()}));
 			DebugUIPlugin.log(status);
 		}
 	}
-	
+
 	/**
 	 * This method is used to collect all of the contributed tabs defined by the <code>launchConfigurationTabs</code>
 	 * extension point
@@ -172,10 +172,10 @@ public class LaunchConfigurationPresentationManager {
 			element.put(tab.getIdentifier(), tab);
 		}
 	}
-	
+
 	/**
 	 * Returns the tab group for the given launch configuration type and mode.
-	 * 
+	 *
 	 * @param type launch configuration type
 	 * @param mode launch mode
 	 * @return the tab group for the given type of launch configuration, or <code>null</code> if none
@@ -188,10 +188,10 @@ public class LaunchConfigurationPresentationManager {
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "No tab group defined for launch configuration type " + type.getIdentifier(), null);   //$NON-NLS-1$
 			 throw new CoreException(status);
-		} 
-		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), null);		
+		}
+		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), null);
 	}
-	
+
 	/**
 	 * Returns the tab group for the given launch configuration and the mode the dialog opened in
 	 * @param type the type of the configuration
@@ -207,17 +207,17 @@ public class LaunchConfigurationPresentationManager {
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "No tab group defined for launch configuration type " + config.getType().getIdentifier(), null);   //$NON-NLS-1$
 			 throw new CoreException(status);
-		} 
+		}
 		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), config);
 	}
-	
+
 	/**
 	 * Returns the proxy elements for all contributed tabs for the specified tab group id
 	 * @param groupid the id of the tab group
 	 * @param config the config the tab group is opened on
 	 * @param mode the mode the associated launch dialog is opened on
 	 * @return the listing of all of the tab extensions or an empty array, never <code>null</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected LaunchConfigurationTabExtension[] getTabExtensions(String groupid, ILaunchConfiguration config, String mode) throws CoreException {
@@ -228,7 +228,7 @@ public class LaunchConfigurationPresentationManager {
 		}
 		return new LaunchConfigurationTabExtension[0];
 	}
-	
+
 	/**
 	 * Returns a listing of <code>LaunchConfiguraitonTabExtension</code>s that does not contain any tabs
 	 * from disabled activities
@@ -242,7 +242,7 @@ public class LaunchConfigurationPresentationManager {
 	 * </p>
 	 * @param tabs the raw listing of tabs to filter
 	 * @return the listing of filtered <code>LaunchConfigurationTabExtension</code>s or an empty array, never <code>null</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected LaunchConfigurationTabExtension[] filterLaunchTabExtensions(LaunchConfigurationTabExtension[] tabs, ILaunchConfiguration config, String mode) throws CoreException {
@@ -281,11 +281,11 @@ public class LaunchConfigurationPresentationManager {
 		}
 		return set.toArray(new LaunchConfigurationTabExtension[set.size()]);
 	}
-	
+
 	/**
 	 * Returns the launch tab group extension for the given type and mode, or
 	 * <code>null</code> if none
-	 * 
+	 *
 	 * @param type launch configuration type identifier
 	 * @param mode launch mode identifier
 	 * @return launch tab group extension or <code>null</code>
@@ -303,11 +303,11 @@ public class LaunchConfigurationPresentationManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the identifier of the help context that is associated with the
 	 * specified launch configuration type and mode, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param type launch config type
 	 * @param mode launch mode
 	 * @return the identifier for the help context associated with the given
@@ -322,14 +322,14 @@ public class LaunchConfigurationPresentationManager {
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "No tab group defined for launch configuration type " + type.getIdentifier(), null);  //$NON-NLS-1$
 			 throw new CoreException(status);
-		} 
-		return ext.getHelpContextId();		
+		}
+		return ext.getHelpContextId();
 	}
-	
+
 	/**
 	 * Returns the description of the given configuration type
 	 * in the specified mode or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configType the config type
 	 * @param mode the launch mode
 	 * @return the description of the given configuration type, possible <code>null</code>
@@ -339,11 +339,11 @@ public class LaunchConfigurationPresentationManager {
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension extension = getExtension(configType.getAttribute(IConfigurationElementConstants.ID), modes);
 		return (extension != null ? extension.getDescription(modes) : null);
-	}	
-	
+	}
+
 	/**
 	 * Returns a sorted list of launch mode names corresponding to the given identifiers.
-	 * 
+	 *
 	 * @param modes set of launch mode identifiers
 	 * @return sorted list of launch mode names
 	 */
@@ -361,7 +361,7 @@ public class LaunchConfigurationPresentationManager {
 		Collections.sort(names);
 		return names;
 	}
-	
+
 	/**
 	 * Returns the label of the mode id with all accelerators removed
 	 * @param modeid the id of the mode i.e. 'run'
@@ -377,6 +377,6 @@ public class LaunchConfigurationPresentationManager {
 		}
 		return mode;
 	}
-	
+
 }
 

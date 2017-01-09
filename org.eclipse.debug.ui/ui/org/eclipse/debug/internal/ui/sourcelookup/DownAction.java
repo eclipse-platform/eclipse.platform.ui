@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * The action for sorting the order of source containers in the dialog.
- * 
+ *
  */
 public class DownAction	extends SourceContainerAction {
-	
+
 	public DownAction() {
-		super(SourceLookupUIMessages.sourceTab_downButton);  
+		super(SourceLookupUIMessages.sourceTab_downButton);
 	}
 	/**
 	 * @see IAction#run()
@@ -47,16 +47,16 @@ public class DownAction	extends SourceContainerAction {
 				list.set(index, temp);
 			}
 			bottom = index;
-		} 
+		}
 		setEntries(list);
 	}
-	
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1) && getViewer().getTree().getSelection()[0].getParentItem()==null;	
+		return !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1) && getViewer().getTree().getSelection()[0].getParentItem()==null;
 	}
-	
+
 }

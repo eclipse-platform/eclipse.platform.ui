@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -68,67 +68,67 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * This manager is used to calculate the labels for the current resource or for the current 
+ * This manager is used to calculate the labels for the current resource or for the current
  * state of the launch history, depending on the enabled status of contextual launching. More specifically
- * if contextual launching is enabled the calculated labels are for the current resource, otherwise 
+ * if contextual launching is enabled the calculated labels are for the current resource, otherwise
  * the calculated labels are for the current state of the launch history.
- * 
+ *
  * Any actions interested in being notified of launch label updates need to register with this manager, and implement
  * the <code>ILaunchLabelChangedListener</code> interface.
- * 
+ *
  * @see ILaunchLabelChangedListener
  * @see org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction
- * 
+ *
  * @since 3.3
  */
 @SuppressWarnings("restriction")
 public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener, ISelectionListener, ILaunchHistoryChangedListener, ILaunchesListener2 {
-	
+
 	/**
 	 *The set of label update listeners
 	 */
 	private ListenerList<ILaunchLabelChangedListener> fLabelListeners = new ListenerList<>();
-	
+
 	/**
 	 * The map of ToolBars that have mouse tracker listeners associated with them:
 	 * stored as Map<IWorkbenchWindow, ToolBar>
 	 */
 	private HashMap<IWorkbenchWindow, ToolBar> fToolbars = new HashMap<IWorkbenchWindow, ToolBar>();
-	
+
 	/**
 	 * the map of current labels
 	 */
 	private HashMap<ILaunchGroup, String> fCurrentLabels = new HashMap<ILaunchGroup, String>();
-	
+
 	/**
 	 * The selection has changed and we need to update the labels
 	 */
 	private boolean fUpdateLabel = true;
-	
+
 	/**
 	 * Set of windows that have been opened and that we have registered selection listeners with
 	 */
 	private HashSet<IWorkbenchWindow> fWindows = new HashSet<IWorkbenchWindow>();
-	
+
 	/**
-	 * Cache of IResource -> ILaunchConfiguration[] used during a tooltip update job. 
+	 * Cache of IResource -> ILaunchConfiguration[] used during a tooltip update job.
 	 * The cache is cleared after each tooltip update job is complete.
 	 */
 	private HashMap<IResource, ILaunchConfiguration[]> fConfigCache = new HashMap<IResource, ILaunchConfiguration[]>();
-	
+
 	/**
 	 * Cache of IResource -> LaunchShortcutExtension used during a tooltip update job.
 	 * The cache is cleared after each tooltip update job is complete.
 	 */
 	private HashMap<IResource, List<LaunchShortcutExtension>> fExtCache = new HashMap<IResource, List<LaunchShortcutExtension>>();
-	
+
 	/**
 	 * Constant denoting the empty string;
 	 */
 	private static final String EMPTY_STRING = IInternalDebugCoreConstants.EMPTY_STRING;
-	
+
 	/**
-	 * Provides a mouse tracker listener for the launching main toolbar 
+	 * Provides a mouse tracker listener for the launching main toolbar
 	 */
 	private MouseTrackAdapter fMouseListener = new MouseTrackAdapter() {
 		@Override
@@ -150,7 +150,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 	};
-	
+
 	/**
 	 * Returns if context launching is enabled
 	 * @return if context launching is enabled
@@ -158,7 +158,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	public static boolean isContextLaunchEnabled() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 	}
-	
+
 	/**
 	 * Returns if context launching is enabled or not. Context launching is enabled iff:
 	 * <ul>
@@ -171,7 +171,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	public static boolean isContextLaunchEnabled(String launchgroupid) {
 		return isContextLaunchEnabled() && !"org.eclipse.ui.externaltools.launchGroup".equals(launchgroupid); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Allows an <code>AbstractLaunchHistoryAction</code> to register with this manager to be notified
 	 * of a context (<code>IResource</code>) change and have its updateToolTip(..) method called back to.
@@ -182,9 +182,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	public void addLaunchLabelUpdateListener(ILaunchLabelChangedListener listener) {
 		fLabelListeners.add(listener);
 	}
-	
+
 	/**
-	 * Removes the specified <code>AbstractLaunchHistoryAction</code> from the listing of registered 
+	 * Removes the specified <code>AbstractLaunchHistoryAction</code> from the listing of registered
 	 * listeners
 	 * <br><br>
 	 * Obeys the contract of listener removal as outlined in {@link ListenerList#remove(Object)}
@@ -193,17 +193,17 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	public void removeLaunchLabelChangedListener(ILaunchLabelChangedListener listener) {
 		fLabelListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Returns the current resource label to be displayed.
-	 * 
+	 *
 	 * @param group the launch group to get the label for
 	 * @return the current resource label;
 	 */
 	public String getLaunchLabel(ILaunchGroup group) {
 		return fCurrentLabels.get(group);
 	}
-	
+
 	/**
 	 * Returns if the parent project should be checked automatically
 	 * @return true if the parent project should checked automatically, false otherwise
@@ -211,7 +211,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	protected boolean shouldCheckParent() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT);
 	}
-	
+
 	/**
 	 * Returns if the the last launch configuration should be launched if the selected resource is not launchable and context launching is enabled
 	 * @return true if the last launched should be launched, false otherwise
@@ -219,9 +219,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	protected boolean shouldLaunchLast() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE);
 	}
-	
+
 	/**
-	 * Computes the current listing of labels for the given <code>IResource</code> context change or the 
+	 * Computes the current listing of labels for the given <code>IResource</code> context change or the
 	 * current launch history changed event
 	 */
 	protected void computeLabels() {
@@ -255,7 +255,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		notifyLabelChanged();
 	}
-	
+
 	/**
 	 * Notifies all registered listeners that the known labels have changed
 	 */
@@ -264,7 +264,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			iLaunchLabelChangedListener.labelChanged();
 		}
 	}
-	
+
 	/**
 	 * Appends the text '(already running)' to the tooltip label if there is a launch currently
 	 * running (not terminated) with the same backing launch configuration as the one specified
@@ -289,7 +289,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		return config.getName();
 	}
-	
+
 	/**
 	 * Returns the label for the last launched configuration or and empty string if there was no last launch.
 	 * @param group the {@link ILaunchGroup} to get the label for
@@ -303,10 +303,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		return EMPTY_STRING;
 	}
-	
+
 	/**
 	 * Returns the label for the specified resource or the empty string, never <code>null</code>
-	 * 
+	 *
 	 * @param selection the current {@link IStructuredSelection}
 	 * @param resource the backing {@link IResource} for the selection
 	 * @param shortcuts the list of {@link ILaunchShortcut}s to consider
@@ -368,14 +368,14 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 	}
-	
+
 	/**
 	 * Prunes the original listing of shortcuts
 	 * @param shortcuts the original listing of <code>LaunchShortcutExtension</code>s
 	 * @param resource the derived resource
 	 * @param mode the mode we are wanting to launch in
 	 * @return the list of {@link ILaunchShortcut}s to consider
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected List<LaunchShortcutExtension> pruneShortcuts(List<LaunchShortcutExtension> shortcuts, IResource resource, String mode) {
@@ -394,14 +394,14 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Computes the current resources context, given all of the launch shortcut participants
 	 * and the current selection
 	 * @param shortcuts the list of {@link ILaunchShortcut} to ask for mapped resources
 	 * @param selection the current workbench {@link IStructuredSelection}
 	 * @return The set of resources who care about this launch
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public IResource getLaunchableResource(List<LaunchShortcutExtension> shortcuts, IStructuredSelection selection) {
@@ -427,13 +427,13 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the launch shortcuts that apply to the current <code>IStructuredSelection</code>
 	 * @param selection the current selection
 	 * @param mode the mode
 	 * @return the list of shortcuts that apply to the given selection and mode or an empty listing, never <code>null</code>
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public List<LaunchShortcutExtension> getShortcutsForSelection(IStructuredSelection selection, String mode) {
@@ -441,7 +441,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		List<LaunchShortcutExtension> sc = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts();
 		List<IEditorInput> ctxt = new ArrayList<IEditorInput>();
 		// work around to bug in Structured Selection that returns actual underlying array in selection
-		// @see bug 211646 
+		// @see bug 211646
 		ctxt.addAll(selection.toList());
 		Object o = selection.getFirstElement();
 		if(o instanceof IEditorPart) {
@@ -451,7 +451,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		context.addVariable("selection", ctxt); //$NON-NLS-1$
 		for (LaunchShortcutExtension ext : sc) {
 			try {
-				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && 
+				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) &&
 						ext.getModes().contains(mode) && !WorkbenchActivityHelper.filterItem(ext)) {
 					if(!list.contains(ext)) {
 						list.add(ext);
@@ -462,16 +462,16 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		return list;
 	}
-	
+
 	/**
-	 * Returns a listing of all launch configurations that want to participate in the contextual 
+	 * Returns a listing of all launch configurations that want to participate in the contextual
 	 * launch of the specified resource or specified selection
 	 * @param resource the underlying resource
 	 * @param selection the current selection in the workbench
 	 * @param shortcuts the listing of shortcut extensions that apply to the current context
 	 * @param mode the mode
 	 * @return a listing of all launch configurations wanting to participate in the current launching
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public List<ILaunchConfiguration> getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List<LaunchShortcutExtension> shortcuts, String mode) {
@@ -494,15 +494,15 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(types.toArray(new String[types.size()]), resource));
 					voteDefault++;
 				} else {
-					if(cfgs.length > 0) { 
-						for(int j = 0; j < cfgs.length; j++) { 
+					if(cfgs.length > 0) {
+						for(int j = 0; j < cfgs.length; j++) {
 							configs.add(cfgs[j]);
 						}
 					}
 				}
 			}
 		}
-		if (voteDefault == shortcuts.size()) {			
+		if (voteDefault == shortcuts.size()) {
 			// consider default configurations if no configurations were contributed
 			addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource));
 		}
@@ -515,12 +515,12 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				if (!config.getType().supportsModeCombination(modes)) {
 					iterator.remove();
 				}
-			} 
+			}
 			catch (CoreException e) {}
 		}
 		return configs;
 	}
-	
+
 	/**
 	 * Adds all of the items in the given object array to the given collection.
 	 * Does nothing if either the collection or array is <code>null</code>.
@@ -537,7 +537,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts up the manager
 	 */
@@ -585,7 +585,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 						bar.removeMouseTrackListener(listener);
 					}
 				});
-				
+
 			}
 		}
 		fWindows.clear();
@@ -633,10 +633,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			window.getSelectionService().addSelectionListener(this);
 		}
 	}
-	
+
 	/**
-	 * Adds a mouse listener to the launch toolbar 
-	 * 
+	 * Adds a mouse listener to the launch toolbar
+	 *
 	 * @param window the {@link IWorkbenchWindow} to work with
 	 */
 	private void addMouseListener(IWorkbenchWindow window) {
@@ -653,7 +653,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -715,7 +715,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-		//we want to ensure that even if a launch is removed from the debug view 
+		//we want to ensure that even if a launch is removed from the debug view
 		//when it is not terminated we update the label just in case.
 		//bug 195232
 		for(int i = 0; i < launches.length; i++) {

@@ -34,7 +34,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * Represents a tab in the Memory View. This is where memory renderings are
  * hosted in the Memory View.
- * 
+ *
  * @since 3.1
  */
 public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, Listener {

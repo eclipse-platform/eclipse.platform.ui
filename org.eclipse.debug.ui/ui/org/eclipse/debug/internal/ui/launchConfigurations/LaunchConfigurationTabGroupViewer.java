@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mohamed Hussein (Mentor Graphics) - Added getWarningMessage (Bug 386673)
@@ -83,58 +83,58 @@ import com.ibm.icu.text.MessageFormat;
  * buttons.
  */
 public class LaunchConfigurationTabGroupViewer {
-	
+
 	/**
 	 * Containing launch dialog
 	 */
 	private ILaunchConfigurationDialog fDialog;
-	
+
 	/**
 	 * The launch configuration (original) being edited
 	 */
 	private ILaunchConfiguration fOriginal;
-	
+
 	/**
 	 * The working copy of the original
 	 */
 	private ILaunchConfigurationWorkingCopy fWorkingCopy;
-	
+
 	/**
 	 * This view's control, which contains a composite area of controls
 	 */
 	private Composite fViewerControl;
-	
+
 	/**
 	 * Name text widget
 	 */
 	private Text fNameWidget;
-	
+
 	/**
 	 * Composite containing the launch config tab widgets
 	 */
 	private Composite fGroupComposite;
-	
+
 	/**
 	 * Tab folder
 	 */
 	private CTabFolder fTabFolder;
-	
+
 	/**
 	 * The current tab group being displayed
 	 */
 	private ILaunchConfigurationTabGroup fTabGroup;
-	
+
 	/**
 	 * Index of the active tab
 	 */
 	private int fCurrentTabIndex = -1;
-	
+
 	/**
 	 * Apply & Revert buttons
 	 */
 	private Button fApplyButton;
 	private Button fRevertButton;
-	
+
 	/**
 	 * Whether tabs are currently being disposed or initialized
 	 */
@@ -146,13 +146,13 @@ public class LaunchConfigurationTabGroupViewer {
 	 * launch configuration type or <code>null</code> if none.
 	 */
 	private String fDescription = null;
-	
+
 	/**
 	 * A place holder for switching between the tabs for a config and the getting started tab
 	 * @since 3.2
 	 */
 	private Composite fTabPlaceHolder = null;
-	
+
 	/**
 	 * A link to allow users to select a valid set of launch options for the specified mode
 	 * @since 3.3
@@ -164,7 +164,7 @@ public class LaunchConfigurationTabGroupViewer {
      * @since 3.5
      */
     private Label fOptionsErrorLabel = null;
-    
+
 	/**
 	 * A new composite replacing the perspectives tab
 	 * @since 3.2
@@ -172,16 +172,16 @@ public class LaunchConfigurationTabGroupViewer {
 	private Composite fGettingStarted = null;
 
 	private ViewForm fViewform;
-	
+
 	/**
 	 * Job to update the dialog after a delay.
 	 */
 	private Job fRefreshJob;
-	
+
 	/**
 	 * Constructs a viewer in the given composite, contained by the given
 	 * launch configuration dialog.
-	 * 
+	 *
 	 * @param parent composite containing this viewer
 	 * @param dialog containing launch configuration dialog
 	 */
@@ -190,7 +190,7 @@ public class LaunchConfigurationTabGroupViewer {
 		fDialog = dialog;
 		createControl(parent);
 	}
-	
+
 	/**
 	 * Cleanup
 	 */
@@ -206,8 +206,8 @@ public class LaunchConfigurationTabGroupViewer {
 			fTabGroup.dispose();
 			fTabGroup = null;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Creates this viewer's control This area displays the name of the launch
 	 * configuration currently being edited, as well as a tab folder of tabs
@@ -225,19 +225,19 @@ public class LaunchConfigurationTabGroupViewer {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fViewform.setLayoutData(gd);
         fViewform.setTopLeft(null);
-        
+
         Composite mainComp = SWTFactory.createComposite(fViewform, fViewform.getFont(), 1, 1, 1, 0, 0);
         fViewform.setContent(mainComp);
 
 		fTabPlaceHolder = SWTFactory.createComposite(mainComp, 1, 1, GridData.FILL_BOTH);
 		fTabPlaceHolder.setLayout(new StackLayout());
 		fGettingStarted = SWTFactory.createComposite(fTabPlaceHolder, 1, 1, GridData.FILL_BOTH);
-		
+
 		createGettingStarted(fGettingStarted);
-		
+
 		fGroupComposite = SWTFactory.createComposite(fTabPlaceHolder, fTabPlaceHolder.getFont(), 2, 2, GridData.FILL_BOTH, 5, 5);
 		SWTFactory.createLabel(fGroupComposite, LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16, 1);
-       
+
 		fNameWidget = new Text(fGroupComposite, SWT.SINGLE | SWT.BORDER);
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fNameWidget.addModifyListener(new ModifyListener() {
@@ -249,9 +249,9 @@ public class LaunchConfigurationTabGroupViewer {
     				}
     			}
     		);
-    		
+
 		createTabFolder(fGroupComposite);
-		
+
 		Composite blComp = SWTFactory.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		Composite linkComp = SWTFactory.createComposite(blComp, blComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 
@@ -259,7 +259,7 @@ public class LaunchConfigurationTabGroupViewer {
 		fOptionsErrorLabel = new Label(linkComp, SWT.NONE);
         gd = new GridData();
         fOptionsErrorLabel.setLayoutData(gd);
-        
+
 		fOptionsLink = new Link(linkComp, SWT.WRAP);
 		fOptionsLink.setFont(linkComp.getFont());
 		gd = new GridData(SWT.LEFT);
@@ -271,7 +271,7 @@ public class LaunchConfigurationTabGroupViewer {
 				//collect the options available
 				try {
 					if(!canLaunchWithModes()) {
-						SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(), 
+						SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(),
 								getLaunchConfigurationDialog().getMode(), getWorkingCopy());
 						if(sld.open() == IDialogConstants.OK_ID) {
 							//set the options to the config
@@ -287,9 +287,9 @@ public class LaunchConfigurationTabGroupViewer {
 						}
 					}
 					else if(hasMultipleDelegates()) {
-						SelectLaunchersDialog sldd = new SelectLaunchersDialog(getShell(), 
-								getWorkingCopy().getType().getDelegates(getCurrentModeSet()), 
-								getWorkingCopy(), 
+						SelectLaunchersDialog sldd = new SelectLaunchersDialog(getShell(),
+								getWorkingCopy().getType().getDelegates(getCurrentModeSet()),
+								getWorkingCopy(),
 								getLaunchConfigurationDialog().getMode());
 						if(sldd.open() == IDialogConstants.OK_ID) {
 							displayInstanceTabs(true);
@@ -300,7 +300,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		});
 		fOptionsLink.setVisible(false);
-		
+
 		Composite buttonComp = SWTFactory.createComposite(blComp, 2, 1, GridData.HORIZONTAL_ALIGN_END);
 
 		fRevertButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
@@ -320,7 +320,7 @@ public class LaunchConfigurationTabGroupViewer {
 		});
         Dialog.applyDialogFont(parent);
 	}
-	
+
 	/**
 	 * Creates some help text for the tab group launch types
 	 * @param parent the parent composite
@@ -336,7 +336,7 @@ public class LaunchConfigurationTabGroupViewer {
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG), 1, width);
         SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS), 1, width);
         SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 1, width);
-        
+
 		SWTFactory.createHorizontalSpacer(parent, 2);
 		Link link = new Link(parent, SWT.LEFT | SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_5);
@@ -351,7 +351,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		});
 	}
-	
+
 	/**
 	 * Creates the tab folder for displaying config instances
 	 * @param parent the parent {@link Composite}
@@ -378,17 +378,17 @@ public class LaunchConfigurationTabGroupViewer {
 						refresh();
 					}
 				}
-			});	
+			});
 		}
 	}
-	
+
 	/**
 	 * Returns the apply button
 	 * @return the 'Apply' button
 	 */
 	protected Button getApplyButton() {
 		return fApplyButton;
-	}	
+	}
 
 	/**
 	 * Returns the revert button
@@ -396,7 +396,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected Button getRevertButton() {
 		return fRevertButton;
-	}	
+	}
 
 	/**
 	 * Sets the current name
@@ -412,7 +412,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 			refreshStatus();
 		}
-	}	
+	}
 
 	/**
 	 * @return the backing viewer control
@@ -420,7 +420,7 @@ public class LaunchConfigurationTabGroupViewer {
 	public Control getControl() {
 		return fViewerControl;
 	}
-	
+
 	/**
 	 * Returns the shell this viewer is contained in.
 	 * @return the current dialog shell
@@ -430,10 +430,10 @@ public class LaunchConfigurationTabGroupViewer {
 	}
 
 	/**
-	 * Returns the current input to the viewer. Input will 
+	 * Returns the current input to the viewer. Input will
 	 * be one of {@link ILaunchConfiguration} or {@link ILaunchConfigurationType}
-	 * 
-	 * @return returns the current input 
+	 *
+	 * @return returns the current input
 	 */
 	public Object getInput() {
 		return getConfiguration();
@@ -460,7 +460,7 @@ public class LaunchConfigurationTabGroupViewer {
 					if(copy != null) {
 						copy.doSave();
 					}
-				} 
+				}
 				catch (CoreException e) {DebugUIPlugin.log(e);}
 			}
 			updateButtons();
@@ -483,10 +483,10 @@ public class LaunchConfigurationTabGroupViewer {
 			getLaunchConfigurationDialog().updateMessage();
 		}
 	}
-	
+
 	/**
 	 * Shows the link for either multiple launch delegates or bad launch mode combinations
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private void showLink() {
@@ -520,11 +520,11 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		fViewform.layout(true, true);
 	}
-	
+
 	/**
 	 * Returns the preferred launch delegate for the current launch configuration and mode set
 	 * @return the preferred launch delegate
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected ILaunchDelegate getPreferredDelegate() {
@@ -542,7 +542,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return preferred;
 	}
-	
+
 	/**
 	 * Returns the listing of modes for the current config
 	 * @return the listing of modes for the current config
@@ -560,10 +560,10 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return set;
 	}
-	
+
 	/**
 	 * @return returns the configuration input
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	ILaunchConfiguration getConfiguration() {
@@ -572,7 +572,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return fOriginal;
 	}
-	
+
 	/**
 	 * updates the button states
 	 */
@@ -597,7 +597,7 @@ public class LaunchConfigurationTabGroupViewer {
 				}
 			});
 		}
-		
+
 	}
 	/**
 	 * Sets the input to the tab group viewer
@@ -616,10 +616,10 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 	}
-	
+
 	/**
 	 * The input has changed to the given object, possibly <code>null</code>.
-	 * 
+	 *
 	 * @param input the new input, possibly <code>null</code>
 	 */
 	protected void inputChanged(Object input) {
@@ -653,16 +653,16 @@ public class LaunchConfigurationTabGroupViewer {
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
-	
+
 	/**
 	 * Sets the tab group viewer to have no input, this is the case when null is passed as an input type
 	 * Setting no input is equivalent to resetting all items, clearing any messages and showing the 'getting started' pane
-	 * @since 3.2 
+	 * @since 3.2
 	 */
 	private void setNoInput() {
 		fOriginal = null;
 		fWorkingCopy = null;
-		disposeExistingTabs();	
+		disposeExistingTabs();
 		updateButtons();
 		updateVisibleControls(false);
 		ILaunchConfigurationDialog lcd = getLaunchConfigurationDialog();
@@ -672,7 +672,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns if the two configurations are using the same <code>ILaunchDelegate</code> or not
 	 * @param config1 the config to compare to
@@ -705,9 +705,9 @@ public class LaunchConfigurationTabGroupViewer {
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		return false;
 	}
-	
+
 	/**
-	 * Updates the visibility of controls based on the status provided 
+	 * Updates the visibility of controls based on the status provided
 	 * @param visible the visibility status to be applied to the controls
 	 */
 	private void updateVisibleControls(boolean visible) {
@@ -722,14 +722,14 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		fTabPlaceHolder.layout(true, true);
 	}
-	
+
     /**
      * sets the current widget focus to the 'Name' widget
      */
     protected void setFocusOnName() {
         fNameWidget.setFocus();
     }
-    
+
 	/**
 	 * Displays tabs for the current working copy
 	 * @param redrawTabs if the tabs should be redrawn
@@ -740,7 +740,7 @@ public class LaunchConfigurationTabGroupViewer {
 		ILaunchConfigurationType type = null;
 		try {
 			type = getWorkingCopy().getType();
-		} 
+		}
 		catch (CoreException e) {
 			errorDialog(e);
 			fInitializingTabs = false;
@@ -767,17 +767,17 @@ public class LaunchConfigurationTabGroupViewer {
 
 		// Update the name field
 		fNameWidget.setText(getWorkingCopy().getName());
-		
+
 		fCurrentTabIndex = fTabFolder.getSelectionIndex();
 
 		// Turn off initializing flag to update message
 		fInitializingTabs = false;
-		
+
 		if (!fViewform.isVisible()) {
 			fViewform.setVisible(true);
-		}	
+		}
 	}
-	
+
 	/**
 	 * Populate the tabs in the configuration edit area to be appropriate to the current
 	 * launch configuration type.
@@ -794,7 +794,7 @@ public class LaunchConfigurationTabGroupViewer {
 		try {
 			group = createGroup();
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_creating_launch_configuration_tabs_27,ce); // 
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_creating_launch_configuration_tabs_27,ce); //
 			return;
 		}
 		disposeExistingTabs();
@@ -807,7 +807,7 @@ public class LaunchConfigurationTabGroupViewer {
 			tab = new CTabItem(fTabFolder, SWT.BORDER);
 			name = tabs[i].getName();
 			if (name == null) {
-				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; 
+				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28;
 			}
 			tab.setText(name);
 			tab.setImage(tabs[i].getImage());
@@ -836,12 +836,12 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 		fDescription = getDescription(configType);
-	}	
+	}
 
 	/**
 	 * Returns the description of the given configuration type
 	 * in the current mode or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configType the config type
 	 * @return the description of the given configuration type or <code>null</code>
 	 */
@@ -850,13 +850,13 @@ public class LaunchConfigurationTabGroupViewer {
 		if(configType != null) {
 			String mode = fDialog.getMode();
 			description = LaunchConfigurationPresentationManager.getDefault().getDescription(configType, mode);
-		}	
+		}
 		if (description == null) {
 			description = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 		return description;
 	}
-	
+
 	/**
 	 * Returns tab group for the given type of launch configuration.
 	 * Tabs are initialized to be contained in this dialog.
@@ -897,8 +897,8 @@ public class LaunchConfigurationTabGroupViewer {
 
 		// Otherwise return the tab group
 		return (ILaunchConfigurationTabGroup)finalArray[0];
-	}	
-	
+	}
+
 	/**
 	 * Returns the tabs currently being displayed, or
 	 * <code>null</code> if none.
@@ -928,11 +928,11 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether the launch configuration being edited is dirty (i.e.
 	 * needs saving)
-	 * 
+	 *
 	 * @return whether the launch configuration being edited needs saving
 	 */
 	public boolean isDirty() {
@@ -949,10 +949,10 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return fOriginal != null && !fOriginal.contentsEqual(workingCopy);
 	}
-	
+
 	/**
 	 * Returns the job to update the launch configuration dialog.
-	 * 
+	 *
 	 * @return update job
 	 */
 	private Job getUpdateJob() {
@@ -962,10 +962,10 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return fRefreshJob;
 	}
-	
+
 	/**
 	 * Schedules the update job to run for this tab based on this tab's delay.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	protected void scheduleUpdateJob() {
@@ -973,22 +973,22 @@ public class LaunchConfigurationTabGroupViewer {
 		job.cancel(); // cancel existing job
 		job.schedule(getUpdateJobDelay());
 	}
-	
+
 	/**
 	 * Return the time delay that should be used when scheduling the
 	 * update job. Subclasses may override.
-	 * 
+	 *
 	 * @return a time delay in milliseconds before the job should run
 	 * @since 3.6
 	 */
 	protected long getUpdateJobDelay() {
 		return 200;
-	}		
-	
+	}
+
 	/**
 	 * Creates and returns a job used to update the launch configuration dialog
 	 * for this tab. Subclasses may override.
-	 * 
+	 *
 	 * @return job to update the launch dialog for this tab
 	 * @since 3.6
 	 */
@@ -1006,8 +1006,8 @@ public class LaunchConfigurationTabGroupViewer {
 				return !getControl().isDisposed();
 			}
 		};
-	}	
-	
+	}
+
 	/**
 	 * Update apply & revert buttons, as well as buttons and message on the
 	 * launch config dialog.
@@ -1017,8 +1017,8 @@ public class LaunchConfigurationTabGroupViewer {
 			LaunchConfigurationsDialog lcd = (LaunchConfigurationsDialog) getLaunchConfigurationDialog();
 			lcd.refreshStatus();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns the containing launch dialog
 	 * @return the current {@link ILaunchConfigurationDialog}
@@ -1030,13 +1030,13 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Returns the original launch configuration being edited, possibly
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @return ILaunchConfiguration
 	 */
 	protected ILaunchConfiguration getOriginal() {
 		return fOriginal;
 	}
-	
+
 	/**
 	 * Returns the working copy used to edit the original, possibly
 	 * <code>null</code>.
@@ -1045,7 +1045,7 @@ public class LaunchConfigurationTabGroupViewer {
 	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
 		return fWorkingCopy;
 	}
-	
+
 	/**
 	 * Return whether the current configuration can be saved.
 	 * <p>
@@ -1079,8 +1079,8 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * @return if the dialog can launch in its current state
 	 */
@@ -1107,14 +1107,14 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Determines if the tab groups that is currently visible can launch with the currently selected
 	 * set of options.
-	 * 
+	 *
 	 * @return true if the dialog can launch with the given set of modes, false otherwise
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public boolean canLaunchWithModes() {
@@ -1131,14 +1131,14 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns if the type currently showing in the tab group viewer has duplicate launch delegates for the given set of modes.
-	 * 
+	 *
 	 * The given set of modes comprises the current mode that the launch dialog was opened in as well as any modes that have been set on the launch
 	 * configuration.
 	 * @return the true if there are duplicates, false otherwise
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public boolean hasDuplicateDelegates() {
@@ -1153,7 +1153,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determines if the currently showing launch configuration has multiple launch delegates for the same mode set, but does not care
 	 * if there has been a default selected yet or not
@@ -1171,7 +1171,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the current error message or <code>null</code> if none.
 	 * @return the error message for the tab
@@ -1180,7 +1180,7 @@ public class LaunchConfigurationTabGroupViewer {
 		if (fInitializingTabs) {
 			return null;
 		}
-		
+
 		if (getWorkingCopy() == null) {
 			return null;
 		}
@@ -1198,12 +1198,12 @@ public class LaunchConfigurationTabGroupViewer {
 		ILaunchConfigurationTab activeTab = getActiveTab();
 		if (activeTab == null) {
 			return null;
-		} 
+		}
 		message = activeTab.getErrorMessage();
 		if (message != null) {
 			return message;
 		}
-		
+
 		ILaunchConfigurationTab[] allTabs = getTabs();
 		for (int i = 0; i < allTabs.length; i++) {
 			ILaunchConfigurationTab tab = allTabs[i];
@@ -1226,23 +1226,23 @@ public class LaunchConfigurationTabGroupViewer {
 			return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14, new Object[] { names.toString() });
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the current message or <code>null</code> if none.
 	 * @return Returns an appropriate message for display to user. The message returned will be:
 	 * The message defined by the visible tab,
 	 * or The tab group description for the particular launch mode,
 	 * or The generic tab group description,
-	 * or <code>null</code> if no message is defined 
+	 * or <code>null</code> if no message is defined
 	 */
 	public String getMessage() {
 		if (fInitializingTabs) {
 			return null;
 		}
-		
+
 		String message = fDescription;
-		
+
 		ILaunchConfigurationTab tab = getActiveTab();
 		if (tab != null) {
 			String tabMessage = tab.getMessage();
@@ -1250,23 +1250,23 @@ public class LaunchConfigurationTabGroupViewer {
 				message = tabMessage;
 			}
 		}
-		
+
 		return message;
-	}	
-		
+	}
+
 	/**
 	 * Returns the current warning message or <code>null</code> if none.
 	 * @return Returns an appropriate warning message for display to user. The message returned will be:
 	 * The warning message defined by the visible tab
-	 * or <code>null</code> if no message is defined 
+	 * or <code>null</code> if no message is defined
 	 */
 	public String getWarningMessage() {
 		if (fInitializingTabs) {
 			return null;
 		}
-		
+
 		String message = null;
-		
+
 		ILaunchConfigurationTab tab = getActiveTab();
 		if (tab instanceof ILaunchConfigurationTab2) {
 			String tabMessage = ((ILaunchConfigurationTab2)tab).getWarningMessage();
@@ -1274,10 +1274,10 @@ public class LaunchConfigurationTabGroupViewer {
 				message = tabMessage;
 			}
 		}
-		
+
 		return message;
-	}	
-		
+	}
+
 	/**
 	 * Verify that the launch configuration name is valid.
 	 * @throws CoreException if a name conflict occurs
@@ -1286,13 +1286,13 @@ public class LaunchConfigurationTabGroupViewer {
 		if (fNameWidget.isVisible()) {
 			ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 			String currentName = fNameWidget.getText().trim();
-	
+
 			// If there is no name, complain
 			if (currentName.length() < 1) {
 				throw new CoreException(new Status(IStatus.ERROR,
 													 DebugUIPlugin.getUniqueIdentifier(),
 													 0,
-													 LaunchConfigurationsMessages.LaunchConfigurationDialog_Name_required_for_launch_configuration_11, 
+													 LaunchConfigurationsMessages.LaunchConfigurationDialog_Name_required_for_launch_configuration_11,
 													 null));
 			}
 			try {
@@ -1316,15 +1316,15 @@ public class LaunchConfigurationTabGroupViewer {
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
-							NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, configTypeName), 
+							NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, configTypeName),
 														 null));
 				}
 			}
 		}
-	}		
-	
+	}
+
 	/**
-	 * Remove the existing tabs that are showing 
+	 * Remove the existing tabs that are showing
 	 */
 	private void disposeExistingTabs() {
 		fDisposingTabs = true;
@@ -1333,7 +1333,7 @@ public class LaunchConfigurationTabGroupViewer {
 		createTabFolder(fGroupComposite);
 		disposeTabGroup();
 		fDisposingTabs = false;
-	}	
+	}
 
 	/**
 	 * Returns the current tab group
@@ -1343,7 +1343,7 @@ public class LaunchConfigurationTabGroupViewer {
 	public ILaunchConfigurationTabGroup getTabGroup() {
 		return fTabGroup;
 	}
-	
+
 	/**
 	 * Notification that a tab has been selected
 	 *
@@ -1369,18 +1369,18 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		fCurrentTabIndex = fTabFolder.getSelectionIndex();
 	}
-	
+
 	/**
 	 * Notification the name field has been modified
 	 */
 	protected void handleNameModified() {
 		getWorkingCopy().rename(fNameWidget.getText().trim());
 		scheduleUpdateJob();
-	}		
-	
+	}
+
 	/**
 	 * Notification that the 'Apply' button has been pressed.
-	 * 
+	 *
 	 * @return the saved launch configuration or <code>null</code> if not saved
 	 */
 	protected ILaunchConfiguration handleApplyPressed() {
@@ -1410,7 +1410,7 @@ public class LaunchConfigurationTabGroupViewer {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								saved[0] = ((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
-							} 
+							}
 							catch (CoreException e) {DebugUIPlugin.log(e);}
 						}
 					};
@@ -1422,12 +1422,12 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 			updateButtons();
 			fInitializingTabs = false;
-		} 
-		catch (CoreException e) {exception = e;} 
-		catch (InvocationTargetException e) {exception = e;} 
-		catch (InterruptedException e) {exception = e;} 
+		}
+		catch (CoreException e) {exception = e;}
+		catch (InvocationTargetException e) {exception = e;}
+		catch (InterruptedException e) {exception = e;}
 		if(exception != null) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, exception); // 
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, exception); //
 			return null;
 		} else {
 			return saved[0];
@@ -1445,10 +1445,10 @@ public class LaunchConfigurationTabGroupViewer {
 				fWorkingCopy = fOriginal.getWorkingCopy();
 				refreshStatus();
 			}
-		} 
+		}
 		catch (CoreException e) {DebugUIPlugin.log(e);}
-	}	
-	
+	}
+
 	/**
 	 * Show an error dialog on the given exception.
 	 *
@@ -1456,12 +1456,12 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected void errorDialog(CoreException exception) {
 		ErrorDialog.openError(getShell(), null, null, exception.getStatus());
-	}	
+	}
 
 	/**
 	 * Sets the displayed tab to the given tab. Has no effect if the specified
 	 * tab is not one of the tabs being displayed in the dialog currently.
-	 * 
+	 *
 	 * @param tab the tab to display/activate
 	 */
 	public void setActiveTab(ILaunchConfigurationTab tab) {
@@ -1475,12 +1475,12 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the displayed tab to the tab with the given index. Has no effect if
 	 * the specified index is not within the limits of the tabs returned by
 	 * <code>getTabs()</code>.
-	 * 
+	 *
 	 * @param index the index of the tab to display
 	 */
 	public void setActiveTab(int index) {

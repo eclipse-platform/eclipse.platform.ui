@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - ongoing bug fixes and enhancements
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Interface of an tree model viewer.  It declares the common methods for the
- * JFace-based {@link TreeModelViewer} and the UI-less 
+ * JFace-based {@link TreeModelViewer} and the UI-less
  * {@link VirtualTreeModelViewer}.
  *
  * @since 3.8
@@ -41,14 +41,14 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * Returns the Display object that this viewer is in.  The
      * display object can be used by clients to access the display thread
      * to call the viewer methods.
-     * 
+     *
      * @return The display.
      */
     public Display getDisplay();
 
     /**
      * Returns this viewer's presentation context.
-     * 
+     *
      * @return presentation context
      */
     public IPresentationContext getPresentationContext();
@@ -57,23 +57,23 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * Returns the current input of this viewer, or <code>null</code>
      * if none. The viewer's input provides the "model" for the viewer's
      * content.
-     * 
+     *
      * @return Input object
      */
     public Object getInput();
 
     /**
-     * Sets the input of this viewer.  Setting the input resets the 
+     * Sets the input of this viewer.  Setting the input resets the
      * viewer's contents and triggers an update starting at the input
      * element.
-     * 
+     *
      * @param object Input element, or <code>null</code> if none.
      */
     public void setInput(Object object);
-    
+
     /**
      * Returns the current selection in viewer.
-     * 
+     *
      * @return selection object
      */
     @Override
@@ -83,20 +83,20 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * Sets a new selection for this viewer and optionally makes it visible.
      * The selection is not set if the model selection policy overrides the
      * attempt to set the selection.
-     * 
+     *
      * @param selection the new selection
      * @param reveal <code>true</code> if the selection is to be made
      *   visible, and <code>false</code> otherwise
-     * @param force <code>true</code> if the selection should override the 
+     * @param force <code>true</code> if the selection should override the
      *   model selection policy
      */
     public void setSelection(ISelection selection, boolean reveal, boolean force);
-    
+
     /**
      * Attempts to set the selection for this viewer and optionally makes it visible.
      * The selection is not set if the model selection policy overrides the
      * attempt to set the selection.
-     * 
+     *
      * @param selection the new selection
      * @param reveal whether to make the selection visible after successfully setting
      *  the selection
@@ -112,7 +112,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * @return non-negative level, or <code>ALL_LEVELS</code> if all levels of
      *         the tree are expanded automatically
      * @see #setAutoExpandLevel
-     */    
+     */
     public int getAutoExpandLevel();
 
     /**
@@ -128,115 +128,115 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * The value <code>ALL_LEVELS</code> means that all subtrees should be
      * expanded.
      * </p>
-     * 
+     *
      * @param level
      *            non-negative level, or <code>ALL_LEVELS</code> to expand all
      *            levels of the tree
      */
     public void setAutoExpandLevel(int level);
-        
+
     /**
-     * Returns the label data for the given element and for the given column, 
-     * Returns <code>null</code> if the given element is not found or is not 
-     * materialized in the virtual viewer.  Clients may listen to label update 
+     * Returns the label data for the given element and for the given column,
+     * Returns <code>null</code> if the given element is not found or is not
+     * materialized in the virtual viewer.  Clients may listen to label update
      * events to be notified when element labels are updated.
-     * 
+     *
      * @param path Path of the element.
      * @param columnId ID of the column for which to return the label data.
-     * @return Label object containing the label information.  Can be 
-     * <code>null</code> if the given element is not found or is not 
+     * @return Label object containing the label information.  Can be
+     * <code>null</code> if the given element is not found or is not
      * materialized in the virtual viewer.
      */
     public ViewerLabel getElementLabel(TreePath path, String columnId);
-    
+
     /**
      * Registers the specified listener for view update notifications.
-     * 
+     *
      * @param listener Listener to add
      */
     public void addViewerUpdateListener(IViewerUpdateListener listener);
-    
+
     /**
      * Removes the specified listener from update notifications.
-     * 
+     *
      * @param listener Listener to remove
      */
     public void removeViewerUpdateListener(IViewerUpdateListener listener);
-    
+
     /**
      * Registers the specified listener for state update notifications.
-     * 
+     *
      * @param listener Listener to add
      */
     public void addStateUpdateListener(IStateUpdateListener listener);
-    
+
     /**
      * Removes the specified listener from state update notifications.
-     * 
+     *
      * @param listener Listener to remove
      */
     public void removeStateUpdateListener(IStateUpdateListener listener);
-    
+
     /**
      * Registers the specified listener for view label update notifications.
-     * 
+     *
      * @param listener Listener to add
      */
     public void addLabelUpdateListener(ILabelUpdateListener listener);
-    
+
     /**
      * Removes the specified listener from view label update notifications.
-     * 
+     *
      * @param listener Listener to remove
      */
     public void removeLabelUpdateListener(ILabelUpdateListener listener);
-    
+
     /**
      * Registers the given listener for model delta notification.
      * This listener is called immediately after the viewer processes
      * the delta.
-     * 
+     *
      * @param listener Listener to add
      */
     public void addModelChangedListener(IModelChangedListener listener);
-    
+
     /**
      * Removes the given listener from model delta notification.
-     * 
+     *
      * @param listener Listener to remove
      */
     public void removeModelChangedListener(IModelChangedListener listener);
-    
+
     /**
      * Writes state information into a delta for the sub-tree at the given
-     * path.  It adds delta nodes and IModelDelta.EXPAND and IModelDelta.SELECT 
+     * path.  It adds delta nodes and IModelDelta.EXPAND and IModelDelta.SELECT
      * as it parses the sub-tree.
-     * 
+     *
      * @param path Path where to start saving the state.
      * @param delta The delta where the state is to be saved.
-     * @param flagsToSave The flags to preserve during the state save.  The 
-     * supported flags are <code>IModelDelta.SELECT</code>, 
+     * @param flagsToSave The flags to preserve during the state save.  The
+     * supported flags are <code>IModelDelta.SELECT</code>,
      * <code>IModelDelta.EXPAND</code>, <code>IModelDelta.COLLAPSE</code>.
-     * @return Returns whether the state was saved for the given path.  Will 
-     * return <code>false</code> if an element at the given path cannot 
+     * @return Returns whether the state was saved for the given path.  Will
+     * return <code>false</code> if an element at the given path cannot
      * be found.
      */
     public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave);
-    
+
     /**
      * Causes the viewer to process the given delta as if it came from a
      * model proxy.  This method is intended to be used to restore state
      * saved using {@link #saveElementState(TreePath, ModelDelta, int)}.
-     * 
+     *
      * @param delta Delta to process.
      */
     public void updateViewer(IModelDelta delta);
-    
+
     /**
-     * Triggers an update of the given element and its children.  If 
-     * multiple instances of the given element are found in the tree, 
+     * Triggers an update of the given element and its children.  If
+     * multiple instances of the given element are found in the tree,
      * they will all be updated.
-     * 
+     *
      * @param element Element to update.
      */
     public void refresh(Object element);
@@ -249,7 +249,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
     /**
      * Returns the paths at which the given element is found realized in viewer
      * or an empty array if not found.
-     * 
+     *
      * @param element Element to find.
      * @return Array of paths for given element.
      */
@@ -257,21 +257,21 @@ public interface ITreeModelViewer extends ISelectionProvider {
 
     /**
      * Returns filters currently configured in viewer.
-     * 
+     *
      * @return filter array in viewer.
      */
     public ViewerFilter[] getFilters();
-    
+
     /**
      * Add a new filter to use in viewer.
-     * 
+     *
      * @param filter Filter to add.
      */
     public void addFilter(ViewerFilter filter);
-    
+
     /**
      * Sets viewer filters to the filters in array.
-     * 
+     *
      * @param filters New filter array to use.
      */
 	public void setFilters(ViewerFilter... filters);

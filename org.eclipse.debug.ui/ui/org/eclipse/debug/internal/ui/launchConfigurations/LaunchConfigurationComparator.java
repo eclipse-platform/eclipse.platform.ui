@@ -26,7 +26,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * Groups configurations by type.
- * 
+ *
  * @since 3.3
  */
 public class LaunchConfigurationComparator extends WorkbenchViewerComparator {
@@ -35,7 +35,7 @@ public class LaunchConfigurationComparator extends WorkbenchViewerComparator {
 	 * the map of categories of <code>ILaunchConfigurationType</code>s to <code>Integer</code>s entries
 	 */
 	private static Map<ILaunchConfigurationType, Integer> fgCategories;
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 	 */
@@ -54,7 +54,7 @@ public class LaunchConfigurationComparator extends WorkbenchViewerComparator {
 		}
 		return map.size();
 	}
-	
+
 	/**
 	 * Returns the map of categories
 	 * @return the map of categories
@@ -70,7 +70,7 @@ public class LaunchConfigurationComparator extends WorkbenchViewerComparator {
 					ILaunchConfigurationType t2 = o2;
 					return t1.getName().compareTo(t2.getName());
 				}
-			
+
 			});
 			Iterator<ILaunchConfigurationType> iterator = types.iterator();
 			int i = 0;

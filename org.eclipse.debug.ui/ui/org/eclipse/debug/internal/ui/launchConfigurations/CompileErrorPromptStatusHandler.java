@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,12 +37,12 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 				return Boolean.TRUE;
 			}
 		}
-		
+
 		Shell shell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
-		String message = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_1; 
-		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
-		
+		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0;
+		String message = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_1;
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
@@ -50,19 +50,19 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 			}
 		}
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-				shell, 
-				title, 
-				null, 
-				message, 
+				shell,
+				title,
+				null,
+				message,
 				MessageDialog.WARNING,
-				new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
-				1, 
-				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1, 
+				new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
+				1,
+				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1,
 				false);
 		dialog.setPrefKey(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		dialog.setPrefStore(store);
 		dialog.open();
-		
+
 		int returnValue = dialog.getReturnCode();
 		if (returnValue == IDialogConstants.YES_ID) {
 			return Boolean.TRUE;

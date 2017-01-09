@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Wind River Systems - Fix for viewer state save/restore [188704]
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -28,8 +28,8 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
     private boolean fKnowsHasChildren;
     private boolean fKnowsChildCount;
     private boolean fCheckChildrenRealized;
-	
-	
+
+
     /**
      * @param provider the content provider to use for the update
      * @param viewerInput the current input
@@ -38,15 +38,15 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
      * @param memento Memento to encode result into
      * @param delta Delta to write the result comparison into.
      * @param modelIndex Index of element to compare.
-     * @param knowsHasChildren Flag indicating whether provider knows the has 
-     * children state of element. 
-     * @param knowsChildCount Flag indicating whether provider knows the 
+     * @param knowsHasChildren Flag indicating whether provider knows the has
+     * children state of element.
+     * @param knowsChildCount Flag indicating whether provider knows the
      * child count state of element.
      * @param checkChildrenRealized Flag indicating if any realized children should be checked
      */
-	public ElementCompareRequest(TreeModelContentProvider provider, Object viewerInput, Object element, 
-	    TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex, 
-	    boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) 
+	public ElementCompareRequest(TreeModelContentProvider provider, Object viewerInput, Object element,
+	    TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex,
+	    boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized)
 	{
 		super(provider, viewerInput, provider.getPresentationContext(), element, elementPath, memento);
 		fProvider = provider;
@@ -83,25 +83,25 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
                 }
             });
         }
-	}	    
-	
+	}
+
 	public boolean isEqual() {
 		return fEqual;
 	}
-	
+
 	ModelDelta getDelta() {
 		return fDelta;
 	}
-	
+
 	int getModelIndex() {
 		return fModelIndex;
 	}
 
-	
+
 	void setKnowsHasChildren(boolean hasChildren) {
 		fKnowsHasChildren = hasChildren;
 	}
-	
+
 	boolean knowsHasChildren() {
 		return fKnowsHasChildren;
 	}
@@ -109,19 +109,19 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 	void setKnowsChildCount(boolean childCount) {
 		fKnowsChildCount = childCount;
 	}
-	
+
 	boolean knowChildCount() {
 		return fKnowsChildCount;
 	}
 
     void setCheckChildrenRealized(boolean checkChildrenRealized) {
-        fCheckChildrenRealized = checkChildrenRealized; 
+        fCheckChildrenRealized = checkChildrenRealized;
     }
-    
+
     boolean checkChildrenRealized() {
         return fCheckChildrenRealized;
     }
-    
+
     @Override
 	public String toString() {
         StringBuffer buf = new StringBuffer();

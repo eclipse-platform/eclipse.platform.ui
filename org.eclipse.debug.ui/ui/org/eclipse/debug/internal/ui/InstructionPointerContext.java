@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,17 +26,17 @@ public class InstructionPointerContext {
 	 * The thread this context belongs to.
 	 */
 	private IThread fThread;
-	
+
 	/**
 	 * The debug target this context belongs to.
 	 */
 	private IDebugTarget fDebugTarget;
-	
+
 	/**
 	 * The editor that the annotation is being displayed in
 	 */
 	private ITextEditor fEditor;
-	
+
 	/**
 	 * The vertical ruler annotation for this context.
 	 */
@@ -48,7 +48,7 @@ public class InstructionPointerContext {
 		fEditor = editor;
 		fAnnotation = annotation;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -62,7 +62,7 @@ public class InstructionPointerContext {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -91,7 +91,7 @@ public class InstructionPointerContext {
 	public ITextEditor getEditor() {
 		return fEditor;
 	}
-	
+
 	/**
 	 * @return the annotation
 	 */

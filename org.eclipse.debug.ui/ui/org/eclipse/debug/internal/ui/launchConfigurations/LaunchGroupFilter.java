@@ -24,9 +24,9 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * Displays launch configurations for a specific launch group
  */
 public class LaunchGroupFilter extends ViewerFilter {
-	
+
 	private ILaunchGroup fGroup;
-	
+
 	/**
 	 * Constructor
 	 * @param groupExtension
@@ -53,7 +53,7 @@ public class LaunchGroupFilter extends ViewerFilter {
 				config = (ILaunchConfiguration)element;
 				try {
 					type = config.getType();
-				} 
+				}
 				catch (CoreException e) {}
 			}
 			boolean priv = false;
@@ -68,10 +68,10 @@ public class LaunchGroupFilter extends ViewerFilter {
 			}
 			return false;
 	}
-	
+
 	/**
 	 * Returns whether the given categories are equal.
-	 * 
+	 *
 	 * @param c1 category identifier or <code>null</code>
 	 * @param c2 category identifier or <code>null</code>
 	 * @return boolean
@@ -81,6 +81,6 @@ public class LaunchGroupFilter extends ViewerFilter {
 			return c1 == c2;
 		}
 		return c1.equals(c2);
-	} 
+	}
 
 }

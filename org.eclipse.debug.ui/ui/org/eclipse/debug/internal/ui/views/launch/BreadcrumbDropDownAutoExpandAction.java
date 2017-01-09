@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,9 +16,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Action that controls the preference for whether elements should be 
+ * Action that controls the preference for whether elements should be
  * automatically expanded in the breadcrumb drop down viewers.
- * 
+ *
  * @since 3.5
  */
 class BreadcrumbDropDownAutoExpandAction extends Action {
@@ -27,19 +27,19 @@ class BreadcrumbDropDownAutoExpandAction extends Action {
 
 	/**
 	 * Creates a new action to set the debug view mode.
-	 * 
+	 *
 	 * @param view Reference to the debug view.
      * in auto mode.
 	 */
 	public BreadcrumbDropDownAutoExpandAction(LaunchView view) {
 		super(IInternalDebugCoreConstants.EMPTY_STRING, AS_CHECK_BOX);
 		fLaunchView = view;
-				
+
 		setText(LaunchViewMessages.BreadcrumbDropDownAutoExpandAction_label);
-		setToolTipText(LaunchViewMessages.BreadcrumbDropDownAutoExpandAction_tooltip);  
-		setDescription(LaunchViewMessages.BreadcrumbDropDownAutoExpandAction_description);  
+		setToolTipText(LaunchViewMessages.BreadcrumbDropDownAutoExpandAction_tooltip);
+		setDescription(LaunchViewMessages.BreadcrumbDropDownAutoExpandAction_description);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.DEBUG_VIEW_DROP_DOWN_AUTOEXPAND_ACTION);
-		
+
 		setChecked(fLaunchView.getBreadcrumbDropDownAutoExpand());
 	}
 
@@ -48,7 +48,7 @@ class BreadcrumbDropDownAutoExpandAction extends Action {
 	 */
 	@Override
 	public void run() {
-		fLaunchView.setBreadcrumbDropDownAutoExpand(isChecked()); 
-	}	
+		fLaunchView.setBreadcrumbDropDownAutoExpand(isChecked());
+	}
 }
 

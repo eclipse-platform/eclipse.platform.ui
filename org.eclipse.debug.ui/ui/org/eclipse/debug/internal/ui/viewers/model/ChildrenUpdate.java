@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Wind River Systems - Fix for viewer state save/restore [188704]
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
@@ -19,19 +19,19 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * This class is public so the test suite has access - it should be default protection.
- * 
- * @since 3.3 
+ *
+ * @since 3.3
  */
 public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
-	
+
 	private Object[] fElements;
 	private int fIndex;
 	private int fLength;
 
 	/**
 	 * Constructs a request to update an element
-	 * 
-	 * @param provider the content provider 
+	 *
+	 * @param provider the content provider
 	 * @param viewerInput the current input
 	 * @param elementPath the path to the element being update
 	 * @param element the element
@@ -43,14 +43,14 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		fIndex = index;
 		fLength = 1;
 	}
-	
+
 	public ChildrenUpdate(TreeModelContentProvider provider, Object viewerInput, TreePath elementPath, Object element, int index, int length, IElementContentProvider elementContentProvider) {
 		super(provider, viewerInput, elementPath, element, elementContentProvider, provider.getPresentationContext());
 		fIndex = index;
 		fLength = length;
 	}
-	
-	
+
+
 	protected void performUpdate(boolean updateFilterOnly) {
 		TreeModelContentProvider provider = getContentProvider();
 		TreePath elementPath = getElementPath();
@@ -94,7 +94,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					}
 				}
 			}
-			
+
 			if (!updateFilterOnly) {
 				provider.getStateTracker().restorePendingStateOnUpdate(elementPath, -1, true, true, true);
 			}
@@ -106,14 +106,14 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
 	@Override
 	protected void performUpdate() {
 		performUpdate(false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
 	 */
@@ -126,16 +126,16 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * This method is public so the test suite has access - it should be default protection.
-	 * 
+	 *
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
 	 */
 	@Override
 	public synchronized boolean coalesce(ViewerUpdateMonitor request) {
 		if (request instanceof ChildrenUpdate) {
 			ChildrenUpdate cu = (ChildrenUpdate) request;
-			if (getElement().equals(cu.getElement()) && getElementPath().equals(cu.getElementPath())) { 
+			if (getElement().equals(cu.getElement()) && getElementPath().equals(cu.getElementPath())) {
 				int end = fIndex + fLength;
 				int otherStart = cu.getOffset();
 				int otherEnd = otherStart + cu.getLength();
@@ -153,14 +153,14 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		}
 		return false;
 	}
-	
+
 	@Override
 	boolean containsUpdate(TreePath path) {
         return getElementPath().equals(path);
     }
 
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
 	 */
@@ -176,7 +176,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	public int getOffset() {
 		return fIndex;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
 	 */
@@ -204,37 +204,37 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	@Override
 	int getPriority() {
 		return 3;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
 	 */
 	@Override
 	TreePath getSchedulingPath() {
 		return getElementPath();
-	}		
-	
+	}
+
 	/**
 	 * Sets this request's offset. Used when modifying a waiting request when
 	 * the offset changes due to a removed element.
-	 * 
+	 *
 	 * @param offset new offset
 	 */
 	void setOffset(int offset) {
 		fIndex = offset;
 	}
-	
+
 	Object[] getElements() {
 	    return fElements;
 	}
-	
+
     @Override
 	protected boolean doEquals(ViewerUpdateMonitor update) {
-        return 
+        return
             update instanceof ChildrenUpdate &&
             ((ChildrenUpdate)update).getOffset() == getOffset() &&
             ((ChildrenUpdate)update).getLength() == getLength() &&
-            getViewerInput().equals(update.getViewerInput()) && 
+            getViewerInput().equals(update.getViewerInput()) &&
             getElementPath().equals(update.getElementPath());
     }
 

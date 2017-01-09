@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - ongoing bug fixes and enhancements
@@ -44,22 +44,22 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * A breadcrumb drop-down which shows a tree viewer.  It implements mouse and 
+ * A breadcrumb drop-down which shows a tree viewer.  It implements mouse and
  * key listeners to handle selection and expansion behavior of the viewer.
- * This class needs to be extended to implement 
- * {@link #createTreeViewer(Composite, int, TreePath)} to instantiate the 
- * concrete {@link TreeViewer} object.  
- * 
+ * This class needs to be extended to implement
+ * {@link #createTreeViewer(Composite, int, TreePath)} to instantiate the
+ * concrete {@link TreeViewer} object.
+ *
  * @since 3.5
  */
 public abstract class TreeViewerDropDown {
-    
+
     /**
-     * Delay to control scrolling when the mouse pointer reaches the edge of 
-     * the tree viewer. 
+     * Delay to control scrolling when the mouse pointer reaches the edge of
+     * the tree viewer.
      */
     private static long MOUSE_MOVE_SCROLL_DELAY = 500;
-    
+
     /**
      * The breadcrumb site in which the viewer is created.
      */
@@ -72,16 +72,16 @@ public abstract class TreeViewerDropDown {
 
     /**
      * Creates the viewer and installs the listeners.
-     * 
+     *
      * @param composite Parent control of the viewer.
      * @param site Breadcrumb site for the viewer.
      * @param path Path to the element for which the drop-down is being opened.
      * @return The control created for the viewer.
      */
     public Control createDropDown(Composite composite, IBreadcrumbDropDownSite site, TreePath path) {
-        
+
         fDropDownSite = site;
-        fDropDownViewer= createTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, path); 
+        fDropDownViewer= createTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, path);
 
         fDropDownViewer.addOpenListener(new IOpenListener() {
             @Override
@@ -92,9 +92,9 @@ public abstract class TreeViewerDropDown {
                 openElement(event.getSelection());
             }
         });
-     
+
         final Tree tree = fDropDownViewer.getTree();
-        
+
         tree.addMouseListener(new MouseListener() {
             @Override
 			public void mouseUp(MouseEvent e) {
@@ -123,7 +123,7 @@ public abstract class TreeViewerDropDown {
                     pathElements.add(0, data);
                     item = item.getParentItem();
                 }
-                
+
                 openElement(new TreeSelection(new TreePath(pathElements.toArray())));
             }
 
@@ -154,7 +154,7 @@ public abstract class TreeViewerDropDown {
                             fLastItem= (TreeItem) o;
                             tree.setSelection(new TreeItem[] { fLastItem });
                         } else if (System.currentTimeMillis() > (fLastScrollTime + MOUSE_MOVE_SCROLL_DELAY)) {
-                            if (e.y < tree.getItemHeight() / 4) 
+                            if (e.y < tree.getItemHeight() / 4)
                             {
                                 // Scroll up
                                 if (currentItem.getParentItem() == null) {
@@ -162,7 +162,7 @@ public abstract class TreeViewerDropDown {
                                     if (index < 1) {
 										return;
 									}
-    
+
                                     fLastItem= tree.getItem(index - 1);
                                     tree.setSelection(new TreeItem[] { fLastItem });
                                 } else {
@@ -181,7 +181,7 @@ public abstract class TreeViewerDropDown {
                                     if (index >= tree.getItemCount() - 1) {
 										return;
 									}
-    
+
                                     fLastItem= tree.getItem(index + 1);
                                     tree.setSelection(new TreeItem[] { fLastItem });
                                 } else {
@@ -211,7 +211,7 @@ public abstract class TreeViewerDropDown {
                         fDropDownSite.close();
                         return;
                     }
-                    
+
                     TreeItem[] selection= tree.getSelection();
                     if (selection.length != 1) {
 						return;
@@ -254,28 +254,28 @@ public abstract class TreeViewerDropDown {
                     }
                 }.schedule();
             }
-            
+
         });
 
         return tree;
     }
-    
+
     /**
      * Creates and returns the tree viewer.
-     *  
+     *
      * @param composite Parent control of the viewer.
      * @param style Style flags to use in creating the tree viewer.
      * @param path Path to the element for which the drop-down is being opened.
      * @return The newly created tree viewer.
      */
     protected abstract TreeViewer createTreeViewer(Composite composite, int style, TreePath path);
-    
+
     /**
-     * Called when the given element was selected in the viewer.  It causes the 
-     * breadcrumb viewer to fire an opened event.  If the viewer loses focus 
-     * as a result of the open operation, then the drop-down is closed.  
+     * Called when the given element was selected in the viewer.  It causes the
+     * breadcrumb viewer to fire an opened event.  If the viewer loses focus
+     * as a result of the open operation, then the drop-down is closed.
      * Otherwise the selected element is expanded.
-     * 
+     *
      * @param selection The selection to open.
      */
     protected void openElement(ISelection selection) {
@@ -287,7 +287,7 @@ public abstract class TreeViewerDropDown {
         fDropDownSite.notifySelection(selection);
 
         Tree tree = fDropDownViewer.getTree();
-        
+
         boolean treeHasFocus= !tree.isDisposed() && tree.isFocusControl();
 
         if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
@@ -323,6 +323,6 @@ public abstract class TreeViewerDropDown {
         }
     }
 
-    
+
 
 }

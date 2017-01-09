@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 
 /**
  * Represents a renderingBindings element of a memoryRenderings contribution.
- * 
+ *
  * @since 3.1
  */
 class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implements IMemoryRenderingBindingsProvider {
@@ -64,7 +64,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Constructs a bindings element from the given contribution.
-	 * 
+	 *
 	 * @param element contribution
 	 */
 	RenderingBindings(IConfigurationElement element) {
@@ -73,7 +73,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Returns the non-default bindings specified by this contribution.
-	 * 
+	 *
 	 * @return the non-default bindings specified by this contribution
 	 */
 	private IMemoryRenderingType[] getBindings() {
@@ -103,7 +103,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Returns the default bindings specified by this contribution.
-	 * 
+	 *
 	 * @return the default bindings specified by this contribution
 	 */
 	private IMemoryRenderingType[] getDefaultBindings() {
@@ -136,7 +136,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Returns the primary id, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the primary id, or <code>null</code> if none
 	 */
 	private String getPrimaryId() {
@@ -145,7 +145,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Returns the provider for this binding or <code>null</code> of none.
-	 * 
+	 *
 	 * @return the provider for this binding or <code>null</code> of none
 	 */
 	protected IMemoryRenderingBindingsProvider getProvider(IMemoryBlock memoryBlock) {
@@ -175,7 +175,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Returns whether this binding is applies to the given memory block.
-	 * 
+	 *
 	 * @param block memory block
 	 * @return whether this binding is applies to the given memory block
 	 */
@@ -195,7 +195,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 
 	/**
 	 * Validates this contribution.
-	 * 
+	 *
 	 * @exception CoreException if invalid
 	 */
 	void validate() throws CoreException {
@@ -210,7 +210,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 	/**
 	 * Returns this binding's enablement expression, or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @return enablement expression, or <code>null</code> if none
 	 */
 	private Expression getExpression() {

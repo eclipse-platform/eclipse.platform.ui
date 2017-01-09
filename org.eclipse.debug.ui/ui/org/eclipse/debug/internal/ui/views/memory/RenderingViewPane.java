@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
  *                 display memory blocks that do not reference IDebugTarget
- *     ARM - Bug 192028 [Memory View] Memory view does not 
+ *     ARM - Bug 192028 [Memory View] Memory view does not
  *                 display memory blocks that do not reference IDebugTarget
  *     WindRiver - Bug 216509 [Memory View] typo, s/isMeomryBlockRemoved/isMemoryBlockRemoved
  *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
@@ -65,9 +65,9 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Represents a rendering view pane in the Memory View. This hosts the memory
  * view tabs in the view.
- * 
+ *
  * @since 3.1
- * 
+ *
  */
 public class RenderingViewPane extends AbstractMemoryViewPane implements IMemoryRenderingContainer {
 
@@ -88,7 +88,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	/**
 	 * @param parent is the view hosting this view pane
 	 * @param paneId is the identifier assigned by the Memory View
-	 * 
+	 *
 	 *            Pane id is assigned with the following format. Rendering view
 	 *            pane created has its id assigned to
 	 *            org.eclipse.debug.ui.MemoryView.RenderingViewPane.#. # is a
@@ -100,7 +100,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 *            org.eclipse.debug.ui.MemoryView.RenderingViewPane.2. and so
 	 *            on. View pane are created from left to right by the Memory
 	 *            View.
-	 * 
+	 *
 	 */
 	public RenderingViewPane(IViewPart parent) {
 		super(parent);
@@ -1098,7 +1098,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 
 	/**
 	 * Reset the memory renderings within this view pane.
-	 * 
+	 *
 	 * @param memoryBlock - reset renderings associated with the given memory
 	 *            block
 	 * @param resetVisible - reset what's currently visible if the parameter is

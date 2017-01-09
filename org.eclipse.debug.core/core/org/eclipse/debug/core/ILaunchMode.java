@@ -32,21 +32,21 @@ package org.eclipse.debug.core;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ILaunchMode {
-	
+
 	/**
 	 * Returns the unique identifier for this launch mode.
-	 * 
+	 *
 	 * @return the unique identifier for this launch mode
 	 */
 	public String getIdentifier();
-	
+
 	/**
 	 * Returns a human readable label for this launch mode.
-	 * 
+	 *
 	 * @return a human readable label for this launch mode
 	 */
 	public String getLabel();
-	
+
 	/**
 	 * Returns a human readable label for this launch mode when used in a
 	 * cascade menu. For example, "Run As". Allows the label to be

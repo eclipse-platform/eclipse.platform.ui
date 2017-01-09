@@ -65,7 +65,7 @@ import com.ibm.icu.text.MessageFormat;
  * </ul>
  * </p>
  * This class is used by <code>WizardExportBreakpoints</code>
- * 
+ *
  * @since 3.2
  */
 public class WizardExportBreakpointsPage extends WizardPage implements Listener {
@@ -82,18 +82,18 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	//state constants
 	private static final String OVERWRITE_ALL_STATE = "overwrite"; //$NON-NLS-1$
 	private static final String DESTINATION_FILE_NAME = "filename"; //$NON-NLS-1$
-	
+
 	/**
 	 * This is the default constructor. It accepts the name for the tab as a
 	 * parameter and an existing selection
-	 * 
+	 *
 	 * @param pageName the name of the page
 	 */
 	public WizardExportBreakpointsPage(String pageName, IStructuredSelection selection) {
 		super(pageName, ImportExportMessages.WizardExportBreakpoints_0, null);
 		fSelection = selection;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
@@ -113,7 +113,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			handleDeselectAllPressed();
 		}
 	}
-	
+
 	/**
 	 * Handles the select all button pressed
 	 *
@@ -126,7 +126,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		viewer.getTree().deselectAll();
 		setPageComplete(detectPageComplete());
 	}
-	
+
 	/**
 	 * Handles the de-select all button pressed
 	 *
@@ -137,7 +137,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		viewer.setGrayedElements(new Object[] {});
 		setPageComplete(detectPageComplete());
 	}
-	
+
 	/**
 	 * This method handles the modified event from the path combo box.
 	 */
@@ -158,16 +158,16 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			if (path != null) {
 				setErrorMessage(null);
 				if(path.getFileExtension() == null) {
-					path = path.addFileExtension(IImportExportConstants.EXTENSION);  
+					path = path.addFileExtension(IImportExportConstants.EXTENSION);
 				}
-				else if(!path.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
-					path = path.addFileExtension(IImportExportConstants.EXTENSION); 
+				else if(!path.getFileExtension().equals(IImportExportConstants.EXTENSION)) {
+					path = path.addFileExtension(IImportExportConstants.EXTENSION);
 				}
 				fDestinationNameField.setText(path.toString());
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -191,15 +191,15 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		createButtonsGroup(composite);
 		createDestinationGroup(composite);
 		fOverwriteExistingFilesCheckbox = SWTFactory.createCheckButton(composite, ImportExportMessages.WizardBreakpointsPage_6, null, false, 1);
-		setControl(composite); 
+		setControl(composite);
 		setPageComplete(false);
 		setMessage(ImportExportMessages.WizardBreakpointsPage_4);
 		restoreWidgetState();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.EXPORT_BREAKPOINTS_WIZARD_PAGE);
-		
+
 		Dialog.applyDialogFont(parent);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
@@ -215,18 +215,18 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
      */
     private void createButtonsGroup(Composite parent) {
         Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
-        fSelectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null); 
+        fSelectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null);
         fSelectAll.addListener(SWT.Selection, this);
 		fDeselectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_2, null);
 		fDeselectAll.addListener(SWT.Selection, this);
     }
-	
+
 	/**
 	 * This method is used to determine if the page can be "finished".
-	 * 
+	 *
 	 * To be determined "finishable" there must be a save path and there must be
 	 * a selection in the tree.
-	 * 
+	 *
 	 * @return if the prerequisites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
@@ -252,7 +252,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 
 	/**
 	 * Create the export destination specification widgets
-	 * 
+	 *
 	 * @param parent org.eclipse.swt.widgets.Composite
 	 */
 	protected void createDestinationGroup(Composite parent) {
@@ -276,7 +276,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			settings.put(DESTINATION_FILE_NAME, fDestinationNameField.getText().trim());
 		}
 	}
-	
+
 	/**
 	 * Restores the state of the wizard from previous invocations
 	 */
@@ -290,22 +290,22 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			}
 		}
 	}
-	
+
 	/**
 	 * The Finish button is clicked on the main wizard
 	 * dialog to export the breakpoints, we write them out with all persistent
 	 * information to a simple XML file via the use of XMLMemento.
-	 * 
+	 *
 	 * @return if the save operation was successful or not
 	 */
 	public boolean finish() {
 		try {
 			IPath path = new Path(fDestinationNameField.getText().trim());
 			if(path.getFileExtension() == null) {
-				path = path.addFileExtension(IImportExportConstants.EXTENSION);  
+				path = path.addFileExtension(IImportExportConstants.EXTENSION);
 			}
-			else if(!path.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
-				path = path.addFileExtension(IImportExportConstants.EXTENSION); 
+			else if(!path.getFileExtension().equals(IImportExportConstants.EXTENSION)) {
+				path = path.addFileExtension(IImportExportConstants.EXTENSION);
 			}
 			saveWidgetState();
 			if(path.toFile().exists() && !fOverwriteExistingFilesCheckbox.getSelection()) {
@@ -322,10 +322,10 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 					breakpoints.add((IBreakpoint) object);
 				}
 			}
-			getContainer().run(false, 
-					true, 
+			getContainer().run(false,
+					true,
 					new ExportBreakpointsOperation(
-							breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
+							breakpoints.toArray(new IBreakpoint[breakpoints.size()]),
 							path.toOSString()));
 		}
 		catch (InterruptedException e) {

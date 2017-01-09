@@ -26,7 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  * Cache that stores evaluated logical structure values to replace raw values.  Cache
  * should be cleared when a RESUME or TERMINATE event is fired so the structure can be
  * reevaluated for new values.
- * 
+ *
  * @since 3.3
  *
  */
@@ -36,11 +36,11 @@ public class LogicalStructureCache {
 	 * Maps a ILogicalStructureType to the cache for that type
 	 */
 	private Map<ILogicalStructureType, LogicalStructureTypeCache> fCacheForType = new HashMap<ILogicalStructureType, LogicalStructureTypeCache>();
-	
+
 	/**
 	 * Returns the logical value to replace the given value using the specified logical structure.
 	 * The value will be retrieved from the cache if possible, or evaluated if not.
-	 * 
+	 *
 	 * @param type the logical structure type used to evaluate the logical value
 	 * @param value the raw value to replace with a logical structure
 	 * @return the logical value replacing the raw value or <code>null</code> if there is a problem
@@ -48,23 +48,23 @@ public class LogicalStructureCache {
 	public IValue getLogicalStructure(ILogicalStructureType type, IValue value) throws CoreException {
 		synchronized (fCacheForType) {
 			LogicalStructureTypeCache cache = getCacheForType(type);
-			return cache.getLogicalStructure(value);			
+			return cache.getLogicalStructure(value);
 		}
 	}
-	
+
 	/**
 	 * Clears the cache of all evaluated values.
 	 */
 	public void clear(){
 		synchronized (fCacheForType) {
-			fCacheForType.clear();	
+			fCacheForType.clear();
 		}
 	}
-	
+
 	/**
 	 * Helper method that returns the cache associated with the given logical structure type.
 	 * If there is not cache associated, one is created.
-	 * 
+	 *
 	 * @param type the logical structure type to get the cache for
 	 * @return the cache associated with the logical structure type
 	 */
@@ -74,35 +74,35 @@ public class LogicalStructureCache {
 			cache = new LogicalStructureTypeCache(type);
 			fCacheForType.put(type, cache);
 		}
-		return cache;			
+		return cache;
 	}
-	
+
 	/**
 	 * Inner class that caches the known and pending values for a given logical
 	 * structure type.
 	 */
 	class LogicalStructureTypeCache{
-		
+
 		private ILogicalStructureType fType;
-		
+
 		/**
-		 * Maps a raw IValue to its calculated logical IValue  
+		 * Maps a raw IValue to its calculated logical IValue
 		 */
 		private Map<IValue, IValue> fKnownValues = new HashMap<IValue, IValue>();
-		
+
 		/**
 		 * Set of raw IValues that logical values are currently being evaluated for.
 		 */
 		private Set<IValue> fPendingValues = new HashSet<IValue>();
-		
+
 		public LogicalStructureTypeCache(ILogicalStructureType type){
 			fType = type;
 		}
-		
+
 		/**
 		 * Returns the logical structure value for the given raw value.  If the value has been evaluated
 		 * the cached value is returned, otherwise the thread waits until the value is evaluated.
-		 * 
+		 *
 		 * @param value the raw value
 		 * @return the logical value
 		 * @exception CoreException if an error occurs computing the value
@@ -146,8 +146,8 @@ public class LogicalStructureCache {
 					fPendingValues.notifyAll();
 				}
 				throw e;
-			} 
+			}
 		}
-		
+
 	}
 }

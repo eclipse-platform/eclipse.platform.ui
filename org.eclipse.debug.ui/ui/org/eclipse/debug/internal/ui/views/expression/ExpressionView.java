@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.expression;
 
- 
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -51,34 +51,34 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
- 
+
 /**
  * Displays expressions and their values with a detail
  * pane.
  */
 public class ExpressionView extends VariablesView {
-	
+
     private PasteWatchExpressionsAction fPasteAction;
     private EditWatchExpressinInPlaceAction fEditInPlaceAction;
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
 	 */
 	@Override
 	protected String getHelpContextId() {
-		return IDebugHelpContextIds.EXPRESSION_VIEW;		
-	}	
-	
+		return IDebugHelpContextIds.EXPRESSION_VIEW;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		super.configureToolBar(tbm);
-		tbm.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));		
+		tbm.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -89,7 +89,7 @@ public class ExpressionView extends VariablesView {
 		menu.add(getAction(FIND_ACTION));
         ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
         if (changeValueAction.isApplicable()) {
-            menu.add(changeValueAction); 
+            menu.add(changeValueAction);
         }
 		menu.add(new Separator());
 		IAction action = new AvailableLogicalStructuresAction(this);
@@ -135,7 +135,7 @@ public class ExpressionView extends VariablesView {
         }
         updateAction(FIND_ACTION);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
 	 */
@@ -149,7 +149,7 @@ public class ExpressionView extends VariablesView {
 	 */
 	@Override
 	protected String getToggleActionLabel() {
-		return VariablesViewMessages.ExpressionView_4; 
+		return VariablesViewMessages.ExpressionView_4;
 	}
 
 	/* (non-Javadoc)
@@ -158,8 +158,8 @@ public class ExpressionView extends VariablesView {
 	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_EXPRESSION_VIEW;
-	}	
-	
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#initDragAndDrop(org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer)
      */
@@ -168,7 +168,7 @@ public class ExpressionView extends VariablesView {
         viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
         viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(getSite(), viewer));
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createActions()
      */
@@ -180,17 +180,17 @@ public class ExpressionView extends VariablesView {
     	fEditInPlaceAction = new EditWatchExpressinInPlaceAction(this);
         configure(fEditInPlaceAction, IWorkbenchCommandConstants.FILE_RENAME, ActionFactory.RENAME.getId(), null);
     }
-    
+
     @Override
 	public void dispose() {
         fEditInPlaceAction.dispose();
         super.dispose();
     }
-    
+
     /**
      * Configures the action to override the global action, and registers the
      * action with this view.
-     * 
+     *
      * @param action
      * 		action
      * @param defId
@@ -209,11 +209,11 @@ public class ExpressionView extends VariablesView {
     	    action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
     	}
     }
-    
+
     /**
      * Returns whether the given selection can be pasted into the expressions
      * view.
-     * 
+     *
      * @return whether the given selection can be pasted into the given target
      */
     public boolean canPaste() {
@@ -223,10 +223,10 @@ public class ExpressionView extends VariablesView {
     	}
     	return false;
     }
-       
+
     /**
      * Pastes the selection into the given target
-     * 
+     *
      * @return whether successful
      */
     public boolean performPaste() {
@@ -241,7 +241,7 @@ public class ExpressionView extends VariablesView {
     	}
     	return false;
     }
-    
+
     // TODO: duplicate code from WatchExpressionAction
     protected IDebugElement getContext() {
         IAdaptable object = DebugUITools.getPartDebugContext(getSite());
@@ -253,7 +253,7 @@ public class ExpressionView extends VariablesView {
         }
         return context;
     }
-    
+
     protected String getClipboardText() {
     	Clipboard clipboard = new Clipboard(Display.getDefault());
     	try {
@@ -264,5 +264,5 @@ public class ExpressionView extends VariablesView {
     	}
     }
 
-    
+
 }

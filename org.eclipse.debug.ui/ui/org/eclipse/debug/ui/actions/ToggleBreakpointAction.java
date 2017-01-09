@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
@@ -38,28 +38,28 @@ import org.eclipse.ui.texteditor.IUpdate;
  * adapter which may optionally be an instance of an
  * <code>IToggleBreakpointsTargetExtension</code>.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @since 3.1
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ToggleBreakpointAction extends Action implements IUpdate {
-	
+
 	private IWorkbenchPart fPart;
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
 	private IToggleBreakpointsTargetManagerListener fListener = new IToggleBreakpointsTargetManagerListener() {
 	    @Override
 		public void preferredTargetsChanged() {
-	        update();	        
+	        update();
 	    }
 	};
 
 	/**
 	 * Constructs a new action to toggle a breakpoint in the given
 	 * part containing the given document and ruler.
-	 * 
+	 *
 	 * @param part the part in which to toggle the breakpoint - provides
 	 *  an <code>IToggleBreakpointsTarget</code> adapter
 	 * @param document the document breakpoints are being set in or
@@ -74,7 +74,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		fRulerInfo = rulerInfo;
 		DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(fListener);
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
@@ -83,7 +83,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	public void run() {
 		doIt(null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
@@ -91,11 +91,11 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	public void runWithEvent(Event event) {
 		doIt(event);
 	}
-	
+
 	/**
 	 * Delegate method to perform the toggling
 	 * @param event the event, possibly <code>null</code>
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	void doIt(Event event) {
@@ -107,7 +107,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 					ITextSelection selection = getTextSelection(document, line);
 					IToggleBreakpointsTarget target = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, selection);
 					if (target != null) {
-						IToggleBreakpointsTargetExtension2 ext = (IToggleBreakpointsTargetExtension2) 
+						IToggleBreakpointsTargetExtension2 ext = (IToggleBreakpointsTargetExtension2)
 								DebugPlugin.getAdapter(target, IToggleBreakpointsTargetExtension2.class);
 						if (ext != null) {
 							if(ext.canToggleBreakpointsWithEvent(fPart, selection, event)) {
@@ -115,7 +115,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 								return;
 							}
 						}
-						IToggleBreakpointsTargetExtension ext2 = (IToggleBreakpointsTargetExtension) 
+						IToggleBreakpointsTargetExtension ext2 = (IToggleBreakpointsTargetExtension)
 								DebugPlugin.getAdapter(target, IToggleBreakpointsTargetExtension.class);
 						if(ext2 != null) {
 							if (ext2.canToggleBreakpoints(fPart, selection)) {
@@ -141,16 +141,16 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			}
 		}
 	}
-	
+
 	/**
 	 * Report an error to the user.
-	 * 
+	 *
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
 		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.ToggleBreakpointAction_1, ActionMessages.ToggleBreakpointAction_2, e); //
 	}
-	
+
 	/**
 	 * Disposes this action. Clients must call this method when
 	 * this action is no longer needed.
@@ -164,28 +164,28 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 
 	/**
 	 * Returns the document on which this action operates.
-	 * 
+	 *
 	 * @return the document or <code>null</code> if none
 	 */
 	private IDocument getDocument() {
 		if (fDocument != null)
 			return fDocument;
-		
+
 		if (fPart instanceof ITextEditor) {
 			ITextEditor editor= (ITextEditor)fPart;
 			IDocumentProvider provider = editor.getDocumentProvider();
 			if (provider != null)
 				return provider.getDocument(editor.getEditorInput());
 		}
-		
+
 		IDocument doc = fPart.getAdapter(IDocument.class);
 		if (doc != null) {
 			return doc;
 		}
-		
+
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -197,8 +197,8 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		    if (line > -1) {
 		        try {
 		            ITextSelection selection = getTextSelection(document, line);
-                   
-                    IToggleBreakpointsTarget adapter = 
+
+                    IToggleBreakpointsTarget adapter =
                         ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, selection);
                     if (adapter == null) {
                         setEnabled(false);
@@ -213,7 +213,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
                     }
                     if (adapter.canToggleLineBreakpoints(fPart, selection) ||
                         adapter.canToggleWatchpoints(fPart, selection) ||
-                        adapter.canToggleMethodBreakpoints(fPart, selection)) 
+                        adapter.canToggleMethodBreakpoints(fPart, selection))
                     {
                         setEnabled(true);
                         return;
@@ -228,9 +228,9 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 
 	/**
 	 * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
-	 * the highlighted text, return the text selection for the highlighted text.  Otherwise, 
+	 * the highlighted text, return the text selection for the highlighted text.  Otherwise,
 	 * return a text selection representing the start of the line.
-	 * 
+	 *
 	 * @param document	The IDocument backing the Editor.
 	 * @param line	The line clicked on in the ruler.
 	 * @return	An ITextSelection as described.
@@ -246,7 +246,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 					&& ((ITextSelection) selection).getStartLine() <= line
 					&& ((ITextSelection) selection).getEndLine() >= line) {
 				textSelection = (ITextSelection) selection;
-			} 
+			}
 		}
 		return textSelection;
 	}

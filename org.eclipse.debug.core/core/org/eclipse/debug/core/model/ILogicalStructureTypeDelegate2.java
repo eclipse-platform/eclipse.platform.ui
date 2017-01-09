@@ -29,14 +29,14 @@ package org.eclipse.debug.core.model;
  * @see org.eclipse.debug.core.ILogicalStructureType
  */
 public interface ILogicalStructureTypeDelegate2 {
-	
+
 	/**
 	 * Returns a simple description of the logical structure provided by this
 	 * structure type delegate, for the given value.
 	 * Cannot return <code>null</code>. This method is only called if this
 	 * logical structure type delegate returns <code>true</code> for
 	 * <code>providesLogicalStructure(IValue)</code>.
-	 * 
+	 *
 	 * @param value a value a description is requested for
 	 * @return a simple description of the logical structure provided by this
 	 * structure type delegate, for the given value

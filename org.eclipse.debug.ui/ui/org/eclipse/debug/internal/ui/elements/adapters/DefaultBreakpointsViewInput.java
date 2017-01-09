@@ -14,36 +14,36 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * The default breakpoints view input populates the view with content 
+ * The default breakpoints view input populates the view with content
  * from the default breakpoint manager.
- * 
+ *
  * @since 3.6
  */
 public class DefaultBreakpointsViewInput {
-	
+
 	/**
 	 * The presentation context of the breakpoints view.
 	 */
 	final private IPresentationContext fContext;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param context the presentation context for this input
 	 */
 	public DefaultBreakpointsViewInput(IPresentationContext context) {
 		fContext = context;
 	}
-		
+
 	/**
 	 * Returns the presentation context for this input.
-	 * 
+	 *
 	 * @return the presentation context
 	 */
 	public IPresentationContext getContext() {
 		return fContext;
 	}
-	
+
 	/*
      * (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -68,9 +68,9 @@ public class DefaultBreakpointsViewInput {
             IPresentationContext context = ((DefaultBreakpointsViewInput) arg0).getContext();
             if (getContext() != null && context != null)
                 return getContext().equals(context);
-        } 
-        
-        return super.equals(arg0);              
+        }
+
+        return super.equals(arg0);
     }
 
 }

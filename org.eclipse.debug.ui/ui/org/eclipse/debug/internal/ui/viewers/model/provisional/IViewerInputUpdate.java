@@ -27,15 +27,15 @@ public interface IViewerInputUpdate extends IViewerUpdate {
 	 * Sets the input to use for this request's presentation context, or <code>null</code>
 	 * if none (empty viewer). The source used to derive the viewer input is available
 	 * from this request's <code>getElement()</code> method.
-	 *  
+	 *
 	 * @param element viewer input for this request's presentation context, possibly <code>null</code>
 	 */
 	public void setInputElement(Object element);
-	
+
 	/**
 	 * Returns the computed viewer input or <code>null</code> if none. The return value of this method
 	 * only contains valid data if this request is complete (i.e. <code>done()</code> has been called).
-	 * 
+	 *
 	 * @return viewer input or <code>null</code>
 	 */
 	public Object getInputElement();

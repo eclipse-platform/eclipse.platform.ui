@@ -31,7 +31,7 @@ import com.ibm.icu.text.MessageFormat;
  * @since 3.2
  */
 public class CommonSourceNotFoundEditorInput extends PlatformObject implements IEditorInput {
-	
+
 	/**
 	 * input element label (cached on creation)
 	 */
@@ -40,7 +40,7 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	 * the artifact that the editor is being opened for
 	 */
 	private Object fArtifact;
-	
+
 	/**
 	 * Constructs an editor input for the given artifact associated with source.
 	 *
@@ -56,8 +56,8 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 		if (fLabel == null) {
 			fLabel = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
@@ -65,7 +65,7 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	public boolean exists() {
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
@@ -73,15 +73,15 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getDefaultImageDescriptor(fArtifact);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	@Override
 	public String getName() {
-		return fLabel;		
+		return fLabel;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
@@ -89,7 +89,7 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	public IPersistableElement getPersistable() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
@@ -97,14 +97,14 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	public String getToolTipText() {
 		return MessageFormat.format(SourceLookupUIMessages.addSourceLocation_editorMessage, new Object[] { fLabel });
 	}
-		
+
 	/**
 	 * Returns the artifact that source was not found for.
-	 * 
+	 *
 	 * @return artifact that source was not found for
 	 */
 	public Object getArtifact(){
 		return fArtifact;
 	}
-	
+
 }

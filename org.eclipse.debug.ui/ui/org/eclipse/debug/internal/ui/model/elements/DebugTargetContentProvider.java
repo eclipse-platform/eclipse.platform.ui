@@ -72,8 +72,8 @@ public class DebugTargetContentProvider extends ElementContentProvider {
 
 	/**
 	 * Returns all children of the given parent object.
-	 * 
-	 * @param parent 
+	 *
+	 * @param parent
 	 * @param context
 	 * @param monitor
 	 * @return all children
@@ -95,6 +95,6 @@ public class DebugTargetContentProvider extends ElementContentProvider {
         }
         return EMPTY;
 	}
-	
-	
+
+
 }

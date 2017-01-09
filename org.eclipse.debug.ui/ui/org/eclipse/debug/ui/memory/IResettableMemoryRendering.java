@@ -16,7 +16,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * A memory rendering that can be reset.  Reset behavior is rendering
  * specific.  Typically, reset means that the rendering would position
- * itself back to the base address of its memory block.  However, clients 
+ * itself back to the base address of its memory block.  However, clients
  * may define its reset behavior that is suitable for its rendering.
  * <p>
  * Clients may implement this interface.
@@ -25,10 +25,10 @@ import org.eclipse.debug.core.DebugException;
  *
  */
 public interface IResettableMemoryRendering extends IMemoryRendering {
-	
+
 	/**
 	 * Reset this memory rendering.
-	 * 
+	 *
 	 * @throws DebugException when there is a problem resetting this memory rendering.
 	 */
 	public void resetRendering() throws DebugException;

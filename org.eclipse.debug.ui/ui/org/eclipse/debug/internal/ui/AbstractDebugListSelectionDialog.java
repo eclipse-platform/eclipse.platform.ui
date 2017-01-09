@@ -26,13 +26,13 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class provides a simple selection dialog displaying items in a table.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSelectionDialog {
 
 	protected TableViewer fListViewer;
-	
+
 	/**
 	 * Constructor
 	 * @param parentShell the parent shell
@@ -41,7 +41,7 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
@@ -54,7 +54,7 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		fListViewer.getTable().setLayoutData(gd);
 		return fListViewer;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
@@ -75,7 +75,7 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#isValid()
 	 */
@@ -89,7 +89,7 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		}
 		return false;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -101,5 +101,5 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		}
 		super.okPressed();
     }
-	
+
 }

@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Suspend action.
- * 
+ *
  * @since 3.3
  */
 public class SuspendCommandAction extends DebugCommandAction {
@@ -27,7 +27,7 @@ public class SuspendCommandAction extends DebugCommandAction {
     public SuspendCommandAction() {
         setActionDefinitionId("org.eclipse.debug.ui.commands.Suspend"); //$NON-NLS-1$
     }
-    
+
     @Override
 	public String getText() {
         return ActionMessages.SuspendAction_0;

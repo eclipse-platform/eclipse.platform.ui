@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,25 +21,25 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 /**
- * This action activates the cell editor in the expressions view to edit the 
- * expression string.  If no expression column found or for multi-line 
- * expressions, revert to the 
+ * This action activates the cell editor in the expressions view to edit the
+ * expression string.  If no expression column found or for multi-line
+ * expressions, revert to the
  */
 public class EditWatchExpressinInPlaceAction extends Action implements ISelectionChangedListener {
 
     private ExpressionView fView;
     private TreeModelViewer fViewer;
     private EditWatchExpressionAction fEditActionDelegate = new EditWatchExpressionAction();
-    
+
     public EditWatchExpressinInPlaceAction(ExpressionView view) {
         fView = view;
         fViewer = (TreeModelViewer)view.getViewer();
         fEditActionDelegate.init(view);
-        ISelectionProvider selectionProvider = fView.getSite().getSelectionProvider(); 
+        ISelectionProvider selectionProvider = fView.getSite().getSelectionProvider();
         selectionProvider.addSelectionChangedListener(this);
         fEditActionDelegate.selectionChanged(this, selectionProvider.getSelection());
     }
-    
+
     @Override
 	public void selectionChanged(SelectionChangedEvent event) {
         IStructuredSelection selection = fEditActionDelegate.getCurrentSelection();
@@ -49,16 +49,16 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
     public void dispose() {
         fView.getSite().getSelectionProvider().removeSelectionChangedListener(this);
     }
-    
+
     @Override
 	public void run() {
         IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
-        
+
         if (selelection.size() != 1) {
             return;
         }
 
-        // Always edit multi-line expressions in dialog.  Otherwise try to find the expression 
+        // Always edit multi-line expressions in dialog.  Otherwise try to find the expression
         // column and activate cell editor there.
         int expressionColumn = getExpressionColumnIndex();
         IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
@@ -68,12 +68,12 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
             fEditActionDelegate.run(this);
         }
     }
-    
+
     private boolean isWatchExpressionWithNewLine(IWatchExpression[] expressions) {
-        return expressions.length == 1 && 
+        return expressions.length == 1 &&
             expressions[0].getExpressionText().indexOf('\n') != -1;
     }
-    
+
     private int getExpressionColumnIndex() {
         Object[] columnProperties = fViewer.getColumnProperties();
         for (int i = 0; columnProperties != null && i < columnProperties.length; i++) {

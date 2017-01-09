@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,20 +25,20 @@ import org.eclipse.debug.core.ILaunch;
  * <p>
  * Clients may implement this interface, however, the debug plug-in
  * provides an implementation of this interface for a
- * <code>java.lang.Process</code>. 
+ * <code>java.lang.Process</code>.
  * </p>
  * @see org.eclipse.debug.core.DebugPlugin#newProcess(ILaunch, Process, String)
  */
 public interface IProcess extends IAdaptable, ITerminate {
-	
+
 	/**
 	 * Attribute key for a common, optional, process property. The value of this
 	 * attribute is the command line a process was launched with.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public final static String ATTR_CMDLINE= DebugPlugin.getUniqueIdentifier() + ".ATTR_CMDLINE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for a common, optional, process property. The value of this
 	 * attribute is an identifier for the type of this process. Process types
@@ -47,17 +47,17 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 *
 	 * @since 2.1
 	 */
-	public final static String ATTR_PROCESS_TYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_TYPE"; //$NON-NLS-1$		
+	public final static String ATTR_PROCESS_TYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_TYPE"; //$NON-NLS-1$
 
 	/**
 	 * Attribute key for a common, optional, process property. The value of this
 	 * attribute specifies an alternate dynamic label for a process, displayed by
 	 * the console.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public final static String ATTR_PROCESS_LABEL = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_LABEL"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns a human-readable label for this process.
 	 *
@@ -71,13 +71,13 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 */
 	public ILaunch getLaunch();
 	/**
-	 * Returns a proxy to the standard input, output, and error streams 
+	 * Returns a proxy to the standard input, output, and error streams
 	 * for this process, or <code>null</code> if not supported.
 	 *
 	 * @return a streams proxy, or <code>null</code> if not supported
 	 */
 	public IStreamsProxy getStreamsProxy();
-	
+
 	/**
 	 * Sets the value of a client defined attribute.
 	 *
@@ -85,7 +85,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @param value the attribute value
 	 */
 	public void setAttribute(String key, String value);
-	
+
 	/**
 	 * Returns the value of a client defined attribute.
 	 *
@@ -93,11 +93,11 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @return value the String attribute value, or <code>null</code> if undefined
 	 */
 	public String getAttribute(String key);
-	
+
 	/**
 	 * Returns the exit value of this process. Conventionally, 0 indicates
 	 * normal termination.
-	 * 
+	 *
 	 * @return the exit value of this process
 	 * @exception DebugException if this process has not yet terminated
 	 */

@@ -24,20 +24,20 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.3
  */
 public abstract class AbstractDebugContextProvider implements IDebugContextProvider {
-	
+
 	/**
 	 * Event listeners
 	 */
 	private ListenerList<IDebugContextListener> fListeners = new ListenerList<>();
-	
+
 	/**
 	 * Part or <code>null</code>
 	 */
 	private IWorkbenchPart fPart;
-	
+
 	/**
 	 * Constructs a context provider for the specified part, possibly <code>null</code>.
-	 * 
+	 *
 	 * @param part workbench part or <code>null</code>
 	 */
 	public AbstractDebugContextProvider(IWorkbenchPart part) {
@@ -70,7 +70,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 
 	/**
 	 * Fires the given context event to all registered listeners.
-	 * 
+	 *
 	 * @param event debug context event
 	 */
 	protected void fire(final DebugContextEvent event) {
@@ -86,7 +86,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 					DebugUIPlugin.log(exception);
 				}
 			});
-			
+
 		}
 	}
 }

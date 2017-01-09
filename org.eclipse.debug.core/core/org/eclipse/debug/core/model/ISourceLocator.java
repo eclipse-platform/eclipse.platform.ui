@@ -38,11 +38,11 @@ import org.eclipse.debug.core.model.IStackFrame;
  * Clients may implement this interface.
  * </p>
  * @see org.eclipse.debug.core.ILaunch
- * @see org.eclipse.debug.core.model.IStackFrame 
+ * @see org.eclipse.debug.core.model.IStackFrame
  * @see org.eclipse.debug.core.model.IPersistableSourceLocator
  */
 public interface ISourceLocator {
-	
+
 	/**
 	 * Returns a source element that corresponds to the given stack frame, or
 	 * <code>null</code> if a source element could not be located. The object returned
@@ -58,7 +58,7 @@ public interface ISourceLocator {
 	 * </p>
 	 *
 	 * @param stackFrame the stack frame for which to locate source
-	 * @return an object representing a source element. 
+	 * @return an object representing a source element.
 	 */
 	 public Object getSourceElement(IStackFrame stackFrame);
 

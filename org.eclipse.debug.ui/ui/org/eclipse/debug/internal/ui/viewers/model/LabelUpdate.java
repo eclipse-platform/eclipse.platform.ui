@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.RGB;
  * @since 3.3
  */
 class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
-	
+
 	private TreePath fElementPath;
 	private String[] fColumnIds;
 	private RGB[] fBackgrounds;
@@ -35,16 +35,16 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	private String[] fLabels;
 	private FontData[] fFontDatas;
 	private TreeModelLabelProvider fProvider;
-	private int fNumColumns; 
+	private int fNumColumns;
 	private IPresentationContext fContext;
 	private Object fViewerInput;
 	private boolean fChecked;
 	private boolean fGrayed;
-	
+
 	/**
 	 * @param viewerInput input at the time the request was made
 	 * @param elementPath element the label is for
-	 * @param provider label provider to callback to 
+	 * @param provider label provider to callback to
 	 * @param columnIds column identifiers or <code>null</code>
 	 * @param context presentation context
 	 */

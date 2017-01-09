@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
@@ -19,7 +19,7 @@ import org.eclipse.swt.events.SelectionListener;
 
 /**
  * Controls view tab enablement based on tab folder selection
- * 
+ *
  * @since 3.0
  */
 public class ViewTabEnablementManager implements SelectionListener {

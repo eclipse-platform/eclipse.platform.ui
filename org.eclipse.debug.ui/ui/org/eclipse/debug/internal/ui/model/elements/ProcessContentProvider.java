@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * Default content provider for process objects. Even though process objects
  * have no children by default, they still need a content provider to ensure
  * proper display (see bug
- * 
+ *
  * @since 3.6
  */
 public class ProcessContentProvider extends ElementContentProvider {

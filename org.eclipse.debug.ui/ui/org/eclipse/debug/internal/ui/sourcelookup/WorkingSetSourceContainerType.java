@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,23 +31,23 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The factory for creating/restoring working set source containers.
- * 
+ *
  * @since 3.0
  */
 public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */	
+	 */
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		WorkingSetSourceContainer workingSet = (WorkingSetSourceContainer) container;
-		Document doc = newDocument();		
+		Document doc = newDocument();
 		Element node = doc.createElement("workingSet"); //$NON-NLS-1$
 		node.setAttribute("name", workingSet.getName()); //$NON-NLS-1$
 		doc.appendChild(node);
-		return serializeDocument(doc);	 
+		return serializeDocument(doc);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
@@ -63,19 +63,19 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
-			
+
 			String name = root.getAttribute("name");//$NON-NLS-1$
-			
+
 			if (isEmpty(name)) {
 				abort(SourceLookupUIMessages.sourceSearch_initError,null);
 			}
 			workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
 			//check that set still exists
-			if (workingSet == null) {				
-				abort(SourceLookupUIMessages.sourceSearch_initError, null); 
-			}				
-			return new WorkingSetSourceContainer(workingSet);	
-			
+			if (workingSet == null) {
+				abort(SourceLookupUIMessages.sourceSearch_initError, null);
+			}
+			return new WorkingSetSourceContainer(workingSet);
+
 		} catch (ParserConfigurationException e) {
 			ex = e;
 		} catch (SAXException e) {
@@ -83,14 +83,14 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 		} catch (IOException e) {
 			ex = e;
 		}
-		
-		abort(SourceLookupUIMessages.sourceSearch_initError, ex);	
-		return null;	
+
+		abort(SourceLookupUIMessages.sourceSearch_initError, ex);
+		return null;
 	}
 
 	private boolean isEmpty(String string) {
 		return string == null || string.length() == 0;
 	}
-	
-	
+
+
 }

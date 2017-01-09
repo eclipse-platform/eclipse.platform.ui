@@ -68,33 +68,33 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Preference page for creating and configuring simple
  * launch variables.
- * 
+ *
  * @see org.eclipse.debug.core.variables.IValueVariable
  * @see org.eclipse.debug.core.variables.ISimpleVariableRegistry
  */
 public class StringVariablePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private TableViewer variableTable;
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
-	
+
 	protected SimpleVariableContentProvider variableContentProvider= new SimpleVariableContentProvider();
-	
-	protected static final String NAME_LABEL= DebugPreferencesMessages.SimpleVariablePreferencePage_10; 
-	protected static final String VALUE_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_11; 
-	protected static final String DESCRIPTION_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_12; 
-	
+
+	protected static final String NAME_LABEL= DebugPreferencesMessages.SimpleVariablePreferencePage_10;
+	protected static final String VALUE_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_11;
+	protected static final String DESCRIPTION_LABEL = DebugPreferencesMessages.SimpleVariablePreferencePage_12;
+
 	protected static final String STRING_VARIABLE_PREFERENCE_KEY = "StringVariablePreferencePage"; //$NON-NLS-1$
-	
+
 	protected static String[] variableTableColumnProperties= {
 		"variable", //$NON-NLS-1$
 		"value", //$NON-NLS-1$
 		"description" //$NON-NLS-1$
 	};
 	protected String[] variableTableColumnHeaders= {
-		DebugPreferencesMessages.SimpleVariablePreferencePage_3, 
-		DebugPreferencesMessages.SimpleVariablePreferencePage_4, 
+		DebugPreferencesMessages.SimpleVariablePreferencePage_3,
+		DebugPreferencesMessages.SimpleVariablePreferencePage_4,
 		DebugPreferencesMessages.SimpleVariablePreferencePage_5,
 		DebugPreferencesMessages.StringVariablePreferencePage_27
 	};
@@ -104,9 +104,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		new ColumnWeightData(25),
 		new ColumnWeightData(20)
 	};
-	
+
 	public StringVariablePreferencePage() {
-		setDescription(DebugPreferencesMessages.SimpleVariablePreferencePage_6); 
+		setDescription(DebugPreferencesMessages.SimpleVariablePreferencePage_6);
 	}
 
 	/**
@@ -130,13 +130,13 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		layout.numColumns= 2;
 		composite.setLayout(layout);
 		composite.setFont(font);
-		
+
 		createTable(composite);
 		createButtons(composite);
-				
+
 		return composite;
 	}
-	
+
 	/**
 	 * Creates and configures the table containing launch configuration variables
 	 * and their associated value.
@@ -178,14 +178,14 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 				}
 			}
 		});
-		
+
 		variableTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTableSelectionChanged(event);
 			}
 		});
-		
+
 		variableTable.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -202,22 +202,22 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 				}
 			}
 		});
-	
+
 		for (int i = 0; i < variableTableColumnHeaders.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.NONE, i);
 			tc.setResizable(variableTableColumnLayouts[i].resizable);
 			tc.setText(variableTableColumnHeaders[i]);
 		}
-		
+
 		// Try restoring column widths from preferences, if widths aren't stored, init columns to default
 		if (!restoreColumnWidths()){
 			restoreDefaultColumnWidths();
 		}
-		
+
 		variableTable.setInput(getVariableManager());
 		variableTable.setLabelProvider(new SimpleVariableLabelProvider());
 	}
-	
+
 	/**
 	 * Creates the new/edit/remove buttons for the variable table
 	 * @param parent the composite in which the buttons should be created
@@ -233,9 +233,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		buttonComposite.setLayout(glayout);
 		buttonComposite.setLayoutData(gdata);
 		buttonComposite.setFont(parent.getFont());
-		
+
 		// Create buttons
-		envAddButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null); 
+		envAddButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null);
 		envAddButton.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -243,7 +243,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 				handleAddButtonPressed();
 			}
 		});
-		envEditButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null); 
+		envEditButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null);
 		envEditButton.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -252,7 +252,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null); 
+		envRemoveButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null);
 		envRemoveButton.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -262,19 +262,19 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		});
 		envRemoveButton.setEnabled(false);
 	}
-	
+
 	private void handleAddButtonPressed() {
 		boolean done = false;
 		String name = null;
 		String description = null;
 		String value = null;
 		while (!done){
-			
-			MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_13); 
+
+			MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.SimpleVariablePreferencePage_13);
 			dialog.addTextField(NAME_LABEL, name, false);
 			dialog.addBrowseField(VALUE_LABEL, value, true);
 			dialog.addTextField(DESCRIPTION_LABEL, description, true);
-	
+
 			if (dialog.open() != Window.OK) {
 				done = true;
 			}
@@ -292,9 +292,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	 * whether the operation completed successfully (either the variable was added
 	 * successfully, or the user cancelled the operation).  Returns false if the name
 	 * is null or the user chooses not to overwrite an existing variable.
-	 *  
+	 *
 	 * @param name name of the variable, cannot be <code>null</code> or empty.
-	 * @param description description of the variable or <code>null</code> 
+	 * @param description description of the variable or <code>null</code>
 	 * @param value value of the variable or <code>null</code>
 	 * @return whether the operation completed successfully
 	 */
@@ -319,7 +319,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 								IDialogConstants.YES_LABEL,
 								IDialogConstants.NO_LABEL,
 								IDialogConstants.CANCEL_LABEL }, 0);
-						int overWrite= dialog.open(); 
+						int overWrite= dialog.open();
 						if (overWrite == 0) {
 							currentVariable.setValue(value);
 							currentVariable.setDescription(description);
@@ -339,7 +339,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		variableTable.refresh();
 		return true;
 	}
-	
+
 	private void handleEditButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
 		VariableWrapper variable= (VariableWrapper) selection.getFirstElement();
@@ -352,7 +352,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.SimpleVariablePreferencePage_14, new Object[] { name }));
 		dialog.addBrowseField(VALUE_LABEL, value, true);
 		dialog.addTextField(DESCRIPTION_LABEL, description, true);
-	
+
 		if (dialog.open() == Window.OK) {
 			value= dialog.getStringValue(VALUE_LABEL);
 			description= dialog.getStringValue(DESCRIPTION_LABEL);
@@ -365,7 +365,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			variableTable.update(variable, null);
 		}
 	}
-	
+
 	/**
 	 * Remove the selection variables.
 	 */
@@ -389,10 +389,10 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		VariableWrapper[] variables= variablesToRemove.toArray(new VariableWrapper[0]);
 		for (int i = 0; i < variables.length; i++) {
 			variables[i].setRemoved(true);
-		} 
+		}
 		variableTable.refresh();
 	}
-	
+
 	/**
 	 * Responds to a selection changed event in the variable table
 	 * @param event the selection change event
@@ -423,7 +423,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		variableTable.refresh();
 		super.performDefaults();
 	}
-	
+
 	/**
 	 * Sets the saved state for reversion.
 	 */
@@ -442,7 +442,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	private IStringVariableManager getVariableManager() {
 		return VariablesPlugin.getDefault().getStringVariableManager();
 	}
-	
+
 	public void saveColumnWidths() {
 		StringBuffer widthPreference = new StringBuffer();
 		for (int i = 0; i < variableTable.getTable().getColumnCount(); i++) {
@@ -453,7 +453,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(STRING_VARIABLE_PREFERENCE_KEY, widthPreference.toString());
 		}
 	}
-	
+
 	private boolean restoreColumnWidths() {
 		String[] columnWidthStrings = DebugUIPlugin.getDefault().getPreferenceStore().getString(STRING_VARIABLE_PREFERENCE_KEY).split(","); //$NON-NLS-1$
 		int columnCount = variableTable.getTable().getColumnCount();
@@ -470,7 +470,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
         }
 		return true;
 	}
-	
+
 	private void restoreDefaultColumnWidths(){
 		TableLayout layout = new TableLayout();
 		for (int i = 0; i < variableTableColumnLayouts.length; i++) {
@@ -478,31 +478,31 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		}
 		variableTable.getTable().setLayout(layout);
 	}
-	
+
 	private class SimpleVariableContentProvider implements IStructuredContentProvider {
 		/**
 		 * The content provider stores variable wrappers for use during editing.
 		 */
 		private List<VariableWrapper> fWorkingSet = new ArrayList<VariableWrapper>();
-		
+
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return fWorkingSet.toArray();
 		}
-				
+
 		/**
 		 * Adds the given variable to the 'wrappers'
-		 * 
+		 *
 		 * @param variable variable to add
 		 */
 		public void addVariable(VariableWrapper variable) {
 			fWorkingSet.add(variable);
-		}		
+		}
 
 		@Override
 		public void dispose() {
 		}
-		
+
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput == null || !(newInput instanceof IStringVariableManager)){
@@ -547,11 +547,11 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 				try {
 					manager.addVariables(add.toArray(new IValueVariable[add.size()]));
 				} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), DebugPreferencesMessages.StringVariablePreferencePage_24, DebugPreferencesMessages.StringVariablePreferencePage_25, e.getStatus()); // 
+				DebugUIPlugin.errorDialog(getShell(), DebugPreferencesMessages.StringVariablePreferencePage_24, DebugPreferencesMessages.StringVariablePreferencePage_25, e.getStatus()); //
 				}
 			}
 		}
-		
+
 		/**
 		 * Re-initializes to the variables currently stored in the manager.
 		 */
@@ -561,108 +561,108 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			IValueVariable[] variables = manager.getValueVariables();
 			for (int i = 0; i < variables.length; i++) {
 				fWorkingSet.add(new VariableWrapper(variables[i]));
-			}			
+			}
 		}
-		
+
 		/**
 		 * Returns the 'working set' of variables
-		 * 
+		 *
 		 * @return the working set of variables (not yet saved)
 		 */
 		public List<VariableWrapper> getWorkingSetVariables() {
 			return fWorkingSet;
 		}
-		
+
 	}
-	
+
 	class VariableWrapper {
-		
+
 		protected IValueVariable fVariable;
 		protected String fNewName = null;
 		protected String fNewDesc = null;
 		protected String fNewValue = null;
 		boolean fRemoved = false;
 		boolean fAdded = false;
-		
+
 		public VariableWrapper(IValueVariable variable) {
 			fVariable = variable;
 		}
-		
+
 		public VariableWrapper(String name, String desc, String value) {
 			fNewName = name;
 			fNewDesc = desc;
 			fNewValue = value;
 			fAdded = true;
 		}
-		
+
 		public boolean isAdded() {
 			return fAdded;
 		}
-		
+
 		public String getName() {
 			if (fNewName == null) {
 				return fVariable.getName();
 			}
 			return fNewName;
 		}
-		
+
 		public void setName(String name) {
 			fNewName = name;
 		}
-		
+
 		public String getDescription() {
 			if (fNewDesc == null) {
 				return fVariable.getDescription();
 			}
 			return fNewDesc;
 		}
-		
+
 		public String getValue() {
 			if (fNewValue == null) {
 				return fVariable.getValue();
 			}
 			return fNewValue;
 		}
-		
+
 		public void setValue(String value) {
 			fNewValue = value;
 		}
-		
+
 		public void setDescription(String desc) {
 			fNewDesc = desc;
 		}
-		
+
 		public boolean isChanged() {
 			return !fAdded && !fRemoved && (fNewValue != null || fNewDesc != null);
 		}
-		
+
 		public boolean isReadOnly() {
 			if (fVariable == null) {
 				return false;
 			}
 			return fVariable.isReadOnly();
 		}
-		
+
 		public boolean isContributed() {
 			if (fVariable == null) {
 				return false;
 			}
 			return fVariable.isContributed();
 		}
-		
+
 		public IValueVariable getUnderlyingVariable() {
 			return fVariable;
 		}
-		
+
 		public boolean isRemoved() {
 			return fRemoved;
 		}
-		
+
 		public void setRemoved(boolean removed) {
 			fRemoved = removed;
 		}
 	}
-	
+
 	private class SimpleVariableLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -681,7 +681,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 						}
 						return name.toString();
 					case 1:
-						String value= variable.getValue(); 
+						String value= variable.getValue();
 						if (value == null) {
 							value= IInternalDebugCoreConstants.EMPTY_STRING;
 						}
@@ -697,15 +697,15 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 						if (variable.isContributed()) {
                             String pluginId = getVariableManager().getContributingPluginId(variable.getUnderlyingVariable());
                             if (pluginId != null) {
-                                contribution = pluginId; 
+                                contribution = pluginId;
                             } else {
-                                contribution = DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_23; 
+                                contribution = DebugPreferencesMessages.SimpleLaunchVariablePreferencePage_23;
                             }
 						}
 						return contribution;
 					default:
 						break;
-						
+
 				}
 			}
 			return null;
@@ -715,7 +715,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			if (element instanceof VariableWrapper) {
 				if (((VariableWrapper) element).isReadOnly()) {
 					Display display= Display.getCurrent();
-					return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);		
+					return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 				}
 			}
 			return null;
@@ -725,7 +725,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			if (element instanceof VariableWrapper) {
 				if (((VariableWrapper) element).isReadOnly()) {
 					Display display= Display.getCurrent();
-					return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
+					return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 				}
 			}
 			return null;
@@ -741,6 +741,6 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return !((VariableWrapper)element).isRemoved();
 		}
-		
+
 	}
 }

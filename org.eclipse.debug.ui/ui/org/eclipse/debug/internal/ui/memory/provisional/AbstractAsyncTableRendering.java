@@ -4,11 +4,11 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Teodor Madan (Freescale) -  Bug 292360 -  [Memory View] platform renderings do not implement correctly IMemoryRendering#getControl
- *     Teodor Madan (Freescale) -  Bug 292426 -  [Memory View] platform renderings cannot be repositioned from non-UI thread through calls to IRepositionableMemoryRendering#goToAddress 
+ *     Teodor Madan (Freescale) -  Bug 292426 -  [Memory View] platform renderings cannot be repositioned from non-UI thread through calls to IRepositionableMemoryRendering#goToAddress
  *     Teodor Madan (Freescale) & Jeremiah Swan (IBM) - Bug 300036 -  [Memory View] NPE in AbstractAsyncTableRendering#getSelectedAddress on rendering creation
  *******************************************************************************/
 
@@ -155,11 +155,11 @@ import org.eclipse.ui.progress.UIJob;
  * rendering.
  * </p>
  * <p>
- * 
+ *
  * The label of the rendering is constructed by retrieving the expression from
  * <code>IMemoryBlockExtension</code>. For IMemoryBlock, the label is
  * constructed using the memory block's start address.
- * 
+ *
  * This rendering manages the change states of its memory bytes if the memory
  * block does not opt to manage the change states. For IMemoryBlockExtension, if
  * the memory block returns false when #supportsChangeManagement() is called,
@@ -170,7 +170,7 @@ import org.eclipse.ui.progress.UIJob;
  * Instead it would rely on the attributes returned in the MemoryByte array to
  * determine if a byte has changed. For IMemoryBlock, this rendering will manage
  * the change states its content.
- * 
+ *
  * When firing change event, be aware of the following: - whenever a change
  * event is fired, the content provider for Memory View view checks to see if
  * memory has actually changed. - If memory has actually changed, a refresh will
@@ -179,12 +179,12 @@ import org.eclipse.ui.progress.UIJob;
  * However, previous delta information will be erased. The screen will be
  * refreshed to show that no memory has been changed. (All delta icons will be
  * removed.)
- * 
+ *
  * Please note that these APIs will be called multiple times by the Memory View.
  * To improve performance, debug adapters need to cache the content of its
  * memory block and only retrieve updated data when necessary.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRendering implements IPropertyChangeListener, IResettableMemoryRendering {
@@ -249,7 +249,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		private void updateActionLabel() {
 			if (fIsShowAddressColumn) {
@@ -264,7 +264,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		private NextPageAction() {
 			super();
 			setText(DebugUIMessages.AbstractTableRendering_4);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".NextPageAction_context"); //$NON-NLS-1$ 
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".NextPageAction_context"); //$NON-NLS-1$
 		}
 
 		@Override
@@ -552,7 +552,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Constructs a new table rendering of the specified type.
-	 * 
+	 *
 	 * @param renderingId memory rendering type identifier
 	 */
 	public AbstractAsyncTableRendering(String renderingId) {
@@ -596,7 +596,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Create the error page of this rendering
-	 * 
+	 *
 	 * @param parent the parent to add the page to
 	 */
 	private void createMessagePage(Composite parent) {
@@ -795,7 +795,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Create popup menu for this rendering
-	 * 
+	 *
 	 * @param control - control to create the popup menu for
 	 * @param menuListener - listener to notify when popup menu is about to show
 	 */
@@ -1359,7 +1359,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the addressable size of this rendering's memory block in bytes.
-	 * 
+	 *
 	 * @return the addressable size of this rendering's memory block in bytes
 	 */
 	@Override
@@ -1440,7 +1440,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Format view tab based on the bytes per line and column.
-	 * 
+	 *
 	 * @param bytesPerLine - number of bytes per line, possible values: (1 / 2 /
 	 *            4 / 8 / 16 / 32 / 64/ 128) * addressableSize
 	 * @param columnSize - number of bytes per column, possible values: (1 / 2 /
@@ -1476,7 +1476,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the number of addressable units per row.
-	 * 
+	 *
 	 * @return number of addressable units per row
 	 */
 	@Override
@@ -1486,7 +1486,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the number of addressable units per column.
-	 * 
+	 *
 	 * @return number of addressable units per column
 	 */
 	@Override
@@ -1496,7 +1496,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * This method estimates the number of visible lines in the rendering table.
-	 * 
+	 *
 	 * @return estimated number of visible lines in the table
 	 */
 	private int getNumberOfVisibleLines() {
@@ -1573,7 +1573,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Displays the given message on the error page
-	 * 
+	 *
 	 * @param message - the message to display
 	 */
 	protected void showMessage(final String message) {
@@ -1584,7 +1584,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the number of bytes displayed in a single column cell.
-	 * 
+	 *
 	 * @return the number of bytes displayed in a single column cell
 	 */
 	@Override
@@ -1594,7 +1594,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the number of bytes displayed in a row.
-	 * 
+	 *
 	 * @return the number of bytes displayed in a row
 	 */
 	@Override
@@ -1604,7 +1604,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns whether the error page is displayed.
-	 * 
+	 *
 	 * @return whether the error page is displayed
 	 */
 	public boolean isDisplayingError() {
@@ -1781,14 +1781,14 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Create a cell editor from the specified composite and column.
-	 * 
+	 *
 	 * @param composite parent composite that the cell editor is to be created
 	 *            from.
 	 * @param column the column where the cell editor is required
 	 * @return the cell editor for editing memory
-	 * 
+	 *
 	 * @since 3.3
-	 * 
+	 *
 	 */
 	protected CellEditor createCellEditor(Composite composite, int column) {
 
@@ -1802,12 +1802,12 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/**
 	 * Create a custom cell modifier for this rendering. Return null if the
 	 * default cell modifier is to be used.
-	 * 
+	 *
 	 * @return the cell modifier for this rendering, or <code>null</code> if the
 	 *         default cell modifier is to be used.
-	 * 
+	 *
 	 * @since 3.3
-	 * 
+	 *
 	 */
 	protected ICellModifier createCellModifier() {
 		return null;
@@ -1866,7 +1866,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/**
 	 * Updates the label of this rendering, optionally displaying the base
 	 * address of this rendering's memory block.
-	 * 
+	 *
 	 * @param showAddress whether to display the base address of this
 	 *            rendering's memory block in this rendering's label
 	 */
@@ -1998,7 +1998,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the number of characters a byte will convert to or -1 if unknown.
-	 * 
+	 *
 	 * @return the number of characters a byte will convert to or -1 if unknown
 	 */
 	@Override
@@ -2032,7 +2032,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the currently selected address in this rendering.
-	 * 
+	 *
 	 * @return the currently selected address in this rendering
 	 */
 	@Override
@@ -2052,7 +2052,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the currently selected content in this rendering as MemoryByte.
-	 * 
+	 *
 	 * @return the currently selected content in array of MemoryByte. Returns an
 	 *         empty array if the selected address is out of buffered range.
 	 */
@@ -2096,7 +2096,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Returns the currently selected content in this rendering as a String.
-	 * 
+	 *
 	 * @return the currently selected content in this rendering
 	 */
 	@Override
@@ -2118,7 +2118,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/**
 	 * Moves the cursor to the specified address. Will load more memory if the
 	 * address is not currently visible.
-	 * 
+	 *
 	 * @param address address to position cursor at
 	 * @throws DebugException if an exception occurs
 	 */
@@ -2253,7 +2253,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Fills the context menu for this rendering
-	 * 
+	 *
 	 * @param menu menu to fill
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
@@ -2557,7 +2557,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Handle column size changed event from synchronizer
-	 * 
+	 *
 	 * @param newColumnSize the new column size
 	 */
 	private void columnSizeChanged(final int newColumnSize) {
@@ -2603,7 +2603,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * update selected address in synchronizer if update is true.
-	 * 
+	 *
 	 * @param address the address to update
 	 */
 	private void updateSyncSelectedAddress(BigInteger address) {
@@ -2643,7 +2643,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * update top visible address in synchronizer
-	 * 
+	 *
 	 * @param address the address to update
 	 */
 	private void updateSyncTopAddress(BigInteger address) {
@@ -2679,7 +2679,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * queried for color information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument.
 	 * </p>
-	 * 
+	 *
 	 * @return the color provider for this rendering's memory block, or
 	 *         <code>null</code>
 	 */
@@ -2696,7 +2696,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * queried for label information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument.
 	 * </p>
-	 * 
+	 *
 	 * @return the label provider for this rendering's memory block, or
 	 *         <code>null</code>
 	 */
@@ -2713,7 +2713,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * queried for font information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument.
 	 * </p>
-	 * 
+	 *
 	 * @return the font provider for this rendering's memory block, or
 	 *         <code>null</code>
 	 */
@@ -2728,7 +2728,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * By default a table presentation is obtained by asking this rendering's
 	 * memory block for its {@link IMemoryBlockTablePresentation} adapter.
 	 * </p>
-	 * 
+	 *
 	 * @return the table presentation for this rendering's memory block, or
 	 *         <code>null</code>
 	 */
@@ -2827,7 +2827,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Also see the methods <code>getToolTipText(...)</code> and
 	 * <code>toolTipAboutToShow(...)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param composite parent for the tooltip control
 	 * @return the tooltip control to be displayed
 	 * @since 3.2
@@ -2845,7 +2845,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * correct table item if SWT.FULL_SELECTION is not on when the table is
 	 * created. Created the following function to work around the problem. We
 	 * can remove this method when the bug is fixed.
-	 * 
+	 *
 	 * @param point the given {@link Point} to find the {@link TableItem} for
 	 * @return the table item where the point is located, return null if the
 	 *         item cannot be located.
@@ -2869,7 +2869,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	/**
 	 * Method for figuring out which column the point is located.
-	 * 
+	 *
 	 * @param point the {@link Point} the get the column number for
 	 * @return the column index where the point is located, return -1 if column
 	 *         is not found.
@@ -2908,7 +2908,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * By default a text tooltip is displayed, and the contents for the tooltip
 	 * are generated by the <code>getToolTipText(...)</code> method.
 	 * </p>
-	 * 
+	 *
 	 * @param toolTipControl - the control for displaying the tooltip
 	 * @param item - the table item where the mouse is pointing.
 	 * @param col - the column at which the mouse is pointing.
@@ -2948,7 +2948,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Returns the text to display in a tool tip at the specified address for
 	 * the specified bytes. By default the address of the bytes is displayed.
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @param address address of cell that tool tip is displayed for
 	 * @param bytes the bytes in the cell
 	 * @return the tooltip text for the memory bytes located at the specified
@@ -3000,9 +3000,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	/**
-	 * 
+	 *
 	 * Return this rendering's viewer
-	 * 
+	 *
 	 * @return this rendering's viewer
 	 */
 	public StructuredViewer getViewer() {
@@ -3066,7 +3066,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/**
 	 * Return the number of lines to be bufferred before the top visible line of
 	 * the memory rendering
-	 * 
+	 *
 	 * @return number of lines to be buffered before the top visible line in the
 	 *         memory rendering
 	 */
@@ -3081,7 +3081,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/**
 	 * Returns the number of lines to be bufferred after the last visible line
 	 * in the memory rendering
-	 * 
+	 *
 	 * @return the number of lines to be bufferred after the last visible line
 	 *         in the memory rendering
 	 */
@@ -3167,7 +3167,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void doGoToAddress() {
 		try {
@@ -3290,7 +3290,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Returns text for the given memory bytes at the specified address for the
 	 * specified rendering type. This is called by the label provider for.
 	 * Subclasses must override.
-	 * 
+	 *
 	 * @param renderingTypeId rendering type identifier
 	 * @param address address where the bytes belong to
 	 * @param data the bytes
@@ -3308,7 +3308,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * the string value to an array of bytes. The bytes will be passed to the
 	 * debug adapter for memory block modification. Returns <code>null</code> if
 	 * the bytes cannot be formatted properly.
-	 * 
+	 *
 	 * @param renderingTypeId rendering type identifier
 	 * @param address address the bytes begin at
 	 * @param currentValues current values of the data in bytes format

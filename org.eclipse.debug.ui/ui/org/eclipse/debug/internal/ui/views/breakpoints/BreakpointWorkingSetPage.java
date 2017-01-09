@@ -47,14 +47,14 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
 /**
  * The Breakpoint working set page allows the user to create
  * and edit a Breakpoint working set.
- * 
+ *
  * @since 3.1
  */
 public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
-	final private static String PAGE_TITLE= DebugUIViewsMessages.BreakpointWorkingSetPage_0; 
+	final private static String PAGE_TITLE= DebugUIViewsMessages.BreakpointWorkingSetPage_0;
 	final private static String PAGE_ID= "breakpointWorkingSetPage"; //$NON-NLS-1$
-	
+
 	private Text fWorkingSetName;
 	private EmbeddedBreakpointsViewer fTViewer;
 	private boolean fFirstCheck;
@@ -65,7 +65,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	 */
 	public BreakpointWorkingSetPage() {
 		super(PAGE_ID, PAGE_TITLE, DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_WIZBAN_DEBUG));
-		setDescription(DebugUIViewsMessages.BreakpointWorkingSetPage_1); 
+		setDescription(DebugUIViewsMessages.BreakpointWorkingSetPage_1);
 		fFirstCheck= true;
 	}
 
@@ -80,7 +80,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(DebugUIViewsMessages.BreakpointWorkingSetPage_2); 
+		label.setText(DebugUIViewsMessages.BreakpointWorkingSetPage_2);
 		GridData gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 		fWorkingSetName= new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -95,11 +95,11 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		);
 		fWorkingSetName.setFocus();
 		label= new Label(composite, SWT.WRAP);
-		label.setText(DebugUIViewsMessages.BreakpointWorkingSetPage_3); 
+		label.setText(DebugUIViewsMessages.BreakpointWorkingSetPage_3);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 		IViewPart viewpart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-		IStructuredSelection selection; 
+		IStructuredSelection selection;
 		if (viewpart == null) {
 			selection = new StructuredSelection();
 		} else {
@@ -190,31 +190,31 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	 * validates the current input of the page to determine if the finish button can be enabled
 	 */
 	private void validateInput() {
-		String errorMessage= null; 
+		String errorMessage= null;
 		String newText= fWorkingSetName.getText();
 
 		if (newText.equals(newText.trim()) == false) {
 			errorMessage = DebugUIViewsMessages.BreakpointWorkingSetPage_4;
-		} 
+		}
 		if (newText.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 			if (fFirstCheck) {
 				setPageComplete(false);
 				fFirstCheck= false;
 				return;
-			}		
-			errorMessage= DebugUIViewsMessages.BreakpointWorkingSetPage_5; 
+			}
+			errorMessage= DebugUIViewsMessages.BreakpointWorkingSetPage_5;
 		}
 		fFirstCheck= false;
 		if (errorMessage == null && (fWorkingSet == null || newText.equals(fWorkingSet.getName()) == false)) {
 			IWorkingSet[] workingSets= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (int i= 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName())) {
-					errorMessage= DebugUIViewsMessages.BreakpointWorkingSetPage_6; 
+					errorMessage= DebugUIViewsMessages.BreakpointWorkingSetPage_6;
 				}
 			}
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
 	}
-	
+
 }

@@ -24,7 +24,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 
 	/**
 	 * Constructs a dialog
-	 * 
+	 *
 	 * @param shell
 	 * @param launchConfiguration
 	 * @param group
@@ -32,24 +32,24 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	public LaunchConfigurationDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group) {
 		super(shell, launchConfiguration, group);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
-		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  
+		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getTitleAreaTitle()
 	 */
 	@Override
 	protected String getTitleAreaTitle() {
-		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Modify_attributes_and_launch__1; 
+		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Modify_attributes_and_launch__1;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getHelpContextId()
 	 */
@@ -57,7 +57,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SINGLE_LAUNCH_CONFIGURATION_DIALOG;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#updateButtons()
 	 */
@@ -66,9 +66,9 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 		// Launch button
 		getTabViewer().refresh();
 		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
-		
+
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getDialogSettingsSectionName()
 	 */

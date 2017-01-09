@@ -28,13 +28,13 @@ import org.eclipse.ui.texteditor.IUpdate;
  * is used for all debug models.
  */
 public class ToggleShowColumnsAction extends Action implements IUpdate {
-	
+
 	private TreeModelViewer fViewer;
 
 	public ToggleShowColumnsAction(TreeModelViewer viewew) {
 		super(VariablesViewMessages.ToggleShowColumnsAction_0, IAction.AS_CHECK_BOX);
 		fViewer = viewew;
-		setToolTipText(VariablesViewMessages.ToggleShowColumnsAction_1);  
+		setToolTipText(VariablesViewMessages.ToggleShowColumnsAction_1);
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB));
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ToggleShowColumsAction"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SHOW_COLUMNS_ACTION);
@@ -51,11 +51,11 @@ public class ToggleShowColumnsAction extends Action implements IUpdate {
 		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
 			@Override
 			public void run() {
-				fViewer.setShowColumns(isChecked());				
+				fViewer.setShowColumns(isChecked());
 			}
-		});		
+		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -63,7 +63,7 @@ public class ToggleShowColumnsAction extends Action implements IUpdate {
 	public void update() {
 		setEnabled(fViewer.canToggleColumns());
 		setChecked(fViewer.isShowColumns());
-	}	
-	
+	}
+
 
 }

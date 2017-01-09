@@ -42,37 +42,37 @@ import org.eclipse.ui.PlatformUI;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class SourceLookupDialog extends TitleAreaDialog {
-	
+
 	private SourceLookupPanel fPanel;
 	private ISourceLookupDirector fDirector;
-	
+
 	/**
 	 * Constructs a dialog to edit the source lookup path managed by the
 	 * given source lookup director. Persists the resulting source lookup
 	 * path on the launch configuration associated with the given source
 	 * lookup director.
-	 * 
+	 *
 	 * @param shell shell to parent the dialog
 	 * @param director source lookup director managing the source lookup
 	 *  path to be edited
 	 */
 	public SourceLookupDialog(Shell shell, ISourceLookupDirector director) {
-		super(shell);	
+		super(shell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
 		fDirector = director;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// create a composite with standard margins and spacing
-		setTitle(SourceLookupUIMessages.manageSourceDialog_description); 
+		setTitle(SourceLookupUIMessages.manageSourceDialog_description);
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ));
 		setMessage(SourceLookupUIMessages.SourceLookupDialog_add_edit_remove);
 		Composite composite = new Composite(parent, SWT.NONE);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.marginHeight =
 			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -83,7 +83,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		layout.horizontalSpacing =
 			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_BOTH);			
+		GridData data = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
 		fPanel = new SourceLookupPanel();
@@ -95,10 +95,10 @@ public class SourceLookupDialog extends TitleAreaDialog {
 			setErrorMessage(SourceLookupUIMessages.SourceLookupDialog_0+config.getName()+SourceLookupUIMessages.SourceLookupDialog_1);
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
-		
+
 		return composite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -111,21 +111,21 @@ public class SourceLookupDialog extends TitleAreaDialog {
 				copy = config.getWorkingCopy();
 				fPanel.performApply(copy);
 				copy.doSave();
-			} 
+			}
 			catch (CoreException e) {DebugUIPlugin.log(e);}
 		}
 		super.okPressed();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */	
+	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(SourceLookupUIMessages.manageSourceDialog_title); 
+		shell.setText(SourceLookupUIMessages.manageSourceDialog_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
@@ -134,7 +134,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		fPanel.dispose();
 		return super.close();
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      * @since 3.2
@@ -145,7 +145,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
          IDialogSettings section = settings.getSection(getClass().getName());
          if (section == null) {
              section = settings.addNewSection(getClass().getName());
-         } 
+         }
          return section;
     }
 }

@@ -39,11 +39,11 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * Model for an asynchronous viewer
- * 
+ *
  * @since 3.2
  */
 public abstract class AsynchronousModel {
-	
+
 	private ModelNode fRoot; // root node
 	private Map<Object, ModelNode[]> fElementToNodes = new HashMap<Object, ModelNode[]>(); // map
 																							// of
@@ -62,9 +62,9 @@ public abstract class AsynchronousModel {
 																							// element
 	private AsynchronousViewer fViewer; // viewer this model works for
     private boolean fDisposed = false; // whether disposed
-    
+
 	class EmptyContentAdapter extends AsynchronousContentAdapter {
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 		 */
@@ -89,14 +89,14 @@ public abstract class AsynchronousModel {
 			return true;
 		}
 	}
-	
+
 	protected IAsynchronousContentAdapter fEmptyContentAdapter = new EmptyContentAdapter();
-	
+
 	/**
 	 * List of requests currently being performed.
 	 */
 	private List<IStatusMonitor> fPendingUpdates = new ArrayList<IStatusMonitor>();
-	
+
 	/**
 	 * List of pending viewer updates
 	 */
@@ -104,7 +104,7 @@ public abstract class AsynchronousModel {
 
 	/**
 	 * Constructs a new empty tree model
-	 * 
+	 *
 	 * @param viewer associated viewer
 	 */
 	public AsynchronousModel(AsynchronousViewer viewer) {
@@ -119,23 +119,23 @@ public abstract class AsynchronousModel {
 			DebugUIPlugin.trace(buffer.toString());
 		}
 	}
-	
+
 	/**
 	 * Initializes this model. Called once after creation.
-	 * 
+	 *
 	 * @param root root element or <code>null</code>
 	 */
 	public void init(Object root) {
 		if (root != null) {
 			fRoot = new ModelNode(null, root);
 			mapElement(root, fRoot);
-		}		
+		}
 	}
-	
+
 	protected AsynchronousViewer getViewer() {
 		return fViewer;
 	}
-	
+
 	/**
 	 * Disposes this model
 	 */
@@ -158,7 +158,7 @@ public abstract class AsynchronousModel {
 		}
 		fElementToNodes.clear();
 	}
-    
+
     /**
      * Returns whether this model has been disposed
      * @return <code>true</code> if the model is disposed <code>false</code> otherwise
@@ -166,7 +166,7 @@ public abstract class AsynchronousModel {
     public synchronized boolean isDisposed() {
         return fDisposed;
     }
-    
+
     /**
      * Cancels all pending update requests.
      */
@@ -178,12 +178,12 @@ public abstract class AsynchronousModel {
             update.setCanceled(true);
         }
         fPendingUpdates.clear();
-    }    
-	
+    }
+
 	/**
 	 * Installs the model proxy for the given element into this viewer
 	 * if not already installed.
-	 * 
+	 *
 	 * @param element element to install an update policy for
 	 */
 	public synchronized void installModelProxy(Object element) {
@@ -202,18 +202,18 @@ public abstract class AsynchronousModel {
 								proxy.installed(getViewer());
 							}
 							return Status.OK_STATUS;
-						} 
+						}
 					};
 					job.setSystem(true);
 					job.schedule();
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Uninstalls the model proxy installed for the given element, if any.
-	 * 
+	 *
 	 * @param element the element context
 	 */
 	protected synchronized void disposeModelProxy(Object element) {
@@ -222,33 +222,33 @@ public abstract class AsynchronousModel {
 			getViewer().modelProxyRemoved(proxy);
 			proxy.dispose();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Unintalls all model proxies installed for this model
 	 */
 	private void disposeAllModelProxies() {
 	    synchronized(fModelProxies) {
 			for (IModelProxy proxy : fModelProxies.values()) {
-	            getViewer().modelProxyRemoved(proxy);	            
+	            getViewer().modelProxyRemoved(proxy);
 	            proxy.dispose();
 	        }
 	        fModelProxies.clear();
 	    }
-	}	
-	
+	}
+
 	/**
 	 * Returns the presentation this model is installed in
-	 * 
+	 *
 	 * @return the presentation context from the backing viewer
 	 */
 	protected IPresentationContext getPresentationContext() {
 		return fViewer.getPresentationContext();
 	}
-	
+
 	/**
 	 * Returns the model proxy factory for the given element of <code>null</code> if none.
-	 * 
+	 *
 	 * @param element element to retrieve adapters for
 	 * @return model proxy factory adapter or <code>null</code>
 	 */
@@ -261,11 +261,11 @@ public abstract class AsynchronousModel {
 			adapter = adaptable.getAdapter(IModelProxyFactory.class);
 		}
 		return adapter;
-	}	
-	
+	}
+
 	/**
 	 * Maps the given element to the given node.
-	 * 
+	 *
 	 * @param element the element context
 	 * @param node the model node
 	 */
@@ -288,10 +288,10 @@ public abstract class AsynchronousModel {
 		}
         installModelProxy(element);
 	}
-    
+
     /**
      * Unmaps the given node from its element and widget.
-     * 
+     *
      * @param node the model node
      */
     protected synchronized void unmapNode(ModelNode node) {
@@ -317,31 +317,31 @@ public abstract class AsynchronousModel {
             }
         }
     }
-	
+
 	/**
 	 * Returns the nodes in this model for the given element or
      * <code>null</code> if none.
-	 * 
+	 *
 	 * @param element model element
 	 * @return associated nodes or <code>null</code>
 	 */
 	public synchronized ModelNode[] getNodes(Object element) {
 		return fElementToNodes.get(element);
 	}
-	
+
 	/**
 	 * Returns the root node or <code>null</code>
-	 * 
+	 *
 	 * @return the root node or <code>null</code>
 	 */
 	public ModelNode getRootNode() {
 		return fRoot;
 	}
-	
+
 	/**
 	 * Cancels any conflicting updates for children of the given item, and
 	 * schedules the new update.
-	 * 
+	 *
 	 * @param update the update to schedule
 	 */
 	protected void requestScheduled(IStatusMonitor update) {
@@ -357,11 +357,11 @@ public abstract class AsynchronousModel {
 			}
 			fPendingUpdates.add(update);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Removes the update from the pending updates list.
-	 * 
+	 *
 	 * @param update the update to remove
 	 */
 	protected void requestComplete(IStatusMonitor update) {
@@ -369,10 +369,10 @@ public abstract class AsynchronousModel {
 			fPendingUpdates.remove(update);
 		}
 	}
-	
+
 	/**
 	 * An viewer update has been scheduled due to the following update request.
-	 * 
+	 *
 	 * @param update the update to add
 	 */
 	protected void viewerUpdateScheduled(IStatusMonitor update) {
@@ -381,11 +381,11 @@ public abstract class AsynchronousModel {
 			fViewerUpdates.add(update);
 		}
 	}
-	
+
 	/**
 	 * Returns the result of running the given elements through the
 	 * viewers filters.
-	 * 
+	 *
 	 * @param parent parent element
 	 * @param elements the elements to filter
 	 * @return only the elements which all filters accept
@@ -410,10 +410,10 @@ public abstract class AsynchronousModel {
 		}
 		return elements;
 	}
-	
+
 	/**
 	 * Refreshes the given node.
-	 * 
+	 *
 	 * @param node the model node to update
 	 */
 	protected void updateLabel(ModelNode node) {
@@ -423,12 +423,12 @@ public abstract class AsynchronousModel {
 			ILabelRequestMonitor labelUpdate = new LabelRequestMonitor(node, this);
 			requestScheduled(labelUpdate);
 			adapter.retrieveLabel(element, getPresentationContext(), labelUpdate);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Returns the label adapter for the given element or <code>null</code> if none.
-	 * 
+	 *
 	 * @param element element to retrieve adapter for
 	 * @return presentation adapter or <code>null</code>
 	 */
@@ -445,17 +445,17 @@ public abstract class AsynchronousModel {
 			return new AsynchronousDebugLabelAdapter();
 		}
 		return adapter;
-	}	
-	
+	}
+
     /**
      * Returns the tree element adapter for the given element or
      * <code>null</code> if none.
-     * 
+     *
      * @param element
      *            element to retrieve adapter for
      * @return presentation adapter or <code>null</code>
      */
-    protected IAsynchronousContentAdapter getContentAdapter(Object element) {        
+    protected IAsynchronousContentAdapter getContentAdapter(Object element) {
         IAsynchronousContentAdapter adapter = null;
         if (element instanceof IAsynchronousContentAdapter) {
             adapter = (IAsynchronousContentAdapter) element;
@@ -464,11 +464,11 @@ public abstract class AsynchronousModel {
             adapter = adaptable.getAdapter(IAsynchronousContentAdapter.class);
         }
         return adapter;
-    }	
-    
+    }
+
     /**
      * Updates the children of the given node.
-     * 
+     *
      * @param parent
      *            node of which to update children
      */
@@ -483,11 +483,11 @@ public abstract class AsynchronousModel {
             requestScheduled(update);
             adapter.retrieveChildren(element, getPresentationContext(), update);
         }
-    }    
-	
+    }
+
 	/**
 	 * Update this model's viewer preserving its selection.
-	 * 
+	 *
 	 * @param update the update code to run in the backing viewer's preserving selection method
 	 */
 	protected void preservingSelection(Runnable update) {
@@ -496,7 +496,7 @@ public abstract class AsynchronousModel {
 
 	/**
 	 * The viewer updated associated with a request is complete.
-	 * 
+	 *
 	 * @param monitor the status to remove and complete
 	 */
 	protected void viewerUpdateComplete(IStatusMonitor monitor) {
@@ -506,10 +506,10 @@ public abstract class AsynchronousModel {
 		}
 		getViewer().updateComplete(monitor);
 	}
-	
+
 	/**
 	 * An update request was cancelled
-	 * 
+	 *
 	 * @param monitor the monitor to remove
 	 */
 	protected void requestCanceled(AsynchronousRequestMonitor monitor) {
@@ -517,10 +517,10 @@ public abstract class AsynchronousModel {
 			fPendingUpdates.remove(monitor);
 		}
 	}
-	
+
 	/**
 	 * Whether any updates are still in progress in the model or against the viewer.
-	 * 
+	 *
 	 * @return <code>true</code> if there are pending changes <code>false</code> otherwise
 	 */
 	protected boolean hasPendingUpdates() {
@@ -528,18 +528,18 @@ public abstract class AsynchronousModel {
 			return !fPendingUpdates.isEmpty() || !fViewerUpdates.isEmpty();
 		}
 	}
-	
+
     /**
      * Asynchronous update for add/set children request.
-     * 
+     *
      * @param parent the parent model node
      * @param element the element context
      */
 	protected abstract void add(ModelNode parent, Object element);
-	
+
 	/**
 	 * Notification from children request monitor
-	 * 
+	 *
 	 * @param parentNode parent node
 	 * @param kids list of model elements
 	 */
@@ -550,11 +550,11 @@ public abstract class AsynchronousModel {
         if (sorter != null) {
         	sorter.sort(viewer, children);
         }
-        
+
         ModelNode[] prevKids = null;
         ModelNode[] newChildren = null;
-        ModelNode[] unmap = null; 
-        
+        ModelNode[] unmap = null;
+
         synchronized (this) {
         	if (isDisposed()) {
                 return;
@@ -572,7 +572,7 @@ public abstract class AsynchronousModel {
             	newChildren = new ModelNode[children.length];
             	unmap = new ModelNode[prevKids.length];
             	for (int i = 0; i < prevKids.length; i++) {
-					unmap[i] = prevKids[i];	
+					unmap[i] = prevKids[i];
 				}
             	for (int i = 0; i < children.length; i++) {
 					Object child = children[i];
@@ -605,9 +605,9 @@ public abstract class AsynchronousModel {
             	DebugUIPlugin.trace(toString());
             }
         }
-        
+
         //update viewer outside the lock
-    	final ModelNode[] finalUnmap = unmap; 
+    	final ModelNode[] finalUnmap = unmap;
         preservingSelection(new Runnable() {
             @Override
 			public void run() {
@@ -618,10 +618,10 @@ public abstract class AsynchronousModel {
             	}
             	viewer.nodeChildrenChanged(parentNode);
             }
-        });        	        
+        });
 
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
@@ -633,7 +633,7 @@ public abstract class AsynchronousModel {
 		}
 		return buf.toString();
 	}
-	
+
 	private void append(StringBuffer buf, ModelNode node, int level) {
 		for (int i = 0; i < level; i++) {
 			buf.append('\t');

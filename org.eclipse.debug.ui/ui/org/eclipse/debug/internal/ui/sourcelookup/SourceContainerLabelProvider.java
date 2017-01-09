@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,13 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Label provider for source containers and source container types.
- * 
+ *
  * @since 3.0
  */
 public class SourceContainerLabelProvider extends LabelProvider {
-	
+
 	private ILabelProvider fLabelProvider = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
@@ -45,13 +45,13 @@ public class SourceContainerLabelProvider extends LabelProvider {
 				// next consult contributed image
 				image = DebugUITools.getSourceContainerImage(type.getId());
 			}
-		}		
+		}
 		if (image != null) {
 			return image;
 		}
 		return super.getImage(element);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
@@ -61,7 +61,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		String label = getWorkbenchLabelProvider().getText(element);
 		if (label == null || label.length() == 0) {
 			if (element instanceof ISourceContainer) {
-				return ((ISourceContainer) element).getName(); 
+				return ((ISourceContainer) element).getName();
 			} else if (element instanceof ISourceContainerType) {
 				return ((ISourceContainerType)element).getName();
 			}
@@ -70,14 +70,14 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		}
 		return super.getText(element);
 	}
-	
+
 	private ILabelProvider getWorkbenchLabelProvider() {
 		if (fLabelProvider == null) {
 			fLabelProvider = new WorkbenchLabelProvider();
 		}
 		return fLabelProvider;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */

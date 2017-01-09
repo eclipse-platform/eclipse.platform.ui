@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,12 +29,12 @@ import org.eclipse.swt.custom.BusyIndicator;
  * ArchiveFilter
  */
 public class ArchiveFilter extends ViewerFilter {
-	
+
 	/**
 	 * Collection of archives and containers to display
 	 */
 	private Set<IResource> fArchives;
-	
+
 	/**
 	 * Collection of already existing archives
 	 */
@@ -51,14 +51,14 @@ public class ArchiveFilter extends ViewerFilter {
 	/**
 	 * Constructs a new filter to display archives and their containers,
 	 * excluding the resources in the given list.
-	 * 
+	 *
 	 * @param objects resources to exclude
 	 */
 	public ArchiveFilter(List<ISourceContainer> objects) {
 		fExisting = objects;
 		init();
 	}
-	
+
 	/**
 	 * Search for all archives in the workspace.
 	 */
@@ -75,13 +75,13 @@ public class ArchiveFilter extends ViewerFilter {
 	/**
 	 * Traverse the given container, adding archives to the given set.
 	 * Returns whether any files were added
-	 * @param container the container to check 
+	 * @param container the container to check
 	 * @param set the set to add any found archives to
 	 * @return <code>true</code> if any archives have been added false otherwise
 	 */
 	private boolean traverse(IContainer container, Set<IResource> set) {
 		boolean added = false;
-		try {	
+		try {
 			IResource[] resources = container.members();
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
@@ -94,7 +94,7 @@ public class ArchiveFilter extends ViewerFilter {
 					}
 				} else if (resource instanceof IContainer) {
 					if (traverse((IContainer)resource, set)) {
-						set.add(resource);	
+						set.add(resource);
 						added = true;
 					}
 				}

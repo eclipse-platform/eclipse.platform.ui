@@ -18,11 +18,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 
 /**
  * Default stack frame event handler for the debug view.
- * 
+ *
  * @since 3.3
  */
 public class StackFrameEventHandler extends DebugEventHandler {
-	
+
 	ThreadEventHandler fThreadHandler = null;
 
 	/**

@@ -24,13 +24,13 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * types from a specific launch category.
  */
 public class LaunchCategoryFilter extends ViewerFilter {
-	
+
 	private String fCategory;
-	
+
 	/**
 	 * Constructs a filter that hides configurations from a specific
 	 * category.
-	 * 
+	 *
 	 * @param groupExtension
 	 */
 	public LaunchCategoryFilter(String category) {
@@ -54,7 +54,7 @@ public class LaunchCategoryFilter extends ViewerFilter {
 				config = (ILaunchConfiguration)element;
 				try {
 					type = config.getType();
-				} 
+				}
 				catch (CoreException e) {}
 			}
 			boolean priv = false;
@@ -71,10 +71,10 @@ public class LaunchCategoryFilter extends ViewerFilter {
 			}
 			return true;
 	}
-	
+
 	/**
 	 * Returns whether the given categories are equal.
-	 * 
+	 *
 	 * @param c1 category identifier or <code>null</code>
 	 * @param c2 category identifier or <code>null</code>
 	 * @return boolean
@@ -84,6 +84,6 @@ public class LaunchCategoryFilter extends ViewerFilter {
 			return c1 == c2;
 		}
 		return c1.equals(c2);
-	} 
+	}
 
 }

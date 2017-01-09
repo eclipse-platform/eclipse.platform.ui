@@ -22,9 +22,9 @@ import org.eclipse.ui.texteditor.IUpdate;
  * CollapseAllAction
  */
 public class CollapseAllAction extends Action implements IUpdate {
-	
+
 	private TreeModelViewer fViewer;
-	
+
 	public CollapseAllAction(TreeModelViewer viewer) {
 		super(ActionMessages.CollapseAllAction_0, DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COLLAPSE_ALL));
 		setToolTipText(ActionMessages.CollapseAllAction_0);
@@ -33,7 +33,7 @@ public class CollapseAllAction extends Action implements IUpdate {
 		setActionDefinitionId(CollapseAllHandler.COMMAND_ID);
 		fViewer = viewer;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */

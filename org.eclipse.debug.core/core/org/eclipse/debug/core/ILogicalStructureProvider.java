@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,10 +38,10 @@ import org.eclipse.debug.core.model.IValue;
  * @see org.eclipse.debug.core.ILogicalStructureType
  */
 public interface ILogicalStructureProvider {
-	
+
 	/**
 	 * Returns the logical structure types which are applicable to the given value.
-	 * 
+	 *
 	 * @param value value for which logical structure types are being requested
 	 * @return the logical structure types which are applicable to the given value
 	 */

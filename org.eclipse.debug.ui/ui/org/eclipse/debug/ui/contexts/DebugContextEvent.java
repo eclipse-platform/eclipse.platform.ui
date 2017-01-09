@@ -32,22 +32,22 @@ public class DebugContextEvent extends EventObject {
 	 * The context
 	 */
 	private ISelection fContext;
-	
+
 	/**
 	 * Change flags.
 	 */
 	private int fFlags;
-	
+
 	/**
 	 * Change constant (bit mask) indicating a context has been activated.
 	 */
 	public static final int ACTIVATED = 0x01;
-	
+
 	/**
 	 * Change constant (bit mask) indicating the state of a context has changed.
 	 * State changes are only broadcast for previously activated contexts.
 	 */
-	public static final int STATE = 0x10;	
+	public static final int STATE = 0x10;
 
 	/**
      * Generated serial version UID for this class.
@@ -56,7 +56,7 @@ public class DebugContextEvent extends EventObject {
 
 	/**
 	 * Constructs a new debug context event.
-	 * 
+	 *
 	 * @param source source of the event - a debug context provider
 	 * @param context the relevant context
 	 * @param flags bit mask indicating how the context has changed - see change constants
@@ -67,29 +67,29 @@ public class DebugContextEvent extends EventObject {
 		fContext = context;
 		fFlags = flags;
 	}
-	
+
 	/**
 	 * Returns the debug context associated with this event.
-	 * 
+	 *
 	 * @return debug context, possible an empty selection
 	 */
 	public ISelection getContext() {
 		return fContext;
 	}
-	
+
 	/**
 	 * Returns flags which describe in more detail how a context has changed.
 	 * See change constants defined in this class.
-	 * 
+	 *
 	 * @return event flags
 	 */
 	public int getFlags() {
 		return fFlags;
 	}
-	
+
 	/**
 	 * Returns the context provider that initiated this event.
-	 * 
+	 *
 	 * @return context provider
 	 */
 	public IDebugContextProvider getDebugContextProvider() {

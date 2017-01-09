@@ -31,11 +31,11 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Asynchronous label adapter for debug elements.
- * 
+ *
  * @since 3.2
  */
 public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
-	      
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#computeLabels(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.ILabelRequestMonitor)
 	 */
@@ -112,11 +112,11 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 		Arrays.fill(rgbs, DebugElementHelper.getBackground(element));
 		return rgbs;
 	}
-	
+
 	/**
 	 * Returns the number of columns in the given presentation context, or 1
 	 * if there are no columns.
-	 * 
+	 *
 	 * @param context presentation context
 	 * @return number of columns or 1 if none
 	 */
@@ -124,7 +124,7 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 		String[] columns = context.getColumns();
 		if (columns == null) {
 			return 1;
-		} 
+		}
 		return columns.length;
 	}
 

@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * that provide an <code>IToggleBreakpointsTarget</code> adapter.
  * <p>
  * Clients may reference/contribute this class as an object contribution
- * action delegate in plug-in XML. 
+ * action delegate in plug-in XML.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

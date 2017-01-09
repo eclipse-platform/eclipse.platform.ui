@@ -22,7 +22,7 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Toggles a breakpoint when ruler is double-clicked. This action delegate can be 
+ * Toggles a breakpoint when ruler is double-clicked. This action delegate can be
  * contributed to an editor with the <code>editorActions</code> extension point.
  * This action is as a factory that creates another action that performs the
  * actual breakpoint toggling. The created action acts on the editor's
@@ -30,7 +30,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * <p>
  * Following is example plug-in XML used to contribute this action to an editor.
  * Note that the label attribute of this action is not displayed in the editor.
- * Instead, the label of the created action is displayed. 
+ * Instead, the label of the created action is displayed.
  * <pre>
  * &lt;extension point="org.eclipse.ui.editorActions"&gt;
  *    &lt;editorContribution
@@ -65,14 +65,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </pre>
  * </p>
  * <p>
- * Clients may refer to this class as an action delegate in plug-in XML. 
+ * Clients may refer to this class as an action delegate in plug-in XML.
  * </p>
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
-	
+
 	private IEditorPart fEditor = null;
 	private ToggleBreakpointAction fDelegate = null;
 

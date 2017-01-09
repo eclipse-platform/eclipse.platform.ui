@@ -19,11 +19,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Global retargettable toggle breakpoint action.
- * 
+ *
  * @since 3.3
  */
 public class RetargetToggleBreakpointAction extends RetargetBreakpointAction {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -54,5 +54,5 @@ public class RetargetToggleBreakpointAction extends RetargetBreakpointAction {
 	@Override
 	protected String getOperationUnavailableMessage() {
 		return Messages.RetargetToggleBreakpointAction_0;
-	}	
+	}
 }

@@ -28,14 +28,14 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The viewer containing the source containers in the 
+ * The viewer containing the source containers in the
  * SourceContainerLookupTab and the EditSourceLookupPathDialog.
  * It is a tree viewer since the containers are represented in tree form.
- * 
+ *
  * @since 3.0
  */
 public class SourceContainerViewer extends TreeViewer {
-	
+
 	/**
 	 * Whether enabled/editable.
 	 */
@@ -43,14 +43,14 @@ public class SourceContainerViewer extends TreeViewer {
 	/**
 	 * The parent panel
 	 */
-	private SourceLookupPanel fPanel;	
+	private SourceLookupPanel fPanel;
 	/**
 	 * The source container entries displayed in this viewer
 	 */
 	protected List<ISourceContainer> fEntries = new ArrayList<ISourceContainer>();
-	
+
 	class ContentProvider implements ITreeContentProvider {
-		
+
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
@@ -58,8 +58,8 @@ public class SourceContainerViewer extends TreeViewer {
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
 		}
-		
-		/** 
+
+		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		@Override
@@ -70,7 +70,7 @@ public class SourceContainerViewer extends TreeViewer {
 				return new Object[0];
 			}
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
@@ -78,17 +78,17 @@ public class SourceContainerViewer extends TreeViewer {
 		public Object getParent(Object element) {
 			return null;
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
 		@Override
 		public boolean hasChildren(Object element) {
-			return ((ISourceContainer)element).isComposite();				
+			return ((ISourceContainer)element).isComposite();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Creates a runtime classpath viewer with the given parent.
 	 *
@@ -99,13 +99,13 @@ public class SourceContainerViewer extends TreeViewer {
 		super(parent);
 		setContentProvider(new ContentProvider());
 		SourceContainerLabelProvider lp = new SourceContainerLabelProvider();
-		setLabelProvider(lp);		
+		setLabelProvider(lp);
 		fPanel = panel;
-	}	
-	
+	}
+
 	/**
-	 * Sets the entries in this viewer 
-	 * 
+	 * Sets the entries in this viewer
+	 *
 	 * @param entries source container entries
 	 */
 	public void setEntries(ISourceContainer[] entries) {
@@ -120,29 +120,29 @@ public class SourceContainerViewer extends TreeViewer {
 			//select first item in list
 			if(!fEntries.isEmpty() && fEntries.get(0)!=null) {
 				setSelection(new StructuredSelection(fEntries.get(0)));
-			}			
+			}
 		} else {
 			refresh();
 		}
 		fPanel.setDirty(true);
-		fPanel.updateLaunchConfigurationDialog(); 
+		fPanel.updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Returns the entries in this viewer
-	 * 
+	 *
 	 * @return the entries in this viewer
 	 */
 	public ISourceContainer[] getEntries() {
 		return fEntries.toArray(new ISourceContainer[fEntries.size()]);
 	}
-	
+
 	/**
 	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list, 
+	 * in the list, the entries are added at the end of the list,
 	 * otherwise the new entries are added before the (first) selected
 	 * entry. The new entries are selected.
-	 * 
+	 *
 	 * @param entries additions
 	 */
 	public void addEntries(ISourceContainer[] entries) {
@@ -157,15 +157,15 @@ public class SourceContainerViewer extends TreeViewer {
 				index++;
 			}
 		}
-		
+
 		refresh();
 		if(entries.length > 0) {
 			setSelection(new StructuredSelection(entries));
 		}
 		fPanel.setDirty(true);
 		fPanel.updateLaunchConfigurationDialog();
-	}	
-	
+	}
+
 	/**
 	 * Enables/disables this viewer. Note the control is not disabled, since
 	 * we still want the user to be able to scroll if required to see the
@@ -175,32 +175,32 @@ public class SourceContainerViewer extends TreeViewer {
 		fEnabled = enabled;
 		// fire selection change to upate actions
 		setSelection(getSelection());
-	}	
-	
+	}
+
 	/**
 	 * Returns whether this viewer is enabled
 	 */
 	public boolean isEnabled() {
 		return fEnabled;
-	}	
-		
+	}
+
 	/**
 	 * Returns the index of an equivalent entry, or -1 if none.
-	 * 
+	 *
 	 * @return the index of an equivalent entry, or -1 if none
 	 */
 	public int indexOf(ISourceContainer entry) {
 		return fEntries.indexOf(entry);
 	}
-	
+
 	/**
 	 * Returns the source locator associated with the parent panel.
-	 * 
+	 *
 	 * @return the source locator
 	 */
 	public ISourceLookupDirector getSourceLocator()
 	{
 		return fPanel.fLocator;
 	}
-	
+
 }

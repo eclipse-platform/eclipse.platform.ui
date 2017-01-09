@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.0
  */
 public class DirectorySourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -35,10 +35,10 @@ public class DirectorySourceContainerBrowser extends AbstractSourceContainerBrow
 		if (dialog.open() == Window.OK) {
 			String directory = dialog.getDirectory();
 			if(directory !=null) {
-				containers[0] = new DirectorySourceContainer(new Path(directory), dialog.isSearchSubfolders());			
-				return containers;			
+				containers[0] = new DirectorySourceContainer(new Path(directory), dialog.isSearchSubfolders());
+				return containers;
 			}
-		}		
+		}
 		return new ISourceContainer[0];
 	}
 
@@ -62,11 +62,11 @@ public class DirectorySourceContainerBrowser extends AbstractSourceContainerBrow
 				String directory = dialog.getDirectory();
 				if(directory !=null) {
 					containers[0].dispose();
-					return new ISourceContainer[]{ new DirectorySourceContainer(new Path(directory), dialog.isSearchSubfolders())};			
+					return new ISourceContainer[]{ new DirectorySourceContainer(new Path(directory), dialog.isSearchSubfolders())};
 				}
 			}
 		}
 		return containers;
 	}
-	
+
 }

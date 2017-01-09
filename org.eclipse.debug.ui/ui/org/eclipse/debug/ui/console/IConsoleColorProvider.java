@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Color;
  * provider extension.
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.consoleColorProviders"&gt;
- *   &lt;consoleColorProvider 
+ *   &lt;consoleColorProvider
  *      id="com.example.ExampleConsoleColorProvider"
  *      class="com.example.ExampleConsoleColorProviderClass"
  *      processType="ExampleProcessType"&gt;
@@ -44,7 +44,7 @@ import org.eclipse.swt.graphics.Color;
  * this content provider is associated with (which corresponds to the
  * <code>ATTR_PROCESS_TYPE</code> attribute on a process).</li>
  * </ul>
- * </p> 
+ * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -57,30 +57,30 @@ public interface IConsoleColorProvider {
 	 * Returns whether the console associated with this color provider's
 	 * process can currently accept keyboard input. This attribute is dynamic
 	 * and may change over the lifetime of a process/document.
-	 * 
+	 *
 	 * @return whether the console associated with this color provider's
 	 * process can currently accept keyboard input
 	 */
 	public boolean isReadOnly();
-	
+
 	/**
 	 * Returns the color to draw output associated with the given stream.
-	 * 
+	 *
 	 * @param streamIdentifer the identifier of the stream
 	 * @return Color
 	 */
 	public Color getColor(String streamIdentifer);
-	
+
 	/**
 	 * Connects this color provider to the given process and console.
 	 * This color provider should connect its streams to the given console
 	 * document.
-	 * 
+	 *
 	 * @param process the process to connect this color provider to
 	 * @param console the console  to connect this color provider to
 	 */
 	public void connect(IProcess process, IConsole console);
-	
+
 	/**
 	 * Disconnects this color provider.
 	 */

@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * This class allow the notion of the viewer to be abstracted from the launch configuration view, as well as allowing the over-riding of 
+ * This class allow the notion of the viewer to be abstracted from the launch configuration view, as well as allowing the over-riding of
  * selection preservation when filtering/deletion occurs
  * @since 3.3
  */
@@ -32,7 +32,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 
 	private int fTotalCount = 0;
 	private LaunchConfigurationView fView = null;
-	
+
 	/**
 	 * Constructor
 	 * @param tree the tree to create the viewer on
@@ -40,7 +40,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	public LaunchConfigurationViewer(Tree tree) {
 		super(tree);
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param parent
@@ -124,7 +124,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		}
 		getTree().getHorizontalBar().setSelection(0);
 	}
-	
+
 	/**
 	 * Covers the case of an outlier indice
 	 * @param count the count to compare the index to
@@ -143,16 +143,16 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		}
 		return -1;
 	}
-	
+
 	/**
-	 * Returns the total count of all of the children that <i>could</i> be visible at 
+	 * Returns the total count of all of the children that <i>could</i> be visible at
 	 * the time the input was set to the viewer
 	 * @return the total number of elements
 	 */
 	protected int getTotalChildCount() {
 		return fTotalCount;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
 	 */
@@ -199,7 +199,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	 * returns the number of children that are remaining in the view.
 	 * Note that this method will force the loading of all children
 	 * @return the count of all children in the viewer
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected int getNonFilteredChildCount() {
@@ -219,7 +219,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		getTree().setRedraw(true);
 		return count;
 	}
-	
+
 	/**
 	 * Collects the indices of the child and parent items for the specified element
 	 * @param object the element to collect indices for
@@ -230,7 +230,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		if(object != null) {
 			TreeItem item = (TreeItem) findItem(object);
 			if(item != null) {
-				TreePath path = getTreePathFromItem(item); 
+				TreePath path = getTreePathFromItem(item);
 				item = (TreeItem) findItem(path.getFirstSegment());
 				if(item != null) {
 					indices[0] = getTree().indexOf(item);
@@ -242,7 +242,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		}
 		return indices;
 	}
-	
+
 	/**
 	 * Finds the index of the specified object in the given array of tree items
 	 * @param items the items to search for the specified object
@@ -267,7 +267,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		if (fView != null) {
 			fView.updateFilterLabel();
 		}
-		
+
 	}
 
 	/**

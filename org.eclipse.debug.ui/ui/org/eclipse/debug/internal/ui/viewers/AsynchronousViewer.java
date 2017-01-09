@@ -58,7 +58,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * This viewer uses adapters to retrieve labels and content rather than
  * a label provider and content provider. As such, the label provider for this viewer
  * is <code>null</code> by default. The content provider returned by this viewer is
- * non-<code>null</code> to conform to the viewer specification, but performs no 
+ * non-<code>null</code> to conform to the viewer specification, but performs no
  * useful function.
  * </p>
  * <p>
@@ -66,12 +66,12 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * the viewer attempts to perform the selection. If the elements in the specified selection
  * are not yet in the viewer, the portion of the selection that could not be honored
  * becomes a pending selection. As more elements are added to viewer, the pending selection
- * is attempted to be set.  
+ * is attempted to be set.
  * </p>
  * @since 3.2
  */
 public abstract class AsynchronousViewer extends StructuredViewer implements Listener {
-	
+
 	/**
 	 * Model of elements for this viewer
 	 */
@@ -107,17 +107,17 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	private ISelection fPendingSelection;
 
 	private ISelection fCurrentSelection;
-	
+
 	/**
 	 * Array used to store indices of the path to an item in the viewer being mapped
-	 * by a 'set data' callback. Indices are bottom up. For example when 'set data' for 
+	 * by a 'set data' callback. Indices are bottom up. For example when 'set data' for
 	 * the 3rd child of the 4th child of the 2nd root element were being asked for,
 	 * the first 3 indices would look like: [3, 4, 2, ....]. We re-use an array to avoid
 	 * creating a new one all the time. The array grows as needed to accommodate deep
 	 * elements.
 	 */
 	private int[] fSetDataIndicies = new int[5];
-	
+
 	/**
 	 * The update policy for this viewer.
 	 */
@@ -125,9 +125,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	protected static final String OLD_LABEL = "old_label"; //$NON-NLS-1$
 	protected static final String OLD_IMAGE = "old_image"; //$NON-NLS-1$
-	
+
 	/**
-	 * Creates a new viewer 
+	 * Creates a new viewer
 	 */
 	protected AsynchronousViewer() {
 		setContentProvider(new NullContentProvider());
@@ -170,7 +170,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			color.dispose();
 		}
 		fColorCache.clear();
-		
+
 		if (fModel != null) {
 			fModel.dispose();
 		}
@@ -184,7 +184,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	/**
 	 * Updates all occurrences of the given element in this viewer.
-	 * 
+	 *
 	 * @param element element to update
 	 */
 	public void update(Object element) {
@@ -195,10 +195,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates the label for a specific element (node) in the model.
-	 * 
+	 *
 	 * @param node node to update
 	 */
 	protected void updateLabel(ModelNode node) {
@@ -207,12 +207,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			getModel().updateLabel(node);
 		}
 	}
-		
+
 	/**
 	 * Returns the presentation context to be used in update requests.
 	 * Clients may override this method if required to provide special
 	 * implementations of contexts.
-	 * 
+	 *
 	 * @return presentation context
 	 */
 	public IPresentationContext getPresentationContext() {
@@ -257,13 +257,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			unmapAllElements();
 			getControl().setData(null);
 		}
-        refresh();		
+        refresh();
 	}
-	
+
 	/**
 	 * Creates a new empty model for this viewer that
 	 * is *not* initialized.
-	 * 
+	 *
 	 * @return a new model
 	 */
 	protected abstract AsynchronousModel createModel();
@@ -289,12 +289,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		return images;
 	}
-	
+
 	/**
 	 * Returns an image for the given image descriptor or <code>null</code>. Adds the image
 	 * to a cache of images if it does not already exist. The cache is cleared when this viewer
-	 * is disposed. 
-	 * 
+	 * is disposed.
+	 *
 	 * @param descriptor image descriptor or <code>null</code>
 	 * @return image or <code>null</code>
 	 */
@@ -319,18 +319,18 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
                 return new Font[columns.length];
             }
 		}
-		
+
 		Font[] fonts = new Font[fontDatas.length];
 		for (int i = 0; i < fonts.length; i++) {
 			fonts[i] = getFont(fontDatas[i]);
 		}
 		return fonts;
 	}
-	
+
 	/**
-	 * Returns a font for the given font data or <code>null</code>. Adds the font to this viewer's font 
+	 * Returns a font for the given font data or <code>null</code>. Adds the font to this viewer's font
 	 * cache which is disposed when this viewer is disposed.
-	 * 
+	 *
 	 * @param fontData font data or <code>null</code>
 	 * @return font font or <code>null</code>
 	 */
@@ -345,7 +345,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		return font;
 	}
-	
+
 	protected Color[] getColors(RGB[] rgb) {
         if (rgb == null || rgb.length == 0) {
             String[] columns = getPresentationContext().getColumns();
@@ -362,9 +362,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return colors;
 	}
 	/**
-	 * Returns a color for the given RGB or <code>null</code>. Adds the color to this viewer's color 
+	 * Returns a color for the given RGB or <code>null</code>. Adds the color to this viewer's color
 	 * cache which is disposed when this viewer is disposed.
-	 * 
+	 *
 	 * @param rgb RGB or <code>null</code>
 	 * @return color or <code>null</code>
 	 */
@@ -379,10 +379,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		return color;
 	}
-	
+
 	/**
-	 * Sets the context for this viewer. 
-	 * 
+	 * Sets the context for this viewer.
+	 *
 	 * @param context the presentation context
 	 */
 	public void setContext(IPresentationContext context) {
@@ -407,10 +407,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		return null;
 	}
-	
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
      */
     @Override
@@ -422,7 +422,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			}
 		}
         return null;
-    }	
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
@@ -452,17 +452,17 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			}
 		}
 	}
-	
+
 	/**
 	 * Refreshes a specific occurrence of an element (a node).
-	 * 
+	 *
 	 * @param node node to update
-	 * 
+	 *
 	 * Subclasses should override and call super
 	 */
 	protected void internalRefresh(ModelNode node) {
 		updateLabel(node);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
@@ -471,10 +471,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	public synchronized void setSelection(ISelection selection, boolean reveal) {
 		setSelection(selection, reveal, false);
 	}
-	
+
 	/**
 	 * Sets the selection in this viewer.
-	 * 
+	 *
 	 * @param selection new selection
 	 * @param reveal whether to reveal the selection
 	 * @param force whether to force the selection change without consulting the model
@@ -491,9 +491,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (!force && !overrideSelection(fCurrentSelection, selection)) {
 			return;
 		}
-		
+
 		fPendingSelection = selection;
-		
+
 		if (getControl().getDisplay().getThread() == Thread.currentThread()) {
 			attemptSelection(reveal);
 		} else {
@@ -503,18 +503,18 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					attemptSelection(reveal);
 					return Status.OK_STATUS;
 				}
-				
+
 			};
 			job.setSystem(true);
 			job.schedule();
-		}		
-	}	
-	
-	
+		}
+	}
+
+
 	/**
 	 * Returns whether the candidate selection should override the current
 	 * selection.
-	 * 
+	 *
 	 * @param current the current selection
 	 * @param candidate the new selection
 	 * @return if the selection should be overridden
@@ -529,7 +529,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		return !selectionPolicy.isSticky(current, getPresentationContext());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelection()
 	 */
@@ -540,8 +540,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			return StructuredSelection.EMPTY;
 		}
 		return fCurrentSelection;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
@@ -552,8 +552,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (control != null && !control.isDisposed()) {
 			updateSelection(newSelectionFromWidget());
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handlePostSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
@@ -561,20 +561,20 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected void handlePostSelect(SelectionEvent e) {
 		SelectionChangedEvent event = new SelectionChangedEvent(this, newSelectionFromWidget());
 		firePostSelectionChanged(event);
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a new selection from this viewer, based on the selected
 	 * elements in the widget.
-	 * 
+	 *
 	 * @return a new selection
 	 */
 	protected abstract ISelection newSelectionFromWidget();
-	
+
 	/**
 	 * Returns the selection policy associated with the given selection
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param selection or <code>null</code>
 	 * @return selection policy or <code>null</code>
 	 */
@@ -601,7 +601,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		// NOT USED
 		throw new IllegalArgumentException("This method should not be called"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List, boolean)
 	 */
@@ -609,11 +609,11 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	final protected void setSelectionToWidget(List l, boolean reveal) {
 		// NOT USED
 		throw new IllegalArgumentException("This method should not be called"); //$NON-NLS-1$
-	}	
-		
+	}
+
 	/**
 	 * Attempts to update any pending selection.
-	 * 
+	 *
 	 * @param reveal whether to reveal the selection
 	 */
 	protected void attemptSelection(boolean reveal) {
@@ -638,47 +638,47 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			firePostSelectionChanged(new SelectionChangedEvent(this, currentSelection));
 		}
 	}
-	
+
 	/**
 	 * Controls whether selection change notification is sent even when
 	 * successive selections are equal.
-	 * 
+	 *
 	 * TODO: what we really want is to fire selection change on ACTIVATE model
 	 * change, even when selection is the same.
-	 * 
+	 *
 	 * @return whether to suppress change notification for equal successive
 	 *         selections
 	 */
 	protected boolean isSuppressEqualSelections() {
 		return true;
 	}
-	
+
 	/**
 	 * Attempts to selection the specified selection and returns a selection
 	 * representing the portion of the selection that could not be honored
 	 * and still needs to be selected.
-	 * 
+	 *
 	 * @param selection selection to attempt
 	 * @param reveal whether to reveal the selection
 	 * @return remaining selection
 	 */
 	protected abstract ISelection doAttemptSelectionToWidget(ISelection selection, boolean reveal);
-	
+
 	/**
 	 * Returns whether this viewer supports the given selection.
-	 * 
+	 *
 	 * @param selection a selection
 	 * @return whether this viewer supports the given selection
 	 */
 	protected abstract boolean acceptsSelection(ISelection selection);
-	
+
 	/**
 	 * Returns an empty selection supported by this viewer.
-	 * 
+	 *
 	 * @return an empty selection supported by this viewer
 	 */
 	protected abstract ISelection getEmptySelection();
-	
+
 	/**
 	 * A content provider that does nothing.
 	 */
@@ -701,7 +701,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Notification that a presentation update has failed.
 	 * Subclasses may override as required. The default implementation
 	 * does nothing.
-	 * 
+	 *
 	 * @param monitor monitor for the presentation request that failed
 	 * @param status status of update
 	 */
@@ -717,7 +717,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			ISelection oldSelection = null;
 			try {
 				// preserve selection
-				oldSelection = fCurrentSelection;				
+				oldSelection = fCurrentSelection;
 				// perform the update
 				updateCode.run();
 			} finally {
@@ -748,17 +748,17 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 							}
                             return Status.OK_STATUS;
 						}
-						
+
 					};
 					job.setSystem(true);
 					job.schedule();
-				}							
+				}
 			}
 		} else {
 			updateCode.run();
 		}
 	}
-	
+
 	protected synchronized void restoreSelection(ISelection oldSelection) {
 		ISelection remaining = doAttemptSelectionToWidget(oldSelection, false);
 		// send out notification if old and new differ
@@ -779,7 +779,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns whether the selection exists in the model
 	 * @param selection the selection context
@@ -801,28 +801,28 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		return true;
 	}
-    
+
 	/**
 	 * Sets the color attributes of the given widget.
-	 * 
+	 *
 	 * @param widget the widget to update
 	 * @param foreground foreground color of the widget or <code>null</code> if default
 	 * @param background background color of the widget or <code>null</code> if default
 	 */
 	protected abstract void setColors(Widget widget, RGB foreground[], RGB background[]);
-	
+
 	/**
 	 * Sets the label attributes of the given widget.
-	 * 
+	 *
 	 * @param widget the widget to update
 	 * @param text label text
 	 * @param image label image or <code>null</code>
 	 */
 	protected abstract void setLabels(Widget widget, String[] text, ImageDescriptor[] image);
-	
+
 	/**
 	 * Sets the font attributes of the given widget.
-	 * 
+	 *
 	 * @param widget widget to update
 	 * @param font font of the widget or <code>null</code> if default.
 	 */
@@ -836,43 +836,43 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		fCurrentSelection = selection;
 		super.updateSelection(selection);
 	}
-	
 
-	
+
+
 	/**
 	 * Notification the given model proxy has been added to this viewer's model.
-	 * 
+	 *
 	 * @param proxy the model proxy that has been added
 	 */
 	protected void modelProxyAdded(IModelProxy proxy) {
 		if (fUpdatePolicy instanceof IModelChangedListener) {
 			proxy.addModelChangedListener((IModelChangedListener)fUpdatePolicy);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Notification the given model proxy has been removed from this viewer's model.
-	 * 
+	 *
 	 * @param proxy the model proxy that has been removed
 	 */
 	protected void modelProxyRemoved(IModelProxy proxy) {
 		if (fUpdatePolicy instanceof IModelChangedListener) {
 			proxy.removeModelChangedListener((IModelChangedListener)fUpdatePolicy);
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Returns this viewer's model
-	 * 
+	 *
 	 * @return model
 	 */
 	protected AsynchronousModel getModel() {
 		return fModel;
-	}	
+	}
 
 	/**
 	 * A node in the model has been updated
-	 * 
+	 *
 	 * @param node the model node that has been changed
 	 */
 	protected void nodeChanged(ModelNode node) {
@@ -893,7 +893,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Notification from the model that the update for the given request
 	 * has completed.
-	 * 
+	 *
 	 * @param monitor the monitor
 	 */
 	protected void updateComplete(IStatusMonitor monitor) {
@@ -901,21 +901,21 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	/**
 	 * Clears the given widget
-	 * 
+	 *
 	 * @param item the widget
 	 */
     protected abstract void clear(Widget item);
-    
+
     /**
      * Clears the children of the widget.
-     * 
+     *
      * @param item the widget to clear children from
      */
     protected abstract void clearChildren(Widget item);
-    
+
     /**
      * Clears the child at the given index.
-     * 
+     *
      * @param parent the parent widget
      * @param childIndex the index of the child widget to clear
      */
@@ -924,16 +924,16 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Returns the child widget at the given index for the given parent or
 	 * <code>null</code>
-	 * 
+	 *
 	 * @param parent the parent widget
-	 * @param index the index of the child in the parent widget 
+	 * @param index the index of the child in the parent widget
 	 * @return the widget at the given index in the parent or <code>null</code>
 	 */
 	protected abstract Widget getChildWidget(Widget parent, int index);
 
 	/**
 	 * Sets the item count for a parent widget
-	 * 
+	 *
 	 * @param parent the parent widget
 	 * @param itemCount the new item count to set
 	 */
@@ -945,12 +945,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     protected void attemptPendingUpdates() {
     	attemptSelection(false);
     }
-	
+
 	/**
 	 * Notification a node's children have changed.
 	 * Updates the child count for the parent's widget
 	 * and clears children to be updated.
-	 * 
+	 *
 	 * @param parentNode the parent model node
 	 */
 	protected void nodeChildrenChanged(ModelNode parentNode) {
@@ -960,13 +960,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			setItemCount(widget, childCount);
 			clearChildren(widget);
 			attemptPendingUpdates();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Notification children have been added to the end
 	 * of the given parent.
-	 * 
+	 *
 	 * @param parentNode the parent model node
 	 */
 	protected void nodeChildrenAdded(ModelNode parentNode) {
@@ -975,15 +975,15 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			int childCount = parentNode.getChildCount();
 			setItemCount(widget, childCount);
 			attemptPendingUpdates();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Notification children have been added to the end
 	 * of the given parent.
-	 * 
+	 *
 	 * @param parentNode the parent model node
-	 * @param index the index of the child that was removed 
+	 * @param index the index of the child that was removed
 	 */
 	protected void nodeChildRemoved(ModelNode parentNode, int index) {
 		Widget widget = findItem(parentNode);
@@ -1000,13 +1000,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 				clearChild(widget, i);
 			}
 			attemptPendingUpdates();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Unmaps the node from its widget and all of its children nodes from
 	 * their widgets.
-	 * 
+	 *
 	 * @param node the model node
 	 */
 	protected void unmapNode(ModelNode node) {
@@ -1034,10 +1034,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					return node;
 				}
 			}
-        }    	
+        }
         return null;
     }
-    
+
     /**
      * Returns the item for the node or <code>null</code>
      * @param node the model node
@@ -1049,26 +1049,26 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * A virtual item has been exposed in the control, map its data.
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
 	@Override
-	public void handleEvent(final Event event) {		
+	public void handleEvent(final Event event) {
 		update((Item)event.item, event.index);
     }
-	
+
 	/**
 	 * Update the given item.
-	 * 
+	 *
 	 * @param item item to update
 	 * @param index index of item in parent's children
 	 */
 	protected void update(Item item, int index) {
 		restoreLabels(item);
 		int level = 0;
-		
+
 		Widget parentItem = getParentWidget(item);
 		if (DebugUIPlugin.DEBUG_VIEWER) {
 			DebugUIPlugin.trace("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
@@ -1105,7 +1105,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 				setNodeIndex(pindex, level);
 				parentItem = parent;
 			}
-			
+
 			node = getModel().getRootNode();
 			if (node == null) {
 				if (DebugUIPlugin.DEBUG_VIEWER) {
@@ -1132,8 +1132,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 				}
 			}
 		}
-		
-		
+
+
 		// map the node to the element and refresh it
 		if (node != null) {
 			mapElement(node, item);
@@ -1146,13 +1146,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			if (DebugUIPlugin.DEBUG_VIEWER) {
 				DebugUIPlugin.trace("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Sets the index of a child node being mapped at the given expansion level
 	 * in the tree.
-	 * 
+	 *
 	 * @param nodeIndex the index of the node
 	 * @param level the expansion level
 	 */
@@ -1165,25 +1165,25 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		fSetDataIndicies[level] = nodeIndex;
 	}
-	
+
 	/**
 	 * Returns the index of a child node being mapped at the given expansion level in
 	 * the tree.
-	 * 
+	 *
 	 * @param level the expansion level
 	 * @return the child index
 	 */
 	private int getNodeIndex(int level) {
 		return fSetDataIndicies[level];
 	}
-	
+
 	protected abstract int indexOf(Widget parent, Widget child);
-	
+
 	protected abstract void restoreLabels(Item item);
-	
+
 	/**
 	 * Returns the parent widget for the given widget or <code>null</code>
-	 * 
+	 *
 	 * @param widget the widget to get the parent from
 	 * @return parent widget or <code>null</code>
 	 */
@@ -1191,7 +1191,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	/**
 	 * Updates the children of the given node.
-	 * 
+	 *
 	 * @param parent
 	 *            node of which to update children
 	 */

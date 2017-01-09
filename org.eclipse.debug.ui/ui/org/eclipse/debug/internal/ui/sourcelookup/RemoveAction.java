@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,15 +19,15 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * The action used to remove source containers in the source location dialog/tab.
- * 
+ *
  */
 public class RemoveAction extends SourceContainerAction {
 	public RemoveAction() {
-		super(SourceLookupUIMessages.sourceTab_removeButton); 
+		super(SourceLookupUIMessages.sourceTab_removeButton);
 	}
 	/**
 	 * Removes all selected entries.
-	 * 
+	 *
 	 * @see IAction#run()
 	 */
 	@Override
@@ -37,7 +37,7 @@ public class RemoveAction extends SourceContainerAction {
 		list.removeAll(targets);
 		setEntries(list);
 	}
-	
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
@@ -46,5 +46,5 @@ public class RemoveAction extends SourceContainerAction {
 		//check that something is selected and it is a root tree node.
 		return !selection.isEmpty() && getViewer().getTree().getSelection()[0].getParentItem()==null;
 	}
-	
+
 }

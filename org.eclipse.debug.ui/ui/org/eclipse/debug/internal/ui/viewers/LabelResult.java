@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,17 +23,17 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 	public LabelResult(ModelNode node, AsynchronousModel model) {
 		super(node, model);
 	}
-	
+
 	@Override
 	protected synchronized void scheduleViewerUpdate(long ms) {
 		notifyAll();
 	}
-	
+
 	@Override
 	public synchronized boolean isDone() {
 		return super.isDone();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getElement()
 	 */
@@ -80,5 +80,5 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 		return level;
 	}
 
-	
+
 }

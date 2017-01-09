@@ -41,31 +41,31 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
                     return new RGB(255, 0, 0);
                 }
             }
-        }		
+        }
 		return super.getForeground(elementPath, presentationContext, columnId);
 	}
-	
+
    @Override
 protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
        if (columnId == null) {
            return super.getLabel(elementPath, context, columnId);
        } else {
            IExpression expression = (IExpression) elementPath.getLastSegment();
-           IValue value = expression.getValue();     
+           IValue value = expression.getValue();
            return getColumnText(expression, value, context, columnId);
        }
     }
-    
+
     /**
      * Returns text for a specific columns for the expression/value.
-     * 
+     *
      * @param expression expression to retrieve text for
      * @param value the value associated with the variable
      * @param context presentation context specifying how to display the text
      * @param columnId the column to get the text for
      * @return the label text
      * @throws CoreException Error while retrieving data from model.
-     * 
+     *
      * @since 3.6
      */
     private String getColumnText(IExpression expression, IValue value, IPresentationContext context, String columnId) throws CoreException {
@@ -74,18 +74,18 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
         } else if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(columnId)) {
             return getExpressionValueText(expression, value, context);
         } else if (IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE.equals(columnId) ||
-        		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE.equals(columnId)) 
+        		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE.equals(columnId))
         {
             if (value != null) {
                 return getValueTypeName(null, value, context);
             }
-        }   
+        }
         return null;
     }
-    
+
     /**
      * Returns the expression's text to show in the view's name column.
-     * 
+     *
      * @param expression expression to retrieve text for
      * @param context presentation context specifying how to display the text
      * @return Returns the expression's text to show in the view's name column.
@@ -96,12 +96,12 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
         if (expression instanceof IWatchExpression) {
             return getWatchExpressionName((IWatchExpression) expression, context);
         }
-        return expression.getExpressionText();            
+        return expression.getExpressionText();
     }
-    
+
     /**
      * Returns the watch expression's text to show in the view's name column.
-     * 
+     *
      * @param expression the expression
      * @param context associated presentation context
      * @return Returns the watch expression's text to show in the view's name column.
@@ -109,7 +109,7 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
      */
     private String getWatchExpressionName(IWatchExpression expression, IPresentationContext context) {
         StringBuffer result= new StringBuffer();
-        
+
         String snippet = expression.getExpressionText().trim();
         StringBuffer snippetBuffer = new StringBuffer();
 		if (snippet.length() > 254) {
@@ -120,24 +120,24 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
             snippetBuffer.append(snippet);
         }
         snippet = snippetBuffer.toString().replaceAll("[\n\r\t]+", " ");  //$NON-NLS-1$//$NON-NLS-2$
-        
+
         result.append('"');
         result.append(snippet);
         result.append('"');
-        
+
         return result.toString();
     }
 
     /**
-     * Returns the expression's value, or a message to show in the value column, 
+     * Returns the expression's value, or a message to show in the value column,
      * if the value is not available.
-     * 
+     *
      * @param expression expression to retrieve text for
      * @param value the value associated with the variable
      * @param context presentation context specifying how to display the text
-     * @return string representing the expression's value 
+     * @return string representing the expression's value
      * @throws CoreException Error while retrieving data from model.
-     * 
+     *
      * @since 3.6
      */
     protected String getExpressionValueText(IExpression expression, IValue value, IPresentationContext context) throws CoreException {
@@ -146,23 +146,23 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
             StringBuffer result = new StringBuffer();
 
 			if (watchExpression.isPending() && value == null) {
-                result.append(DebugUIMessages.DefaultLabelProvider_12); 
+                result.append(DebugUIMessages.DefaultLabelProvider_12);
             } else if (watchExpression.hasErrors()) {
-                result.append(DebugUIMessages.DefaultLabelProvider_13); 
+                result.append(DebugUIMessages.DefaultLabelProvider_13);
             } else if (value != null) {
                 result.append( getValueText(null, value, context) );
             }
             if (!watchExpression.isEnabled()) {
-                result.append(DebugUIMessages.DefaultLabelProvider_15); 
+                result.append(DebugUIMessages.DefaultLabelProvider_15);
             }
 
             return result.toString();
         }
-        
+
         if (value != null) {
             return getValueText(null, value, context);
         }
         return null;
     }
-    
+
 }

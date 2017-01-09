@@ -45,7 +45,7 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 	/**
 	 * the predefined width of the wrapping label for the expression to enter
 	 * combo
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private static final int LABEL_WIDTH = 210;

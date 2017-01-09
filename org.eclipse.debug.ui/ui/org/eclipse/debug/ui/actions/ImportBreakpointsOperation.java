@@ -69,12 +69,12 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	private boolean fCreateWorkingSets = false;
 
 	private ArrayList<IBreakpoint> fAdded = new ArrayList<IBreakpoint>();
-	
+
 	private String fCurrentWorkingSetProperty = null;
 
 	private BreakpointManager fManager = (BreakpointManager) DebugPlugin.getDefault().getBreakpointManager();
-	
-	/** 
+
+	/**
 	 * When a buffer is specified, a file is not used.
 	 */
 	private StringBuffer fBuffer = null;
@@ -83,8 +83,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	/**
 	 * Constructs an operation to import breakpoints.
-	 * 
-	 * @param fileName the file to read breakpoints from - the file should have been 
+	 *
+	 * @param fileName the file to read breakpoints from - the file should have been
 	 *            created from an export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
 	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
@@ -98,7 +98,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	/**
 	 * Constructs an operation to import breakpoints.
-	 * 
+	 *
 	 * @param fileName the file to read breakpoints from - the file should have been created from an
 	 *            export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
@@ -115,12 +115,12 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		fCreateWorkingSets = createWorkingSets;
 		fImportBreakpoints = importBreakpoints;
 	}
-	
+
 	/**
 	 * Constructs an operation to import breakpoints from a string buffer. The buffer
 	 * must contain a memento created an {@link ExportBreakpointsOperation}.
-	 * 
-	 * @param buffer the string buffer to read breakpoints from - the file should have been 
+	 *
+	 * @param buffer the string buffer to read breakpoints from - the file should have been
 	 *            created from an export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
 	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
@@ -132,11 +132,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	public ImportBreakpointsOperation(StringBuffer buffer, boolean overwrite, boolean createWorkingSets) {
 		this(buffer, overwrite, createWorkingSets, true);
 	}
-	
+
 	/**
 	 * Constructs an operation to import breakpoints from a string buffer. The buffer must contain a
 	 * memento created an {@link ExportBreakpointsOperation}.
-	 * 
+	 *
 	 * @param buffer the string buffer to read breakpoints from - the file should have been created
 	 *            from an export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
@@ -152,7 +152,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		fOverwriteAll = overwrite;
 		fCreateWorkingSets = createWorkingSets;
 		fImportBreakpoints = importBreakpoints;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -202,9 +202,9 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				}
 
 				// filter resource breakpoints that do not exist in this workspace
-				if(resource != null) {	
+				if(resource != null) {
 					try {
-						participants = fManager.getImportParticipants((String) attributes.get(IImportExportConstants.IE_NODE_TYPE)); 
+						participants = fManager.getImportParticipants((String) attributes.get(IImportExportConstants.IE_NODE_TYPE));
 					}
 					catch(CoreException ce) {}
 					IMarker marker = findExistingMarker(attributes, participants);
@@ -229,16 +229,16 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			if(fAdded.size() > 0 && fImportBreakpoints) {
 				fManager.addBreakpoints(fAdded.toArray(new IBreakpoint[fAdded.size()]));
 			}
-		} 
+		}
 		catch(CoreException ce) {
-			throw new InvocationTargetException(ce, 
+			throw new InvocationTargetException(ce,
  MessageFormat.format("There was a problem importing breakpoints from: {0}", new Object[] { fFileName })); //$NON-NLS-1$
 		}
 		finally {
 			localmonitor.done();
 		}
 	}
-	
+
 	/**
 	 * Returns a marker backing an existing breakpoint based on the given set of breakpoint attributes
 	 * @param attributes the map of attributes to compare for marker equality
@@ -247,7 +247,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @since 3.5
 	 */
 	protected IMarker findExistingMarker(Map<String, Object> attributes, IBreakpointImportParticipant[] participants) {
-		IBreakpoint[] bps = fManager.getBreakpoints();		 
+		IBreakpoint[] bps = fManager.getBreakpoints();
 		for(int i = 0; i < bps.length; i++) {
 			for(int j = 0; j < participants.length; j++) {
 				try {
@@ -260,7 +260,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Collects all of the properties for a breakpoint from the memento describing it.
 	 * The values in the map will be one of:
@@ -275,7 +275,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	protected Map<String, Object> collectBreakpointProperties(IMemento memento) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		
+
 		//collect attributes from the 'breakpoint' node
 		map.put(IImportExportConstants.IE_BP_ENABLED, memento.getBoolean(IImportExportConstants.IE_BP_ENABLED));
 		map.put(IImportExportConstants.IE_BP_PERSISTANT, memento.getBoolean(IImportExportConstants.IE_BP_PERSISTANT));
@@ -297,14 +297,14 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		map.put(IImportExportConstants.IE_NODE_PATH, child.getString(IImportExportConstants.IE_NODE_PATH));
 		return map;
 	}
-	
+
 	/**
 	 * Collects the 'name' and 'value' key / attribute from the given memento and places it in the specified map
-	 * @param memento the memento to read a name / value attribute from 
+	 * @param memento the memento to read a name / value attribute from
 	 * @param map the map to add the read attribute to
 	 */
 	private void readAttribute(IMemento memento, Map<String, Object> map) {
-		String name = memento.getString(IImportExportConstants.IE_NODE_NAME), 
+		String name = memento.getString(IImportExportConstants.IE_NODE_NAME),
 		   	   value = memento.getString(IImportExportConstants.IE_NODE_VALUE);
 		if (value != null && name != null) {
 			if (name.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
@@ -323,7 +323,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			}
 		}
 	}
-	
+
 	/**
 	 * restores all of the attributes back into the given marker, recreates the breakpoint in the
 	 * breakpoint manager, and optionally recreates any working set(s) the breakpoint belongs to.
@@ -368,7 +368,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates the working sets the given breakpoint belongs to
 	 * @param wsnames the array of working set names
@@ -407,13 +407,13 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			}
 		}
 	}
-	
+
 	/**
 	 * Collects all of the breakpoint working sets that contain the given {@link IBreakpoint}
 	 * in the given list
-	 * 
-	 * @param breakpoint the breakpoint to collect working set containers from 
-	 * @param collector the list to collect containing working sets in 
+	 *
+	 * @param breakpoint the breakpoint to collect working set containers from
+	 * @param collector the list to collect containing working sets in
 	 * @since 3.5
 	 */
 	private void collectContainingWorkingsets(IBreakpoint breakpoint, List<IWorkingSet> collector) {
@@ -426,7 +426,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			}
 		}
 	}
-	
+
 	/**
 	 * Method to ensure markers and breakpoints are not both added to the working set
 	 * @param set the set to check
@@ -442,11 +442,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the breakpoints that were imported by this operation, possibly
-	 * an empty list. 
-	 * 
+	 * an empty list.
+	 *
 	 * @return breakpoints imported by this operation
 	 * @since 3.5
 	 */

@@ -34,13 +34,13 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 
 public interface IDebugView extends IViewPart {
-	
+
 	/**
 	 * Action id for a view's copy action. Any view
 	 * with a copy action that should be invoked when
 	 * CTRL+C is pressed should store their
 	 * copy action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String COPY_ACTION = ActionFactory.COPY.getId();
@@ -50,7 +50,7 @@ public interface IDebugView extends IViewPart {
 	 * with a cut action that should be invoked when
 	 * CTRL+X is pressed should store their
 	 * cut action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String CUT_ACTION = ActionFactory.CUT.getId();
@@ -60,7 +60,7 @@ public interface IDebugView extends IViewPart {
 	 * with an action that should be invoked when
 	 * the mouse is double-clicked should store their
 	 * double-click action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	 //$NON-NLS-1$
@@ -70,7 +70,7 @@ public interface IDebugView extends IViewPart {
 	 * with a find action that should be invoked when
 	 * CTRL+F is pressed should store their
 	 * find action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String FIND_ACTION = ActionFactory.FIND.getId();
@@ -80,7 +80,7 @@ public interface IDebugView extends IViewPart {
 	 * with a paste action that should be invoked when
 	 * CTRL+V is pressed should store their
 	 * paste action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String PASTE_ACTION = ActionFactory.PASTE.getId();
@@ -90,7 +90,7 @@ public interface IDebugView extends IViewPart {
 	 * with a remove action that should be invoked when
 	 * the delete key is pressed should store their
 	 * remove action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
@@ -100,18 +100,18 @@ public interface IDebugView extends IViewPart {
 	 * with a select all action that should be invoked when
 	 * CTRL+A is pressed should store their
 	 * select all action with this key.
-	 * 
+	 *
 	 * @see #setAction(String, IAction)
 	 */
 	public static final String SELECT_ALL_ACTION = ActionFactory.SELECT_ALL.getId();
-	
+
 	/**
 	 * Returns the viewer contained in this debug view.
 	 *
 	 * @return viewer
 	 */
 	public Viewer getViewer();
-	
+
 	/**
 	 * Returns the debug model presentation for this view specified
 	 * by the debug model identifier.
@@ -122,42 +122,42 @@ public interface IDebugView extends IViewPart {
 	 *     presentation is registered for the specified id
 	 */
 	public IDebugModelPresentation getPresentation(String id);
-	
+
 	/**
 	 * Installs the given action under the given action id.
 	 *
 	 * If the action has an id that maps to one of the global
-	 * action ids defined by this interface, the action is registered 
+	 * action ids defined by this interface, the action is registered
 	 * as a global action handler.
 	 *
 	 * If the action is an instance of <code>IUpdate</code> it is added/remove
 	 * from the collection of updateables associated with this view.
-	 * 
+	 *
 	 * @param actionID the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
 	 */
 	public void setAction(String actionID, IAction action);
-	
+
 	/**
 	 * Adds the given IUpdate to this view's collection of updatable
 	 * objects.  Allows the view to periodically update these registered
-	 * objects.  
+	 * objects.
 	 * Has no effect if an identical IUpdate is already registered.
-	 * 
+	 *
 	 * @param updatable The IUpdate instance to be added
 	 */
 	public void add(IUpdate updatable);
-	
+
 	/**
 	 * Removes the given IUpdate from this view's collection of updatable
 	 * objects.
  	 * Has no effect if an identical IUpdate was not already registered.
- 	 * 
+ 	 *
 	 * @param updatable The IUpdate instance to be removed
 	 */
 	public void remove(IUpdate updatable);
-	
+
 	/**
 	 * Returns the action installed under the given action id.
 	 *
@@ -166,7 +166,7 @@ public interface IDebugView extends IViewPart {
 	 * @see #setAction
 	 */
 	public IAction getAction(String actionID);
-	
+
 	/**
 	 * Returns the context menu manager for this view.
 	 *

@@ -22,7 +22,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * categorize breakpoints. Images and labels for categories are generated
  * via workbench adapters.
  * <p>
- * Organizers may optionally support breakpoint recategorization. 
+ * Organizers may optionally support breakpoint recategorization.
  * </p>
  * <p>
  * Following is example plug-in XML for contributing a breakpoint organizer.
@@ -53,7 +53,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * @since 3.1
  */
 public interface IBreakpointOrganizerDelegate {
-    
+
     /**
      * Change event id when a category's breakpoints have changed.
      * The <code>oldValue</code> of the <code>PropertyChangeEvent</code> will be the
@@ -71,84 +71,84 @@ public interface IBreakpointOrganizerDelegate {
      * the breakpoint. Categories must return <code>true</code> when sent
      * the message <code>equals(Object)</code> with an equivalent category
      * as an argument.
-     * 
+     *
      * @param breakpoint breakpoint to classify
      * @return categories of the given breakpoint or <code>null</code>
      */
     public IAdaptable[] getCategories(IBreakpoint breakpoint);
-    
+
     /**
      * Adds the specified listener. Has no effect if an identical listener is
      * already registered.
-     * 
+     *
      * @param listener listener to add
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener);
-    
+
     /**
      * Removes the specified listener. Has no effect if an identical listener
      * is not already registered.
-     * 
+     *
      * @param listener listener to remove
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener);
-    
+
     /**
      * Adds the specified breakpoint to the given category. Only called
      * if <code>canAdd(...)</code> returns <code>true</code> for the given
      * breakpoint and category.
-     * 
+     *
      * @param breakpoint breakpoint to recategorize
      * @param category the breakpoint's new category
      */
     public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category);
-    
+
     /**
      * Removes the specified breakpoint from the given category. Only
      * called if <code>canRemove(...)</code> returns <code>true</code> for
      * the given breakpoint and category.
-     * 
+     *
      * @param breakpoint breakpoint to recategorize
      * @param category the category the breakpoint is remove from
      */
     public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category);
-    
+
     /**
      * Returns whether the given breakpoint can be categorized in the
      * specified category.
-     *  
+     *
      * @param breakpoint breakpoint to recatogorize
      * @param category the category to add the breakpoint to
      * @return whether the given breakpoint can be categorized in the
      * specified category
      */
     public boolean canAdd(IBreakpoint breakpoint, IAdaptable category);
-    
+
     /**
      * Returns whether the given breakpoint can be removed from the given
      * category.
-     * 
+     *
      * @param breakpoint breakpoint to recategorize
      * @param category the category to remove the breakpoint from
      * @return whether the given breakpoint can be removed from the given
      * category
      */
     public boolean canRemove(IBreakpoint breakpoint, IAdaptable category);
-    
+
     /**
      * Returns all categories managed by this organizer, or <code>null</code>.
      * When <code>null</code> is returned, the breakpoints view only displays
      * categories that contain breakpoints. When a collection of categories
      * is returned the breakpoints will display all of the categories, some of
      * which may be empty.
-     *  
+     *
      * @return all categories managed by this organizer, or <code>null</code>
      */
     public IAdaptable[] getCategories();
-    
+
     /**
      * Disposes this breakpoint organizer.
      */
     public void dispose();
-    
+
 }

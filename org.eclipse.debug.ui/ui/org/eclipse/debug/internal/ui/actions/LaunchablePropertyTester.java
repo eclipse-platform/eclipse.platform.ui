@@ -53,10 +53,10 @@ public class LaunchablePropertyTester extends PropertyTester {
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
-	
+
 	/**
 	 * Returns the resource this property page is open on.
-	 * 
+	 *
 	 * @return resource
 	 */
 	protected IResource getResource(Object element) {

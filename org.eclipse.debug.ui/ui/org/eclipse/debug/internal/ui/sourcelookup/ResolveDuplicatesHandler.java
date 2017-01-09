@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * Status handler to prompt for duplicate source element resolution.
- * 
+ *
  * @since 3.0
  */
 public class ResolveDuplicatesHandler implements IStatusHandler {
@@ -36,7 +36,7 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 		List<?> sources = (List<?>) args[1];
 		return resolveSourceElement(sources);
 	}
-	
+
 	public Object resolveSourceElement(List<?> sources) {
 		Object file = null;
 		sources = removeSourceNotFoundEditors(sources);
@@ -47,16 +47,16 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 		}
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(DebugUIPlugin.getShell(), new SourceElementLabelProvider());
 		dialog.setMultipleSelection(false);
-		dialog.setTitle(SourceLookupUIMessages.ResolveDuplicatesHandler_0); 
-		dialog.setMessage(SourceLookupUIMessages.ResolveDuplicatesHandler_1); 
+		dialog.setTitle(SourceLookupUIMessages.ResolveDuplicatesHandler_0);
+		dialog.setMessage(SourceLookupUIMessages.ResolveDuplicatesHandler_1);
 		dialog.setElements(sources.toArray());
-		dialog.open();											
+		dialog.open();
 		if(dialog.getReturnCode() == Window.OK) {
-			file = dialog.getFirstResult();		
+			file = dialog.getFirstResult();
 		}
 		return file;
 	}
-	
+
 	/**
 	 * Remove extra source not found editors, if any.
 	 * If multiple source not found editors and no "real" source inputs,

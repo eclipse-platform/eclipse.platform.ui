@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,20 +35,20 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests coalescing of children update requests.
- * 
+ *
  * @since 3.3
  */
 public class ChildrenUpdateTests extends TestCase {
-	
+
 	class BogusModelContentProvider extends TreeModelContentProvider {
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#getViewer()
 		 */
 		@Override
 		protected IInternalTreeModelViewer getViewer() {
 			return new IInternalTreeModelViewer(){
-			
+
 				@Override
 				public void setSelection(ISelection selection) {}
 				@Override
@@ -105,52 +105,52 @@ public class ChildrenUpdateTests extends TestCase {
 				public void refresh() {}
                 @Override
 				public void refresh(Object element) {}
-			
+
 				@Override
 				public ISelection getSelection() {
 					return null;
 				}
-			
+
 				@Override
 				public IPresentationContext getPresentationContext() {
 					return null;
 				}
-			
+
 				@Override
 				public Object getInput() {
 					return null;
 				}
-			
+
 				@Override
 				public ViewerLabel getElementLabel(TreePath path, String columnId) {
 					return null;
 				}
-			
+
 				@Override
 				public Display getDisplay() {
 					return DebugUIPlugin.getStandardDisplay();
 				}
-			
+
 				@Override
 				public int getAutoExpandLevel() {
 					return 0;
 				}
-			
-			
+
+
 				@Override
 				public boolean overrideSelection(ISelection current, ISelection candidate) {
 					return false;
 				}
-			
+
 				@Override
 				public void insert(Object parentOrTreePath, Object element, int position) {
 				}
-			
+
 				@Override
 				public TreePath getTopElementPath() {
 					return null;
 				}
-			
+
 				@Override
 				public ViewerFilter[] getFilters() {
 					return null;
@@ -161,36 +161,36 @@ public class ChildrenUpdateTests extends TestCase {
 				@Override
 				public void setFilters(ViewerFilter... filters) {
 				}
-				
+
 				@Override
 				public boolean getExpandedState(Object elementOrTreePath) {
 					return false;
 				}
-			
+
 				@Override
 				public Object getChildElement(TreePath path, int index) {
 					return null;
 				}
-			
+
                 @Override
 				public boolean getHasChildren(Object elementOrTreePath) {
                     return false;
                 }
-            
+
 				@Override
 				public int getChildCount(TreePath path) {
 					return 0;
 				}
-			
+
 				@Override
 				public int findElementIndex(TreePath parentPath, Object element) {
 					return 0;
 				}
-			
+
 				@Override
 				public void expandToLevel(Object elementOrTreePath, int level) {
 				}
-			
+
 				@Override
 				public void autoExpand(TreePath elementPath) {
 				}
@@ -199,17 +199,17 @@ public class ChildrenUpdateTests extends TestCase {
 				public boolean getElementChildrenRealized(TreePath parentPath) {
                     return false;
                 }
-                
+
                 @Override
 				public boolean getElementChecked(TreePath path) {
                     return false;
                 }
-                
+
                 @Override
 				public boolean getElementGrayed(TreePath path) {
                     return false;
                 }
-                
+
                 @Override
 				public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
                 }
@@ -225,22 +225,22 @@ public class ChildrenUpdateTests extends TestCase {
                 @Override
 				public String[] getVisibleColumns() {
                     return null;
-                }                
+                }
 			};
 		}
 	}
-	
+
 	/**
 	 * @param name
 	 */
 	public ChildrenUpdateTests(String name) {
 		super(name);
 	}
-	
+
 	protected TreeModelContentProvider getContentProvider() {
 		return new BogusModelContentProvider();
 	}
-	
+
 	/**
 	 * Tests coalescing of requests
 	 */
@@ -252,17 +252,17 @@ public class ChildrenUpdateTests extends TestCase {
 		assertTrue("Should coalesce", update1.coalesce(update2)); //$NON-NLS-1$
 		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
 		assertEquals("Wrong length", 2, update1.getLength()); //$NON-NLS-1$
-		
+
 		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 3, null);
 		assertTrue("Should coalesce", update1.coalesce(update2)); //$NON-NLS-1$
 		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
 		assertEquals("Wrong length", 3, update1.getLength()); //$NON-NLS-1$
-		
+
 		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null);
 		assertTrue("Should coalesce", update1.coalesce(update2)); //$NON-NLS-1$
 		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
 		assertEquals("Wrong length", 3, update1.getLength()); //$NON-NLS-1$
-		
+
 		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 5, null);
 		assertFalse("Should not coalesce", update1.coalesce(update2)); //$NON-NLS-1$
 		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$

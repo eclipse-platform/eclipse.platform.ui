@@ -24,7 +24,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * Following is an example definition of a source locator extension.
  * <pre>
  * &lt;extension point="org.eclipse.debug.core.sourceLocators"&gt;
- *   &lt;sourceLocator 
+ *   &lt;sourceLocator
  *      id="com.example.ExampleIdentifier"
  *      class="com.example.ExampleSourceLocator"
  *      name="Example Source Locator"&gt;
@@ -44,34 +44,34 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * Clients may implement this interface.
  * </p>
  * @see org.eclipse.debug.core.ILaunch
- * @see IStackFrame 
+ * @see IStackFrame
  * @since 2.0
  */
 public interface IPersistableSourceLocator extends ISourceLocator {
-	
+
 	/**
 	 * Returns a memento that can be used to reconstruct
 	 * this source locator
-	 * 
+	 *
 	 * @return a memento that can be used to reconstruct
 	 *  this source locator
 	 * @exception CoreException if unable to construct a memento
 	 */
 	public String getMemento() throws CoreException;
-	
+
 	/**
 	 * Initializes this source locator based on the given
 	 * memento.
-	 * 
+	 *
 	 * @param memento a memento to initialize this source locator
-	 * @exception CoreException on failure to initialize 
+	 * @exception CoreException on failure to initialize
 	 */
 	public void initializeFromMemento(String memento) throws CoreException;
-	
+
 	/**
 	 * Initializes this source locator to perform default
 	 * source lookup for the given launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration this source locator
 	 *  will be performing source lookup for
 	 * @exception CoreException on failure to initialize

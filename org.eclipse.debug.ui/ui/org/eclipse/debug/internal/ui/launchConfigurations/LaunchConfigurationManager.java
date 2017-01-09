@@ -81,10 +81,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Manages UI related launch configuration artifacts
- * 
+ *
  * Since 3.3 the Launch Configuration Manager is an <code>ISaveParticipant</code>, allowing it to participate in
  * workspace persistence life-cycles.
- * 
+ *
  * @see ISaveParticipant
  * @see org.eclipse.debug.ui.ILaunchShortcut
  * @see ILaunchGroup
@@ -110,7 +110,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			LaunchShortcutExtension shortcutB = b;
 			String labelB = shortcutB.getLabel();
 			String pathB = shortcutB.getMenuPath();
-			
+
 			// group by path, then sort by label
 			// a null path sorts last (i.e. highest)
 			if (nullOrEqual(pathA, pathB)) {
@@ -135,7 +135,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			}
 			return pathA.compareToIgnoreCase(pathB);
 		}
-		
+
 		private boolean nullOrEqual(String a, String b) {
 			if (a == null) {
 				return b == null;
@@ -144,17 +144,17 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 
 	}
-	
+
 	/**
 	 * Launch group extensions, keyed by launch group identifier.
 	 */
 	protected Map<String, LaunchGroupExtension> fLaunchGroups;
-	
+
 	/**
 	 * Launch histories keyed by launch group identifier
-	 */	
+	 */
 	protected Map<String, LaunchHistory> fLaunchHistories;
-		
+
 	/**
 	 * The list of registered implementors of <code>ILaunchHistoryChangedListener</code>
 	 */
@@ -164,33 +164,33 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Launch shortcuts
 	 */
 	private List<LaunchShortcutExtension> fLaunchShortcuts = null;
-	
+
 	/**
 	 * Launch shortcuts, cached by perspective ids
 	 */
 	private Map<String, List<LaunchShortcutExtension>> fLaunchShortcutsByPerspective = null;
-		
+
 	/**
 	 * Cache of launch configuration tab images with error overlays
 	 */
 	protected ImageRegistry fErrorImages = null;
-	
+
 	/**
 	 * true when restoring launch history
 	 */
 	protected boolean fRestoring = false;
-		
+
 	/**
 	 * The name of the file used to persist the launch history.
 	 */
 	private static final String LAUNCH_CONFIGURATION_HISTORY_FILENAME = "launchConfigurationHistory.xml"; //$NON-NLS-1$
-	
+
 	/**
-	 * performs initialization of the manager when it is started 
+	 * performs initialization of the manager when it is started
 	 */
-	public void startup() {				
+	public void startup() {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		launchManager.addLaunchListener(this);	
+		launchManager.addLaunchListener(this);
 		DebugUIPlugin.getDefault().addSaveParticipant(this);
 		//update histories for launches already registered
 		ILaunch[] launches = launchManager.getLaunches();
@@ -198,23 +198,23 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			launchAdded(launches[i]);
 		}
 	}
-	
+
 	/**
 	 * Returns whether any launch config supports the given mode.
-	 * 
+	 *
 	 * @param mode launch mode
 	 * @return whether any launch config supports the given mode
 	 */
 	public boolean launchModeAvailable(String mode) {
 		return ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).launchModeAvailable(mode);
 	}
-	
+
 	/**
 	 * Returns whether the given launch configuration should be visible in the
 	 * debug UI. If the config is marked as private, or belongs to a different
 	 * category (i.e. non-null), then this configuration should not be displayed
 	 * in the debug UI.
-	 * 
+	 *
 	 * @param launchConfiguration the configuration to check for the {@link IDebugUIConstants#ATTR_PRIVATE} attribute
 	 * @return boolean
 	 */
@@ -225,11 +225,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns a collection of launch configurations that does not contain
 	 * configurations from disabled activities.
-	 * 
+	 *
 	 * @param configurations a collection of configurations
 	 * @return the given collection minus any configurations from disabled activities
 	 */
@@ -250,7 +250,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				if (DebugUIPlugin.doLaunchConfigurationFiltering(configuration) & !WorkbenchActivityHelper.filterItem(contribution)) {
 					filteredConfigs.add(configuration);
 				}
-			} 
+			}
 			catch (CoreException e) {DebugUIPlugin.log(e.getStatus());}
 		}
 		return filteredConfigs.toArray(new ILaunchConfiguration[filteredConfigs.size()]);
@@ -279,9 +279,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return set.toArray(new ILaunchDelegate[set.size()]);
 	}
-	
+
 	/**
-	 * Performs cleanup operations when the manager is being disposed of. 
+	 * Performs cleanup operations when the manager is being disposed of.
 	 */
 	public void shutdown() {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -293,13 +293,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		DebugUIPlugin.getDefault().removeSaveParticipant(this);
 	}
-	
+
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	@Override
 	public void launchRemoved(ILaunch launch) {}
-	
+
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
@@ -315,7 +315,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	public void launchAdded(final ILaunch launch) {
 		removeTerminatedLaunches(launch);
 	}
-	
+
 	/**
 	 * Removes terminated launches from the launch view, leaving the specified launch in the view
 	 * @param newLaunch the newly added launch to leave in the view
@@ -332,16 +332,16 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	        }
 	    }
 	}
-	
+
 	/**
 	 * Returns the most recent launch for the given group, or <code>null</code>
 	 * if none. This method does not include any filtering for the returned launch configuration.
-	 *	
+	 *
 	 * This method is exposed via DebugTools.getLastLaunch
 	 * @param groupId the identifier of the {@link ILaunchGroup} to get the last launch from
 	 *
 	 * @return the last launch, or <code>null</code> if none
-	 */	
+	 */
 	public ILaunchConfiguration getLastLaunch(String groupId) {
 		LaunchHistory history = getLaunchHistory(groupId);
 		if (history != null) {
@@ -349,11 +349,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the most recent launch for the given group taking launch configuration
 	 * filters into account, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param groupId launch group
 	 * @return the most recent, un-filtered launch
 	 */
@@ -367,7 +367,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Add the specified listener to the list of listeners that will be notified when the
 	 * launch history changes.
@@ -378,7 +378,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			fLaunchHistoryChangedListeners.add(listener);
 		}
 	}
-	
+
 	/**
 	 * Remove the specified listener from the list of listeners that will be notified when the
 	 * launch history changes.
@@ -387,7 +387,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	public void removeLaunchHistoryListener(ILaunchHistoryChangedListener listener) {
 		fLaunchHistoryChangedListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Notify all launch history listeners that the launch history has changed in some way.
 	 */
@@ -405,7 +405,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 */
 	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException {
 		Document doc = DebugUIPlugin.getDocument();
-		Element historyRootElement = doc.createElement(IConfigurationElementConstants.LAUNCH_HISTORY); 
+		Element historyRootElement = doc.createElement(IConfigurationElementConstants.LAUNCH_HISTORY);
 		doc.appendChild(historyRootElement);
 		for (LaunchHistory history : fLaunchHistories.values()) {
 			Element groupElement = doc.createElement(IConfigurationElementConstants.LAUNCH_GROUP);
@@ -439,13 +439,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			}
 		}
 	}
-				
+
 	/**
 	 * Returns the path to the local file for the launch history
 	 * @return the file path for the launch history file
 	 */
 	protected IPath getHistoryFilePath() {
-		return DebugUIPlugin.getDefault().getStateLocation().append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
+		return DebugUIPlugin.getDefault().getStateLocation().append(LAUNCH_CONFIGURATION_HISTORY_FILENAME);
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		synchronized (this) {
 			if (fLaunchHistories == null || fRestoring) {
 				return;
-			}			
+			}
 		}
 		boolean shouldsave = false;
 		for (LaunchHistory history : fLaunchHistories.values()) {
@@ -471,13 +471,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			String xml = getHistoryAsXML();
 			File file = new File(osHistoryPath);
 			file.createNewFile();
-			
+
 			try (FileOutputStream stream = new FileOutputStream(file)) {
 				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 			}
 		}
 	}
-	
+
 	/**
 	 * Find the XML history file and parse it.  Place the corresponding configurations
 	 * in the appropriate history, and set the most recent launch.
@@ -509,9 +509,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		} catch (IOException exception) {
 			DebugUIPlugin.log(exception);
 			return;
-		}	
+		}
 		// If root node isn't what we expect, return
-		if (!rootHistoryElement.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH_HISTORY)) { 
+		if (!rootHistoryElement.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH_HISTORY)) {
 			return;
 		}
 		// For each child of the root node, construct a launch config handle and add it to
@@ -526,7 +526,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
 				entry = (Element) node;
-				if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
+				if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) {
 					createHistoryElement(entry, histories, false);
 				} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
 					createHistoryElement(entry, histories, true);
@@ -534,7 +534,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 					String id = entry.getAttribute(IConfigurationElementConstants.ID);
 					if (id != null) {
 						LaunchHistory history = getLaunchHistory(id);
-						if (history != null) { 
+						if (history != null) {
 							restoreHistory(entry, history);
 						}
 					}
@@ -542,10 +542,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			}
 		}
 	}
-	
+
 	/**
 	 * Restores the given launch history.
-	 * 
+	 *
 	 * @param groupElement launch group history
 	 * @param history associated history cache
 	 */
@@ -574,8 +574,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			}
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Restores a list of configurations.
 	 * @param root element
 	 * @return list of configurations under the element
@@ -589,7 +589,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equals(IConfigurationElementConstants.LAUNCH)) {
-					String memento = element.getAttribute(IConfigurationElementConstants.MEMENTO); 
+					String memento = element.getAttribute(IConfigurationElementConstants.MEMENTO);
 					if (memento != null) {
 						try {
 							ILaunchConfiguration configuration = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
@@ -607,7 +607,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return configs.toArray(new ILaunchConfiguration[configs.size()]);
 	}
-	
+
 	/**
 	 * Construct a launch configuration corresponding to the specified XML
 	 * element, and place it in the appropriate history.
@@ -616,8 +616,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @param prepend if any restored items should be added to to top of the launch history
 	 */
 	private void createHistoryElement(Element entry, LaunchHistory[] histories, boolean prepend) {
-		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO); 
-		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);     
+		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO);
+		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
 			//touch the type to see if its type exists
@@ -633,9 +633,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			}
 		} catch (CoreException e) {
 			//do nothing, as we want to throw away invalid launch history entries silently
-		}	
+		}
 	}
-	
+
 	/**
 	 * Load all registered extensions of the 'launch shortcut' extension point.
 	 */
@@ -644,8 +644,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			// Get the configuration elements
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-	
-			// Load the configuration elements into a Map 
+
+			// Load the configuration elements into a Map
 			fLaunchShortcuts = new ArrayList<LaunchShortcutExtension>(infos.length);
 			for (int i = 0; i < infos.length; i++) {
 				fLaunchShortcuts.add(new LaunchShortcutExtension(infos[i]));
@@ -653,7 +653,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			Collections.sort(fLaunchShortcuts, new ShortcutComparator());
 		}
 	}
-	
+
 	/**
 	 * Load all registered extensions of the 'launch groups' extension point.
 	 */
@@ -662,8 +662,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			// Get the configuration elements
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
 			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-	
-			// Load the configuration elements into a Map 
+
+			// Load the configuration elements into a Map
 			fLaunchGroups = new HashMap<String, LaunchGroupExtension>(infos.length);
 			LaunchGroupExtension ext = null;
 			for (int i = 0; i < infos.length; i++) {
@@ -671,11 +671,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				fLaunchGroups.put(ext.getIdentifier(), ext);
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns all launch shortcuts
-	 * 
+	 *
 	 * @return all launch shortcuts
 	 */
 	public List<LaunchShortcutExtension> getLaunchShortcuts() {
@@ -712,11 +712,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Returns an array of all of the ids of the <code>ILaunchConfigurationType</code>s that apply to the currently
 	 * specified <code>IResource</code>.
-	 * 
+	 *
 	 * @param resource the resource context
 	 * @return an array of applicable <code>ILaunchConfigurationType</code>  ids, or an empty array, never <code>null</code>
 	 * @since 3.3
@@ -747,7 +747,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		ILaunchConfigurationType type = null;
 		for (String id : set) {
 			type = lm.getLaunchConfigurationType(id);
-			if(type != null) { 
+			if(type != null) {
 				if(!types.contains(type) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
 					types.add(type.getIdentifier());
 				}
@@ -755,12 +755,12 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return types.toArray(new String[types.size()]);
 	}
-	
+
 	/**
 	 * Returns an array of the <code>ILaunchConfiguration</code>s that apply to the specified <code>IResource</code>
 	 * @param types the array of launch configuration type identifiers
 	 * @param resource the resource
-	 * @return an array of applicable <code>ILaunchConfiguration</code>s for the specified <code>IResource</code> or an empty 
+	 * @return an array of applicable <code>ILaunchConfiguration</code>s for the specified <code>IResource</code> or an empty
 	 * array if none, never <code>null</code>
 	 * @since 3.3
 	 */
@@ -805,7 +805,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return list.toArray(new ILaunchConfiguration[list.size()]);
 	}
-	
+
 	/**
 	 * Returns if the specified configuration should be considered as a potential candidate
 	 * @param config to configuration
@@ -826,7 +826,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns all launch shortcuts for the given category
 	 * @param category the identifier of the category
@@ -835,11 +835,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 */
 	public List<LaunchShortcutExtension> getLaunchShortcuts(String category) {
 		return filterShortcuts(getLaunchShortcuts(), category);
-	}	
-	
+	}
+
 	/**
 	 * Return a list of filtered launch shortcuts, based on the given category.
-	 *  
+	 *
 	 * @param unfiltered the raw list of shortcuts to filter
 	 * @param category the category to filter by
 	 * @return List
@@ -855,18 +855,18 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				filtered.add(extension);
 			}
 		}
-		return filtered;		
+		return filtered;
 	}
-	
+
 	/**
 	 * Returns all launch shortcuts defined for the given perspective,
 	 * empty list if none.
-	 * 
+	 *
 	 * @param perpsective perspective identifier
 	 * @param category the category for the shortcut
 	 * @return all launch shortcuts defined for the given perspective,
 	 * empty list if none.
-	 * @deprecated the use of perspectives for launch shortcuts has been 
+	 * @deprecated the use of perspectives for launch shortcuts has been
 	 * deprecated since 3.1, use a contextualLaunch element instead
 	 */
 	@Deprecated
@@ -887,10 +887,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		List<LaunchShortcutExtension> list = fLaunchShortcutsByPerspective.get(perpsective);
 		if (list == null) {
 			return Collections.EMPTY_LIST;
-		} 
+		}
 		return filterShortcuts(list, category);
 	}
-	
+
 	/**
 	 * Returns the first occurrence of any one of the configurations in the provided list, if they are found in the launch history
 	 * for the corresponding launch group
@@ -942,7 +942,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the shared config from the selected resource or <code>null</code> if the selected resources is not a shared config
 	 * @param receiver the object to test if it is a shared launch configuration
@@ -978,7 +978,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the image used to display an error in the given tab
 	 * @param tab the tab to get the error image for
@@ -1003,11 +1003,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Return the launch group with the given id, or <code>null</code>
 	 * @param id the identifier of the {@link LaunchGroupExtension}
-	 * 
+	 *
 	 * @return the launch group with the given id, or <code>null</code>
 	 */
 	public LaunchGroupExtension getLaunchGroup(String id) {
@@ -1016,10 +1016,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return fLaunchGroups.get(id);
 	}
-	
+
 	/**
 	 * Return all defined launch groups
-	 * 
+	 *
 	 * @return all defined launch groups
 	 */
 	public ILaunchGroup[] getLaunchGroups() {
@@ -1027,18 +1027,18 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			loadLaunchGroups();
 		}
 		return fLaunchGroups.values().toArray(new ILaunchGroup[fLaunchGroups.size()]);
-	}	
-	
+	}
+
 	/**
 	 * Return the launch history with the given group id, or <code>null</code>
-	 * @param id the identifier of the launch history 
+	 * @param id the identifier of the launch history
 	 * @return the launch history with the given group id, or <code>null</code>
 	 */
 	public LaunchHistory getLaunchHistory(String id) {
 		loadLaunchHistories();
 		return fLaunchHistories.get(id);
-	}	
-	
+	}
+
 	/**
 	 * Returns the singleton instance of the launch manager
 	 * @return the singleton instance of the launch manager
@@ -1047,7 +1047,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	private LaunchManager getLaunchManager() {
 		return (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	/**
 	 * Restore launch history
 	 */
@@ -1067,10 +1067,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			fRestoring = false;
 		}
 	}
-	
+
 	/**
 	 * Returns the default launch group for the given mode.
-	 * 
+	 *
 	 * @param mode the mode identifier
 	 * @return launch group
 	 */
@@ -1080,11 +1080,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 	}
-	
+
 	/**
 	 * Returns the launch group the given launch configuration type belongs to, in
 	 * the specified mode, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param type the type
 	 * @param mode the mode
 	 * @return the launch group the given launch configuration belongs to, in
@@ -1113,12 +1113,12 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 
 	/**
-	 * Returns the {@link ILaunchGroup} for the given mode set and 
+	 * Returns the {@link ILaunchGroup} for the given mode set and
 	 * {@link ILaunchConfigurationType}.
 	 * @param type the type
 	 * @param modeset the set of modes, which are combined to one mode string
 	 * @return the associated {@link ILaunchGroup} or <code>null</code>
-	 * 
+	 *
 	 * @since 3.4.0
 	 */
 	public ILaunchGroup getLaunchGroup(ILaunchConfigurationType type, Set<String> modeset) {
@@ -1131,11 +1131,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return getLaunchGroup(type, buff.toString());
 	}
-	
+
 	/**
 	 * Returns the private launch configuration used as a place-holder to represent/store
 	 * the information associated with a launch configuration type.
-	 * 
+	 *
 	 * @param type launch configuration type
 	 * @return launch configuration
 	 * @throws CoreException if an excpetion occurs
@@ -1154,7 +1154,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				break;
 			}
 		}
-		
+
 		if (shared == null) {
 			// create a new shared config
 			ILaunchConfigurationWorkingCopy workingCopy;
@@ -1197,14 +1197,14 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Internal error saving launch history", e)); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Internal error saving launch history", e)); //$NON-NLS-1$
-		} 
+		}
 	}
-	
+
 	/**
 	 * Sets the given launch to be the most recent launch in the launch
 	 * history (for applicable histories).
 	 * <p>
-	 * @param launch the launch to prepend to its associated histories 
+	 * @param launch the launch to prepend to its associated histories
 	 * @since 3.3
 	 */
 	public void setRecentLaunch(ILaunch launch) {
@@ -1217,6 +1217,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				history.launchAdded(launch);
 			}
 		}
-	}	
+	}
 
 }

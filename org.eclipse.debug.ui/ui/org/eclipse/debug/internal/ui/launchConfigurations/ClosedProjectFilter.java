@@ -19,11 +19,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
- * 
+ *
  * This implementation is used to filter closed projects from the launch configuration dialog.
- * It is (de)activated via the <code>IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED</code> preference, and is 
+ * It is (de)activated via the <code>IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED</code> preference, and is
  * provided to fix bug 19521.
- * 
+ *
  * @since 3.2
  *
  */
@@ -60,7 +60,7 @@ public class ClosedProjectFilter extends ViewerFilter {
 						return true;
 					}
 				}
-			} 
+			}
 			catch (CoreException e) {}
 		}
 		return false;

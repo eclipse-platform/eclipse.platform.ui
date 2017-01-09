@@ -41,7 +41,7 @@ public interface IExpressionListener {
 	 * @param expression the removed expression
 	 */
 	public void expressionRemoved(IExpression expression);
-	
+
 	/**
 	 * Notifies this listener that the given expression has
 	 * changed.

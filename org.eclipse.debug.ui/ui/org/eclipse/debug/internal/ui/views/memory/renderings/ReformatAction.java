@@ -17,13 +17,13 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Resize all columns
- * 
+ *
  * @since 3.0
  */
 public class ReformatAction extends Action {
-	
+
 	private AbstractBaseTableRendering fRendering;
-	
+
 	public ReformatAction(AbstractBaseTableRendering rendering)
 	{
 		super(DebugUIMessages.ReformatAction_title);

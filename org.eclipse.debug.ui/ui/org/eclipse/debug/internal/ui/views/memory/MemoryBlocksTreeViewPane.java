@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
  *                 display memory blocks that do not reference IDebugTarget
- *     
+ *
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.views.memory;
@@ -349,7 +349,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateRetrieval() {
 

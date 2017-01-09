@@ -50,16 +50,16 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 			for (int i= 0; i < selection.length; i++) {
 				if (!(selection[i] instanceof IFile)) {
 					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-				}					
+				}
 			}
 			return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-		}			
+		}
 	};
 
 	/**
 	 * Returns internal jars (source containers) currently used by the
 	 * given source lookup director.
-	 * 
+	 *
 	 * @param director source lookup director jars are being added to
 	 * @return the list of any found {@link ArchiveSourceContainer}s
 	 */
@@ -81,16 +81,16 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ViewerFilter filter= new ArchiveFilter(getSelectedJars(director));
-		
+
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, lp, cp);
 		dialog.setValidator(validator);
-		dialog.setTitle(SourceLookupUIMessages.ArchiveSourceContainerBrowser_3); 
-		dialog.setMessage(SourceLookupUIMessages.ArchiveSourceContainerBrowser_4); 
+		dialog.setTitle(SourceLookupUIMessages.ArchiveSourceContainerBrowser_3);
+		dialog.setMessage(SourceLookupUIMessages.ArchiveSourceContainerBrowser_4);
 		dialog.addFilter(filter);
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
 		if (dialog.open() == Window.OK) {
@@ -100,7 +100,7 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 				containers[i] = new ArchiveSourceContainer((IFile)result[i], true);
 			}
 			return containers;
-		}	
+		}
 		return new ISourceContainer[0];
 	}
 }

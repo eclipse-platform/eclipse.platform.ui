@@ -59,7 +59,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
         /**
          * Resume event for which there is a pending suspend.
-         * 
+         *
          * @param resume
          *            event
          */
@@ -70,7 +70,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.util.TimerTask#run()
          */
         @Override
@@ -85,7 +85,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Adds the given handler to this event update policy.
-     * 
+     *
      * @param handler
      */
     protected abstract DebugEventHandler[] createEventHandlers();
@@ -111,7 +111,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
     @Override
@@ -156,7 +156,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Returns whether this event handler should process the event.
-     * 
+     *
      * @param event debug event
      * @return whether this event handler should process the event
      */
@@ -166,7 +166,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Dispatches a create event.
-     * 
+     *
      * @param event
      */
     protected void dispatchCreate(DebugEventHandler handler, DebugEvent event) {
@@ -175,7 +175,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Dispatches a terminate event.
-     * 
+     *
      * @param event
      */
     protected void dispatchTerminate(DebugEventHandler handler, DebugEvent event) {
@@ -184,7 +184,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Dispatches a suspend event. Subclasses may override.
-     * 
+     *
      * @param event
      */
     protected void dispatchSuspend(DebugEventHandler handler, DebugEvent event) {
@@ -211,7 +211,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      * or a step, a timer is started to update the event source if the step or
      * evaluation takes more than 500ms. Otherwise the source is refreshed.
      * Subclasses may override.
-     * 
+     *
      * @param event
      */
     protected void dispatchResume(DebugEventHandler handler, DebugEvent event) {
@@ -235,7 +235,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Dispatches a change event.
-     * 
+     *
      * @param event
      */
     protected void dispatchChange(DebugEventHandler handler, DebugEvent event) {
@@ -244,7 +244,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 
     /**
      * Dispatches an unknown event.
-     * 
+     *
      * @param event
      */
     protected void dispatchOther(DebugEventHandler handler, DebugEvent event) {
@@ -254,18 +254,18 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     /**
      * Notification that a pending suspend event was not received for the given
      * resume event and handler within the timeout period.
-     * 
+     *
      * @param resume
      *            resume event with missing suspend event
      */
     protected void dispatchSuspendTimeout(DebugEventHandler handler, DebugEvent resume) {
         handler.handleSuspendTimeout(resume);
     }
-    
+
     /**
      * Returns the index of the given element in the list or -1 if
      * not present.
-     * 
+     *
      * @param list
      * @param element
      * @return index or -1 if not present
@@ -277,6 +277,6 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 			}
 		}
 		return -1;
-	}    
+	}
 
 }

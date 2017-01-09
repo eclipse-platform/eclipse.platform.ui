@@ -58,7 +58,7 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 		if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) {
 			if (element instanceof IExpressionManager) {
 				return new ExpressionManagerModelProxy();
-			} 
+			}
 			if (element instanceof IWatchExpression) {
 				return new DefaultWatchExpressionModelProxy((IWatchExpression)element);
 			}
@@ -84,7 +84,7 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 				return new BreakpointContainerProxy((IBreakpointContainer)element);
 			}
 		}
-		
+
 		if (context instanceof MemoryViewPresentationContext)
 		{
 			if (((MemoryViewPresentationContext)context).getRendering() instanceof AbstractAsyncTableRendering)
@@ -93,7 +93,7 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 					return new MemoryBlockProxy((IMemoryBlock)element);
 			}
 		}
-		
+
 		return null;
 	}
 

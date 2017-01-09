@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * A node in an asynchronous model.
- * 
+ *
  * @since 3.2
  */
 public class ModelNode {
@@ -27,36 +27,36 @@ public class ModelNode {
 	private ModelNode fParent; // parent node or null for root
 	private ModelNode[] fChildren; // child nodes, possibly null
 	private boolean fDisposed; // whether this node has been disposed
-	
+
 	public ModelNode(ModelNode parent, Object element) {
 		fParent = parent;
 		fElement = element;
 	}
-	
+
 	public synchronized Object getElement() {
 		return fElement;
 	}
-    
+
     public synchronized void remap(Object element) {
         fElement = element;
     }
-	
+
 	public ModelNode getParentNode() {
 		return fParent;
 	}
-	
+
 	public synchronized boolean isContainer() {
 		return fIsContainer;
 	}
-	
+
 	public synchronized ModelNode[] getChildrenNodes() {
 		return fChildren;
 	}
-	
+
 	public synchronized boolean isDisposed() {
-		return fDisposed; 
+		return fDisposed;
 	}
-	
+
 	public synchronized void dispose() {
 		fDisposed = true;
         ModelNode[] childrenNodes = getChildrenNodes();
@@ -66,10 +66,10 @@ public class ModelNode {
             }
         }
 	}
-	
+
 	/**
 	 * Returns whether this node corresponds to the given path
-	 * 
+	 *
 	 * @param path tree path
 	 */
 	public synchronized boolean correspondsTo(TreePath path) {
@@ -86,10 +86,10 @@ public class ModelNode {
 		}
 		return index == -1;
 	}
-	
+
 	/**
 	 * Returns a tree path corresponding to this node.
-	 * 
+	 *
 	 * @return
 	 */
 	public synchronized TreePath getTreePath() {
@@ -101,10 +101,10 @@ public class ModelNode {
 		}
 		return new TreePath(path.toArray());
 	}
-	
+
 	/**
 	 * Adds the given child to this node.
-	 * 
+	 *
 	 * @param child
 	 */
 	public synchronized void addChild(ModelNode child) {
@@ -117,10 +117,10 @@ public class ModelNode {
 			fChildren = kids;
 		}
 	}
-    
+
     /**
      * Removes the given child from this node.
-     * 
+     *
      * @param child
      */
     public synchronized void removeChild(ModelNode child) {
@@ -138,11 +138,11 @@ public class ModelNode {
                 }
             }
         }
-    }    
-	
+    }
+
 	/**
 	 * Sets the children for this node
-	 * 
+	 *
 	 * @param children
 	 */
 	public synchronized void setChildren(ModelNode[] children) {
@@ -153,10 +153,10 @@ public class ModelNode {
 			fChildren = children;
 		}
 	}
-	
+
 	/**
 	 * Returns the number of children for this node.
-	 * 
+	 *
 	 * @return
 	 */
 	public synchronized int getChildCount() {
@@ -168,10 +168,10 @@ public class ModelNode {
 		}
 		return fChildren.length;
 	}
-    
+
     /**
      * Returns the index of the given child in this parent, or -1
-     * 
+     *
      * @param child
      */
     public synchronized int getChildIndex(ModelNode child) {
@@ -184,16 +184,16 @@ public class ModelNode {
        }
        return -1;
     }
-    
+
     /**
      * Sets whether this node has children.
-     * 
+     *
      * @param container
      */
     public synchronized void setIsContainer(boolean container) {
         fIsContainer = container;
     }
-    
+
     @Override
 	public String toString() {
     	StringBuffer buf = new StringBuffer();
@@ -206,5 +206,5 @@ public class ModelNode {
     	buf.append(getElement());
     	return buf.toString();
     }
-    
+
 }

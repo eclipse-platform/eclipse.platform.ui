@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Drop to frame action.
- * 
+ *
  * @since 3.3
  */
 public class DropToFrameCommandAction extends DebugCommandAction {
@@ -27,7 +27,7 @@ public class DropToFrameCommandAction extends DebugCommandAction {
     public DropToFrameCommandAction() {
         setActionDefinitionId("org.eclipse.debug.ui.commands.DropToFrame"); //$NON-NLS-1$
     }
-    
+
     @Override
 	public String getText() {
         return ActionMessages.DropToFrameAction_0;

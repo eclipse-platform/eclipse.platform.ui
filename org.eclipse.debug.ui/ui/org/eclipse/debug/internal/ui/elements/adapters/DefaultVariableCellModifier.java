@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ICellModifier;
  */
 @SuppressWarnings("deprecation")
 public class DefaultVariableCellModifier implements ICellModifier {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 	 */
@@ -68,7 +68,7 @@ public class DefaultVariableCellModifier implements ICellModifier {
 						// The value column displays special characters escaped, so encode the string with any special characters escaped properly
 						String valueExpression = DefaultLabelProvider.encodeEsacpedChars((String)value);
 						IVariable variable = (IVariable) element;
-						DetailPaneAssignValueAction.assignValue(DebugUIPlugin.getShell(), variable, valueExpression);						
+						DetailPaneAssignValueAction.assignValue(DebugUIPlugin.getShell(), variable, valueExpression);
 					}
 				}
 	        }

@@ -27,27 +27,27 @@ import org.eclipse.jface.viewers.ISelection;
  * will then be asked to create a model selection policy adapter.
  * The adapter represents selections from an instance of a model.
  * </p>
- * 
+ *
  * @see IModelSelectionPolicyFactory
  * @since 3.2
  */
 public interface IModelSelectionPolicy {
-	
+
 	/**
 	 * Returns whether the given selection is contained in this model.
-	 * 
+	 *
 	 * @param selection Selection to check
 	 * @param context Presentation context of the viewer.
 	 * @return true if selection is contained in model.
 	 */
 	public boolean contains(ISelection selection, IPresentationContext context);
-	
+
 	/**
 	 * Returns whether the candidate selection overrides the
 	 * existing selection. The policy is only asked about selections
 	 * that it contains.
-	 * 
-	 * @param existing Existing selection to check. 
+	 *
+	 * @param existing Existing selection to check.
 	 * @param candidate New proposed selection.
 	 * @param context Presentation context of viewer.
 	 * @return true if candidate selection should be set to viewer
@@ -57,13 +57,13 @@ public interface IModelSelectionPolicy {
 	/**
 	 * Returns whether the given selection should be maintained in the
 	 * face of a selection attempt from a different model.
-	 *  
+	 *
 	 * @param selection selection to test
 	 * @param context Presentation context of viewer.
 	 * @return true if selection is sticky
 	 */
 	public boolean isSticky(ISelection selection, IPresentationContext context);
-	
+
 	/**
 	 * Replaces an invalid selection.
 	 * <p>
@@ -75,7 +75,7 @@ public interface IModelSelectionPolicy {
 	 * elements removed). Model selection policies may implement a different strategy
 	 * for picking a new selection when the old selection becomes invalid.
 	 * </p>
-	 * 
+	 *
 	 * @param invalidSelection
 	 *            the selection before the viewer was updated
 	 * @param newSelection

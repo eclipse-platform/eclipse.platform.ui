@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Workbench adapter for standard source containers.
- * 
+ *
  * @since 3.0
  */
 public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
@@ -60,12 +60,12 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 		if (o instanceof ArchiveSourceContainer) {
 			ArchiveSourceContainer container = (ArchiveSourceContainer)o;
 			return SourceElementWorkbenchAdapter.getQualifiedName(container.getFile().getFullPath());
-		}		
+		}
 		if (o instanceof ExternalArchiveSourceContainer) {
 			ExternalArchiveSourceContainer container = (ExternalArchiveSourceContainer)o;
 			IPath path = new Path(container.getName());
 			return SourceElementWorkbenchAdapter.getQualifiedName(path);
-		}		
+		}
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 	/* (non-Javadoc)

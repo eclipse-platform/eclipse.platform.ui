@@ -33,7 +33,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Breakpoint manager model proxy.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointManagerProxy extends AbstractModelProxy {
@@ -41,17 +41,17 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 	 * The breakpoint manager content provider for this model proxy
 	 */
 	final private BreakpointManagerContentProvider fProvider;
-	
+
 	/**
 	 * The breakpoint manager input for this model proxy
 	 */
 	final private DefaultBreakpointsViewInput fInput;
-	
+
 	/**
 	 * Job to fire posted deltas.
 	 */
     private Job fFireModelChangedJob;
-    
+
     /**
      * Object used for describing a posted delta.
      */
@@ -64,27 +64,27 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
             fDelta = delta;
         }
     }
-    
+
     /**
      * List of posted deltas ready to be fired.
      */
 	private List<DeltaInfo> fPendingDeltas = new LinkedList<DeltaInfo>();
-    
+
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param input the breakpoint manager input
 	 * @param context the presentation context for this model proxy
 	 */
 	public BreakpointManagerProxy(Object input, IPresentationContext context) {
 		super();
-				
+
 		DefaultBreakpointsViewInput bpmInput = null;
 		BreakpointManagerContentProvider bpmProvider = null;
 		if (input instanceof DefaultBreakpointsViewInput) {
 			bpmInput = (DefaultBreakpointsViewInput) input;
-			
+
 			// cache the required data and pass to the provider when this model is installed
 			IElementContentProvider provider = ViewerAdapterService.getContentProvider(input);
 			if (provider instanceof BreakpointManagerContentProvider) {
@@ -94,7 +94,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 		fInput = bpmInput;
 		fProvider = bpmProvider;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
@@ -106,7 +106,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 			fProvider.registerModelProxy(fInput, this);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#dispose()
@@ -121,19 +121,19 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 	        }
             fPendingDeltas.clear();
 	    }
-        
-		super.dispose();		
+
+		super.dispose();
 	}
-	
+
 	/**
-	 * Posts a given delta to be fired by the proxy.  Posting a delta places it 
+	 * Posts a given delta to be fired by the proxy.  Posting a delta places it
 	 * in a queue which is later emptied by a job that fires the deltas.
 	 * <p>
 	 * If the delta is used only to select a breakpiont and does not change the
-	 * viewer content, the caller should set the <code>select</code> parameter 
-	 * to <code>true</code>.  When a select delta is added to the delta queue, 
-	 * any previous select deltas are removed. 
-	 * 
+	 * viewer content, the caller should set the <code>select</code> parameter
+	 * to <code>true</code>.  When a select delta is added to the delta queue,
+	 * any previous select deltas are removed.
+	 *
 	 * @param delta Delta to be posted to the viewer.
 	 * @param select Flag indicating that the delta is only to change the
 	 * viewer selection.
@@ -148,7 +148,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
         if (viewerControl == null) {
             return;
         }
-        
+
         // If we are processing a select delta, remove the previous select delta.
         if (select) {
 			for (Iterator<DeltaInfo> itr = fPendingDeltas.iterator(); itr.hasNext();) {
@@ -158,16 +158,16 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
             }
         }
         fPendingDeltas.add(new DeltaInfo(select, delta));
-        
+
         if (fFireModelChangedJob == null) {
 	        fFireModelChangedJob = new WorkbenchJob(viewerControl.getDisplay(), "Select Breakpoint Job") { //$NON-NLS-1$
 	            {
 	                setSystem(true);
 	            }
-	            
+
 	            @Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-                    Object[] deltas; 
+                    Object[] deltas;
                     synchronized(BreakpointManagerProxy.this) {
                         deltas = fPendingDeltas.toArray();
                         fPendingDeltas.clear();

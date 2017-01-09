@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Item;
  * A drag adapter for the breakpoints viewer
  */
 public class BreakpointsDragAdapter extends DragSourceAdapter implements TransferDragSourceListener {
-    
+
     /**
      * the associated viewer for the adapter
      */
@@ -37,7 +37,7 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
 
     private BreakpointsView fView;
     private TreePath[] fTreePaths = null;
-    
+
     /**
      * Constructor
      * @param viewer the associated viewer, which acts as the selection provider and therefore <b>must</b> implement <code>ISelectionProvider</code>
@@ -59,7 +59,7 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
 	public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();
     }
-    
+
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragStart
      */
@@ -69,7 +69,7 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
         LocalSelectionTransfer.getTransfer().setSelection(selection);
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(event.time & 0xFFFFFFFFL);
         if (fViewer instanceof BreakpointsViewer) {
-        	BreakpointsViewer viewer = (BreakpointsViewer)fViewer; 
+        	BreakpointsViewer viewer = (BreakpointsViewer)fViewer;
 	        fItems = viewer.getSelectedItems();
 	        event.doit = viewer.canDrag(fItems);
         } else {
@@ -78,13 +78,13 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
         	} else {
         		fTreePaths = new TreePath[0];
         	}
-	        event.doit = fView.canDrag(fTreePaths); 	
+	        event.doit = fView.canDrag(fTreePaths);
         }
     }
-   
+
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData
-     */     
+     */
     @Override
 	public void dragSetData(DragSourceEvent event) {
         // For consistency set the data to the selection even though
@@ -95,20 +95,20 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
 
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished
-     */ 
+     */
     @Override
 	public void dragFinished(DragSourceEvent event) {
         if (event.detail == DND.DROP_MOVE) {
             // remove from source on move operation
             if (fViewer instanceof BreakpointsViewer) {
-            	BreakpointsViewer viewer = (BreakpointsViewer)fViewer; 
+            	BreakpointsViewer viewer = (BreakpointsViewer)fViewer;
             	viewer.performDrag(fItems);
             } else {
-            	fView.performDrag(fTreePaths);            	
+            	fView.performDrag(fTreePaths);
             }
         }
         fItems = null;
         LocalSelectionTransfer.getTransfer().setSelection(null);
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(0);
-    }   
+    }
 }

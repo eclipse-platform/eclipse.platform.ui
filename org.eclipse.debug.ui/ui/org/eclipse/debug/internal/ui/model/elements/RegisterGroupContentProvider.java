@@ -18,8 +18,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Register group content provider.
- * 
- * @since 3.3 
+ *
+ * @since 3.3
  */
 public class RegisterGroupContentProvider extends ElementContentProvider {
 
@@ -32,7 +32,7 @@ public class RegisterGroupContentProvider extends ElementContentProvider {
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(((IRegisterGroup)parent).getRegisters(), index, length);
 	}
-	
+
 	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((IRegisterGroup)element).hasRegisters();

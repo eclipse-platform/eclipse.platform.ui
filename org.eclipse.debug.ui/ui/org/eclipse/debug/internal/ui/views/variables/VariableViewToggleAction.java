@@ -24,10 +24,10 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ *
  */
 public abstract class VariableViewToggleAction implements IViewActionDelegate, IActionDelegate2 {
-	
+
 	private IViewPart fView;
 	private IAction fAction;
 
@@ -89,11 +89,11 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	protected IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/**
 	 * Returns the value of this filters preference (on/off) for the given
 	 * view.
-	 * 
+	 *
 	 * @param part
 	 * @return boolean
 	 */
@@ -108,20 +108,20 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 		} else {
 			value = store.getBoolean(baseKey);
 		}
-		return value;		
+		return value;
 	}
-	
+
 	/**
 	 * Returns the key for this action's preference
-	 * 
+	 *
 	 * @return String
 	 */
-	protected abstract String getPreferenceKey(); 
-		
+	protected abstract String getPreferenceKey();
+
 	protected IViewPart getView() {
 		return fView;
 	}
-	
+
 	protected StructuredViewer getStructuredViewer() {
 		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
@@ -129,7 +129,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 			if (viewer instanceof StructuredViewer) {
 				return (StructuredViewer)viewer;
 			}
-		}		
+		}
 		return null;
 	}
 }

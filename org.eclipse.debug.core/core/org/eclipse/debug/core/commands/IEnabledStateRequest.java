@@ -25,7 +25,7 @@ public interface IEnabledStateRequest extends IDebugCommandRequest {
 
 	/**
 	 * Sets the enabled state of a command handler.
-	 * 
+	 *
 	 * @param result whether enabled
 	 */
 	public void setEnabled(boolean result);

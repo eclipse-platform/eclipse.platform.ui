@@ -39,7 +39,7 @@ import com.ibm.icu.text.MessageFormat;
  * Adds the selected launch configuration to the launch favorites.
  */
 public class AddToFavoritesAction extends SelectionListenerAction {
-	
+
 	private ILaunchConfiguration fConfiguration = null;
 	private String fMode =null;
 	private ILaunchGroup fGroup = null;
@@ -65,7 +65,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 			Object object = selection.getFirstElement();
 			ILaunch launch = null;
 			if (object instanceof IAdaptable) {
-				launch = ((IAdaptable)object).getAdapter(ILaunch.class); 
+				launch = ((IAdaptable)object).getAdapter(ILaunch.class);
 			}
 			if (launch == null) {
 				if (object instanceof ILaunch) {
@@ -85,21 +85,21 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 					}
 					setGroup(group);
 					setLaunchConfiguration(configuration);
-					setMode(launch.getLaunchMode());				
+					setMode(launch.getLaunchMode());
 					setText(MessageFormat.format(ActionMessages.AddToFavoritesAction_1, new Object[] { DebugUIPlugin.removeAccelerators(getGroup().getLabel()) }));
 				}
 			}
 		}
-		
+
 		// Disable the action if the launch config is private
 		ILaunchConfiguration config = getLaunchConfiguration();
 		if (config == null) {
 			return false;
-		} 
+		}
 		if (DebugUITools.isPrivate(config)) {
 				return false;
 		}
-		
+
 		if (getGroup() != null) {
 			try {
 				List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
@@ -109,9 +109,9 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 				return true;
 			} catch (CoreException e) {
 			}
-			
+
 		}
-		
+
 		return false;
 	}
 
@@ -122,7 +122,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {
 		fConfiguration = configuration;
 	}
-	
+
 	/**
 	 * Returns the underlying <code>ILaunchConfiguration</code>
 	 * @return the underlying <code>ILaunchConfiguration</code>
@@ -130,7 +130,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected ILaunchConfiguration getLaunchConfiguration() {
 		return fConfiguration;
 	}
-	
+
 	/**
 	 * Sets the mode this action applies to
 	 * @param mode the modes to set
@@ -138,7 +138,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected void setMode(String mode) {
 		fMode = mode;
 	}
-	
+
 	/**
 	 * Returns the mode this action applies to
 	 * @return the {@link ILaunchMode} this action applies to
@@ -146,7 +146,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected String getMode() {
 		return fMode;
 	}
-	
+
 	/**
 	 * Sets the <code>ILaunchGroup</code> this action applies to
 	 * @param group the new <code>ILaunchGroup</code>
@@ -154,7 +154,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected void setGroup(ILaunchGroup group) {
 		fGroup = group;
 	}
-	
+
 	/**
 	 * Returns the underlying <code>ILaunchGroup</code>
 	 * @return the underlying <code>ILaunchGroup</code>
@@ -162,7 +162,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	protected ILaunchGroup getGroup() {
 		return fGroup;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -188,7 +188,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 			}
 		});
 		if (ex[0] != null) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.AddToFavoritesAction_2, ActionMessages.AddToFavoritesAction_3, ex[0].getStatus()); // 
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.AddToFavoritesAction_2, ActionMessages.AddToFavoritesAction_3, ex[0].getStatus()); //
 		}
 	}
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -16,13 +16,13 @@ package org.eclipse.debug.ui.actions;
  * breakpoints target manager.  This interface allows toggle breakpoint
  * actions to update their enablement when the user changes the preferred
  * toggle target settings.
- * 
+ *
  * @see IToggleBreakpointsTargetManager
  * @see IToggleBreakpointsTargetFactory
  * @since 3.8
  */
 public interface IToggleBreakpointsTargetManagerListener {
-    
+
     /**
      * Called when the preferred toggle targets have changed.
      */

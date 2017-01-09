@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -196,7 +196,7 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_4;
 	public static String LaunchConfigurationsDialog_5;
 	public static String FilterLaunchConfigurationAction_0;
-	
+
 
 	public static String LaunchConfigurationTabGroupViewer_8;
 

@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * A detail pane factory creates one or more types of detail panes. 
+ * A detail pane factory creates one or more types of detail panes.
  * <p>
  * Detail pane factories are contributed via the <code>org.eclipse.debug.ui.detailPaneFactories</code>
  * extension point. Following is an example of a detail pane factory extension:
@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * <p>
  * <p>
  * Clients contributing a detail pane factory are intended to implement this interface.
- * @see IDetailPane  
+ * @see IDetailPane
  * @since 3.3
  *
  */
@@ -41,50 +41,50 @@ public interface IDetailPaneFactory {
 	 * Returns all possible types detail panes that this factory can
 	 * create for the given selection, possibly empty. Detail panes are returned
 	 * as a set of detail pane identifiers.
-	 * 
+	 *
 	 * @param selection The current selection
 	 * @return Set of String IDs for possible detail pane types, possibly empty
 	 */
 	public Set<String> getDetailPaneTypes(IStructuredSelection selection);
-	
+
 	/**
-	 * Returns the identifier of the default detail pane type to use for the given 
-	 * selection, or <code>null</code> if this factory has no preference. 
+	 * Returns the identifier of the default detail pane type to use for the given
+	 * selection, or <code>null</code> if this factory has no preference.
 	 * A factory can override the platform's default detail pane by returning
-	 * a non-<code>null</code> value.  
-	 * 
+	 * a non-<code>null</code> value.
+	 *
 	 * @param selection The current selection
 	 * @return a detail pane type identifier or <code>null</code>
 	 */
 	public String getDefaultDetailPane(IStructuredSelection selection);
-	
+
 	/**
 	 * Creates and returns a detail pane corresponding to the given detail pane
-	 * type identifier that this factory can produce (according to 
+	 * type identifier that this factory can produce (according to
 	 * <code>getDetailPaneTypes(IStructuredSelection selection)</code>).
-	 *  
+	 *
 	 * @param paneID The id of the detain pane type to be created
 	 * @return detail pane or <code>null</code> if one could not be created
 	 */
 	public IDetailPane createDetailPane(String paneID);
-	
+
 	/**
 	 * Returns a name for the detail pane type associated with the given ID
 	 * or <code>null</code> if none. Used to
 	 * populate the context menu with meaningful names of the pane types.
-	 * 
+	 *
 	 * @param paneID detail pane type identifier
 	 * @return detail pane name or <code>null</code> if none
 	 */
 	public String getDetailPaneName(String paneID);
-	
+
 	/**
 	 * Returns a description for the detail pane type associated with the given ID
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param paneID detail pane type identifier
 	 * @return detail pane description or <code>null</code> if none
 	 */
 	public String getDetailPaneDescription(String paneID);
-	
+
 }

@@ -27,11 +27,11 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Model proxy that fires model delta updates for the ExpressionManager.
- * 
+ *
  * @see org.eclipse.debug.internal.core.ExpressionManager
  */
 public class ExpressionManagerModelProxy extends AbstractModelProxy implements IExpressionsListener2, IPropertyChangeListener {
-        
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
@@ -41,7 +41,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		getExpressionManager().addExpressionListener(this);
 		context.addPropertyChangeListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
@@ -56,7 +56,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	protected IExpressionManager getExpressionManager() {
 		return DebugPlugin.getDefault().getExpressionManager();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
 	 */
@@ -84,7 +84,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		}
 		fireModelChanged(delta);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsInserted(org.eclipse.debug.core.model.IExpression[], int)
 	 */
@@ -98,7 +98,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		}
 		fireModelChanged(delta);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
 	 */
@@ -127,9 +127,9 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 */
 	@Override
 	public void expressionsChanged(IExpression[] expressions) {
-		updateExpressions(expressions, IModelDelta.CONTENT | IModelDelta.STATE);		
+		updateExpressions(expressions, IModelDelta.CONTENT | IModelDelta.STATE);
 	}
-    
+
     private void updateExpressions(IExpression[] expressions, int flags) {
 		ModelDelta delta = new ModelDelta(getExpressionManager(), IModelDelta.NO_CHANGE);
 		for (int i = 0; i < expressions.length; i++) {
@@ -140,20 +140,20 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
     }
 
     private int getElementsCount() {
-        // Account for the "Add new expression" element only if columns are 
+        // Account for the "Add new expression" element only if columns are
         // displayed.
         return getExpressionManager().getExpressions().length +
             (getPresentationContext().getColumns() != null ? 1 : 0);
     }
-    
+
     @Override
 	public void propertyChange(PropertyChangeEvent event) {
-        // If columns are turned on/off, refresh the view to account for the 
+        // If columns are turned on/off, refresh the view to account for the
         // "Add new expression" element.
         if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
             fireModelChanged(new ModelDelta(getExpressionManager(), IModelDelta.CONTENT));
        }
     }
 
-    
+
 }

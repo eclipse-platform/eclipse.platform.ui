@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
  * <ul>
  * <li><code>modelId</code> the debug model identifier for which the given
  * variable value editor is applicable</li>
- * <li><code>class</code> fully qualified name of a class that implements 
+ * <li><code>class</code> fully qualified name of a class that implements
  * {@link IVariableValueEditor}</li>
  * </ul>
  * </p>
@@ -45,7 +45,7 @@ public interface IVariableValueEditor {
      * Edits the given variable, if appropriate. If this editor does not apply to
      * the given variable this method returns false, which indicates that the
      * Debug Platform's default variable edit dialog should be used.
-     * 
+     *
      * @param variable the variable to edit
      * @param shell the currently active shell, which can be used to open a dialog
      *  for the user
@@ -55,13 +55,13 @@ public interface IVariableValueEditor {
      *  variable editor
      */
     public boolean editVariable(IVariable variable, Shell shell);
-    
+
     /**
      * Saves the given expression to the given variable, if appropriate. If this
      * editor does not set the given variable's value from the given expression, this
      * method returns false. Returning false indicates that the Debug Platform should
      * perform the default operation to set a variable's value based on a String.
-     * 
+     *
      * @param variable the variable to edit
      * @param expression the expression to assign to the given variable
      * @param shell the currently active shell, which can be used to report errors to the

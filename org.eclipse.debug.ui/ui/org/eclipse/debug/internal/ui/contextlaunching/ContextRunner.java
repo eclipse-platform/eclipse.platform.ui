@@ -39,22 +39,22 @@ import org.eclipse.ui.IEditorPart;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Static runner for context launching to provide the base capability of context 
+ * Static runner for context launching to provide the base capability of context
  * launching to more than one form of action (drop down, toolbar, view, etc)
- * 
+ *
  * @see org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction
  * @see org.eclipse.debug.ui.actions.LaunchShortcutsAction
  * @see org.eclipse.debug.ui.actions.ContextualLaunchAction
- * 
+ *
  *  @since 3.3
  */
 public final class ContextRunner {
-	
+
 	/**
 	 * The singleton instance of the context runner
 	 */
 	private static ContextRunner fgInstance = null;
-	
+
 	/**
 	 * Returns the singleton instance of <code>ContextRunner</code>
 	 * @return the singleton instance of <code>ContextRunner</code>
@@ -65,17 +65,17 @@ public final class ContextRunner {
 		}
 		return fgInstance;
 	}
-	
+
 	/**
 	 * The one instance of <code>LaunchingResourceManager</code> we need
 	 * @since 3.4
 	 */
 	private LaunchingResourceManager fLRM = DebugUIPlugin.getDefault().getLaunchingResourceManager();
-	
+
 	/**
 	 * Performs the context launching given the object context and the mode to
 	 * launch in.
-	 * 
+	 *
 	 * @param group the launch group to launch using
 	 * @deprecated use launch(ILaunchGroup, boolean)
 	 */
@@ -83,11 +83,11 @@ public final class ContextRunner {
 	public void launch(ILaunchGroup group) {
 		launch(group, false);
 	}
-	
+
 	/**
 	 * Performs the context launching given the object context and the mode to
 	 * launch in.
-	 * 
+	 *
 	 * @param group the launch group to launch using
 	 * @param isShift is Shift pressed (use <code>false</code> if no support for
 	 *            Shift)
@@ -97,10 +97,10 @@ public final class ContextRunner {
 		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 		selectAndLaunch(resource, group, selection, isShift);
 	}
-	
+
 	/**
 	 * This method launches the last configuration that was launched, if any.
-	 * 
+	 *
 	 * @param group the launch group to launch with
 	 * @return true if there was a last launch and it was launched, false
 	 *         otherwise
@@ -113,7 +113,7 @@ public final class ContextRunner {
 
 	/**
 	 * This method launches the last configuration that was launched, if any.
-	 * 
+	 *
 	 * @param group the launch group to launch with
 	 * @param isShift is Shift pressed (use <code>false</code> if no support for
 	 *            Shift)
@@ -131,11 +131,11 @@ public final class ContextRunner {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Prompts the user to select a way of launching the current resource, where
 	 * a 'way' is defined as a launch shortcut.
-	 * 
+	 *
 	 * @param resource the resource context
 	 * @param group the launch group to launch with
 	 * @param selection the current selection
@@ -150,7 +150,7 @@ public final class ContextRunner {
 	/**
 	 * Prompts the user to select a way of launching the current resource, where
 	 * a 'way' is defined as a launch shortcut.
-	 * 
+	 *
 	 * @param resource the resource context
 	 * @param group the launch group to launch with
 	 * @param selection the current selection
@@ -158,7 +158,7 @@ public final class ContextRunner {
 	 *            Shift)
 	 */
 	protected void selectAndLaunch(IResource resource, ILaunchGroup group, IStructuredSelection selection, boolean isShift) {
-		if(group != null) {			
+		if(group != null) {
 			LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 			String mode = group.getMode();
 			List<LaunchShortcutExtension> shortcuts = fLRM.getShortcutsForSelection(selection, mode);
@@ -174,7 +174,7 @@ public final class ContextRunner {
 				launch(config, mode, isShift);
 				return;
 			}
-		//get the configurations from the resource and participants	
+		//get the configurations from the resource and participants
 			List<ILaunchConfiguration> configs = fLRM.getParticipatingLaunchConfigurations(selection, resource, shortcuts, mode);
 			int csize = configs.size();
 			if(csize == 1) {
@@ -225,10 +225,10 @@ public final class ContextRunner {
 			}
 		}
 	}
-	
+
 	/**
 	 * Validates the given launch mode and launches.
-	 * 
+	 *
 	 * @param configuration configuration to launch
 	 * @param mode launch mode identifier
 	 * @param isShift is Shift pressed
@@ -238,17 +238,17 @@ public final class ContextRunner {
 			DebugUITools.launch(configuration, mode, isShift);
 		}
 	}
-	
+
 	/**
 	 * Delegate method that calls the appropriate launch method on a
 	 * <code>LaunchShortcutExtension</code> given the current resource and
 	 * selection context
-	 * 
+	 *
 	 * @param selection the current selection
 	 * @param shortcut the shortcut that wants to launch
 	 * @param mode the mode to launch in
 	 * @param isShift is Shift pressed
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private void launchShortcut(IStructuredSelection selection, LaunchShortcutExtension shortcut, String mode, boolean isShift) {
@@ -266,11 +266,11 @@ public final class ContextRunner {
 			DebugUITools.removeLaunchToggleTerminate(selection);
 		}
 	}
-	
+
 	/**
 	 * Validates the given launch mode is supported, and returns whether to continue with
 	 * the launch.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @param mode launch mode
 	 * @return whether the mode is supported
@@ -300,11 +300,11 @@ public final class ContextRunner {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Presents the user with a dialog to pick the launch configuration to
 	 * launch and launches that configuration.
-	 * 
+	 *
 	 * @param configurations the listing of applicable configurations to present
 	 * @param mode the mode
 	 * @deprecated use
@@ -319,7 +319,7 @@ public final class ContextRunner {
 	/**
 	 * Presents the user with a dialog to pick the launch configuration to
 	 * launch and launches that configuration.
-	 * 
+	 *
 	 * @param configurations the listing of applicable configurations to present
 	 * @param mode the mode
 	 * @param isShift is Shift pressed (use <code>false</code> if no support for
@@ -332,11 +332,11 @@ public final class ContextRunner {
 			launch(config, mode, isShift);
 		}
 	}
-	
+
 	/**
 	 * Presents a selection dialog to the user to pick a launch shortcut and
 	 * launch using that shortcut.
-	 * 
+	 *
 	 * @param resource the resource context
 	 * @param shortcuts the list of applicable shortcuts
 	 * @param mode the mode
@@ -353,7 +353,7 @@ public final class ContextRunner {
 	/**
 	 * Presents a selection dialog to the user to pick a launch shortcut and
 	 * launch using that shortcut.
-	 * 
+	 *
 	 * @param resource the resource context
 	 * @param shortcuts the list of applicable shortcuts
 	 * @param mode the mode

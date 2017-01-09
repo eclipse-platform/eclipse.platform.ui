@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
-	
+
 	protected IExpression[] getExpressions() {
 		TreeSelection selection = (TreeSelection) getSelection();
 		TreePath[] paths = selection.getPaths();

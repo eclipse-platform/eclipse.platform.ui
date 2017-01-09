@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,10 +22,10 @@ import org.eclipse.jface.action.Action;
  * Remove Memory Rendering action This action serves two purposes: - remove
  * memory rendering from Memory Rendering Pane - quck way to remove a memory
  * block from Memory Rendering Pane
- * 
+ *
  * When user clicks on the this tool bar action, it simply removes the top view
  * tab from Memory Rendering Pane.
- * 
+ *
  * @since 3.0
  */
 public class RemoveMemoryRenderingAction extends Action {

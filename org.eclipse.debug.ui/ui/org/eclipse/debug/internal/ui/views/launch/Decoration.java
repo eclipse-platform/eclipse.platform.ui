@@ -16,15 +16,15 @@ import org.eclipse.debug.core.model.IThread;
  * A decoration in an editor, created by the debugger.
  */
 public abstract class Decoration {
-	
+
 	/**
 	 * Removes this decoration
 	 */
 	public abstract void remove();
-	
+
 	/**
 	 * Returns the thread this decoration decorates.
-	 * 
+	 *
 	 * @return thread associated with this decoration
 	 */
 	public abstract IThread getThread();

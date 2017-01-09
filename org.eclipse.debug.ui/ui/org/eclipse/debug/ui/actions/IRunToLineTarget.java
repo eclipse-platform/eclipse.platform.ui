@@ -28,8 +28,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * the user invokes an associated action. If an adapter does not exist
  * for the part, the retargettable actions asks selected objects in the
  * active part for an adapter. Generally, a debug implementation will
- * provide breakpoint adapters for relevant editors and model objects. 
- * </p>  
+ * provide breakpoint adapters for relevant editors and model objects.
+ * </p>
  * <p>
  * Clients are intended to implement this interface and provide instances as
  * an adapter on applicable parts (for example, editors) that support the
@@ -38,25 +38,25 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.0
  */
 public interface IRunToLineTarget {
-	
+
 	/**
-	 * Perform a run to line operation on the given element that is 
+	 * Perform a run to line operation on the given element that is
 	 * currently selected and suspended in the Debug view. Implementations
 	 * must honor the user preference of whether to skip breakpoints
 	 * during the operation -
 	 * see <code>IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE</code>.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @param target suspended element to perform the "run to line" action on
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
 
 	/**
 	 * Returns whether a run to line operation can be performed on the given
 	 * element that is currently selected and suspended in the Debug view.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @param target suspended element to perform the "run to line" action on

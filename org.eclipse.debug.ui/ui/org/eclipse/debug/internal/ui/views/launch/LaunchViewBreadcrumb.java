@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation = bug fixing
@@ -69,26 +69,26 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
         Input(TreePath path) {
             fPath = path;
         }
-        
+
         @Override
 		public boolean equals(Object obj) {
-            return obj instanceof Input && 
+            return obj instanceof Input &&
                 ((fPath == null && ((Input)obj).fPath == null) ||
                  (fPath != null && fPath.equals( ((Input)obj).fPath )));
         }
-        
+
         @Override
 		public int hashCode() {
             return fPath == null ? 0 : fPath.hashCode();
         }
     }
-    
+
     private static class ContentProvider implements ITreePathContentProvider {
 
         private static final Object[] EMPTY_ELEMENTS_ARRAY = new Object[0];
-        
-        public Input fInput;  
-        
+
+        public Input fInput;
+
         @Override
 		public Object[] getChildren(TreePath parentPath) {
             if (hasChildren(parentPath)) {
@@ -107,9 +107,9 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
 		public boolean hasChildren(TreePath parentPath) {
             if ( parentPath.getSegmentCount() == 0) {
                 return fInput != null;
-            } else if (fInput != null && 
-                       fInput.fPath != null && 
-                       fInput.fPath.getSegmentCount() > parentPath.getSegmentCount()) 
+            } else if (fInput != null &&
+                       fInput.fPath != null &&
+                       fInput.fPath.getSegmentCount() > parentPath.getSegmentCount())
             {
                 for (int i = 0; i < parentPath.getSegmentCount(); i++) {
                     if (i >= fInput.fPath.getSegmentCount()) {
@@ -129,8 +129,8 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
 
         @Override
 		public Object[] getElements(Object inputElement) {
-            if (fInput != null && 
-                fInput.fPath != null) 
+            if (fInput != null &&
+                fInput.fPath != null)
             {
                 return getChildren(TreePath.EMPTY);
             } else {
@@ -152,7 +152,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }
         }
     }
-        
+
     private class LabelProvider extends BaseLabelProvider implements ITreePathLabelProvider {
         @Override
 		public void updateLabel(ViewerLabel label, TreePath elementPath) {
@@ -171,31 +171,31 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                     label.setFont(treeViewerLabel.getFont());
                     label.setForeground(treeViewerLabel.getForeground());
                     label.setBackground(treeViewerLabel.getBackground());
-                    
+
                 }
-            }            
+            }
         }
     }
-    
+
     private final LaunchView fView;
     private final TreeModelViewer fTreeViewer;
     private final IDebugContextProvider fTreeViewerContextProvider;
     private Input fBreadcrumbInput;
-    static final private Object fgEmptyDebugContextElement = new Object(); 
+    static final private Object fgEmptyDebugContextElement = new Object();
     private BreadcrumbViewer fViewer;
     private boolean fRefreshBreadcrumb = false;
-    
+
     private class BreadcrumbContextProvider extends AbstractDebugContextProvider implements IDebugContextListener, ISelectionChangedListener {
-        
+
         private ISelection fBreadcrumbSelection = null;
-        
+
         BreadcrumbContextProvider() {
             super(fView);
             fViewer.addSelectionChangedListener(this);
             fBreadcrumbSelection = fViewer.getSelection();
             fTreeViewerContextProvider.addDebugContextListener(this);
         }
-        
+
         @Override
 		public ISelection getActiveContext() {
             if (fBreadcrumbSelection != null && !fBreadcrumbSelection.isEmpty()) {
@@ -205,17 +205,17 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                 return treeViewerSelection != null ? treeViewerSelection : StructuredSelection.EMPTY;
             }
         }
-        
+
         void dispose() {
             fViewer.removeSelectionChangedListener(this);
             fTreeViewerContextProvider.removeDebugContextListener(this);
         }
-        
+
         @Override
 		public void debugContextChanged(DebugContextEvent event) {
             fire(new DebugContextEvent(this, getActiveContext(), event.getFlags()));
         }
-        
+
         @Override
 		public void selectionChanged(SelectionChangedEvent event) {
             ISelection oldContext = getActiveContext();
@@ -227,7 +227,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
     }
 
     private BreadcrumbContextProvider fBreadcrumbContextProvider;
-    
+
     public LaunchViewBreadcrumb(LaunchView view, TreeModelViewer treeViewer, IDebugContextProvider contextProvider) {
         fView = view;
         fTreeViewer = treeViewer;
@@ -236,7 +236,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
         fBreadcrumbInput = new Input( getPathForSelection(fTreeViewerContextProvider.getActiveContext()) );
         fTreeViewerContextProvider.addDebugContextListener(this);
     }
-    
+
     @Override
 	protected void activateBreadcrumb() {
     }
@@ -260,7 +260,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }
         };
 
-        // Force the layout of the breadcrumb viewer so that we may calcualte 
+        // Force the layout of the breadcrumb viewer so that we may calcualte
         // its proper size.
         parent.pack(true);
 
@@ -268,11 +268,11 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
         fViewer.setLabelProvider(new LabelProvider());
 
         createMenuManager();
-        
+
         fViewer.setInput(getCurrentInput());
-        
+
         fBreadcrumbContextProvider = new BreadcrumbContextProvider();
-        
+
         return fViewer;
     }
 
@@ -306,7 +306,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }
         });
     }
-   
+
     @Override
 	protected Object getCurrentInput() {
         return fBreadcrumbInput;
@@ -333,12 +333,12 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
     @Override
 	public void debugContextChanged(DebugContextEvent event) {
         if (fView.isBreadcrumbVisible()) {
-            fBreadcrumbInput = new Input(getPathForSelection(event.getContext())); 
+            fBreadcrumbInput = new Input(getPathForSelection(event.getContext()));
             if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
                 setInput(getCurrentInput());
-                
+
                 // If the context was activated, then clear the selection in breadcrumb
-                // so that the activated context will become the active context for the 
+                // so that the activated context will become the active context for the
                 // window.
                 fViewer.setSelection(StructuredSelection.EMPTY);
             } else {
@@ -346,11 +346,11 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }
         }
     }
-    
+
     @Override
 	public void labelUpdateStarted(ILabelUpdate update) {
     }
-    
+
     @Override
 	public void labelUpdateComplete(ILabelUpdate update) {
         if (fBreadcrumbInput != null && fBreadcrumbInput.fPath != null) {
@@ -361,11 +361,11 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }
         }
     }
-    
+
     @Override
 	public void labelUpdatesBegin() {
     }
-    
+
     @Override
 	public void labelUpdatesComplete() {
         boolean refresh = false;
@@ -384,36 +384,36 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }.schedule();
         }
     }
-    
+
     IDebugContextProvider getContextProvider() {
         return fBreadcrumbContextProvider;
     }
-    
+
     int getHeight() {
         return fViewer.getControl().getSize().y;
     }
-    
+
     void clearSelection() {
         fViewer.setSelection(StructuredSelection.EMPTY);
     }
-    
+
     private TreePath getPathForSelection(ISelection selection) {
         if (selection instanceof ITreeSelection && !selection.isEmpty()) {
             return ((ITreeSelection)selection).getPaths()[0];
         }
         return null;
     }
-    
+
     public Control createDropDownControl(Composite parent, final IBreadcrumbDropDownSite site, TreePath paramPath) {
-        
+
         TreeViewerDropDown dropDownTreeViewer = new TreeViewerDropDown() {
-            
+
             SubTreeModelViewer fDropDownViewer;
-            
+
             @Override
 			protected TreeViewer createTreeViewer(Composite composite, int style, final TreePath path) {
                 fDropDownViewer = new SubTreeModelViewer(
-                    composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL | SWT.POP_UP, 
+                    composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL | SWT.POP_UP,
                     fTreeViewer.getPresentationContext());
 
                 Object launchViewInput = fTreeViewer.getInput();
@@ -421,12 +421,12 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
 
                 ViewerFilter[] filters = fTreeViewer.getFilters();
                 fDropDownViewer.setFilters(filters);
-                
+
                 ModelDelta stateDelta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
                 fTreeViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND | IModelDelta.SELECT);
-                
+
                 // If we do not want to expand the elements in the drop-down.
-                // Prune the delta to only select the element in the 
+                // Prune the delta to only select the element in the
                 // top-most list.
                 if (!fView.getBreadcrumbDropDownAutoExpand()) {
                     final ModelDelta prunedDelta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
@@ -442,19 +442,19 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                                 // Build up the delta copy along the path of the drop-down element.
                                 copy = copy.addNode(
                                     delta.getElement(), delta.getIndex(), delta.getFlags(), delta.getChildCount());
-                            } 
-                            
-                            // If the delta is for the drop-down element, set its select flag and stop traversing 
+                            }
+
+                            // If the delta is for the drop-down element, set its select flag and stop traversing
                             // the delta..
                             if (deltaPath.equals(path)) {
                                 copy.setFlags(IModelDelta.SELECT | IModelDelta.REVEAL);
                                 return false;
                             }
-                            
+
                             // Continue traversing the delta.
                             return true;
                         }
-                        
+
                         private TreePath getViewerTreePath(IModelDelta node) {
 							ArrayList<Object> list = new ArrayList<Object>();
                             IModelDelta parentDelta = node.getParentDelta();
@@ -468,9 +468,9 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                     });
                     stateDelta = prunedDelta;
                 }
-                
+
                 fDropDownViewer.updateViewer(stateDelta);
-                
+
                 fDropDownViewer.addLabelUpdateListener(new ILabelUpdateListener() {
                     @Override
 					public void labelUpdateComplete(ILabelUpdate update) {}
@@ -499,16 +499,16 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                 if (fTreeViewer.getControl().isDisposed()) {
                     return;
                 }
-                
+
                 if (selection != null && (selection instanceof ITreeSelection) && !selection.isEmpty()) {
                     // Create the path to the root element of the drop-down viewer.  Need to calcualte
-                    // indexes and counts for the delta in order for the selection from the drop-down 
+                    // indexes and counts for the delta in order for the selection from the drop-down
                     // viewer to work properly.
                     TreeModelContentProvider contentProvider = (TreeModelContentProvider)fTreeViewer.getContentProvider();
                     TreePath path = TreePath.EMPTY;
                     int count = fTreeViewer.getChildCount(path);
                     count = contentProvider.viewToModelCount(path, count);
-                    ModelDelta rootDelta = 
+                    ModelDelta rootDelta =
                         new ModelDelta(fTreeViewer.getInput(), -1, IModelDelta.NO_CHANGE, count);
                     TreePath rootPath = fDropDownViewer.getRootPath();
                     ModelDelta delta = rootDelta;
@@ -521,10 +521,10 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                         count = contentProvider.viewToModelCount(path, count);
                         delta = delta.addNode(rootPath.getSegment(i), index, IModelDelta.NO_CHANGE, count);
                     }
-                    
+
                     // Create the delta and save the drop-down viewer's state to it.
                     fDropDownViewer.saveElementState(TreePath.EMPTY, delta, IModelDelta.EXPAND | IModelDelta.SELECT);
-                    
+
                     // Add the IModelDelta.FORCE flag to override the current selection in view.
                     rootDelta.accept(new IModelDeltaVisitor(){
                         @Override
@@ -536,23 +536,23 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                         }
                     });
 
-                    // If elements in the drop-down were auto-expanded, then collapse the drop-down's sub tree in the 
+                    // If elements in the drop-down were auto-expanded, then collapse the drop-down's sub tree in the
                     // full viewer.  After the drop-down's full expansion state is saved out to the tree viewer, the
-                    // tree viewer will accurately reflect the state changes made by the user. 
+                    // tree viewer will accurately reflect the state changes made by the user.
                     if (fView.getBreadcrumbDropDownAutoExpand()) {
                         fTreeViewer.collapseToLevel(rootPath, AbstractTreeViewer.ALL_LEVELS);
-                    }                    
-                    
+                    }
+
                     // Save the state of the drop-down out into the tree viewer.
                     fTreeViewer.updateViewer(rootDelta);
                     fViewer.setSelection(StructuredSelection.EMPTY);
                     site.close();
                 }
-                    
+
                 super.openElement(selection);
             }
         };
-        
+
 
         return dropDownTreeViewer.createDropDown(parent, site, paramPath);
     }

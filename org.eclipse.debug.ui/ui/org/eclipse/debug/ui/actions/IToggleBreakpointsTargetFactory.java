@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted to use with IToggleBreakpiontsTargetFactory extension
@@ -17,13 +17,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * A toggle breakpoints target factory creates one or more toggle breakpoint 
+ * A toggle breakpoints target factory creates one or more toggle breakpoint
  * targets.  The toggle breakpoints targets are used by toggle breakpoint actions
- * to create breakpoints appropriate for the active editor, debug session, project, 
+ * to create breakpoints appropriate for the active editor, debug session, project,
  * or selection.
- *  
+ *
  * <p>
- * Toggle breakpoints target factories are contributed via the 
+ * Toggle breakpoints target factories are contributed via the
  * <code>org.eclipse.debug.ui.toggleBreakpointsTargetFactories</code>
  * extension point. Following is an example of a detail pane factory extension:
  * <pre>
@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchPart;
  *            class="com.example.BreakpointToggleTargetFactory"&gt;
  *        &lt;enablement&gt;
  *           &lt;!-- Test the active debug context.  Enable only if the active context
- *                is an element from "Example" debugger, or if there is no debug context 
+ *                is an element from "Example" debugger, or if there is no debug context
  *                associated with the context element.  Also enable if debug context is
  *                empty --&gt;
  *           &lt;with variable="debugContext"&gt;
@@ -44,7 +44,7 @@ import org.eclipse.ui.IWorkbenchPart;
  *               &lt;/or&gt;
  *           &lt;/iterate&gt;
  *           &lt;/with&gt;
- *           &lt;!-- If there is no active debug context.  Enable the breakpoint toggle for 
+ *           &lt;!-- If there is no active debug context.  Enable the breakpoint toggle for
  *                the "Example" editors --&gt;
  *           &lt;instanceof value="com.example.Editor"/&gt;
  *        &lt;/enablement&gt;
@@ -54,9 +54,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * </p>
  * <p>
  * <p>
- * Clients contributing a toggle breakpoints target factory are intended to 
+ * Clients contributing a toggle breakpoints target factory are intended to
  * implement this interface.
- * 
+ *
  * @see IToggleBreakpointsTarget
  * @see IToggleBreakpointsTargetExtension
  * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager
@@ -64,55 +64,55 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public interface IToggleBreakpointsTargetFactory {
     /**
-     * Returns all possible types of toggle breakpoints targets that this 
-     * factory can create for the given selection and part, possibly empty. 
+     * Returns all possible types of toggle breakpoints targets that this
+     * factory can create for the given selection and part, possibly empty.
      * Toggle breakpoints targets  are returned as a set of IDs.
-     * 
+     *
      * @param part The active part.
      * @param selection The current selection
-     * @return Set of <code>String</code> IDs for possible toggle breakpoint 
+     * @return Set of <code>String</code> IDs for possible toggle breakpoint
      * targets, possibly empty
      */
 	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection);
-    
+
     /**
-     * Returns the identifier of the default toggle breakpoints target to use 
-     * for the given selection, or <code>null</code> if this factory has no 
-     * preference.   
-     * 
+     * Returns the identifier of the default toggle breakpoints target to use
+     * for the given selection, or <code>null</code> if this factory has no
+     * preference.
+     *
      * @param part The active part.
      * @param selection The current selection
      * @return a breakpoint toggle target identifier or <code>null</code>
      */
     public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection);
-    
+
     /**
-     * Creates and returns a toggle breakpoint target corresponding to the 
-     * given identifier that this factory can produce (according to 
+     * Creates and returns a toggle breakpoint target corresponding to the
+     * given identifier that this factory can produce (according to
      * {@link #getToggleTargets}).
-     *  
+     *
      * @param targetID The id of the toggle target to be created
      * @return toggle target or <code>null</code> if one could not be created
      */
     public IToggleBreakpointsTarget createToggleTarget(String targetID);
-    
+
     /**
-     * Returns a human readable name for the breakpoint toggle target associated with the 
+     * Returns a human readable name for the breakpoint toggle target associated with the
      * given ID. Used to populate the context menu with meaningful names of the types of
      * breakpoints created by the given target.
-     * 
+     *
      * @param targetID toggle breakpoints target identifier
      * @return toggle target name
      */
     public String getToggleTargetName(String targetID);
-    
+
     /**
-     * Returns a description for the breakpoint toggle target associated with the 
-     * given ID or <code>null</code> if none. 
-     * 
+     * Returns a description for the breakpoint toggle target associated with the
+     * given ID or <code>null</code> if none.
+     *
      * @param targetID toggle breakpoints target identifier
      * @return toggle target name or <code>null</code> if none
      */
     public String getToggleTargetDescription(String targetID);
-    
+
 }

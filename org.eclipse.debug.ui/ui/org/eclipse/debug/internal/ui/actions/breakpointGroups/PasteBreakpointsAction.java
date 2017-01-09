@@ -25,18 +25,18 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class PasteBreakpointsAction extends BreakpointSelectionAction {
-    
+
     /**
      * Creates a new action.
      *
      * @param view the view of this action
      */
     public PasteBreakpointsAction(BreakpointsView view) {
-        super(BreakpointGroupMessages.PasteBreakpointsAction_0, view); 
+        super(BreakpointGroupMessages.PasteBreakpointsAction_0, view);
         setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.PASTE_BREAKPOINTS_ACTION);
     }
@@ -44,7 +44,7 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
     /**
      * Returns the actual target of the paste action. Returns null
      * if no valid target is selected.
-     * 
+     *
      * @return the actual target of the paste action
      */
     private Object getTarget() {
@@ -70,7 +70,7 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
 
     /**
      * Returns whether this action should be enabled based on the selection
-     * in the clipboard. Only updates when the breakpoints view has focus. 
+     * in the clipboard. Only updates when the breakpoints view has focus.
      */
     @Override
 	protected boolean updateSelection(IStructuredSelection selection) {

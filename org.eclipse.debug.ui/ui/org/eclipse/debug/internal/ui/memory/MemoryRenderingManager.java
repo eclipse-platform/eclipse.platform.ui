@@ -32,7 +32,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 
 /**
  * The memory rendering manager.
- * 
+ *
  * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager
  * @since 3.1
  */
@@ -53,7 +53,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 
 	/**
 	 * Returns the memory rendering manager.
-	 * 
+	 *
 	 * @return the memory rendering manager
 	 */
 	public static IMemoryRenderingManager getDefault() {

@@ -18,8 +18,8 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 /**
  * Manages registered memory blocks in the workspace. Clients
- * interested in notification of the addition and removal of 
- * memory blocks may register as a memory block listener with 
+ * interested in notification of the addition and removal of
+ * memory blocks may register as a memory block listener with
  * the memory block manager.
  * @see org.eclipse.debug.core.model.IMemoryBlock
  * @see org.eclipse.debug.core.IMemoryBlockListener
@@ -33,61 +33,61 @@ public interface IMemoryBlockManager {
 	 * Adds the given memory blocks to the memory block manager.
 	 * Registered memory block listeners are notified of the additions.
 	 * Has no effect on memory blocks that are already registered.
-	 *   
+	 *
 	 * @param memoryBlocks memory blocks to add
 	 */
 	public void addMemoryBlocks(IMemoryBlock[] memoryBlocks);
-	
+
 	/**
 	 * Removes the given memory blocks from the memory block manager.
 	 * Registered memory block listeners are notified of the removals.
 	 * Has no effect on memory blocks that are not currently registered.
-	 * 
+	 *
 	 * @param memoryBlocks memory blocks to remove
 	 */
 	public void removeMemoryBlocks(IMemoryBlock[] memoryBlocks);
-	
+
 	/**
 	 * Registers the given listener for memory block addition and
 	 * removal notification. Has no effect if an identical listener
 	 * is already registered.
-	 *    
+	 *
 	 * @param listener the listener to add
 	 */
 	public void addListener(IMemoryBlockListener listener);
-	
+
 	/**
 	 * Unregisters the given listener for memory block addition and
 	 * removal notification. Has no effect if an identical listener
 	 * is not already registered.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 */
 	public void removeListener(IMemoryBlockListener listener);
-	
+
 	/**
 	 * Returns all registered memory blocks.
-	 * 
+	 *
 	 * @return all registered memory blocks
 	 */
 	public IMemoryBlock[] getMemoryBlocks();
-	
+
 	/**
 	 * Returns all registered memory blocks associated with the
 	 * given debug target. That is, all registered memory blocks
 	 * whose <code>getDebugTarget()</code> method returns the
 	 * specified debug target.
-	 * 
+	 *
 	 * @param debugTarget target for which memory blocks have been requested
 	 * @return all registered memory blocks associated with the given debug
 	 *  target
 	 */
 	public IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget);
-	
+
 	/**
 	 * Returns all registered memory blocks that originated from the
 	 * given memory retrieval source.
-	 * 
+	 *
 	 * @param source source for which memory blocks have been requested
 	 * @return all registered memory blocks that originated from the
 	 *  given memory retrieval source

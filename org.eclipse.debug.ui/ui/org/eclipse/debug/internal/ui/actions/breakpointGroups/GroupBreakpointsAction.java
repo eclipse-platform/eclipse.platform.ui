@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.jface.action.IAction;
  * some criteria (as determined by the factory).
  */
 public class GroupBreakpointsAction extends Action {
-    
+
     private IBreakpointOrganizer fOrganzier;
     private BreakpointsView fView;
 
@@ -52,10 +52,10 @@ public class GroupBreakpointsAction extends Action {
             }
         }
     }
-    
+
     /**
      * Returns this action's organizer.
-     * 
+     *
      * @return breakpoint organizer
      */
     public IBreakpointOrganizer getOrganizer() {

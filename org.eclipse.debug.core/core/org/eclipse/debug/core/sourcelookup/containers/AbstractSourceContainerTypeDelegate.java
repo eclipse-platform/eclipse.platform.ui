@@ -26,10 +26,10 @@ import org.w3c.dom.Element;
  * @since 3.0
  */
 public abstract class AbstractSourceContainerTypeDelegate implements ISourceContainerTypeDelegate {
-	
+
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
 	 * @throws CoreException if a problem is encountered
@@ -38,20 +38,20 @@ public abstract class AbstractSourceContainerTypeDelegate implements ISourceCont
 		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);
 		throw new CoreException(status);
 	}
-	
+
 	/**
 	 * Creates and returns a new XML document.
-	 * 
+	 *
 	 * @return a new XML document
 	 * @throws CoreException if unable to create a new document
 	 */
 	protected Document newDocument()throws CoreException {
 		return DebugPlugin.newDocument();
-	}	
-	
+	}
+
 	/**
 	 * Returns the given XML document as a string.
-	 * 
+	 *
 	 * @param document document to serialize
 	 * @return the given XML document as a string
 	 * @throws CoreException if unable to serialize the document
@@ -62,12 +62,12 @@ public abstract class AbstractSourceContainerTypeDelegate implements ISourceCont
 
 	/**
 	 * Parses the given XML document, returning its root element.
-	 * 
+	 *
 	 * @param document XML document as a string
 	 * @return the document's root element
 	 * @throws CoreException if unable to parse the document
 	 */
 	protected Element parseDocument(String document) throws CoreException {
 		return DebugPlugin.parseDocument(document);
-	}	
+	}
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -27,7 +27,7 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * A source provider for the active debug context variable.
- * 
+ *
  * @since 3.5
  */
 public class DebugContextSourceProvider extends AbstractSourceProvider implements IDebugContextListener {
@@ -36,14 +36,14 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
      * The names of the sources supported by this source provider.
      */
     private static final String[] PROVIDED_SOURCE_NAMES = new String[] { IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME };
-    
+
     private final IDebugContextService fDebugContextService;
-    
+
 	private final IEvaluationService fEvaluationService;
-	
+
 	/**
-	 * Creates the source provider.  It registers it as a listener to the 
-	 * given debug context service, and as a provider with the given 
+	 * Creates the source provider.  It registers it as a listener to the
+	 * given debug context service, and as a provider with the given
 	 * evaluation service.
 	 */
 	public DebugContextSourceProvider(IDebugContextService debugContextService, IEvaluationService evaluationService) {
@@ -69,7 +69,7 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
 			fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values);
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		fDebugContextService.removeDebugContextListener(this);

@@ -21,21 +21,21 @@ import org.eclipse.swt.widgets.Event;
 
 /**
  * This class provides the aciton event for both the context menu in breakpoints view
- * and the drop down menu in the breakpoints view. 
+ * and the drop down menu in the breakpoints view.
  * <p>
  * The action simply calls the wizard to import breakpoints.
  * </p>
- *  
+ *
  *  @see WizardImportBreakpoints
  *  @see WizardImportBreakpointsPage
- *  
+ *
  *  @since 3.2
  */
 public class ImportBreakpoints extends AbstractDebugActionDelegate {
-	
+
 	/**
 	 * Opens import wizard
-	 * 
+	 *
 	 * @param action IAction the action
 	 */
 	@Override

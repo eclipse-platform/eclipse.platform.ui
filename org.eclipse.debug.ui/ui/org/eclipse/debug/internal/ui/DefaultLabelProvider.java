@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
- *     Valentin Ciocoi - Bug 414994 Guard against out of bounds exception when handling escaped characters in DefaultLabelProvider 
+ *     Valentin Ciocoi - Bug 414994 Guard against out of bounds exception when handling escaped characters in DefaultLabelProvider
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -57,7 +57,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import com.ibm.icu.text.MessageFormat;
 
 public class DefaultLabelProvider implements ILabelProvider {
-	
+
 	/**
 	 * Maps image descriptors to images.
 	 */
@@ -77,7 +77,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			if (de != null) {
 				ImageDescriptor descriptor= de.getImageDescriptor(element);
 				if( descriptor != null) {
-					return getImage(descriptor);					
+					return getImage(descriptor);
 				}
 			}
 			return null;
@@ -87,11 +87,11 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		return DebugPluginImages.getImage(key);
 	}
-	
+
 	/**
 	 * Returns an image created from the given image descriptor or <code>null</code>.
 	 * Caches and reuses images.
-	 * 
+	 *
 	 * @param descriptor image descriptor
 	 * @return image or <code>null</code>
 	 */
@@ -104,9 +104,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (image != null) {
 			fImages.put(descriptor, image);
 		}
-		return image;						
+		return image;
 	}
-	
+
 	/**
 	 * Returns the key (<code>String</code>) of the default image
 	 * appropriate for the given element or <code>null</code>
@@ -123,7 +123,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			} else if (element instanceof IVariable || element instanceof IValue) {
 				if (element instanceof IndexedVariablePartition) {
 					return IInternalDebugUIConstants.IMG_OBJS_ARRAY_PARTITION;
-				} 
+				}
 				return IDebugUIConstants.IMG_OBJS_VARIABLE;
 			} else if (element instanceof IStackFrame) {
 				if (((IStackFrame)element).getThread().isSuspended()) {
@@ -159,7 +159,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			} else if (element instanceof IProcess) {
 				if (((IProcess) element).isTerminated()) {
 					return IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED;
-				} 
+				}
 				return IDebugUIConstants.IMG_OBJS_OS_PROCESS;
 			} else if (element instanceof ILaunch) {
 				// determine the image from the launch config type
@@ -180,7 +180,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					return IDebugUIConstants.IMG_OBJS_LAUNCH_RUN_TERMINATED;
 				} else {
 					return IDebugUIConstants.IMG_OBJS_LAUNCH_RUN;
-				}	
+				}
 			} else if (element instanceof ILaunchConfigurationType) {
 				return ((ILaunchConfigurationType)element).getIdentifier();
 			} else if (element instanceof ILaunchConfiguration) {
@@ -192,7 +192,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				} else if (element instanceof IRegisterGroup) {
 					label.append(getRegisterGroupText((IRegisterGroup)element));
 				} else if (element instanceof IValue) {
-					label.append(((IValue)element).getValueString()); 
+					label.append(((IValue)element).getValueString());
 				}
 			} else {
 				if (element instanceof IMarker) {
@@ -258,25 +258,25 @@ public class DefaultLabelProvider implements ILabelProvider {
 						int exit = process.getExitValue();
 						terminatedMessage = MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new Object[] { Integer.valueOf(exit).toString() });
 					} else {
-						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1; 
+						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1;
 					}
 					label.insert(0, terminatedMessage);
 				}
 			} else if (element instanceof IDisconnect) {
 				if (((IDisconnect) element).isDisconnected()) {
-					label.insert(0, DebugUIMessages.DefaultLabelProvider__disconnected__1); 
+					label.insert(0, DebugUIMessages.DefaultLabelProvider__disconnected__1);
 				}
 			}
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);
-			label.append(DebugUIMessages.DefaultLabelProvider__unknown__1); 
+			label.append(DebugUIMessages.DefaultLabelProvider__unknown__1);
 		}
 		return label.toString();
 	}
-	
+
 	/**
 	 * Returns default label for a breakpoint.
-	 * 
+	 *
 	 * @param breakpoint
 	 * @return default label for a breakpoint
 	 */
@@ -303,16 +303,16 @@ public class DefaultLabelProvider implements ILabelProvider {
 				return de.getLabel(object);
 			}
 		}
-		return DebugUIMessages.DefaultLabelProvider__unknown__1; 
+		return DebugUIMessages.DefaultLabelProvider__unknown__1;
 	}
-	
+
 	/**
 	 * Used to render launch history items in the re-launch drop downs
 	 */
 	protected String getLaunchText(ILaunch launch) {
 		if (launch.getLaunchConfiguration() == null || (!launch.getLaunchConfiguration().exists() && !launch.getLaunchConfiguration().isWorkingCopy())) {
-			return DebugUIMessages.DefaultLabelProvider__unknown__1; 
-		} 
+			return DebugUIMessages.DefaultLabelProvider__unknown__1;
+		}
 		// new launch configuration
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		StringBuffer buff= new StringBuffer(config.getName());
@@ -323,7 +323,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			DebugUIPlugin.log(e);
 		}
 		buff.append("]"); //$NON-NLS-1$
-		return buff.toString();			
+		return buff.toString();
 	}
 
 	protected String getExpressionText(IExpression expression) {
@@ -342,18 +342,18 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		if (valueString != null && valueString.length() > 0) {
 			buffer.append("= "); //$NON-NLS-1$
-			buffer.append(valueString);		
+			buffer.append(valueString);
 		}
 		return buffer.toString();
-	}	
-	
+	}
+
 	/**
 	 * @param expression
 	 * @return
 	 */
 	protected String getWatchExpressionText(IWatchExpression expression) {
 		StringBuffer result= new StringBuffer();
-		
+
 		String snippet = expression.getExpressionText().trim();
 		StringBuffer snippetBuffer = new StringBuffer();
 		if (snippet.length() > 30){
@@ -364,18 +364,18 @@ public class DefaultLabelProvider implements ILabelProvider {
 			snippetBuffer.append(snippet);
 		}
 		snippet = snippetBuffer.toString().replaceAll("[\n\r\t]+", " ");  //$NON-NLS-1$//$NON-NLS-2$
-		
+
 		result.append('"');
 		result.append(snippet);
 		result.append('"');
 
 		if (expression.isPending()) {
-			result.append(DebugUIMessages.DefaultLabelProvider_12); 
+			result.append(DebugUIMessages.DefaultLabelProvider_12);
 		} else if (expression.hasErrors()) {
-			result.append(DebugUIMessages.DefaultLabelProvider_13); 
+			result.append(DebugUIMessages.DefaultLabelProvider_13);
 		} else {
 			IValue value= expression.getValue();
-			if (value != null) {	
+			if (value != null) {
 				String valueString= DebugUIPlugin.getModelPresentation().getText(value);
 				if (valueString.length() > 0) {
 					result.append(" = ").append(valueString); //$NON-NLS-1$
@@ -383,7 +383,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			}
 		}
 		if (!expression.isEnabled()) {
-			result.append(DebugUIMessages.DefaultLabelProvider_15); 
+			result.append(DebugUIMessages.DefaultLabelProvider_15);
 		}
 		return result.toString();
 	}
@@ -400,7 +400,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		return buffer.toString();
 	}
-	
+
 	protected String getRegisterGroupText(IRegisterGroup registerGroup) {
 		StringBuffer buffer= new StringBuffer();
 		try {
@@ -410,32 +410,32 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		return buffer.toString();
 	}
-	
+
 	protected String getMarkerText(IMarker marker) {
 		try {
 			if (marker.exists() && marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
-				return DebugUIMessages.DefaultLabelProvider_Breakpoint_1; 
+				return DebugUIMessages.DefaultLabelProvider_Breakpoint_1;
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
-	
+
 	protected String getMarkerImageKey(IMarker marker) {
 		try {
 			IBreakpoint breakpoint= DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
 			if (breakpoint != null && marker.exists()) {
 				if (breakpoint.isEnabled()) {
 					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
-				} 
+				}
 				return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
 			}
 		} catch (CoreException e) {
 		}
 		return null;
 	}
-	
+
 	protected String getBreakpointImageKey(IBreakpoint breakpoint) {
 		if (breakpoint != null && breakpoint.getMarker().exists()) {
 		    try {
@@ -447,17 +447,17 @@ public class DefaultLabelProvider implements ILabelProvider {
 	        				//access and modification
 	        				if (enabled) {
 	        					return IDebugUIConstants.IMG_OBJS_WATCHPOINT;
-	        				} 
+	        				}
 	        				return IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED;
 	        			}
 	        			if (enabled) {
         					return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT;
-        				} 
+        				}
 	        			return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED;
 	        		} else if (watchpoint.isModification()) {
 	        			if (enabled) {
 	        				return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT;
-	        			} 
+	        			}
 	        			return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED;
 	        		} else {
 	        			//neither access nor modification
@@ -466,7 +466,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	            }
 			    if (enabled) {
 					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
-				} 
+				}
 				return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
 		    } catch (CoreException e) {
 		    }
@@ -506,10 +506,10 @@ public class DefaultLabelProvider implements ILabelProvider {
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
-	
+
 	/**
 	 * Returns the given string with special chars in escaped sequences.
-	 * 
+	 *
 	 * @param label
 	 * @return the given string with special chars in escaped sequences
 	 * @since 3.3
@@ -527,7 +527,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					break;
 				case '\f':
 					escaped.append("\\f"); //$NON-NLS-1$
-					break;					
+					break;
 				case '\n':
 					escaped.append("\\n"); //$NON-NLS-1$
 					break;
@@ -539,18 +539,18 @@ public class DefaultLabelProvider implements ILabelProvider {
 					break;
 				case '\\':
 					escaped.append("\\\\"); //$NON-NLS-1$
-					break;					
+					break;
 				default:
 					escaped.append(c);
 					break;
 			}
 		}
 		return escaped.toString();
-	}	
-	
+	}
+
 	/**
 	 * Returns the string with escaped sequences replaced with single chars.
-	 * 
+	 *
 	 * @param string
 	 * @return the string with escaped sequences replaced with single chars
 	 * @since 3.3
@@ -597,11 +597,11 @@ public class DefaultLabelProvider implements ILabelProvider {
 						break;
 					default :
 						break;
-				}	
+				}
 			}
 			encoded.append(c);
 		}
-		return encoded.toString();		
+		return encoded.toString();
 	}
 }
 

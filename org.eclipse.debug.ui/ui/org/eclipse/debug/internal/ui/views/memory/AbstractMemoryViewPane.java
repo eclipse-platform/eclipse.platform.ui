@@ -72,7 +72,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 
 	/**
 	 * Create the content of the view pane
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param paneId the id of the pane to create
 	 * @param label the label for the new pane
@@ -324,7 +324,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	/**
 	 * Helper method to dispose of a tab folder, and of any tab items it
 	 * contains. Must be called from the UI thread.
-	 * 
+	 *
 	 * @param tabFolder the {@link CTabFolder} to dispose
 	 * */
 	private void disposeOfFolder(CTabFolder tabFolder) {

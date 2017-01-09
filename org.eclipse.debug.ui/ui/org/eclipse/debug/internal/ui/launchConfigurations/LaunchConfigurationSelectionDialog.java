@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class provides a dialog for selecting a given launch configuration from a listing
- * 
+ *
  * @since 3.3.0
  * CONTEXTLAUNCHING
  */
@@ -26,7 +26,7 @@ public class LaunchConfigurationSelectionDialog extends AbstractDebugListSelecti
 
 	private static final String DIALOG_SETTINGS = IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_CONFIGURATION_DIALOG"; //$NON-NLS-1$;
 	private Object fInput;
-	
+
 	/**
 	 * Constructor
 	 * @param parent
@@ -68,5 +68,5 @@ public class LaunchConfigurationSelectionDialog extends AbstractDebugListSelecti
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.LaunchConfigurationSelectionDialog_1;
 	}
-	
+
 }

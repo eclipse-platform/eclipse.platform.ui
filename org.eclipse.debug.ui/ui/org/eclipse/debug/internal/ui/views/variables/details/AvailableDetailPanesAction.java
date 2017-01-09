@@ -24,35 +24,35 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Drop down action that displays the available detail panes for a selection.
- * 
+ *
  * @since 3.3
  * @see IDetailPaneContainer
  */
 public class AvailableDetailPanesAction extends Action implements IMenuCreator {
-	
+
 	private Menu fMenu;
 	private Set<String> fAvailableIDs;
 	private IDetailPaneContainer fDetailPaneContainer;
-	
+
 	/**
 	 * Each entry in the menu will be of this type.  It represents one possible detail pane
 	 * that the user can select.  If the user selects it, the display is changed to use that
 	 * detail pane and the preferred detail pane map in the pane manager is updated.
-	 * 
+	 *
 	 * @see DetailPaneManager
 	 * @since 3.3
 	 */
 	private class SetDetailPaneAction extends Action {
-		
+
 		private String fPaneID;
 		private Set<String> fPossiblePaneIDs;
-		
+
 		public SetDetailPaneAction(String name, String paneID, Set<String> possiblePaneIDs) {
 			super(name,AS_RADIO_BUTTON);
 			fPaneID = paneID;
 			fPossiblePaneIDs = possiblePaneIDs;
 		}
-		
+
 		@Override
 		public void run() {
 			// Don't change panes unless the user is selecting a different pane than the one currently displayed
@@ -61,26 +61,26 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 				fDetailPaneContainer.refreshDetailPaneContents();
 			}
 		}
-			
+
 	}
-	
+
 	public AvailableDetailPanesAction(IDetailPaneContainer detailPaneContainer) {
 		fDetailPaneContainer = detailPaneContainer;
-		setText(DetailMessages.AvailableDetailPanesAction_0);  
+		setText(DetailMessages.AvailableDetailPanesAction_0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_DETAIL_PANE);
-		
+
 		setEnabled(false);
 		setMenuCreator(this);
 		init();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
@@ -91,7 +91,7 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		}
 		fAvailableIDs.clear();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
@@ -99,12 +99,12 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	public Menu getMenu(Control parent) {
 		return null;
 	}
-	
+
 	protected void addActionToMenu(Menu parent, IAction action) {
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
@@ -124,26 +124,26 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
                 name.append(i);
                 name.append(' ');
             }
-			
+
 			String typeName = DetailPaneManager.getDefault().getNameFromID(currentID);
 			if (typeName != null && typeName.length() > 0){
 				name.append(typeName);
 			} else {
-				name.append(currentID);				
+				name.append(currentID);
 			}
-					
+
 			IAction action = new SetDetailPaneAction(name.toString(),currentID,fAvailableIDs);
-			
+
 			if (currentID.equals(fDetailPaneContainer.getCurrentPaneID())){
 				action.setChecked(true);
 			}
-			
-			addActionToMenu(fMenu, action);	
+
+			addActionToMenu(fMenu, action);
 		}
-		
+
 		return fMenu;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */

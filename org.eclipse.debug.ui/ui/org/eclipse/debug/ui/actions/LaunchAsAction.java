@@ -51,39 +51,39 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 @Deprecated
 public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
-	
+
 	/**
-	 * Cascading menu 
+	 * Cascading menu
 	 */
 	private Menu fCreatedMenu;
-	
+
 	/**
-	 * Launch group identifier 
+	 * Launch group identifier
 	 */
 	private String fLaunchGroupIdentifier;
-	
+
 	/**
 	 * Presentation wrapper for this action
 	 */
 	private IAction fAction;
-	
+
 	/**
 	 * Creates a cascading menu action to populate with shortcuts in the given
 	 * launch group.
-	 *  
+	 *
 	 * @param launchGroupIdentifier launch group identifier
 	 */
 	public LaunchAsAction(String launchGroupIdentifier) {
 		super();
 		fLaunchGroupIdentifier = launchGroupIdentifier;
 		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode());
-		setText(launchMode.getLaunchAsLabel()); 
+		setText(launchMode.getLaunchAsLabel());
 		setMenuCreator(this);
 	}
-	
+
 	/**
 	 * Returns the launch group associated with this action.
-	 * 
+	 *
 	 * @return the launch group associated with this action
 	 */
 	private LaunchGroupExtension getLaunchGroup() {
@@ -97,7 +97,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	public void run() {
 		//do nothing, this action just creates a cascading menu.
 	}
-		
+
 	private void createAction(Menu parent, IAction action, int count) {
 		StringBuffer label= new StringBuffer();
 		//add the numerical accelerator
@@ -111,7 +111,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
-	
+
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
@@ -121,7 +121,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 			getCreatedMenu().dispose();
 		}
 	}
-	
+
 	/**
 	 * @see IMenuCreator#getMenu(Control)
 	 */
@@ -129,7 +129,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	public Menu getMenu(Control parent) {
 		return null;
 	}
-	
+
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
@@ -143,7 +143,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		initMenu();
 		return getCreatedMenu();
 	}
-	
+
 	private void fillMenu() {
 		//Retrieve the current perspective and the registered shortcuts
 		List<LaunchShortcutExtension> shortcuts = null;
@@ -151,7 +151,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 if (activePerspID != null) {
 			 shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(activePerspID, getCategory());
 		 }
-	
+
 		 // If NO shortcuts are listed in the current perspective, add ALL shortcuts
 		 // to avoid an empty cascading menu
 		 if (shortcuts == null || shortcuts.isEmpty()) {
@@ -167,7 +167,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 			 }
 		 }
 	}
-	
+
 	/**
 	 * Creates the menu for the action
 	 */
@@ -186,7 +186,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 			}
 		});
 	}
-		
+
 	/**
 	 * Add the shortcut to the menu.
 	 * @param mode the launch mode identifier
@@ -202,11 +202,11 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);
 		}
 		/*if (fKeyBindingService != null) {
-			fKeyBindingService.registerGlobalAction(action);	
+			fKeyBindingService.registerGlobalAction(action);
 		}*/
 		createAction(menu, action, menuCount);
 	}
-	
+
 	/**
 	 * Return the ID of the currently active perspective, or <code>null</code>
 	 * if there is none.
@@ -225,16 +225,16 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		}
 		return null;
 	}
-		
+
 	/**
-	 * Returns the mode of this action - run or debug 
-	 * 
+	 * Returns the mode of this action - run or debug
+	 *
 	 * @return the mode of this action - run or debug
 	 */
 	private String getMode() {
 		return getLaunchGroup().getMode();
 	}
-	
+
 	/**
 	 * Returns the category of this action - possibly <code>null</code>
 	 *
@@ -243,15 +243,15 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	private String getCategory() {
 		return getLaunchGroup().getCategory();
 	}
-	
+
 	private Menu getCreatedMenu() {
 		return fCreatedMenu;
 	}
-	
+
 	private void setCreatedMenu(Menu createdMenu) {
 		fCreatedMenu = createdMenu;
 	}
-	
+
 	/**
 	 * Returns the launch configuration manager.
 	 *
@@ -259,8 +259,8 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 */
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-	}	
-	
+	}
+
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -288,7 +288,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 			initialize(action);
 		}
 	}
-	
+
 	/**
 	 * Set the enabled state of the underlying action based on whether there are any
 	 * registered launch shortcuts for this launch mode.
@@ -296,13 +296,13 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 */
 	private void initialize(IAction action) {
 		fAction = action;
-		action.setEnabled(existsShortcutsForMode());	
-	}	
+		action.setEnabled(existsShortcutsForMode());
+	}
 
 	/**
 	 * Return whether there are any registered launch shortcuts for
 	 * the mode of this action.
-	 * 
+	 *
 	 * @return whether there are any registered launch shortcuts for
 	 * the mode of this action
 	 */
@@ -312,8 +312,8 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 			if (ext.getModes().contains(getMode())) {
 				return true;
 			}
-		}		
+		}
 		return false;
-	}	
+	}
 }
 

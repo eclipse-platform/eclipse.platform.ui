@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,18 +21,18 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Starts a source lookup service in each workbench window.
- * 
+ *
  * @since 3.2
  */
 public class SourceLookupManager implements IWindowListener {
 
 	private static SourceLookupManager fgDefault;
-	
+
 	/**
 	 * Services per window
 	 */
 	private Map<IWorkbenchWindow, SourceLookupService> fServices = new HashMap<IWorkbenchWindow, SourceLookupService>();
-	
+
 	private SourceLookupManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
@@ -42,10 +42,10 @@ public class SourceLookupManager implements IWindowListener {
 		}
 		workbench.addWindowListener(this);
 	}
-		
+
 	/**
 	 * Returns the default source lookup manager.
-	 * 
+	 *
 	 * @return
 	 */
 	public static SourceLookupManager getDefault() {
@@ -92,7 +92,7 @@ public class SourceLookupManager implements IWindowListener {
 			fServices.put(window, service);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
@@ -102,5 +102,5 @@ public class SourceLookupManager implements IWindowListener {
 		if (service != null) {
 			service.displaySource(context, page, forceSourceLookup);
 		}
-	}	
+	}
 }

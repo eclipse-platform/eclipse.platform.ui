@@ -44,24 +44,24 @@ public class MultipleInputDialog extends Dialog {
 	protected static final int BROWSE = 101;
 	protected static final int VARIABLE = 102;
 	protected static final int MULTILINE_VARIABLE = 103;
-	
+
 	protected Composite panel;
-	
+
 	protected List<FieldSummary> fieldList = new ArrayList<FieldSummary>();
 	protected List<Text> controlList = new ArrayList<Text>();
 	protected List<Validator> validators = new ArrayList<Validator>();
 	protected Map<Object, String> valueMap = new HashMap<Object, String>();
 
 	private String title;
-	
-	
-	
+
+
+
 	public MultipleInputDialog(Shell shell, String title) {
 		super(shell);
 		this.title = title;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
@@ -71,9 +71,9 @@ public class MultipleInputDialog extends Dialog {
 		if (title != null) {
 			shell.setText(title);
 		}
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -83,7 +83,7 @@ public class MultipleInputDialog extends Dialog {
 		validateFields();
 		return bar;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -92,7 +92,7 @@ public class MultipleInputDialog extends Dialog {
 		Composite container = (Composite)super.createDialogArea(parent);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		panel = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		panel.setLayout(layout);
@@ -115,12 +115,12 @@ public class MultipleInputDialog extends Dialog {
 					break;
 			}
 		}
-		
+
 		fieldList = null; // allow it to be gc'd
 		Dialog.applyDialogFont(container);
 		return container;
 	}
-	
+
 	public void addBrowseField(String labelText, String initialValue, boolean allowsEmpty) {
 		fieldList.add(new FieldSummary(BROWSE, labelText, initialValue, allowsEmpty));
 	}
@@ -133,23 +133,23 @@ public class MultipleInputDialog extends Dialog {
 	public void addMultilinedVariablesField(String labelText, String initialValue, boolean allowsEmpty) {
 		fieldList.add(new FieldSummary(MULTILINE_VARIABLE, labelText, initialValue, allowsEmpty));
 	}
-	
-	protected void createTextField(String labelText, String initialValue, boolean allowEmpty) { 
+
+	protected void createTextField(String labelText, String initialValue, boolean allowEmpty) {
 		Label label = new Label(panel, SWT.NONE);
 		label.setText(labelText);
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		
+
 		final Text text = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text.setData(FIELD_NAME, labelText);
-		
+
 		// make sure rows are the same height on both panels.
-		label.setSize(label.getSize().x, text.getSize().y); 
-		
+		label.setSize(label.getSize().x, text.getSize().y);
+
 		if (initialValue != null) {
 			text.setText(initialValue);
 		}
-		
+
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				@Override
@@ -164,22 +164,22 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 		}
-		
+
 		controlList.add(text);
 	}
-	
+
 	protected void createBrowseField(String labelText, String initialValue, boolean allowEmpty) {
 		Label label = new Label(panel, SWT.NONE);
 		label.setText(labelText);
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		
+
 		Composite comp = new Composite(panel, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		final Text text = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 200;
@@ -187,8 +187,8 @@ public class MultipleInputDialog extends Dialog {
 		text.setData(FIELD_NAME, labelText);
 
 		// make sure rows are the same height on both panels.
-		label.setSize(label.getSize().x, text.getSize().y); 
-		
+		label.setSize(label.getSize().x, text.getSize().y);
+
 		if (initialValue != null) {
 			text.setText(initialValue);
 		}
@@ -208,45 +208,45 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 		}
-		
-		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_6, false); 
+
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_6, false);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setMessage(DebugUIMessages.MultipleInputDialog_7);  
+				dialog.setMessage(DebugUIMessages.MultipleInputDialog_7);
 				String currentWorkingDir = text.getText();
 				if (!currentWorkingDir.trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 					File path = new File(currentWorkingDir);
 					if (path.exists()) {
 						dialog.setFilterPath(currentWorkingDir);
-					}			
+					}
 				}
-				
+
 				String selectedDirectory = dialog.open();
 				if (selectedDirectory != null) {
 					text.setText(selectedDirectory);
-				}		
+				}
 			}
 		});
 
 		controlList.add(text);
-		
+
 	}
-	
-	
+
+
 	public void createVariablesField(String labelText, String initialValue, boolean allowEmpty) {
 		Label label = new Label(panel, SWT.NONE);
 		label.setText(labelText);
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		
+
 		Composite comp = new Composite(panel, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		final Text text = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 200;
@@ -254,8 +254,8 @@ public class MultipleInputDialog extends Dialog {
 		text.setData(FIELD_NAME, labelText);
 
 		// make sure rows are the same height on both panels.
-		label.setSize(label.getSize().x, text.getSize().y); 
-		
+		label.setSize(label.getSize().x, text.getSize().y);
+
 		if (initialValue != null) {
 			text.setText(initialValue);
 		}
@@ -275,8 +275,8 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 		}
-		
-		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_8, false); 
+
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_8, false);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -292,16 +292,16 @@ public class MultipleInputDialog extends Dialog {
 		});
 
 		controlList.add(text);
-				
+
 	}
-	
+
 	public void createMultilineVariablesField(String labelText, String initialValue, boolean allowEmpty) {
 		Label label = new Label(panel, SWT.NONE);
 		label.setText(labelText);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		final Text text = new Text(panel, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 300;
@@ -309,7 +309,7 @@ public class MultipleInputDialog extends Dialog {
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		text.setData(FIELD_NAME, labelText);
-		
+
 		text.addTraverseListener(new TraverseListener () {
   			@Override
 			public void keyTraversed(TraverseEvent e) {
@@ -318,10 +318,10 @@ public class MultipleInputDialog extends Dialog {
   				}
   			}
   		});
-		
+
 		// make sure rows are the same height on both panels.
-		label.setSize(label.getSize().x, text.getSize().y); 
-		
+		label.setSize(label.getSize().x, text.getSize().y);
+
 		if (initialValue != null) {
 			text.setText(initialValue);
 		}
@@ -341,13 +341,13 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 		}
-		Composite comp = SWTFactory.createComposite(panel, panel.getFont(), 1, 2, GridData.HORIZONTAL_ALIGN_END); 
+		Composite comp = SWTFactory.createComposite(panel, panel.getFont(), 1, 2, GridData.HORIZONTAL_ALIGN_END);
 		GridLayout ld = (GridLayout)comp.getLayout();
 		ld.marginHeight = 1;
 		ld.marginWidth = 0;
 		ld.horizontalSpacing = 0;
 		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_8, false);
-		
+
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -362,9 +362,9 @@ public class MultipleInputDialog extends Dialog {
 			}
 		});
 
-		controlList.add(text);				
+		controlList.add(text);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -377,7 +377,7 @@ public class MultipleInputDialog extends Dialog {
 		super.okPressed();
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
@@ -386,15 +386,15 @@ public class MultipleInputDialog extends Dialog {
 		applyDialogFont(panel);
 		return super.open();
 	}
-	
+
 	public Object getValue(String key) {
 		return valueMap.get(key);
 	}
-	
+
 	public String getStringValue(String key) {
 		return  (String) getValue(key);
 	}
-	
+
 	public void validateFields() {
 		for (Validator validator : validators) {
 			if (!validator.validate()) {
@@ -404,13 +404,13 @@ public class MultipleInputDialog extends Dialog {
 		}
 		getButton(IDialogConstants.OK_ID).setEnabled(true);
 	}
-    
+
 	protected class FieldSummary {
 		int type;
 		String name;
 		String initialValue;
 		boolean allowsEmpty;
-		
+
 		public FieldSummary(int type, String name, String initialValue, boolean allowsEmpty) {
 			this.type = type;
 			this.name = name;
@@ -418,7 +418,7 @@ public class MultipleInputDialog extends Dialog {
 			this.allowsEmpty = allowsEmpty;
 		}
 	}
-	
+
 	protected class Validator {
 		boolean validate() {
 			return true;

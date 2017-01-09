@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River - Pawel Piech - Fixed debug context service usage (Bug 258189)
@@ -21,22 +21,22 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Manages the view context services for each window.
- * 
+ *
  * @since 3.2
  */
 public class ViewContextManager implements IWindowListener {
-		
+
 	/**
 	 * Map of services
 	 */
 	private Map<IWorkbenchWindow, ViewContextService> fWindowToService = new HashMap<IWorkbenchWindow, ViewContextService>();
-	
+
 	// singleton manager
 	private static ViewContextManager fgManager;
-	
+
 	/**
 	 * Returns the singleton view context manager.
-	 * 
+	 *
 	 * @return view manager
 	 */
 	public static ViewContextManager getDefault() {
@@ -45,8 +45,8 @@ public class ViewContextManager implements IWindowListener {
 		}
 		return fgManager;
 	}
-	
-	
+
+
 	private ViewContextManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
@@ -56,7 +56,7 @@ public class ViewContextManager implements IWindowListener {
 		}
 		workbench.addWindowListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -94,10 +94,10 @@ public class ViewContextManager implements IWindowListener {
 			fWindowToService.put(window, service);
 		}
 	}
-	
+
 	/**
 	 * Returns the service for the given window, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param window
 	 * @return view context service or <code>null</code>
 	 */

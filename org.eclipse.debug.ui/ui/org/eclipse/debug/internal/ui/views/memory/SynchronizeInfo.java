@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,11 +23,11 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * responsible for defining properties to be synchronized and notifying the
  * synchronizer of properties changes. This is only for keeping track of values
  * of synchronized properties and firing events when properties are changed.
- * 
+ *
  * Memory block serves as a key for synchronization. Views displaying the same
  * memory block can be synchronized. Views displaying different memory block
  * cannot be synchronized.
- * 
+ *
  * @since 3.0
  */
 public class SynchronizeInfo {
@@ -37,7 +37,7 @@ public class SynchronizeInfo {
 
 	/**
 	 * Create a new synchronization info object for the memory block
-	 * 
+	 *
 	 * @param block
 	 */
 	public SynchronizeInfo(IMemoryBlock block) {
@@ -47,7 +47,7 @@ public class SynchronizeInfo {
 
 	/**
 	 * Set a property and its value to the info object
-	 * 
+	 *
 	 * @param propertyId
 	 * @param value
 	 */
@@ -63,7 +63,7 @@ public class SynchronizeInfo {
 
 	/**
 	 * Returns the value of the property from the info object
-	 * 
+	 *
 	 * @param propertyId
 	 * @return value of the property
 	 */

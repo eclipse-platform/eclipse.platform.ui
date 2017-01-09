@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -45,7 +45,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
 public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -65,7 +65,7 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 				boolean deleteAll = false;
 				boolean deleteContainer = false;
 				boolean prompted = false;
-				while (itr.hasNext()) {		
+				while (itr.hasNext()) {
 					Object next= itr.next();
 					IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(next, IBreakpoint.class);
 					if (breakpoint != null) {
@@ -99,7 +99,7 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 								IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 								prompted = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER);
 								if(prompted) {
-									MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0, 
+									MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0,
 											ActionMessages.RemoveBreakpointAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompted, null, null);
 									if(mdwt.getReturnCode() == IDialogConstants.NO_ID) {
 										deleteAll = false;
@@ -127,7 +127,7 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 				if(breakpoints.length > 0) {
 					((BreakpointsView)getView()).preserveSelection(getSelection());
 				}
-				new Job(ActionMessages.RemoveBreakpointAction_2) { 
+				new Job(ActionMessages.RemoveBreakpointAction_2) {
                     @Override
 					protected IStatus run(IProgressMonitor pmonitor) {
                         try {
@@ -142,7 +142,7 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
                             DebugUIPlugin.log(e);
                         }
                         return Status.CANCEL_STATUS;
-                    }   
+                    }
                 }.schedule();
 			}
 		};
@@ -154,13 +154,13 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 		if (exception[0] != null) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.RemoveBreakpointAction_Removing_a_breakpoint_4,ActionMessages.RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5 , exception[0]);  
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.RemoveBreakpointAction_Removing_a_breakpoint_4,ActionMessages.RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5 , exception[0]);
 			} else {
 				DebugUIPlugin.log(exception[0]);
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractSelectionActionDelegate#isEnabledFor(java.lang.Object)
 	 */

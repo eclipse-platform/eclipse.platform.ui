@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
- 
+
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -38,11 +38,11 @@ import org.eclipse.debug.core.DebugException;
 
 
 public interface IValue extends IDebugElement {
-	
+
 	/**
 	 * Returns a description of the type of data this value contains
 	 * or references.
-	 * 
+	 *
 	 * @return the name of this value's reference type
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
@@ -50,7 +50,7 @@ public interface IValue extends IDebugElement {
 	 * the failure.</li>
 	 */
 	public String getReferenceTypeName() throws DebugException;
-	
+
 	/**
 	 * Returns this value as a <code>String</code>.
 	 *
@@ -61,7 +61,7 @@ public interface IValue extends IDebugElement {
 	 * the failure.</li>
 	 */
 	public String getValueString() throws DebugException;
-		
+
 	/**
 	 * Returns whether this value is currently allocated.
 	 * <p>
@@ -78,7 +78,7 @@ public interface IValue extends IDebugElement {
 	/**
 	 * Returns the visible variables in this value. An empty
 	 * collection is returned if there are no visible variables.
-	 * 
+	 *
 	 * @return an array of visible variables
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
@@ -88,10 +88,10 @@ public interface IValue extends IDebugElement {
 	 * @since 2.0
 	 */
 	public IVariable[] getVariables() throws DebugException;
-	
+
 	/**
 	 * Returns whether this value currently contains any visible variables.
-	 * 
+	 *
 	 * @return whether this value currently contains any visible variables
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -100,5 +100,5 @@ public interface IValue extends IDebugElement {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean hasVariables() throws DebugException;	
+	public boolean hasVariables() throws DebugException;
 }

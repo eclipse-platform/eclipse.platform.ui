@@ -33,7 +33,7 @@ package org.eclipse.debug.core.sourcelookup;
  * </pre>
  * </p>
  * <p>
- * Clients contributing a source container type implement 
+ * Clients contributing a source container type implement
  * {@link org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate}.
  * </p>
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
@@ -50,7 +50,7 @@ public interface ISourceContainerType extends ISourceContainerTypeDelegate {
 	 * <code>Project</code>.  The value returned is
 	 * identical to the name specified in plugin.xml by the <code>name</code>
 	 * attribute.
-	 * 
+	 *
 	 * @return the name of this source container type
 	 */
 	public String getName();
@@ -59,17 +59,17 @@ public interface ISourceContainerType extends ISourceContainerTypeDelegate {
 	 * Returns the unique identifier associated with this source container type.
 	 * The value returned is identical to the identifier specified in plugin.xml by
 	 * the <code>id</code> attribute.
-	 * 
+	 *
 	 * @return the unique identifier associated with this source container type
 	 */
 	public String getId();
-	
+
 	/**
 	 * Returns a short description of this source container type that can be used
 	 * for presentation purposes, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return a short description of this source container type, or <code>null</code>
 	 */
 	public String getDescription();
-	
+
 }

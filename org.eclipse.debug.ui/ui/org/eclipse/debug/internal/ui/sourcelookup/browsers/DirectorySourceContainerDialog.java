@@ -43,7 +43,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * The dialog for selecting the external folder for which a source container will be created.
- * 
+ *
  * @since 3.0
  */
 public class DirectorySourceContainerDialog extends TitleAreaDialog {
@@ -53,15 +53,15 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 
 	private String fDirectory;
 	private boolean fSearchSubfolders = true;
-	
+
 	private Text fDirText;
 	private Button fSubfoldersButton;
-	
+
 	private boolean fNewContainer = true;
 
 	/**
 	 * Creates a dialog to select a new file system folder.
-	 * 
+	 *
 	 * @param shell shell
 	 */
 	public DirectorySourceContainerDialog(Shell shell) {
@@ -71,11 +71,11 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 
 	/**
 	 * Creates a dialog to edit file system folder.
-	 *  
+	 *
 	 * @param shell shell
 	 * @param directory directory to edit or empty string
 	 * @param searchSubfolders whether the search sub-folders button should be checked
-	 * @param newContainer 
+	 * @param newContainer
 	 */
 	public DirectorySourceContainerDialog(Shell shell, String directory, boolean searchSubfolders) {
 		super(shell);
@@ -84,7 +84,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		fSearchSubfolders = searchSubfolders;
 		fNewContainer = false;
 	}
-	
+
 	/**
 	 * Returns the result of the dialog.open() operation
 	 * @return the dialog.open() result
@@ -95,7 +95,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 
 	/**
 	 * Returns whether the 'search subfolders' option is selected.
-	 * 
+	 *
 	 * @return whether the 'search subfolders' option is selected
 	 */
 	public boolean isSearchSubfolders() {
@@ -107,7 +107,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Image image = (fNewContainer) ? DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_DIR_WIZ) : 
+		Image image = (fNewContainer) ? DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_DIR_WIZ) :
 			DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_EDIT_SRC_DIR_WIZ);
 		setTitle(SourceLookupUIMessages.DirectorySourceContainerDialog_2);
 		setMessage(SourceLookupUIMessages.DirectorySourceContainerDialog_3);
@@ -136,7 +136,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
         data.horizontalSpan = 2;
         label.setLayoutData(data);
         label.setFont(font);
-        
+
         fDirText = new Text(dirComposite, SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 1;
@@ -146,7 +146,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 			@Override
 			public void modifyText( ModifyEvent e ) {
 				validate();
-			}        	
+			}
         });
 
         Button button = new Button(dirComposite, SWT.PUSH);
@@ -206,7 +206,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		fDirectory = fDirText.getText().trim();
 		fSearchSubfolders = fSubfoldersButton.getSelection();
 		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_PATH_SETTING, fDirectory);
-		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);	
+		DebugUIPlugin.getDefault().getDialogSettings().put(LAST_SUBDIR_SETTING, fSearchSubfolders);
 		super.okPressed();
 	}
 
@@ -216,11 +216,11 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 			last = DebugUIPlugin.getDefault().getDialogSettings().get(LAST_PATH_SETTING);
 		}
 		if (last == null) {
-			last = IInternalDebugCoreConstants.EMPTY_STRING; 
+			last = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SINGLE);
-		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0); 
-		dialog.setMessage(SourceLookupUIMessages.DirectorySourceContainerDialog_1); 
+		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0);
+		dialog.setMessage(SourceLookupUIMessages.DirectorySourceContainerDialog_1);
 		dialog.setFilterPath(last);
 		String result = dialog.open();
 		if (result == null) {

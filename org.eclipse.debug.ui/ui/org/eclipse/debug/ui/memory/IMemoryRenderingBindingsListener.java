@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.debug.ui.memory;
 
-/** 
+/**
  * A rendering bindings listener is notified of changes in the renderings provided by
  * a rendering bindings provider. When bindings change, a memory block may be bound
  * to a different set of renderings.
@@ -25,7 +25,7 @@ package org.eclipse.debug.ui.memory;
  * @see IMemoryRenderingBindingsProvider#removeListener
  */
 public interface IMemoryRenderingBindingsListener {
-	
+
 	/**
 	 * Notification that the bindings provided by a rendering bindings
 	 * provider have changed.

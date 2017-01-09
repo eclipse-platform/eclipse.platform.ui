@@ -21,7 +21,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * @since 3.3
  */
 public class HexIntegerRendering extends AbstractIntegerRendering {
-	
+
 	public HexIntegerRendering(String renderingId)
 	{
 		super(renderingId);
@@ -37,7 +37,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 		int endianess = getEndianness(data);
 
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
-		
+
         if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
             MemoryByte[] swapped = new MemoryByte[data.length];
             for (int i = 0; i < data.length; i++){
@@ -45,7 +45,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
             }
             data = swapped;
         }
-        
+
 		for (int i=0; i<data.length; i++)
 		{
 			if (data[i].isReadable())
@@ -58,7 +58,7 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 				strBuffer.append(paddedStr);
 			}
 		}
-		
+
 		return strBuffer.toString().toUpperCase();
 	}
 
@@ -85,8 +85,8 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 
 		int endianess = getEndianness(currentValues);
 		byte[] bytes = RenderingsUtil.convertHexStringToByteArray(data, currentValues.length, getNumCharsPerByte());
-		
-		
+
+
         if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
             byte[] swapped = new byte[bytes.length];
             for (int i = 0; i < bytes.length; i++){
@@ -94,15 +94,15 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
             }
            bytes = swapped;
         }
-        
+
 		return bytes;
 	}
-	
+
 	@Override
 	public int getNumCharsPerByte()
 	{
 		return 2;
 	}
 
-	
+
 }

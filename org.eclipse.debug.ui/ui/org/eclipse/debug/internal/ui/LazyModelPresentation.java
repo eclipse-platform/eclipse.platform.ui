@@ -50,9 +50,9 @@ import org.eclipse.ui.IEditorPart;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, 
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation,
 	IColorProvider, IFontProvider, IInstructionPointerPresentation, IDebugModelPresentationExtension {
-	
+
 	/**
 	 * A temporary mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
@@ -63,24 +63,24 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * The config element that defines the extension
 	 */
 	protected IConfigurationElement fConfig = null;
-	
+
 	/**
 	 * The actual presentation instance - null until called upon
 	 */
 	protected IDebugModelPresentation fPresentation = null;
-	
+
 	/**
 	 * Temp holding for listeners - we do not add to presentation until
 	 * it needs to be instantiated.
 	 */
 	protected ListenerList<ILabelProviderListener> fListeners = new ListenerList<>();
-	
+
 	/**
 	 * Non-null when nested inside a delegating model presentation
 	 */
 	private DelegatingModelPresentation fOwner = null;
-	
-		
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnntations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
 	 */
@@ -110,18 +110,18 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	public LazyModelPresentation(IConfigurationElement configElement) {
 		fConfig = configElement;
 	}
-	
+
 	/**
 	 * Constructs a lazy presentation from the config element, owned by the specified
 	 * delegating model presentation.
-	 * 
+	 *
 	 * @param parent owning presentation
 	 * @param configElement XML configuration element
 	 */
 	public LazyModelPresentation(DelegatingModelPresentation parent, IConfigurationElement configElement) {
 		this(configElement);
 		fOwner = parent;
-	}	
+	}
 
 	/**
 	 * @see IDebugModelPresentation#getImage(Object)
@@ -142,7 +142,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         }
         return image;
 	}
-	
+
 	/**
 	 * Initializes the image registry
 	 */
@@ -154,7 +154,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 
 	/**
      * Computes and return common adornment flags for the given element.
-     * 
+     *
      * @param element
      * @return adornment flags defined in CompositeDebugImageDescriptor
      */
@@ -180,14 +180,14 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
     protected Image getDefaultImage(Object element) {
         return DebugUIPlugin.getDefaultLabelProvider().getImage(element);
     }
-    
+
     /**
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
 	@Override
 	public String getText(Object element) {
         if (!(element instanceof IndexedVariablePartition)) {
-            // Attempt to delegate        
+            // Attempt to delegate
             String text = getPresentation().getText(element);
             if (text != null) {
                 return text;
@@ -207,7 +207,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
                         }
                     }
                     buf.append(getDefaultText(element));
-                    return buf.toString(); 
+                    return buf.toString();
                 } else if (element instanceof IVariable) {
                     return new StringBuffer(((IVariable)element).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(element)).toString();
                 }
@@ -217,7 +217,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         }
         return getDefaultText(element);
 	}
-	
+
     /**
      * Whether or not to show variable type names.
      * This option is configured per model presentation.
@@ -228,15 +228,15 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		show = show == null ? Boolean.FALSE : show;
         return show.booleanValue();
     }
-    
+
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
 	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		getPresentation().computeDetail(value, listener);
-	}	
-	
+	}
+
 	/**
 	 * @see ISourcePresentation#getEditorInput(Object)
 	 */
@@ -244,7 +244,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	public IEditorInput getEditorInput(Object element) {
 		return getPresentation().getEditorInput(element);
 	}
-	
+
 	/**
 	 * @see ISourcePresentation#getEditorId(IEditorInput, Object)
 	 */
@@ -282,7 +282,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	public boolean isLabelProperty(Object element, String property) {
 		if (fPresentation != null) {
 			return getPresentation().isLabelProperty(element, property);
-		} 
+		}
 		return false;
 	}
 
@@ -299,7 +299,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		    listeners.remove(listener);
 		}
 	}
-	
+
 	/**
 	 * Returns the real presentation, instantiating if required.
 	 */
@@ -347,12 +347,12 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		}
 
 		fAttributes.put(id, value);
-		
+
 		if (fOwner != null) {
 			fOwner.basicSetAttribute(id, value);
 		}
 	}
-	
+
 	/**
 	 * Returns the identifier of the debug model this
 	 * presentation is registered for.
@@ -360,12 +360,12 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	public String getDebugModelIdentifier() {
 		return fConfig.getAttribute("id"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns a new source viewer configuration for the details
 	 * area of the variables view, or <code>null</code> if
 	 * unspecified.
-	 * 
+	 *
 	 * @return source viewer configuration or <code>null</code>
 	 * @exception CoreException if unable to create the specified
 	 * 	source viewer configuration
@@ -377,20 +377,20 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a copy of the attributes in this model presentation.
-	 * 
+	 *
 	 * @return a copy of the attributes in this model presentation
 	 * @since 3.0
 	 */
 	public Map<String, Object> getAttributeMap() {
 		return new HashMap<String, Object>(fAttributes);
 	}
-	
+
 	/**
 	 * Returns the raw attribute map
-	 * 
+	 *
 	 * @return the raw attribute map
 	 */
 	public Map<String, Object> getAttributes() {
@@ -422,7 +422,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         }
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
      */

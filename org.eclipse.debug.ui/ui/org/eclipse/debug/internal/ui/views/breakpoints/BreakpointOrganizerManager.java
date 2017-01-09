@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,9 +38,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @since 3.1
  */
 public class BreakpointOrganizerManager {
-	
+
 	private static BreakpointOrganizerManager fgManager;
-	
+
 	// map for lookup by id
 	private Map<String, IBreakpointOrganizer> fOrganizers = new HashMap<String, IBreakpointOrganizer>();
     // cached sorted list by label
@@ -57,7 +57,7 @@ public class BreakpointOrganizerManager {
 		}
 		return fgManager;
 	}
-	
+
 	/**
 	 * Creates and initializes a new breakpoint container factory.
 	 */
@@ -67,10 +67,10 @@ public class BreakpointOrganizerManager {
         start("org.eclipse.debug.ui.workingSetOrganizer"); //$NON-NLS-1$
         start("org.eclipse.debug.ui.breakpointWorkingSetOrganizer"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Forces instantiation of organizer delegate.
-	 * 
+	 *
 	 * @param organizerId organizer to start
 	 */
 	private void start(String organizerId) {
@@ -81,9 +81,9 @@ public class BreakpointOrganizerManager {
             }
         };
         organizer.addPropertyChangeListener(listener);
-        organizer.removePropertyChangeListener(listener);		
+        organizer.removePropertyChangeListener(listener);
 	}
-    
+
     /**
      * Loads all contributed breakpoint organizers.
      */
@@ -97,8 +97,8 @@ public class BreakpointOrganizerManager {
                 fOrganizers.put(organizer.getIdentifier(), organizer);
             }
         }
-    }    
-	
+    }
+
     /**
      * Validates the given organizer. Checks that certain required attributes
      * are available.
@@ -109,11 +109,11 @@ public class BreakpointOrganizerManager {
         String id = organizer.getIdentifier();
         String label = organizer.getLabel();
         return id != null && id.length() > 0 && label != null && label.length() > 0;
-    }    
-	
+    }
+
     /**
      * Returns all contributed breakpoint organizers.
-     * 
+     *
      * @return all contributed breakpoint organizers
      */
     public IBreakpointOrganizer[] getOrganizers() {
@@ -132,7 +132,7 @@ public class BreakpointOrganizerManager {
     	}
     	return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
     }
-    
+
     /**
      * Returns the specified breakpoint organizer or <code>null</code>
      * @param id organizer identifier
@@ -141,7 +141,7 @@ public class BreakpointOrganizerManager {
     public IBreakpointOrganizer getOrganizer(String id) {
         return fOrganizers.get(id);
     }
-    
+
     /**
      * Shuts down the organizer manager, disposing organizers.
      */

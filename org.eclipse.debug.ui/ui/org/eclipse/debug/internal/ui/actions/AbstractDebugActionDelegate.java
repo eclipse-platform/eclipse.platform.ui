@@ -38,7 +38,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @see IActionDelegate2
  */
 public abstract class AbstractDebugActionDelegate implements IViewActionDelegate, IActionDelegate2 {
-	
+
 	/**
 	 * The underlying action for this delegate
 	 */
@@ -48,17 +48,17 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * if not installed in a view.
 	 */
 	private IViewPart fViewPart;
-	
+
 	/**
 	 * Cache of the most recent selection
 	 */
 	private IStructuredSelection fSelection = StructuredSelection.EMPTY;
-	
+
 	/**
 	 * Whether this delegate has been initialized
 	 */
 	private boolean fInitialized = false;
-	
+
 	/**
 	 * Whether this delegate was started with Shift pressed
 	 */
@@ -70,7 +70,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * set in the plugin's plugin.xml file.
 	 */
 	public AbstractDebugActionDelegate() {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -92,15 +92,15 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 			runInForeground(selection, false);
 	    }
 	}
-	
+
 	/**
 	 * Runs this action in the UI thread.
 	 * @param selection the current selection
 	 */
 	private void runInForeground(final IStructuredSelection selection, boolean isShift) {
 		fIsShift = isShift;
-	    final MultiStatus status= 
-			new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null); 	    
+	    final MultiStatus status=
+			new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			@Override
 			public void run() {
@@ -143,14 +143,14 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection s) {
-		boolean wasInitialized= initialize(action, s);		
+		boolean wasInitialized= initialize(action, s);
 		if (!wasInitialized) {
 			if (getView() != null) {
 				update(action, s);
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates the specified selection based on the selection, as well as setting the selection
 	 * for this action
@@ -167,7 +167,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 			setSelection(StructuredSelection.EMPTY);
 		}
 	}
-	
+
 	/**
 	 * Returns a selection this operation should act on based on the given selection.
 	 * Provides an opportunity for actions to translate the selection/targets of the
@@ -182,7 +182,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	protected IStructuredSelection getTargetSelection(IStructuredSelection s) {
 		return s;
 	}
-	
+
 	/**
 	 * Performs the specific action on this element.
 	 * @param element the element context to perform the action on
@@ -218,11 +218,11 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	public void init(IViewPart view) {
 		fViewPart = view;
 	}
-	
+
 	/**
 	 * Returns this action's view part, or <code>null</code>
 	 * if not installed in a view.
-	 * 
+	 *
 	 * @return view part or <code>null</code>
 	 */
 	protected IViewPart getView() {
@@ -232,9 +232,9 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/**
 	 * Initialize this delegate, updating this delegate's
 	 * presentation.
-	 * As well, all of the flavors of AbstractDebugActionDelegates need to 
+	 * As well, all of the flavors of AbstractDebugActionDelegates need to
 	 * have the initial enabled state set with a call to update(IAction, ISelection).
-	 * 
+	 *
 	 * @param action the presentation for this action
 	 * @param selection the current selection - workbench or text
 	 * @return whether the action was initialized
@@ -251,22 +251,22 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 
 	/**
 	 * Returns the most recent selection
-	 * 
+	 *
 	 * @return structured selection
-	 */	
+	 */
 	protected IStructuredSelection getSelection() {
 		return fSelection;
 	}
-	
+
 	/**
 	 * Sets the most recent selection
-	 * 
+	 *
 	 * @param selection structured selection
-	 */	
+	 */
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
-	}	
-	
+	}
+
 	/**
 	 * Allows the underlying <code>IAction</code> to be set to the specified <code>IAction</code>
 	 * @param action the action to set
@@ -282,7 +282,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	protected IAction getAction() {
 		return fAction;
 	}
-	
+
 	/**
 	 * Returns if this action has been initialized or not
 	 * @return if this action has been initialized or not
@@ -298,7 +298,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	protected void setInitialized(boolean initialized) {
 		fInitialized = initialized;
 	}
-	
+
 	/**
 	 * Return whether the action should be enabled or not based on the given selection.
 	 * @param selection the selection
@@ -315,7 +315,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 				return false;
 			}
 		}
-		return true;		
+		return true;
 	}
 
 	/**

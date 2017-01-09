@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.0
- * 
+ *
  */
 public abstract class BasicDebugViewContentProvider implements IStructuredContentProvider, IDebugEventSetListener {
 
@@ -34,7 +34,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	public void dispose() {
 		fDisposed= true;
 	}
-	
+
 	/**
 	 * Returns whether this content provider has already
 	 * been disposed.
@@ -43,7 +43,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	protected boolean isDisposed() {
 		return fDisposed;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -60,7 +60,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 			}
 		}
 	}
-	
+
 	protected void syncExec(Runnable r) {
 		if (fViewer != null) {
 			Control ctrl= fViewer.getControl();
@@ -69,7 +69,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 			}
 		}
 	}
-	
+
 	/**
 	 * Refreshes the viewer - must be called in UI thread.
 	 */
@@ -78,7 +78,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 			fViewer.refresh();
 		}
 	}
-			
+
 	/**
 	 * Refresh the given element in the viewer - must be called in UI thread.
 	 * @param element the element to refresh in the viewer
@@ -88,7 +88,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 			 fViewer.refresh(element);
 		}
 	}
-	
+
 	/**
 	 * Handle debug events on the main thread.
 	 * @param event the debug event
@@ -109,7 +109,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 				}
 			}
 		};
-		
+
 		asyncExec(r);
 	}
 
@@ -121,7 +121,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 		for (int i=0; i < events.length; i++)
 			handleDebugEvent(events[i]);
 	}
-	
+
 	/**
 	 * Performs an update based on the event
 	 * @param event the debug event

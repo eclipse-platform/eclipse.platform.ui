@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -68,7 +68,7 @@ import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsActio
 
 /**
  * Common function for views related to debugging. Clients implementing
- * views for a debugger should subclass this class. Common function 
+ * views for a debugger should subclass this class. Common function
  * includes:
  * <ul>
  * <li>Debug view adapter implementation - <code>IDebugView</code></li>
@@ -80,10 +80,10 @@ import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsActio
  * 		underlying viewer and registers the menu with this
  * 		view's site, such that other plug-ins may contribute.</li>
  * <li>Hooks a key press listener, and invokes the
- * 		<code>REMOVE_ACTION</code> when the delete key 
+ * 		<code>REMOVE_ACTION</code> when the delete key
  * 		is pressed.</li>
  * <li>Hooks a double-click listener, and invokes the
- * 		<code>DOUBLE_CLICK_ACTION</code> when the mouse 
+ * 		<code>DOUBLE_CLICK_ACTION</code> when the mouse
  * 		is double-clicked.</li>
  * <li>Provides a mechanism for displaying an error message
  * 		in the view, via the <code>PageBookView</code> mechanism.
@@ -102,60 +102,60 @@ import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsActio
  */
 
 public abstract class AbstractDebugView extends PageBookView implements IDebugView, IDoubleClickListener {
-	
+
 	/**
 	 * Underlying viewer that displays the contents of
 	 * this view.
 	 */
 	private Viewer fViewer = null;
-	
+
 	/**
 	 * This view's message page.
 	 */
 	private MessagePage fMessagePage = null;
-	
+
 	/**
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
 	private Map<String, IAction> fActionMap = null;
-	
+
 	/**
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
 	private List<IUpdate> fUpdateables = null;
-	
+
 	/**
 	 * The collection of menu managers that are
 	 * relevant for this view.
 	 */
 	private List<IMenuManager> fContextMenuManagers;
-	
+
 	/**
 	 * The memento that was used to persist the state of this view.
 	 * May be <code>null</code>.
 	 */
 	private IMemento fMemento;
-	
+
 	/**
 	 * Whether this view is currently visible.
 	 */
 	private boolean fIsVisible = false;
-	
+
 	/**
 	 * The part listener for this view, used to notify this view when it
 	 * becomes visible and hidden. Set to <code>null</code> when this view isn't
 	 * currently listening to part changes.
 	 */
 	private DebugViewPartListener fPartListener= null;
-	
+
 	/**
 	 * A message was requested to be displayed before the view was fully
 	 * created. The message is cached until it can be properly displayed.
 	 */
 	private String fEarlyMessage= null;
-	
+
 	private static Set<String> fgGlobalActionIds;
 	static {
 		fgGlobalActionIds = new HashSet<String>();
@@ -175,7 +175,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	private class DebugViewPartListener implements IPartListener2 {
 		/**
-		 * 
+		 *
 		 * @see org.eclipse.ui.IPartListener2#partVisible(IWorkbenchPartReference)
 		 */
 		@Override
@@ -231,7 +231,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		@Override
 		public void partOpened(IWorkbenchPartReference ref) {
 		}
-		
+
 		/**
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(IWorkbenchPartReference)
 		 */
@@ -239,8 +239,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		public void partInputChanged(IWorkbenchPartReference ref){
 		}
 
-	}	
-	
+	}
+
 	/**
 	 * Constructs a new debug view.
 	 */
@@ -248,12 +248,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		fActionMap = new HashMap<String, IAction>(5);
 		fUpdateables = new ArrayList<IUpdate>(3);
 	}
-	
+
 	/**
 	 * Debug views implement the debug view adapter which
 	 * provides access to a view's underlying viewer and
 	 * debug model presentation for a specific debug model.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 * @see IDebugView
 	 */
@@ -274,7 +274,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	/**
 	 * A page in this view's page book that contains this
 	 * view's viewer.
@@ -286,7 +286,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		@Override
 		public void createControl(Composite parent) {
 			Viewer viewer = createViewer(parent);
-			setViewer(viewer);			
+			setViewer(viewer);
 		}
 
 		/**
@@ -312,7 +312,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 
 }
-	
+
 	/**
 	 * Creates this view's underlying viewer and actions.
 	 * Hooks a pop-up menu to the underlying viewer's control,
@@ -356,23 +356,23 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 				}
 			});
 			if (getViewer() instanceof StructuredViewer) {
-				((StructuredViewer)getViewer()).addDoubleClickListener(this);	
+				((StructuredViewer)getViewer()).addDoubleClickListener(this);
 			}
 		}
 		// create the message page
 		setMessagePage(new MessagePage());
 		getMessagePage().createControl(getPageBook());
 		initPage(getMessagePage());
-		
+
 		if (fEarlyMessage != null) { //bug 28127
 			showMessage(fEarlyMessage);
 			fEarlyMessage= null;
 		}
-	}	
-	
+	}
+
 	/**
 	 * The default page for a debug view is its viewer.
-	 * 
+	 *
 	 * @see PageBookView#createDefaultPage(PageBook)
 	 */
 	@Override
@@ -381,34 +381,34 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		page.createControl(book);
 		initPage(page);
 		return page;
-	}	
+	}
 
 	/**
 	 * Creates and returns this view's underlying viewer.
 	 * The viewer's control will automatically be hooked
 	 * to display a pop-up menu that other plug-ins may
 	 * contribute to. Subclasses must override this method.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @return the new {@link Viewer}
 	 */
 	protected abstract Viewer createViewer(Composite parent);
-	
+
 	/**
 	 * Creates this view's actions. Subclasses must
 	 * override this method, which is called after
 	 * <code>createViewer(Composite)</code>
 	 */
-	protected abstract void createActions();	
-	
+	protected abstract void createActions();
+
 	/**
 	 * Returns this view's help context id, which is hooked
 	 * to this view on creation.
-	 * 
+	 *
 	 * @return help context id
 	 */
 	protected abstract String getHelpContextId();
-	
+
 	/**
 	 * @see IWorkbenchPart#dispose()
 	 */
@@ -423,12 +423,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		fActionMap.clear();
 		super.dispose();
 	}
-	
+
 	/**
 	 * Saves the checked state for all actions contributed to the toolbar
 	 * manager that function as a toggle action.  The states are saved in
 	 * the Debug UI plugin's preference store.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void saveAllCheckedActionStates() {
@@ -440,17 +440,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 				ActionContributionItem item= (ActionContributionItem)iContributionItem;
 				IAction action= item.getAction();
 				if (action.getStyle() == IAction.AS_CHECK_BOX && action.isEnabled()) {
-					saveCheckedActionState(action);					
+					saveCheckedActionState(action);
 				}
-			}		
-		}		
+			}
+		}
 	}
-	
+
 	/**
 	 * Save the checked state of the specified action in the Debug UI plugin's
 	 * preference store.  The specified action is expected to be enabled and
 	 * support the style <code>IAction.AS_CHECK_BOX</code>.
-	 * 
+	 *
 	 * @param action the enabled, toggle action whose checked state will be
 	 * saved in preferences
 	 * @since 2.1
@@ -460,7 +460,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		IPreferenceStore prefStore = getPreferenceStore();
 		prefStore.setValue(prefKey, action.isChecked());
 	}
-	
+
 	/**
 	 * Generate a String that can be used as a key into a preference store based
 	 * on the specified action.  The resulting String will be unique across
@@ -471,20 +471,20 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @since 2.1
 	 */
 	protected String generatePreferenceKey(IAction action) {
-		return getViewSite().getId() + '+' + action.getId();		
+		return getViewSite().getId() + '+' + action.getId();
 	}
-	
+
 	/**
 	 * Convenience method to return the preference store for the Debug UI
 	 * plug-in.
-	 * 
+	 *
 	 * @return the preference store for the Debug UI plug-in
 	 * @since 2.1
 	 */
 	protected IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/**
 	 * @see IDebugView#getViewer()
 	 */
@@ -492,11 +492,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public Viewer getViewer() {
 		return fViewer;
 	}
-	
+
 	/**
 	 * Returns this view's viewer as a structured viewer,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return this view's viewer as a structured viewer
 	 * 	or <code>null</code>
 	 */
@@ -506,11 +506,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns this view's viewer as a text viewer,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return this view's viewer as a text viewer
 	 * 	or <code>null</code>
 	 */
@@ -519,8 +519,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			return (TextViewer)getViewer();
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * @see IDebugView#getPresentation(String)
 	 */
@@ -539,7 +539,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a pop-up menu on the given control. The menu
 	 * is registered with this view's site, such that other
@@ -549,7 +549,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Subclasses must implement the method
 	 * <code>#fillContextMenu(IMenuManager)</code> which will
 	 * be called each time the context menu is realized.
-	 * 
+	 *
 	 * @param menuControl the control with which the pop-up
 	 *  menu will be associated with.
 	 */
@@ -571,10 +571,10 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		addContextMenuManager(menuMgr);
 	}
-	
+
 	/**
 	 * @see IDebugView#getContextMenuManager()
-	 * 
+	 *
 	 * @deprecated @see AbstractDebugView.getContextMenuManagers()
 	 */
 	@Deprecated
@@ -585,25 +585,25 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the context menu managers relevant to this view.
-	 * 
+	 *
 	 * @return the context menu managers relevant to this view
 	 * @since 2.1
 	 */
 	public List<IMenuManager> getContextMenuManagers() {
 		return fContextMenuManagers;
 	}
-	
+
 	/**
 	 * Subclasses must override this method to fill the context
 	 * menu each time it is realized.
-	 * 
+	 *
 	 * @param menu the context menu
 	 */
-	protected abstract void fillContextMenu(IMenuManager menu);	
-	
+	protected abstract void fillContextMenu(IMenuManager menu);
+
 	/**
 	 * Configures this view's toolbar. Subclasses implement
 	 * <code>#configureToolBar(IToolBarManager)</code> to
@@ -621,7 +621,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		final IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		configureToolBar(tbm);
 		getViewSite().getActionBars().updateActionBars();
-		
+
 		// This is done in a runnable to be run after this view's pane
 		// is created
 		Runnable r = new Runnable() {
@@ -637,7 +637,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 							IAction action = ((ActionContributionItem)items[i]).getAction();
 							if (!SkipAllBreakpointsAction.ACTION_ID.equals(action.getId())) {
 								if (action.getStyle() == IAction.AS_CHECK_BOX) {
-									initActionState(action);	
+									initActionState(action);
 									if (action.isChecked()) {
 										action.run();
 									}
@@ -651,12 +651,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		};
 		asyncExec(r);
 	}
-	
+
 	/**
 	 * Restores the persisted checked state of the specified action that was
 	 * stored in preferences. If the action is disabled, its persisted state
 	 * is not restored (because a disabled action cannot be run).
-	 * 
+	 *
 	 * @param action the action whose checked state will be restored
 	 * @since 2.1
 	 */
@@ -677,28 +677,28 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		super.init(site, memento);
 		//store the memento to be used when this view is created.
 		setMemento(memento);
-	}	 
+	}
 
 	/**
 	 * Sets the viewer for this view.
-	 * 
+	 *
 	 * @param viewer viewer
      * @since 3.1
 	 */
 	protected void setViewer(Viewer viewer) {
 		fViewer = viewer;
 	}
-	
+
 	/**
 	 * Subclasses implement this menu to contribute actions
-	 * to the toolbar. This method is called after 
+	 * to the toolbar. This method is called after
 	 * <code>createActions()</code>.
-	 * 
+	 *
 	 * @param tbm the tool bar manager for this view's site
 	 * @see #createViewer(Composite)
 	 */
-	protected abstract void configureToolBar(IToolBarManager tbm);	
-	
+	protected abstract void configureToolBar(IToolBarManager tbm);
+
 	/**
 	 * @see IDebugView#setAction(String, IAction)
 	 */
@@ -714,11 +714,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			}
 		}
 		if (fgGlobalActionIds.contains(actionID)) {
-			IActionBars actionBars = getViewSite().getActionBars();	
+			IActionBars actionBars = getViewSite().getActionBars();
 			actionBars.setGlobalActionHandler(actionID, action);
 		}
-	}	
-	
+	}
+
 	/**
 	 * @see IDebugView#getAction(String)
 	 */
@@ -726,7 +726,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public IAction getAction(String actionID) {
 		return fActionMap.get(actionID);
 	}
-	
+
 	/**
 	 * Updates all the registered updatables.
 	 */
@@ -735,10 +735,10 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			update.update();
 		}
 	}
-			
+
 	/**
 	 * Handles key events in viewer. Invokes
-	 * <ol> 
+	 * <ol>
 	 * <li><code>REMOVE_ACTION</code> when the delete
 	 * key is pressed</li>
 	 * @param event the {@link KeyEvent}
@@ -750,12 +750,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 				action.run();
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Delegate to the <code>DOUBLE_CLICK_ACTION</code>,
 	 * if any.
-	 *  
+	 *
 	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
 	 */
 	@Override
@@ -764,13 +764,13 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (action != null && !event.getSelection().isEmpty() && action.isEnabled()) {
 			action.run();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
 	 * @param r the {@link Runnable} to run
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Display#asyncExec(java.lang.Runnable)
 	 */
 	public void asyncExec(Runnable r) {
@@ -778,17 +778,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			getControl().getDisplay().asyncExec(r);
 		}
 	}
-	
+
 	/**
 	 * Returns the control for this view, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the control for this view, or <code>null</code> if none
 	 * @since 3.0
 	 */
 	protected Control getControl() {
 		return getViewer().getControl();
 	}
-	
+
 	/**
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
@@ -800,8 +800,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (isAvailable()) {
 			getControl().getDisplay().syncExec(r);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns the memento that contains the persisted state of
 	 * the view.  May be <code>null</code>.
@@ -811,19 +811,19 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		return fMemento;
 	}
 
-	/** 
-	 * Sets the memento that contains the persisted state of the 
+	/**
+	 * Sets the memento that contains the persisted state of the
 	 * view.
 	 * @param memento the new {@link IMemento}
 	 */
 	protected void setMemento(IMemento memento) {
 		fMemento = memento;
 	}
-	
+
 	/**
 	 * Returns the specified view in this view's page
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param id view identifier
 	 * @return view part
 	 */
@@ -833,9 +833,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (page != null) {
 			view = page.findView(id);
 		}
-		return view;	
+		return view;
 	}
-	
+
 	/**
 	 * @see PageBookView#isImportant(IWorkbenchPart)
 	 */
@@ -872,39 +872,39 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * this view's viewer's control is returned. Subclasses
 	 * should override if required - for example, if this
 	 * view has its viewer nested inside other controls.
-	 * 
+	 *
 	 * @return this view's default control.
-	 */ 
+	 */
 	protected Control getDefaultControl() {
 		Viewer viewer = getViewer();
 		if (viewer != null) {
 			return viewer.getControl();
-		} 
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Sets this view's message page
-	 * 
+	 *
 	 * @param page message page
 	 */
 	private void setMessagePage(MessagePage page) {
 		fMessagePage = page;
 	}
-	
+
 	/**
 	 * Returns this view's message page
-	 * 
+	 *
 	 * @return message page
 	 */
 	protected MessagePage getMessagePage() {
 		return fMessagePage;
-	}	
-	
+	}
+
 	/**
 	 * Shows the given message in this view's message'
 	 * page. Makes the message page the visible page.
-	 * 
+	 *
 	 * @param message the message to display
 	 */
 	public void showMessage(String message) {
@@ -919,7 +919,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		getMessagePage().setMessage(message);
 		getPageBook().showPage(getMessagePage().getControl());
 	}
-	
+
 	/**
 	 * Shows this view's viewer page.
 	 */
@@ -929,17 +929,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		getPageBook().showPage(getDefaultPage().getControl());
 	}
-	
+
 	/**
 	 * Returns whether this view's viewer is
 	 * currently available.
-	 * 
+	 *
 	 * @return whether this view's viewer is
 	 * currently available
 	 */
 	public boolean isAvailable() {
 		return !(getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed());
-	}	
+	}
 	/**
 	 * @see IDebugView#add(IUpdate)
 	 */
@@ -957,11 +957,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public void remove(IUpdate updatable) {
 		fUpdateables.remove(updatable);
 	}
-	
+
 	/**
 	 * Adds a context menu manager that is relevant to this view.
 	 * @param contextMenuManager The contextMenuManager to add
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public void addContextMenuManager(IMenuManager contextMenuManager) {
@@ -970,37 +970,37 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		fContextMenuManagers.add(contextMenuManager);
 	}
-	
+
 	/**
 	 * Notification this view is now visible.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void becomesVisible() {
 	}
-	
+
 	/**
 	 * Notification this view is now hidden.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void becomesHidden() {
 	}
-	
+
 	/**
 	 * Returns whether this view is currently visible.
-	 * 
+	 *
 	 * @return whether this view is currently visible
 	 * @since 2.1
 	 */
 	public boolean isVisible() {
 		return fIsVisible;
 	}
-	
+
 	/**
 	 * Creates and registers a part listener with this event handler's page,
 	 * if one does not already exist.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void registerPartListener() {
@@ -1012,7 +1012,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 	/**
 	 * Unregisters and disposes this event handler's part listener.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void deregisterPartListener() {
@@ -1020,7 +1020,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			getSite().getPage().removePartListener(fPartListener);
 			fPartListener = null;
 		}
-	}	
+	}
 
 	/**
 	 * Returns a map of the current attribute settings in the model
@@ -1039,6 +1039,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		return Collections.EMPTY_MAP;
 	}
-}	
+}
 
 

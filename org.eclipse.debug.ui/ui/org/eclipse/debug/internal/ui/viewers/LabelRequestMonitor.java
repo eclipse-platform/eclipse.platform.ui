@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Widget;
  * Not intended to be subclassed or instantiated by clients. For use speficially
  * with <code>AsynchronousViewer</code>.
  * </p>
- * 
+ *
  * @since 3.2
  */
 class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRequestMonitor {
@@ -52,7 +52,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	/**
 	 * Cosntructs a request to upate the label of the given node in the give
 	 * model.
-	 * 
+	 *
 	 * @param node node to update
 	 * @param model model containing the node
 	 */
@@ -62,7 +62,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
 	 */
 	@Override
@@ -78,7 +78,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
 	 */
 	@Override
@@ -88,7 +88,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setLabel(java.lang.String)
 	 */
 	@Override
@@ -98,7 +98,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setFontData(org.eclipse.swt.graphics.FontData)
 	 */
 	@Override
@@ -108,7 +108,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor)
 	 */
 	@Override
@@ -118,7 +118,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setForeground(org.eclipse.swt.graphics.RGB)
 	 */
 	@Override
@@ -128,30 +128,30 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setBackground(org.eclipse.swt.graphics.RGB)
 	 */
 	@Override
 	public void setBackgrounds(RGB[] background) {
 		fBackgrounds = background;
 	}
-	
+
 	protected RGB[] getBackgrounds() {
 		return fBackgrounds;
 	}
-	
+
 	protected RGB[] getForegrounds() {
 		return fForegrounds;
 	}
-	
+
 	protected FontData[] getFontDatas() {
 		return fFontDatas;
 	}
-	
+
 	protected String[] getLabels() {
 		return fLabels;
 	}
-	
+
 	protected ImageDescriptor[] getImageDescriptors() {
 		return fImageDescriptors;
 	}

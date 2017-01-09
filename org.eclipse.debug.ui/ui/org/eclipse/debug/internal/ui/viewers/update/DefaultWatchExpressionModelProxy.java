@@ -32,21 +32,21 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Model proxy for the expressions view
- * 
+ *
  * @see org.eclipse.debug.internal.ui.views.expression.ExpressionView
  * @see org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider
  * @see org.eclipse.debug.internal.ui.model.elements.ExpressionsViewMementoProvider
- * 
+ *
  * @since 3.2
  */
 public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProxy implements IDebugContextListener {
-	
+
 	private IWorkbenchWindow fWindow;
-	
+
 	public DefaultWatchExpressionModelProxy(IWatchExpression expression) {
 		super(expression);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
@@ -61,7 +61,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
     				for (int i = 0; i < workbenchWindows.length; i++) {
     					IWorkbenchWindow window = workbenchWindows[i];
     					// Virtual viewer may have a null control.
-    					Control control = viewer.getControl(); 
+    					Control control = viewer.getControl();
     					if (control != null && control.getShell().equals(window.getShell())) {
     						fWindow = window;
     						break;
@@ -79,7 +79,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 			    }
 				return Status.OK_STATUS;
 			}
-		
+
 		};
 		job.setSystem(true);
 		job.schedule();
@@ -139,5 +139,5 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 			contextActivated(event.getContext());
 		}
 	}
-	
+
 }

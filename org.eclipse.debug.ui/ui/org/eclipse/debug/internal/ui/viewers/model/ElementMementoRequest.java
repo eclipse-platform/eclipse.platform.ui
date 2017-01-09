@@ -19,11 +19,11 @@ import org.eclipse.ui.IMemento;
 
 /**
  * Request for element memento.
- * 
+ *
  * @since 3.3
  */
 class ElementMementoRequest extends MementoUpdate implements IElementMementoRequest {
-	
+
 	private IElementMementoCollector fManager;
 	private ModelDelta fDelta;
 
@@ -47,7 +47,7 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	 */
 	@Override
 	public void done() {
-		
+
 		ITreeModelViewer viewer = getContentProvider().getViewer();
 		if (viewer == null) return;  // disposed
 		if (viewer.getDisplay().getThread() == Thread.currentThread()) {
@@ -60,12 +60,12 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 		        }
 		    });
 		}
-		
+
 	}
-	
+
 	private void doComplete() {
         if (getContentProvider().isDisposed()) return;
-        
+
         if (!isCanceled() && (getStatus() == null || getStatus().isOK())) {
             // replace the element with a memento
             fDelta.setElement(getMemento());

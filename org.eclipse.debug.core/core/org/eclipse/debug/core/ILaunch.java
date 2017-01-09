@@ -39,7 +39,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	public Object[] getChildren();
 	/**
 	 * Returns the primary (first) debug target associated with this launch, or <code>null</code>
-	 * if no debug target is associated with this launch. All debug targets 
+	 * if no debug target is associated with this launch. All debug targets
 	 * associated with this launch may be retrieved by
 	 * <code>getDebugTargets()</code>.
 	 *
@@ -54,7 +54,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return array of processes
 	 */
 	public IProcess[] getProcesses();
-	
+
 	/**
 	 * Returns all the debug targets associated with this launch,
 	 * or an empty collection if no debug targets are associated
@@ -65,7 +65,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @since 2.0
 	 */
 	public IDebugTarget[] getDebugTargets();
-	
+
 	/**
 	 * Adds the given debug target to this launch. Has no effect
 	 * if the given debug target is already associated with this
@@ -75,8 +75,8 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param target debug target to add to this launch
 	 * @since 2.0
 	 */
-	public void addDebugTarget(IDebugTarget target);	
-	
+	public void addDebugTarget(IDebugTarget target);
+
 	/**
 	 * Removes the given debug target from this launch. Has no effect
 	 * if the given debug target is not already associated with this
@@ -86,8 +86,8 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param target debug target to remove from this launch
 	 * @since 2.0
 	 */
-	public void removeDebugTarget(IDebugTarget target);	
-	
+	public void removeDebugTarget(IDebugTarget target);
+
 	/**
 	 * Adds the given process to this launch. Has no effect
 	 * if the given process is already associated with this
@@ -97,8 +97,8 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param process the process to add to this launch
 	 * @since 2.0
 	 */
-	public void addProcess(IProcess process);		
-	
+	public void addProcess(IProcess process);
+
 	/**
 	 * Removes the given process from this launch. Has no effect
 	 * if the given process is not already associated with this
@@ -108,8 +108,8 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param process the process to remove from this launch
 	 * @since 2.0
 	 */
-	public void removeProcess(IProcess process);			
-		
+	public void removeProcess(IProcess process);
+
 	/**
 	 * Returns the source locator to use for locating source elements for
 	 * the debug target associated with this launch, or <code>null</code>
@@ -118,7 +118,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return the source locator
 	 */
 	public ISourceLocator getSourceLocator();
-	
+
 	/**
 	 * Sets the source locator to use for locating source elements for
 	 * the debug target associated with this launch, or <code>null</code>
@@ -128,7 +128,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @since 2.0
 	 */
 	public void setSourceLocator(ISourceLocator sourceLocator);
-		
+
 	/**
 	 * Returns the mode of this launch - one of the mode constants defined by
 	 * the launch manager.
@@ -137,16 +137,16 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @see ILaunchManager
 	 */
 	public String getLaunchMode();
-	
+
 	/**
 	 * Returns the configuration that was launched, or <code>null</code>
 	 * if no configuration was launched.
-	 * 
+	 *
 	 * @return the launched configuration or <code>null</code>
 	 * @since 2.0
 	 */
 	public ILaunchConfiguration getLaunchConfiguration();
-	
+
 	/**
 	 * Sets the value of a client defined attribute.
 	 *
@@ -155,7 +155,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @since 2.0
 	 */
 	public void setAttribute(String key, String value);
-	
+
 	/**
 	 * Returns the value of a client defined attribute.
 	 *
@@ -163,12 +163,12 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return value the attribute value, or <code>null</code> if undefined
 	 * @since 2.0
 	 */
-	public String getAttribute(String key);	
-	
+	public String getAttribute(String key);
+
 	/**
 	 * Returns whether this launch contains at least one process
 	 * or debug target.
-	 * 
+	 *
 	 * @return whether this launch contains at least one process
 	 * or debug target
 	 * @since 2.0

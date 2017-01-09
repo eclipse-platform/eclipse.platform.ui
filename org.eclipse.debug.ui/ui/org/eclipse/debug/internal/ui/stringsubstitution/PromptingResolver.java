@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2013 Matt Conway and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matt Conway - initial implementation
  *     IBM Corporation - integration and code cleanup
@@ -43,14 +43,14 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 	 */
 	protected String defaultValue = null;
 	/**
-	 * The last value chosen by the user for this variable 
+	 * The last value chosen by the user for this variable
 	 */
 	protected String lastValue = null;
 	/**
 	 * The result returned from the prompt dialog
 	 */
 	protected String dialogResultString = null;
-	
+
 	/**
 	 * Presents the user with the appropriate prompt for the variable to be expanded
 	 * and sets the <code>dialogResultString</code> based on the user's selection.
@@ -61,7 +61,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 	 * Initializes values displayed when the user is prompted. If
 	 * a prompt hint and default value are supplied in the given
 	 * variable value, these are extracted for presentation
-	 * 
+	 *
 	 * @param varValue the value of the variable from which the prompt
 	 * hint and default value will be extracted
 	 */
@@ -82,10 +82,10 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		if (promptHint != null) {
 			dialogMessage = MessageFormat.format(StringSubstitutionMessages.PromptExpanderBase_0, new Object[] { promptHint });
 		} else {
-			dialogMessage = StringSubstitutionMessages.PromptExpanderBase_1; 
+			dialogMessage = StringSubstitutionMessages.PromptExpanderBase_1;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
@@ -109,7 +109,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		}
 		return value;
 	}
-	
+
 	protected Shell getShell() {
 		return DebugUIPlugin.getShell();
 	}

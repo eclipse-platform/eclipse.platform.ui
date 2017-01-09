@@ -19,7 +19,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
- * Abstract implementation of a rendering that translates memory into 
+ * Abstract implementation of a rendering that translates memory into
  * text, displayed in a table.
  * <p>
  * Clients should subclass from this class if they wish to provide a table
@@ -27,24 +27,24 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * </p>
  * @since 3.1
  */
-abstract public class AbstractTextRendering extends AbstractTableRendering { 	
-	
+abstract public class AbstractTextRendering extends AbstractTableRendering {
+
 	private String fCodePage;
 
 	/**
 	 * Constructs a text rendering of the specified type.
-	 * 
+	 *
 	 * @param renderingId memory rendering type identifier
 	 */
 	public AbstractTextRendering(String renderingId)
 	{
 		super(renderingId);
 	}
-	
+
 	/**
 	 * Constructs a text rendering of the specified type on the given
 	 * code page.
-	 * 
+	 *
 	 * @param renderingId memory rendering type identifier
 	 * @param codePage the name of a supported
      *  {@link java.nio.charset.Charset </code>charset<code>}, for
@@ -55,12 +55,12 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 		super(renderingId);
 		fCodePage = codePage;
 	}
-	
+
 	/**
 	 * Sets the code page for this rendering.  This does not cause
 	 * the rendering to be updated with the new code page.  Clients need
 	 * to update the rendering manually when the code page is changed.
-	 * 
+	 *
 	 * @param codePage the name of a supported
 	 * {@link java.nio.charset.Charset </code>charset<code>}, for
      *  example <code>CP1252</code>
@@ -69,7 +69,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	{
 		fCodePage = codePage;
 	}
-	
+
 	/**
 	 * Returns the current code page used by this rendering.  Returns null
 	 * if not set.
@@ -80,7 +80,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	{
 		return fCodePage;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
 	 */
@@ -90,7 +90,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 			if(fCodePage == null)
 				return IInternalDebugCoreConstants.EMPTY_STRING;
-			
+
 			boolean[] invalid = new boolean[data.length];
 			boolean hasInvalid = false;
 			byte byteArray[] = new byte[data.length];
@@ -103,7 +103,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 				}
 				byteArray[i] = data[i].getValue();
 			}
-			
+
 			if (hasInvalid)
 			{
 				StringBuffer strBuf = new StringBuffer();
@@ -123,7 +123,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 			return "-- error --"; //$NON-NLS-1$
 		}
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
@@ -131,13 +131,13 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 	@Override
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		try {
-			
+
 			if (fCodePage == null)
 				return new byte[0];
-			
+
 			byte[] bytes =  data.getBytes(fCodePage);
 			return bytes;
-			
+
 		} catch (UnsupportedEncodingException e) {
 			return new byte[0];
 		}

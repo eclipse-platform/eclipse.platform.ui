@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -39,47 +39,47 @@ import org.eclipse.swt.widgets.Widget;
  * Breakpoints viewer.
  */
 public class BreakpointsViewer extends CheckboxTreeViewer {
-	
+
     /**
      * Constructs a new breakpoints viewer with the given tree.
-     * 
+     *
      * @param tree the backing tree widget
      */
     public BreakpointsViewer(Tree tree) {
         super(tree);
     }
-    
+
     /**
      * Returns the selected items.
-     * 
+     *
      * @return selected items
      */
     public Item[] getSelectedItems() {
         return getSelection(getControl());
     }
-    
+
     /**
      * Returns the item associated with the given element, or <code>null</code>.
-     * 
+     *
      * @param element element in breakpoints view
      * @return item associated with the given element, or <code>null</code>
      */
     public Widget searchItem(Object element) {
         return findItem(element);
     }
-    
+
     /**
      * Refreshes the given item in the tree.
-     * 
+     *
      * @param item item to refresh
      */
     public void refreshItem(TreeItem item) {
         updateItem(item, item.getData());
     }
-    
+
     /**
      * Returns a collection of currently visible breakpoints.
-     * 
+     *
      * @return collection of currently visible breakpoints
      */
     public IBreakpoint[] getVisibleBreakpoints() {
@@ -98,7 +98,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     /**
      * Adds expanded breakpoints to the list. Traverses children of the given
      * tree item if any.
-     * 
+     *
      * @param item the item to get breakpoints from
      * @param list collection of visible breakpoints
      */
@@ -118,7 +118,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 
     /**
      * Sets the selection to a specific tree item
-     * 
+     *
      * @param item the item to set as the current tree selection
      */
     protected void setSelection(TreeItem item) {
@@ -151,7 +151,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	}
     	return null;
     }
-	
+
     /**
      * Returns the addable breakpoint container of the specified breakpoint
      * @param item the item to get the container for
@@ -175,7 +175,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	}
     	return null;
     }
-    
+
     /**
      * Returns if the selected item in the tree can be dragged
      * <p>
@@ -203,7 +203,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	}
     	return true;
     }
-    
+
     /**
      * Performs the actual removal of breakpoints from their respective (removable) containers on a successful drag operation
      * @param items the items involved in the drag
@@ -245,7 +245,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 			}
     	}
     }
-    
+
     /**
      * Determines if the specified element can be dropped into the specified target
      * <p>
@@ -277,7 +277,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	 * This method is used to determine if there is an addable parent container available for the specified drop target.
 	 * <p>
 	 * A drop target can be either a <code>BreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire hierarchy
-	 * of the tree path for the specified target in the event one of the parent element does not support dropping. 
+	 * of the tree path for the specified target in the event one of the parent element does not support dropping.
 	 * </p>
 	 * @param target the target to check
 	 * @param breakpoint the breakpoint we would like to drop
@@ -334,7 +334,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	expandToLevel(target.getData(), ALL_LEVELS);
     	return true;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
@@ -352,11 +352,11 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 		for (int i = 0; i < items.length; i++) {
 			updateCheckedState(items[i]);
 		}
-	}    
-    
+	}
+
     /**
      * Update the checked state up the given element and all of its children.
-     * 
+     *
      * @param element the element to update
      */
 	public void updateCheckedState(Object element) {
@@ -368,7 +368,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
             }
         }
 	}
-   
+
 	/**
 	 * finds all occurrences of a widget to update
 	 * @param element the element to search for when finding occurrences
@@ -382,7 +382,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
         }
         return list.toArray(new Widget[0]);
     }
-    
+
     /**
      * performs the actual search for items in the tree
      * @param list the list to add matches to
@@ -398,10 +398,10 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
         	findAllOccurrences(items[i], element, list);
         }
     }
-    
+
     /**
      * Update the checked state up the given element and all of its children.
-     * 
+     *
      * @param item the item to update
      */
     public void updateCheckedState(TreeItem item) {
@@ -445,5 +445,5 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
                 updateCheckedState(items[i]);
             }
         }
-    }        
+    }
 }

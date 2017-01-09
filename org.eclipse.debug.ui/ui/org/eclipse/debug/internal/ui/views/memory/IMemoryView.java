@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 /**
  * Functions to allow user to control the Memory View or the Memory Rendering
  * View
- * 
+ *
  * @since 3.0
  */
 public interface IMemoryView {
@@ -30,7 +30,7 @@ public interface IMemoryView {
 
 	/**
 	 * Move specified view tab to the top
-	 * 
+	 *
 	 * @param viewTab
 	 */
 	public void moveToTop(IMemoryViewTab viewTab);

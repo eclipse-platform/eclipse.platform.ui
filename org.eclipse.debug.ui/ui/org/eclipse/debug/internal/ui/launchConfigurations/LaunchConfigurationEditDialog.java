@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * This class is used to construct a launch configuration dialog used to edit a launch configuration and continue or cancel (optional),
  * not allowing a launch to occur.
- * 
+ *
  * @since 3.3
  */
 public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 
 	private boolean fShowCancel = false;
-	
+
 	/**
 	 * Constructor
 	 * @param shell the shell to create this dialog on
@@ -43,9 +43,9 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 	 */
 	@Override
 	protected String getTitleAreaTitle() {
-		return LaunchConfigurationsMessages.LaunchConfigurationEditDialog_0; 
+		return LaunchConfigurationsMessages.LaunchConfigurationEditDialog_0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -56,7 +56,7 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 			createButton(parent, ID_CANCEL_BUTTON, IDialogConstants.CANCEL_LABEL, false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#updateButtons()
 	 */
@@ -65,7 +65,7 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 		getTabViewer().refresh();
 		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getDialogSettingsSectionName()
 	 */

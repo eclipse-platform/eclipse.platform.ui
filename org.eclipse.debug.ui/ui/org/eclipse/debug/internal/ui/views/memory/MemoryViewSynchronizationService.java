@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Synchronization service for the memory view.
- * 
+ *
  * @since 3.1
  */
 public class MemoryViewSynchronizationService implements IMemoryRenderingSynchronizationService, IMemoryBlockListener, IPropertyChangeListener {
@@ -70,7 +70,7 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		/**
 		 * If the property matches one of the filters, the property is valid and
 		 * the view should be notified about its change.
-		 * 
+		 *
 		 * @param property the property
 		 * @return if the property is specified in the filter
 		 */
@@ -89,7 +89,7 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		/**
 		 * Set property filters, indicating what property change events the
 		 * listener is interested in.
-		 * 
+		 *
 		 * @param filters the property filters or <code>null</code>
 		 */
 		public void setPropertyFilters(String[] filters) {
@@ -216,7 +216,7 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 
 	/**
 	 * Fire property change events
-	 * 
+	 *
 	 * @param evt the event to fire
 	 */
 	public void firePropertyChanged(final PropertyChangeEvent evt) {

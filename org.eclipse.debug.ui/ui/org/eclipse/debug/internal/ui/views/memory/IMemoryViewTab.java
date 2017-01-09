@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,10 +15,10 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 
 /**
  * Represent a view tab in the Memory View or Memory Rendering View
- * 
+ *
  * Refer to AbstractMemoryViewTab. This is an internal interface. This class is
  * not intended to be implemented by clients.
- * 
+ *
  * @since 3.0
  */
 public interface IMemoryViewTab {
@@ -39,14 +39,14 @@ public interface IMemoryViewTab {
 
 	/**
 	 * Sets the enablament state of the view tab.
-	 * 
+	 *
 	 * @param enabled
 	 */
 	public void setEnabled(boolean enabled);
 
 	/**
 	 * Set view tab's label
-	 * 
+	 *
 	 * @param label
 	 */
 	public void setTabLabel(String label);

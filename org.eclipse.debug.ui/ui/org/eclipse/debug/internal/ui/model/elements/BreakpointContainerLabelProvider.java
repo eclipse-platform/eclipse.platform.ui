@@ -37,17 +37,17 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 	 */
 	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
-		ImageDescriptor desc = super.getImageDescriptor(elementPath, presentationContext, columnId);		
+		ImageDescriptor desc = super.getImageDescriptor(elementPath, presentationContext, columnId);
 		int flags = computeAdornmentFlags();
-		
+
         if (flags > 0) {
-        	Image image = DebugUIPlugin.getImageDescriptorRegistry().get(desc);        	
+        	Image image = DebugUIPlugin.getImageDescriptorRegistry().get(desc);
             CompositeDebugImageDescriptor compDesc = new CompositeDebugImageDescriptor(image, flags);
             return compDesc;
         }
         return desc;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getChecked(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
@@ -61,13 +61,13 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
             for (int i = 0; i < breakpoints.length; ++i) {
             	if (breakpoints[i].isEnabled()) return true;
             }
-            
+
             return false;
         }
-        
+
 		return super.getChecked(path, presentationContext);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getGrayed(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
@@ -86,11 +86,11 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 
 			for (int i = 0; i < breakpoints.length; ++i) {
 				if (breakpoints[i].isEnabled()) {
-					hasEnabled = true;				
+					hasEnabled = true;
 				} else {
 					hasDisabled = true;
 				}
-				
+
 				if (hasEnabled && hasDisabled) {
 					return true;
 				}
@@ -101,14 +101,14 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 
 		return super.getGrayed(path, presentationContext);
 	}
-	
+
 	// Forward font data requests to the workbench adapter
 	@Override
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		FontData fontData = super.getFontData(elementPath, presentationContext, columnId);
 		if (fontData == null && element instanceof IAdaptable) {
-			
+
             IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
                 fontData = adapter.getFont(element);
@@ -123,7 +123,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		Object element = elementPath.getLastSegment();
 		RGB rgb = super.getForeground(elementPath, presentationContext, columnId);
 		if (rgb == null && element instanceof IAdaptable) {
-			
+
             IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
             	rgb = adapter.getForeground(element);
@@ -138,7 +138,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		Object element = elementPath.getLastSegment();
 		RGB rgb = super.getBackground(elementPath, presentationContext, columnId);
 		if (rgb == null && element instanceof IAdaptable) {
-			
+
             IWorkbenchAdapter2 adapter = ((IAdaptable)element).getAdapter(IWorkbenchAdapter2.class);
             if (adapter != null) {
             	rgb = adapter.getBackground(element);
@@ -149,7 +149,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 
 	/**
      * Computes and return common adornment flags for the given category.
-     * 
+     *
      * @return adornment flags defined in CompositeDebugImageDescriptor
      */
     private int computeAdornmentFlags() {
@@ -157,5 +157,5 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
             return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
         }
         return 0;
-    } 
+    }
 }

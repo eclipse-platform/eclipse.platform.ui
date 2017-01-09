@@ -53,11 +53,11 @@ public class LaunchAction extends Action {
 	 * The mode to launch in
 	 */
 	private String fMode;
-	
+
 	/**
 	 * Constructs an action that launches the specified launch configuration
 	 * in the specified mode.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @param mode launch mode - one of <code>ILaunchManager.RUN_MODE</code> or
 	 * <code>ILaunchManager.DEBUG_MODE</code>
@@ -87,7 +87,7 @@ public class LaunchAction extends Action {
 	/**
 	 * If the user has control-clicked the launch history item, open the launch
 	 * configuration dialog on the launch configuration, rather than running it.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
 	@Override
@@ -98,12 +98,12 @@ public class LaunchAction extends Action {
 				//prompt based on pref
 				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 				if(store.getBoolean(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY)) {
-					MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(DebugUIPlugin.getShell(), 
-							ActionMessages.LaunchAction_0, 
+					MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(DebugUIPlugin.getShell(),
+							ActionMessages.LaunchAction_0,
  MessageFormat.format(ActionMessages.LaunchAction_1, new Object[] { fConfiguration.getName() }),
-							ActionMessages.LaunchAction_2, 
-							false, 
-							null, 
+							ActionMessages.LaunchAction_2,
+							false,
+							null,
 							null);
 					int ret = mdwt.getReturnCode();
 					if(ret == IDialogConstants.YES_ID) {
@@ -124,18 +124,18 @@ public class LaunchAction extends Action {
 			else {
 				runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
 			}
-		} 
+		}
 		else {
 			runInternal(((event.stateMask & SWT.SHIFT) > 0) ? true : false);
 		}
 	}
-	
+
 	/**
 	 * Removes the specified <code>ILaunchConfiguration</code> from the launch histories associated
 	 * with the specified listing of <code>ILaunchGroup</code>s.
 	 * @param config the configuration to remove from the histories from the given launch groups
 	 * @param groups the launch groups whose histories the given configuration should be removed from
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private void removeFromLaunchHistories(ILaunchConfiguration config, ILaunchGroup[] groups) {
@@ -149,13 +149,13 @@ public class LaunchAction extends Action {
 			}
 		}
 	}
-	
+
 	/**
 	 * Collects all of the launch groups associated with the specified <code>ILaunchConfiguration</code>
 	 * @param config the config to collect launch groups for
-	 * @return the listing of associated <code>ILaunchGroup</code>s for the specified <code>ILaunchConfiguration</code>, or 
+	 * @return the listing of associated <code>ILaunchGroup</code>s for the specified <code>ILaunchConfiguration</code>, or
 	 * an empty listing, never <code>null</code>
-	 * @since 3.4 
+	 * @since 3.4
 	 */
 	private ILaunchGroup[] getAllGroupsForConfiguration(ILaunchConfiguration config) {
 		ArrayList<ILaunchGroup> list = new ArrayList<ILaunchGroup>();

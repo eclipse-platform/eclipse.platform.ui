@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,22 +21,22 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * Category for breakpoints in "other" categories.   Clients which provide 
- * custom content in the Breakpoints view may instantiate this object to 
+ * Category for breakpoints in "other" categories.   Clients which provide
+ * custom content in the Breakpoints view may instantiate this object to
  * represent elements in a breakpoint organizer that do not fall into any known
  * category.
- * 
+ *
  * @since 3.6
- * 
+ *
  * @see IBreakpointContainer
  * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate
  */
 public class OtherBreakpointCategory extends PlatformObject implements IWorkbenchAdapter {
-    
+
 	private static Map<IBreakpointOrganizer, IAdaptable[]> fOthers = new HashMap<IBreakpointOrganizer, IAdaptable[]>();
     private IBreakpointOrganizer fOrganizer;
-    
-    
+
+
     public static IAdaptable[] getCategories(IBreakpointOrganizer organizer) {
         IAdaptable[] others = fOthers.get(organizer);
         if (others == null) {
@@ -45,10 +45,10 @@ public class OtherBreakpointCategory extends PlatformObject implements IWorkbenc
         }
         return others;
     }
-    
+
     /**
      * Constructs an 'other' category for the given organizer.
-     * 
+     *
      * @param organizer breakpoint organizer
      */
     private OtherBreakpointCategory(IBreakpointOrganizer organizer) {
@@ -86,7 +86,7 @@ public class OtherBreakpointCategory extends PlatformObject implements IWorkbenc
 	public Object getParent(Object o) {
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -98,12 +98,12 @@ public class OtherBreakpointCategory extends PlatformObject implements IWorkbenc
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
 	public int hashCode() {
         return fOrganizer.hashCode();
-    }    
+    }
 }

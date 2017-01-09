@@ -38,26 +38,26 @@ package org.eclipse.debug.core.model;
  * @since 3.0
  */
 public interface IStepFilters {
-	
+
 	/**
 	 * Returns whether this debug target supports step filters.
 	 *
 	 * @return whether this debug target supports step filters
 	 */
 	public boolean supportsStepFilters();
-	
+
 	/**
 	 * Returns whether step filters are currently enabled in this
 	 * debug target.
-	 * 
+	 *
 	 * @return whether step filters are currently enabled in this
 	 * debug target
 	 */
 	public boolean isStepFiltersEnabled();
-	
+
 	/**
 	 * Sets whether step filters are enabled in this debug target.
-	 * 
+	 *
 	 * @param enabled whether step filters are enabled in this debug target
 	 */
 	public void setStepFiltersEnabled(boolean enabled);

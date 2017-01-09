@@ -19,7 +19,7 @@ import org.eclipse.debug.ui.actions.DebugCommandAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * Disconnect action.
- * 
+ *
  * @since 3.3
  */
 public class DisconnectCommandAction extends DebugCommandAction{
@@ -27,7 +27,7 @@ public class DisconnectCommandAction extends DebugCommandAction{
     public DisconnectCommandAction() {
         setActionDefinitionId("org.eclipse.debug.ui.commands.Disconnect"); //$NON-NLS-1$
     }
-    
+
     @Override
 	public String getText() {
         return ActionMessages.DisconnectAction_0;

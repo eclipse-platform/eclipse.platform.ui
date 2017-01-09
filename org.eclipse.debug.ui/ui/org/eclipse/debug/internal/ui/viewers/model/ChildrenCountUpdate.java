@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Wind River Systems - Fix for viewer state save/restore [188704]
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
@@ -29,31 +29,31 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
      * Child count result.
      */
 	private int fCount = 0;
-	
+
 	/**
 	 * Other child count updates for the same content provider.  Coalesced requests are
 	 * batched together into an array.
 	 */
 	private List<ViewerUpdateMonitor> fBatchedRequests = null;
-	
+
     /**
-     * Flag whether filtering is enabled in viewer.  If filtering is enabled, then a 
+     * Flag whether filtering is enabled in viewer.  If filtering is enabled, then a
      * children update is performed on child elements to filter them as part of the
      * child count calculation.
      */
 	private boolean fShouldFilter = false;
-	
+
 	/**
-	 * Children indexes which are currently filtered.  When updating child count, also need 
+	 * Children indexes which are currently filtered.  When updating child count, also need
 	 * to verify that currently filtered children are still filtered.
 	 */
     private int[] fFilteredChildren = null;
-    
+
 	/**
 	 * Children update used to filter children.
 	 */
 	private ChildrenUpdate fChildrenUpdate;
-	
+
 	/**
 	 * Constructor
 	 * @param provider the content provider to use for the update
@@ -92,14 +92,14 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		            int endIdx = fFilteredChildren[fFilteredChildren.length - 1];
 		            count = endIdx - startIdx + 1;
 		        }
-		        
+
      		    fChildrenUpdate = new ChildrenUpdate(getContentProvider(), getViewerInput(), getElementPath(), getElement(), startIdx, count, getElementContentProvider()) {
      		    	@Override
 					protected void performUpdate() {
      		    		performUpdate(true);
      		    		ChildrenCountUpdate.super.scheduleViewerUpdate();
      		    	}
-     		    	
+
      		    	@Override
 					protected void scheduleViewerUpdate() {
      		    		execInDisplayThread(new Runnable() {
@@ -124,8 +124,8 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		    super.scheduleViewerUpdate();
 		}
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ViewerUpdateMonitor#performUpdate()
 	 */
@@ -142,8 +142,8 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			DebugUIPlugin.trace("setChildCount(" + getElement() + ", modelCount: " + fCount + " viewCount: " + viewCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
-		// Special case for element 0 in a set of filtered elements:  
-		// Child 0 is automatically updated by the tree at the same time that the child count is requested. Therefore, 
+		// Special case for element 0 in a set of filtered elements:
+		// Child 0 is automatically updated by the tree at the same time that the child count is requested. Therefore,
 		// If this child count update filtered out this element, it needs to be updated again.
 		if (fShouldFilter && getContentProvider().isFiltered(elementPath, 0)) {
 		    getContentProvider().updateElement(elementPath, 0);
@@ -156,14 +156,14 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 	public void setChildCount(int numChildren) {
 		fCount = numChildren;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("IChildrenCountUpdate: "); //$NON-NLS-1$
 		buf.append(getElement());
 		return buf.toString();
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
@@ -185,7 +185,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
 	 */
@@ -204,7 +204,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 			getElementContentProvider().update(updates);
 		}
 	}
-	
+
 	@Override
 	boolean containsUpdate(TreePath path) {
 	    if (getElementPath().equals(path)) {
@@ -237,20 +237,20 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 			return path.getParentPath();
 		}
 		return path;
-	}		
-	
+	}
+
 	int getCount() {
 	    return fCount;
 	}
-	
+
     @Override
 	protected boolean doEquals(ViewerUpdateMonitor update) {
-        return 
-            update instanceof ChildrenCountUpdate && 
-            getViewerInput().equals(update.getViewerInput()) && 
+        return
+            update instanceof ChildrenCountUpdate &&
+            getViewerInput().equals(update.getViewerInput()) &&
             getElementPath().equals(update.getElementPath());
     }
-    
+
     @Override
 	protected int doHashCode() {
         return getClass().hashCode() + getViewerInput().hashCode() + getElementPath().hashCode();

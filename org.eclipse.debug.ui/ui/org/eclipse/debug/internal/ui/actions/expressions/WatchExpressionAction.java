@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - integration with non-standard debug models (Bug 209883)
@@ -38,8 +38,8 @@ import org.eclipse.ui.IWorkbenchPart;
 public abstract class WatchExpressionAction implements IViewActionDelegate {
 	IWorkbenchPart fPart = null;
 
-	private static IWatchExpression[] EMPTY_EXPRESSION_ARRAY = new IWatchExpression[0]; 
-	
+	private static IWatchExpression[] EMPTY_EXPRESSION_ARRAY = new IWatchExpression[0];
+
 	@Override
 	public void init(IViewPart view) {
 	    fPart = view;
@@ -61,12 +61,12 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
     }
 
 	protected IWatchExpression[] getSelectedExpressions() {
-	    List<Object> list = new LinkedList<Object>(); 
+	    List<Object> list = new LinkedList<Object>();
 	    IStructuredSelection currentSelection = getCurrentSelection();
 	    if (currentSelection == null) {
 	        return EMPTY_EXPRESSION_ARRAY;
 	    }
-	    
+
         for (Iterator<?> iter= currentSelection.iterator(); iter.hasNext();) {
             Object element = iter.next();
             if (element instanceof IWatchExpression) {
@@ -82,10 +82,10 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
                 return EMPTY_EXPRESSION_ARRAY;
             }
         }
-        
+
 		return list.toArray(new IWatchExpression[list.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -106,7 +106,7 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 
 	/**
 		* Displays the given error message in the status line.
-		* 
+		*
 		* @param message the message to display
 		*/
 	protected void showErrorMessage(String message) {

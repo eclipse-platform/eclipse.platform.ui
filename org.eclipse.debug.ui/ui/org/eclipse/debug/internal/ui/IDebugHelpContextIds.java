@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
- 
+
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -21,16 +21,16 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
+ *
  */
 public interface IDebugHelpContextIds {
-	
+
 	public static final String PREFIX = IDebugUIConstants.PLUGIN_ID + "."; //$NON-NLS-1$
-	
+
 	// Actions
-	public static final String CHANGE_VALUE_ACTION = PREFIX + "change_value_action_context"; //$NON-NLS-1$	
+	public static final String CHANGE_VALUE_ACTION = PREFIX + "change_value_action_context"; //$NON-NLS-1$
 	public static final String OPEN_BREAKPOINT_ACTION = PREFIX + "open_breakpoint_action_context"; //$NON-NLS-1$
-	public static final String RELAUNCH_HISTORY_ACTION = PREFIX + "relaunch_history_action_context"; //$NON-NLS-1$	
+	public static final String RELAUNCH_HISTORY_ACTION = PREFIX + "relaunch_history_action_context"; //$NON-NLS-1$
 	public static final String SHOW_BREAKPOINTS_FOR_MODEL_ACTION = PREFIX + "show_breakpoints_for_model_action_context"; //$NON-NLS-1$
 	public static final String COPY_BREAKPOINTS_ACTION = PREFIX + "copy_breakpoints_action_context"; //$NON-NLS-1$
 	public static final String PASTE_BREAKPOINTS_ACTION = PREFIX + "paste_breakpoints_action_context"; //$NON-NLS-1$
@@ -39,7 +39,7 @@ public interface IDebugHelpContextIds {
 	public static final String VARIABLES_SELECT_LOGICAL_STRUCTURE = PREFIX + "variables_select_logical_structure"; //$NON-NLS-1$
 	public static final String VARIABLES_SELECT_DETAIL_PANE = PREFIX + "variables_select_detail_pane_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_AUTO_EXPAND = PREFIX + "variables_auto_expand_action_context"; //$NON-NLS-1$
-	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_context"; //$NON-NLS-1$			
+	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_context"; //$NON-NLS-1$
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_context"; //$NON-NLS-1$
 	public static final String EDIT_LAUNCH_CONFIGURATION_ACTION = PREFIX + "edit_launch_configuration_action_context"; //$NON-NLS-1$
 	public static final String OPEN_LAUNCH_CONFIGURATION_ACTION = PREFIX + "open_launch_configuration_action_context"; //$NON-NLS-1$
@@ -88,7 +88,7 @@ public interface IDebugHelpContextIds {
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
 	public static final String PROCESS_CONSOLE = PREFIX + "process_console_context";  //$NON-NLS-1$
     public static final String MODULES_VIEW = PREFIX + "modules_view_context"; //$NON-NLS-1$
-	
+
 	// Preference pages
 	public static final String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context"; //$NON-NLS-1$
 	public static final String CONSOLE_PREFERENCE_PAGE = PREFIX + "console_preference_page_context"; //$NON-NLS-1$
@@ -98,7 +98,7 @@ public interface IDebugHelpContextIds {
 	public static final String LAUNCH_CONFIGURATION_PREFERENCE_PAGE = PREFIX + "launch_configuration_preference_page_context"; //$NON-NLS-1$
 	public static final String VIEW_MANAGEMENT_PREFERENCE_PAGE = PREFIX + "view_management_preference_page_context"; //$NON-NLS-1$
 	public static final String LAUNCH_DELEGATES_PREFERENCE_PAGE = PREFIX + "launch_delegate_preference_page_context"; //$NON-NLS-1$
-	
+
 	// Dialogs
 	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_PROPERTIES_DIALOG = PREFIX + "launch_configuration_properties_dialog"; //$NON-NLS-1$
@@ -129,28 +129,28 @@ public interface IDebugHelpContextIds {
 	public static final String SELECT_FAVORITES_DIALOG = PREFIX + "select_favorites_dialog"; //$NON-NLS-1$
 	public static final String SELECT_NATIVE_ENVIRONMENT_DIALOG = PREFIX + "select_native_environment_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCH_CONFIGURATION_MIGRATION_DIALOG = PREFIX + "select_launch_configuration_migration_dialog"; //$NON-NLS-1$
-	
+
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$
 	public static final String PROCESS_PAGE_RUN_AT = PREFIX + "process_page_run_at_time_widget"; //$NON-NLS-1$
 	public static final String RUN_DEBUG_RESOURCE_PROPERTY_PAGE = PREFIX + "run_debug_resource_property_page"; //$NON-NLS-1$
-	
+
 	// Launch configuration dialog pages
 	public static final String LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB = PREFIX + "launch_configuration_dialog_common_tab"; //$NON-NLS-1$
-	public static final String LAUNCH_CONFIGURATION_DIALOG_PERSPECTIVE_TAB = PREFIX + "launch_configuration_dialog_perspective_tab"; //$NON-NLS-1$	
+	public static final String LAUNCH_CONFIGURATION_DIALOG_PERSPECTIVE_TAB = PREFIX + "launch_configuration_dialog_perspective_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB = PREFIX + "launch_configuration_dialog_refresh_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB = PREFIX +  "launch_configuration_dialog_environment_tab"; //$NON-NLS-1$
-	
+
 	// Working set page
-	public static final String WORKING_SET_PAGE = PREFIX + "working_set_page_context"; //$NON-NLS-1$			
-	
+	public static final String WORKING_SET_PAGE = PREFIX + "working_set_page_context"; //$NON-NLS-1$
+
 	//Wizards
 	public static final String IMPORT_BREAKPOINTS_WIZARD_PAGE = PREFIX + "import_breakpoints_wizard_page_context"; //$NON-NLS-1$
 	public static final String EXPORT_BREAKPOINTS_WIZARD_PAGE = PREFIX + "export_breakpoints_wizard_page_context"; //$NON-NLS-1$
 	public static final String IMPORT_LAUNCH_CONFIGURATIONS_PAGE = PREFIX + "import_launch_configurations_context"; //$NON-NLS-1$
 	public static final String EXPORT_LAUNCH_CONFIGURATIONS_PAGE = PREFIX + "export_launch_configurations_context"; //$NON-NLS-1$
-	
-	//Editor	
+
+	//Editor
 	public static final String NO_SOURCE_EDITOR = PREFIX + "debugger_editor_no_source_common";//$NON-NLS-1$
 }
 

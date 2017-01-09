@@ -15,11 +15,11 @@ import org.eclipse.debug.ui.actions.ContextualLaunchAction;
 
 /**
  * Specialization of <code>ContextualLaunchAction</code> for the profile mode
- * 
+ *
  * @see {@link ContextualLaunchAction}
  */
 public class ProfileContextualLaunchAction extends ContextualLaunchAction {
-	
+
 	/**
 	 * Constructor
 	 */

@@ -1,13 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind River Systems - adapted action to use for breakpoint types 
+ *     Wind River Systems - adapted action to use for breakpoint types
  ******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
@@ -39,15 +39,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 
 /**
- * Breakpoint ruler pop-up action that creates a sub-menu to select the currently 
- * active breakpoint type.   This action delegate can be contributed to an editor 
- * with the <code>editorActions</code> extension point.  The breakpoint types are 
+ * Breakpoint ruler pop-up action that creates a sub-menu to select the currently
+ * active breakpoint type.   This action delegate can be contributed to an editor
+ * with the <code>editorActions</code> extension point.  The breakpoint types are
  * calculated based on the toggle breakpoint target factories contributed through
  * the <code>toggleBreakpointsTargetFactories</code> extension point.
  * <p>
  * Following is example plug-in XML used to contribute this action to an editor's
- * vertical ruler context menu.  It uses the <code>popupMenus</code> extension 
- * point, by referencing the ruler's context menu identifier in the 
+ * vertical ruler context menu.  It uses the <code>popupMenus</code> extension
+ * point, by referencing the ruler's context menu identifier in the
  * <code>targetID</code> attribute.
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
@@ -71,7 +71,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  * @see IToggleBreakpointsTargetFactory
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.5
- *  
+ *
  * @deprecated Should use BreakpointTypesContribution instead.
  */
 @Deprecated
@@ -80,12 +80,12 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
     private IAction fCallerAction = null;
     private IVerticalRulerInfo fRulerInfo;
     private ISelection fSelection;
-    
+
     /**
      * The menu created by this action
      */
     private Menu fMenu;
-    
+
     private class SelectTargetAction extends Action {
 		private final Set<String> fPossibleIDs;
         private final String fID;
@@ -104,23 +104,23 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         }
     }
 
-    
+
     @Override
 	public void selectionChanged(IAction action, ISelection selection) {
         // In the editor we're not using the selection.
     }
-    
+
     @Override
 	public void run(IAction action) {
         // Do nothing, this is a pull-down menu.
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
     @Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
-        // Clean up old editor data. 
+        // Clean up old editor data.
         if (fCallerAction != null) {
             fCallerAction.setMenuCreator(null);
         }
@@ -128,13 +128,13 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
             ((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
         }
         fRulerInfo = null;
-        
+
         // Set up new editor data.
         fCallerAction = callerAction;
         fCallerAction.setMenuCreator(this);
-        
+
         fEditor= targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class);
-        
+
         if (fEditor != null) {
             if (fEditor instanceof ITextEditorExtension) {
                 ((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
@@ -160,7 +160,7 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
 	public void menuAboutToShow(IMenuManager manager) {
         fSelection = StructuredSelection.EMPTY;
         if (fEditor != null && fRulerInfo != null) {
-            
+
             IDocumentProvider provider = fEditor.getDocumentProvider();
             if (provider != null) {
                 IDocument document =  provider.getDocument(fEditor.getEditorInput());
@@ -172,18 +172,18 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
                     } catch (BadLocationException e) {}
                 }
             }
-            ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault(); 
+            ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault();
 			Set<String> enabledIDs = toggleTargetManager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
             fCallerAction.setEnabled(enabledIDs.size() > 0);
         } else {
             fCallerAction.setEnabled(false);
         }
-        
+
     }
-    
+
     /**
      * Sets this action's drop-down menu, disposing the previous menu.
-     * 
+     *
      * @param menu the new menu
      */
     private void setMenu(Menu menu) {
@@ -208,14 +208,14 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         initMenu();
         return fMenu;
     }
-    
+
     /**
      * Fills the drop-down menu with enabled toggle breakpoint targets
-     * 
+     *
      * @param menu the menu to fill
      */
     private void fillMenu(Menu menu) {
-        ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault(); 
+        ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault();
 		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
         String preferredId = manager.getPreferredToggleBreakpointsTargetID(fEditor, fSelection);
 		for (String id : enabledIDs) {
@@ -225,7 +225,7 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
             }
             ActionContributionItem item= new ActionContributionItem(action);
             item.fill(menu, -1);
-        } 
+        }
     }
 
     /**

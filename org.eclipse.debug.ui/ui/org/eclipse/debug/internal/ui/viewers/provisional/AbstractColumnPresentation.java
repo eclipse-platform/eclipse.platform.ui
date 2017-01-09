@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,9 +22,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.2
  */
 public abstract class AbstractColumnPresentation implements IColumnPresentation2 {
-	
+
 	private IPresentationContext fContext;
-	
+
 	/**
 	 * Empty array of strings
 	 */
@@ -45,7 +45,7 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation2
 	public void dispose() {
 		fContext = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getImageDescriptor(java.lang.String)
 	 */
@@ -56,13 +56,13 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation2
 
 	/**
 	 * Returns the context this column presentation is installed in.
-	 * 
+	 *
 	 * @return presentation context
 	 */
 	protected IPresentationContext getPresentationContext() {
 		return fContext;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2#getInitialColumnWidth(java.lang.String, int, java.lang.String[])
 	 */

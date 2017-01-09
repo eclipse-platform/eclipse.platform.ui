@@ -40,7 +40,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	 * subranges.
 	 */
 	private static LogicalStructureCache fgLogicalCache;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
@@ -56,7 +56,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(getAllChildren(parent, context), index, length);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
@@ -64,7 +64,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((IVariable)element).getValue().hasVariables();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
@@ -72,7 +72,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	protected boolean supportsContextId(String id) {
 		 return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW) || id.equals(IDebugUIConstants.ID_VARIABLE_VIEW) || id.equals(IDebugUIConstants.ID_REGISTER_VIEW);
 	}
-	
+
 	/**
 	 * Gets all the children variables for the parent
 	 * @param parent the parent IVariable
@@ -86,13 +86,13 @@ public class VariableContentProvider extends ElementContentProvider {
         if (value != null) {
             return getValueChildren(variable, value, context);
         }
-        return EMPTY;		
+        return EMPTY;
 	}
 
     /**
      * Return whether to show compute a logical structure or a raw structure
      * in the specified context
-     * 
+     *
      * @return whether to show compute a logical structure or a raw structure
      * in the specified context
      */
@@ -104,18 +104,18 @@ public class VariableContentProvider extends ElementContentProvider {
     /**
      * Returns the number of entries that should be displayed in each partition
      * of an indexed collection.
-     * 
+     *
      * @return the number of entries that should be displayed in each partition
      *         of an indexed collection
      */
     protected int getArrayPartitionSize() {
         // TODO: should fix this with a user preference
         return 100;
-    }	
-    
+    }
+
     /**
      * Returns any logical value for the raw value in the specified context
-     * 
+     *
      * @param value
      * @param context
      * @return logical value for the raw value
@@ -123,11 +123,11 @@ public class VariableContentProvider extends ElementContentProvider {
     protected IValue getLogicalValue(IValue value, IPresentationContext context) throws CoreException {
 		return getLogicalValue(value, new ArrayList<String>(), context);
     }
-    
+
     /**
      * Returns children for the given value, creating array partitions if
      * required
-     * 
+     *
      * @param parent expression or variable containing the given value
      * @param value the value to retrieve children for
      * @param context the context in which children have been requested
@@ -175,7 +175,7 @@ public class VariableContentProvider extends ElementContentProvider {
      * partition size is computed by determining the number of levels that an
      * indexed collection must be nested in order to partition the collection
      * sub-collections of the preferred partition size.
-     * 
+     *
      * @param value
      *            indexed value
      * @return size of partitions the value should be subdivided into
@@ -202,13 +202,13 @@ public class VariableContentProvider extends ElementContentProvider {
         } catch (DebugException e) {
         }
         return partitionSize;
-    }    
-    
+    }
+
     /**
      * Returns any logical value for the raw value. This method will recurse
      * over the returned value until the same structure is encountered again (to
      * avoid infinite recursion).
-     * 
+     *
      * @param value raw value to possibly be replaced by a logical value
      * @param previousStructureIds
      *            the list of logical structures that have already been applied
@@ -230,12 +230,12 @@ public class VariableContentProvider extends ElementContentProvider {
         }
         return value;
     }
-    
+
     /**
      * Returns the logical structure cache to use to store calculated structures.  If the cache does not
      * exist yet, one is created and a debug event listener is added to clear the cache on RESUME and
      * TERMINATE events.
-     * 
+     *
      * @return the logical structure cache to use
      */
     protected synchronized LogicalStructureCache getLogicalStructureCache(){
@@ -254,7 +254,7 @@ public class VariableContentProvider extends ElementContentProvider {
 							break;
 						} else if (events[i].getKind() == DebugEvent.SUSPEND && events[i].getDetail() != DebugEvent.EVALUATION_IMPLICIT){
 								fgLogicalCache.clear();
-								break;							
+								break;
 						} else if (events[i].getKind() == DebugEvent.CHANGE && events[i].getDetail() == DebugEvent.CONTENT){
 							fgLogicalCache.clear();
 							break;
@@ -265,5 +265,5 @@ public class VariableContentProvider extends ElementContentProvider {
     	}
     	return fgLogicalCache;
     }
-	
+
 }

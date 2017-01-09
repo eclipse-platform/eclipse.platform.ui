@@ -25,18 +25,18 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  * Represents a breakpoint category for a specific working set.
  */
 public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdapter, IWorkbenchAdapter2 {
-    
+
     private IWorkingSet fWorkingSet;
 
     /**
      * Constructs a new workings set category for the given working set.
-     * 
+     *
      * @param workingSet
      */
     public WorkingSetCategory(IWorkingSet workingSet) {
         fWorkingSet = workingSet;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
      */
@@ -60,7 +60,7 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
 	public String getLabel(Object o) {
         StringBuffer name = new StringBuffer(fWorkingSet.getName());
         if (isDefault()) {
-            name.append(DebugUIViewsMessages.WorkingSetCategory_0); 
+            name.append(DebugUIViewsMessages.WorkingSetCategory_0);
         }
         return name.toString();
     }
@@ -72,10 +72,10 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
 	public Object getParent(Object o) {
         return null;
     }
-    
+
     /**
      * Returns the working set for this category.
-     * 
+     *
      * @return
      */
     public IWorkingSet getWorkingSet() {
@@ -93,7 +93,7 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -133,16 +133,16 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
         }
         return null;
     }
-    
+
     /**
      * Whether this is the default breakpoint working set.
-     * 
+     *
      * @return whether this is the default breakpoint working set
      */
     private boolean isDefault() {
         return fWorkingSet.equals(BreakpointSetOrganizer.getDefaultWorkingSet());
     }
-    
+
     @Override
 	public String toString() {
         return fWorkingSet.getName();

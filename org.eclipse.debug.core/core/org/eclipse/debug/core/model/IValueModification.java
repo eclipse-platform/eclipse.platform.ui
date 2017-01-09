@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public interface IValueModification {
 	 * </ul>
 	 */
 	public void setValue(String expression) throws DebugException;
-	
+
 	/**
 	 * Sets the value of this variable to the given value.
 	 *
@@ -45,15 +45,15 @@ public interface IValueModification {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public void setValue(IValue value) throws DebugException;	
-	
+	public void setValue(IValue value) throws DebugException;
+
 	/**
 	 * Returns whether this variable supports value modification.
 	 *
 	 * @return whether this variable supports value modification
 	 */
 	public boolean supportsValueModification();
-	
+
 	/**
 	 * Returns whether the given expression is valid to be used in
 	 * setting a new value for this variable.
@@ -66,7 +66,7 @@ public interface IValueModification {
 	 * </ul>
 	 */
 	public boolean verifyValue(String expression) throws DebugException;
-	
+
 	/**
 	 * Returns whether the given value can be used as
 	 * a new value for this variable.

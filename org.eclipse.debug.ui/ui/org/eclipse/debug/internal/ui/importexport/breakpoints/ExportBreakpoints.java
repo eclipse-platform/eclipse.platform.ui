@@ -27,20 +27,20 @@ import org.eclipse.ui.IViewPart;
  * <p>
  * This class provides the aciton event for both the context menu in breakpoints view
  * and the drop down menu inn the breakpoints view.
- * </p> 
+ * </p>
  * <p>
  *  The action simply calls the wizard to export breakpoints.
  *  </p>
  *  @see WizardExportBreakpoints
  *  @see WizardExportBreakpointsPage
- *  
+ *
  *  @since 3.2
  */
-public class ExportBreakpoints extends AbstractDebugActionDelegate { 
+public class ExportBreakpoints extends AbstractDebugActionDelegate {
 
 	/**
 	 * This method actually performs the execution of the action event
-	 * 
+	 *
 	 * @param action IAction the action
 	 */
 	@Override
@@ -52,7 +52,7 @@ public class ExportBreakpoints extends AbstractDebugActionDelegate {
 		wizdialog.setBlockOnOpen(true);
 		wizdialog.open();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

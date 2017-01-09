@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,11 +30,11 @@ public class MemoryRenderingElement {
 	private IMemoryRendering fRendering;
 	private BigInteger fAddress;
 	private MemoryByte[] fBytes;
-	
+
 	/**
 	 * Constructs a new memory rendering element for the given rendering
 	 * and specified bytes.
-	 * 
+	 *
 	 * @param rendering the rendering containing the memory block being rendered
 	 * @param address the address at which the rendering is taking place
 	 * @param bytes the memory bytes being rendered
@@ -45,30 +45,30 @@ public class MemoryRenderingElement {
 		fAddress = address;
 		fBytes = bytes;
 	}
-	
+
 	/**
 	 * Returns the memory rendering in which bytes are being rendered.
-	 * 
+	 *
 	 * @return the memory rendering in which bytes are being rendered
 	 */
 	public IMemoryRendering getRendering()
 	{
 		return fRendering;
 	}
-	
+
 	/**
 	 * Returns the address at which bytes are being rendered.
-	 * 
+	 *
 	 * @return the address at which bytes are being rendered
 	 */
 	public BigInteger getAddress() {
 		return fAddress;
 	}
-	
+
 
 	/**
 	 * Returns the memory bytes being rendered.
-	 * 
+	 *
 	 * @return the memory bytes being rendered
 	 */
 	public MemoryByte[] getBytes() {

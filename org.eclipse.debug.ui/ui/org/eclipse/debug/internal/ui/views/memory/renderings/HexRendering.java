@@ -22,7 +22,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * @since 3.1
  */
 public class HexRendering extends AbstractAsyncTableRendering {
-	
+
 	public HexRendering(String renderingId)
 	{
 		super(renderingId);
@@ -37,7 +37,7 @@ public class HexRendering extends AbstractAsyncTableRendering {
 		StringBuffer strBuffer = new StringBuffer();
 
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
-		
+
 		for (int i=0; i<data.length; i++)
 		{
 			if (data[i].isReadable())
@@ -50,7 +50,7 @@ public class HexRendering extends AbstractAsyncTableRendering {
 				strBuffer.append(paddedStr);
 			}
 		}
-		
+
 		return strBuffer.toString().toUpperCase();
 	}
 
@@ -61,14 +61,14 @@ public class HexRendering extends AbstractAsyncTableRendering {
 	public byte[] getBytes(String dataType, BigInteger address,
 			MemoryByte[] currentValues, String data) {
 		byte[] bytes = RenderingsUtil.convertHexStringToByteArray(data, currentValues.length, getNumCharsPerByte());
-		
+
 		return bytes;
 	}
-	
+
 	@Override
 	public int getNumCharsPerByte()
 	{
 		return 2;
 	}
-	
+
 }

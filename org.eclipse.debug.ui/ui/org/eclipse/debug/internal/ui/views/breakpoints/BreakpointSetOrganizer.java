@@ -45,23 +45,23 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Breakpoint organizers for breakpoint working sets.
- * 
+ *
  * @since 3.1
  */
 public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate implements IBreakpointOrganizerDelegateExtension, IPropertyChangeListener, IBreakpointsListener {
 
 	private IWorkingSetManager fWorkingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-	
+
 	/**
 	 * A cache for mapping markers to the working set they belong to
 	 * @since 3.2
 	 */
 	private BreakpointWorkingSetCache fCache = null;
-	
+
 	// Cache of the default working set, so we can know when it changes name
 	private static IWorkingSet fDefaultWorkingSet = null;
-	
-	
+
+
 	/**
 	 * Constructs a working set breakpoint organizer. Listens for changes in
 	 * working sets and fires property change notification.
@@ -76,7 +76,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
@@ -101,7 +101,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
 	 */
 	@Override
@@ -115,7 +115,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	@Override
@@ -169,7 +169,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	@Override
@@ -198,7 +198,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			addBreakpointsToSet(list.toArray(new IBreakpoint[list.size()]), set);
 		}
 	}
-	
+
 	private void queueToSet(IBreakpoint breakpoint, IWorkingSet set, Map<IWorkingSet, List<IBreakpoint>> queue) {
 		List<IBreakpoint> list = queue.get(set);
 		if (list == null) {
@@ -207,12 +207,12 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		}
 		list.add(breakpoint);
 	}
-	
+
 	/**
 	 * Adds a breakpoint to a working set
 	 * @param breakpoints the breakpoints to add
 	 * @param set the set to add it to or <code>null</code> if none
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void addBreakpointsToSet(IBreakpoint[] breakpoints, IWorkingSet set) {
@@ -228,17 +228,17 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 				IBreakpoint breakpoint = breakpoints[i];
 				if (!collection.contains(breakpoint)) {
 					list.add(breakpoint);
-					fCache.addEntry(breakpoint.getMarker(), set.getName()); //fix for bug 103731	
+					fCache.addEntry(breakpoint.getMarker(), set.getName()); //fix for bug 103731
 					fCache.flushMarkerCache(breakpoint.getMarker());
 				}
 			}
 			set.setElements(list.toArray(new IAdaptable[list.size()]));
 		}
-	}	
-	
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[],
 	 *      org.eclipse.core.resources.IMarkerDelta[])
 	 */
@@ -257,7 +257,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/**
 	 * Removes deleted breakpoints from the given working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            breakpoint working set
 	 */
@@ -289,7 +289,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[],
 	 *      org.eclipse.core.resources.IMarkerDelta[])
 	 */
@@ -300,7 +300,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	/**
 	 * Returns the active default breakpoint working set, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the active default breakpoint working set, or <code>null</code>
 	 */
 	public static IWorkingSet getDefaultWorkingSet() {
@@ -315,7 +315,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	/**
 	 * Sets the active default breakpoint working set, or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @param set
 	 *            default working set or <code>null</code>
 	 */
@@ -341,7 +341,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -356,7 +356,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -371,7 +371,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addBreakpoint(org.eclipse.debug.core.model.IBreakpoint,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -379,14 +379,14 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
 		addBreakpoints(new IBreakpoint[]{breakpoint}, category);
 	}
-	
+
 	/**
 	 * Gets the working set names from the marker
-	 * 
+	 *
 	 * @param marker them marker to get the names from
 	 * @param type the type attribute to look up
 	 * @return the listing of markers or an empty String array, never <code>null</code>
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private String[] getWorkingsetAttributeFromMarker(IMarker marker, String type) {
@@ -402,7 +402,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removeBreakpoint(org.eclipse.debug.core.model.IBreakpoint,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -426,7 +426,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
 	 */
 	@Override

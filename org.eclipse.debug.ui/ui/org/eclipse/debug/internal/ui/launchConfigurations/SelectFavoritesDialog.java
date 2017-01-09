@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,14 +31,14 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * This dialog is used to select one or more launch configurations to add to your favorites
- * 
+ *
  * @since 3.3.0
  */
 public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog {
 
 	/**
 	 * Content provider for table
-	 */	
+	 */
 	protected class LaunchConfigurationContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -66,11 +66,11 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 		public void dispose() {}
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-	}	
-	
+	}
+
 	private LaunchHistory fHistory;
 	private List<ILaunchConfiguration> fCurrentFavoriteSet;
-	
+
 	/**
 	 * Constructor
 	 * @param parentShell
@@ -87,13 +87,13 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 
 	/**
 	 * Returns a label to use for launch mode with accelerators removed.
-	 * 
+	 *
      * @return label to use for launch mode with accelerators removed
      */
     private String getModeLabel() {
         return DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel());
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
@@ -125,7 +125,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_FAVORITES_DIALOG;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
@@ -133,5 +133,5 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.FavoritesDialog_7;
 	}
-	
+
 }

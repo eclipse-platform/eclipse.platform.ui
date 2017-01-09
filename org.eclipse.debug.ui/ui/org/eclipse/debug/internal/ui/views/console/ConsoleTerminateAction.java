@@ -38,16 +38,16 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	private IWorkbenchWindow fWindow;
 
 	/**
-	 * Creates a terminate action for the console 
+	 * Creates a terminate action for the console
 	 * @param window the window
 	 * @param console the console
 	 */
 	public ConsoleTerminateAction(IWorkbenchWindow window, ProcessConsole console) {
-		super(ConsoleMessages.ConsoleTerminateAction_0); 
+		super(ConsoleMessages.ConsoleTerminateAction_0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONSOLE_TERMINATE_ACTION);
 		fConsole = console;
 		fWindow = window;
-		setToolTipText(ConsoleMessages.ConsoleTerminateAction_1); 
+		setToolTipText(ConsoleMessages.ConsoleTerminateAction_1);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_TERMINATE));
@@ -60,10 +60,10 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void update() {
-		IProcess process = fConsole.getProcess(); 
+		IProcess process = fConsole.getProcess();
 		setEnabled(process.canTerminate());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -75,10 +75,10 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
         DebugCommandService service = DebugCommandService.getService(fWindow);
         service.executeCommand(ITerminateHandler.class, targets.toArray(), null);
 	}
-	
+
 	/**
 	 * Collects targets associated with a process.
-	 * 
+	 *
 	 * @param process the process to collect {@link IDebugTarget}s for
 	 * @return associated targets
 	 */

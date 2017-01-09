@@ -32,7 +32,7 @@ public class Prompter implements IStatusHandler {
 	/**
 	 * Prompts the user for input based on the given status and source
 	 * object, blocking the calling thread until the status is resolved.
-	 * 
+	 *
 	 * @param status client status code for which a status handler must
 	 *  be registered
 	 * @param source object requesting the status to be resolved
@@ -64,7 +64,7 @@ public class Prompter implements IStatusHandler {
 		}
 		final Object[] result = new Object[1];
 		final CoreException[] exception = new CoreException[1];
-		final Object lock = this;		
+		final Object lock = this;
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
@@ -79,7 +79,7 @@ public class Prompter implements IStatusHandler {
 			}
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
-		
+
 		if (exception[0] != null ) {
 			throw exception[0];
 		}

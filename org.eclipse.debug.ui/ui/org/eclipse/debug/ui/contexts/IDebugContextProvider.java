@@ -15,7 +15,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Interface common to all objects that provide a debug context. A context provider
- * is registered with a debug context service associated with a specific window.  
+ * is registered with a debug context service associated with a specific window.
  * <p>
  * A context provider can provide context information for a specific workbench part.
  * There can only be one context provider registered per part with a context
@@ -26,9 +26,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * A context provider does not have to be associated with a part. In this case the provider
  * specifies <code>null</code> for its part, and provides context information for the window.
  * There can only be one context provider without an associated part registered per context
- * service (i.e. per window). A context provider that provides context without an associated 
+ * service (i.e. per window). A context provider that provides context without an associated
  * part is only active (i.e. used to provide context information) when there are no other
- * context providers with associated parts registered with that service. 
+ * context providers with associated parts registered with that service.
  * </p>
  * <p>
  * Clients may implement this interface.
@@ -39,32 +39,32 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.3
  */
 public interface IDebugContextProvider {
-	
+
 	/**
 	 * Returns the part associated with this context provider or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return part associated with this context provider or <code>null</code>
 	 */
 	public IWorkbenchPart getPart();
-	
+
     /**
      * Registers the given listener for debug context events.
-     * 
+     *
      * @param listener event listener
      */
 	public void addDebugContextListener(IDebugContextListener listener);
-    
+
     /**
      * Unregisters the given listener for debug context events.
-     * 
+     *
      * @param listener event listener
      */
 	public void removeDebugContextListener(IDebugContextListener listener);
-	
+
     /**
      * Returns the currently active context, possibly empty or <code>null</code>.
-     * 
+     *
      * @return active context, possibly empty or <code>null</code>.
      */
 	public ISelection getActiveContext();

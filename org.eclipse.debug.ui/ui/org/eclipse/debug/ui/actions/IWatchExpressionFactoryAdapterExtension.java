@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IVariable;
  * By default, the 'Create Watch Expression' action is enabled for instances of
  * {@link org.eclipse.debug.core.model.IVariable} that have an associated
  * {@link org.eclipse.debug.core.model.IWatchExpressionDelegate} registered
- * for that debug model. 
+ * for that debug model.
  * When a watch expression factory adapter is available for a variable that implements
  * this interface, the factory is consulted to enable the action.
  * </p>
@@ -30,10 +30,10 @@ import org.eclipse.debug.core.model.IVariable;
  * @since 3.3
  */
 public interface IWatchExpressionFactoryAdapterExtension extends IWatchExpressionFactoryAdapter {
-	
+
 	/**
 	 * Returns whether a watch expression can be created for the specified variable.
-	 * 
+	 *
 	 * @param variable variable a watch expression is required for
 	 * @return whether an expression can be created
 	 */

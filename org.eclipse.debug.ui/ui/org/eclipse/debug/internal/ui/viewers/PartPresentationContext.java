@@ -15,22 +15,22 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A presentation context tied to a part.
- * 
+ *
  * @since 3.3
  * @deprecated getPart() is now supported by IPresentationContext itself.
  */
 @Deprecated
 public class PartPresentationContext extends PresentationContext {
-	
+
 	/**
 	 * Constructs a part presentation context.
-	 *  
-	 * @param part part 
+	 *
+	 * @param part part
 	 */
 	public PartPresentationContext(IWorkbenchPart part) {
 		super(part);
 	}
-	
+
 	@Override
 	public IWorkbenchPart getPart() {
 	    return super.getPart();

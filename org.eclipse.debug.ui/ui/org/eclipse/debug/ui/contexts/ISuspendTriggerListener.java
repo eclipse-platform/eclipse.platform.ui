@@ -26,11 +26,11 @@ import org.eclipse.debug.core.ILaunch;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISuspendTriggerListener {
-	
+
 	/**
 	 * Notification the given launch has suspended at the
 	 * specified context.
-	 * 
+	 *
 	 * @param launch the launch that has suspended
 	 * @param context the context on which the launch suspended
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,7 +60,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 		addToMenu(menu, getOpenDialogAction(), -1);
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
-	
+
 	/**
 	 * Returns an action to open the launch dialog
 	 * @return the new {@link OpenLaunchDialogAction}
@@ -69,10 +69,10 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	protected IAction getOpenDialogAction() {
 		return new OpenLaunchDialogAction(getLaunchGroupIdentifier());
 	}
-	
+
 	/**
 	 * Launch the last launch, or open the launch config dialog if none.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override

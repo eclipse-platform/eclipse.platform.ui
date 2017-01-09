@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - Bug 137923
@@ -90,7 +90,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import com.ibm.icu.text.MessageFormat;
- 
+
 /**
  * The dialog used to edit and launch launch configurations.
  */
@@ -104,7 +104,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Id for 'Launch' button.
 	 */
 	protected static final int ID_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
-		
+
 	/**
 	 * Id for 'Close' button.
 	 */
@@ -113,13 +113,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Id for 'Cancel' button.
 	 */
 	protected static final int ID_CANCEL_BUTTON = IDialogConstants.CLIENT_ID + 3;
-	
+
 	/**
 	 * The id for the 'No' button on the discard changes message box
 	 * @since 3.3
 	 */
 	protected static final int ID_DISCARD_BUTTON = IDialogConstants.CLIENT_ID + 4;
-	
+
 	/**
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
@@ -164,7 +164,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
 	 */
 	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
-	
+
 	private boolean fIsShift = false;
 
 	/**
@@ -173,7 +173,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
 	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
 	private static final String DIALOG_EXPANDED_NODES = IDebugUIConstants.PLUGIN_ID + ".EXPANDED_NODES"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns the currently visible dialog
 	 * @return the currently visible launch dialog
@@ -188,7 +188,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public static void setCurrentlyVisibleLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		fgCurrentlyVisibleLaunchConfigurationDialog = dialog;
 	}
-	
+
 	/**
 	 * widgets
 	 */
@@ -200,18 +200,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private ProgressMonitorPart fProgressMonitorPart;
 	private LaunchGroupExtension fGroup;
 	private Image fBannerImage;
-	
+
 	/**
 	 * When this dialog is opened in <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code>
 	 * mode, this specifies the selection that is initially shown in the dialog.
 	 */
 	private IStructuredSelection fInitialSelection;
-		
+
 	/**
 	 * The status to open the dialog on, or <code>null</code> if none.
 	 */
 	private IStatus fInitialStatus;
-	
+
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
 	 */
@@ -221,7 +221,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Double-click action
 	 */
 	private IAction fDoubleClickAction;
-	
+
 	/**
 	 * Filters for the LCD
 	 * @since 3.2
@@ -230,27 +230,27 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private DeletedProjectFilter fDeletedProjectFilter;
 	private LaunchConfigurationTypeFilter fLCTFilter;
 	private WorkingSetsFilter fWorkingSetsFilter;
-	
+
 	/**
 	 * set of reserved names that should not be considered when generating a new name for a launch configuration
 	 */
 	protected Set<String> fReservedNames = null;
-	
+
 	/**
 	 * Whether to set default values when opened
 	 * @since 3.6
 	 */
 	private boolean fSetDefaultOnOpen = false;
-	
+
 	/**
 	 * Whether in the process of setting the input to the tab viewer
 	 */
 	private boolean fSettingInput = false;
-	
+
 	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
-	 * 
+	 *
 	 * @param shell the parent shell
 	 * @param group the group of launch configuration to display
 	 */
@@ -259,10 +259,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setLaunchGroup(group);
 	}
-	
+
 	/**
 	 * Adds content to the dialog area
-	 * 
+	 *
 	 * @param dialogComp
 	 */
 	protected void addContent(Composite dialogComp) {
@@ -274,12 +274,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		topLayout.marginHeight = 5;
 		topLayout.marginWidth = 5;
 		topComp.setLayout(topLayout);
-		
+
 		// Set the things that TitleAreaDialog takes care of
 		setTitle(LaunchConfigurationsMessages.LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8);
 		setMessage(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ready_to_launch_2);
 		setModeLabelState();
-		
+
 		// Create the SashForm that contains the selection area on the left,
 		// and the edit area on the right
 		gd = new GridData(GridData.FILL_BOTH);
@@ -290,25 +290,25 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		sash.setFont(dialogComp.getFont());
 		sash.setVisible(true);
 		fSashForm = sash;
-		
+
 		// Build the launch configuration selection area and put it into the composite.
 		Control launchConfigSelectionArea = createLaunchConfigurationSelectionArea(fSashForm);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		launchConfigSelectionArea.setLayoutData(gd);
-		
+
 		// Build the launch configuration edit area and put it into the composite.
 		Composite editAreaComp = createLaunchConfigurationEditArea(fSashForm);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
-		
+
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
 	}
-	
+
 	/**
 	 * Handle the 'close' & 'launch' buttons here, all others are handled
 	 * in <code>Dialog</code>
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	@Override
@@ -327,7 +327,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Return whether the current configuration should be saved or discarded.  This involves determining
 	 * if it is dirty, and if it is, asking the user what to do.
-	 * 
+	 *
 	 * @return if we can discard the current config or not
 	 */
 	protected int shouldSaveCurrentConfig() {
@@ -339,7 +339,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return IDialogConstants.NO_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
@@ -360,10 +360,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getBannerImage().dispose();
 		return result;
 	}
-	
+
 	/**
 	 * Sets the title for the dialog, and establishes the help context.
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell);
 	 */
 	@Override
@@ -371,7 +371,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		super.configureShell(shell);
 		shell.setText(getShellTitle());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
@@ -382,7 +382,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			fTabViewer.inputChanged(null);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -427,7 +427,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	/**
-	 * 
+	 *
 	 * @param buttonId
 	 */
 	protected void launchButtonPressed(int buttonId) {
@@ -440,13 +440,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 
-	
+
 	/**
 	 * A launch configuration dialog overrides this method
 	 * to create a custom set of buttons in the button bar.
 	 * This dialog has 'Launch' and 'Cancel'
 	 * buttons.
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -471,7 +471,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		});
 		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -482,7 +482,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), getHelpContextId());
 		return contents;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -495,20 +495,20 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return dialogComp;
 	}
-			
+
 	/**
 	 * Creates the launch configuration edit area of the dialog.
 	 * This area displays the name of the launch configuration
 	 * currently being edited, as well as a tab folder of tabs
 	 * that are applicable to the launch configuration.
-	 * 
+	 *
 	 * @return the composite used for launch configuration editing
 	 */
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		setTabViewer(new LaunchConfigurationTabGroupViewer(parent, this));
 		return (Composite)fTabViewer.getControl();
 	}
-    
+
 	/**
 	 * Creates all of the actions for the toolbar
 	 * @param toolbar
@@ -524,7 +524,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		tmanager.update(true);
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
-    
+
 	protected void setShift(boolean isShift) {
 		fIsShift = isShift;
 	}
@@ -533,7 +533,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * This area displays a tree of launch configurations that the user
 	 * may select, and allows users to create new configurations, and
 	 * delete and duplicate existing configurations.
-	 * 
+	 *
 	 * @return the composite used for launch configuration selection area
 	 */
 	protected Control createLaunchConfigurationSelectionArea(Composite parent) {
@@ -543,14 +543,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         gridLayout.marginWidth = 0;
         comp.setLayout(gridLayout);
         comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
+
         ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
         ToolBarManager toolBarManager= new ToolBarManager(SWT.FLAT);
         ToolBar toolBar = toolBarManager.createControl(viewForm);
         toolBar.setBackground(parent.getBackground());
         viewForm.setTopLeft(toolBar);
         viewForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
+
         Composite viewFormContents = new Composite(viewForm, SWT.FLAT);
         gridLayout = new GridLayout();
         gridLayout.marginHeight = 5;
@@ -563,7 +563,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (filterText != null){
 			filterText.setFocus();
 		}
-		
+
 	//create toolbar actions, we reuse the actions from the view so we wait until after
 	//the view is created to add them to the toolbar
 		createToolbarActions(toolBarManager);
@@ -593,7 +593,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		};
 		fLaunchConfigurationView.setAction(IDebugView.DOUBLE_CLICK_ACTION, fDoubleClickAction);
 		Viewer viewer = fLaunchConfigurationView.getViewer();
-		
+
 		Control control = viewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
@@ -653,14 +653,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return filters.toArray(new ViewerFilter[filters.size()]);
 	}
-	
+
 	/**
 	 * Set the initial selection in the tree.
 	 */
 	public void doInitialTreeSelection() {
 		fLaunchConfigurationView.getViewer().setSelection(fInitialSelection);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
 	 */
@@ -671,7 +671,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return getLaunchManager().generateLaunchConfigurationName(name);
 	}
-	
+
 	/**
 	 * Generates and returns a unique name using the specified name as a prefix in the event
 	 * the specified name already exists or is contained in the set of reserved names.
@@ -679,7 +679,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @param reservednames a listing of names that should be considered as 'taken' and cannot be generated
 	 * by this method
 	 * @return a new name based on the specified name.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public String generateName(String name, Set<String> reservednames) {
@@ -688,7 +688,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return ((LaunchManager)getLaunchManager()).generateUniqueLaunchConfigurationNameFrom(name, reservednames);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getActiveTab()
 	 */
@@ -696,7 +696,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public ILaunchConfigurationTab getActiveTab() {
 		return fTabViewer.getActiveTab();
 	}
-	
+
 	/**
 	 * Returns the banner image to display in the title area
 	 */
@@ -709,10 +709,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return fBannerImage;
 	}
-	
+
 	/**
 	 * Gets the delete menu action
-	 * 
+	 *
 	 * @return the delete menu action
 	 */
 	protected AbstractLaunchConfigurationAction getDeleteAction() {
@@ -727,7 +727,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected IAction getFilterAction() {
 		return fLaunchConfigurationView.getAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION);
 	}
-	
+
 	/**
 	 * Gets the collapse all action
 	 * @return the collapse all action
@@ -736,7 +736,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected IAction getCollapseAllAction() {
 		return fLaunchConfigurationView.getAction(CollapseAllLaunchConfigurationAction.ID_COLLAPSEALL_ACTION);
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      * @since 3.2
@@ -745,7 +745,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected IDialogSettings getDialogBoundsSettings() {
     	return getDialogSettings();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
      */
@@ -753,11 +753,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected int getDialogBoundsStrategy() {
     	return DIALOG_PERSISTSIZE;
     }
-    
+
 	/**
 	 * Returns the dialog settings for this dialog. Subclasses should override
 	 * <code>getDialogSettingsSectionName()</code>.
-	 * 
+	 *
 	 * @return IDialogSettings
 	 */
 	protected IDialogSettings getDialogSettings() {
@@ -771,16 +771,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATIONS_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Gets the current display
-	 * 
+	 *
 	 * @return the display
 	 */
 	protected Display getDisplay() {
@@ -790,37 +790,37 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return DebugUIPlugin.getStandardDisplay();
 	}
-  	
+
   	/**
   	 * Gets the duplicate menu action
-  	 * 
+  	 *
   	 * @return the duplicate menu action
   	 */
   	protected AbstractLaunchConfigurationAction getDuplicateAction() {
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION);
 	}
-  	
+
 	/**
 	 * Gets the help context id
-	 * 
+	 *
 	 * @return the help context id
 	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG;
 	}
- 
+
  	/**
 	 * Returns the status the dialog was opened on or <code>null</code> if none.
-	 * 
+	 *
 	 * @return IStatus
 	 */
 	protected IStatus getInitialStatus() {
 		return fInitialStatus;
 	}
- 	 	 	
+
  	/**
 	 * Return the last launched configuration in the workspace.
-	 * 
+	 *
 	 * @return the last launched configuration
 	 */
 	protected ILaunchConfiguration getLastLaunchedWorkbenchConfiguration() {
@@ -829,22 +829,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
  	/**
 	 * Returns the appropriate text for the launch button - run or debug.
-	 * 
+	 *
 	 * @return the launch button text
 	 */
 	protected String getLaunchButtonText() {
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode()).getLabel();
 	}
- 	 
+
  	/**
 	 * Returns the launch group being displayed.
-	 * 
+	 *
 	 * @return launch group
 	 */
 	public LaunchGroupExtension getLaunchGroup() {
 		return fGroup;
 	}
- 	 	 	
+
  	/* (non-Javadoc)
  	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getMode()
  	 */
@@ -852,42 +852,42 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public String getMode() {
  		return getLaunchGroup().getMode();
  	}
- 	
+
 	/**
 	 * Gets the new menu action
-	 * 
+	 *
 	 * @return the new menu action
 	 */
 	protected AbstractLaunchConfigurationAction getNewAction() {
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION);
 	}
-	
+
 	/**
 	 * Returns the reserved name set (if there is one), <code>null</code> otherwise
 	 * @return the reserved name set or <code>null</code>
 	 * @since 3.3
-	 * 
+	 *
 	 */
 	public Set<String> getReservedNameSet() {
 		return fReservedNames;
 	}
-	
+
 	/**
 	 * returns the open mode
-	 * 
+	 *
 	 * @return the open mode
 	 */
 	protected int getOpenMode() {
 		return fOpenMode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
 	 */
 	public Object getSelectedPage() {
 		return getActiveTab();
 	}
-	
+
 	/**
 	 * Returns the title of the shell
 	 * @return the shell title
@@ -905,7 +905,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
  	 * Returns the current tab group
- 	 * 
+ 	 *
  	 * @return the current tab group, or <code>null</code> if none
  	 */
  	public ILaunchConfigurationTabGroup getTabGroup() {
@@ -928,7 +928,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
 	 * Returns the viewer used to display the tabs for a launch configuration.
-	 * 
+	 *
 	 * @return LaunchConfigurationTabGroupViewer
 	 */
 	protected LaunchConfigurationTabGroupViewer getTabViewer() {
@@ -954,14 +954,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			cancelPressed();
 		}
 	}
-	
+
 	/**
 	 * Notification that selection has changed in the launch configuration tree.
 	 * <p>
 	 * If the currently displayed configuration is not saved,
 	 * prompt for saving before moving on to the new selection.
 	 * </p>
-	 * 
+	 *
 	 * @param event selection changed event
 	 */
  	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
@@ -1020,10 +1020,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			}
  		}
   	}
- 	
+
 	/**
 	 * Notification the 'launch' button has been pressed. Save and launch.
-	 * 
+	 *
 	 */
 	protected void handleLaunchPressed() {
 		ILaunchConfiguration config = fTabViewer.getOriginal();
@@ -1040,7 +1040,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Consult a status handler for the given status, if any. The status handler
 	 * is passed this launch config dialog as an argument.
-	 * 
+	 *
 	 * @param status the status to be handled
 	 */
 	public void handleStatus(IStatus status) {
@@ -1094,7 +1094,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		super.initializeBounds();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
 	 */
@@ -1130,7 +1130,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			DebugUIPlugin.log(e.getStatus());
 		}
 	}
-	
+
 	/**
 	 * Performs initialization of the content by setting the initial tree selection
 	 */
@@ -1148,17 +1148,17 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		}
 		doInitialTreeSelection();
-		
+
 		IStatus status = getInitialStatus();
 		if (status != null) {
 			handleStatus(status);
 		}
 		restoreExpansion();
 	}
-	
+
 	/**
 	 * Compares two objects to determine their equality
-	 * 
+	 *
 	 * @param o1 the first object
 	 * @param o2 the object to compare to object one
 	 * @return true if they are equal, false if object 1 is null, the result of o1.equals(o2) otherwise
@@ -1175,18 +1175,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
 	 * Returns whether the dialog can be closed
-	 * 
+	 *
 	 * @return whether the dialog can be closed
 	 */
 	protected boolean isSafeToClose() {
 	    return fActiveRunningOperations == 0;
 	}
-	
+
 	/**
 	 * Determine the initial configuration for this dialog.
 	 * Open the dialog in the mode set using #setOpenMode(int) and return one of
 	 * <code>Window. OK</code> or <code>Window.CANCEL</code>.
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#open()
 	 * @return the int status of opening the dialog
 	 */
@@ -1202,7 +1202,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		return super.open();
 	}
-	
+
 	/**
 	 * saves which of the nodes are expanded at the time the dialog is closed
 	 * @since 3.2
@@ -1240,7 +1240,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			settings.put(DIALOG_EXPANDED_NODES, value);
 		}
 	}
-	
+
 	/**
 	 * Restore the original expansion state of the nodes in the viewer
 	 * @since 3.2
@@ -1278,7 +1278,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		}
 	}
-	
+
 	/**
 	 * Save the current sash weights
 	 */
@@ -1290,7 +1290,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			settings.put(DIALOG_SASH_WEIGHTS_2, (sashWeights[1] < 10 ? DEFAULT_SASH_WEIGHTS[1] : sashWeights[1]));
 		}
 	}
-	
+
 	/**
 	 * Update buttons and message.
 	 */
@@ -1332,7 +1332,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			fProgressMonitorPart.attachToCancelComponent(null);
 			fProgressMonitorPart.getParent().setVisible(true);
 			fActiveRunningOperations++;
-			
+
 		//do work here collecting enabled states, otherwise to get these states we would need to
 		//perform the validation of the dialog again, which is expensive and would cause flashing of widgets.
 			Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
@@ -1362,7 +1362,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 		}
 	}
-	
+
 	/**
 	 * Updates the enablement of the runnable controls to appear disabled as a job is running
 	 * @param enabled the desired enable status of the dialog area, revert//apply buttons, and
@@ -1380,7 +1380,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		getDialogArea().setEnabled(enabled);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
 	 */
@@ -1388,7 +1388,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setActiveTab(ILaunchConfigurationTab tab) {
 		fTabViewer.setActiveTab(tab);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
 	 */
@@ -1396,7 +1396,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setActiveTab(int index) {
 		fTabViewer.setActiveTab(index);
 	}
-	
+
 	/**
 	 * Sets the initial selection for the dialog when opened in
 	 * <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code> mode.
@@ -1404,48 +1404,48 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setInitialSelection(IStructuredSelection selection) {
 		fInitialSelection = selection;
 	}
-	
+
 	/**
 	 * Sets the status to open the dialog on.
-	 * 
+	 *
 	 * @param status the initial status for the dialog
 	 */
 	public void setInitialStatus(IStatus status) {
 		fInitialStatus = status;
 	}
-	
+
 	/**
 	 * Sets whether the tab group should set default values in the launch configuration
 	 * when the dialog is opened. If this method is not called, default values are not
 	 * set.
-	 * 
+	 *
 	 * @param setDefaults whether to set default values
 	 * @since 3.6
 	 */
 	public void setDefaultsOnOpen(boolean setDefaults) {
 		fSetDefaultOnOpen = setDefaults;
 	}
-	
+
 	/**
 	 * Returns if the dialog is supposed to be setting the default values for
 	 * the initial configuration when it opens
-	 * 
+	 *
 	 * @return <code>true</code> if the defaults should be set on open, <code>false</code> otherwise
 	 * @since 3.6
 	 */
 	public boolean shouldSetDefaultsOnOpen() {
 		return fSetDefaultOnOpen;
 	}
-	
+
 	/**
 	 * Sets the launch group to display.
-	 * 
+	 *
 	 * @param group launch group
 	 */
 	protected void setLaunchGroup(LaunchGroupExtension group) {
 		fGroup = group;
 	}
-	
+
 	/**
 	 * Set the title area image based on the mode this dialog was initialized with
 	 */
@@ -1460,7 +1460,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setName(String name) {
 		fTabViewer.setName(name);
 	}
-	
+
 	/**
 	 * Returns the current launch manager
 	 * @return the current launch manager
@@ -1468,7 +1468,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	/**
 	 * Set the flag indicating how this dialog behaves when the <code>open()</code> method is called.
 	 * Valid values are defined by the LAUNCH_CONFIGURATION_DIALOG... constants in this class.
@@ -1476,7 +1476,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setOpenMode(int mode) {
 		fOpenMode = mode;
 	}
-	
+
 	/**
  	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
  	 * Do not increase the size of the Shell beyond the bounds of the Display.
@@ -1488,7 +1488,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/**
 	 * Sets the viewer used to display the tabs for a launch configuration.
-	 * 
+	 *
 	 * @param viewer the new view to set
 	 */
 	protected void setTabViewer(LaunchConfigurationTabGroupViewer viewer) {
@@ -1498,7 +1498,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Create and return a dialog that asks the user whether they want to discard
 	 * unsaved changes.
-	 * 
+	 *
 	 * @return the return code based on the button selected.
 	 * The value will be one of <code>YES_ID</code> or <code>NO_ID</code> from
 	 * <code>IDialogConstants</code>.
@@ -1535,7 +1535,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Create and return a dialog that asks the user whether they want to save
 	 * unsaved changes.
-	 * 
+	 *
 	 * @return the return code based on the button selected.
 	 * The value will be one of <code>YES_ID</code>, <code>NO_ID</code>, or <code>CANCEL_ID</code>, from
 	 * <code>IDialogConstants</code>.
@@ -1569,7 +1569,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * can be saved or not.  Return <code>true</code> if the user indicated that they wish to replace
 	 * the current config, either by saving changes or by discarding the, return <code>false</code>
 	 * otherwise.
-	 * 
+	 *
 	 * @return returns the <code>showSaveChangesDialog</code> return value
 	 */
 	private int showUnsavedChangesDialog() {
@@ -1610,7 +1610,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns if there is a selection in the tree viewer or not
 	 * @return true if something in the tree is selected, false otherwise
@@ -1619,7 +1619,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public boolean isTreeSelectionEmpty() {
 		return fLaunchConfigurationView.getTreeViewer().getSelection().isEmpty();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -1648,7 +1648,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 						fLaunchConfigurationView.updateFilterLabel();
 					}
 				}
-				
+
 				return Status.OK_STATUS;
 			}
 		};

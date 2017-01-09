@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
-	
+
 	/**
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
@@ -38,7 +38,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 
 	/**
 	 * Re-launches the given configuration in the specified mode.
-	 * 
+	 *
 	 */
 	public static void relaunch(ILaunchConfiguration config, String mode) {
 		DebugUITools.launch(config, mode);
@@ -47,7 +47,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * Re-launches the given configuration in the specified mode after
 	 * terminating the previous if Preferred.
-	 * 
+	 *
 	 * @param isShift is Shift pressed (use <code>false</code> if no support for
 	 *            Shift)
 	 */
@@ -63,7 +63,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		ILaunch launch= DebugUIPlugin.getLaunch(element);
 		return launch != null && launch.getLaunchConfiguration() != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getTargetSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -84,20 +84,20 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		}
 		return new StructuredSelection(dups.toArray());
 	}
-			
+
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	@Override
 	protected String getErrorDialogMessage() {
-		return ActionMessages.RelaunchActionDelegate_Launch_Failed_1; 
+		return ActionMessages.RelaunchActionDelegate_Launch_Failed_1;
 	}
-	
+
 	/**
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	@Override
 	protected String getStatusMessage() {
-		return ActionMessages.RelaunchActionDelegate_An_exception_occurred_while_launching_2; 
+		return ActionMessages.RelaunchActionDelegate_An_exception_occurred_while_launching_2;
 	}
 }

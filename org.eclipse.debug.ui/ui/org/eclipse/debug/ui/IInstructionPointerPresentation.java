@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.ui.IEditorPart;
  * <li>Specify the annotation object to use. This is done by returning a non-<code>null</code>
  *  value from <code>getInstructionPointerAnnotation(..)</code>.</li>
  * <li>Specify an <code>annotationType</code> extension to use.
- *  This is done by returning a non-<code>null</code> value from 
+ *  This is done by returning a non-<code>null</code> value from
  *  <code>getInstructionPointerAnnotationType(..)</code>. When specified, the annotation
  *  type controls the image displayed via its associated
  *  <code>markerAnnotationSpecification</code>.</li>
@@ -58,26 +58,26 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	/**
 	 * Returns an annotation used for the specified stack frame in the specified
 	 * editor, or <code>null</code> if a default annotation should be used.
-     * 
+     *
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return annotation or <code>null</code>
 	 */
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame);
-	
+
 	/**
 	 * Returns an identifier of a <code>org.eclipse.ui.editors.annotationTypes</code> extension used for
 	 * the specified stack frame in the specified editor, or <code>null</code> if a default annotation
 	 * should be used.
-	 * 
+	 *
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return annotation type identifier or <code>null</code>
-	 */	
+	 */
 	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame);
-	
+
 	/**
 	 * Returns the instruction pointer image used for the specified stack frame in the specified
 	 * editor, or <code>null</code> if a default image should be used.
@@ -89,9 +89,9 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return image or <code>null</code>
-	 */		
+	 */
 	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame);
-	
+
 	/**
 	 * Returns the text to associate with the instruction pointer annotation used for the
 	 * specified stack frame in the specified editor, or <code>null</code> if a default
@@ -104,6 +104,6 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
 	 *  @return message or <code>null</code>
-	 */			
+	 */
 	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame);
 }

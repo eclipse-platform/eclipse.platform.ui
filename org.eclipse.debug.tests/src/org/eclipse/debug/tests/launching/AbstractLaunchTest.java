@@ -28,7 +28,7 @@ public abstract class AbstractLaunchTest extends TestCase {
 
 	/**
 	 * Constructs a test with the given name.
-	 * 
+	 *
 	 * @param name
 	 */
 	public AbstractLaunchTest(String name) {
@@ -37,25 +37,25 @@ public abstract class AbstractLaunchTest extends TestCase {
 
 	/**
 	 * Returns the launch manager.
-	 * 
+	 *
 	 * @return launch manager
 	 */
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
-	}	
-	
+	}
+
 	/**
 	 * Returns the singleton instance of the <code>LaunchConfigurationManager</code>
-	 * 
+	 *
 	 * @return the singleton instance of the <code>LaunchConfigurationManager</code>
 	 */
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-	}	
-	
+	}
+
 	/**
 	 * Returns a launch configuration with the given name, creating one if required.
-	 * 
+	 *
 	 * @param name configuration name
 	 * @return launch configuration
 	 * @throws CoreException
@@ -73,5 +73,5 @@ public abstract class AbstractLaunchTest extends TestCase {
 		 ILaunchConfigurationWorkingCopy wc = type.newInstance(null, name);
 		 ILaunchConfiguration saved = wc.doSave();
 		 return saved;
-	}	
+	}
 }

@@ -24,10 +24,10 @@ import org.eclipse.debug.internal.ui.viewers.model.ViewerInputUpdate;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ViewerInputService {
-	
+
     /**
-     * An input object which will yield a null input element. 
-     * 
+     * An input object which will yield a null input element.
+     *
      * @since 3.6
      */
     public final static Object NULL_INPUT = new IViewerInputProvider() {
@@ -37,14 +37,14 @@ public class ViewerInputService {
             update.done();
         }
     };
-    
+
 	// previous update request, cancelled when a new request comes in
 	private IViewerInputUpdate fPendingUpdate = null;
-	
+
 	private IViewerInputRequestor fRequestor = null;
-	
+
 	private ITreeModelViewer fViewer;
-	
+
 	private IViewerInputRequestor fProxyRequest = new IViewerInputRequestor() {
 		@Override
 		public void viewerInputComplete(final IViewerInputUpdate update) {
@@ -56,24 +56,24 @@ public class ViewerInputService {
 			fRequestor.viewerInputComplete(update);
 		}
 	};
-	
+
 	/**
 	 * Constructs a viewer input service for the given requester and presentation context.
-	 * 
+	 *
      * @param viewer for which inputs are required
-	 * @param requestor client requesting viewer inputs 
+	 * @param requestor client requesting viewer inputs
 	 */
 	public ViewerInputService(ITreeModelViewer viewer, IViewerInputRequestor requestor) {
 		fRequestor = requestor;
 		fViewer = viewer;
 	}
-	
+
 	/**
 	 * Resolves a viewer input derived from the given source object.
 	 * Reports the result to the given this service's requester. A requester may be called back
 	 * in the same or thread, or asynchronously in a different thread. Cancels any previous
 	 * incomplete request from this service's requester.
-	 * 
+	 *
 	 * @param source source from which to derive a viewer input
 	 */
 	public void resolveViewerInput(Object source) {

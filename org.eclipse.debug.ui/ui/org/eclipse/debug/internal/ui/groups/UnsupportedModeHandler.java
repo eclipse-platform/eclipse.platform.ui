@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Handles the case where a launch configuration in a group cannot be launched
  * in the requested mode.
- * 
+ *
  * @since 3.12
  */
 public class UnsupportedModeHandler implements IStatusHandler {

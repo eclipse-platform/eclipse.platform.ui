@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,15 +20,15 @@ import org.eclipse.ui.IPersistableElement;
  * Adapter to save and restore breakpoints for a working set.
  */
 public class BreakpointPersistableElementAdapter implements IPersistableElement {
-    
+
     private IBreakpoint fBreakpoint;
-    
+
     public static final String TAG_MARKER_ID = "TAG_MARKER_ID"; //$NON-NLS-1$
     public static final String TAG_RESOURCE_FACTORY_ID = "TAG_RESOURCE_FACTORY_ID"; //$NON-NLS-1$
-    
+
     /**
      * Constructs a new persitable element adapter for the given breakpoint.
-     * 
+     *
      * @param breakpoint the backing {@link IBreakpoint}
      */
     public BreakpointPersistableElementAdapter(IBreakpoint breakpoint) {
@@ -58,7 +58,7 @@ public class BreakpointPersistableElementAdapter implements IPersistableElement 
                 memento.putString(TAG_MARKER_ID, longString);
                 memento.putString(TAG_RESOURCE_FACTORY_ID, pe.getFactoryId());
                 pe.saveState(memento);
-            }            
+            }
         }
     }
 

@@ -20,17 +20,17 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * Abstract action for toggling preference to automatically show
  * the console when a streams content changes.
- * 
+ *
  * @since 3.3
  */
 public abstract class ShowWhenContentChangesAction extends Action implements IPropertyChangeListener{
-	
+
 	/**
 	 * Constructs an action to toggle console auto activation preferences
 	 */
 	public ShowWhenContentChangesAction(String name) {
 		super(name, IAction.AS_CHECK_BOX);
-		setToolTipText(name);  
+		setToolTipText(name);
 		getPreferenceStore().addPropertyChangeListener(this);
 		update();
 	}
@@ -45,9 +45,9 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
              update();
         }
 	}
-	
+
 	protected abstract String getKey();
-	
+
 	private void update() {
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(getKey())) {
@@ -77,7 +77,7 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
 		store.setValue(getKey(), show);
 		store.addPropertyChangeListener(this);
 	}
-	
+
 	/**
 	 * Must be called to dispose this action.
 	 */

@@ -24,15 +24,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * 
+ *
  */
 public class SortBreakpointsByAction extends AbstractBreakpointsViewAction implements IMenuCreator {
 
 	private IAction fAction= null;
-	
+
 	public SortBreakpointsByAction() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -72,7 +72,7 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 				}
 				fillMenu(m);
 			}
-		});		
+		});
 		return menu;
     }
 
@@ -80,7 +80,7 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 	 * Fill pull down menu with the "group by" options
 	 */
 	private void fillMenu(Menu menu) {
-		
+
 		// Add hard-coded sorting order by Name
 		IAction action = new SortBreakpointsAction(fView, Messages.GroupBreakpointsSortByAction_Name, IInternalDebugUIConstants.BREAKPOINT_SORTING_ORDER_NAME);
 		ActionContributionItem item = new ActionContributionItem(action);
@@ -93,7 +93,7 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 
 	}
 
-    
+
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

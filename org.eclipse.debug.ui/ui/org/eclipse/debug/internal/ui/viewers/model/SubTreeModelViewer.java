@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - ongoing bug fixes and enhancements
@@ -36,8 +36,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Specialized tree viewer which displays only sub-tree of a full model. 
- * 
+ * Specialized tree viewer which displays only sub-tree of a full model.
+ *
  * @since 3.5
  */
 public class SubTreeModelViewer extends TreeModelViewer {
@@ -51,9 +51,9 @@ public class SubTreeModelViewer extends TreeModelViewer {
      * Viewer delegate that content and label providers refer to for viewer data.
      */
     private DelegatingTreeModelViewer fDelegatingViewer;
-    
+
     /**
-     * @return Returns the root element's model tree path. 
+     * @return Returns the root element's model tree path.
      */
     public TreePath getRootPath() {
         return fRootPath;
@@ -65,7 +65,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
 
     /**
      * Sets the viewer's input and root element's path
-     * 
+     *
      * @param input New viewer input.
      * @param rootPath New root element path.
      */
@@ -73,14 +73,14 @@ public class SubTreeModelViewer extends TreeModelViewer {
         fRootPath = rootPath;
         super.setInput(input);
     }
-    
+
     /**
-     * A proxy for the sub tree viewer which is given to the content and 
-     * label providers.  It translates the sub-tree paths in the viewer to the 
+     * A proxy for the sub tree viewer which is given to the content and
+     * label providers.  It translates the sub-tree paths in the viewer to the
      * full model paths that the providers expect.
      */
-    public class DelegatingTreeModelViewer extends Viewer 
-        implements IInternalTreeModelViewer 
+    public class DelegatingTreeModelViewer extends Viewer
+        implements IInternalTreeModelViewer
     {
         @Override
 		public void reveal(TreePath path, int index) {
@@ -88,7 +88,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
                 SubTreeModelViewer.this.reveal(createSubPath(path), index);
             }
         }
-        
+
         @Override
 		public void replace(Object parentOrTreePath, int index, Object element) {
             if (parentOrTreePath instanceof TreePath) {
@@ -100,7 +100,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
                 SubTreeModelViewer.this.replace(parentOrTreePath, index, element);
             }
         }
-        
+
         @Override
 		public void setChildCount(Object elementOrTreePath, int count) {
             if (elementOrTreePath instanceof TreePath) {
@@ -112,7 +112,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
                 SubTreeModelViewer.this.setChildCount(elementOrTreePath, count);
             }
         }
-        
+
         @Override
 		public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {
             if (elementOrTreePath instanceof TreePath) {
@@ -141,7 +141,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
                 SubTreeModelViewer.this.setExpandedState(elementOrTreePath, expanded);
             }
         }
-        
+
         @Override
 		public void expandToLevel(Object elementOrTreePath, int level) {
             if (elementOrTreePath instanceof TreePath) {
@@ -202,12 +202,12 @@ public class SubTreeModelViewer extends TreeModelViewer {
             }
             return false;
         }
-        
+
         @Override
 		public int getChildCount(TreePath path) {
             if (path.startsWith(fRootPath, null)) {
                 return SubTreeModelViewer.this.getChildCount(createSubPath(path));
-            }        
+            }
             return -1;
         }
 
@@ -228,20 +228,20 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public Object getChildElement(TreePath path, int index) {
             if (path.startsWith(fRootPath, null)) {
                 return SubTreeModelViewer.this.getChildElement(createSubPath(path), index);
-            }        
+            }
             return null;
         }
-        
+
         @Override
 		public TreePath getTopElementPath() {
             return createFullPath(SubTreeModelViewer.this.getTopElementPath());
         }
-        
+
         @Override
 		public int findElementIndex(TreePath parentPath, Object element) {
             if (parentPath.startsWith(fRootPath, null)) {
                 return SubTreeModelViewer.this.findElementIndex(createSubPath(parentPath), element);
-            }        
+            }
             return -1;
         }
 
@@ -249,15 +249,15 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public boolean getElementChildrenRealized(TreePath parentPath) {
             if (parentPath.startsWith(fRootPath, null)) {
                 return SubTreeModelViewer.this.getElementChildrenRealized(createSubPath(parentPath));
-            }        
+            }
             return true;
         }
-        
+
         @Override
 		public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images, FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds) {
             if (path.startsWith(fRootPath, null)) {
                 SubTreeModelViewer.this.setElementData(createSubPath(path), numColumns, labels, images, fontDatas, foregrounds, backgrounds);
-            }        
+            }
         }
 
         @Override
@@ -369,7 +369,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public void setSelection(ISelection selection, boolean reveal, boolean force) {
             SubTreeModelViewer.this.setSelection(selection, reveal, force);
         }
-        
+
         @Override
 		public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
         	return SubTreeModelViewer.this.trySelection(selection, reveal, force);
@@ -380,7 +380,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
             SubTreeModelViewer.this.updateViewer(delta);
         }
 
-        
+
         @Override
 		public ViewerFilter[] getFilters() {
             return SubTreeModelViewer.this.getFilters();
@@ -390,12 +390,12 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public void addFilter(ViewerFilter filter) {
             SubTreeModelViewer.this.addFilter(filter);
         }
-        
+
         @Override
 		public void setFilters(ViewerFilter... filters) {
         	SubTreeModelViewer.this.setFilters(filters);
         }
-        
+
         @Override
 		public boolean overrideSelection(ISelection current, ISelection candidate) {
             return SubTreeModelViewer.this.overrideSelection(current, candidate);
@@ -410,12 +410,12 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public void update(Object element) {
             SubTreeModelViewer.this.update(element);
         }
-        
+
         @Override
 		public void clearSelectionQuiet() {
         	SubTreeModelViewer.this.clearSelectionQuiet();
         }
-        
+
         @Override
 		public TreePath[] getElementPaths(Object element) {
             TreePath[] subViewerPaths = SubTreeModelViewer.this.getElementPaths(element);
@@ -425,41 +425,41 @@ public class SubTreeModelViewer extends TreeModelViewer {
             }
             return retVal;
         }
-        
+
         @Override
 		public boolean getElementChecked(TreePath path) {
             return SubTreeModelViewer.this.getElementChecked(createSubPath(path));
         }
-        
+
         @Override
 		public boolean getElementGrayed(TreePath path) {
             return SubTreeModelViewer.this.getElementGrayed(createSubPath(path));
         }
-        
+
         @Override
 		public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
             SubTreeModelViewer.this.setElementChecked(createSubPath(path), checked, grayed);
         }
     }
 
-    
+
     /**
-     * Delegating content provider.  It translates all the calls to the 
+     * Delegating content provider.  It translates all the calls to the
      * underlying content provider to use full model tree paths.
      */
     private class SubTreeModelContentProvider implements ITreeModelContentProvider {
-        
+
         private TreeModelContentProvider fBaseProvider;
-        
+
         public SubTreeModelContentProvider() {
             fBaseProvider = new TreeModelContentProvider();
         }
-        
+
         @Override
 		public void updateHasChildren(TreePath path) {
             fBaseProvider.updateHasChildren(createFullPath(path));
         }
-        
+
         @Override
 		public void updateChildCount(TreePath path, int currentChildCount) {
             fBaseProvider.updateChildCount(createFullPath(path), currentChildCount);
@@ -469,12 +469,12 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public void updateElement(TreePath parentPath, int viewIndex) {
             fBaseProvider.updateElement(createFullPath(parentPath), viewIndex);
         }
-        
+
         @Override
 		public int viewToModelCount(TreePath parentPath, int count) {
             return fBaseProvider.viewToModelCount(createFullPath(parentPath), count);
         }
-        
+
         @Override
 		public int viewToModelIndex(TreePath parentPath, int index) {
             return fBaseProvider.viewToModelIndex(createFullPath(parentPath), index);
@@ -539,7 +539,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public boolean areTreeModelViewerFiltersApplicable(Object parentElement) {
             return fBaseProvider.areTreeModelViewerFiltersApplicable(parentElement);
         }
-        
+
         @Override
 		public boolean shouldFilter(Object parentElementOrTreePath, Object element) {
             if (parentElementOrTreePath instanceof TreePath) {
@@ -548,7 +548,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
             } else {
                 return fBaseProvider.shouldFilter(parentElementOrTreePath, element);
             }
-            
+
         }
 
         @Override
@@ -571,7 +571,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public void cancelRestore(TreePath path, int flags) {
             fBaseProvider.cancelRestore(createFullPath(path), flags);
         }
-        
+
         @Override
 		public void dispose() {
             fBaseProvider.dispose();
@@ -581,13 +581,13 @@ public class SubTreeModelViewer extends TreeModelViewer {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             fBaseProvider.inputChanged(fDelegatingViewer, oldInput, newInput);
         }
-        
+
 		@Override
 		public void postInputChanged(IInternalTreeModelViewer viewer,
 				Object oldInput, Object newInput) {
 			fBaseProvider.postInputChanged(viewer, oldInput, newInput);
 		}
-		
+
         @Override
 		public boolean setChecked(TreePath path, boolean checked) {
             return fBaseProvider.setChecked(createFullPath(path), checked);
@@ -596,19 +596,19 @@ public class SubTreeModelViewer extends TreeModelViewer {
     }
 
     /**
-     * Delegating label provider.  It translates all the calls to the 
+     * Delegating label provider.  It translates all the calls to the
      * underlying label provider to use full model tree paths.
      */
     private class SubTreeModelLabelProvider extends ColumnLabelProvider
-        implements ITreeModelLabelProvider 
+        implements ITreeModelLabelProvider
     {
 
         private TreeModelLabelProvider fBaseProvider;
-        
+
         public SubTreeModelLabelProvider(IInternalTreeModelViewer viewer) {
             fBaseProvider = new TreeModelLabelProvider(viewer);
         }
-        
+
         @Override
 		public boolean update(TreePath elementPath) {
             return fBaseProvider.update( createFullPath(elementPath) );
@@ -660,12 +660,12 @@ public class SubTreeModelViewer extends TreeModelViewer {
             fBaseProvider.removeListener(listener);
         }
     }
-        
+
     private TreePath createFullPath(TreePath subPath) {
         if (fRootPath == null) {
             return TreePath.EMPTY;
         }
-        
+
         Object[] segments = new Object[fRootPath.getSegmentCount() + subPath.getSegmentCount()];
         for (int i = 0; i < fRootPath.getSegmentCount(); i++) {
             segments[i] = fRootPath.getSegment(i);
@@ -675,7 +675,7 @@ public class SubTreeModelViewer extends TreeModelViewer {
         }
         return new TreePath(segments);
     }
-    
+
     private TreePath createSubPath(TreePath fullPath) {
         if (fRootPath == null) {
             return TreePath.EMPTY;
@@ -690,23 +690,23 @@ public class SubTreeModelViewer extends TreeModelViewer {
         }
         return new TreePath(segments);
     }
-    
+
     private DelegatingTreeModelViewer getDelegatingViewer() {
     	if (fDelegatingViewer == null) {
     		fDelegatingViewer = new DelegatingTreeModelViewer();
     	}
     	return fDelegatingViewer;
     }
-    
+
     @Override
 	protected ITreeModelContentProvider createContentProvider() {
         return new SubTreeModelContentProvider();
     }
-    
+
     @Override
 	protected ITreeModelLabelProvider createLabelProvider() {
         return new SubTreeModelLabelProvider(getDelegatingViewer());
     }
-    
+
 
 }

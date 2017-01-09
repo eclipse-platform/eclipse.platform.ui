@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -46,28 +46,28 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 /**
- * Class containing logic to save and restore expanded state of the tree model 
- * viewer.  
+ * Class containing logic to save and restore expanded state of the tree model
+ * viewer.
  * <p>
- * When the input to the viewer is changes, the tree model viewer attempts to 
- * save the expansion state of elements as well as currently selected element and 
+ * When the input to the viewer is changes, the tree model viewer attempts to
+ * save the expansion state of elements as well as currently selected element and
  * scroll position.  Each expanded element is queried for its memento and all the
  * collected mementos are saved into a delta tree then serialized by the viewer.<br>
- * When a new input is set to the viewer, the viewer compares the input's memento 
- * with the stored mementos and if a match is found, it attempts to restore the 
+ * When a new input is set to the viewer, the viewer compares the input's memento
+ * with the stored mementos and if a match is found, it attempts to restore the
  * previous expansion state to the viewer.  As elements are revealed and realized
- * in the viewer, the element's memento is compared against the memento stored in 
- * the saved state delta.  If matching elements are found in the delta, the expansion 
- * and selection state is then restored to those elements.  
+ * in the viewer, the element's memento is compared against the memento stored in
+ * the saved state delta.  If matching elements are found in the delta, the expansion
+ * and selection state is then restored to those elements.
  * </p><p>
- * Additionally to saving restoring state on input change, the viewer also 
+ * Additionally to saving restoring state on input change, the viewer also
  * saves/restores elements' state when the model requests viewer to refresh model
  * structure.  Since the viewer items are matched to the model elements using items'
- * indexes, inserting or removing elements in model can cause the expansion state 
+ * indexes, inserting or removing elements in model can cause the expansion state
  * of elements to shift after a refresh.  To compensate for this, the viewer saves
- * the elements before a refresh is performed into a delta, but without encoding 
+ * the elements before a refresh is performed into a delta, but without encoding
  * elements using mementos.  As the refresh of the tree progresses, the save state
- * is restored to the tree and elements are expanded or collapsed as needed to 
+ * is restored to the tree and elements are expanded or collapsed as needed to
  * compensate for changes in model structure.
  * </p>
  * @see TreeModelContentProvider
@@ -79,14 +79,14 @@ class ViewerStateTracker {
     static final int STATE_SAVE_SEQUENCE_COMPLETE = 5;
     static final int STATE_RESTORE_SEQUENCE_BEGINS = 6;
     static final int STATE_RESTORE_SEQUENCE_COMPLETE = 7;
-    
+
     /**
      * Dummy marker element used in the state delta. The marker indicates that a
      * given element in the pending state delta has been removed. It replaces
      * the original element so that it may optionally be garbage collected.
      */
     private final static String ELEMENT_REMOVED = "ELEMENT_REMOVED"; //$NON-NLS-1$
-    
+
     /**
      * Collector of memento encoding requests.
      */
@@ -94,18 +94,18 @@ class ViewerStateTracker {
 
         /**
          * Adds the request to this manager.
-         * 
+         *
          * @param request to add
          */
         public void addRequest(ElementMementoRequest request);
-        
+
         /**
          * Notification the request is complete.
-         * 
+         *
          * @param request that was completed
          */
         public void requestComplete(ElementMementoRequest request);
-        
+
         /**
          * Process the queued requests. Accepts no more new requests.
          */
@@ -116,7 +116,7 @@ class ViewerStateTracker {
          */
         public void cancel();
     }
-    
+
     /**
      * LRU cache for viewer states
      */
@@ -140,11 +140,11 @@ class ViewerStateTracker {
      * Content provider that is using this state tracker.
      */
     private TreeModelContentProvider fContentProvider;
-    
+
     ViewerStateTracker(TreeModelContentProvider contentProvider) {
         fContentProvider = contentProvider;
     }
-    
+
     /**
      * Map of viewer states keyed by viewer input mementos
      */
@@ -157,21 +157,21 @@ class ViewerStateTracker {
 
     /**
      * Flag indicating that the content provider is performing
-     * state restore operations.  
+     * state restore operations.
      */
-    private boolean fInStateRestore = false; 
-    
+    private boolean fInStateRestore = false;
+
     /**
      * State update listeners
      */
 	private ListenerList<IStateUpdateListener> fStateUpdateListeners = new ListenerList<>();
-    
+
     /**
      * Postpone restoring REVEAL element until the current updates are complete.
      * See bug 324100
      */
     protected PendingRevealDelta fPendingSetTopItem = null;
-    
+
     /**
      * Set of IMementoManager's that are currently saving state
      */
@@ -186,7 +186,7 @@ class ViewerStateTracker {
      * Object used to key compare requests in map.
      */
     private static class CompareRequestKey {
-        
+
         CompareRequestKey(TreePath path, IModelDelta delta) {
             fPath = path;
             fDelta = delta;
@@ -214,13 +214,13 @@ class ViewerStateTracker {
      * Compare requests that are currently running.
      */
 	private Map<CompareRequestKey, ElementCompareRequest> fCompareRequestsInProgress = new LinkedHashMap<CompareRequestKey, ElementCompareRequest>();
-    
-    
+
+
     /**
      * Cancels pending updates.
      */
     void dispose() {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
 		for (IElementMementoCollector emc : fPendingStateSaves) {
 			emc.cancel();
         }
@@ -229,21 +229,21 @@ class ViewerStateTracker {
 			ecr.cancel();
         }
         fCompareRequestsInProgress.clear();
-        
+
         if (fPendingSetTopItem != null) {
             fPendingSetTopItem.dispose();
         }
     }
-    
+
     /**
      * Restores viewer state for the given input
-     * 
+     *
      * @param input
      *            viewer input
      */
     private void startRestoreViewerState(final Object input) {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
         fPendingState = null;
         final IElementMementoProvider defaultProvider = ViewerAdapterService.getMementoProvider(input);
         if (defaultProvider != null) {
@@ -256,7 +256,7 @@ class ViewerStateTracker {
 
                 /*
                  * (non-Javadoc)
-                 * 
+                 *
                  * @see
                  * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
                  * .
@@ -283,7 +283,7 @@ class ViewerStateTracker {
                                 	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 
-                                // Process start of restore in an async cycle because we may still be inside inputChanged() 
+                                // Process start of restore in an async cycle because we may still be inside inputChanged()
                                 // call. I.e. the "input.equals(fContentProvider.getViewer().getInput())" test may fail.
                                 fContentProvider.getViewer().getDisplay().asyncExec(new Runnable() {
                                     @Override
@@ -322,7 +322,7 @@ class ViewerStateTracker {
 
                 /*
                  * (non-Javadoc)
-                 * 
+                 *
                  * @see
                  * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
                  * .IMementoManager#processReqeusts()
@@ -339,7 +339,7 @@ class ViewerStateTracker {
 
                 /*
                  * (non-Javadoc)
-                 * 
+                 *
                  * @see
                  * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
                  * .
@@ -350,7 +350,7 @@ class ViewerStateTracker {
 				public void addRequest(ElementMementoRequest req) {
                     fRequest = req;
                 }
-                
+
                 @Override
 				public void cancel() {
                     // not used
@@ -364,7 +364,7 @@ class ViewerStateTracker {
         } else {
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
             	DebugUIPlugin.trace("STATE RESTORE: No input memento provider"); //$NON-NLS-1$
-            }            
+            }
         }
     }
 
@@ -377,7 +377,7 @@ class ViewerStateTracker {
 		 {
 			return; // Not initialized yet.
 		}
-        
+
         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
         	DebugUIPlugin.trace("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
         }
@@ -390,7 +390,7 @@ class ViewerStateTracker {
         }
 
         if (!fContentProvider.getViewer().saveElementState(path, delta, IModelDelta.COLLAPSE | IModelDelta.EXPAND | IModelDelta.SELECT)) {
-            // Path to save the state was not found or there was no 
+            // Path to save the state was not found or there was no
             // (expansion) state to save!  Abort.
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
             	DebugUIPlugin.trace("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -424,14 +424,14 @@ class ViewerStateTracker {
             	DebugUIPlugin.trace("\tAPPEND OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
             }
 
-            // If the append delta is generated for a sub-tree, copy the pending delta 
+            // If the append delta is generated for a sub-tree, copy the pending delta
             // attributes into the pending delta.
             if (path.getSegmentCount() > 0) {
                 fPendingState.accept( new IModelDeltaVisitor() {
                     @Override
 					public boolean visit(IModelDelta pendingDeltaNode, int depth) {
                         TreePath pendingDeltaPath = fContentProvider.getViewerTreePath(pendingDeltaNode);
-                        if (path.startsWith(pendingDeltaPath, null)) 
+                        if (path.startsWith(pendingDeltaPath, null))
                         {
                             ModelDelta appendDelta = findDeltaForPath(appendDeltaRoot, pendingDeltaPath);
                             appendDelta.setFlags(pendingDeltaNode.getFlags());
@@ -463,9 +463,9 @@ class ViewerStateTracker {
                     // If the pending state node does not contain any flags,
                     // we can also skip it.
                     ModelDelta saveDeltaNode = findSubDeltaParent(appendDeltaRoot, pendingDeltaNode);
-                    if (saveDeltaNode != null && 
+                    if (saveDeltaNode != null &&
                         !isDeltaInParent(pendingDeltaNode, saveDeltaNode) &&
-                        pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) 
+                        pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE)
                     {
                         saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
                         copyIntoDelta(pendingDeltaNode, saveDeltaNode);
@@ -485,7 +485,7 @@ class ViewerStateTracker {
                         return pendingDeltaNode.getChildCount() > 0;
                     }
                 }
-                
+
             });
         }
 
@@ -533,9 +533,9 @@ class ViewerStateTracker {
                 // set back the pending reveal flag
                 ModelDelta revealDelta = fPendingSetTopItem.getDelta();
                 revealDelta.setFlags(revealDelta.getFlags() | IModelDelta.REVEAL);
-                
+
                 fPendingSetTopItem.dispose();
-                
+
                 ModelDelta saveDeltaNode = findSubDeltaParent(saveDeltaRoot, revealDelta);
                 if (saveDeltaNode != null) {
                     clearRevealFlag(saveDeltaRoot);
@@ -553,7 +553,7 @@ class ViewerStateTracker {
                     }
                 }
             }
-            
+
             if (fPendingState != null) {
                 // If the restore for the current input was never completed,
                 // preserve
@@ -688,7 +688,7 @@ class ViewerStateTracker {
      * Encodes delta elements into mementos using the given provider.
      * @param rootDelta the {@link ModelDelta} to encode
      * @param defaultProvider the default provider to use when processing the given delta
-     * 
+     *
      */
     protected void encodeDelta(final ModelDelta rootDelta, final IElementMementoProvider defaultProvider) {
         final Object input = rootDelta.getElement();
@@ -708,7 +708,7 @@ class ViewerStateTracker {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see
              * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
              * .IMementoManager
@@ -717,7 +717,7 @@ class ViewerStateTracker {
              */
             @Override
 			public void requestComplete(ElementMementoRequest request) {
-                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
+                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
 
                 notifyStateUpdate(input, TreeModelContentProvider.UPDATE_COMPLETE, request);
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
@@ -725,8 +725,8 @@ class ViewerStateTracker {
                 }
 
                 if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
-                    boolean requestsComplted = false; 
-                    if (!fCanceled) { 
+                    boolean requestsComplted = false;
+                    if (!fCanceled) {
                         fRequests.remove(request);
                         requestsComplted = fRequests.isEmpty();
                     }
@@ -751,12 +751,12 @@ class ViewerStateTracker {
 
             @Override
 			public void cancel() {
-                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
+                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
 
                 if (fCanceled) {
                     return;
                 }
-                            
+
                 fCanceled = true;
 				for (IElementMementoRequest req : fRequests) {
                     req.cancel();
@@ -767,18 +767,18 @@ class ViewerStateTracker {
                 }
                 stateSaveComplete(input, this);
             }
-            
+
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see
              * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
              * .IMementoManager#processReqeusts()
              */
             @Override
 			public void processReqeusts() {
-                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-                
+                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
 				Map<IElementMementoProvider, List<IElementMementoRequest>> providers = new HashMap<IElementMementoProvider, List<IElementMementoRequest>>();
 				for (IElementMementoRequest request : fRequests) {
                     notifyStateUpdate(input, TreeModelContentProvider.UPDATE_BEGINS, request);
@@ -802,7 +802,7 @@ class ViewerStateTracker {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see
              * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
              * .IMementoManager
@@ -811,8 +811,8 @@ class ViewerStateTracker {
              */
             @Override
 			public void addRequest(ElementMementoRequest request) {
-                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-                
+                Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
                 fRequests.add(request);
             }
 
@@ -820,14 +820,14 @@ class ViewerStateTracker {
         IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
             @Override
 			public boolean visit(IModelDelta delta, int depth) {
-                // Add the CONTENT flag to all nodes with an EXPAND flag. 
-                // During restoring, this flag is used as a marker indicating 
-                // whether all the content of a given element has been 
+                // Add the CONTENT flag to all nodes with an EXPAND flag.
+                // During restoring, this flag is used as a marker indicating
+                // whether all the content of a given element has been
                 // retrieved.
                 if ((delta.getFlags() | IModelDelta.EXPAND) != 0) {
                     ((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.CONTENT);
                 }
-                
+
                 // This is the root element, save the root element memento in 'inputMemento'.
                 if (delta.getParentDelta() == null) {
                     manager.addRequest(new ElementMementoRequest(fContentProvider, input, manager,
@@ -855,8 +855,8 @@ class ViewerStateTracker {
      * @param manager the manager to notify
      */
     private void stateSaveStarted(Object input, IElementMementoCollector manager) {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
         notifyStateUpdate(input, STATE_SAVE_SEQUENCE_BEGINS, null);
         fPendingStateSaves.add(manager);
     }
@@ -867,8 +867,8 @@ class ViewerStateTracker {
      * @param manager the manager to notify
      */
     private void stateSaveComplete(Object input, IElementMementoCollector manager) {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
         notifyStateUpdate(input, STATE_SAVE_SEQUENCE_COMPLETE, null);
         fPendingStateSaves.remove(manager);
         if (fQueuedRestore != null) {
@@ -880,11 +880,11 @@ class ViewerStateTracker {
 
     /**
      * Returns whether any state saving is in progress.
-     * 
+     *
      * @return whether any state saving is in progress
      */
     private boolean isSavingState() {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
 
         return !fPendingStateSaves.isEmpty();
     }
@@ -892,13 +892,13 @@ class ViewerStateTracker {
     /**
      * Restores the viewer state unless a save is taking place. If a save is
      * taking place, the restore is queued.
-     * 
+     *
      * @param input
      *            viewer input
      */
     protected void restoreViewerState(final Object input) {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
         fPendingState = null;
         if (isSavingState()) {
             fQueuedRestore = input;
@@ -910,7 +910,7 @@ class ViewerStateTracker {
 
     public void cancelRestore(final TreePath path, final int flags) {
         if (fInStateRestore) {
-            // If we are currently processing pending state already, ignore 
+            // If we are currently processing pending state already, ignore
             // cancelRestore requests.  These requests may be triggered in the viewer
             // by changes to the tree state (Bug 295585).
             return;
@@ -921,15 +921,15 @@ class ViewerStateTracker {
             return;
         }
 
-        // Nothing else to do 
+        // Nothing else to do
         if (fPendingState == null) {
             return;
         }
-        
+
         if ((flags & (IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
             // If we're canceling reveal and this is waiting for updates to complete
             // then just cancel it and return
-            
+
             // If we're canceling select or reveal, cancel it for all of pending deltas
             final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
             fPendingState.accept(new IModelDeltaVisitor() {
@@ -977,12 +977,12 @@ class ViewerStateTracker {
                                 // Descend delta to clear the EXPAND flags of a canceled expand
                                 return true;
                             }
-                        } 
+                        }
                         return false;
                     } else {
                         // We're clearing out flags of a matching sub-tree
                         // assert (flags & IModelDelta.EXPAND) != 0;
-                        
+
                         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                             if (delta.getFlags() != IModelDelta.NO_CHANGE) {
                             	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -995,14 +995,14 @@ class ViewerStateTracker {
             });
         }
     }
-    
+
 
     /**
      * Perform any restoration required for the given tree path.
      * <p>
-     * This method is called after every viewer update completion to continue 
-     * restoring the expansion state that was previously saved.  
-     * 
+     * This method is called after every viewer update completion to continue
+     * restoring the expansion state that was previously saved.
+     *
      * @param path the tree path to update
      * @param modelIndex the index in the current model
      * @param knowsHasChildren if the content provider knows it has children already
@@ -1010,10 +1010,10 @@ class ViewerStateTracker {
      * @param checkChildrenRealized if any realized children should be checked or not
      */
     void restorePendingStateOnUpdate(final TreePath path, final int modelIndex, final boolean knowsHasChildren,
-        final boolean knowsChildCount, final boolean checkChildrenRealized) 
+        final boolean knowsChildCount, final boolean checkChildrenRealized)
     {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
         if (fPendingState == null) {
             return;
         }
@@ -1072,7 +1072,7 @@ class ViewerStateTracker {
         try {
             fInStateRestore = true;
             fPendingState.accept(visitor);
-        } 
+        }
         finally {
             fInStateRestore = false;
         }
@@ -1080,15 +1080,15 @@ class ViewerStateTracker {
     }
 
     /**
-     * Checks whether restoring pending state is already complete.  
+     * Checks whether restoring pending state is already complete.
      */
     void checkIfRestoreComplete() {
-        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-        
+        Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
         if (fPendingState == null) {
             return;
         }
-        
+
         /**
          * Used to determine when restoration delta has been processed
          */
@@ -1097,7 +1097,7 @@ class ViewerStateTracker {
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see
              * org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor
              * #visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta,
@@ -1107,20 +1107,20 @@ class ViewerStateTracker {
 			public boolean visit(IModelDelta delta, int depth) {
                 // Filter out the CONTENT flags from the delta flags, the content
                 // flag is only used as a marker indicating that all the sub-elements
-                // of a given delta have been retrieved.  
+                // of a given delta have been retrieved.
                 int flags = (delta.getFlags() & ~IModelDelta.CONTENT);
-                
+
                 if (flags != IModelDelta.NO_CHANGE) {
                     IModelDelta parentDelta = delta.getParentDelta();
                     // Remove the delta if :
-                    // - The parent delta has no more flags on it (the content flag is removed as well), 
+                    // - The parent delta has no more flags on it (the content flag is removed as well),
                     // which means that parent element's children have been completely exposed.
                     // - There are no more pending updates for the element.
                     // - If element is a memento, there are no state requests pending.
                     if (parentDelta != null && parentDelta.getFlags() == IModelDelta.NO_CHANGE) {
                         TreePath deltaPath = fContentProvider.getViewerTreePath(delta);
                         if ( !fContentProvider.areElementUpdatesPending(deltaPath) &&
-                             (!(delta.getElement() instanceof IMemento) || !areMementoUpdatesPending(delta)) ) 
+                             (!(delta.getElement() instanceof IMemento) || !areMementoUpdatesPending(delta)) )
                         {
                             removeDelta(delta);
                             return false;
@@ -1170,7 +1170,7 @@ class ViewerStateTracker {
         fPendingState.accept(state);
         if (state.isComplete()) {
             // notify restore complete if REVEAL was restored also, otherwise
-            // postpone until then. 
+            // postpone until then.
             if (fPendingSetTopItem == null) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 	DebugUIPlugin.trace("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
@@ -1178,14 +1178,14 @@ class ViewerStateTracker {
 
                 notifyStateUpdate(fPendingState.getElement(), STATE_RESTORE_SEQUENCE_COMPLETE, null);
             }
-            
-            fPendingState = null;            
+
+            fPendingState = null;
         }
     }
 
     /**
      * Restores the pending state in the given delta node.  This method is called
-     * once the state tracker has found the element which matches the element in 
+     * once the state tracker has found the element which matches the element in
      * the given delta node.
      * @param delta the {@link ModelDelta} to restore from
      * @param knowsHasChildren if the content provider has computed its children
@@ -1217,7 +1217,7 @@ class ViewerStateTracker {
                 delta.setFlags(delta.getFlags() & ~IModelDelta.COLLAPSE);
             }
         }
-        
+
         if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
             delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
@@ -1235,9 +1235,9 @@ class ViewerStateTracker {
                         break;
                     }
                 }
-                // Only set the selection if the element is not yet in 
-                // selection.  Otherwise the setSelection() call will 
-                // update selection listeners needlessly. 
+                // Only set the selection if the element is not yet in
+                // selection.  Otherwise the setSelection() call will
+                // update selection listeners needlessly.
                 if (!pathInSelection) {
                     TreePath[] newPaths = new TreePath[currentPaths.length + 1];
                     System.arraycopy(currentPaths, 0, newPaths, 0, currentPaths.length);
@@ -1246,11 +1246,11 @@ class ViewerStateTracker {
                 }
             }
         }
-        
+
         if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
             delta.setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
-            // Look for the reveal flag in the child deltas.  If 
-            // A child delta has the reveal flag, do not set the 
+            // Look for the reveal flag in the child deltas.  If
+            // A child delta has the reveal flag, do not set the
             // top element yet.
             boolean setTopItem = true;
             IModelDelta[] childDeltas = delta.getChildDeltas();
@@ -1261,18 +1261,18 @@ class ViewerStateTracker {
                     setTopItem = false;
                 }
             }
-            
-            if (setTopItem) { 
+
+            if (setTopItem) {
                 Assert.isTrue(fPendingSetTopItem == null);
-                
+
                 fPendingSetTopItem = new PendingRevealDelta(treePath, delta);
                 viewer.addViewerUpdateListener(fPendingSetTopItem);
-            }            
+            }
         }
 
-        // If we know the child count of the element, look for the reveal 
-        // flag in the child deltas.  For the children with reveal flag start 
-        // a new update.  
+        // If we know the child count of the element, look for the reveal
+        // flag in the child deltas.  For the children with reveal flag start
+        // a new update.
         // If the child delta's index is out of range, strip the reveal flag
         // since it is no longer applicable.
         if (knowsChildCount) {
@@ -1287,81 +1287,81 @@ class ViewerStateTracker {
                             fContentProvider.doUpdateElement(treePath, modelIndex);
                         } else {
                             childDelta.setFlags(childDelta.getFlags() & ~IModelDelta.REVEAL);
-                        }                       
+                        }
                     }
                 }
             }
         }
-        
-        // Some children of this element were just updated.  If all its 
-        // children are now realized, clear out any elements that still 
+
+        // Some children of this element were just updated.  If all its
+        // children are now realized, clear out any elements that still
         // have flags, because they represent elements that were removed.
-        if ((checkChildrenRealized && 
-             !fContentProvider.areChildrenUpdatesPending(treePath) && 
+        if ((checkChildrenRealized &&
+             !fContentProvider.areChildrenUpdatesPending(treePath) &&
              fContentProvider.getViewer().getElementChildrenRealized(treePath)) ||
-            (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
+            (knowsHasChildren && !viewer.getHasChildren(treePath)) )
         {
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
             	DebugUIPlugin.trace("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
-            delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
+            delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);
         }
     }
 
     /**
-     * Utility that reveals the saved top item in the viewer.  It listens for 
+     * Utility that reveals the saved top item in the viewer.  It listens for
      * all content updates to complete in order to avoid having the desired top item
      * scroll out as view content is filled in.
-     * <br> 
+     * <br>
      * Revealing some elements can trigger expanding some of elements
-     * that have been just revealed. Therefore, we have to check one 
+     * that have been just revealed. Therefore, we have to check one
      * more time after the new triggered updates are completed if we
      * have to set again the top index
      */
     private class PendingRevealDelta implements IViewerUpdateListener {
-        
+
         private final TreePath fPathToReveal;
         private final ModelDelta fRevealDelta;
-        
+
         PendingRevealDelta(TreePath pathToReveal, ModelDelta revealDelta) {
             fPathToReveal = pathToReveal;
             fRevealDelta = revealDelta;
         }
-       
+
         /**
          * Counter that tracks how many time the viewer updates were completed.
          */
         private int fCounter = 0;
         private Object fModelInput = fPendingState.getElement();
-        
+
         @Override
 		public void viewerUpdatesComplete() {
-            Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
-            
+            Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
+
             IInternalTreeModelViewer viewer = fContentProvider.getViewer();
             if (viewer == null || fPendingSetTopItem != this) {
                 return;
             }
-            
+
             TreePath topPath = viewer.getTopElementPath();
             if (!fPathToReveal.equals(topPath)) {
                 TreePath parentPath = fPathToReveal.getParentPath();
                 int index = viewer.findElementIndex(parentPath, fPathToReveal.getLastSegment());
-                if (index >= 0) { 
+                if (index >= 0) {
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     	DebugUIPlugin.trace("\tRESTORE REVEAL: " + fPathToReveal.getLastSegment()); //$NON-NLS-1$
                     }
                     viewer.reveal(parentPath, index);
-                    
+
                 }
             }
-            
+
             fCounter++;
             // in case the pending state was already set to null, we assume that
             // all others elements are restored, so we don't expect that REVEAL will
             // trigger other updates
             if (fCounter > 1 || fPendingState == null) {
-                dispose();                              
+                dispose();
             }
         }
 
@@ -1371,7 +1371,7 @@ class ViewerStateTracker {
 		public void updateStarted(IViewerUpdate update) {}
         @Override
 		public void updateComplete(IViewerUpdate update) {}
-        
+
         /**
          * Returns delta that is used to reveal the item.
          * @return delta to be revealed.
@@ -1381,20 +1381,20 @@ class ViewerStateTracker {
         }
 
         /**
-         * Resets the item 
+         * Resets the item
          */
         public void dispose() {
             // top item is set
             fPendingSetTopItem = null;
-            
+
             IInternalTreeModelViewer viewer = fContentProvider.getViewer();
             if (viewer == null) {
 				return;
 			}
-            
+
             // remove myself as viewer update listener
             viewer.removeViewerUpdateListener(this);
-            
+
             if (fPendingState == null) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 	DebugUIPlugin.trace("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
@@ -1404,20 +1404,20 @@ class ViewerStateTracker {
                 checkIfRestoreComplete();
             }
         }
-        
+
     }
-    
+
     /**
      * Restore selection/expansion based on items already in the viewer
      * @param delta the {@link ModelDelta} to restore from
      */
     protected void doInitialRestore(ModelDelta delta) {
-        // Find the reveal delta and mark nodes on its path 
+        // Find the reveal delta and mark nodes on its path
         // to reveal as elements are updated.
         markRevealDelta(delta);
-        
-        // Restore visible items.  
-        // Note (Pawel Piech): the initial list of items is normally 
+
+        // Restore visible items.
+        // Note (Pawel Piech): the initial list of items is normally
         // empty, so in most cases the code below does not do anything.
         // Instead doRestore() is called when various updates complete.
         int count = fContentProvider.getViewer().getChildCount(TreePath.EMPTY);
@@ -1427,11 +1427,11 @@ class ViewerStateTracker {
                 restorePendingStateOnUpdate(new TreePath(new Object[]{data}), i, false, false, false);
             }
         }
-        
+
     }
 
     /**
-     * Finds the delta with the reveal flag, then it walks up this 
+     * Finds the delta with the reveal flag, then it walks up this
      * delta and marks all the parents of it with the reveal flag.
      * These flags are then used by the restore logic to restore
      * and reveal all the nodes leading up to the element that should
@@ -1452,10 +1452,10 @@ class ViewerStateTracker {
                 return revealDelta[0] == null;
             }
         };
-        
+
         rootDelta.accept(visitor);
         if (revealDelta[0] != null) {
-            ModelDelta parentDelta = (ModelDelta)revealDelta[0].getParentDelta(); 
+            ModelDelta parentDelta = (ModelDelta)revealDelta[0].getParentDelta();
             while(parentDelta.getParentDelta() != null) {
                 revealDelta[0] = parentDelta;
                 revealDelta[0].setFlags(revealDelta[0].getFlags() | IModelDelta.REVEAL);
@@ -1467,14 +1467,14 @@ class ViewerStateTracker {
 
     /**
      * Builds a delta with the given root delta for expansion/selection state.
-     * 
+     *
      * @param delta
      *            root delta
      */
     private void buildViewerState(ModelDelta delta) {
         IInternalTreeModelViewer viewer = fContentProvider.getViewer();
         viewer.saveElementState(TreeModelContentProvider.EMPTY_TREE_PATH, delta, IModelDelta.SELECT | IModelDelta.EXPAND);
-        
+
         // Add memento for top item if it is mapped to an element.  The reveal memento
         // is in its own path to avoid requesting unnecessary data when restoring it.
         TreePath topElementPath = viewer.getTopElementPath();
@@ -1495,7 +1495,7 @@ class ViewerStateTracker {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
         }
     }
-    
+
     /**
      * Cancels any outstanding compare requests for given element and its children.
      * @param path Path of element to cancel updates for.
@@ -1524,9 +1524,9 @@ class ViewerStateTracker {
                 restorePendingStateNode(delta, request.knowsHasChildren(), request.knowChildCount(), request.checkChildrenRealized());
             } else if (request.getModelIndex() != -1) {
                 // Comparison failed.
-                // Check if the delta has a reveal flag, and if its index 
-                // matches the index of the element that it was compared 
-                // against. If this is the case, strip the reveal flag from 
+                // Check if the delta has a reveal flag, and if its index
+                // matches the index of the element that it was compared
+                // against. If this is the case, strip the reveal flag from
                 // the delta as it is most likely not applicable anymore.
                 if ((delta.getFlags() & IModelDelta.REVEAL) != 0 && delta.getIndex() == request.getModelIndex()) {
                     delta.setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
@@ -1583,5 +1583,5 @@ class ViewerStateTracker {
                 });
             }
         }
-    }    
+    }
 }

@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 /**
  * Drop to Frame action delegate.
- * 
+ *
  * @since 3.7
  */
 public class DropToFrameCommandActionDelegate extends DebugCommandActionDelegate {

@@ -46,16 +46,16 @@ import org.osgi.service.prefs.BackingStoreException;
  * Organizes the detail factories contributed through the extension point and keeps
  * track of the detail panes the factories produce.  Accessed as a singleton through
  * the <code>getDefault()</code> method.
- * 
+ *
  * @see IDetailPaneFactory
  * @see IDetailPane
  * @since 3.3
  */
 public class DetailPaneManager {
-	
+
 	/**
 	 * Acts as a proxy between the detail pane manager and the factories contributed
-	 * to the extension point.  Only loads information from the plug-in xml and only 
+	 * to the extension point.  Only loads information from the plug-in xml and only
 	 * instantiates the specified factory if required (lazy loading).
 	 */
 	private class DetailPaneFactoryExtension implements IDetailPaneFactory{
@@ -63,12 +63,12 @@ public class DetailPaneManager {
 		private IConfigurationElement fConfigElement;
 		private IDetailPaneFactory fFactory;
 		private Expression fEnablementExpression;
-		
+
 		public DetailPaneFactoryExtension(IConfigurationElement configElement){
-			fConfigElement = configElement;			
+			fConfigElement = configElement;
 		}
-		
-		/** 
+
+		/**
 		 * Instantiates the factory and asks it to produce the IDetailPane for
 		 * the given ID
 		 * @param paneID the identifier of the detail pane to create
@@ -82,7 +82,7 @@ public class DetailPaneManager {
 			return null;
 		}
 
-		/** 
+		/**
 		 * Instantiates the factory and asks it for the set of detail pane
 		 * IDs that the factory can produce for the given selection.
 		 * @param selection the current view selection
@@ -95,8 +95,8 @@ public class DetailPaneManager {
 			}
 			return Collections.EMPTY_SET;
 		}
-		
-		/** 
+
+		/**
 		 * Instantiates the factory and asks it for the detail pane ID
 		 * that the factory considers the default for the given selection.
 		 * @param selection the current view selection
@@ -108,9 +108,9 @@ public class DetailPaneManager {
 				return getFactory().getDefaultDetailPane(selection);
 			}
 			return null;
-		}	
+		}
 
-		/** 
+		/**
 		 * Instantiates the factory and asks it to produce the name of the detail pane
 		 * for the given ID.
 		 * @param paneID the detail pane identifier
@@ -123,9 +123,9 @@ public class DetailPaneManager {
 			}
 			return null;
 		}
-		
-		/** 
-		 * Instantiates the factory and asks it to produce the description of the 
+
+		/**
+		 * Instantiates the factory and asks it to produce the description of the
 		 * detail pane for the given ID.
 		 * @param paneID the detail pane identifier
 		 * @return the description of the detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
@@ -137,9 +137,9 @@ public class DetailPaneManager {
 			}
 			return null;
 		}
-		
+
 		/**
-		 * Returns the instantiated factory specified by the class property. 
+		 * Returns the instantiated factory specified by the class property.
 		 * @return the singleton {@link IDetailPaneFactory}
 		 */
 		private IDetailPaneFactory getFactory(){
@@ -152,14 +152,14 @@ public class DetailPaneManager {
 					fFactory = (IDetailPaneFactory)obj;
 				} else {
 					throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "org.eclipse.debug.ui.detailFactories extension failed to load a detail factory because the specified class does not implement org.eclipse.debug.ui.IDetailPaneFactory.  Class specified was: " + obj, null)); //$NON-NLS-1$
-				}	
+				}
 			} catch (CoreException e){
 				DebugUIPlugin.log(e.getStatus());
 				fFactory = null;
 			}
 			return fFactory;
 		}
-		
+
 		/**
 		 * Checks if the enablement expression for the factory evaluates to true for the
 		 * given selection.
@@ -183,13 +183,13 @@ public class DetailPaneManager {
 			}
 			return enabled;
 		}
-		
+
 		/**
 		 * Evaluate the given expression within the given context and return
 		 * the result. Returns <code>true</code> iff result is either TRUE or NOT_LOADED.
 		 * This allows optimistic inclusion of shortcuts before plug-ins are loaded.
 		 * Returns <code>false</code> if expression is <code>null</code>.
-		 * 
+		 *
 		 * @param exp the enablement expression to evaluate or <code>null</code>
 		 * @param context the context of the evaluation. Usually, the
 		 *  user's selection.
@@ -208,11 +208,11 @@ public class DetailPaneManager {
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Returns an expression that represents the enablement logic for the
 		 * detail pane factory or <code>null</code> if none.
-		 * 
+		 *
 		 * @return an evaluatable expression or <code>null</code>
 		 */
 		private Expression getEnablementExpression(){
@@ -220,7 +220,7 @@ public class DetailPaneManager {
 			if (fEnablementExpression == null) {
 				try{
 					IConfigurationElement[] elements = fConfigElement.getChildren(ExpressionTagNames.ENABLEMENT);
-					IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+					IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 					if (enablement != null) {
 						fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
 					}
@@ -231,42 +231,42 @@ public class DetailPaneManager {
 			}
 			return fEnablementExpression;
 		}
-	
+
 	}
-	
+
 	/**
 	 * There should only ever be once instance of this manager for the workbench.
 	 */
 	private static DetailPaneManager fgSingleton;
-	
+
 	/**
 	 * Maps the IDs of types of detail panes to the factory that can create them.
 	 * There can currently only be one factory for a given type of details pane.
 	 */
 	private Map<String, IDetailPaneFactory> fFactoriesByPaneID;
-	
+
 	/**
 	 * Maps a Set of detail pane id's to the one detail pane id that is preferred.
 	 */
 	private Map<Set<String>, String> fPreferredDetailPanes;
-	
+
 	/**
 	 * The set of all factories that have been loaded from the extension point.
 	 */
 	private List<DetailPaneFactoryExtension> fKnownFactories;
-	
+
     /**
      * Preference key for storing the preferred detail panes map.
      * @see #storePreferredDetailsAreas()
      * @see #loadPreferredDetailsAreas()
      */
     public static final String PREF_DETAIL_AREAS = "preferredDetailPanes"; //$NON-NLS-1$
-	
+
 	private DetailPaneManager(){
 		fFactoriesByPaneID = new HashMap<String, IDetailPaneFactory>();
 		fFactoriesByPaneID.put(MessageDetailPane.ID, new DefaultDetailPaneFactory());
 	}
-	
+
 	public static DetailPaneManager getDefault(){
 		if (fgSingleton == null) {
 			fgSingleton = new DetailPaneManager();
@@ -276,7 +276,7 @@ public class DetailPaneManager {
 
 	/**
 	 * Returns the ID of the preferred detail pane for the given selection.
-	 * 
+	 *
 	 * @param selection The selection to display in the detail pane
 	 * @return The ID of the preferred detail pane or null
 	 */
@@ -285,11 +285,11 @@ public class DetailPaneManager {
 		Set<String> possiblePaneIDs = getPossiblePaneIDs(possibleFactories, selection);
 		return chooseDetailsAreaIDInSet(possiblePaneIDs, possibleFactories, selection);
 	}
-	
+
 	/**
 	 * Returns the set of all possible detail panes the can display the given
 	 * selection.
-	 * 
+	 *
 	 * @param selection The selection to display in the detail pane
 	 * @return The set of IDs of all possible detail panes for the given selection
 	 */
@@ -297,14 +297,14 @@ public class DetailPaneManager {
 		List<IDetailPaneFactory> possibleFactories = getEnabledFactories(selection);
 		return getPossiblePaneIDs(possibleFactories, selection);
 	}
-	
+
 	/**
 	 * Given the ID of a details pane, this method will try to find the factory
 	 * that creates it and return an instantiation of that area.
 	 * <p>
 	 * This method will not call the init() method of the IDetailsPane.
 	 * </p>
-	 * 
+	 *
 	 * @param ID The ID of the requested pane
 	 * @return The instantiated pane or null
 	 */
@@ -315,11 +315,11 @@ public class DetailPaneManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Given the ID of a details pane, this method will try to find the factory
 	 * that creates it and ask it for the name of the details pane.
-	 * 
+	 *
 	 * @param ID The ID of the requested pane
 	 * @return The name of the details pane or null
 	 */
@@ -330,11 +330,11 @@ public class DetailPaneManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Given the ID of a details pane, this method will try to find the factory
 	 * that creates it and ask it for the description of the details pane.
-	 * 
+	 *
 	 * @param ID The ID of the requested pane
 	 * @return The description of the details pane or null
 	 */
@@ -345,15 +345,15 @@ public class DetailPaneManager {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Returns the set of IDetailPaneFactories (they will be DetailPaneFactoryDelegates) that were
 	 * contributed to the extension point and are enabled for the given selection
-	 * (enabled if the factory does not have an enablement expression or if the 
+	 * (enabled if the factory does not have an enablement expression or if the
 	 * enablement expression evaluates to true).
 	 * @param selection  the current view selection
-	 * 
+	 *
 	 * @return The factories enabled for the selection or an empty collection.
 	 */
 	private List<IDetailPaneFactory> getEnabledFactories(IStructuredSelection selection) {
@@ -366,15 +366,15 @@ public class DetailPaneManager {
 				if (((DetailPaneFactoryExtension)currentFactory).isEnabled(selection)){
 					factoriesForSelection.add(currentFactory);
 				}
-			}			
-		}	
+			}
+		}
 		return factoriesForSelection;
 	}
-	
+
 	/**
 	 * Produces the set of IDs for all possible detail panes that can be used to display
 	 * the given selection.
-	 *  
+	 *
 	 * @param factoriesToQuery The collection of factories to check
 	 * @param selection The selection to be displayed
 	 * @return Set of pane IDs or an empty set
@@ -384,8 +384,8 @@ public class DetailPaneManager {
 		for (IDetailPaneFactory currentFactory : factoriesToQuery) {
 			for (String currentAreaTypeID : currentFactory.getDetailPaneTypes(selection)) {
 				fFactoriesByPaneID.put(currentAreaTypeID, currentFactory);
-				idsForSelection.add(currentAreaTypeID);				
-			}			
+				idsForSelection.add(currentAreaTypeID);
+			}
 		}
 		return idsForSelection;
 	}
@@ -394,7 +394,7 @@ public class DetailPaneManager {
 	 * Given a set of possible detail pane IDs, this method will determine which pane is
 	 * preferred and should be used to display the selection.  This method chooses a pane
 	 * by storing previous choices and can be set using a context menu.
-	 * 
+	 *
 	 * @param possiblePaneIDs The set of possible detail pane IDs
 	 * @param enabledFactories the complete listing of enable {@link IDetailPaneFactory}s
 	 * @param selection the current selection from the variables view
@@ -404,9 +404,9 @@ public class DetailPaneManager {
 		if (possiblePaneIDs == null || possiblePaneIDs.isEmpty()){
 			return null;
 		}
-		
+
 		String preferredID = getUserPreferredDetailPane(possiblePaneIDs);
-		
+
 		if (preferredID == null){
 			// If there is no preferred pane already set, check the factories to see there is a default pane
 			for (IDetailPaneFactory currentFactory : enabledFactories) {
@@ -416,7 +416,7 @@ public class DetailPaneManager {
 				}
 			}
 			// If the factories don't have a default, try to choose the DefaultDetailPane
-			if (preferredID == null){			
+			if (preferredID == null){
 				Iterator<String> paneIterator = possiblePaneIDs.iterator();
 				// If the DefaultDetailPane is not in the set, just use the first in the set
 				preferredID = paneIterator.next();
@@ -432,7 +432,7 @@ public class DetailPaneManager {
 
 		return preferredID;
 	}
-	
+
 	/**
 	 * Initializes the collection of known factories from extension point contributions.
 	 */
@@ -445,13 +445,13 @@ public class DetailPaneManager {
 			for(int i = 0; i < infos.length; i++) {
 				delegate = new DetailPaneFactoryExtension(infos[i]);
 				fKnownFactories.add(delegate);
-			}		
+			}
 		}
 	}
-	
+
 	/**
 	 * Returns the preferred pane ID from the given set if the mapping has been set.
-	 * 
+	 *
 	 * @param possibleDetailsAreaIDs Set of possible pane IDs
 	 * @return The preferred ID or null
 	 */
@@ -460,13 +460,13 @@ public class DetailPaneManager {
 			loadPreferredDetailsAreas();
 		}
 		return fPreferredDetailPanes.get(possibleDetailsAreaIDs);
-		
+
 	}
-	
+
 	/**
 	 * Adds or updates the mapping to set which pane ID is preferred for a certain
 	 * set of possible IDs.
-	 * 
+	 *
 	 * @param possibleDetailsAreaIDs The set of possible IDs
 	 * @param preferredDetailsAreaID The preferred ID in the set.
 	 */
@@ -482,15 +482,15 @@ public class DetailPaneManager {
 			fPreferredDetailPanes.put(possibleDetailsAreaIDs, preferredDetailsAreaID);
 			storePreferredDetailsAreas();
 		}
-		
+
 	}
-	
+
     /**
      * Stores the map of preferred detail pane IDs to the preference store in the format:
-     * 
-     * Key1A,Key1B:Value1|Key2A,Key2B,Key2C:Value2| 
-     * 
-     * Where the sub keys (Key1A, Key1B, etc.) are the elements of the set used at the 
+     *
+     * Key1A,Key1B:Value1|Key2A,Key2B,Key2C:Value2|
+     *
+     * Where the sub keys (Key1A, Key1B, etc.) are the elements of the set used at the
      * key in the mapping and the values are the associated String value in the mapping.
      */
     private void storePreferredDetailsAreas() {
@@ -515,15 +515,15 @@ public class DetailPaneManager {
 			}
         }
     }
-    
+
     /**
      * Loads the map of preferred detail pane IDs from the preference store.
-     * 
+     *
      * @see #storePreferredDetailsAreas()
      */
     private void loadPreferredDetailsAreas() {
 		fPreferredDetailPanes = new HashMap<Set<String>, String>();
-    	String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(), 
+    	String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(),
     			PREF_DETAIL_AREAS,
     			"",  //$NON-NLS-1$
     			null);

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,21 +17,21 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * The action for adding the default container to the list.
- * 
+ *
  * @since 3.0
  */
 public class RestoreDefaultAction extends SourceContainerAction {
-	
+
 	private ISourceLookupDirector fDirector;
 
 	public RestoreDefaultAction() {
-		super(SourceLookupUIMessages.sourceTab_defaultButton); 
+		super(SourceLookupUIMessages.sourceTab_defaultButton);
 	}
 	/**
 	 * @see IAction#run()
 	 */
 	@Override
-	public void run() {		
+	public void run() {
 		ISourceContainer[] containers = new ISourceContainer[1];
 		containers[0] = new DefaultSourceContainer();
 		containers[0].init(fDirector);
@@ -54,7 +54,7 @@ public class RestoreDefaultAction extends SourceContainerAction {
 			if(containers[0] instanceof DefaultSourceContainer) {
 				return false;
 			}
-		}		
-		return true;	
+		}
+		return true;
 	}
 }

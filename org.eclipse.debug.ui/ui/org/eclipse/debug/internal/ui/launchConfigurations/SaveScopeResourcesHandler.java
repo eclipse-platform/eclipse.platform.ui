@@ -56,7 +56,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * </p>
  * <p>
  * The 'breaking' occurs as the saving is moved from <code>DebugUIPlugin</code> to the launch configuration delegate, which will require
- * implementors of <code>LaunchConfigurationDelegate</code> to incorporate the use of this status handler to perform any pre-launch saving. 
+ * implementors of <code>LaunchConfigurationDelegate</code> to incorporate the use of this status handler to perform any pre-launch saving.
  * </p>
  * @since 3.2
  */
@@ -73,7 +73,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		Object fInput;
 		IStructuredContentProvider fContentProvider;
 		ILabelProvider fLabelProvider;
-		
+
 		public ScopedResourcesSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider) {
 			super(parentShell);
 			fInput = input;
@@ -82,7 +82,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setShowSelectAllButtons(true);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
 		 */
@@ -90,7 +90,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		protected IContentProvider getContentProvider() {
 			return fContentProvider;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
@@ -98,7 +98,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		protected IBaseLabelProvider getLabelProvider() {
 			return fLabelProvider;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
@@ -130,7 +130,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		protected String getViewerLabel() {
 			return LaunchConfigurationsMessages.SaveScopeResourcesHandler_2;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 		 */
@@ -146,7 +146,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				}
 			});
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#okPressed()
 		 */
@@ -157,7 +157,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			store.setValue(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, val);
 			super.okPressed();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 		 */
@@ -165,7 +165,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		protected void addViewerListeners(StructuredViewer viewer) {
 			// Override to remove listener that affects the ok button
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#isValid()
 		 */
@@ -174,16 +174,16 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * The objects to save (if any)
 	 */
 	IResource[] fSaves = null;
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Source object is an array - a launch configuration and an array of projects to save resources for.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	@Override
@@ -202,7 +202,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
             if (DebugUITools.isPrivate(config)) {
                 return Boolean.TRUE;
             }
-        } 
+        }
         if (projects != null && projects.length > 0) {
             IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
             String save = store.getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
@@ -212,18 +212,18 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
             	return Boolean.TRUE;
             }
             return Boolean.FALSE;
-        } 
+        }
         else {
 			@SuppressWarnings("deprecation")
 			boolean cancel = DebugUIPlugin.preLaunchSave();
             return Boolean.valueOf(cancel);
         }
     }
-	
+
 	/**
-	 * 
+	 *
 	 * Builds the list of editors that apply to this build that need to be saved
-	 * 
+	 *
 	 * @param projects the projects involved in this build, used to scope the searching process
 	 * @return the list of dirty editors for this launch to save, never null
 	 */
@@ -248,7 +248,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		}
 		return dirtyres.toArray(new IResource[dirtyres.size()]);
 	}
-	
+
 	/**
 	 * Performs the save of the editor parts returned by getScopedResources
 	 */
@@ -256,8 +256,8 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		if(fSaves != null) {
 			IDE.saveAllEditors(fSaves, false);
 		}
-	} 
-	
+	}
+
 	/**
 	 * show the save dialog with a list of editors to save (if any)
 	 * The dialog is also not shown if the the preference for automatically saving dirty before launch is set to always

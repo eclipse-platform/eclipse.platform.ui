@@ -16,11 +16,11 @@ import org.eclipse.ui.IMemento;
 
 /**
  * Abstract memento provider debug elements.
- * 
+ *
  * @since 3.4
  */
 public abstract class DebugElementMementoProvider extends ElementMementoProvider {
-	
+
 	protected static final String ELEMENT_NAME = "ELEMENT_NAME"; //$NON-NLS-1$
 
 	@Override
@@ -47,28 +47,28 @@ public abstract class DebugElementMementoProvider extends ElementMementoProvider
 
     /**
      * Returns whether this adapter supports the given context.
-     * 
+     *
      * @param context
      * @return whether this adapter supports the given context
      */
     protected boolean supportsContext(IPresentationContext context) {
 		return supportsContextId(context.getId());
     }
-    
+
     /**
      * Returns whether this adapter provides content in the specified context id.
-     * 
+     *
      * @param id part id
      * @return whether this adapter provides content in the specified context id
      */
     protected boolean supportsContextId(String id) {
     	return true;
     }
-    
+
     /**
      * Returns the name of the given element to use in a memento in the given context,
      * or <code>null</code> if unsupported.
-     * 
+     *
      * @param element model element
      * @param context presentation context
      * @return element name or <code>null</code> if none

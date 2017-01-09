@@ -23,14 +23,14 @@ import org.eclipse.jface.viewers.Viewer;
  * is then installed into the viewer and the viewer listens to model deltas
  * in order to update that element. Generally, a model proxy factory creates
  * model proxies for root elements in a model, and then represents all elements
- * within that model for a specific presentation context. 
+ * within that model for a specific presentation context.
  * </p>
  * <p>
  * Note: provider methods are called in the Display thread of the viewer.
- * To avoid blocking the UI, long running operations should be performed 
+ * To avoid blocking the UI, long running operations should be performed
  * asynchronously.
  * </p>
- * 
+ *
  * @noimplement Clients are not intended to implement this interface directly. Instead, clients
  * creating and firing model deltas should create instances of {@link AbstractModelProxy}.
  * @see IModelDelta
@@ -41,7 +41,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @since 3.2
  */
 public interface IModelProxy {
-    
+
 	/**
 	 * Notification this model proxy has been created and is about to be installed
 	 * in the following context. This is the first method called after a model proxy
@@ -54,13 +54,13 @@ public interface IModelProxy {
 	 * @see IModelProxy2#initialize(ITreeModelViewer)
 	 */
 	public void init(IPresentationContext context);
-	
-	/** 
-	 * Notification this model proxy has been installed in the specified 
+
+	/**
+	 * Notification this model proxy has been installed in the specified
 	 * viewer. This indicates that the model proxy has been created and registered
-	 * model change listeners are ready to process deltas.  This method is called 
-	 * by the {@link AbstractModelProxy} base class using a job and NOT in viewers 
-	 * display thread. It allows the client to initialize the proxy without 
+	 * model change listeners are ready to process deltas.  This method is called
+	 * by the {@link AbstractModelProxy} base class using a job and NOT in viewers
+	 * display thread. It allows the client to initialize the proxy without
 	 * blocking the UI. The default implementaiton is a no-op.
 	 * <p>
 	 * This method is called by the asynchronous viewer framework and should not
@@ -71,7 +71,7 @@ public interface IModelProxy {
 	 * @since 3.3
 	 */
 	public void installed(Viewer viewer);
-	
+
 	/**
 	 * Disposes this model proxy.
 	 * <p>
@@ -80,27 +80,27 @@ public interface IModelProxy {
 	 * </p>
 	 */
 	public void dispose();
-	
+
 	/**
 	 * Registers the given listener for model delta notification.
-	 * 
+	 *
 	 * @param listener model delta listener
 	 */
 	public void addModelChangedListener(IModelChangedListener listener);
-	
+
 	/**
 	 * Unregisters the given listener from model delta notification.
-	 * 
+	 *
 	 * @param listener model delta listener
 	 */
 	public void removeModelChangedListener(IModelChangedListener listener);
-	
+
 	/**
 	 * Returns whether this proxy has been disposed.
-	 * 
+	 *
 	 * @return whether this proxy has been disposed
 	 * @since 3.3
 	 */
 	public boolean isDisposed();
-	
+
 }

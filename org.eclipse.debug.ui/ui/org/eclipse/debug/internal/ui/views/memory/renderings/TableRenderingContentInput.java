@@ -37,7 +37,7 @@ public class TableRenderingContentInput extends PlatformObject {
 	private BigInteger fMemoryBlockBaseAddress;		// base address of the memory block when this input is set
 	private BigInteger fStartAddress;
 	private BigInteger fEndAddress;
-	
+
 	public TableRenderingContentInput(IMemoryRendering rendering, int preBuffer, int postBuffer, BigInteger loadAddress, int numOfLines, boolean updateDelta, BigInteger contentBaseAddress)
 	{
 		fRendering = rendering;
@@ -69,7 +69,7 @@ public class TableRenderingContentInput extends PlatformObject {
 	public BigInteger getLoadAddress() {
 		return fLoadAddress;
 	}
-	
+
 	public IMemoryBlock getMemoryBlock()
 	{
 		return fRendering.getMemoryBlock();
@@ -92,7 +92,7 @@ public class TableRenderingContentInput extends PlatformObject {
 		fLoadAddress = address;
 	}
 	public BigInteger getContentBaseAddress() {
-		
+
 		if (fMemoryBlockBaseAddress == null)
 		{
 			try {
@@ -101,10 +101,10 @@ public class TableRenderingContentInput extends PlatformObject {
 				fMemoryBlockBaseAddress = new BigInteger("0"); //$NON-NLS-1$
 			}
 		}
-		
+
 		return fMemoryBlockBaseAddress;
 	}
-	
+
 	public void updateContentBaseAddress() throws DebugException {
 		IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
 		if (memoryBlock instanceof IMemoryBlockExtension) {
@@ -113,7 +113,7 @@ public class TableRenderingContentInput extends PlatformObject {
 			fMemoryBlockBaseAddress = BigInteger.valueOf(memoryBlock.getStartAddress());
 		}
 	}
-	
+
 	/**
 	 * @return start address of the memory block
 	 */
@@ -132,16 +132,16 @@ public class TableRenderingContentInput extends PlatformObject {
 				}
 			} catch (DebugException e) {
 				// default to 0 if we have trouble getting the start address
-				fStartAddress =  BigInteger.valueOf(0);			
+				fStartAddress =  BigInteger.valueOf(0);
 			}
-			
+
 			if (fStartAddress == null) {
 				fStartAddress =  BigInteger.valueOf(0);
 			}
 		}
-		return fStartAddress; 
+		return fStartAddress;
 	}
-	
+
 	/**
 	 * @return end address of the memory block
 	 */
@@ -161,7 +161,7 @@ public class TableRenderingContentInput extends PlatformObject {
 				} catch (DebugException e) {
 					fEndAddress = null;
 				}
-				
+
 				if (fEndAddress == null)
 				{
 					int addressSize;
@@ -170,31 +170,31 @@ public class TableRenderingContentInput extends PlatformObject {
 					} catch (DebugException e) {
 						addressSize = 4;
 					}
-					
+
 					endAddress = BigInteger.valueOf(2);
 					endAddress = endAddress.pow(addressSize*8);
 					endAddress = endAddress.subtract(BigInteger.valueOf(1));
 					fEndAddress =  endAddress;
 				}
 			}
-			
+
 			if (fEndAddress == null) {
 				fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
 			}
 		}
 		return fEndAddress;
 	}
-	
+
 	public int getNumLines()
 	{
 		return fNumLines;
 	}
-	
+
 	public void setNumLines(int numLines)
 	{
 		fNumLines = numLines;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
@@ -210,7 +210,7 @@ public class TableRenderingContentInput extends PlatformObject {
 				return (T) fRendering;
 			}
 		}
-		
+
 		return super.getAdapter(adapter);
 	}
 }

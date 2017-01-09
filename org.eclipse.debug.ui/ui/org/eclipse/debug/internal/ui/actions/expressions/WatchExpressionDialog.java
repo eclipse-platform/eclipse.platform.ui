@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mike Morearty - Bug 271411
@@ -58,7 +58,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	 * The detail formatter to edit.
 	 */
 	private IWatchExpression fWatchExpression;
-	
+
 	// widgets
 	private SourceViewer fSnippetViewer;
 	private Button fCheckBox;
@@ -70,10 +70,10 @@ public class WatchExpressionDialog extends StatusDialog {
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		String helpContextId = null;
 		if (editDialog) {
-			setTitle(ActionMessages.WatchExpressionDialog_0); 
+			setTitle(ActionMessages.WatchExpressionDialog_0);
 			helpContextId = IDebugHelpContextIds.EDIT_WATCH_EXPRESSION_DIALOG;
 		} else {
-			setTitle(ActionMessages.WatchExpressionDialog_1); 
+			setTitle(ActionMessages.WatchExpressionDialog_1);
 			helpContextId = IDebugHelpContextIds.ADD_WATCH_EXPRESSION_DIALOG;
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpContextId);
@@ -87,7 +87,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
@@ -96,14 +96,14 @@ public class WatchExpressionDialog extends StatusDialog {
 
 		// snippet label
 		Label label = new Label(container, SWT.NONE);
-		label.setText(ActionMessages.WatchExpressionDialog_2); 
+		label.setText(ActionMessages.WatchExpressionDialog_2);
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
-		
+
 		fSnippetViewer = new SourceViewer(container, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fSnippetViewer.setInput(this);
-		
+
 		IDocument document = new Document();
 		fSnippetViewer.configure(new SourceViewerConfiguration());
 		fSnippetViewer.setEditable(true);
@@ -159,7 +159,7 @@ public class WatchExpressionDialog extends StatusDialog {
 
 		// enable checkbox
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
-		fCheckBox.setText(ActionMessages.WatchExpressionDialog_3); 
+		fCheckBox.setText(ActionMessages.WatchExpressionDialog_3);
 		fCheckBox.setSelection(fWatchExpression.isEnabled());
 		fCheckBox.setFont(font);
 
@@ -176,7 +176,7 @@ public class WatchExpressionDialog extends StatusDialog {
 
 	/**
 	 * Returns a string representation of the "Ctrl+Return" key sequence.
-	 * 
+	 *
 	 * @return a string representation of the "Ctrl+Return" key sequence.
 	 */
 	private String getCtrlReturnText() {
@@ -197,14 +197,14 @@ public class WatchExpressionDialog extends StatusDialog {
 		fWatchExpression.setExpressionText(fSnippetViewer.getDocument().get());
 		super.okPressed();
 	}
-	
+
 	/**
 	 * Check the field values and display a message in the status if needed.
 	 */
 	private void checkValues() {
 		StatusInfo status= new StatusInfo();
 		if (fSnippetViewer.getDocument().get().trim().length() == 0) {
-			status.setError(ActionMessages.WatchExpressionDialog_4); 
+			status.setError(ActionMessages.WatchExpressionDialog_4);
 		}
 		updateStatus(status);
 	}

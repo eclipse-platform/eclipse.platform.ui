@@ -37,35 +37,35 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 /**
  * An action which toggles the breakpoint manager's enablement.
  * This causes debug targets which honor the manager's enablement
- * to skip (not suspend for) all breakpoints. 
- * 
+ * to skip (not suspend for) all breakpoints.
+ *
  * This class also implements the window action delegate for the action presented as
  * part of the "Breakpoints" group for the "Run" menu.
  */
 public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindowActionDelegate, IActionDelegate2, IBreakpointManagerListener {
-	
+
 	public static final String ACTION_ID = "org.eclipse.debug.ui.actions.SkipAllBreakpoints"; //$NON-NLS-1$
 	public static final String ACTION_DEFINITION_ID = "org.eclipse.debug.ui.commands.SkipAllBreakpoints"; //$NON-NLS-1$
-	
+
 	//The real action if this is an action delegate
 	private IAction fAction;
-	
+
 	/**
 	 * Workbench part or <code>null</code> if not installed in a part
 	 */
 	private IWorkbenchPart fPart = null;
-	
+
 	public SkipAllBreakpointsAction() {
-		super(ActionMessages.SkipAllBreakpointsAction_0, AS_CHECK_BOX); 
-		setToolTipText(ActionMessages.SkipAllBreakpointsAction_0); 
-		setDescription(ActionMessages.SkipAllBreakpointsAction_2); 
+		super(ActionMessages.SkipAllBreakpointsAction_0, AS_CHECK_BOX);
+		setToolTipText(ActionMessages.SkipAllBreakpointsAction_0);
+		setDescription(ActionMessages.SkipAllBreakpointsAction_2);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_SKIP_BREAKPOINTS));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
 	}
-	
+
 	/**
 	 * Constructs an action in the given part.
-	 * 
+	 *
 	 * @param part the part this action is created for
 	 */
 	public SkipAllBreakpointsAction(IWorkbenchPart part) {
@@ -74,7 +74,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		setId(ACTION_ID); // set action ID when created programmatically.
 		updateActionCheckedState();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -102,7 +102,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 			job.schedule();
 		}
 	}
-	
+
 	/**
 	 * Updates the action's checked state to be opposite the enabled
 	 * state of the breakpoint manager.
@@ -114,16 +114,16 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 			setChecked(!getBreakpointManager().isEnabled());
 		}
 	}
-	
+
 	/**
 	 * Returns the global breakpoint manager.
-	 * 
+	 *
 	 * @return the global breakpoint manager
 	 */
 	public static IBreakpointManager getBreakpointManager() {
 		return DebugPlugin.getDefault().getBreakpointManager();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -131,7 +131,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	public void dispose() {
 		getBreakpointManager().removeBreakpointManagerListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -140,20 +140,20 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		updateActionCheckedState();
 		getBreakpointManager().addBreakpointManagerListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
 	public void run(IAction action) {
 		setChecked(action.isChecked());
-		run();	
+		run();
 		// when run from the workbench window action, need to keep view action state in synch (in case view has been closed)
 		String prefKey = IDebugUIConstants.ID_BREAKPOINT_VIEW + '+' + action.getId();
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		prefStore.setValue(prefKey, action.isChecked());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

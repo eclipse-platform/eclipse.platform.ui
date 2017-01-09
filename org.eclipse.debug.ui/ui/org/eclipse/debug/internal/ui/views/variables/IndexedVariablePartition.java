@@ -28,27 +28,27 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * (<code>IIndexedValue</code>).
  */
 public class IndexedVariablePartition extends PlatformObject implements IVariable  {
-	
+
 	// the starting offset of this partition, into the associated collection
 	private int fOffset;
-	
+
 	// the length of this partition
 	private int fLength;
-	
+
 	// the root variable or expression containing the indexed value
 	private IDebugElement fOriginalVariable;
 
 	// the indexed value
 	private IIndexedValue fOriginalValue;
-	
+
 	// sub-range of values
 	private IIndexedValue fValuePartition;
-	
+
 	private String fName = null;
-	
+
 	/**
 	 * Creates a partition for an indexed value.
-	 * 
+	 *
 	 * @param variable variable or expression containing the indexed value
 	 * @param value indexed value
 	 * @param offset beginning offset of this partition (into the value)
@@ -61,7 +61,7 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 		fLength = length;
 		fValuePartition = new IndexedValuePartition(value, offset, length);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */

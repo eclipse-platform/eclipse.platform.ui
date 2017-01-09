@@ -20,7 +20,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Factory for default variable column presentation.
- * 
+ *
  * @since 3.2
  */
 public class VariableColumnFactoryAdapter implements IColumnPresentationFactory {
@@ -31,9 +31,9 @@ public class VariableColumnFactoryAdapter implements IColumnPresentationFactory 
 	@Override
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		String id = context.getId();
-        if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || 
-            IDebugUIConstants.ID_REGISTER_VIEW.equals(id) || 
-            IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) 
+        if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) ||
+            IDebugUIConstants.ID_REGISTER_VIEW.equals(id) ||
+            IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id))
         {
 			if (element instanceof IStackFrame || element instanceof IExpressionManager) {
 				return new VariableColumnPresentation();
@@ -48,9 +48,9 @@ public class VariableColumnFactoryAdapter implements IColumnPresentationFactory 
 	@Override
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		String id = context.getId();
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || 
-		    IDebugUIConstants.ID_REGISTER_VIEW.equals(id) || 
-		    IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) 
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) ||
+		    IDebugUIConstants.ID_REGISTER_VIEW.equals(id) ||
+		    IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id))
 		{
 			if (element instanceof IStackFrame || element instanceof IExpressionManager) {
 				return IDebugUIConstants.COLUMN_PRESENTATION_ID_VARIABLE;

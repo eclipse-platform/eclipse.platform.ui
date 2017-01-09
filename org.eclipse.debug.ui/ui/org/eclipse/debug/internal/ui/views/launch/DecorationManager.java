@@ -30,7 +30,7 @@ public class DecorationManager {
 
 	/**
 	 * Adds the given decoration for the given stack frame.
-	 * 
+	 *
 	 * @param decoration
 	 * @param frame
 	 */
@@ -48,7 +48,7 @@ public class DecorationManager {
 
 	/**
 	 * Removes any decorations for the given debug target.
-	 * 
+	 *
 	 * @param target to remove editor decorations for
 	 */
 	public static void removeDecorations(IDebugTarget target) {
@@ -57,7 +57,7 @@ public class DecorationManager {
 
 	/**
 	 * Removes any decorations for the given thread
-	 * 
+	 *
 	 * @param thread thread to remove decorations for
 	 */
 	public static void removeDecorations(IThread thread) {

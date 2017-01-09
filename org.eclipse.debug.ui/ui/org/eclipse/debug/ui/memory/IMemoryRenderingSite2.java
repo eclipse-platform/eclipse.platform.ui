@@ -11,16 +11,16 @@
 package org.eclipse.debug.ui.memory;
 
 /**
- * Extension to memory site that allows a client to request a rendering container 
+ * Extension to memory site that allows a client to request a rendering container
  * to become visible.
- * 
+ *
  * @since 3.8
  */
 public interface IMemoryRenderingSite2 extends IMemoryRenderingSite {
-	
+
     /**
-     * Sets whether the identified container should be visible. 
-     * 
+     * Sets whether the identified container should be visible.
+     *
      * @param id identifier of the container to be affected
      * @param visible whether the given container should be made visible
      */

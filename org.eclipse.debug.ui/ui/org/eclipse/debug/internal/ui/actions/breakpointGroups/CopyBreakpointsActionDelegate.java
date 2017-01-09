@@ -35,7 +35,7 @@ import org.eclipse.ui.IViewPart;
  * to the breakpoint paste action.
  */
 public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionDelegate implements IBreakpointsListener {
-	
+
 	private long fStamp;
 
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
         	}
         }
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
@@ -66,7 +66,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 		super.init(view);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#dispose()
 	 */

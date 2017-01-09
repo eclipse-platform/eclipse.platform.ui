@@ -44,5 +44,5 @@ public class RegisterGroupLabelProvider extends DebugElementLabelProvider {
 			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 	}
-	
+
 }

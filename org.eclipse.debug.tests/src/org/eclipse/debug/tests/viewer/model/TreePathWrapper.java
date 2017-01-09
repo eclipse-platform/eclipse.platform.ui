@@ -15,9 +15,9 @@ import org.eclipse.jface.viewers.TreePath;
 import org.junit.Assert;
 
 /**
- * Utility for comparing TreePath objects in unit tests.  This wrapper prints the tree 
+ * Utility for comparing TreePath objects in unit tests.  This wrapper prints the tree
  * paths in exception showing contexts of the paths.
- * 
+ *
  * @since 3.7
  */
 public class TreePathWrapper {
@@ -26,26 +26,26 @@ public class TreePathWrapper {
     public TreePathWrapper(TreePath path) {
         fPath = path;
     }
-    
+
     @Override
 	public int hashCode() {
         return fPath.hashCode();
     }
-    
+
     @Override
 	public boolean equals(Object obj) {
         return obj instanceof TreePathWrapper &&
-               fPath.equals( ((TreePathWrapper)obj).fPath ); 
+               fPath.equals( ((TreePathWrapper)obj).fPath );
     }
-    
+
     @Override
 	public String toString() {
         if (fPath.getSegmentCount() == 0) {
             return "TreePath:EMPTY"; //$NON-NLS-1$
         }
-        
+
         StringBuffer buf = new StringBuffer("TreePath:["); //$NON-NLS-1$
-        
+
         for (int i = 0; i < fPath.getSegmentCount(); i++) {
             if (i != 0) {
                 buf.append(", ");                     //$NON-NLS-1$
@@ -55,14 +55,14 @@ public class TreePathWrapper {
         buf.append(']');
         return buf.toString();
     }
-    
+
     /**
-     * Asserts that the two given tree paths are the same.  In case of failure, the 
+     * Asserts that the two given tree paths are the same.  In case of failure, the
      * generated exception will contain a printout of the tree paths' contents.
      */
     public static void assertEqual(TreePath expected, TreePath actual) {
         Assert.assertEquals(
-            expected != null ? new TreePathWrapper(expected) : null,  
+            expected != null ? new TreePathWrapper(expected) : null,
             actual != null ? new TreePathWrapper(actual) : null);
-    }        
+    }
 }

@@ -25,21 +25,21 @@ import org.eclipse.ui.PlatformUI;
  * An action handler that delegates to an action in the debug view.
  */
 public abstract class DebugActionHandler implements IHandler2 {
-	
+
 	private String fActionId;
-	
+
 	/**
 	 * Constructs a new handler for the given action identifier.
-	 * 
+	 *
 	 * @param actionId action identifier
 	 */
 	public DebugActionHandler(String actionId) {
 		fActionId = actionId;
 	}
-		
+
 	/**
 	 * Returns the delegate handler or <code>null</code> if none.
-	 * 
+	 *
 	 * @return handler or <code>null</code>
 	 */
 	protected IHandler2 getDelegate() {
@@ -55,7 +55,7 @@ public abstract class DebugActionHandler implements IHandler2 {
 		}
 		return null;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */

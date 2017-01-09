@@ -4,11 +4,11 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
- *                 display memory blocks that do not reference IDebugTarget     
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
+ *                 display memory blocks that do not reference IDebugTarget
  *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
@@ -65,12 +65,12 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 
 	private ListViewer fViewer;
 	private Label fMemoryBlockLabel;
-	private IMemoryRenderingContainer fContainer; 
+	private IMemoryRenderingContainer fContainer;
 	private Composite fCanvas;
 	private String fLabel;
-	
+
 	private String fTabLabel;
-	
+
 	public CreateRendering(IMemoryRenderingContainer container)
 	{
 		super("org.eclipse.debug.internal.ui.views.createrendering"); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 
 	class MemoryRenderingLabelProvider implements ILabelProvider
 	{
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
@@ -95,7 +95,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		@Override
 		public String getText(Object element) {
 			if (element instanceof IMemoryRenderingType)
-			{	
+			{
 				String label = ((IMemoryRenderingType)element).getLabel();
 				return label;
 			}
@@ -132,7 +132,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		}
 
 	}
-	
+
 	class MemoryRenderingContentProvider implements IStructuredContentProvider
 	{
 
@@ -150,7 +150,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		 */
 		@Override
 		public void dispose() {
-			
+
 		}
 
 		/* (non-Javadoc)
@@ -159,9 +159,9 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -172,54 +172,54 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		compositeLayout.numColumns = 2;
 		compositeLayout.makeColumnsEqualWidth = false;
 		fCanvas.setLayout(compositeLayout);
-		
+
 		GridData comositeSpec= new GridData();
 		comositeSpec.grabExcessVerticalSpace= true;
 		comositeSpec.grabExcessHorizontalSpace= true;
 		comositeSpec.horizontalAlignment= GridData.FILL;
 		comositeSpec.verticalAlignment= GridData.CENTER;
 		fCanvas.setLayoutData(comositeSpec);
-		
+
 		fMemoryBlockLabel = new Label(fCanvas, SWT.BORDER);
-		
+
 		String memoryBlockLabel = " "; //$NON-NLS-1$
 		memoryBlockLabel = getLabel();
-		
-		fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + memoryBlockLabel + "  "); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+		fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + memoryBlockLabel + "  "); //$NON-NLS-1$ //$NON-NLS-2$
 		GridData textLayout = new GridData();
 		textLayout.verticalAlignment=GridData.CENTER;
 		textLayout.horizontalAlignment=GridData.BEGINNING;
 		fMemoryBlockLabel.setLayoutData(textLayout);
 
 		Label renderingLabel = new Label(fCanvas, SWT.NONE);
-		renderingLabel.setText(DebugUIMessages.CreateRenderingTab_Select_renderings_to_create); 
+		renderingLabel.setText(DebugUIMessages.CreateRenderingTab_Select_renderings_to_create);
 		GridData renderingLayout = new GridData();
 		renderingLayout.horizontalAlignment = GridData.BEGINNING;
 		renderingLayout.verticalAlignment = GridData.CENTER;
 		renderingLayout.horizontalSpan = 2;
 		renderingLabel.setLayoutData(renderingLayout);
-		
+
 		fViewer = new ListViewer(fCanvas);
 		fViewer.setContentProvider(new MemoryRenderingContentProvider());
 		fViewer.setLabelProvider(new MemoryRenderingLabelProvider());
 		fViewer.setInput(getMemoryBlock());
-		
+
 		if (fViewer.getElementAt(0) != null)
 		{
 			fViewer.getList().select(0);
 		}
-		
+
 		GridData listLayout = new GridData(GridData.FILL_BOTH);
 		listLayout.horizontalSpan = 1;
 		fViewer.getControl().setLayoutData(listLayout);
-		
+
 		fViewer.addDoubleClickListener(new IDoubleClickListener (){
 
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				addRenderings();
 			}});
-		
+
 		// listen for enter being pressed
 		fViewer.getList().addKeyListener(new KeyAdapter() {
 			@Override
@@ -227,14 +227,14 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 				if (e.character == SWT.CR)
 					addRenderings();
 			}});
-		
+
 		Button addButton = new Button(fCanvas, SWT.NONE);
-		addButton.setText(DebugUIMessages.CreateRenderingTab_Add_renderings); 
+		addButton.setText(DebugUIMessages.CreateRenderingTab_Add_renderings);
 		GridData buttonLayout = new GridData();
 		buttonLayout.horizontalAlignment = GridData.BEGINNING;
 		buttonLayout.verticalAlignment = GridData.BEGINNING;
 		addButton.setLayoutData(buttonLayout);
-		
+
 		addButton.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -246,44 +246,44 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 			public void widgetDefaultSelected(SelectionEvent e) {
 				addRenderings();
 			}});
-		
+
 		DebugUITools.getMemoryRenderingManager().addListener(this);
-		
-		return fCanvas;		
+
+		return fCanvas;
 	}
-	
+
 	private void addRenderings()
-	{									
+	{
 		ISelection selection = fViewer.getSelection();
 		Object[] renderings = null;
-		
+
 		if (selection instanceof IStructuredSelection)
 		{
 			IStructuredSelection strucSelection = (IStructuredSelection)selection;
-			
+
 			renderings = strucSelection.toArray();
 		}
-		
+
 		if (renderings == null)
 		{
 			Status stat = new Status(
 					IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),
-					DebugException.INTERNAL_ERROR, DebugUIMessages.CreateRenderingTab_0, null); 
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.CreateRenderingTab_1, DebugUIMessages.CreateRenderingTab_2, stat); // 
+					DebugException.INTERNAL_ERROR, DebugUIMessages.CreateRenderingTab_0, null);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.CreateRenderingTab_1, DebugUIMessages.CreateRenderingTab_2, stat); //
 			return;
 		}
-										
+
 		// ask for debug target and memory block retrieval
 		IMemoryBlockRetrieval standardMemRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(getMemoryBlock());
-		
+
 		if (standardMemRetrieval == null)
 			return;
-				
+
 		// make a copy of the container, may be diposed when a rendering is added
 		IMemoryRenderingContainer container = fContainer;
 		// add memory renderings to Memory Rendering Manager
 		for (int i=0; i<renderings.length; i++)
-		{	
+		{
 			if (renderings[i] instanceof IMemoryRenderingType)
 			{
 				try {
@@ -294,11 +294,11 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 						container.addMemoryRendering(rendering);
 					}
 				} catch (CoreException e) {
-					
-					MemoryViewUtil.openError(DebugUIMessages.CreateRendering_0, DebugUIMessages.CreateRendering_1, e);  // 
+
+					MemoryViewUtil.openError(DebugUIMessages.CreateRendering_0, DebugUIMessages.CreateRendering_1, e);  //
 				}
-			}					
-		}		
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -333,26 +333,26 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 			fTabLabel = DebugUIMessages.CreateRendering_2;
 			updateRenderingLabel();
 		}
-		
+
 		return fTabLabel;
 	}
-	
+
 	@Override
 	public Image getImage() {
 		return DebugUIPlugin.getImageDescriptorRegistry().get(
 				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 	}
-	
+
 	@Override
 	public void becomesVisible() {
 		// Do nothing, do not want to connect/disconnect from clients
 	}
-	
+
 	@Override
 	public void becomesHidden() {
 		// Do nothing, do not want to connect/disconnect from clients
 	}
-	
+
 	protected void updateRenderingLabel()
 	{
 		Job job = new Job("Update Rendering Label"){ //$NON-NLS-1$
@@ -361,9 +361,9 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 			protected IStatus run(IProgressMonitor monitor) {
 				fLabel = CreateRendering.super.getLabel();
 				fTabLabel = DebugUIMessages.CreateRenderingTab_label ;
-				
+
 				firePropertyChangedEvent(new PropertyChangeEvent(CreateRendering.this, IBasicPropertyConstants.P_TEXT, null, fTabLabel));
-				
+
 				WorkbenchJob wbJob = new WorkbenchJob("Create Rendering Update Label"){ //$NON-NLS-1$
 
 					@Override

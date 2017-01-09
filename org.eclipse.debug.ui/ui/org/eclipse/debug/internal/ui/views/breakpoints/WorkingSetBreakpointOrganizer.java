@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,18 +26,18 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Breakpoint organizers for resource working sets.
- * 
+ *
  * @since 3.1
  */
 public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener {
-    
+
     IWorkingSetManager fWorkingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-    
+
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
      * working sets and fires property change notification.
      */
-    public WorkingSetBreakpointOrganizer() {    
+    public WorkingSetBreakpointOrganizer() {
         fWorkingSetManager.addPropertyChangeListener(this);
     }
 
@@ -83,7 +83,7 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         fWorkingSetManager = null;
         super.dispose();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */

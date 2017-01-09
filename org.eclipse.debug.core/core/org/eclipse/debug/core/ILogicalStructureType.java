@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * Provides a value representing the logical structure of a raw implementation value
  * from a debug model. Logical structures are useful for navigating complex data
  * structures. Logical structure types are contributed via extensions in plug-in XML,
- * and provide a delegate for performing logical value computation. Logical 
+ * and provide a delegate for performing logical value computation. Logical
  * structure types can be retrieved from the <code>DebugPlugin</code>.
  * <p>
  * Following is example plug-in XML to define a logical structure type.
@@ -36,7 +36,7 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * The attributes are specified as follows:
  * <ul>
  * <li>id - unique identifier for this logical structure type</li>
- * <li>class - fully qualified name of class that implements 
+ * <li>class - fully qualified name of class that implements
  *   <code>ILogicalStructureTypeDelegate</code></li>
  * <li>modelIdentifier - identifier of the debug model this logical structure
  *   type is associated with</li>
@@ -56,7 +56,7 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * @see org.eclipse.debug.core.ILogicalStructureProvider
  */
 public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, ILogicalStructureTypeDelegate2 {
-	
+
 	/**
 	 * Returns a simple description of the logical structure provided by this
 	 * structure type.
@@ -64,16 +64,16 @@ public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, IL
 	 * Since 3.1, this method can return <code>null</code> if this logical structure
 	 * type's delegate implements <code>ILogicalStructureTypeDelegate2</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return a simple description of the logical structure provided by this
 	 * structure type, possibly <code>null</code>
 	 */
 	public String getDescription();
-	
+
 	/**
 	 * Returns this logical structure type's unique identifier, as defined
 	 * in plug-in XML.
-	 * 
+	 *
 	 * @return this logical structure type's unique identifier
 	 */
 	public String getId();

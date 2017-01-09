@@ -25,7 +25,7 @@ package org.eclipse.debug.core;
  * Clients may implement this interface.
  * </p>
  * <p>
- * Clients may also implement the extension interface {@link ILaunchesListener2} for 
+ * Clients may also implement the extension interface {@link ILaunchesListener2} for
  * notification of more than one launch being terminated.
  * </p>
  * @see org.eclipse.debug.core.ILaunch
@@ -34,7 +34,7 @@ package org.eclipse.debug.core;
  * @see ILaunchesListener2
  * @since 2.1
  */
-public interface ILaunchesListener {	
+public interface ILaunchesListener {
 	/**
 	 * Notifies this listener that the specified
 	 * launches have been removed.
@@ -45,16 +45,16 @@ public interface ILaunchesListener {
 	/**
 	 * Notifies this listener that the specified launches
 	 * have been added.
-	 * 
+	 *
 	 * @param launches the newly added launch objects
 	 */
-	public void launchesAdded(ILaunch[] launches);	
+	public void launchesAdded(ILaunch[] launches);
 	/**
 	 * Notifies this listener that the specified launches
 	 * have changed. For example, a process or debug target
 	 * has been added to a launch.
-	 * 
+	 *
 	 * @param launches the changed launch object
 	 */
-	public void launchesChanged(ILaunch[] launches);	
+	public void launchesChanged(ILaunch[] launches);
 }

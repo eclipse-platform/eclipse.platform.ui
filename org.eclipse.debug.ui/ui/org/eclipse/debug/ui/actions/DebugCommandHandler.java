@@ -37,17 +37,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Abstract base class for re-targeting command framework handlers, which 
- * delegate execution to {@link org.eclipse.debug.core.commands.IDebugCommandHandler} 
- * handlers. The specific type of <code>IDebugCommandHandler</code> is 
- * determined by the abstract {@link #getCommandType()} method.    
- * 
+ * Abstract base class for re-targeting command framework handlers, which
+ * delegate execution to {@link org.eclipse.debug.core.commands.IDebugCommandHandler}
+ * handlers. The specific type of <code>IDebugCommandHandler</code> is
+ * determined by the abstract {@link #getCommandType()} method.
+ *
  * <p> Note: This class is not an implementation of the <code>IDebugCommandHandler</code>
- * interface, which was somewhat unfortunately named.  <code>IDebugCommandHandler</code> 
- * is an interface that used only by the debugger plug-ins.  This class implements 
- * {@link org.eclipse.core.commands.IHandler} interface and is to be used with the 
+ * interface, which was somewhat unfortunately named.  <code>IDebugCommandHandler</code>
+ * is an interface that used only by the debugger plug-ins.  This class implements
+ * {@link org.eclipse.core.commands.IHandler} interface and is to be used with the
  * platform commands framework. </p>
- * 
+ *
  * <p>
  * Clients may subclass this class.
  * </p>
@@ -59,18 +59,18 @@ import org.eclipse.ui.handlers.HandlerUtil;
 public abstract class DebugCommandHandler extends AbstractHandler {
 
     /**
-     * The DebugCommandService is able to evaluate the command handler 
+     * The DebugCommandService is able to evaluate the command handler
      * enablement in each workbench window separately, however the workbench
      * command framework uses only a single handler instance for all windows.
      * This IEnabledTarget implementation tracks enablement of the command
-     * for a given window.  When the handler enablement is tested, the 
-     * currently active window is used to determine which enabled target 
-     * to use.  
+     * for a given window.  When the handler enablement is tested, the
+     * currently active window is used to determine which enabled target
+     * to use.
      */
     private class EnabledTarget implements IEnabledTarget, IDebugContextListener {
         boolean fEnabled = getInitialEnablement();
         IWorkbenchWindow fWindow;
-        
+
         EnabledTarget(IWorkbenchWindow window) {
             fWindow = window;
 		}
@@ -88,12 +88,12 @@ public abstract class DebugCommandHandler extends AbstractHandler {
                 fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
             }
         }
-        
+
         @Override
 		public void debugContextChanged(DebugContextEvent event) {
             DebugCommandService.getService(fWindow).postUpdateCommand(getCommandType(), this);
         }
-        
+
         void dispose() {
             if (isDisposed()) {
                 return;
@@ -101,26 +101,26 @@ public abstract class DebugCommandHandler extends AbstractHandler {
             getContextService(fWindow).removeDebugContextListener(this);
             fWindow = null;
         }
-        
+
         boolean isDisposed() {
             return fWindow == null;
         }
     }
 
     /**
-     * Window listener is used to make sure that the handler enablement 
+     * Window listener is used to make sure that the handler enablement
      * is updated when the active workbench window is changed.
      */
     private IWindowListener fWindowListener =  new IWindowListener() {
-        
+
         @Override
 		public void windowOpened(IWorkbenchWindow w) {
         }
-    
+
         @Override
 		public void windowDeactivated(IWorkbenchWindow w) {
         }
-    
+
         @Override
 		public void windowClosed(IWorkbenchWindow w) {
             EnabledTarget enabledTarget = fEnabledTargetsMap.get(w);
@@ -128,14 +128,14 @@ public abstract class DebugCommandHandler extends AbstractHandler {
                 enabledTarget.dispose();
             }
         }
-    
+
         @Override
 		public void windowActivated(IWorkbenchWindow w) {
             fCurrentEnabledTarget = fEnabledTargetsMap.get(w);
             fireHandlerChanged(new HandlerEvent(DebugCommandHandler.this, true, false));
         }
     };
-    
+
     /**
      * Map of enabled targets keyed by workbench window.
      */
@@ -146,15 +146,15 @@ public abstract class DebugCommandHandler extends AbstractHandler {
      * workbench window.
      */
     private EnabledTarget fCurrentEnabledTarget = null;
-    
+
     /**
-      * The constructor adds the handler as the 
+      * The constructor adds the handler as the
      */
     public DebugCommandHandler() {
         super();
         PlatformUI.getWorkbench().addWindowListener(fWindowListener);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
      */
@@ -162,9 +162,9 @@ public abstract class DebugCommandHandler extends AbstractHandler {
 	public void setEnabled(Object evaluationContext) {
         // This method is called with the current evaluation context
         // just prior to the isEnabled() being called.  Check the active
-        // window and update the current enabled target based on it 
+        // window and update the current enabled target based on it
         fCurrentEnabledTarget = null;
-        
+
         if (!(evaluationContext instanceof IEvaluationContext)) {
             return;
         }
@@ -175,7 +175,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
             fCurrentEnabledTarget = getEnabledTarget(window);
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
      */
@@ -186,7 +186,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         }
         return fCurrentEnabledTarget.fEnabled;
     }
-    
+
     private EnabledTarget getEnabledTarget(IWorkbenchWindow window) {
         EnabledTarget target = fEnabledTargetsMap.get(window);
         if (target == null) {
@@ -196,7 +196,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         }
         return target;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
      */
@@ -212,42 +212,42 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         if (selection instanceof IStructuredSelection && isEnabled()) {
             IStructuredSelection ss = (IStructuredSelection) selection;
             boolean enabledAfterExecute = execute(window, ss.toArray());
-            
+
             // enable/disable the action according to the command
             fCurrentEnabledTarget.setEnabled(enabledAfterExecute);
         }
 
         return null;
     }
-    
+
     private IDebugContextService getContextService(IWorkbenchWindow window) {
         return DebugUITools.getDebugContextManager().getContextService(window);
     }
-    
+
     /**
      * Executes this action on the given target objects
-     * @param window the window 
+     * @param window the window
      * @param targets the targets to execute this action on
      * @return  if the command stays enabled while the command executes
      */
     private boolean execute(IWorkbenchWindow window, final Object[] targets) {
-        DebugCommandService service = DebugCommandService.getService(window); 
+        DebugCommandService service = DebugCommandService.getService(window);
     	return service.executeCommand(
-    	    getCommandType(), targets, 
+    	    getCommandType(), targets,
             new ICommandParticipant() {
                 @Override
 				public void requestDone(org.eclipse.debug.core.IRequest request) {
                     DebugCommandHandler.this.postExecute(request, targets);
-                }             
+                }
             });
     }
 
     /**
-     * This method is called after the completion of the execution of this 
+     * This method is called after the completion of the execution of this
      * command.  Extending classes may override this method to perform additional
-     * operation after command execution. 
-     * 
-     * @param request The completed request object which was given the the 
+     * operation after command execution.
+     *
+     * @param request The completed request object which was given the the
      * debug command handler.
      * @param targets Objects which were the targets of this action
      */
@@ -256,20 +256,20 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     }
 
     /**
-     * Returns the {@link org.eclipse.debug.core.commands.IDebugCommandHandler} 
+     * Returns the {@link org.eclipse.debug.core.commands.IDebugCommandHandler}
      * command handler that type this action executes.
-     * 
+     *
      * @return command class.
-     * 
+     *
      * @see org.eclipse.debug.core.commands.IDebugCommandHandler
      */
 	abstract protected Class<?> getCommandType();
 
-    
+
     /**
      * Returns whether this action should be enabled when initialized
      * and there is no active debug context.
-     * 
+     *
      * @return false, by default
      */
     protected boolean getInitialEnablement() {

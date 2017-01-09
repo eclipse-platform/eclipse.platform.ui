@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,20 +21,20 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Abstract base class for debug action delegates performing debug commands.
- * 
+ *
  * @since 3.3.
  */
 public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
 	/**
-     *The real action for this delegate 
+     *The real action for this delegate
 	 */
 	private DebugCommandAction fDebugAction;
-    
+
 	protected void setAction(DebugCommandAction action) {
 	    fDebugAction = action;
 	}
-	
+
 	/*
      * (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
@@ -52,7 +52,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
 	public void init(IAction action) {
         fDebugAction.setActionProxy(action);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
@@ -61,7 +61,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
 	public void init(IWorkbenchWindow window) {
         fDebugAction.init(window);
 	}
-    
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -71,7 +71,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
         fDebugAction.run();
 	}
 
-    
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)

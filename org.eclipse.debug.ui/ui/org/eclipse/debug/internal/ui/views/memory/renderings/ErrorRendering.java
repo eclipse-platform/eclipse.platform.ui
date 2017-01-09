@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class ErrorRendering extends AbstractMemoryRendering {
 	private TextViewer fTextViewer;
 	private String fRenderingId;
 	private Throwable fException;
-	
+
 	/**
 	 * @param renderingId - id of rendering that the memory view has failed
 	 * to create.
@@ -44,35 +44,35 @@ public class ErrorRendering extends AbstractMemoryRendering {
 		fRenderingId = renderingId;
 		fException = exception;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public Control createControl(Composite parent) {
-		fTextViewer = new TextViewer(parent, SWT.READ_ONLY);		
+		fTextViewer = new TextViewer(parent, SWT.READ_ONLY);
 		fTextViewer.setDocument(new Document());
 		StyledText styleText = fTextViewer.getTextWidget();
-		
-		styleText.setText("\r\n\r\n" + DebugUIMessages.EmptyViewTab_Unable_to_create + "\n" + getRenderingName() + "\n\n" + DebugUIMessages.ErrorRendering_0 + fException.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
-		
-		
+
+		styleText.setText("\r\n\r\n" + DebugUIMessages.EmptyViewTab_Unable_to_create + "\n" + getRenderingName() + "\n\n" + DebugUIMessages.ErrorRendering_0 + fException.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+
 		return fTextViewer.getControl();
 	}
-	
+
 
 	/**
-	 * 
+	 *
 	 */
 	private String getRenderingName() {
-		
+
 		if (DebugUITools.getMemoryRenderingManager().getRenderingType(fRenderingId)!= null)
 		{
 			String name =
 				DebugUITools.getMemoryRenderingManager()
 				.getRenderingType(fRenderingId)
 				.getLabel();
-			
+
 			return name;
 		}
 		return "Unknown"; //$NON-NLS-1$

@@ -20,7 +20,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Resolves the currently selected resource.
- * 
+ *
  * @since 3.5
  */
 public class SelectedResourceResolver extends ResourceResolver implements IDynamicVariableResolver {

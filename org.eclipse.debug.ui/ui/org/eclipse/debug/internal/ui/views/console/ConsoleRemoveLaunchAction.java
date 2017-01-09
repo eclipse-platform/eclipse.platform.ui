@@ -35,7 +35,7 @@ import org.eclipse.ui.console.IConsoleView;
 public class ConsoleRemoveLaunchAction extends Action implements IViewActionDelegate, IConsoleListener, ILaunchesListener2 {
 
     private ILaunch fLaunch;
-    
+
     // only used when a view action delegate
     private IConsoleView fConsoleView;
 
@@ -49,7 +49,7 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
         ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);
     }
-    
+
     public ConsoleRemoveLaunchAction(ILaunch launch) {
     	this();
         fLaunch = launch;
@@ -82,7 +82,7 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
     @Override
 	public void init(IViewPart view) {
     	if (view instanceof IConsoleView) {
-			fConsoleView = (IConsoleView) view;			
+			fConsoleView = (IConsoleView) view;
 		}
     	update();
     }
@@ -133,7 +133,7 @@ public class ConsoleRemoveLaunchAction extends Action implements IViewActionDele
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
-	
+
 	protected ILaunch getLaunch() {
 		if (fConsoleView == null) {
 			return fLaunch;

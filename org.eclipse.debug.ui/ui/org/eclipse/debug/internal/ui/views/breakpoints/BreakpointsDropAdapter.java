@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -34,7 +34,7 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
 	private Item fTarget = null;
 	private TreePath fPath = null;
 	private BreakpointsView fView;
-	
+
     /**
      * Constructor
      * @param viewer the backing viewer
@@ -87,7 +87,7 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
 		}
 		return fTarget;
 	}
-	
+
     /**
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
      */

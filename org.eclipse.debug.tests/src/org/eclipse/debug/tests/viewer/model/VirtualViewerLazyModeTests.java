@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
  * Tests which verify the operation of the virtual viewer in the lazy mode.
  * Note: the virtual viewer doesn't support lazy mode yet, so this class
  * is really just a big place holder.
- * 
+ *
  *  @since 3.6
  */
 public class VirtualViewerLazyModeTests extends TestCase {
@@ -34,7 +34,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
     Shell fShell;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public VirtualViewerLazyModeTests(String name) {
         super(name);
     }
@@ -50,7 +50,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
@@ -64,7 +64,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
     protected ITreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(display, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -72,7 +72,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
 	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {

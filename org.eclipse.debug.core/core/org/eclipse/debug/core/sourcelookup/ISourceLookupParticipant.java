@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * breakpoint, etc.),  into a source name that can be recognized by a source container
  * (<code>ISourceContainer</code>), to search for source elements. Source containers
  * are generally debug model independent, whereas source lookup participants are
- * debug model specific.  
+ * debug model specific.
  * <p>
  * Clients may implement this interface. An abstract implementation is
  * provided by <code>AbstractSourceLookupParticipant</code>, which clients
@@ -33,13 +33,13 @@ public interface ISourceLookupParticipant {
 
 	/**
 	 * Notification this participant has been added to the specified
-	 * source lookup director. 
+	 * source lookup director.
      *
 	 * @param director the source lookup director that this participant
 	 *  has been added to
 	 */
 	public void init(ISourceLookupDirector director);
-	
+
 	/**
 	 * Returns a collection of source elements corresponding to the given debug
 	 * artifact (for example, a stack frame or breakpoint). Returns an empty
@@ -60,29 +60,29 @@ public interface ISourceLookupParticipant {
 	 * @exception CoreException if an exception occurs while searching for source
 	 */
 	public Object[] findSourceElements(Object object) throws CoreException;
-	
+
 	/**
 	 * Returns the source file name associated with the given debug artifact that
 	 * source needs to be found for, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
 	 * @return the source file name associated with the given debug artifact,
 	 *  or <code>null</code> if none.
-	 * @throws CoreException if unable to determine a source file name 
+	 * @throws CoreException if unable to determine a source file name
 	 */
 	public String getSourceName(Object object) throws CoreException;
 
 	/**
 	 * Disposes this source lookup participant. This method is called when
-	 * the source lookup director associated with this participant is 
+	 * the source lookup director associated with this participant is
 	 * disposed.
 	 */
 	public void dispose();
-	
+
 	/**
 	 * Notification that the source lookup containers in the given source
 	 * lookup director have changed.
-	 * 
+	 *
 	 * @param director source lookup director that is directing this
 	 * participant
 	 */

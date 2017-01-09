@@ -61,31 +61,31 @@ import org.eclipse.ui.part.EditorPart;
  * @since 3.2
  */
 public class CommonSourceNotFoundEditor extends EditorPart implements IReusableEditor  {
-	
+
 	/**
 	 * Text widgets used for this editor
 	 */
-	private Text fText;	
-	
+	private Text fText;
+
 	/**
 	 * Launch listener to handle launch events, or <code>null</code> if none
 	 */
 	private ILaunchesListener2 fLaunchesListener;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
 	@Override
 	public void doSaveAs() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 */
@@ -95,7 +95,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		setInput(input);
 		initialize();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isDirty()
 	 */
@@ -103,7 +103,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	public boolean isDirty() {
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
@@ -111,40 +111,40 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		GridLayout topLayout = new GridLayout();
-		GridData data = new GridData();	
+		GridData data = new GridData();
 		topLayout.numColumns = 1;
 		topLayout.verticalSpacing = 10;
 		parent.setLayout(topLayout);
-		parent.setLayoutData(data);		
+		parent.setLayoutData(data);
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		
+
 		fText = new Text(parent,SWT.READ_ONLY|SWT.WRAP);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.grabExcessHorizontalSpace = true;
         fText.setLayoutData(data);
-		fText.setForeground(JFaceColors.getErrorText(fText.getDisplay()));	
-		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));	
+		fText.setForeground(JFaceColors.getErrorText(fText.getDisplay()));
+		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		if (getEditorInput() != null) {
 			setInput(getEditorInput());
 		}
-		
-		createButtons(parent);		
-		
+
+		createButtons(parent);
+
 		Dialog.applyDialogFont(parent);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
 	}
 
 	/**
 	 * Create buttons to be displayed in this editor
-	 * 
+	 *
 	 * @param parent composite to create the buttons in.
 	 */
 	protected void createButtons(Composite parent) {
@@ -154,7 +154,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		data.grabExcessHorizontalSpace = false;
 		data.grabExcessVerticalSpace = false;
 		button.setLayoutData(data);
-		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2); 
+		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -162,20 +162,20 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			}
 		});
 	}
-	
+
 	/**
 	 * Edits the source lookup path associated with the active debug context.
 	 * After the path is edited, source lookup is performed again and this
 	 * editor is closed.
 	 */
 	protected void editSourceLookupPath(){
-		ISourceLocator locator = null;		
-		ILaunch launch = null;		
+		ISourceLocator locator = null;
+		ILaunch launch = null;
 		IAdaptable selection = DebugUITools.getDebugContext();
 		if(selection == null) {
-			new MessageDialog(getSite().getShell(), 
-					SourceLookupUIMessages.CommonSourceNotFoundEditor_0,	
-					null, 
+			new MessageDialog(getSite().getShell(),
+					SourceLookupUIMessages.CommonSourceNotFoundEditor_0,
+					null,
 					SourceLookupUIMessages.CommonSourceNotFoundEditor_1,
 					MessageDialog.INFORMATION,
 					new String[] {IDialogConstants.OK_LABEL}, 0).open();
@@ -183,26 +183,26 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}
 		if (selection.getAdapter(ILaunch.class) != null ) {
 			launch = selection.getAdapter(ILaunch.class);
-			locator = launch.getSourceLocator();			
-		} 
+			locator = launch.getSourceLocator();
+		}
 		else if (selection.getAdapter(IDebugElement.class) != null ) {
 			launch = selection.getAdapter(IDebugElement.class).getLaunch();
-			locator = launch.getSourceLocator();					
+			locator = launch.getSourceLocator();
 		}
 		else {
 			return;  //should not occur
 		}
 		if (locator == null || !(locator instanceof AbstractSourceLookupDirector)) {
-			return; 
+			return;
 		}
-		final SourceLookupDialog dialog = new SourceLookupDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);		
+		final SourceLookupDialog dialog = new SourceLookupDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);
 		if(dialog.open() == Window.OK) {
 			IWorkbenchPage page = getEditorSite().getPage();
 			SourceLookupManager.getDefault().displaySource(getArtifact(), page, true);
 			closeEditor();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
@@ -212,7 +212,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			fText.setFocus();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
 	 */
@@ -220,22 +220,22 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
 		setPartName(input.getName());
-		if (fText != null) {			
+		if (fText != null) {
 			fText.setText(getText());
 		}
 		firePropertyChange(PROP_INPUT);
 	}
-	
+
 	/**
 	 * Return the text to be displayed in this editor. The text is reset each time
 	 * the editor input is set.
-	 * 
+	 *
 	 * @return the text to be displayed in this editor
 	 */
 	protected String getText() {
 		return getEditorInput().getToolTipText() + "\n"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Closes this editor.
 	 */
@@ -255,11 +255,11 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			}
 		});
 	}
-	
-	
+
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	@Override
@@ -268,11 +268,11 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
 		super.dispose();
 	}
-	
+
 	/**
 	 * Returns the artifact this editor was opened for (i.e. the artifact that source
 	 * was not found for), or <code>null</code>
-	 * 
+	 *
 	 * @return artifact with associated source or <code>null</code>
 	 */
 	protected Object getArtifact() {
@@ -283,7 +283,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Initialize this editor.
 	 * Called after <code>init(IEditorSite, IEditorInput)</code>. By default, a launch
@@ -319,8 +319,8 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 
 			@Override
 			public void launchesChanged(ILaunch[] launches) {
-			}}; 
-			
+			}};
+
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchesListener);
 	}
 }

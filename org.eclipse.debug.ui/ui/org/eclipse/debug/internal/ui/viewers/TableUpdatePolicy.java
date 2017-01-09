@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Default update policy updates a viewer based on model deltas.
- * 
+ *
  * @since 3.2
  */
 public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy implements IModelChangedListener {
@@ -66,7 +66,7 @@ public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.Abs
             }
             if ((flags & IModelDelta.ADDED) != 0) {
                 handleAdd(node);
-            } 
+            }
             if ((flags & IModelDelta.REMOVED) != 0) {
                 handleRemove(node);
             }

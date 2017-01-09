@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.jface.action.IAction;
- 
+
 /**
  * Removes all terminated/detached launches from the
  * active debug view.
@@ -53,9 +53,9 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 		if (!removed.isEmpty()) {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			manager.removeLaunches(removed.toArray(new ILaunch[removed.size()]));
-		}				
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
 	 */
@@ -63,7 +63,7 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	protected void initialize() {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#dispose()
 	 */

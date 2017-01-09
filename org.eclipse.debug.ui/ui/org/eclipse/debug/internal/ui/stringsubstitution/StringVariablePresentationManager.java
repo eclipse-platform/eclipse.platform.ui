@@ -25,35 +25,35 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Manages argument selectors (choosers) for string variables.
- * 
+ *
  * @since 3.0
  */
 public class StringVariablePresentationManager {
-	
+
 	/**
 	 * String variable presentation extension point identifier
 	 * (value <code>"stringVariablePresentations"</code>).
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS = "stringVariablePresentations"; //$NON-NLS-1$
-	
+
 	// default manager
 	private static StringVariablePresentationManager fgManager;
-	
+
 	// extension point attributes
 	public static final String ATTR_NAME = "variableName"; //$NON-NLS-1$
 	public static final String ATTR_ARGUMENT_SELECTOR = "argumentSelector"; //$NON-NLS-1$
-	
+
 	/**
 	 * Table of configuration elements for variable presentations,
 	 * keyed by variable name.
 	 */
 	private Map<String, IConfigurationElement> fConfigurations;
-	
+
 	/**
 	 * Returns the singleton string variable presentation manager.
-	 * 
+	 *
 	 * @return the singleton string variable presentation manager
 	 */
 	public static StringVariablePresentationManager getDefault() {
@@ -62,11 +62,11 @@ public class StringVariablePresentationManager {
 		}
 		return fgManager;
 	}
-	
+
 	/**
 	 * Returns an argument selector contributed for the given
 	 * variable, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param variable string substitution variable
 	 * @return argument selector or <code>null</code>
 	 */
@@ -81,7 +81,7 @@ public class StringVariablePresentationManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Constructs the manager, loading extensions.
 	 */
@@ -90,7 +90,7 @@ public class StringVariablePresentationManager {
 	}
 
 	/**
-	 * Load extensions 
+	 * Load extensions
 	 */
 	private void initialize() {
 		fConfigurations = new HashMap<String, IConfigurationElement>();
@@ -104,8 +104,8 @@ public class StringVariablePresentationManager {
 				continue;
 			}
 			fConfigurations.put(name, element);
-		}		
+		}
 	}
-	
+
 
 }

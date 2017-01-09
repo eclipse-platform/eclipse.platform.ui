@@ -19,11 +19,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Resume action.
- * 
+ *
  * @since 3.3
  */
 public class ResumeCommandAction extends DebugCommandAction{
-	
+
 	public ResumeCommandAction() {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.Resume"); //$NON-NLS-1$
 	}

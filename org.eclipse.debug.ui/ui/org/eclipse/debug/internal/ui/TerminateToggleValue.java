@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtensio
  * Class stores the data for shortcut and if Shift was pressed with shortcut
  * This is used to store that data for selected selection and later used at the
  * launching of the shortcut
- * 
+ *
  * @since 3.12
  */
 public class TerminateToggleValue {

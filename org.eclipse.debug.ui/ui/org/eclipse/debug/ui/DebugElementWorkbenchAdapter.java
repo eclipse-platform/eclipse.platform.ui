@@ -33,7 +33,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  */
 @Deprecated
 public abstract class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Util class for Memory View
- * 
+ *
  * @since 3.0
  */
 public class MemoryViewUtil {
@@ -106,7 +106,7 @@ public class MemoryViewUtil {
 
 	/**
 	 * Helper function to open an error dialog.
-	 * 
+	 *
 	 * @param title
 	 * @param message
 	 * @param e
@@ -143,7 +143,7 @@ public class MemoryViewUtil {
 	/**
 	 * Checks to see if the event is valid for activating cell editing in a view
 	 * tab
-	 * 
+	 *
 	 * @param event
 	 * @return true if the edit event is valid for activating the cell editor
 	 */
@@ -175,14 +175,14 @@ public class MemoryViewUtil {
 
 	/**
 	 * Return the memory block retrieval of the given object
-	 * 
+	 *
 	 * @param object
 	 * @return the memory block retrieval of the given object or
 	 *         <code>null</code> if no memory block retrieval can be found
-	 * 
+	 *
 	 *         Returning null for the memory block retrieval will result in
 	 *         errors in operations that follow.
-	 * 
+	 *
 	 *         Non-standard debug models must provide a memory block retrieval
 	 *         via <code>getAdapter(IMemoryBlockRetrieval.class</code>
 	 */

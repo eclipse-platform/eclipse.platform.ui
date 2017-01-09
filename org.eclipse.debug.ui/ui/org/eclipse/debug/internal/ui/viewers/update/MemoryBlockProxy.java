@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mikhail Khodjaiants - Bug 383687 - Memory view is not updated when using Platform renderings
@@ -20,7 +20,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.Viewer;
 
 public class MemoryBlockProxy extends EventHandlerModelProxy  {
-	
+
 	private IMemoryBlock fMemoryBlock;
 	private DebugEventHandler fDebugEventHandler = new DebugEventHandler(this)  {
 
@@ -28,7 +28,7 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 		protected boolean handlesEvent(DebugEvent event) {
 			if (event.getKind() == DebugEvent.CHANGE && event.getSource() == fMemoryBlock)
 				return true;
-			
+
 			Object src = event.getSource();
 			if (src instanceof IDebugElement)
 			{
@@ -41,7 +41,7 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 		@Override
 		protected void handleChange(DebugEvent event) {
 			if (event.getDetail() == DebugEvent.STATE)
-			{	
+			{
 				ModelDelta delta = new ModelDelta(fMemoryBlock, IModelDelta.STATE);
 				fireModelChanged(delta);
 			}
@@ -62,7 +62,7 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 		public synchronized void dispose() {
 			super.dispose();
 		}};
-	
+
 	public MemoryBlockProxy(IMemoryBlock mb)
 	{
 		fMemoryBlock = mb;

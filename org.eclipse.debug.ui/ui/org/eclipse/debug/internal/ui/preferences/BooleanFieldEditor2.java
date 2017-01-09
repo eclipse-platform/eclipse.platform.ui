@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
- 
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
  * button.
  */
 public class BooleanFieldEditor2 extends BooleanFieldEditor {
-	
+
 	private  Button fChangeControl;
 
 	/**
@@ -41,7 +41,7 @@ public class BooleanFieldEditor2 extends BooleanFieldEditor {
 	public Button getChangeControl(Composite parent) {
 		if (fChangeControl == null) {
 			fChangeControl = super.getChangeControl(parent);
-		} 
+		}
 		return fChangeControl;
 	}
 

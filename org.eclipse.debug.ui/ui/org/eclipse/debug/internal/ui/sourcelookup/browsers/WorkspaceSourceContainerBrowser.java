@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,21 +18,21 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * The browser for creating workspace source containers.
- * 
+ *
  * @since 3.0
  */
 public class WorkspaceSourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ISourceContainer[] containers = new ISourceContainer[1];
-		
+
 		containers[0] = new WorkspaceSourceContainer();
-		
-		return containers;		
+
+		return containers;
 	}
-	
+
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,11 +23,11 @@ import org.eclipse.swt.widgets.Composite;
  * by SELECT, and the added element is an memory blok, then the udpate policy
  * asks the Memory View if the it is currently pinned to a memory block. If the
  * view is currently pinned, then the SELECT delta is ignored.
- * 
+ *
  * If the ADDED delta and SELECT delta are recieved in separate nodes, then the
  * delta will be handled as-is and would not take the pinning state of the
  * memory view into account.
- * 
+ *
  */
 public class MemoryViewTreeViewer extends TreeModelViewer {
 

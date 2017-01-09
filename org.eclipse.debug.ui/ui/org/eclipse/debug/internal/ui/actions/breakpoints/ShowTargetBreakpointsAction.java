@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * This class implements the show target breakpoint action.
- * 
+ *
  * @since 3.6
  */
 public class ShowTargetBreakpointsAction extends Action {
@@ -29,24 +29,24 @@ public class ShowTargetBreakpointsAction extends Action {
 	 * Breakpoints view
 	 */
 	BreakpointsView fView;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param view the breakpoints view
 	 */
 	public ShowTargetBreakpointsAction(BreakpointsView view) {
 		super();
-		
+
 		fView = view;
-		
-		setText(ActionMessages.ShowSupportedBreakpointsAction_Show_For_Selected); 
-		setToolTipText(ActionMessages.ShowSupportedBreakpointsAction_tooltip); 
-		
+
+		setText(ActionMessages.ShowSupportedBreakpointsAction_Show_For_Selected);
+		setToolTipText(ActionMessages.ShowSupportedBreakpointsAction_tooltip);
+
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
 		setChecked(false);
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ShowSupportedBreakpointsAction"); //$NON-NLS-1$
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION);
 	}
 

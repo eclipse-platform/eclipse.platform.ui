@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -30,12 +30,12 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.handlers.CollapseAllHandler;
 
 /**
- * 
+ *
  */
 public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActionDelegate2, IViewerUpdateListener, IModelChangedListener  {
-	
+
 	private AbstractDebugView fView;
-	
+
 	private IAction fAction;
 
 	/* (non-Javadoc)
@@ -48,7 +48,7 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
         if (viewer != null) {
             viewer.addViewerUpdateListener(this);
             viewer.addModelChangedListener(this);
-        }		
+        }
 	}
 
 	/* (non-Javadoc)
@@ -106,25 +106,25 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
     @Override
 	public void updateStarted(IViewerUpdate update) {
     }
-    
+
     @Override
 	public void updateComplete(IViewerUpdate update) {
           if (!update.isCanceled()) {
               if (TreePath.EMPTY.equals(update.getElementPath())) {
                   update();
               }
-          }        
+          }
     }
-    
+
     private void update() {
         IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
         if (viewer != null && fAction != null) {
             fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
         }
     }
-    
+
     @Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         update();
-    }	
+    }
 }

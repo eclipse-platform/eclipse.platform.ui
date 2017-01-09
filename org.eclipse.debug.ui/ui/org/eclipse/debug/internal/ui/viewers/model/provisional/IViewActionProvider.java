@@ -14,21 +14,21 @@ import org.eclipse.jface.action.IAction;
 
 
 /**
- * Action provider allows a debug model to override the standard actions in the 
- * variables view.  The client should return this provider as an adapter to the 
+ * Action provider allows a debug model to override the standard actions in the
+ * variables view.  The client should return this provider as an adapter to the
  * input element of the variables view.
- * 
+ *
  * @since 3.8
  */
 public interface IViewActionProvider {
 	/**
 	 * Get action for a given presentation context and action id.  Implementation
 	 * should return an action implementation appropriate for given view and action ID.
-	 * The implementation may register itself as listener to presentation context 
+	 * The implementation may register itself as listener to presentation context
 	 * to determine when to dispose the returned action.
 	 * @param presentationContext presentation context
 	 * @param actionID action id
-	 * @return action or null 
+	 * @return action or null
 	 */
 	public IAction getAction(IPresentationContext presentationContext, String actionID);
 }

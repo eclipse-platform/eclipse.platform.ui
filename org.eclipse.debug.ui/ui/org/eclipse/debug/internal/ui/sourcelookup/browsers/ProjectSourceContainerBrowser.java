@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,11 +30,11 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * The browser for creating project source containers.
- * 
+ *
  * @since 3.0
  */
 public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell,org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -44,19 +44,19 @@ public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowse
 		IStructuredContentProvider contentProvider=new BasicContainerContentProvider();
 		ILabelProvider labelProvider = new WorkbenchLabelProvider();
 		Dialog dialog = new ProjectSourceContainerDialog(shell,input, contentProvider, labelProvider,
-				SourceLookupUIMessages.projectSelection_chooseLabel); 
-		if(dialog.open() == Window.OK){		
+				SourceLookupUIMessages.projectSelection_chooseLabel);
+		if(dialog.open() == Window.OK){
 			Object[] elements= ((ListSelectionDialog)dialog).getResult();
 			ArrayList<ISourceContainer> res = new ArrayList<ISourceContainer>();
 			for (int i= 0; i < elements.length; i++) {
 				if(!(elements[i] instanceof IProject)) {
 					continue;
-				}				
-				res.add(new ProjectSourceContainer((IProject)elements[i], ((ProjectSourceContainerDialog)dialog).isAddRequiredProjects()));				
+				}
+				res.add(new ProjectSourceContainer((IProject)elements[i], ((ProjectSourceContainerDialog)dialog).isAddRequiredProjects()));
 			}
-			return res.toArray(new ISourceContainer[res.size()]);	
-		}	
+			return res.toArray(new ISourceContainer[res.size()]);
+		}
 		return new ISourceContainer[0];
 	}
-	
+
 }

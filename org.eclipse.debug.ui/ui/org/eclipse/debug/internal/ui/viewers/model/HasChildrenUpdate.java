@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Wind River Systems - Fix for viewer state save/restore [188704]
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
@@ -26,13 +26,13 @@ import org.eclipse.jface.viewers.TreePath;
 class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdate {
 
 	private boolean fHasChildren = false;
-	
+
 	private List<ViewerUpdateMonitor> fBatchedRequests = null;
-	
+
     /**
      * Constructs a request to update an element
-     * 
-     * @param provider the content provider 
+     *
+     * @param provider the content provider
      * @param viewerInput the current input
      * @param elementPath the path to the element being update
      * @param element the element
@@ -75,7 +75,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		buf.append(getElement());
 		return buf.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
 	 */
@@ -137,8 +137,8 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 	@Override
 	int getPriority() {
 		return 1;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
 	 */
@@ -149,17 +149,17 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 			return path.getParentPath();
 		}
 		return path;
-	}		
-	
+	}
+
 	boolean hasChildren() {
 	    return fHasChildren;
 	}
-	
+
     @Override
 	protected boolean doEquals(ViewerUpdateMonitor update) {
-        return 
-            update instanceof HasChildrenUpdate && 
-            getViewerInput().equals(update.getViewerInput()) && 
+        return
+            update instanceof HasChildrenUpdate &&
+            getViewerInput().equals(update.getViewerInput()) &&
             getElementPath().equals(update.getElementPath());
     }
 

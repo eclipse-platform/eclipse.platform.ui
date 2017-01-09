@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,22 +23,22 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Does source lookup for the selected stack frame again.
- * 
+ *
  * @since 3.0
  */
 public class LookupSourceAction extends SelectionListenerAction {
-	
+
 	private ISourceLookupDirector director = null;
 	private LaunchView fView = null;
 	private IStackFrame frame = null;
-	
+
 	public LookupSourceAction(LaunchView view) {
-		super(SourceLookupUIMessages.LookupSourceAction_0); 
+		super(SourceLookupUIMessages.LookupSourceAction_0);
 		setEnabled(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.LOOKUP_SOURCE_ACTION);
 		fView = view;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * This class provides a mechanism to prompt users in the UI thread from debug.core in the case where
  * a launch delegate has gone missing and a new choice needs to be made in the launch dialog.
- * 
+ *
  * @since 3.3
  */
 public class LaunchDelegateNotAvailableHandler implements IStatusHandler {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,10 +19,10 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * @see IModelDelta
  */
 public interface IModelChangedListener {
-	
+
 	/**
 	 * Notification a model has changed as described by the given delta.
-	 * 
+	 *
 	 * @param delta model delta
 	 * @param proxy proxy that created the delta
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,24 +28,24 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
- * The action for editing the source lookup path. Brings up the 
+ * The action for editing the source lookup path. Brings up the
  * EditSourceLookupPathDialog.
- * 
+ *
  * @since 3.0
  */
 public class EditSourceLookupPathAction extends SelectionListenerAction {
-	
+
 	private ISourceLookupDirector director = null;
 	private LaunchView fView = null;
-	
+
 	public EditSourceLookupPathAction(LaunchView view) {
-		super(SourceLookupUIMessages.EditSourceLookupPathAction_0); 
+		super(SourceLookupUIMessages.EditSourceLookupPathAction_0);
 		setEnabled(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU));
 		fView = view;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -72,7 +72,7 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 	 */
 	@Override
 	public void run() {
-		Shell shell = DebugUIPlugin.getShell();		
+		Shell shell = DebugUIPlugin.getShell();
 		SourceLookupDialog dialog = new SourceLookupDialog(shell, director);
 		if (dialog.open() == Window.OK) {
 			ISelection selection = fView.getViewer().getSelection();

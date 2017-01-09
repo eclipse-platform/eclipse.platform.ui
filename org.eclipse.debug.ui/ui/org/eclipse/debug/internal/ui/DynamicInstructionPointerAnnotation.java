@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
- 
+
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jface.text.source.Annotation;
 
@@ -24,9 +24,9 @@ public class DynamicInstructionPointerAnnotation extends Annotation {
 	 * instances of this class can be distinguished by equals().
 	 */
 	private IStackFrame fStackFrame;
-		
+
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @param markerAnnotationSpecificationId
 	 * @param text
@@ -35,18 +35,18 @@ public class DynamicInstructionPointerAnnotation extends Annotation {
 		super(markerAnnotationSpecificationId, false, text);
 		fStackFrame = frame;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof DynamicInstructionPointerAnnotation) {
-			return getStackFrame().equals(((DynamicInstructionPointerAnnotation)other).getStackFrame());			
+			return getStackFrame().equals(((DynamicInstructionPointerAnnotation)other).getStackFrame());
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -57,7 +57,7 @@ public class DynamicInstructionPointerAnnotation extends Annotation {
 
 	/**
 	 * Returns the stack frame associated with this annotation
-	 * 
+	 *
 	 * @return the stack frame associated with this annotation
 	 */
 	private IStackFrame getStackFrame() {

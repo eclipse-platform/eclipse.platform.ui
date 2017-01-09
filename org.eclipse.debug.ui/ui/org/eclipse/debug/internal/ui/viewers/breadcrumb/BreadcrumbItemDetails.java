@@ -368,7 +368,7 @@ class BreadcrumbItemDetails {
 
 			private void openDropDown() {
 			    Shell shell = fParent.getDropDownShell();
-			    if (shell == null) { 
+			    if (shell == null) {
 	                fParent.openDropDownMenu();
 	                shell = fParent.getDropDownShell();
 			    }
@@ -417,7 +417,7 @@ class BreadcrumbItemDetails {
 				viewer.selectItem(fParent);
 				if (shell == null && e.button == 1 && e.stateMask == 0) {
 					fParent.getViewer().fireDoubleClick();
-				} 
+				}
 			}
 
 			@Override

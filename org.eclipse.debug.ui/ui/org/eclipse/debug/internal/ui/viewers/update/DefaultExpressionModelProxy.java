@@ -19,9 +19,9 @@ import org.eclipse.debug.core.model.IVariable;
  *
  */
 public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
-	
+
 	private IExpression fExpression;
-	
+
 	public DefaultExpressionModelProxy(IExpression expression) {
 		fExpression = expression;
 	}
@@ -34,7 +34,7 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 		super.dispose();
 		fExpression = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
@@ -58,11 +58,11 @@ public class DefaultExpressionModelProxy extends EventHandlerModelProxy {
 
 	/**
 	 * Returns this model's expression, or <code>null</code> if disposed.
-	 * 
+	 *
 	 * @return expression or <code>null</code>
 	 */
 	protected IExpression getExpression() {
 		return fExpression;
 	}
-	
+
 }

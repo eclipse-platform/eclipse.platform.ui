@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,11 +28,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class provides a dialog to present the user with a list of of viable launch options in the event 
+ * This class provides a dialog to present the user with a list of of viable launch options in the event
  * the plug-in that provides either a launch option or a contributed launch delegate is no longer available.
- * The user can select one of the launch mode/option configuration from this dialog and repair the option 
+ * The user can select one of the launch mode/option configuration from this dialog and repair the option
  * configuration state of the the current launch configuration
- * 
+ *
  *  @since 3.3
  */
 public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
@@ -62,15 +62,15 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 		@Override
 		public void removeListener(ILabelProviderListener listener) {}
 	}
-	
+
 	private List<Set<String>> fValidModes = null;
-	
+
 	/**
 	 * Constructor
 	 * @param parentShell the parent shell
 	 * @param mode the current mode context
 	 * @param configuration the current launch configuration context
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public SelectLaunchModesDialog(Shell parentShell, String mode, ILaunchConfiguration configuration) throws CoreException {
@@ -85,7 +85,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
@@ -101,7 +101,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	protected IBaseLabelProvider getLabelProvider() {
 		return new OptionsLabelProvider();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */

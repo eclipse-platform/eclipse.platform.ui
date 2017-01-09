@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,21 +22,21 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Abstract label provider for an ITableMemoryViewTab
- * 
+ *
  * @since 3.0
  */
 abstract public class AbstractTableRenderingLabelProvider extends LabelProvider implements ITableLabelProvider{
 
 	protected AbstractTableRendering fRendering;
-	
+
 	/**
-	 * 
+	 *
 	 * Constructor for MemoryViewLabelProvider
 	 */
 	public AbstractTableRenderingLabelProvider() {
 		super();
 	}
-	
+
 	public AbstractTableRenderingLabelProvider(AbstractTableRendering rendering){
 		fRendering = rendering;
 	}
@@ -55,28 +55,28 @@ abstract public class AbstractTableRenderingLabelProvider extends LabelProvider 
 	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		
+
 		if (columnIndex == 0)
 		{
-			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);	
+			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);
 		}
 		else if (columnIndex > (fRendering.getBytesPerLine()/fRendering.getBytesPerColumn()))
 		{
-			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);	
+			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);
 		}
 		else
-		{	
+		{
 			// if memory in the range has changed, return delta icon
 			int startOffset = (columnIndex-1)*fRendering.getBytesPerColumn();
 			int endOffset = startOffset + fRendering.getBytesPerColumn() - 1;
 			if (((TableRenderingLine)element).isRangeChange(startOffset, endOffset)) {
 				return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY_CHANGED);
 			}
-			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);	
+			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);
 		}
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
@@ -87,7 +87,7 @@ abstract public class AbstractTableRenderingLabelProvider extends LabelProvider 
 		if (columnIndex == 0)
 		{
 			columnLabel = ((TableRenderingLine)element).getAddress();
-			
+
 			// consult model presentation for address presentation
 		}
 		else if (columnIndex > (fRendering.getBytesPerLine()/fRendering.getBytesPerColumn()))
@@ -95,14 +95,14 @@ abstract public class AbstractTableRenderingLabelProvider extends LabelProvider 
 			columnLabel = " "; //$NON-NLS-1$
 		}
 		else
-		{	
+		{
 			int start = (columnIndex-1)*fRendering.getBytesPerColumn();
 			int end = start + fRendering.getBytesPerColumn();
 
 			MemoryByte[] bytes = ((TableRenderingLine)element).getBytes(start, end);
 			BigInteger address = new BigInteger(((TableRenderingLine)element).getAddress(), 16);
-			address = address.add(BigInteger.valueOf(start)); 
-			
+			address = address.add(BigInteger.valueOf(start));
+
 			columnLabel = fRendering.getString(fRendering.getRenderingId(), address, bytes);
 		}
 		return columnLabel;

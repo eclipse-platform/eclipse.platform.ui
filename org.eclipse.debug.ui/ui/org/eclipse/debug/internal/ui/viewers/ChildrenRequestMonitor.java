@@ -18,7 +18,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor
 
 /**
  * Implementation for <code>IChildrenRequestMonitor</code>. Collects
- * children from an asynchronous tree content adapter.  
+ * children from an asynchronous tree content adapter.
  * <p>
  * Not intended to be subclassed or instantiated by clients. For use
  * speficially with <code>AsynchronousTreeViewer</code>.
@@ -26,9 +26,9 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor
  * @since 3.2
  */
 class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChildrenRequestMonitor {
-    
+
     private boolean fFirstUpdate = true;
-    
+
 	/**
 	 * Collection of children retrieved
 	 */
@@ -37,14 +37,14 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
     /**
      * Constucts a monitor to retrieve and update the children of the given
      * node.
-     * 
+     *
      * @param parent parent to retrieve children for
      * @param model model being updated
      */
     ChildrenRequestMonitor(ModelNode parent, AsynchronousModel model) {
         super(parent, model);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChild(java.lang.Object)
      */
@@ -53,7 +53,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
         synchronized (fChildren) {
             fChildren.add(child);
         }
-        
+
         scheduleViewerUpdate(250);
     }
 
@@ -67,10 +67,10 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
                 fChildren.add(children[i]);
             }
         }
-        
+
         scheduleViewerUpdate(0);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
      */
@@ -91,7 +91,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
             } else {
 				for (Iterator<Object> iter = fChildren.iterator(); iter.hasNext();) {
                     Object child = iter.next();
-                    getModel().add(getNode(), child);    
+                    getModel().add(getNode(), child);
                 }
             }
             fChildren.clear();

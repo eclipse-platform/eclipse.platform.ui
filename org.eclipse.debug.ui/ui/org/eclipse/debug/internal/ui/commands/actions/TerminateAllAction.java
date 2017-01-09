@@ -27,16 +27,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Terminates all launches.
- * 
+ *
  * @since 3.3
  */
 public class TerminateAllAction extends DebugCommandAction implements ILaunchesListener2 {
-		
+
 	@Override
 	protected ISelection getContext() {
 		return new StructuredSelection(getLaunchManager().getLaunches());
 	}
-	
+
 	@Override
 	public void dispose() {
 		getLaunchManager().removeLaunchListener(this);
@@ -137,7 +137,7 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 
 	/**
 	 * Initializes this action for the given workbench window.
-	 * 
+	 *
 	 * @param window the workbench window that this action is for
 	 */
 	@Override

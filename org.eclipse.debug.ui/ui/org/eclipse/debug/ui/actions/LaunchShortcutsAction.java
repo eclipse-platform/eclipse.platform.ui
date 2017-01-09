@@ -57,42 +57,42 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * selection. This action is similar to <code>ContextualLaunchAction</code>
  * except this action is an <code>IAction</code> rather than an action
  * delegate.
- * <p> 
+ * <p>
  * This action appears in the main Run menu
- * </p> 
+ * </p>
  * <p>
  * Clients may subclass this class.
  * </p>
  * @since 3.1
  */
 public class LaunchShortcutsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
-	
+
 	/**
-	 * Cascading menu 
+	 * Cascading menu
 	 */
 	private Menu fCreatedMenu;
-	
+
 	/**
 	 * Launch group
 	 */
 	private ILaunchGroup fGroup;
-	
+
 	/**
 	 * Whether this actions enablement has been initialized
 	 */
 	private boolean fInitialized = false;
-		
+
 	/**
 	 * Creates a cascading menu action to populate with shortcuts in the given
 	 * launch group.
-	 *  
+	 *
 	 * @param launchGroupIdentifier launch group identifier
 	 */
 	public LaunchShortcutsAction(String launchGroupIdentifier) {
 		super();
 		fGroup = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
 		ILaunchMode mode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode());
-		setText(mode.getLaunchAsLabel()); 
+		setText(mode.getLaunchAsLabel());
 		setMenuCreator(this);
 		setEnabled(existsConfigTypesForMode());
 	}
@@ -104,7 +104,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	public void run() {
 		//do nothing, this action just creates a cascading menu.
 	}
-	
+
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
@@ -114,7 +114,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			fCreatedMenu.dispose();
 		}
 	}
-	
+
 	/**
 	 * @see IMenuCreator#getMenu(Control)
 	 */
@@ -122,7 +122,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	public Menu getMenu(Control parent) {
 		return null;
 	}
-	
+
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
@@ -135,7 +135,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		initMenu();
 		return fCreatedMenu;
 	}
-	
+
 	/**
 	 * @return an Evaluation context with default variable = selection
 	 */
@@ -153,10 +153,10 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", list); //$NON-NLS-1$
 		return context;
-	}	
-	
+	}
+
 	/**
-	 * Fills the fly-out menu 
+	 * Fills the fly-out menu
 	 */
 	private void fillMenu() {
 		IEvaluationContext context = createContext();
@@ -200,13 +200,13 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		}
 		if (accelerator == 1) {
 			// No shortcuts added. Add "none available" action.
-			IAction action= new Action(ActionMessages.LaunchShortcutsAction_1) {}; 
+			IAction action= new Action(ActionMessages.LaunchShortcutsAction_1) {};
 			action.setEnabled(false);
 			ActionContributionItem item= new ActionContributionItem(action);
 			item.fill(fCreatedMenu, -1);
 		}
 	}
-	
+
 	/**
 	 * Returns the first element of the current selection
 	 * @param context the current evaluation context
@@ -217,7 +217,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		List<?> list = (List<?>) context.getVariable("selection"); //$NON-NLS-1$
 		return (list.isEmpty() ? null : list.get(0));
 	}
-	
+
 	/**
 	 * Add the shortcut to the context menu's launch sub-menu.
 	 * @param mode the launch mode identifier
@@ -246,7 +246,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(menu, -1);
 	}
-	
+
 	/**
 	 * Evaluate the enablement logic in the contextualLaunch
 	 * element description. A true result means that we should
@@ -260,7 +260,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		Expression expr = ext.getContextualLaunchEnablementExpression();
 		return ext.evalEnablementExpression(context, expr);
 	}
-	
+
 	/**
 	 * Creates the menu for the action
 	 */
@@ -279,16 +279,16 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			}
 		});
 	}
-		
+
 	/**
-	 * Returns the mode of this action - run or debug 
-	 * 
+	 * Returns the mode of this action - run or debug
+	 *
 	 * @return the mode of this action - run or debug
 	 */
 	protected String getMode() {
 		return fGroup.getMode();
 	}
-	
+
 	/**
 	 * Returns the launch configuration manager.
 	 *
@@ -296,8 +296,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 */
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-	}	
-	
+	}
+
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -326,7 +326,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * Return whether there are any registered launch configuration types for
 	 * the mode of this action.
-	 * 
+	 *
 	 * @return whether there are any registered launch configuration types for
 	 * the mode of this action
 	 */
@@ -337,7 +337,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			if (configType.supportsMode(getMode())) {
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
 }

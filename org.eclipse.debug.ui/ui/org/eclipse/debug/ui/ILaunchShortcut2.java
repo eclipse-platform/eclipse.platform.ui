@@ -18,13 +18,13 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * <p>
- * An extension to a standard launch shortcut ({@link ILaunchShortcut}) allowing 
+ * An extension to a standard launch shortcut ({@link ILaunchShortcut}) allowing
  * launch shortcuts to specify how selections and editors should be launched.
  * </p>
  * <p>
  * To launch a selection (or active editor), the debug platform derives a resource associated
  * with the selection (or active editor), and then resolves the most recently launched configuration
- * associated with that resource. This interface allows a launch shortcut to override the 
+ * associated with that resource. This interface allows a launch shortcut to override the
  * framework's resource and launch configuration resolution for selections (and active editors).
  * </p>
  * <p>
@@ -43,48 +43,48 @@ public interface ILaunchShortcut2 extends ILaunchShortcut {
 	 * Returns an array of  <code>ILaunchConfiguration</code>s that apply to the specified
 	 * selection, an empty collection if one could be created but does not exist, or
 	 * <code>null</code> if default resource mappings should be used to derive associated
-	 * configurations.  
-	 * 
+	 * configurations.
+	 *
 	 * @param selection the current selection
-	 * @return an array of existing <code>ILaunchConfiguration</code>s that could be 
+	 * @return an array of existing <code>ILaunchConfiguration</code>s that could be
 	 *  used to launch the given selection, an empty array if one could be created
 	 *  but does not exist, or <code>null</code> if default resource mappings should
 	 *  be used to derive associated configurations
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection);
-	
+
 	/**
-	 * Returns an array of existing <code>ILaunchConfiguration</code>s that could be 
-	 * used to launch the given editor part, an empty array if one 
+	 * Returns an array of existing <code>ILaunchConfiguration</code>s that could be
+	 * used to launch the given editor part, an empty array if one
 	 * could be created but does not exist, or <code>null</code> if default resource
-	 * mappings should be used to derive associated configurations 
-	 * 
+	 * mappings should be used to derive associated configurations
+	 *
 	 * @param editorpart the current selection
-	 * @return an array of existing <code>ILaunchConfiguration</code>s that could be 
-	 *  used to launch the given editor part/editor input, an empty array if one 
+	 * @return an array of existing <code>ILaunchConfiguration</code>s that could be
+	 *  used to launch the given editor part/editor input, an empty array if one
 	 *  could be created but does not exist, or <code>null</code> if default resource
 	 *  mappings should be used to derive associated configurations
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart);
-	
+
 	/**
 	 * Returns an <code>IResource</code> that maps to the given selection for launch
 	 * purposes, or <code>null</code> if none. The resource is used to resolve a configuration
 	 * to launch if this shortcut does not provide specific launch configurations to launch
-	 * for the selection (via {@link #getLaunchConfigurations(ISelection)}. 
-	 *  
+	 * for the selection (via {@link #getLaunchConfigurations(ISelection)}.
+	 *
 	 * @param selection the current selection
 	 * @return an <code>IResource</code> that maps to the given selection for launch
 	 *  purposes or <code>null</code> if none
 	 */
 	public IResource getLaunchableResource(ISelection selection);
-	
+
 	/**
 	 * Returns an <code>IResource</code> that maps to given editor part for launch
 	 * purposes, or <code>null</code> if none. The resource is used to resolve a configuration
 	 * to launch if this shortcut does not provide specific launch configurations to launch
 	 * for the editor (via {@link #getLaunchConfigurations(IEditorPart)}.
-	 * 
+	 *
 	 * @param editorpart the current editor part
 	 * @return an <code>IResource</code> that maps to given editor part for launch
 	 *  purposes, or <code>null</code> if none

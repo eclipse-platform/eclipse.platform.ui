@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Freescale - Teodor Madan - Show IP for active frame only (Bug 49730)
@@ -73,14 +73,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Utility methods for looking up and displaying source.
- * 
+ *
  * @since 3.1
  */
 public class SourceLookupFacility implements IPageListener, IPartListener2, IPropertyChangeListener, IDebugEventSetListener {
 
 	/**
 	 * Provides an LRU cache with a given max size
-	 * 
+	 *
 	 * @since 3.10
 	 */
 	static class LRU extends HashMap<Object, SourceLookupResult> {
@@ -91,7 +91,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param size The desired size
 		 */
 		LRU(int size) {
@@ -122,7 +122,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 
 		/**
 		 * Shuffles the entry stack and removes mapped results as needed
-		 * 
+		 *
 		 * @param key
 		 */
 		void shuffle(Object key) {
@@ -158,7 +158,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	/**
 	 * Contains a mapping of artifacts to the source element that was computed
 	 * for them.
-	 * 
+	 *
 	 * @since 3.10
 	 */
 	private static LRU fLookupResults = new LRU(10);
@@ -178,7 +178,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 */
 	/**
 	 * Returns the source lookup facility
-	 * 
+	 *
 	 * @return
 	 */
 	public static SourceLookupFacility getDefault() {
@@ -306,7 +306,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 
 	/**
 	 * Performs source lookup for the given artifact and returns the result.
-	 * 
+	 *
 	 * @param artifact object for which source is to be resolved
 	 * @param locator the source locator to use, or <code>null</code>. When
 	 *            <code>null</code> a source locator is determined from the
@@ -387,34 +387,34 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		}
 		return result;
     }
-    
+
     /**
      * Returns the model presentation for the given debug model, or <code>null</code>
      * if none.
-     * 
+     *
      * @param id debug model id
      * @return presentation for the model, or <code>null</code> if none.
      */
 	protected IDebugModelPresentation getPresentation(String id) {
 		return ((DelegatingModelPresentation)DebugUIPlugin.getModelPresentation()).getPresentation(id);
-	}   
-	
+	}
+
 	/**
 	 * Returns an editor presentation.
-	 * 
+	 *
 	 * @return an editor presentation
 	 */
 	protected IDebugEditorPresentation getEditorPresentation() {
 	    return (DelegatingModelPresentation)DebugUIPlugin.getModelPresentation();
 	}
-    
+
     /**
      * Opens an editor in the given workbench page for the given source lookup
      * result. Has no effect if the result has an unknown editor id or editor input.
      * The editor is opened, positioned, and annotated.
      * <p>
      * Honor's the user preference of whether to re-use editors when displaying source.
-     * </p> 
+     * </p>
      * @param result source lookup result to display
      * @param page the page to display the result in
      */
@@ -426,33 +426,33 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		IStackFrame frame = null;
         if (result.getArtifact() instanceof IStackFrame) {
             frame = (IStackFrame) result.getArtifact();
-        }		
+        }
 		// position and annotate editor for stack frame
         if (frame != null) {
 			IDebugEditorPresentation editorPresentation = getEditorPresentation();
             if (editorPresentation.addAnnotations(editor, frame)) {
 				Decoration decoration = new StandardDecoration(editorPresentation, editor, frame.getThread());
-				DecorationManager.addDecoration(decoration);				
+				DecorationManager.addDecoration(decoration);
 			} else {
 				// perform standard positioning and annotations
 				ITextEditor textEditor = null;
-				if (editor instanceof ITextEditor) {					
+				if (editor instanceof ITextEditor) {
 					textEditor = (ITextEditor)editor;
 				} else {
 					textEditor = editor.getAdapter(ITextEditor.class);
 				}
 				if (textEditor != null) {
 					positionEditor(textEditor, frame);
-					InstructionPointerManager.getDefault().removeAnnotations(textEditor); 
+					InstructionPointerManager.getDefault().removeAnnotations(textEditor);
 					Annotation annotation = fPresentation.getInstructionPointerAnnotation(textEditor, frame);
 					if (annotation != null) {
 						InstructionPointerManager.getDefault().addAnnotation(textEditor, frame, annotation);
 					}
 				}
 			}
-		}        
+		}
     }
-    
+
 	/**
 	 * Opens the editor used to display the source for an element selected in
 	 * this view and returns the editor that was opened or <code>null</code> if
@@ -465,14 +465,14 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		if (input == null || id == null) {
 			return null;
 		}
-		
+
 		if (fReuseEditor) {
 			IEditorReference[] references = page.findEditors(input, id, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
 			if (references.length > 0) {
 				// activate the editor we want to reuse
 				IEditorPart refEditor= references[0].getEditor(false);
 				editor = refEditor;
-				page.bringToTop(editor);	
+				page.bringToTop(editor);
 			}
 			if (editor == null) {
 			    IEditorPart editorForPage = getEditor(page);
@@ -500,8 +500,8 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			editor = openEditor(page, input, id);
 		}
 		return editor;
-	}   
-	
+	}
+
 	/**
 	 * Positions the text editor for the given stack frame
 	 */
@@ -521,7 +521,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		} catch (DebugException e) {
 		}
 	}
-	
+
 	/**
 	 * Returns the line information for the given line in the given editor
 	 */
@@ -543,7 +543,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			provider.disconnect(input);
 		}
 		return null;
-	}	
+	}
 	/**
 	 * Opens an editor in the workbench and returns the editor that was opened
 	 * or <code>null</code> if an error occurred while attempting to open the
@@ -558,17 +558,17 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 					try {
 						editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
 					} catch (PartInitException e) {
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), 
-							DebugUIViewsMessages.LaunchView_Error_1,  
-							DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2,  
+						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
+							DebugUIViewsMessages.LaunchView_Error_1,
+							DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2,
 							e);
 					}
 				}
 			}
-		}; 
+		};
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
 		return editor[0];
-	}	
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
@@ -667,11 +667,11 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 		}
     }
-    
+
     /**
      * Returns the editor to use to display source in the given page, or
      * <code>null</code> if a new editor should be opened.
-     * 
+     *
      * @param page workbench page
      * @return the editor to use to display source in the given page, or
      * <code>null</code> if a new editor should be opened
@@ -679,11 +679,11 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     protected IEditorPart getEditor(IWorkbenchPage page) {
         return fEditorsByPage.get(page);
     }
-    
+
     /**
      * Sets the editor to use to display source in the given page, or
      * <code>null</code> if a new editor should be opened.
-     * 
+     *
      * @param page workbench page
      * @return the editor to use to display source in the given page, or
      * <code>null</code> if a new editor should be opened
@@ -696,8 +696,8 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
         }
         page.addPartListener(this);
         page.getWorkbenchWindow().addPageListener(this);
-    } 
-  
+    }
+
     /**
      * Performs cleanup.
      */
@@ -836,7 +836,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	/**
 	 * Clears any source decorations associated with the given thread or debug
 	 * target.
-	 * 
+	 *
 	 * @param source thread or debug target
 	 */
 	private void clearSourceSelection(Object source) {

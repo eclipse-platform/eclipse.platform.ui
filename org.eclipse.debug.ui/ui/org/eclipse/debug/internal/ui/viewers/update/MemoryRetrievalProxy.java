@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
  *                 display memory blocks that do not reference IDebugTarget
- *     
+ *
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.viewers.update;
@@ -119,7 +119,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	 * Set the initial memory block selection when the proxy is installed. This
 	 * is done to ensure that when the memory view is opened, there is an
 	 * initial selection. Otherwise, the Rendering Pane will show up as blank.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected void setInitialSelection() {

@@ -21,6 +21,6 @@ public class TerminateAndRelaunchHandler extends DebugActionHandler {
 	public TerminateAndRelaunchHandler() {
 		super(LaunchView.TERMINATE_AND_RELAUNCH);
 	}
-	
+
 
 }

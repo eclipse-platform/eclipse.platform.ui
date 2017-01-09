@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,20 +28,20 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 
 	private String fName;
 	private ImageDescriptor fImageDescriptor = DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_OBJS_BREAKPOINT_TYPE);
-	
+
 	/**
 	 * Constructs a type category for the given type name.
-	 * 
+	 *
 	 * @param name breakpoint type name
 	 */
 	public BreakpointTypeCategory(String name) {
 		fName = name;
 	}
-	
+
 	/**
 	 * Constructs a type category for the given type name with the given
 	 * image.
-	 * 
+	 *
 	 * @param name breakpoint type name
 	 * @param descriptor image descriptor
 	 */
@@ -51,16 +51,16 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 			fImageDescriptor = descriptor;
 		}
 	}
-	
+
 	/**
 	 * Returns the name of this category's breakpoint type.
-	 * 
+	 *
 	 * @return the name of this category's breakpoint type
 	 */
 	protected String getName() {
 		return fName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -72,7 +72,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -112,7 +112,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	public Object getParent(Object o) {
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 	    return fName;

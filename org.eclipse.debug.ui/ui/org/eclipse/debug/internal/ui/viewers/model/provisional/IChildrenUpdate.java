@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 /**
  * Context sensitive children update request for a parent and subrange of its
  * children.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
@@ -23,23 +23,23 @@ public interface IChildrenUpdate extends IViewerUpdate {
 	/**
 	 * Returns the offset at which children have been requested for. This is
 	 * the index of the first child being requested.
-	 * 
+	 *
 	 * @return offset at which children have been requested for
 	 */
 	public int getOffset();
-	
+
 	/**
 	 * Returns the number of children requested.
-	 * 
+	 *
 	 * @return number of children requested
 	 */
 	public int getLength();
-	
+
 	/**
 	 * Sets the child for this request's parent at the given offset.
-	 * 
+	 *
 	 * @param child child
 	 * @param offset child offset
 	 */
-	public void setChild(Object child, int offset); 	
+	public void setChild(Object child, int offset);
 }

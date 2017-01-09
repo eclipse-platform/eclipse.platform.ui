@@ -4,13 +4,13 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.expressions;
 
- 
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.IExpressionsListener;
@@ -35,13 +35,13 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	 */
 	@Override
 	public void run(IAction action) {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();		
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 			boolean prompt = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_EXPRESSIONS);
 			boolean proceed = true;
 			if (prompt) {
-				MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllExpressionsAction_0, 
+				MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllExpressionsAction_0,
 						ActionMessages.RemoveAllExpressionsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
 				if(mdwt.getReturnCode() !=  IDialogConstants.YES_ID){
 					proceed = false;
@@ -57,7 +57,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
 	 */

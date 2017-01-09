@@ -55,15 +55,15 @@ import com.ibm.icu.text.MessageFormat;
  * Dialog for organizing favorite launch configurations
  */
 public class FavoritesDialog extends TrayDialog {
-	
+
 	/**
 	 * Table of favorite launch configurations
 	 */
-	private TableViewer fFavoritesTable;	
+	private TableViewer fFavoritesTable;
 
 	// history being organized
 	private LaunchHistory fHistory;
-	
+
 	// favorites collection under edit
 	private List<ILaunchConfiguration> fFavorites;
 
@@ -91,8 +91,8 @@ public class FavoritesDialog extends TrayDialog {
 				handleMoveDownButtonSelected();
 			}
 		}
-	};	
-	
+	};
+
 	/**
 	 * Listener that delegates when the selection changes in a table
 	 */
@@ -101,8 +101,8 @@ public class FavoritesDialog extends TrayDialog {
 		public void selectionChanged(SelectionChangedEvent event) {
 			handleFavoriteSelectionChanged();
 		}
-	};	
-	
+	};
+
 	/**
 	 * Listener that delegates when a key is pressed in a table
 	 */
@@ -110,11 +110,11 @@ public class FavoritesDialog extends TrayDialog {
 		@Override
 		public void keyPressed(KeyEvent event) {
 			if (event.character == SWT.DEL && event.stateMask == 0) {
-				removeSelectedFavorites(); 
+				removeSelectedFavorites();
 			}
 		}
 	};
-	
+
 	/**
 	 * Content provider for favorites table
 	 */
@@ -129,10 +129,10 @@ public class FavoritesDialog extends TrayDialog {
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
-	
+
 	/**
 	 * Constructs a favorites dialog.
-	 * 
+	 *
 	 * @param parentShell shell to open the dialog on
 	 * @param history launch history to edit
 	 */
@@ -155,8 +155,8 @@ public class FavoritesDialog extends TrayDialog {
 			}
 			updateStatus();
 		}
-	}	
-	
+	}
+
 	/**
 	 * The 'remove favorites' button has been pressed
 	 */
@@ -167,16 +167,16 @@ public class FavoritesDialog extends TrayDialog {
 			Object config = iter.next();
 			getFavorites().remove(config);
 		}
-		getFavoritesTable().refresh();		
-	}	
-	
+		getFavoritesTable().refresh();
+	}
+
 	/**
 	 * The 'move up' button has been pressed
 	 */
 	protected void handleMoveUpButtonSelected() {
 		handleMove(-1);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
 	 */
@@ -184,14 +184,14 @@ public class FavoritesDialog extends TrayDialog {
 	protected Point getInitialSize() {
 		return new Point(350, 400);
 	}
-	
+
 	/**
 	 * The 'move down' button has been pressed
 	 */
 	protected void handleMoveDownButtonSelected() {
 		handleMove(1);
-	}	
-	
+	}
+
 	/**
 	 * Handles moving a favorite up or down the listing
 	 * @param direction the direction to make the move (up or down)
@@ -206,28 +206,28 @@ public class FavoritesDialog extends TrayDialog {
 			i= getFavorites().indexOf(config);
 			movedFavs[i + direction]= config;
 		}
-		
+
 		getFavorites().removeAll(selList);
-			
+
 		for (int j = 0; j < movedFavs.length; j++) {
 			Object config = movedFavs[j];
 			if (config != null) {
 				getFavorites().add(j, (ILaunchConfiguration) config);
 			}
 		}
-		getFavoritesTable().refresh();	
-		handleFavoriteSelectionChanged();	
+		getFavoritesTable().refresh();
+		handleFavoriteSelectionChanged();
 	}
-	
+
 	/**
 	 * Returns the table of favorite launch configurations.
-	 * 
+	 *
 	 * @return table viewer
 	 */
 	protected TableViewer getFavoritesTable() {
 		return fFavoritesTable;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -253,7 +253,7 @@ public class FavoritesDialog extends TrayDialog {
 
 	/**
 	 * Returns a label to use for launch mode with accelerators removed.
-	 * 
+	 *
      * @return label to use for launch mode with accelerators removed
      */
     private String getModeLabel() {
@@ -261,15 +261,15 @@ public class FavoritesDialog extends TrayDialog {
     }
 
     /**
-     * Creates the main area of the dialog 
+     * Creates the main area of the dialog
      * @param parent the parent to add this content to
      */
     protected void createFavoritesArea(Composite parent) {
 		Composite topComp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
-		SWTFactory.createLabel(topComp, LaunchConfigurationsMessages.FavoritesDialog_2, 2); 
+		SWTFactory.createLabel(topComp, LaunchConfigurationsMessages.FavoritesDialog_2, 2);
 		fFavoritesTable = createTable(topComp, new FavoritesContentProvider());
 		Composite buttonComp = SWTFactory.createComposite(topComp, topComp.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
-		fAddFavoriteButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_3, null); 
+		fAddFavoriteButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_3, null);
 		fAddFavoriteButton.addSelectionListener(fButtonListener);
 		fAddFavoriteButton.setEnabled(true);
 		fRemoveFavoritesButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_4, null);
@@ -279,7 +279,7 @@ public class FavoritesDialog extends TrayDialog {
 		fMoveDownButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_6, null);
 		fMoveDownButton.addSelectionListener(fButtonListener);
 	}
-	
+
 	/**
 	 * Creates a fully configured table with the given content provider
 	 */
@@ -295,8 +295,8 @@ public class FavoritesDialog extends TrayDialog {
 		tableViewer.getTable().setFont(parent.getFont());
 		tableViewer.addSelectionChangedListener(fSelectionChangedListener);
 		tableViewer.getControl().addKeyListener(fKeyListener);
-		return tableViewer; 
-	}	
+		return tableViewer;
+	}
 
 	/**
 	 * Returns the current list of favorites.
@@ -308,26 +308,26 @@ public class FavoritesDialog extends TrayDialog {
 			addAll(favs, fFavorites);
 		}
 		return fFavorites;
-	}	
-	
+	}
+
 	protected LaunchHistory getLaunchHistory() {
 		return fHistory;
-	}	
-	
+	}
+
 	/**
 	 * Returns the initial content for the favorites list
 	 */
 	protected ILaunchConfiguration[] getInitialFavorites() {
 		return getLaunchHistory().getFavorites();
-	}	
-	
+	}
+
 	/**
 	 * Returns the mode of this page - run or debug.
 	 */
 	protected String getMode() {
 		return getLaunchHistory().getLaunchGroup().getMode();
 	}
-			
+
 	/**
 	 * Copies the array into the list
 	 */
@@ -336,14 +336,14 @@ public class FavoritesDialog extends TrayDialog {
 			list.add(array[i]);
 		}
 	}
-	
+
 	/**
 	 * Refresh all tables and buttons
 	 */
 	protected void updateStatus() {
 		getFavoritesTable().refresh();
-		handleFavoriteSelectionChanged();				
-	}	
+		handleFavoriteSelectionChanged();
+	}
 
 	/**
 	 * The selection in the favorites list has changed
@@ -365,18 +365,18 @@ public class FavoritesDialog extends TrayDialog {
 				last= true;
 			}
 		}
-		
+
 		fRemoveFavoritesButton.setEnabled(notEmpty);
 		fMoveUpButton.setEnabled(notEmpty && !first);
 		fMoveDownButton.setEnabled(notEmpty && !last);
 	}
-	
+
 	/**
 	 * Method performOK. Uses scheduled Job format.
 	 * @since 3.2
 	 */
 	public void saveFavorites() {
-		
+
 		final Job job = new Job(LaunchConfigurationsMessages.FavoritesDialog_8) {
 			@SuppressWarnings("deprecation")
 			@Override
@@ -384,10 +384,10 @@ public class FavoritesDialog extends TrayDialog {
 				ILaunchConfiguration[] initial = getInitialFavorites();
 				List<ILaunchConfiguration> current = getFavorites();
 				String groupId = getLaunchHistory().getLaunchGroup().getIdentifier();
-				
+
 				int taskSize = Math.abs(initial.length-current.size());//get task size
 				monitor.beginTask(LaunchConfigurationsMessages.FavoritesDialog_8, taskSize);//and set it
-				
+
 				// removed favorites
 				for (int i = 0; i < initial.length; i++) {
 					ILaunchConfiguration configuration = initial[i];
@@ -401,7 +401,7 @@ public class FavoritesDialog extends TrayDialog {
 							if (groups != null) {
 								groups.remove(groupId);
 								if (groups.isEmpty()) {
-									groups = null;	
+									groups = null;
 								}
 								workingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
 							}
@@ -409,11 +409,11 @@ public class FavoritesDialog extends TrayDialog {
 						} catch (CoreException e) {
 							DebugUIPlugin.log(e);
 							return Status.CANCEL_STATUS;
-						} 
+						}
 					}
 					monitor.worked(1);
 				}
-				
+
 				// update added favorites
 				Iterator<ILaunchConfiguration> favs = current.iterator();
 				while (favs.hasNext()) {
@@ -435,22 +435,22 @@ public class FavoritesDialog extends TrayDialog {
 					}
 					monitor.worked(1);
 				}
-				 
+
 				fHistory.setFavorites(getArray(current));
 				monitor.done();
 				return Status.OK_STATUS;
-			}			
+			}
 		};
 		job.setPriority(Job.LONG);
 		PlatformUI.getWorkbench().getProgressService().showInDialog(getParentShell(), job);
 		job.schedule();
-			
-	}	
-	
+
+	}
+
 	protected ILaunchConfiguration[] getArray(List<ILaunchConfiguration> list) {
 		return list.toArray(new ILaunchConfiguration[list.size()]);
-	} 
-		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -459,7 +459,7 @@ public class FavoritesDialog extends TrayDialog {
 		saveFavorites();
 		super.okPressed();
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -469,13 +469,13 @@ public class FavoritesDialog extends TrayDialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
-	
+
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getDialogSettingsSectionName() {

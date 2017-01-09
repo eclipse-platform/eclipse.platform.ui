@@ -27,7 +27,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * @since 3.4
  */
 public abstract class ViewerInputProvider implements IViewerInputProvider {
-	
+
 	protected static final Object[] EMPTY = new Object[0];
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public abstract class ViewerInputProvider implements IViewerInputProvider {
 				if (!update.isCanceled()) {
 					retrieveInput(update);
 				}
-				update.done();					
+				update.done();
 				return Status.OK_STATUS;
 			}
 		};
@@ -49,10 +49,10 @@ public abstract class ViewerInputProvider implements IViewerInputProvider {
 		job.setRule(getRule(update));
 		job.schedule();
 	}
-	    
+
     /**
      * Computes the viewer input for the specified context.
-     * 
+     *
      * @param update update request
      */
     protected void retrieveInput(IViewerInputUpdate update) {
@@ -69,49 +69,49 @@ public abstract class ViewerInputProvider implements IViewerInputProvider {
 				status = e.getStatus();
 			}
 			update.setStatus(status);
-		}    	
+		}
     }
-    
-        
+
+
     /**
      * Returns the viewer input derived from the given source object in the specified
      * context, possibly <code>null</code>.
-     * 
+     *
      * @param source element to derive a viewer input from
      * @param context context for which an input is requested
      * @param update viewer update request
      * @throws CoreException if an exception occurs retrieving child
      */
     protected abstract Object getViewerInput(Object source, IPresentationContext context, IViewerUpdate update) throws CoreException;
-    
+
 
     /**
      * Returns whether this adapter supports the given context.
-     * 
+     *
      * @param context
      * @return whether this adapter supports the given context
      */
     protected boolean supportsContext(IPresentationContext context) {
 		return supportsContextId(context.getId());
     }
-    
+
     /**
      * Returns whether this adapter provides content in the specified context id.
-     * 
+     *
      * @param id part id
      * @return whether this adapter provides content in the specified context id
      */
-    protected abstract boolean supportsContextId(String id);	
-	
+    protected abstract boolean supportsContextId(String id);
+
 	/**
 	 * Returns a scheduling rule to use when performing the given updates or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param update
 	 * @return scheduling rule or <code>null</code> if none
 	 */
 	protected ISchedulingRule getRule(IViewerInputUpdate update) {
 		return null;
 	}
-	    
+
 }

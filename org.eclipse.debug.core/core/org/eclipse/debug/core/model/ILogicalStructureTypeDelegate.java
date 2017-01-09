@@ -24,20 +24,20 @@ import org.eclipse.core.runtime.CoreException;
  * @see org.eclipse.debug.core.ILogicalStructureType
  */
 public interface ILogicalStructureTypeDelegate {
-	
+
 	/**
-	 * Returns whether this structure type can provide a logical structure for 
+	 * Returns whether this structure type can provide a logical structure for
 	 * the given value.
-	 * 
+	 *
 	 * @param value value for which a logical structure is being requested
-	 * @return whether this structure type can provide a logical structure for 
+	 * @return whether this structure type can provide a logical structure for
 	 * the given value
 	 */
 	public boolean providesLogicalStructure(IValue value);
-	
+
 	/**
 	 * Returns a value representing a logical structure of the given value.
-	 * 
+	 *
 	 * @param value value for which a logical structure is being requested
 	 * @return value representing logical structure
 	 * @throws CoreException if an exception occurs generating a logical

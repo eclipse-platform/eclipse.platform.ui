@@ -14,7 +14,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**
  * Notified of label updates.
- * 
+ *
  * @since 3.3
  */
 public interface ILabelUpdateListener {
@@ -23,25 +23,25 @@ public interface ILabelUpdateListener {
 	 * Notification that a sequence of viewer updates are starting.
 	 */
 	public void labelUpdatesBegin();
-	
+
 	/**
 	 * Notification that viewer updates are complete. Corresponds to
 	 * a <code>viewerUpdatesBegin()</code> notification.
 	 */
 	public void labelUpdatesComplete();
-	
+
 	/**
 	 * Notification that a specific update has started within
 	 * a sequence of updates.
-	 * 
+	 *
 	 * @param update update
 	 */
 	public void labelUpdateStarted(ILabelUpdate update);
-	
+
 	/**
 	 * Notification that a specific update has completed within a
 	 * sequence of updates.
-	 * 
+	 *
 	 * @param update update
 	 */
 	public void labelUpdateComplete(ILabelUpdate update);

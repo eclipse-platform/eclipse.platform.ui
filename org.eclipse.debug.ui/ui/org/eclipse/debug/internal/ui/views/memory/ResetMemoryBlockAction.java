@@ -28,7 +28,7 @@ import org.eclipse.ui.IViewPart;
 /**
  * The popup menu action for a memory rendering used to reset the current
  * selection to the default first memory position
- * 
+ *
  * @since 3.2.0
  */
 public class ResetMemoryBlockAction implements IViewActionDelegate {

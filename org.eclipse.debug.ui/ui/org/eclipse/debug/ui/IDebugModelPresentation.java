@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
  * Following is an example definition of a debug model presentation extension.
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.debugModelPresentations"&gt;
- *   &lt;debugModelPresentation 
+ *   &lt;debugModelPresentation
  *      id="com.example.debugModelIdentifier"
  *      class="com.example.ExamplePresentation"
  *      detailsViewerConfiguration="com.example.ExampleSourceViewerConfiguration"&gt;
@@ -55,7 +55,7 @@ import org.eclipse.swt.graphics.Image;
  * a <code>setAttribute</code> method. The debug UI plug-in defines
  * one presentation attribute:
  * <ul>
- *  <li><code>DISPLAY_VARIABLE_TYPE_NAMES</code> - This is a boolean attribute 
+ *  <li><code>DISPLAY_VARIABLE_TYPE_NAMES</code> - This is a boolean attribute
  *     indicating whether variable elements should be rendered with the declared
  *     type of a variable. For example, a Java debug model presentation would render
  *     an integer as <code>"int x = 3"</code> when true, and <code>"x = 3"</code>
@@ -72,7 +72,7 @@ import org.eclipse.swt.graphics.Image;
  * </p>
  * <p>
  * Since 3.1, debug model presentations may optionally implement <code>IColorProvider</code>
- * and <code>IFontProvider</code> to override default fonts and colors for debug elements. 
+ * and <code>IFontProvider</code> to override default fonts and colors for debug elements.
  * </p>
  * <p>
  * Clients may implement this interface.
@@ -83,11 +83,11 @@ import org.eclipse.swt.graphics.Image;
  */
 
 public interface IDebugModelPresentation extends ILabelProvider, ISourcePresentation {
-	/** 
+	/**
 	 * Variable type names presentation property (value <code>"org.eclipse.debug.ui.displayVariableTypeNames"</code>).
 	 * When <code>DISPLAY_VARIABLE_TYPE_NAMES</code> is set to <code>true</code>,
 	 * this label provider should include the reference type of a variable  when rendering
-	 * variables. When set to <code>false</code>, this label provider 
+	 * variables. When set to <code>false</code>, this label provider
 	 * should not include the reference type of a variable when rendering
 	 * variables.
 	 * @see #setAttribute(String, Object)
@@ -124,7 +124,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 */
 	@Override
 	public String getText(Object element);
-	
+
 	/**
 	 * Computes a detailed description of the given value, reporting
 	 * the result to the specified listener. This allows a presentation
@@ -133,13 +133,13 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 * the details are reported back to the specified listener asynchronously.
 	 * If <code>null</code> is reported, the value's value string is displayed
 	 * (<code>IValue.getValueString()</code>).
-	 * 
+	 *
 	 * @param value the value for which a detailed description
 	 * 	is required
 	 * @param listener the listener to report the details to
 	 * 	asynchronously
 	 * @since 2.0
 	 */
-	void computeDetail(IValue value, IValueDetailListener listener);	
+	void computeDetail(IValue value, IValueDetailListener listener);
 
 }

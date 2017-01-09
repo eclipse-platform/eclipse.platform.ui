@@ -49,10 +49,10 @@ public class FileLink implements IConsoleHyperlink {
 	private int fFileLength;
 	private int fFileLineNumber;
 	private String fEditorId;
-	
+
 	/**
 	 * Constructs a hyperlink to the specified file.
-	 * 
+	 *
 	 * @param file the file to open when activated
 	 * @param editorId the identifier of the editor to open the file in, or
 	 * <code>null</code> if the default editor should be used
@@ -117,7 +117,7 @@ public class FileLink implements IConsoleHyperlink {
 					}
 				} catch (PartInitException e) {
 					DebugUIPlugin.log(e);
-				}	
+				}
 			}
 		}
 	}
@@ -135,7 +135,7 @@ public class FileLink implements IConsoleHyperlink {
 	@Override
 	public void linkExited() {
 	}
-	
+
 	private String getEditorId() {
 		if (fEditorId == null) {
 			IWorkbench workbench= DebugUIPlugin.getDefault().getWorkbench();

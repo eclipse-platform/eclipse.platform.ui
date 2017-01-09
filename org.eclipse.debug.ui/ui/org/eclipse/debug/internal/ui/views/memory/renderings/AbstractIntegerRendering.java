@@ -22,22 +22,22 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
  *
  */
 public abstract class AbstractIntegerRendering extends AbstractAsyncTableRendering {
-	
+
 	private int fDisplayEndianess = RenderingsUtil.ENDIANESS_UNKNOWN;
-	
+
 	public AbstractIntegerRendering(String renderingId){
 		super(renderingId);
 	}
-	
+
 	@Override
 	public void init(IMemoryRenderingContainer container, IMemoryBlock block) {
 		super.init(container, block);
-		
+
 		// default to big endian for simple memory block
 		if (!(block instanceof IMemoryBlockExtension))
 			fDisplayEndianess = RenderingsUtil.BIG_ENDIAN;
 	}
-	
+
 	/**
 	 * @return Returns the currentEndianess.
 	 */
@@ -54,10 +54,10 @@ public abstract class AbstractIntegerRendering extends AbstractAsyncTableRenderi
 
 	protected int getBytesEndianess(MemoryByte[] data) {
 		int endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
-		
+
 		if (!data[0].isEndianessKnown())
 			return endianess;
-		
+
 		if (data[0].isBigEndian())
 			endianess = RenderingsUtil.BIG_ENDIAN;
 		else
@@ -67,7 +67,7 @@ public abstract class AbstractIntegerRendering extends AbstractAsyncTableRenderi
 			// if endianess is not known for a byte, return unknown
 			if (!data[i].isEndianessKnown())
 				return RenderingsUtil.ENDIANESS_UNKNOWN;
-			
+
 			int byteEndianess = data[i].isBigEndian()?RenderingsUtil.BIG_ENDIAN:RenderingsUtil.LITTLE_ENDIAN;
 			if (byteEndianess != endianess)
 			{

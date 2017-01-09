@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - integration with non-standard debug models (Bug 209883)
@@ -36,7 +36,7 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
     @Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
     }
-    
+
     /**
      * Finds the currently selected context in the UI.
      * @return the current debug context
@@ -78,7 +78,7 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

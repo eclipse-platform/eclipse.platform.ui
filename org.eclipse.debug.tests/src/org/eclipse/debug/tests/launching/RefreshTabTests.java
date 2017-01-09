@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.ui.PlatformUI;
  * Tests the refresh tab.
  */
 public class RefreshTabTests extends AbstractLaunchTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -46,7 +46,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Sets the selected resource in the navigator view.
-	 * 
+	 *
 	 * @param resource resource to select
 	 */
 	protected void setSelection(IResource resource) {
@@ -64,7 +64,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 			assertNotNull("Failed to open navigator view", null); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Tests a refresh scope of the selected resource
 	 * @throws CoreException
@@ -76,9 +76,9 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
-		assertEquals(resource, result[0]);		
+		assertEquals(resource, result[0]);
 	}
-	
+
 	/**
 	 * Tests a refresh scope of the selected resource's container
 	 * @throws CoreException
@@ -90,9 +90,9 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
-		assertEquals(resource.getParent(), result[0]);		
+		assertEquals(resource.getParent(), result[0]);
 	}
-	
+
 	/**
 	 * Tests a refresh scope of the selected resource's project
 	 * @throws CoreException
@@ -104,9 +104,9 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
-		assertEquals(resource.getProject(), result[0]);		
-	}	
-	
+		assertEquals(resource.getProject(), result[0]);
+	}
+
 	/**
 	 * Tests a refresh scope of the selected resource's project
 	 * @throws CoreException
@@ -116,9 +116,9 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
-		assertEquals(ResourcesPlugin.getWorkspace().getRoot(), result[0]);		
-	}	
-	
+		assertEquals(ResourcesPlugin.getWorkspace().getRoot(), result[0]);
+	}
+
 	/**
 	 * Tests a refresh scope for a specific resource (old format)
 	 * @throws CoreException
@@ -129,9 +129,9 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
-		assertEquals(resource, result[0]);				
+		assertEquals(resource, result[0]);
 	}
-	
+
 	/**
 	 * Tests a refresh scope for a working set
 	 * @throws CoreException
@@ -142,12 +142,12 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
-		assertEquals(resource, result[0]);			
+		assertEquals(resource, result[0]);
 	}
-	
+
 	/**
 	 * Returns a scratch project for launch configurations
-	 *  
+	 *
 	 * @return
 	 */
 	protected IProject getProject() throws CoreException {
@@ -162,11 +162,11 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		}
 		return project;
 	}
-	
+
 	/**
 	 * Tests the launch configuration attribute comparator extension for comparing
 	 * old/new attribute styles.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testRefreshScopeComparator() throws CoreException {
@@ -174,10 +174,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		String newStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</resources>}"; //$NON-NLS-1$
 		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(oldStyle, newStyle)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests persist restore of some resources.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testResourceMemento() throws CoreException {
@@ -189,10 +189,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		assertEquals(resources[1], restore[1]);
 		assertEquals(resources[2], restore[2]);
 	}
-	
+
 	/**
 	 * Tests persist/restore of empty resource collection.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testEmptyResourceSet() throws CoreException {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -50,11 +50,11 @@ import org.eclipse.ui.IEditorPart;
  * presentation contains a table of specialized presentations that are defined
  * as <code>org.eclipse.debug.ui.debugModelPresentations</code> extensions. When
  * asked to render an object from a debug model, this presentation delegates
- * to the extension registered for that debug model. 
+ * to the extension registered for that debug model.
  */
 public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation,
 	IColorProvider, IFontProvider, IInstructionPointerPresentation, IDebugModelPresentationExtension {
-	
+
 	/**
 	 * A mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
@@ -151,7 +151,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		// If no delegate returned an image, use the default
 		return getDefaultImage(item);
 	}
-	
+
 	/**
      * @see IDebugModelPresentation#getText(Object)
      */
@@ -163,7 +163,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
     	}
     	return getDefaultText(item);
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
 	 */
@@ -175,7 +175,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
@@ -202,7 +202,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	protected Image getDefaultImage(Object element) {
 		return DebugUIPlugin.getDefaultLabelProvider().getImage(element);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
@@ -210,11 +210,11 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IDebugModelPresentation lp= getConfiguredPresentation(value);
 		if (lp != null) {
-			lp.computeDetail(value, listener);			
+			lp.computeDetail(value, listener);
 		} else {
 			listener.detailComputed(value, getText(value));
 		}
-	}	
+	}
 
 	/**
 	 * Delegate to all extensions.
@@ -269,7 +269,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 
 		return null;
 	}
-	
+
 	/**
 	 * Returns the presentation registered for the given id, or <code>null</code>
 	 * of nothing is registered for the id.
@@ -277,7 +277,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	public IDebugModelPresentation getPresentation(String id) {
 		return getLabelProviders().get(id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
 	 */
@@ -291,10 +291,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 			p.setAttribute(id, value);
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the given attribute without setting in child presentations.
-	 * 
+	 *
 	 * @param id id
 	 * @param value value
 	 */
@@ -312,7 +312,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		show= show == null ? Boolean.FALSE : show;
 		return show.booleanValue();
 	}
-		
+
 	/**
 	 * Returns the raw attribute map
 	 * @return the raw attribute map
@@ -320,10 +320,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	public HashMap<String, Object> getAttributes() {
 		return fAttributes;
 	}
-	
+
 	/**
 	 * Returns a copy of the attribute map for this presentation.
-	 * 
+	 *
 	 * @return a copy of the attribute map for this presentation
 	 * @since 3.0
 	 */
@@ -333,7 +333,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 
 	/**
 	 * Returns the live-list of registered {@link ILabelProvider}s
-	 * 
+	 *
 	 * @return the live list of label providers
 	 */
 	protected HashMap<String, IDebugModelPresentation> getLabelProviders() {
@@ -493,7 +493,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		}
 		if (presentation instanceof IDebugModelPresentationExtension) {
 			return ((IDebugModelPresentationExtension)presentation).requiresUIThread(element);
-		} 
+		}
 		return false;
-	}	
+	}
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,18 +25,18 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * The browser for adding a folder source container.
- * 
+ *
  * @since 3.0
  */
 public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		FolderSourceContainerDialog dialog = new FolderSourceContainerDialog(shell,  new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-		
+
 		if (dialog.open() == Window.OK) {
 			Object[] selection= ((ElementTreeSelectionDialog)dialog).getResult();
 			ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>();
@@ -45,8 +45,8 @@ public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser
 					containers.add(new FolderSourceContainer((IFolder)selection[i], dialog.isSearchSubfolders()));
 				}
 			}
-			return containers.toArray(new ISourceContainer[containers.size()]);	
-		}			
+			return containers.toArray(new ISourceContainer[containers.size()]);
+		}
 		return new ISourceContainer[0];
 	}
 
@@ -76,11 +76,11 @@ public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser
 					list.add(new FolderSourceContainer((IFolder)selection[i], dialog.isSearchSubfolders()));
 				}
 			}
-			return list.toArray(new ISourceContainer[list.size()]);	
-		}			
+			return list.toArray(new ISourceContainer[list.size()]);
+		}
 		return new ISourceContainer[0];
 	}
-	
-	
-	
+
+
+
 }

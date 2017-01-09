@@ -19,7 +19,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * This class provides memento for the breakpoint container.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointContainerMementoProvider extends DebugElementMementoProvider {

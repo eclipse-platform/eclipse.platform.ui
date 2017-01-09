@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ package org.eclipse.debug.core;
  * @see org.eclipse.debug.core.ILaunch
  * @see org.eclipse.debug.core.ILaunchesListener
  */
-public interface ILaunchListener {	
+public interface ILaunchListener {
 	/**
 	 * Notifies this listener that the specified
 	 * launch has been removed.
@@ -34,18 +34,18 @@ public interface ILaunchListener {
 	/**
 	 * Notifies this listener that the specified launch
 	 * has been added.
-	 * 
+	 *
 	 * @param launch the newly added launch
 	 * @since 2.0
 	 */
-	public void launchAdded(ILaunch launch);	
+	public void launchAdded(ILaunch launch);
 	/**
 	 * Notifies this listener that the specified launch
 	 * has changed. For example, a process or debug target
 	 * has been added to the launch.
-	 * 
+	 *
 	 * @param launch the changed launch
 	 * @since 2.0
 	 */
-	public void launchChanged(ILaunch launch);	
+	public void launchChanged(ILaunch launch);
 }

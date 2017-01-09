@@ -13,7 +13,7 @@ package org.eclipse.debug.ui.actions;
 /**
  * Interface used to tag objects as launchable. Objects that provide
  * an adapter of this type will be considered by the contextual
- * launch support. 
+ * launch support.
  * <p>
  * The debug platform uses the {@link ILaunchable} interface as a tag for
  * objects that can be launched via the context menu 'Run As / Debug As' actions
@@ -32,13 +32,13 @@ package org.eclipse.debug.ui.actions;
  * Thus objects that can be launched need to register {@link ILaunchable} adapters, but
  * don't have to provide implementations. There is also no harm in implementing the interface
  * or providing the adapter. For example, JDT contributes an adapter as follows. Although
- * no adapter is actually provided the platform will answer <code>true</code> to 
+ * no adapter is actually provided the platform will answer <code>true</code> to
  * <code>hasAdapter(...)</code>.
  * </p>
  * <pre>
  * <extension point="org.eclipse.core.runtime.adapters">
- *    <factory 
- *       class="" 
+ *    <factory
+ *       class=""
  *       adaptableType="org.eclipse.jdt.core.IJavaElement">
  *       <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
  *   </factory>
@@ -50,7 +50,7 @@ package org.eclipse.debug.ui.actions;
  * required.
  * </p>
  * <p>
- * Clients that need to check for presence of launchable adapter using 
+ * Clients that need to check for presence of launchable adapter using
  * standard expression mechanism, should use a property tester as follows:
  * <pre>
  * <with variable="selection">
@@ -59,7 +59,7 @@ package org.eclipse.debug.ui.actions;
  *    </iterator>
  * </with>
  * </pre>
- * 
+ *
  * </p>
  * @see org.eclipse.debug.ui.actions.ContextualLaunchAction
  * @since 3.0

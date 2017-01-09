@@ -54,7 +54,7 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 
 	/**
 	 * Returns whether the memento represents the given element.
-	 * 
+	 *
 	 * @param element the element to compare to the memento
 	 * @param memento memento
 	 * @param context the context the compare is in
@@ -88,13 +88,13 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 		// TODO: rule
 		job.schedule();
 	}
-	
+
 	/**
 	 * Encodes the specified element into the given memento.
 	 * Returns whether the element could be encoded
-	 * 
+	 *
 	 * @param element the element to encode
-	 * @param memento the memento to write to 
+	 * @param memento the memento to write to
 	 * @param context presentation context
 	 * @return false if cancelled/not supported
 	 * @throws CoreException

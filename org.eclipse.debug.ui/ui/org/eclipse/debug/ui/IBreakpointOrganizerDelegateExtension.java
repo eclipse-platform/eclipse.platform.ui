@@ -23,26 +23,26 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * @since 3.3
  */
 public interface IBreakpointOrganizerDelegateExtension extends IBreakpointOrganizerDelegate {
-    
+
     /**
      * Adds the specified breakpoints to the given category. Only called
      * if <code>canAdd(...)</code> returns <code>true</code> for the given
      * breakpoints and category.
-     * 
+     *
      * @param breakpoints breakpoints add
      * @param category the breakpoints' new category
      */
     public void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category);
-    
+
     /**
      * Removes the specified breakpoints from the given category. Only
      * called if <code>canRemove(...)</code> returns <code>true</code> for
      * the given breakpoints and category.
-     * 
+     *
      * @param breakpoints breakpoints to remove
      * @param category the category the breakpoint is remove from
      */
     public void removeBreakpoints(IBreakpoint[] breakpoints, IAdaptable category);
-        
-    
+
+
 }

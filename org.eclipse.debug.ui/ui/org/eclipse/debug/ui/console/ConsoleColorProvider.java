@@ -30,7 +30,7 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 
 	private IProcess fProcess;
 	private IConsole fConsole;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.ui.console.IConsole)
 	 */
@@ -39,7 +39,7 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 		fProcess = process;
 		fConsole = console;
 		IStreamsProxy streamsProxy = fProcess.getStreamsProxy();
-		if (streamsProxy != null) { 
+		if (streamsProxy != null) {
 			fConsole.connect(streamsProxy);
 		}
 	}
@@ -71,28 +71,28 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 		}
 		if (IDebugUIConstants.ID_STANDARD_ERROR_STREAM.equals(streamIdentifer)) {
 			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR);
-		}		
+		}
 		if (IDebugUIConstants.ID_STANDARD_INPUT_STREAM.equals(streamIdentifer)) {
 			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR);
-		}		
+		}
 		return null;
 	}
 
 	/**
 	 * Returns the process this color provider is providing color for, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return the process this color provider is providing color for, or
 	 * <code>null</code> if none
 	 */
 	protected IProcess getProcess() {
 		return fProcess;
 	}
-	
+
 	/**
 	 * Returns the console this color provider is connected to, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return IConsole the console this color provider is connected to, or
 	 * <code>null</code> if none
 	 */

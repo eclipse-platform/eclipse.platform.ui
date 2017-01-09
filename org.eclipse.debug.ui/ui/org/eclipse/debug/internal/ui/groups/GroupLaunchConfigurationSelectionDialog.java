@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -73,7 +73,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements ISelectionChangedListener {
 	private static final String GROUP_TYPE_ID = "org.eclipse.debug.core.groups.GroupLaunchConfigurationType"; //$NON-NLS-1$
-	
+
 	private ISelection fSelection;
 	private String mode;
 	private GroupElementPostLaunchAction action = GroupElementPostLaunchAction.NONE;
@@ -95,7 +95,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		fForEditing = forEditing;
 		selfRef = self;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		
+
 		groupType = getLaunchManager().getLaunchConfigurationType(GROUP_TYPE_ID);
 		emptyTypeFilter = new ViewerFilter() {
 			@Override
@@ -432,7 +432,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 				}
 			}
 		}
-		
+
 		return false;
 	}
 

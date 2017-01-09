@@ -20,10 +20,10 @@ import org.eclipse.ui.IMemento;
  * @since 3.3
  */
 public interface IElementMementoRequest extends IViewerUpdate {
-	
+
 	/**
 	 * Returns the memento used to persist the element.
-	 * 
+	 *
 	 * @return memento
 	 */
 	public IMemento getMemento();

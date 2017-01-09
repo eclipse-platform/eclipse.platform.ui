@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IRegion;
  * extension.
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.consoleLineTrackers"&gt;
- *   &lt;consoleLineTracker 
+ *   &lt;consoleLineTracker
  *      id="com.example.ExampleConsoleLineTracker"
  *      class="com.example.ExampleConsoleLineTrackerClass"
  *      processType="ExampleProcessType"&gt;
@@ -42,11 +42,11 @@ import org.eclipse.jface.text.IRegion;
  * @since 2.1
  */
 public interface IConsoleLineTracker {
-	
+
 	/**
 	 * Notification that a console document has been created for which this
-	 * listener is registered. 
-	 *  
+	 * listener is registered.
+	 *
 	 * @param console console that has been created
 	 */
 	public void init(IConsole console);
@@ -55,14 +55,14 @@ public interface IConsoleLineTracker {
 	 * Notification that a line of text has been appended to the console. The
 	 * given region describes the offset and length of the line appended to the
 	 * console, excluding the line delimiter.
-	 * 
+	 *
 	 * @param line region describing the offset and length of line appended to
 	 * the console, excluding the line delimiter
 	 */
 	public void lineAppended(IRegion line);
-	
+
 	/**
-	 * Disposes this console line tracker. 
+	 * Disposes this console line tracker.
 	 */
 	public void dispose();
 }

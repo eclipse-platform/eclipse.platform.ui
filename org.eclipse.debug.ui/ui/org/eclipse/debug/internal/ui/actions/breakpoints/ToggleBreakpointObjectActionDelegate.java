@@ -26,16 +26,16 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * A toggle breakpoint action that can be contributed to an object. The action
  * will perform a toggle breakpoint operation for a selected object.
- * 
+ *
  * <p>Clients may subclass this class.</p>
- * 
+ *
  * @since 3.0
  */
 public abstract class ToggleBreakpointObjectActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
-	
+
 	private IWorkbenchPart fPart;
 	private IStructuredSelection fSelection;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -48,7 +48,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 */
 	@Override
 	public void run(IAction action) {
-		IToggleBreakpointsTarget target = 
+		IToggleBreakpointsTarget target =
 		    DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
 		if (target != null) {
 			try {
@@ -61,14 +61,14 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 
 	/**
 	 * Performs the operation specific to this action.
-	 *  
+	 *
 	 * @param target adapter to toggle breakpoints
 	 * @param part the active part
 	 * @param selection the selection in the active part
 	 * @exception CoreException if an exception occurs
 	 */
 	protected abstract void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) throws CoreException;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -81,7 +81,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 			// selectionChagned() can sometimes be called before setActivePart().
 			// Guard here against that possibility.
 			if (fPart != null) {
-			    IToggleBreakpointsTarget target = 
+			    IToggleBreakpointsTarget target =
 			        DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
 			    enabled = target != null;
 			}
@@ -94,7 +94,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	@Override
 	public void init(IAction action) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */

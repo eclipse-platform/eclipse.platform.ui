@@ -18,11 +18,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Global retargettable toggle method breakpoint action.
- * 
+ *
  * @since 3.0
  */
 public class RetargetMethodBreakpointAction extends RetargetBreakpointAction {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */

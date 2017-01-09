@@ -20,17 +20,17 @@ package org.eclipse.debug.ui.contexts;
  * preferences. The debug platform asks each registered launch for its suspend
  * trigger adapter or registers with the launch itself if it implements
  * <code>ISuspendTrigger</code>.
- * </p>  
+ * </p>
  * <p>
  * It is important that the same instance of a suspend trigger adapter is
  * returned each time it is asked for the same object, such that listeners
  * can be added and removed from the same instance. When a listener is removed
  * and no more listeners are registered, this trigger can be disposed or replaced
- * with a new adapter the next time one is requested. 
+ * with a new adapter the next time one is requested.
  * </p>
  * <p>
  * Clients may implement this interface. The debug platform provides a suspend trigger
- * adapter for implementations of <code>ILaunch</code>. The implementation provided by 
+ * adapter for implementations of <code>ILaunch</code>. The implementation provided by
  * the platform is based on a standard debug model that fires debug events. Clients
  * wishing to provide their own implementation must also provide their own implementation
  * of <code>ILaunch</code> (or subclass of <code>Launch</code>), in order to register
@@ -40,19 +40,19 @@ package org.eclipse.debug.ui.contexts;
  * @since 3.3
  */
 public interface ISuspendTrigger {
-	
+
     /**
      * Registers the given listener for suspend notifications.
-     * 
+     *
      * @param listener suspend listener
      */
 	public void addSuspendTriggerListener(ISuspendTriggerListener listener);
-    
+
     /**
      * Unregisters the given listener for suspend notifications.
-     * 
+     *
      * @param listener suspend listener
      */
 	public void removeSuspendTriggerListener(ISuspendTriggerListener listener);
-	
+
 }

@@ -20,38 +20,38 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 
 public class MemoryBlockLabelProvider extends DebugElementLabelProvider {
-	
+
 	@Override
 	protected String getLabel(TreePath elementPath,
 			IPresentationContext presentationContext, String columnId)
 			throws CoreException {
 		Object element = elementPath.getLastSegment();
-		
+
 		if (element instanceof IMemoryBlock)
 			return getLabel((IMemoryBlock)element);
-		
+
 		return super.getLabel(elementPath, presentationContext, columnId);
 	}
-	
+
 	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath,
 			IPresentationContext presentationContext, String columnId)
 			throws CoreException {
-		
+
 		Object element = elementPath.getLastSegment();
-		
+
 		if (element instanceof IMemoryBlock)
 			return DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_VARIABLE);
-		
+
 		return super.getImageDescriptor(elementPath, presentationContext, columnId);
 	}
-	
+
 	/**
 	 * @param memoryBlockLabel
 	 * @return
 	 */
 	private String getLabel(IMemoryBlock memoryBlock) {
-		
+
 		String memoryBlockLabel = " "; //$NON-NLS-1$
 		if (memoryBlock instanceof IMemoryBlockExtension)
 		{

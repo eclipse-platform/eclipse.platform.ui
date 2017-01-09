@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,8 +21,8 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 /**
  * Virtual item, which is analogous to the SWT's tree item.  This class is used
- * by the {@link VirtualTreeModelViewer}. 
- * 
+ * by the {@link VirtualTreeModelViewer}.
+ *
  * @see VirtualTreeModelViewer
  * @since 3.8
  */
@@ -34,34 +34,34 @@ public class VirtualItem {
     public static String FONT_KEY = "FONT_KEY"; //$NON-NLS-1$
     public static String FOREGROUND_KEY = "FOREGROUND_KEY"; //$NON-NLS-1$
     public static String BACKGROUND_KEY = "BACKGROUND_KEY"; //$NON-NLS-1$
-    
+
     public static String ELEMENT_DATA_KEY = "element"; //$NON-NLS-1$
-    
+
     /**
      * Index object of a tree item. It allows the indexes to be modified
      * as items are inserted and removed.
      */
 	public static class Index implements Comparable<Object> {
         private Integer fIndexValue;
-        
+
         public Index(int index) {
             fIndexValue = Integer.valueOf(index);
         }
-        
+
         @Override
 		public boolean equals(Object obj) {
             return obj instanceof Index && ((Index)obj).fIndexValue.equals(fIndexValue);
         }
-        
+
         @Override
 		public int hashCode() {
             return fIndexValue.hashCode();
         }
-        
+
         public void increment() {
             fIndexValue = Integer.valueOf(fIndexValue.intValue() + 1);
         }
-        
+
         public void decrement() {
             fIndexValue = Integer.valueOf(fIndexValue.intValue() - 1);
         }
@@ -69,36 +69,36 @@ public class VirtualItem {
         public int intValue() {
             return fIndexValue.intValue();
         }
-        
+
         @Override
 		public int compareTo(Object obj) {
-            return obj instanceof Index ? fIndexValue.compareTo(((Index)obj).fIndexValue) : 0; 
+            return obj instanceof Index ? fIndexValue.compareTo(((Index)obj).fIndexValue) : 0;
         }
-        
+
         @Override
 		public String toString() {
             return fIndexValue.toString();
         }
     }
-    
+
     /**
      * Parent items of this item.
      */
     final private VirtualItem fParent;
 
     /**
-     * The index of this item.  
+     * The index of this item.
      */
     final private Index fIndex;
-    
+
     /**
-     * Map of child items.  The key to the map is the item's index, which 
+     * Map of child items.  The key to the map is the item's index, which
      * must be the same object instance as the index in the item.  The tree map
-     * keeps the items sorted while allowing indexes (keys) to be modified as 
-     * child items are inserted and removed.   
+     * keeps the items sorted while allowing indexes (keys) to be modified as
+     * child items are inserted and removed.
      */
 	private Map<Index, VirtualItem> fItems = new TreeMap<Index, VirtualItem>();
-    
+
     /**
      * Flag indicating whether this item has child items.
      */
@@ -111,14 +111,14 @@ public class VirtualItem {
     private boolean fExpanded = false;
 
     /**
-     * The count of child items.  <code>-1</code> indicates that the count 
+     * The count of child items.  <code>-1</code> indicates that the count
      * is not known.
      */
     private int fItemCount = -1;
-    
+
     /**
      * The data held by this item.  It includes the element as well as the item
-     * display attributes. 
+     * display attributes.
      */
 	private Map<String, Object> fData = new HashMap<String, Object>(1);
 
@@ -126,22 +126,22 @@ public class VirtualItem {
      * Flag indicating that the item needs to have it's label updated.
      */
     private boolean fNeedsLabelUpdate = true;
-    
+
     /**
      * Flag indicating that the item's count needs to be updated.
      */
     private boolean fNeedsCountUpdate = true;
-    
+
     /**
      * Flag indicating that the item's element needs to be updated.
      */
     private boolean fNeedsDataUpdate = true;
-    
+
     /**
      * Indicates that this item has been disposed.
      */
     private boolean fDisposed = false;
-    
+
 
     /**
      * Virtual item constructor.
@@ -154,7 +154,7 @@ public class VirtualItem {
     }
 
     /**
-     * Clears the child item at the given index. 
+     * Clears the child item at the given index.
      * @param index index of item to clear.
      */
     public void clear(Index index) {
@@ -163,10 +163,10 @@ public class VirtualItem {
             item.dispose();
         }
     }
-    
+
     /**
      * Clears all child items.
-     * 
+     *
      * @since 3.9
      */
     public void clearAll() {
@@ -183,14 +183,14 @@ public class VirtualItem {
     public VirtualItem getParent() {
         return fParent;
     }
-    
+
     /**
      * @return Returns the index of this item.
      */
     public Index getIndex() {
         return fIndex;
     }
-    
+
     /**
      * Finds the given item in the child items of this element.
      * @param element Data object of the item to be found.
@@ -205,7 +205,7 @@ public class VirtualItem {
         }
         return null;
     }
-    
+
     /**
      * @return Returns whether the data element of this item is stale.
      */
@@ -219,7 +219,7 @@ public class VirtualItem {
     public void setNeedsDataUpdate() {
         fNeedsDataUpdate = true;
     }
-    
+
     /**
      * Clears the stale status of the item's data element.
      */
@@ -233,9 +233,9 @@ public class VirtualItem {
     public boolean needsCountUpdate() {
         return fNeedsCountUpdate;
     }
-    
+
     /**
-     * Marks the item as having a stale child count.  
+     * Marks the item as having a stale child count.
      */
     public void setNeedsCountUpdate() {
         fNeedsCountUpdate = true;
@@ -255,9 +255,9 @@ public class VirtualItem {
     public boolean needsLabelUpdate() {
         return fNeedsLabelUpdate;
     }
-    
+
     /**
-     * Marks the item as having a stale label data.  
+     * Marks the item as having a stale label data.
      */
     public void setNeedsLabelUpdate() {
         fNeedsLabelUpdate = true;
@@ -269,32 +269,32 @@ public class VirtualItem {
     public void clearNeedsLabelUpdate() {
         fNeedsLabelUpdate = false;
     }
-    
+
     /**
      * @return Returns whether the item has been disposed.
      */
     public boolean isDisposed() {
         return fDisposed;
     }
-    
+
     /**
      * Disposes the item.
      */
     public void dispose() {
         clearAll();
-        
+
         fDisposed = true;
         findTree().fireItemDisposed(this);
     }
 
     /**
      * @param key Key to retrieve data for.
-     * @return Returns item data corresponding to given key. 
+     * @return Returns item data corresponding to given key.
      */
     public Object getData (String key) {
         return fData.get(key);
     }
-    
+
     /**
      * Sets given data element for given key.
      * @param key Key for data.
@@ -305,13 +305,13 @@ public class VirtualItem {
     }
 
     /**
-     * Sets the item's data element. 
+     * Sets the item's data element.
      * @param data Item's new element.
      */
     public void setData(Object data) {
         fData.put(ELEMENT_DATA_KEY, data);
     }
-    
+
     /**
      * @return Returns item's data element.
      */
@@ -333,8 +333,8 @@ public class VirtualItem {
             setNeedsCountUpdate();
         }
 
-        
-        Assert.isTrue(!fExpanded || hasItems());        
+
+        Assert.isTrue(!fExpanded || hasItems());
 
         // If collapsed, make sure that all the children are collapsed as well.
         if (!fExpanded) {
@@ -343,7 +343,7 @@ public class VirtualItem {
             }
         }
     }
-    
+
     /**
      * @return Returns item's expanded state.
      */
@@ -365,14 +365,14 @@ public class VirtualItem {
             setItemCount(-1);
         }
     }
-    
+
     /**
      * @return Returns true if item has child items.
      */
     public boolean hasItems() {
         return fHasItems;
     }
-    
+
     /**
      * Sets the item's child count.
      * @param count Child count.
@@ -383,7 +383,7 @@ public class VirtualItem {
 			Entry<Index, VirtualItem> entry = itr.next();
             int index = entry.getKey().intValue();
             if (index >= count) {
-                VirtualItem item = entry.getValue(); 
+                VirtualItem item = entry.getValue();
                 item.dispose();
                 itr.remove();
             }
@@ -401,31 +401,31 @@ public class VirtualItem {
             }
         }
     }
-    
+
     /**
      * @return  Returns item's child count.
      */
     public int getItemCount() {
         return fItemCount;
     }
-    
+
     /**
-     * Returns the child item at given index.  Child item is created if needed.  
-     * 
+     * Returns the child item at given index.  Child item is created if needed.
+     *
      * @param index Index of the child item.
      * @return Child item.
      */
     public VirtualItem getItem(Index index) {
         ensureItems();
-        
-        VirtualItem item = fItems.get(index); 
+
+        VirtualItem item = fItems.get(index);
         if (item == null) {
             item = new VirtualItem(this, index);
             fItems.put(index, item);
         }
         return item;
     }
-    
+
     /**
      * @return Returns true if any of the child items need a data update.
      */
@@ -443,18 +443,18 @@ public class VirtualItem {
         }
         return false;
     }
-    
+
     /**
-     * Returns an array of current child items.  The returned array contains 
-     * only the items that have been created.  It may not contain as many items as the 
-     * item count. 
-     *  
+     * Returns an array of current child items.  The returned array contains
+     * only the items that have been created.  It may not contain as many items as the
+     * item count.
+     *
      * @return Child items array.
      */
     public VirtualItem[] getItems() {
         return fItems.values().toArray(new VirtualItem[fItems.size()]);
     }
-    
+
     /**
      * Adds a child item at the given index position.
      * @param position The index position to inser the new item at.
@@ -467,7 +467,7 @@ public class VirtualItem {
         if (fItemCount < 0) {
             fItemCount = 0;
         }
-        
+
         // Increment all items with an index higher than the given position.
         fItemCount++;
         ensureItems();
@@ -476,15 +476,15 @@ public class VirtualItem {
                 childIndex.increment();
             }
         }
-        
-        // Note: the same index object used to create the item has to 
-        // be used as the key into the map.  
+
+        // Note: the same index object used to create the item has to
+        // be used as the key into the map.
         Index childIndex = new Index(position);
         VirtualItem newChild = new VirtualItem(this, childIndex);
         fItems.put(childIndex, newChild);
         return newChild;
     }
-    
+
     /**
      * Removes the item at the given index.
      * @param position Index of the item to remove.
@@ -494,7 +494,7 @@ public class VirtualItem {
         if (fItemCount < 0) {
             fHasItems = false;
         }
-         
+
         ensureItems();
 
         VirtualItem removedItem = null;
@@ -510,13 +510,13 @@ public class VirtualItem {
             }
         }
     }
-    
+
     private void ensureItems() {
         if (fItems == null) {
 			fItems = new HashMap<Index, VirtualItem>(Math.max(1, Math.min(fItemCount, 16)));
         }
     }
-    
+
     private VirtualTree findTree() {
         VirtualItem item = this;
         while (!(item instanceof VirtualTree)) {
@@ -524,14 +524,14 @@ public class VirtualItem {
         }
         return (VirtualTree)item;
     }
-    
+
     @Override
 	public String toString() {
         StringBuffer buffer = new StringBuffer();
         toStringItem(buffer, IInternalDebugCoreConstants.EMPTY_STRING);
         return buffer.toString();
     }
-    
+
     void toStringItem(StringBuffer buffer, String indent) {
         buffer.append(indent);
         buffer.append(toStringElement());
@@ -546,12 +546,12 @@ public class VirtualItem {
             }
         }
     }
-    
+
     private String toStringElement() {
         String[] label = (String[])fData.get(LABEL_KEY);
         if (label != null && label.length != 0) {
             return label[0];
-        } 
+        }
         Object data = fData.get(ELEMENT_DATA_KEY);
         if (data != null) {
             return data.toString();

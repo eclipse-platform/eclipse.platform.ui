@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -122,16 +122,16 @@ public class DebugPreferencesMessages extends NLS {
 	public static String LaunchPerspectivePreferencePage_0;
 
 	public static String LaunchPerspectivePreferencePage_1;
-	
+
 	public static String PerspectivePreferencePage_0;
 	public static String PerspectivePreferencePage_1;
 	public static String PerspectivePreferencePage_2;
 	public static String PerspectivePreferencePage_4;
 	public static String PerspectivePreferencePage_5;
-	
+
 	public static String LaunchConfigurationsPreferencePage_1;
 	public static String LaunchConfigurationsPreferencePage_0;
-	
+
 	public static String ProcessPropertyPage_Command_Line__1;
 
 	public static String SimpleVariablePreferencePage_3;
@@ -160,7 +160,7 @@ public class DebugPreferencesMessages extends NLS {
 	public static String StringVariablePreferencePage_25;
 	public static String StringVariablePreferencePage_26;
 	public static String StringVariablePreferencePage_27;
-	
+
 	public static String ViewManagementPreferencePage_0;
 	public static String ViewManagementPreferencePage_1;
 	public static String ViewManagementPreferencePage_2;

@@ -56,10 +56,10 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private String fFileName = null;
 	private StringWriter fWriter = null;
-	
+
 	/**
 	 * Constructs an operation to export breakpoints to a file.
-	 * 
+	 *
 	 * @param breakpoints the breakpoints to export
 	 * @param fileName absolute path of file to export breakpoints to - the file
 	 * 	will be overwritten if it already exists
@@ -72,7 +72,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	/**
 	 * Constructs an operation to export breakpoints to a string buffer. The buffer
 	 * is available after the operation is run via {@link #getBuffer()}.
-	 * 
+	 *
 	 * @param breakpoints the breakpoints to export
 	 * @since 3.5
 	 */
@@ -111,7 +111,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 				root.putString(IImportExportConstants.IE_NODE_TYPE, marker.getType());
 				Object val = marker.getAttribute(IMarker.LINE_NUMBER);
 				root.putString(IMarker.LINE_NUMBER, (val != null) ? val.toString() : null);
-				val = marker.getAttribute(IImportExportConstants.CHARSTART); 
+				val = marker.getAttribute(IImportExportConstants.CHARSTART);
 				root.putString(IImportExportConstants.CHARSTART, (val != null) ? val.toString() : null);
 				String value = null;
 				boolean wsattrib = false;
@@ -160,9 +160,9 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	/**
 	 * Collects all of the breakpoint working sets that contain the given {@link IBreakpoint}
 	 * in the given list
-	 * 
+	 *
 	 * @param breakpoint the breakpoint to get working set information about
-	 * @return the {@link IImportExportConstants#DELIMITER} delimited {@link String} for all of the work sets the given breakpoint belongs to 
+	 * @return the {@link IImportExportConstants#DELIMITER} delimited {@link String} for all of the work sets the given breakpoint belongs to
 	 * @since 3.5
 	 */
 	private String getWorkingSetsAttribute(IBreakpoint breakpoint) {
@@ -177,7 +177,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Method to ensure markers and breakpoints are not both added to the working set
 	 * @param set the set to check
@@ -194,13 +194,13 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns a string buffer containing a memento of the exported breakpoints
 	 * or <code>null</code> if the operation was configured to export to a file.
 	 * The memento can be used to import breakpoints into the workspace using an
 	 * {@link ImportBreakpointsOperation}.
-	 * 
+	 *
 	 * @return a string buffer containing a memento of the exported breakpoints
 	 * or <code>null</code> if the operation was configured to export to a file
 	 * @since 3.5
@@ -211,6 +211,6 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		return null;
 	}
-	
-	
+
+
 }

@@ -16,22 +16,22 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Optional extension to a model proxy for models that use a check box tree viewer. Provides
- * notification for check state changes in the tree. 
- * 
+ * notification for check state changes in the tree.
+ *
  * @since 3.6
  * @see IModelProxy
  */
 public interface ICheckboxModelProxy {
 
     /**
-     * Notifies the receiver that the given element has had its 
+     * Notifies the receiver that the given element has had its
      * checked state modified in the viewer.
      * <p>
      * This method is called in the UI thread. Clients that execute long running operations or
      * communicate with a potentially unreliable or blocking model should run those operations
      * asynchronously.
      * </p>
-     * 
+     *
      * @param context Presentation context in which the element was updated.
      * @param viewerInput The root element of the viewer where the check
      * selection took place.

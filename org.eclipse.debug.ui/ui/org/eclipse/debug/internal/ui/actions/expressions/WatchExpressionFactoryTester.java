@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,9 +18,9 @@ import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 
 /**
- * This class is used to check whether a given element can be used to create 
- * a watch expression.  A single property can be tested 
- * "canCreateWatchExpression".  Test for this property ignores the value and 
+ * This class is used to check whether a given element can be used to create
+ * a watch expression.  A single property can be tested
+ * "canCreateWatchExpression".  Test for this property ignores the value and
  * always returns a boolean.
  *
  *	@since 3.4
@@ -28,7 +28,7 @@ import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 public class WatchExpressionFactoryTester extends PropertyTester {
 
 	public static final String CAN_CREATE_WATCH_EXPRESSION_PROPERTY = "canCreateWatchExpression"; //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
@@ -51,7 +51,7 @@ public class WatchExpressionFactoryTester extends PropertyTester {
 	                return factory2.canCreateWatchExpression(element);
 	            }
 	        }
-		} 
+		}
 		return false;
 	}
 }

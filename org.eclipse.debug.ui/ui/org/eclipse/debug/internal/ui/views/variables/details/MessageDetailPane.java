@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,39 +24,39 @@ import org.eclipse.ui.IWorkbenchPartSite;
 /**
  * A detail pane that displays a message in a wrapped label. Not contributed by an extension
  * point - used internally to display messages.
- * 
+ *
  * @since 3.6
  */
 public class MessageDetailPane implements IDetailPane {
-	
+
 	public static final String ID = IDebugUIConstants.PLUGIN_ID + ".detailpanes.message"; //$NON-NLS-1$
 	public static final String NAME = DetailMessages.MessageDetailPane_0;
 	public static final String DESCRIPTION = DetailMessages.MessageDetailPane_1;
-		
+
 	/**
 	 * Composite that contains the label that has margins.
 	 */
 	private Composite fControlParent;
-	
+
 	/**
 	 * Label control
 	 */
 	private Label fLabel;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
 	@Override
 	public void init(IWorkbenchPartSite partSite) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
 	@Override
 	public void dispose() {
 		fControlParent.dispose();
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
@@ -68,7 +68,7 @@ public class MessageDetailPane implements IDetailPane {
 		fLabel = SWTFactory.createWrapLabel(fControlParent, "", 1); //$NON-NLS-1$
 		return fControlParent;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
@@ -76,7 +76,7 @@ public class MessageDetailPane implements IDetailPane {
 	public boolean setFocus() {
 		return false;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

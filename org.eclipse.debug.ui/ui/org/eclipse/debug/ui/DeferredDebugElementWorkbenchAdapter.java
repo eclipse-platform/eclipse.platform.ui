@@ -17,7 +17,7 @@ import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
- * Common function for a deferred workbench adapter for a debug element. 
+ * Common function for a deferred workbench adapter for a debug element.
  * <p>
  * Clients may subclass this class to provide custom adapters for elements in a debug
  * model. The debug platform provides <code>IDeferredWorkbenchAdapters</code> for the standard debug
@@ -32,7 +32,7 @@ import org.eclipse.ui.progress.IElementCollector;
  */
 @Deprecated
 public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
-    
+
 	/**
 	 * An empty collection of children
 	 */

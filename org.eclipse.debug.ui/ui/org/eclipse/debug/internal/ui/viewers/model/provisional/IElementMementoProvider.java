@@ -17,30 +17,30 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * in order to support viewer state save/restore.
  * <p>
  * Note: provider methods are called in the Display thread of the viewer.
- * To avoid blocking the UI, long running operations should be performed 
+ * To avoid blocking the UI, long running operations should be performed
  * asynchronously.
  * </p>
  *
  * @since 3.3
  */
 public interface IElementMementoProvider {
-	
+
 	/**
 	 * Creates and stores a mementos for the elements specified in the requests.
 	 * A request should be cancelled if a memento is not supported for the
 	 * specified element or context.
-	 * 
-	 * @param requests Specifies elements and provides memento stores.  
-	 *  The requests array is guaranteed to have at least one element, and for  
+	 *
+	 * @param requests Specifies elements and provides memento stores.
+	 *  The requests array is guaranteed to have at least one element, and for
      *  all requests to have the same presentation context.
 	 */
 	public void encodeElements(IElementMementoRequest[] requests);
-	
+
 	/**
 	 * Determines whether mementos represent associated elements specified in the requests.
-	 * 
-	 * @param requests Specifies each element and previously created memento.  
-	 *  The requests array is guaranteed to have at least one element, and for  
+	 *
+	 * @param requests Specifies each element and previously created memento.
+	 *  The requests array is guaranteed to have at least one element, and for
      *  all requests to have the same presentation context.
 	 */
 	public void compareElements(IElementCompareRequest[] requests);

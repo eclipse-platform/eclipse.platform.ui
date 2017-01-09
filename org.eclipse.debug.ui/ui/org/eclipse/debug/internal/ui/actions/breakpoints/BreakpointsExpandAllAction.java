@@ -30,8 +30,8 @@ import org.eclipse.ui.IViewPart;
 /**
  * Action which fully expands the tree in the breakpoints view.
  */
-public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionDelegate2, IViewerUpdateListener, IModelChangedListener {	
-	
+public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionDelegate2, IViewerUpdateListener, IModelChangedListener {
+
     private IAction fAction;
 	private BreakpointsView fView;
 
@@ -55,7 +55,7 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
 
     @Override
 	public void runWithEvent(IAction action, Event event) {
-        run(action);   
+        run(action);
     }
 
 	/* (non-Javadoc)
@@ -94,23 +94,23 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
     @Override
 	public void updateStarted(IViewerUpdate update) {
     }
-    
+
     @Override
 	public void updateComplete(IViewerUpdate update) {
           if (!update.isCanceled()) {
               if (TreePath.EMPTY.equals(update.getElementPath())) {
                   update();
               }
-          }        
+          }
     }
-    
+
     private void update() {
         IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
         if (viewer != null && fAction != null) {
             fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
         }
     }
-    
+
     @Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         update();

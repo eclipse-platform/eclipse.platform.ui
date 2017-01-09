@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2005 Keith Seitz and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
@@ -18,10 +18,10 @@ public class EnvironmentVariable
 {
 	// The name of the environment variable
 	private String name;
-	
+
 	// The value of the environment variable
 	private String value;
-	
+
 	public EnvironmentVariable(String name, String value)
 	{
 		this.name = name;
@@ -31,24 +31,24 @@ public class EnvironmentVariable
 	/**
 	 * Returns this variable's name, which serves as the key in the key/value
 	 * pair this variable represents
-	 * 
+	 *
 	 * @return this variable's name
 	 */
 	public String getName()
 	{
 		return name;
 	}
-	
+
 	/**
 	 * Returns this variables value.
-	 * 
+	 *
 	 * @return this variable's value
 	 */
 	public String getValue()
 	{
 		return value;
 	}
-		
+
 	/**
 	 * Sets this variable's value
 	 * @param value
@@ -57,7 +57,7 @@ public class EnvironmentVariable
 	{
 		this.value = value;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -65,8 +65,8 @@ public class EnvironmentVariable
 	public String toString() {
 		return getName();
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -77,7 +77,7 @@ public class EnvironmentVariable
 			EnvironmentVariable var = (EnvironmentVariable)obj;
 			equal = var.getName().equals(name);
 		}
-		return equal;		
+		return equal;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

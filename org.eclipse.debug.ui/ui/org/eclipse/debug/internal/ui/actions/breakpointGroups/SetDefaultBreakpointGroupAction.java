@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkingSet;
  * Action which prompts the user to set a default breakpoint group.
  */
 public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewAction {
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */

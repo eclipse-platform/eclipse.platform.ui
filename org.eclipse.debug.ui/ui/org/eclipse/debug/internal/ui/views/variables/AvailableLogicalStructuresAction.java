@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
  * variable or expression.
  */
 public class AvailableLogicalStructuresAction extends Action implements IMenuCreator {
-	
+
 	private VariablesView fView;
 	private Menu fMenu;
 	private IValue fValue;
@@ -39,8 +39,8 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 
 	public AvailableLogicalStructuresAction(VariablesView view) {
 		setView(view);
-		setToolTipText(VariablesViewMessages.AvailableLogicalStructuresAction_0); 
-		setText(VariablesViewMessages.AvailableLogicalStructuresAction_1); 
+		setToolTipText(VariablesViewMessages.AvailableLogicalStructuresAction_0);
+		setText(VariablesViewMessages.AvailableLogicalStructuresAction_1);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_LOGICAL_STRUCTURE);
 		setEnabled(false);
 		setMenuCreator(this);
@@ -53,7 +53,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	@Override
 	public void run() {
 	}
-	
+
 	protected VariablesView getView() {
 		return fView;
 	}
@@ -87,7 +87,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
@@ -96,7 +96,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
-		
+
 		fMenu= new Menu(parent);
 		ILogicalStructureType[] types = getTypes();
         ILogicalStructureType enabledType = DebugPlugin.getDefaultStructureType(types);
@@ -157,19 +157,19 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		}
 		setEnabled(false);
 	}
-	
+
 	protected ILogicalStructureType[] getTypes() {
 		return fTypes;
 	}
-	
+
 	private void setTypes(ILogicalStructureType[] types) {
 		fTypes = types;
 	}
-	
+
 	protected IValue getValue() {
 		return fValue;
 	}
-	
+
 	private void setValue(IValue value) {
 		fValue = value;
 	}

@@ -26,17 +26,17 @@ import org.eclipse.jface.viewers.Viewer;
  * Duplicates the selected launch configuration.
  */
 public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurationAction {
-	
+
 	/**
 	 * Action identifier for IDebugView#getAction(String)
 	 */
 	public static final String ID_DUPLICATE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DUPLICATE_ACTION"; //$NON-NLS-1$
 
 	/**
-	 * Constructs an action to duplicate a launch configuration 
+	 * Constructs an action to duplicate a launch configuration
 	 */
 	public DuplicateLaunchConfigurationAction(Viewer viewer, String mode) {
-		super(LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1, viewer, mode); 
+		super(LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1, viewer, mode);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return selection.size() == 1 && selection.getFirstElement() instanceof ILaunchConfiguration;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
 	 */

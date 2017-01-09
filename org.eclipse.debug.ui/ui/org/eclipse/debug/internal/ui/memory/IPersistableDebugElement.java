@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,14 +20,14 @@ import org.eclipse.core.runtime.CoreException;
 public interface IPersistableDebugElement {
 
 	/**
-	 * Return the property with the specified propertyId.  
+	 * Return the property with the specified propertyId.
 	 * @param context is the context who is asking for this property.
 	 * @param propertyId is the property id of the property.
 	 * @return the value of the specified property
 	 * @throws CoreException when an error has occurred getting this property
 	 */
 	public Object getProperty(Object context, String propertyId) throws CoreException;
-	
+
 	/**
 	 * Sets the property with the specified propertyId.  Clients are expected
 	 * to save the properties specified.
@@ -37,7 +37,7 @@ public interface IPersistableDebugElement {
 	 * @throws CoreException when an error has occurred setting this property
 	 */
 	public void setProperty(Object context, String propertyId, Object value) throws CoreException;
-	
+
 	/**
 	 * @param context is the contex who is asking if this property is supported
 	 * @param propertyId
@@ -45,5 +45,5 @@ public interface IPersistableDebugElement {
 	 * the specified property.
 	 */
 	public boolean supportsProperty(Object context, String propertyId);
-	
+
 }

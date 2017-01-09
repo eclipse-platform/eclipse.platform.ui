@@ -54,7 +54,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 					projects.add(arg);
 				}
 			}
-		}	
+		}
 		Shell shell = DebugUIPlugin.getShell();
 		StringBuffer projectList = new StringBuffer();
 		//we need to limit this
@@ -71,22 +71,22 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 		} else{
 			projectMessage = projectList.toString();
 		}
-		String title =  LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
+		String title =  LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0;
 		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new Object[] { projectMessage });
-		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
-		
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
 				return Boolean.TRUE;
 			}
 		}
-		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, 
-				title, 
-				null, 
-				message, 
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell,
+				title,
+				null,
+				message,
 				MessageDialog.QUESTION,
-				new String[] {IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL}, 
+				new String[] {IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL},
 				0,
 				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1,
 				false);
@@ -96,7 +96,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
         		store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
         	}
             return Boolean.TRUE;
-        } 
+        }
         else {
             return Boolean.FALSE;
         }

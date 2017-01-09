@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -25,11 +25,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Tests which verify the check box support.  This test is very similar to the 
- * content test except that the extending class should create a viewer with 
- * the SWT.CHECK style enabled. <br>  
+ * Tests which verify the check box support.  This test is very similar to the
+ * content test except that the extending class should create a viewer with
+ * the SWT.CHECK style enabled. <br>
  * Most of the  check box verification is performed in the test model.
- * 
+ *
  * @since 3.6
  */
 abstract public class CheckTests extends TestCase {
@@ -37,7 +37,7 @@ abstract public class CheckTests extends TestCase {
     Shell fShell;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public CheckTests(String name) {
         super(name);
     }
@@ -53,14 +53,14 @@ abstract public class CheckTests extends TestCase {
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open ();
     }
 
     abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -68,7 +68,7 @@ abstract public class CheckTests extends TestCase {
 	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {
@@ -93,34 +93,34 @@ abstract public class CheckTests extends TestCase {
 
         // Make sure that all elements are expanded
         fViewer.setAutoExpandLevel(-1);
-        
+
         // Create the agent which forces the tree to populate
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        
+
         // Create the listener which determines when the view is finished updating.
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
-        
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
+
         // Set the viewer input (and trigger updates).
         fViewer.setInput(model.getRootElement());
-        
+
         // Wait for the updates to complete.
         while (!fListener.isFinished()) {
 			if (!fDisplay.readAndDispatch ()) {
 				Thread.sleep(0);
 			}
 		}
-        
+
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
     public void testSimpleMultiLevel() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        
+
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
-        
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
-        
+
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
+
         fViewer.setInput(model.getRootElement());
 
         while (!fListener.isFinished()) {
@@ -138,14 +138,14 @@ abstract public class CheckTests extends TestCase {
 //        TestModel model = TestModel.simpleSingleLevel();
 //        fViewer.setAutoExpandLevel(-1);
 //        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-//        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+//        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 //        fViewer.setInput(model.getRootElement());
-//        
+//
 //        // Wait for the updates to complete and validate.
 //        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 //        model.validateData(fViewer, TreePath.EMPTY);
-//        
-//        InternalTreeModelViewer treeViewer = ((InternalTreeModelViewer)fViewer); 
+//
+//        InternalTreeModelViewer treeViewer = ((InternalTreeModelViewer)fViewer);
 //        TreePath elementPath = model.findElement("1");
 //        TestElement element = model.getElement(elementPath);
 //        boolean initialCheckState = element.getChecked();
@@ -158,18 +158,18 @@ abstract public class CheckTests extends TestCase {
 //        fDisplay.post(event);
 //
 //        while (fDisplay.readAndDispatch ());
-//        
+//
 //        Assert.assertTrue(element.getChecked() != initialCheckState);
 //    }
 
     public void testUpdateCheck() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-        
+
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -179,14 +179,14 @@ abstract public class CheckTests extends TestCase {
 			}
 		}
         model.validateData(fViewer, TreePath.EMPTY);
-        
+
         // Update the model
         TestElement element = model.getRootElement().getChildren()[0];
-        
+
         TreePath elementPath = new TreePath(new Object[] { element });
         ModelDelta delta = model.setElementChecked(elementPath, false, false);
-        
-        fListener.reset(elementPath, element, -1, true, false); 
+
+        fListener.reset(elementPath, element, -1, true, false);
         model.postDelta(delta);
         while (!fListener.isFinished(ITestModelUpdatesListenerConstants.LABEL_COMPLETE | ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) {
 			if (!fDisplay.readAndDispatch ()) {

@@ -34,16 +34,16 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Print view tab toolbar action
- * 
+ *
  * @since 3.0
  */
 public class PrintTableRenderingAction extends Action
 {
 	private AbstractBaseTableRendering fRendering;
 	private StructuredViewer fViewer;
-	
+
 	private static final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
-	
+
 	public PrintTableRenderingAction(AbstractBaseTableRendering rendering, StructuredViewer viewer)
 	{
 		super(DebugUIMessages.PrintViewTabAction_title);
@@ -62,16 +62,16 @@ public class PrintTableRenderingAction extends Action
 	 * and endPage() and endJob() must be called after printTable(...).
 	 */
 	protected void printTable(TableItem[] itemList, GC printGC, Printer printer) {
-		
-		
+
+
 		int numColumns = ((Table)fViewer.getControl()).getColumnCount();
-		ITableLabelProvider labelProvider = (ITableLabelProvider)fViewer.getLabelProvider();		
+		ITableLabelProvider labelProvider = (ITableLabelProvider)fViewer.getLabelProvider();
 		int lineNum = 1;
 
 		int charsPerByte = fRendering.getNumCharsPerByte();
 		if (charsPerByte < 0)
 			charsPerByte = 4;
-		
+
 		// return line number after column labels are printed
 		lineNum = printColumnLabels(printGC, lineNum);
 
@@ -81,13 +81,13 @@ public class PrintTableRenderingAction extends Action
 			//print all columns for this row
 			for (int j=0; j < numColumns; j++) {
 				String columnText = labelProvider.getColumnText(itemList[i].getData(), j);
-				
+
 				while (columnText.length() < fRendering.getBytesPerColumn() * charsPerByte)
 				{
 					 columnText += " "; //$NON-NLS-1$
 				}
 				tableContents.append(COLUMN_SEPERATOR);
-				tableContents.append(columnText);							 
+				tableContents.append(columnText);
 			}
 			printGC.drawString(tableContents.toString(), 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
 			lineNum++;
@@ -101,17 +101,17 @@ public class PrintTableRenderingAction extends Action
 			}
 		}
 	}
-	
+
 	private int printColumnLabels(GC printGC, int lineNum)
-	{	
+	{
 		StringBuffer tableContents = new StringBuffer();
-		int numColumns = ((Table)fViewer.getControl()).getColumnCount();		
+		int numColumns = ((Table)fViewer.getControl()).getColumnCount();
 		TableColumn columns[] = ((Table)fViewer.getControl()).getColumns();
-		
+
 		int charsPerByte = fRendering.getNumCharsPerByte();
 		if (charsPerByte < 0)
 			charsPerByte = 4;
-		
+
 		int addressSizeInBytes = 0;
 		TableRenderingContentDescriptor descriptor = fRendering.getAdapter(TableRenderingContentDescriptor.class);
 		if (descriptor == null)
@@ -125,7 +125,7 @@ public class PrintTableRenderingAction extends Action
 				} catch (DebugException e) {
 					addressSizeInBytes = 0;
 				}
-				
+
 				if (addressSizeInBytes <= 0)
 					addressSizeInBytes = 4;
 			}
@@ -138,13 +138,13 @@ public class PrintTableRenderingAction extends Action
 		{
 			addressSizeInBytes = descriptor.getAddressSize();
 		}
-	
+
 		//get the column headers
 		for (int k=0; k < numColumns; k++) {
-	
+
 			StringBuffer columnLabel = new StringBuffer(columns[k].getText());
 			int numBytes = 0;
-	
+
 			if (k > 0)
 			{
 				numBytes = fRendering.getBytesPerColumn();
@@ -153,18 +153,18 @@ public class PrintTableRenderingAction extends Action
 			{
 				numBytes = addressSizeInBytes;
 			}
-	
+
 			 while (columnLabel.length() < numBytes * charsPerByte)
 			 {
 				 columnLabel.append(" "); //$NON-NLS-1$
 			 }
-	 
+
 			tableContents.append(COLUMN_SEPERATOR);
 			tableContents.append(columnLabel);
 		}
 		printGC.drawString(tableContents.toString(), 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
-		lineNum++;		
-		
+		lineNum++;
+
 		return lineNum;
 	}
 
@@ -173,17 +173,17 @@ public class PrintTableRenderingAction extends Action
 	 */
 	@Override
 	public void run() {
-		
+
 		if (!(fViewer.getControl() instanceof Table))
 			return;
-		
+
 		PrintDialog printDialog = new PrintDialog(DebugUIPlugin.getShell());
 		PrinterData printerData = printDialog.open();	// pop up a system print dialog
 		if (printerData == null) {setChecked(false); return;}
 		Printer printer = new Printer(printerData);
 		GC gc = new GC(printer);
 		TableItem[] tableItems = ((Table)fViewer.getControl()).getItems();
-		
+
 		// start the print job and assign it a title
 		printer.startJob(DebugUIMessages.PrintViewTabAction_jobtitle + fRendering.getLabel());
 		printer.startPage();					// start the first page

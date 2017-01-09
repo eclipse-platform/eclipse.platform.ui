@@ -34,13 +34,13 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 	 * @since 3.2
 	 */
 	class FilterAction extends Action {
-		
+
 		/** The preference store. */
 		private IPreferenceStore fStore = null;
 
 		/** The preference key for the value in the store. */
 		private String fKey = null;
-		
+
 		/**
 		 * Constructor for check style menu items
 		 * @param store the pref store
@@ -54,7 +54,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 			setChecked(fStore.getBoolean(fKey));
 			fillIntoMenu(menu, this);
 		}
-		
+
 		/**
 		 * Constructor for flyout menu style actions
 		 * @param menu the parent menu
@@ -66,7 +66,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 			setMenuCreator(creator);
 			fillIntoMenu(menu, this);
 		}
-		
+
 		/**
 		 * fills the new action into the specified menu
 		 * @param menu the parent menu
@@ -76,7 +76,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 			ActionContributionItem item = new ActionContributionItem(action);
 			item.fill(menu, -1);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
@@ -87,7 +87,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 			}
 		}
 	}
-	
+
 	/**
 	 * the menu created via this class
 	 */
@@ -100,7 +100,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 	private IPreferenceStore getDebugPrefStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
@@ -123,10 +123,10 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_1, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED);
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_2, IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES);
 		new FilterAction(fCreatedMenu, getDebugPrefStore(), LaunchConfigurationsMessages.FilterDropDownMenuCreator_4, IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS);
-		
+
 		//add separator
 		new MenuItem(fCreatedMenu, SWT.SEPARATOR);
-	
+
 		//add pref action
 		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
 			@Override
@@ -137,7 +137,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		new ActionContributionItem(action).fill(fCreatedMenu, -1);
 		return fCreatedMenu;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */

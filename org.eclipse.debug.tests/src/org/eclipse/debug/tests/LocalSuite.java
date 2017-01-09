@@ -25,24 +25,24 @@ import org.eclipse.debug.tests.viewer.model.JFaceViewerTopIndexTests;
 import org.eclipse.debug.tests.viewer.model.JFaceViewerUpdateTests;
 
 /**
- * Tests to run locally.  They require a user terminal to execute correctly 
- * and have frequent issues when run on build machine. 
- * 
+ * Tests to run locally.  They require a user terminal to execute correctly
+ * and have frequent issues when run on build machine.
+ *
  * @since 3.7
  */
 public class LocalSuite extends TestSuite {
 
 	/**
 	 * Returns the suite.  This is required to use the JUnit Launcher.
-	 * 
+	 *
 	 * @return the test suite
 	 */
 	public static Test suite() {
 		return new LocalSuite();
 	}
-	
+
 	/**
-	 * Constructs the automated test suite. Adds all tests. 
+	 * Constructs the automated test suite. Adds all tests.
 	 */
 	public LocalSuite() {
 		// JFace viewer tests

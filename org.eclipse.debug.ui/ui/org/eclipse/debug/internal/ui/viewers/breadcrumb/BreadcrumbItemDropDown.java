@@ -153,7 +153,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	// the size is not adjusted correctly in a virtual tree.
     private static final int DROP_DOWN_MIN_WIDTH= 500;
     private static final int DROP_DOWN_MAX_WIDTH= 501;
-    
+
     private static final int DROP_DOWN_DEFAULT_MIN_HEIGHT= 100;
     private static final int DROP_DOWN_DEFAULT_MAX_HEIGHT= 500;
 
@@ -171,7 +171,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
     private boolean fIsResizingProgrammatically;
     private int fCurrentWidth = -1;
     private int fCurrentHeight = -1;
-    
+
 
 	public BreadcrumbItemDropDown(BreadcrumbItem parent, Composite composite) {
 		fParent= parent;
@@ -280,7 +280,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		if (DebugUIPlugin.DEBUG_BREADCRUMB) {
 			DebugUIPlugin.trace("	creating new shell"); //$NON-NLS-1$
 		}
-	      
+
         fShell.addControlListener(new ControlAdapter() {
             /*
              * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
@@ -289,7 +289,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			public void controlResized(ControlEvent e) {
                 if (fIsResizingProgrammatically)
                     return;
-                
+
                 Point size= fShell.getSize();
                 fCurrentWidth = size.x;
                 fCurrentHeight = size.y;
@@ -313,7 +313,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
         TreePath path= fParent.getPath();
 
 		Control control = fParent.getViewer().createDropDown(composite, this, path);
-		
+
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		setShellBounds(fShell);
@@ -439,7 +439,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	        settings= javaSettings.addNewSection(DIALOG_SETTINGS);
 	    return settings;
 	}
-	    
+
 	private int getMaxWidth() {
 	    try {
 	        return getDialogSettings().getInt(DIALOG_WIDTH);
@@ -462,7 +462,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 * @param shell the shell to calculate the size for.
 	 */
 	private void setShellBounds(Shell shell) {
-	    
+
 		Rectangle rect= fParentComposite.getBounds();
 		Rectangle toolbarBounds= fToolBar.getBounds();
 
@@ -474,16 +474,16 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		if (fParent.getImage() != null) {
 			imageBoundsX= fParent.getImage().getImageData().width;
 		}
-		
+
 		Rectangle trim= fShell.computeTrim(0, 0, width, height);
 		int x= toolbarBounds.x + toolbarBounds.width + 2 + trim.x - imageBoundsX;
 		if (!isLeft())
 			x+= width;
-		
+
 		int y = rect.y;
-		if (isTop()) 
+		if (isTop())
 		    y+= rect.height;
-		else 
+		else
 		    y-= height;
 
 		Point pt= new Point(x, y);
@@ -551,7 +551,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	private void resizeShell(final Shell shell) {
         int maxHeight= getMaxHeight();
         int maxWidth = getMaxWidth();
-        
+
         if (fCurrentHeight >= maxHeight && fCurrentWidth >= maxWidth)
 			return;
 
@@ -561,7 +561,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
         if (fCurrentWidth >= DROP_DOWN_MAX_WIDTH) {
 			newWidth= fCurrentWidth;
 		} else {
-		    // Workaround for bug 319612: Do not resize width below the 
+		    // Workaround for bug 319612: Do not resize width below the
 		    // DROP_DOWN_MIN_WIDTH.  This can happen because the Shell.getSize()
 		    // is incorrectly small on Linux.
             newWidth= Math.min(Math.max(Math.max(preferedSize.x, fCurrentWidth), DROP_DOWN_MIN_WIDTH), maxWidth);
@@ -580,7 +580,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 				shell.setSize(newWidth, newHeight);
 				fCurrentWidth = newWidth;
 				fCurrentHeight = newHeight;
-				
+
 				Point location = shell.getLocation();
 				Point newLocation = location;
 				if (!isLeft()) {
@@ -588,7 +588,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 				}
 				if (!isTop()) {
                     newLocation = new Point(newLocation.x, newLocation.y - (newHeight - fCurrentHeight));
-				}				    
+				}
 				if (!location.equals(newLocation)) {
 	                shell.setLocation(newLocation.x, newLocation.y);
 				}
@@ -610,7 +610,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		return (fParentComposite.getStyle() & SWT.RIGHT_TO_LEFT) == 0 &&
 		    (fParent.getViewer().getStyle() & SWT.RIGHT) == 0;
 	}
-	
+
 	   /**
      * Tells whether this the breadcrumb is in LTR mode or RTL mode.  Or whether the breadcrumb
      * is on the right-side status coolbar, which has the same effect on layout.
@@ -628,12 +628,12 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
             fShell.close();
         }
     }
-    
+
     @Override
 	public void notifySelection(ISelection selection) {
-        fParent.getViewer().fireMenuSelection(selection);        
+        fParent.getViewer().fireMenuSelection(selection);
     }
-    
+
     @Override
 	public void updateSize() {
         if (fShell != null && !fShell.isDisposed()) {

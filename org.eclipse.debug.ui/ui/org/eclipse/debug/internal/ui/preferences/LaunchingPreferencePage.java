@@ -39,17 +39,17 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * A preference page for configuring launching preferences.
- * 
+ *
  * @since 3.0.0
  */
 public class LaunchingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private Button fUseContextLaunching;
 	private Button fUseOldLaunching;
 	private Button fLaunchLastIfNotLaunchable;
 	private Button fCheckParent;
 	private Button fTerminatAndRelaunch;
-	
+
 	/**
 	 * The default constructor
 	 */
@@ -57,7 +57,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		super();
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -74,43 +74,43 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		//save dirty editors
-		FieldEditor edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_2, 3,  
-				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, 
+		FieldEditor edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_2, 3,
+				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS},
 				 {DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER},
-				 {DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}}, 
-				 comp,
-				 true);	
-		addField(edit);
-		
-		//wait for build
-		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, 
-				 DebugPreferencesMessages.LaunchingPreferencePage_6, 3,
-				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_7, MessageDialogWithToggle.ALWAYS}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_8, MessageDialogWithToggle.NEVER}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}}, 
+				 {DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}},
 				 comp,
 				 true);
 		addField(edit);
-		
+
+		//wait for build
+		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD,
+				 DebugPreferencesMessages.LaunchingPreferencePage_6, 3,
+				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_7, MessageDialogWithToggle.ALWAYS},
+				 {DebugPreferencesMessages.LaunchingPreferencePage_8, MessageDialogWithToggle.NEVER},
+				 {DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}},
+				 comp,
+				 true);
+		addField(edit);
+
 		//re-launch in debug mode
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
-				 DebugPreferencesMessages.LaunchingPreferencePage_15, 3, 
-				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_16, MessageDialogWithToggle.ALWAYS}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_17, MessageDialogWithToggle.NEVER}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_18, MessageDialogWithToggle.PROMPT}}, 
+				 DebugPreferencesMessages.LaunchingPreferencePage_15, 3,
+				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_16, MessageDialogWithToggle.ALWAYS},
+				 {DebugPreferencesMessages.LaunchingPreferencePage_17, MessageDialogWithToggle.NEVER},
+				 {DebugPreferencesMessages.LaunchingPreferencePage_18, MessageDialogWithToggle.PROMPT}},
 				 comp,
 				 true);
 		addField(edit);
-		
+
 		//continue with compile errors
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
-				 DebugPreferencesMessages.LaunchingPreferencePage_21, 2, 
-				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_22, MessageDialogWithToggle.ALWAYS},  
-				 {DebugPreferencesMessages.LaunchingPreferencePage_23, MessageDialogWithToggle.PROMPT}},  
+				 DebugPreferencesMessages.LaunchingPreferencePage_21, 2,
+				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_22, MessageDialogWithToggle.ALWAYS},
+				 {DebugPreferencesMessages.LaunchingPreferencePage_23, MessageDialogWithToggle.PROMPT}},
 				 comp,
 				 true);
 		addField(edit);
-		
+
 		//filtering options
 		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_36, 1, 1, GridData.FILL_HORIZONTAL);
 		Composite spacer = SWTFactory.createComposite(group, 1, 1, GridData.FILL_HORIZONTAL);
@@ -120,11 +120,11 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		edit = new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.LaunchingPreferencePage_10, SWT.NONE, spacer);
 		edit.fillIntoGrid(spacer, 2);
 		addField(edit);
-		
+
 		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY, DebugPreferencesMessages.LaunchingPreferencePage_confirm_0, spacer);
 		edit.fillIntoGrid(spacer, 2);
 		addField(edit);
-		
+
 		//history list size preference
 		IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, spacer);
 		editor.fillIntoGrid(spacer, 2);
@@ -135,7 +135,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		editor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		editor.setValidRange(1, historyMax);
 		editor.setEmptyStringAllowed(false);
-		
+
 		//CONTEXTLAUNCHING
 		createContextLaunchingControls(comp);
 		initialize();
@@ -144,10 +144,10 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	}
 
 	/**
-	 * Creates the context launching portion of the page, which includes two radio buttons and 
+	 * Creates the context launching portion of the page, which includes two radio buttons and
 	 * a nested check box
 	 * @param parent the parent to add this control to
-	 * 
+	 *
 	 * @since 3.3.0
 	 * CONTEXTLAUNCHING
 	 */
@@ -172,7 +172,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		layout.marginHeight = 0;
 		fCheckParent = SWTFactory.createRadioButton(space, DebugPreferencesMessages.LaunchingPreferencePage_39);
 		fLaunchLastIfNotLaunchable = SWTFactory.createRadioButton(space, DebugPreferencesMessages.LaunchingPreferencePage_41);
-		
+
 		fTerminatAndRelaunch = SWTFactory.createCheckButton(group, DebugPreferencesMessages.LaunchingPreferencePage_42, null, false, 1);
 
 		// initialize the buttons
@@ -188,13 +188,13 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		value = getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION);
 		fTerminatAndRelaunch.setSelection(value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	@Override
 	public void init(IWorkbench workbench) {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -212,7 +212,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		fTerminatAndRelaunch.setSelection(value);
 		super.performDefaults();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */

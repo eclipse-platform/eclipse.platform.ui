@@ -23,7 +23,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * @since 3.2
  */
 public class SuspendTriggerAdapterFactory implements IAdapterFactory {
-	
+
 	private Map<Object, LaunchSuspendTrigger> fSuspendTriggers = new HashMap<Object, LaunchSuspendTrigger>();
 
 	/* (non-Javadoc)
@@ -52,7 +52,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
 		return new Class[]{ISuspendTrigger.class};
 	}
-	
+
 	public synchronized void dispose(LaunchSuspendTrigger trigger) {
 		fSuspendTriggers.remove(trigger.getLaunch());
 	}

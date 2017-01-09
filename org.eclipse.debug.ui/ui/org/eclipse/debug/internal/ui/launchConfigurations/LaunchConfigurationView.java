@@ -51,26 +51,26 @@ import com.ibm.icu.text.MessageFormat;
  * A tree view of launch configurations
  */
 public class LaunchConfigurationView extends AbstractDebugView implements ILaunchConfigurationListener {
-	
+
 	/**
 	 * the filtering tree viewer
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private LaunchConfigurationFilteredTree fTree;
-	
+
 	/**
 	 * a handle to the launch manager
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private ILaunchManager fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
-	
+
 	/**
 	 * The launch group to display
 	 */
 	private LaunchGroupExtension fLaunchGroup;
-	
+
 	/**
 	 * Actions
 	 */
@@ -78,31 +78,31 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
 	private CollapseAllLaunchConfigurationAction fCollapseAllAction;
-	
+
 	/**
 	 * Action for providing filtering to the Launch Configuration Dialog
 	 * @since 3.2
 	 */
 	private FilterLaunchConfigurationAction fFilterAction;
-	
+
 	/**
-	 * This label is used to notify users that items (possibly) have been filtered from the 
+	 * This label is used to notify users that items (possibly) have been filtered from the
 	 * launch configuration view
 	 * @since 3.3
 	 */
 	private Label fFilteredNotice = null;
-	
+
 	/**
 	 * Whether to automatically select configs that are added
 	 */
 	private boolean fAutoSelect = true;
-	
+
 	/**
 	 * the group of additional filters to be added to the viewer
 	 * @since 3.2
 	 */
 	private ViewerFilter[] fFilters = null;
-	
+
 	/**
 	 * Constructs a launch configuration view for the given launch group
 	 */
@@ -110,7 +110,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		super();
 		fLaunchGroup = launchGroup;
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param launchGroup
@@ -121,10 +121,10 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fLaunchGroup = launchGroup;
 		fFilters = filters;
 	}
-	
+
 	/**
 	 * Returns the launch group this view is displaying.
-	 * 
+	 *
 	 * @return the launch group this view is displaying
 	 */
 	protected LaunchGroupExtension getLaunchGroup() {
@@ -143,7 +143,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		viewer.setLaunchConfigurationView(this);
 		return viewer;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getAdapter(java.lang.Class)
 	 */
@@ -174,11 +174,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		}
 		return super.getAdapter(key);
 	}
-	
+
 	/**
 	 * Returns the filtering text control from the viewer or <code>null</code>
 	 * if the text control was not created.
-	 * 
+	 *
 	 * @return the filtering text control or <code>null</code>
 	 * @since 3.2
 	 */
@@ -193,20 +193,20 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	protected void createActions() {
 		fCreateAction = new CreateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION, fCreateAction);
-		
+
 		fDeleteAction = new DeleteLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DeleteLaunchConfigurationAction.ID_DELETE_ACTION, fDeleteAction);
 		setAction(IDebugView.REMOVE_ACTION, fDeleteAction);
-		
+
 		fDuplicateAction = new DuplicateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION, fDuplicateAction);
-		
+
 		fCollapseAllAction = new CollapseAllLaunchConfigurationAction((TreeViewer)getViewer());
 		setAction(CollapseAllLaunchConfigurationAction.ID_COLLAPSEALL_ACTION, fCollapseAllAction);
-		
+
 		fFilterAction = new FilterLaunchConfigurationAction();
 		setAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION, fFilterAction);
-		
+
 	}
 
 	/**
@@ -233,11 +233,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {}
-	
+
 	/**
 	 * Returns this view's tree viewer
-	 * 
-	 * @return this view's tree viewer 
+	 *
+	 * @return this view's tree viewer
 	 */
 	protected TreeViewer getTreeViewer() {
 		return fTree.getLaunchConfigurationViewer();
@@ -262,7 +262,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	@Override
 	public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 		if(isSupportedConfiguration(configuration)) {
-			//due to notification and async messages we need to collect the moved from config 
+			//due to notification and async messages we need to collect the moved from config
 			//now, else it is null'd out before the following async job runs
 			//@see bug 211235 - making local config shared creates "non-existant dup" in LCD
 			final ILaunchConfiguration from  = getLaunchManager().getMovedFrom(configuration);
@@ -297,7 +297,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
     				viewer.setSelection(new StructuredSelection(configuration), true);
     			}
                 updateFilterLabel();
-			} 
+			}
 			catch (CoreException e) {}
 			finally {
 				viewer.getControl().setRedraw(true);
@@ -315,14 +315,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
      * </ul>
      * @param configuration the configuration
      * @return true if the configuration is supported by this instance of the view, false otherwise
-     * 
+     *
      * @since 3.4
      */
     protected boolean isSupportedConfiguration(ILaunchConfiguration configuration) {
     	try {
     		ILaunchConfigurationType type = configuration.getType();
-    		return !configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) && 
-    				type.supportsMode(getLaunchGroup().getMode()) && 
+    		return !configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) &&
+    				type.supportsMode(getLaunchGroup().getMode()) &&
     				equalCategories(type.getCategory(), getLaunchGroup().getCategory());
     	}
     	catch(CoreException ce) {
@@ -330,14 +330,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
     	}
     	return false;
     }
-    
+
     /**
 	 * Returns whether the given categories are equal.
-	 * 
+	 *
 	 * @param c1 category identifier or <code>null</code>
 	 * @param c2 category identifier or <code>null</code>
 	 * @return boolean
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean equalCategories(String c1, String c2) {
@@ -345,8 +345,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			return c1 == c2;
 		}
 		return c1.equals(c2);
-	} 
-    
+	}
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -407,7 +407,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fFilteredNotice = SWTFactory.createLabel(parent, IInternalDebugCoreConstants.EMPTY_STRING, 1);
 		fFilteredNotice.setBackground(parent.getBackground());
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.IDebugView#getViewer()
 	 */
@@ -415,7 +415,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	public Viewer getViewer() {
 		return fTree.getLaunchConfigurationViewer();
 	}
-	
+
 	/**
 	 * Updates the filter notification label
 	 * @since 3.3
@@ -426,7 +426,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				Integer.toString(viewer.getNonFilteredChildCount()),
 				Integer.toString(viewer.getTotalChildCount()) }));
 	}
-	
+
 	/**
 	 * returns the launch manager
 	 * @return
@@ -434,23 +434,23 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	protected ILaunchManager getLaunchManager() {
 		return fLaunchManager;
 	}
-	
+
 	/**
 	 * Sets whether to automatically select configs that are
 	 * added into the view (newly created).
-	 * 
+	 *
 	 * @param select whether to automatically select configs that are
 	 * added into the view (newly created)
 	 */
 	public void setAutoSelect(boolean select) {
 		fAutoSelect = select;
 	}
-	
+
 	/**
 	 * Returns whether this view is currently configured to
 	 * automatically select newly created configs that are
 	 * added into the view.
-	 * 
+	 *
 	 * @return whether this view is currently configured to
 	 * automatically select newly created configs
 	 */

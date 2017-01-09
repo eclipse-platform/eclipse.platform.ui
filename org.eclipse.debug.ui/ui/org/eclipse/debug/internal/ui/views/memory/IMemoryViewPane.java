@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,17 +18,17 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Represent a view pane in the memory view.
- * 
+ *
  * This is an internal interface for mananging the view panes within the Memory
  * View
- * 
+ *
  * @since 3.1
  */
 public interface IMemoryViewPane {
 
 	/**
 	 * Create the view pane with the given parent composite, and pane id.
-	 * 
+	 *
 	 * @param parent
 	 * @param paneId
 	 * @param label
@@ -61,7 +61,7 @@ public interface IMemoryViewPane {
 	/**
 	 * Add the given selection listener to the view pane. The selection listener
 	 * gets notified when the selection from the view pane has changed.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void addSelectionListener(ISelectionChangedListener listener);
@@ -69,7 +69,7 @@ public interface IMemoryViewPane {
 	/**
 	 * Remove the selection listener from the view pane. The listener will no
 	 * longer get notified when selection is changed.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removeSelctionListener(ISelectionChangedListener listener);
@@ -86,7 +86,7 @@ public interface IMemoryViewPane {
 
 	/**
 	 * Called when the view pane becomes visible or hidden
-	 * 
+	 *
 	 * @param visible visibility state of teh view pane
 	 */
 	public void setVisible(boolean visible);

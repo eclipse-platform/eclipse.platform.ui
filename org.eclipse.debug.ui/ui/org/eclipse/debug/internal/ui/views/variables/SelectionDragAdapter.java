@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * 	   Wind River - Pawel Piech - Initial Implementation - Drag/Drop to Expressions View (Bug 184057)
  *     IBM Corporation - further implementation and documentation
@@ -23,19 +23,19 @@ import org.eclipse.swt.dnd.Transfer;
 /**
  * Drag adapter for the variables view and expressions view.  Allows selected variables and
  * expressions to be dragged.
- * 
+ *
  * @see org.eclipse.debug.internal.ui.views.expression.ExpressionDropAdapter
  * @since 3.4
  */
 public class SelectionDragAdapter extends DragSourceAdapter implements TransferDragSourceListener {
-    
+
     /**
      * The associated viewer for the adapter
      */
     private TreeModelViewer fViewer;
-    
+
     /**
-     * Constructor, takes the viewer that contains the selection provider 
+     * Constructor, takes the viewer that contains the selection provider
      * @param view the associated view, <b>must</b> implement <code>ISelectionProvider</code>
      */
     public SelectionDragAdapter(TreeModelViewer viewer) {
@@ -50,7 +50,7 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
 	public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
      */
@@ -61,7 +61,7 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(event.time & 0xFFFFFFFFL);
         event.doit = !selection.isEmpty();
     }
-   
+
     /* (non-Javadoc)
      * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
      */
@@ -80,5 +80,5 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
 	public void dragFinished(DragSourceEvent event) {
         LocalSelectionTransfer.getTransfer().setSelection(null);
         LocalSelectionTransfer.getTransfer().setSelectionSetTime(0);
-    }   
+    }
 }

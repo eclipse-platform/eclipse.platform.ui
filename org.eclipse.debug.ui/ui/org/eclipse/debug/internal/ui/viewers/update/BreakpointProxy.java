@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Breakpoint model proxy.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointProxy extends AbstractModelProxy implements ICheckboxModelProxy {
@@ -28,16 +28,16 @@ public class BreakpointProxy extends AbstractModelProxy implements ICheckboxMode
 	 * Breakpoint object
 	 */
 	protected IBreakpoint fBreakpoint;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint for this model proxy
 	 */
 	public BreakpointProxy(IBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy#setChecked(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object, org.eclipse.jface.viewers.TreePath, boolean)
 	 */

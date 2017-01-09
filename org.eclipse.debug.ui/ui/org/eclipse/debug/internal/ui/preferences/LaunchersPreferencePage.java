@@ -55,10 +55,10 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 /**
  * This class provides a preference page for selecting and changing preferred launch delegates for those of them
  * that have conflicting delegates.
- * 
- * Delegates are considered to be conflicting if they are for the same launch configuration type, and apply to the same 
+ *
+ * Delegates are considered to be conflicting if they are for the same launch configuration type, and apply to the same
  * mode sets.
- * 
+ *
  * @since 3.3
  */
 public class LaunchersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -70,13 +70,13 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		private ILaunchConfigurationType fType = null;
 		private ILaunchDelegate[] fDelegates = null;
 		private Set<String> fModes = null;
-		
+
 		public DuplicateDelegate(ILaunchConfigurationType type, ILaunchDelegate[] delegates, Set<String> modes) {
 			fModes = modes;
 			fType = type;
 			fDelegates = delegates;
 		}
-		
+
 		public ILaunchConfigurationType getType() {
 			return fType;
 		}
@@ -88,7 +88,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			return fModes;
 		}
 	}
-	
+
 	/**
 	 * label provider to extend the default one, provides labels to both the tree and table of this page
 	 */
@@ -108,7 +108,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			return element.toString();
 		}
 	}
-	
+
 	/**
 	 * This class is used to provide content to the tree
 	 */
@@ -139,14 +139,14 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		@Override
 		public Object getParent(Object element) {return null;}
 	}
-	
+
 	private TreeViewer fTreeViewer = null;
 	private CheckboxTableViewer fTableViewer = null;
 	private Map<ILaunchConfigurationType, Set<DuplicateDelegate>> fDuplicates = null;
 	private Map<DuplicateDelegate, ILaunchDelegate> fDupeSelections = null;
 	private boolean fDirty = false;
 	private Text fDescription = null;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -170,13 +170,13 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_1, 2, 300);
-		
+
 		boolean enabled = fDuplicates.size() > 0;
 		if(!enabled) {
 			SWTFactory.createVerticalSpacer(comp, 1);
 			SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.LaunchersPreferencePage_0, 2, 300);
 		}
-		
+
 		SWTFactory.createVerticalSpacer(comp, 1);
 	//tree
 		Composite comp1 = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL);
@@ -213,7 +213,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				}
 			}
 		});
-		
+
 	//table
 		Composite comp2 = SWTFactory.createComposite(comp, comp.getFont(), 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(comp2, DebugPreferencesMessages.LaunchDelegatesPreferencePage_3, 1);
@@ -245,7 +245,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				Object element = event.getElement();
 				boolean checked = event.getChecked();
 				//always set checked, this way users cannot 'undo' a change to selecting a preferred delegate
-				//The story for this is that on startup if there are dupes, the user is prompted to pick a delegate, after that they cannot 
+				//The story for this is that on startup if there are dupes, the user is prompted to pick a delegate, after that they cannot
 				//return to a state of not being able to launch something, but can pick a different delegate
 				fTableViewer.setCheckedElements(new Object[] {element});
 				//set the selection to be the checked element
@@ -282,7 +282,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				delegate = fDupeSelections.get(dd);
 				try {
 					dd.getType().setPreferredDelegate(dd.getModeSet(), delegate);
-				} 
+				}
 				catch (CoreException e) {DebugUIPlugin.log(e);}
 			}
 		}

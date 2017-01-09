@@ -36,8 +36,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	private IEditorInput input;
 
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
-		super(selectionProvider, ActionMessages.OpenBreakpointMarkerAction__Go_to_File_1); 
-		setToolTipText(ActionMessages.OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2); 
+		super(selectionProvider, ActionMessages.OpenBreakpointMarkerAction__Go_to_File_1);
+		setToolTipText(ActionMessages.OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2);
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/elcl16/gotoobj_tsk.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		setDisabledImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/dlcl16/gotoobj_tsk.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
@@ -59,13 +59,13 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		if (page == null) {
 			return;
 		}
-		
+
 		IStructuredSelection selection= getStructuredSelection();
 		if (selection.isEmpty()) {
 			setEnabled(false);
 			return;
 		}
-		
+
 		IEditorPart part= null;
 		if (input != null) {
 			String editorId = fgPresentation.getEditorId(input, breakpoint);
@@ -73,7 +73,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
     			try {
     				part= page.openEditor(input, editorId, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
     			} catch (PartInitException e) {
-    				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.OpenBreakpointMarkerAction_Go_to_Breakpoint_1, ActionMessages.OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2, e); // 
+    				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.OpenBreakpointMarkerAction_Go_to_Breakpoint_1, ActionMessages.OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2, e); //
     			}
             }
 		}
@@ -81,7 +81,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 			IDE.gotoMarker(part, breakpoint.getMarker());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -15,14 +15,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTree;
 
 /**
- * Item validator for the virtual viewer which specifies that the given 
+ * Item validator for the virtual viewer which specifies that the given
  * range of items should be treated as visible.
  */
 public class VisibleVirtualItemValidator implements IVirtualItemValidator {
 
     private int fStart = 0;
     private int fEnd = 0;
-    
+
     public VisibleVirtualItemValidator(int startPosition, int length) {
         setVisibleRange(startPosition, length);
     }
@@ -31,15 +31,15 @@ public class VisibleVirtualItemValidator implements IVirtualItemValidator {
         fStart = startPosition;
         fEnd = startPosition + length;
     }
-    
+
     public int getStartPosition() {
         return fStart;
     }
-    
+
     public int getLength() {
         return fEnd - fStart;
     }
-    
+
     @Override
 	public boolean isItemVisible(VirtualItem item) {
         int position = 0;
@@ -65,11 +65,11 @@ public class VisibleVirtualItemValidator implements IVirtualItemValidator {
         }
         return position;
     }
-    
+
     private boolean isSelected(VirtualItem item) {
         VirtualItem[] selection = getSelection(item);
         for (int i = 0; i < selection.length; i++) {
-            VirtualItem selectionItem = selection[i]; 
+            VirtualItem selectionItem = selection[i];
             while (selectionItem != null) {
                 if (item.equals(selectionItem)) {
                     return true;
@@ -79,7 +79,7 @@ public class VisibleVirtualItemValidator implements IVirtualItemValidator {
         }
         return false;
     }
-    
+
     private VirtualItem[] getSelection(VirtualItem item) {
         VirtualTree tree = getTree(item);
         if (tree != null) {
@@ -87,7 +87,7 @@ public class VisibleVirtualItemValidator implements IVirtualItemValidator {
         }
         return new VirtualItem[0];
     }
-    
+
     private VirtualTree getTree(VirtualItem item) {
         while (item != null && !(item instanceof VirtualTree)) {
             item = item.getParent();

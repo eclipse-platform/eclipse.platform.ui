@@ -69,7 +69,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     /**
      * Table must be SWT.VIRTUAL. This is intentional. Labels will never be
      * retrieved for non-visible items.
-     * 
+     *
      * @see SWT#VIRTUAL
      * @param table the backing table widget
      */
@@ -89,7 +89,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			public void mouseDown(MouseEvent e) {
                 fTableEditorImpl.handleMouseDown(e);
             }
-        });      
+        });
     }
 
     @Override
@@ -97,7 +97,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     	fTableEditor.dispose();
     	fTable.dispose();
         super.dispose();
-    }  
+    }
 
     @Override
 	protected ISelection doAttemptSelectionToWidget(ISelection selection, boolean reveal) {
@@ -112,7 +112,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
             ModelNode[] nodes = getModel().getRootNode().getChildrenNodes();
             if (nodes != null) {
 	            int index = 0;
-	
+
 	            // I'm not sure if it would be faster to check TableItems first...
 	            for (int i = 0; i < nodes.length; i++) {
 	                Object element = nodes[i].getElement();
@@ -121,7 +121,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	                    index++;
 	                }
 	            }
-	
+
 	            fTable.setSelection(indices);
 	            if (reveal && indices.length > 0) {
 	                TableItem item = fTable.getItem(indices[0]);
@@ -177,7 +177,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         if (node.getElement().equals(getInput())) {
             updateChildren(node);
         }
-    } 
+    }
 
     @Override
 	protected void restoreLabels(Item item) {
@@ -264,7 +264,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
      */
     @Override
@@ -278,7 +278,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     /**
      * Sets the cell editors of this table viewer.
-     * 
+     *
      * @param editors
      *            the list of cell editors
      */
@@ -288,7 +288,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     /**
      * Sets the cell modifier of this table viewer.
-     * 
+     *
      * @param modifier
      *            the cell modifier
      */
@@ -375,7 +375,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 
     /**
      * This is not asynchronous. This method must be called in the UI Thread.
-     * 
+     *
      * @param element
      *            The element to edit. Each element maps to a row in the Table.
      * @param column
@@ -480,12 +480,12 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     @Override
 	protected void setItemCount(Widget parent, int itemCount) {
 		fTable.setItemCount(itemCount);
-	}  
+	}
 
 	protected int getVisibleItemCount(int top) {
         int itemCount = fTable.getItemCount();
         return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
-    }   
+    }
 
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createUpdatePolicy()
@@ -529,7 +529,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChild(org.eclipse.swt.widgets.Widget, int)
 	 */
@@ -547,7 +547,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	protected void clearChildren(Widget item) {
 		if (item instanceof Table) {
 			fTable.clearAll();
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -560,5 +560,5 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		}
 		return -1;
 	}
-	
+
 }

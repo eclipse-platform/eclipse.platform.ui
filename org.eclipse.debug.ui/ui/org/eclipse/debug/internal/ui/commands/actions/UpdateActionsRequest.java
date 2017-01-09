@@ -16,15 +16,15 @@ import org.eclipse.debug.internal.core.commands.DebugCommandRequest;
 /**
  * Boolean collector that collects boolean results from a number of voters.
  * Request is cancelled when one voter votes false.
- * 
+ *
  * @since 3.3
  *
  */
 public class UpdateActionsRequest extends DebugCommandRequest implements IEnabledStateRequest {
-	
+
 	private IEnabledTarget[] fActions;
 	private boolean fEnabled = false;
-	
+
 	public UpdateActionsRequest(Object[] elements, IEnabledTarget[] actions) {
 		super(elements);
 		fActions = actions;

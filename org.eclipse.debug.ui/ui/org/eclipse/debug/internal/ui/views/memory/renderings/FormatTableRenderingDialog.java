@@ -47,13 +47,13 @@ public class FormatTableRenderingDialog extends TrayDialog
 
 		// possible number of addressable units per column
 		private int[] fColumnSizes = new int[] {1, 2, 4, 8, 16, 32, 64, 128};
-		
+
 		// possible number of addressable units per column
 		private int[] fRowSizes = new int[] {1, 2, 4, 8, 16, 32, 64, 128};
-		
+
 		private Combo fColumnControl;
 		private Combo fRowControl;
-		
+
 		private int fCurrentColIdx = -1;
 		private int fCurrentRowIdx = -1;
 		private Control fPreivewPage;
@@ -67,7 +67,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 		private Label fMsgLabel;
 		private boolean fDisableCancel = false;
 		private String fMsg;
-		
+
 
 		public FormatTableRenderingDialog(AbstractBaseTableRendering rendering, Shell parentShell) {
 			super(parentShell);
@@ -75,12 +75,12 @@ public class FormatTableRenderingDialog extends TrayDialog
 			fRendering = rendering;
 			fMsg = DebugUIMessages.FormatTableRenderingAction_1;
 		}
-		
+
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			getShell().setText(DebugUIMessages.FormatTableRenderingAction_0);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".FormatTableRenderingDialog_context"); //$NON-NLS-1$
-			
+
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 3;
@@ -92,16 +92,16 @@ public class FormatTableRenderingDialog extends TrayDialog
 			data.horizontalAlignment = SWT.FILL;
 			data.verticalAlignment = SWT.FILL;
 			composite.setLayoutData(data);
-			
+
 			fMsgLabel = new Label(composite, SWT.NONE);
 			fMsgLabel.setText(fMsg);
-			
+
 			data = new GridData();
 			data.grabExcessHorizontalSpace = true;
 			data.horizontalAlignment = SWT.BEGINNING;
 			data.horizontalSpan = 3;
 			fMsgLabel.setLayoutData(data);
-			
+
 			Label rowLabel = new Label(composite, SWT.NONE);
 			rowLabel.setText(DebugUIMessages.FormatTableRenderingAction_2);
 			fRowControl = new Combo(composite, SWT.READ_ONLY);
@@ -109,7 +109,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			{
 				fRowControl.add(String.valueOf(fRowSizes[i]));
 			}
-			
+
 			fRowControl.addSelectionListener(new SelectionListener() {
 
 				@Override
@@ -125,15 +125,15 @@ public class FormatTableRenderingDialog extends TrayDialog
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}});
-			
+
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			data.horizontalAlignment = SWT.BEGINNING;
 			fRowControl.setLayoutData(data);
-			
+
 			Label unit = new Label(composite, SWT.NONE);
-			unit.setText(DebugUIMessages.FormatTableRenderingAction_3);		
-			
+			unit.setText(DebugUIMessages.FormatTableRenderingAction_3);
+
 			Label columnLabel = new Label(composite, SWT.NONE);
 			columnLabel.setText(DebugUIMessages.FormatTableRenderingAction_4);
 			fColumnControl = new Combo(composite, SWT.READ_ONLY);
@@ -141,7 +141,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			{
 				fColumnControl.add(String.valueOf(fColumnSizes[i]));
 			}
-			
+
 			fColumnControl.addSelectionListener(new SelectionListener() {
 
 				@Override
@@ -157,17 +157,17 @@ public class FormatTableRenderingDialog extends TrayDialog
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}});
-			
+
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			data.horizontalAlignment = SWT.BEGINNING;
 			fColumnControl.setLayoutData(data);
-			
+
 			unit = new Label(composite, SWT.NONE);
 			unit.setText(DebugUIMessages.FormatTableRenderingAction_5);
-			
+
 			populateDialog();
-			
+
 			fDefaultButton = new Button(composite, SWT.NONE);
 			fDefaultButton.setText(DebugUIMessages.FormatTableRenderingAction_8);
 			data = new GridData();
@@ -176,7 +176,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			data.horizontalAlignment = SWT.END;
 			data.horizontalSpan = 3;
 			fDefaultButton.setLayoutData(data);
-			
+
 			fDefaultButton.addSelectionListener(new SelectionListener() {
 
 				@Override
@@ -186,9 +186,9 @@ public class FormatTableRenderingDialog extends TrayDialog
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
-					
+
 				}});
-			
+
 			Group group = new Group(composite, SWT.NONE);
 			group.setText(DebugUIMessages.FormatTableRenderingAction_7);
 			group.setLayout(new GridLayout());
@@ -199,7 +199,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			data.verticalAlignment = SWT.FILL;
 			data.horizontalSpan = 3;
 			group.setLayoutData(data);
-			
+
 			fPreviewPageBook = new PageBook(group, SWT.NONE);
 			data = new GridData();
 			data.grabExcessHorizontalSpace = true;
@@ -207,46 +207,46 @@ public class FormatTableRenderingDialog extends TrayDialog
 			data.horizontalAlignment = SWT.FILL;
 			data.verticalAlignment = SWT.FILL;
 			fPreviewPageBook.setLayoutData(data);
-			
+
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
 			int colSize = fColumnSizes[fColumnControl.getSelectionIndex()];
 
 			fPreivewPage = createPreviewPage(fPreviewPageBook, rowSize, colSize);
 			fPreviewPageBook.showPage(fPreivewPage);
-			
+
 			Label defaultRow = new Label(composite, SWT.NONE);
 			defaultRow.setText(DebugUIMessages.FormatTableRenderingDialog_0);
 			fDefaultRowValue = new Text(composite, SWT.READ_ONLY);
-			
+
 			int defRow = getDefaultRowSize();
-						
+
 			fDefaultRowValue.setText(String.valueOf(defRow));
 			Label def = new Label(composite, SWT.NONE);
 			def.setText(DebugUIMessages.FormatTableRenderingDialog_1);
-			
+
 			data = new GridData();
 			data.grabExcessHorizontalSpace = true;
 			data.grabExcessVerticalSpace = true;
 			data.horizontalAlignment = SWT.BEGINNING;
 			def.setLayoutData(data);
-			
-			
+
+
 			Label defaultCol = new Label(composite, SWT.NONE);
 			defaultCol.setText(DebugUIMessages.FormatTableRenderingDialog_2);
 			fDefaultColValue = new Text(composite, SWT.READ_ONLY);
-			
+
 			int defCol = getDefaultColumnSize();
-			
+
 			fDefaultColValue.setText(String.valueOf(defCol));
 			def = new Label(composite, SWT.NONE);
 			def.setText(DebugUIMessages.FormatTableRenderingDialog_3);
-			
+
 			data = new GridData();
 			data.grabExcessHorizontalSpace = true;
 			data.grabExcessVerticalSpace = true;
 			data.horizontalAlignment = SWT.BEGINNING;
 			def.setLayoutData(data);
-			
+
 			Button restoreButton = new Button(composite, SWT.NONE);
 			restoreButton.setText(DebugUIMessages.FormatTableRenderingAction_6);
 			restoreButton.addSelectionListener(new SelectionListener() {
@@ -263,7 +263,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			data.horizontalSpan = 3;
 			data.verticalAlignment = SWT.CENTER;
 			restoreButton.setLayoutData(data);
-			
+
 			return composite;
 		}
 
@@ -274,7 +274,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			fRowSize = fRowSizes[fRowControl.getSelectionIndex()];
 			super.okPressed();
 		}
-		
+
 		private void populateDialog()
 		{
 			int currentColSize = fRendering.getAddressableUnitPerColumn();
@@ -295,84 +295,84 @@ public class FormatTableRenderingDialog extends TrayDialog
 			control.select(idx);
 			return idx;
 		}
-		
+
 		private Control createPreviewPage(Composite parent, int rowSize, int colSize)
-		{			
+		{
 			if (!isValid(rowSize, colSize))
-			{	
+			{
 				Label label = new Label(parent, SWT.NONE);
 				StringBuffer errorMsg = new StringBuffer();
 				errorMsg.append(DebugUIMessages.FormatTableRenderingAction_9);
 				errorMsg.append("\n"); //$NON-NLS-1$
 				errorMsg.append(DebugUIMessages.FormatTableRenderingAction_11);
-				
+
 				if (colSize > rowSize)
 				{
 					errorMsg.append("\n"); //$NON-NLS-1$
 					errorMsg.append(DebugUIMessages.FormatTableRenderingAction_13);
 				}
-				
+
 				label.setText(errorMsg.toString());
-				
+
 				return label;
 			}
-			
+
 			Table table = new Table(parent, SWT.BORDER);
 			table.setHeaderVisible(true);
-			
+
 			int numCol = rowSize/colSize;
-			
+
 			TableColumn addressCol = new TableColumn(table, SWT.NONE);
-			
+
 			TableColumn[] columns = new TableColumn[numCol];
 			for (int i=0; i<columns.length; i++)
 			{
 				columns[i] = new TableColumn(table, SWT.NONE);
 			}
-			
+
 			StringBuffer buf = new StringBuffer();
 			for (int j=0; j<colSize; j++)
 			{
 				buf.append("X"); //$NON-NLS-1$
 			}
-			
+
 			for (int i = 0; i < 4; i++) {
 				TableItem tableItem = new TableItem(table, SWT.NONE);
-				
+
 				String[] text = new String[numCol + 1];
 				text[0] = DebugUIMessages.FormatTableRenderingAction_15;
 				for (int j=1; j<text.length; j++)
 				{
-					text[j] = buf.toString(); 
+					text[j] = buf.toString();
 				}
-				
+
 				tableItem.setText(text);
 			}
-			
+
 			addressCol.pack();
 			for (int i=0; i<columns.length; i++)
 			{
 				columns[i].pack();
 			}
-			
-			
+
+
 			return table;
 		}
-		
+
 		private boolean isValid(int rowSize, int colSize)
 		{
 			if (rowSize % colSize != 0)
 				return false;
-			
+
 			if (colSize > rowSize)
 				return false;
-			
+
 			return true;
 		}
 
 		private void refreshPreviewPage() {
 			fPreivewPage.dispose();
-			
+
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
 			int colSize = fColumnSizes[fColumnControl.getSelectionIndex()];
 			fPreivewPage = createPreviewPage(fPreviewPageBook, rowSize, colSize);
@@ -387,8 +387,8 @@ public class FormatTableRenderingDialog extends TrayDialog
 			{
 				button.setEnabled(false);
 				fDefaultButton.setEnabled(false);
-				
-				
+
+
 			}
 			else
 			{
@@ -406,7 +406,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			String colPrefId = IDebugPreferenceConstants.PREF_COLUMN_SIZE + ":" + modelId; //$NON-NLS-1$
 			return colPrefId;
 		}
-		
+
 		private int getDefaultRowSize()
 		{
 			int size = -1;
@@ -416,12 +416,12 @@ public class FormatTableRenderingDialog extends TrayDialog
 				if (elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL))
 					return getDefaultFromPersistableElement(IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL);
 			}
-			
+
 			size = getDefaultRowSize(fRendering.getMemoryBlock().getModelIdentifier());
-			
+
 			return size;
 		}
-		
+
 		private int getDefaultColumnSize()
 		{
 			int size = -1;
@@ -435,7 +435,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 			size = getDefaultColumnSize(fRendering.getMemoryBlock().getModelIdentifier());
 			return size;
 		}
-		
+
 		private int getDefaultRowSize(String modelId)
 		{
 			int row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
@@ -444,11 +444,11 @@ public class FormatTableRenderingDialog extends TrayDialog
 				DebugUITools.getPreferenceStore().setValue(getRowPrefId(modelId), IDebugPreferenceConstants.PREF_ROW_SIZE_DEFAULT);
 				row = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
 			}
-			
+
 			return row;
-			
+
 		}
-		
+
 		private int getDefaultColumnSize(String modelId)
 		{
 			int col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
@@ -464,9 +464,9 @@ public class FormatTableRenderingDialog extends TrayDialog
 		private void saveDefaults() {
 			int columnSize = fColumnSizes[fColumnControl.getSelectionIndex()];
 			int rowSize = fRowSizes[fRowControl.getSelectionIndex()];
-			
+
 			IPersistableDebugElement elmt = fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
-			
+
 			if (elmt != null && elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL)
 				&& elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
 			{
@@ -482,37 +482,37 @@ public class FormatTableRenderingDialog extends TrayDialog
 				// save preference
 				// find model id
 				String modelId = fRendering.getMemoryBlock().getModelIdentifier();
-				
+
 				// constrcut preference id
 				String rowPrefId = getRowPrefId(modelId);
 				String colPrefId = getColumnPrefId(modelId);
-				
+
 				// save setting
 				IPreferenceStore prefStore = DebugUITools.getPreferenceStore();
 				prefStore.setValue(rowPrefId, rowSize);
 				prefStore.setValue(colPrefId, columnSize);
 			}
-			
+
 			fDefaultColValue.setText(String.valueOf(getDefaultColumnSize()));
 			fDefaultRowValue.setText(String.valueOf(getDefaultRowSize()));
-			
+
 			fDefaultRowValue.getParent().layout();
 		}
 
 		private void restoreDefaults() {
 
-			// Determine the default values by using the following search order: 
+			// Determine the default values by using the following search order:
 			// IPersistableDebugElement, workspace preference, plugin defaults
-			// issue: 248486 
+			// issue: 248486
 			int defaultRowSize = getDefaultRowSize();
 			int defaultColSize = getDefaultColumnSize();
-			
+
 			populateControl(defaultRowSize, fRowSizes, fRowControl);
 			populateControl(defaultColSize, fColumnSizes, fColumnControl);
-			
+
 			fCurrentRowIdx = fRowControl.getSelectionIndex();
 			fCurrentColIdx = fColumnControl.getSelectionIndex();
-			
+
 			refreshPreviewPage();
 			updateButtons();
 		}
@@ -524,7 +524,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 		public int getRowSize() {
 			return fRowSize;
 		}
-		
+
 		public void setCurrentRowColSizes(int row, int col)
 		{
 			fCurrentColIdx = populateControl(col, fColumnSizes, fColumnControl);
@@ -539,14 +539,14 @@ public class FormatTableRenderingDialog extends TrayDialog
 			updateButtons();
 			return ret;
 		}
-		
+
 		public void openError(String msg)
 		{
 			fDisableCancel = true;
 			fMsg = msg;
 			open();
 		}
-		
+
 		private int getDefaultFromPersistableElement(String propertyId) {
 			int defaultValue = -1;
 			IPersistableDebugElement elmt = fRendering.getMemoryBlock().getAdapter(IPersistableDebugElement.class);
@@ -559,7 +559,7 @@ public class FormatTableRenderingDialog extends TrayDialog
 						IStatus status = DebugUIPlugin.newErrorStatus("Model returned invalid type on " + propertyId, null); //$NON-NLS-1$
 						DebugUIPlugin.log(status);
 					}
-					
+
 					if (valueMB != null)
 					{
 						Integer value = (Integer)valueMB;

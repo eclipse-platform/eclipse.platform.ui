@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,13 +26,13 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * The dialog for selecting the project for which a source container will be created.
- * 
+ *
  * @since 3.0
  */
 public class ProjectSourceContainerDialog extends ListSelectionDialog {
-	
+
 	private boolean fAddRequiredProjects = false;
-	
+
 	public ProjectSourceContainerDialog(
 			Shell parentShell,
 			Object input,
@@ -41,19 +41,19 @@ public class ProjectSourceContainerDialog extends ListSelectionDialog {
 			String message) {
 		super(parentShell, input, contentProvider, labelProvider, message);
 	}
-	
-	
+
+
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite composite = (Composite)super.createDialogArea(parent);
-		
+
 		final Button addRequired = new Button(composite, SWT.CHECK);
-		addRequired.setText(SourceLookupUIMessages.projectSelection_requiredLabel);  
+		addRequired.setText(SourceLookupUIMessages.projectSelection_requiredLabel);
 		addRequired.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -61,17 +61,17 @@ public class ProjectSourceContainerDialog extends ListSelectionDialog {
 			}
 		});
 		addRequired.setSelection(fAddRequiredProjects);
-		addRequired.setFont(font);		
-		
+		addRequired.setFont(font);
+
 		applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),  IDebugHelpContextIds.ADD_PROJECT_CONTAINER_DIALOG);
 		return composite;
 	}
-	
-	
+
+
 	/**
 	 * Returns whether the user has selected to add required projects.
-	 * 
+	 *
 	 * @return whether the user has selected to add required projects
 	 */
 	public boolean isAddRequiredProjects() {

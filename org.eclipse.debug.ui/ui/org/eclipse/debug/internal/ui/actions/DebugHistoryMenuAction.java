@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,11 +16,11 @@ import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
 
 /**
  * Debug history menu in the top-level "Run" menu.
- */ 
+ */
 public class DebugHistoryMenuAction extends AbstractLaunchHistoryAction {
-	
+
 	public DebugHistoryMenuAction() {
 		super(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 	}
-	
+
 }

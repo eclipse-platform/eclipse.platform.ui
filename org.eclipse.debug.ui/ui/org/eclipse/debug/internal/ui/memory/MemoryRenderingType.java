@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,21 +22,21 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate;
 
 /**
  * A contributed memory rendering type.
- * 
+ *
  * @since 3.1
  */
 class MemoryRenderingType implements IMemoryRenderingType {
-    
+
     private IConfigurationElement fConfigurationElement;
     private IMemoryRenderingTypeDelegate fDelegate;
-    
+
     // attributes for a memoryRenderingType
     static final String ATTR_MEM_RENDERING_TYPE_NAME = "name"; //$NON-NLS-1$
     static final String ATTR_MEM_RENDERING_TYPE_ID = "id"; //$NON-NLS-1$
     static final String ATTR_MEM_RENDERING_TYPE_DELEGATE = "class"; //$NON-NLS-1$
-    
+
     /**
-     * Constructs a rendering type from a contribution. 
+     * Constructs a rendering type from a contribution.
      */
     MemoryRenderingType(IConfigurationElement element) {
         fConfigurationElement = element;
@@ -71,7 +71,7 @@ class MemoryRenderingType implements IMemoryRenderingType {
 
     /**
      * Validates this contribution.
-     * 
+     *
      * @exception CoreException if invalid
      */
     void validate() throws CoreException {
@@ -79,7 +79,7 @@ class MemoryRenderingType implements IMemoryRenderingType {
         verifyPresent(ATTR_MEM_RENDERING_TYPE_NAME);
         verifyPresent(ATTR_MEM_RENDERING_TYPE_DELEGATE);
     }
-    
+
     private void verifyPresent(String attrName) throws CoreException {
         if (fConfigurationElement.getAttribute(attrName) == null) {
             Status status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR,

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.Item;
 /**
  * This class is copied from package org.eclipse.jface.viewers.TableEditorImpl
  * because the original has package access only.
- * 
+ *
  * TODO: complain to UI about package access to API class.
- * 
+ *
  */
 public abstract class TableEditorImpl {
 	private CellEditor fCellEditor;
@@ -53,7 +53,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Returns this <code>TableViewerImpl</code> viewer
-	 * 
+	 *
 	 * @return the viewer
 	 */
 	public StructuredViewer getViewer() {
@@ -191,7 +191,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Start editing the given element.
-	 * 
+	 *
 	 * @param element
 	 * @param column
 	 */
@@ -217,7 +217,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Return the array of CellEditors used in the viewer
-	 * 
+	 *
 	 * @return the cell editors
 	 */
 	public CellEditor[] getCellEditors() {
@@ -226,7 +226,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Get the cell modifier
-	 * 
+	 *
 	 * @return the cell modifier
 	 */
 	public ICellModifier getCellModifier() {
@@ -237,7 +237,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Return the properties for the column
-	 * 
+	 *
 	 * @return the array of column properties
 	 */
 	public Object[] getColumnProperties() {
@@ -248,7 +248,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Handles the mouse down event; activates the cell editor.
-	 * 
+	 *
 	 * @param event
 	 *            the mouse event that should be handled
 	 */
@@ -297,7 +297,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Return whether there is an active cell editor.
-	 * 
+	 *
 	 * @return <code>true</code> if there is an active cell editor; otherwise
 	 *         <code>false</code> is returned.
 	 */
@@ -323,7 +323,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Set the cell editors
-	 * 
+	 *
 	 * @param editors
 	 */
 	public void setCellEditors(CellEditor[] editors) {
@@ -332,7 +332,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Set the cell modifier
-	 * 
+	 *
 	 * @param modifier
 	 */
 	public void setCellModifier(ICellModifier modifier) {
@@ -341,7 +341,7 @@ public abstract class TableEditorImpl {
 
 	/**
 	 * Set the column properties
-	 * 
+	 *
 	 * @param columnProperties
 	 */
 	public void setColumnProperties(String[] columnProperties) {

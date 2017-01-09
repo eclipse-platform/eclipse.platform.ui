@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,13 +22,13 @@ import org.eclipse.swt.custom.BusyIndicator;
  * logical structure types for the same variable).
  */
 public class SelectLogicalStructureAction extends Action {
-	
+
 	private VariablesView fView;
     private ILogicalStructureType fType;
     private ILogicalStructureType[] fAvailableTypes;
 
 	/**
-	 * 
+	 *
 	 * @param view Variables view
 	 * @param type the type that this action will turn on/off
 	 * @param value the value for which logical structures are to be chosen
@@ -64,11 +64,11 @@ public class SelectLogicalStructureAction extends Action {
                     type= fType;
                 }
                 DebugPlugin.setDefaultStructureType(fAvailableTypes, type);
-				getView().getViewer().refresh();					
+				getView().getViewer().refresh();
 			}
-		});			
+		});
 	}
-	
+
 	protected VariablesView getView() {
 		return fView;
 	}

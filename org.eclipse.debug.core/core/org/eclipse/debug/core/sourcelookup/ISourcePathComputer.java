@@ -16,7 +16,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * A source path computer computes the default source lookup path (set of source
  * containers that should be considered) for a launch configuration.
  * <p>
- * A source path computer is contributed in plug-in XML via the 
+ * A source path computer is contributed in plug-in XML via the
  * <code>sourcePathComputers</code> extension point, that provides a delegate
  * to compute the path specific to a launch configuration. Following
  * is an example contribution.
@@ -28,7 +28,7 @@ import org.eclipse.debug.core.DebugPlugin;
  *    	&lt;/sourcePathComputer&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p> 
+ * </p>
  * <p>
  * A source path computer can be associated with a launch configuration type
  * via the <code>sourcePathComputerId</code> attribute of a launch configuration
@@ -37,7 +37,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * attribute.
  * </p>
  * <p>
- * Clients contributing a source path computer provide an implementation of 
+ * Clients contributing a source path computer provide an implementation of
  * {@link org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate}.
  * </p>
  * @since 3.0
@@ -45,7 +45,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISourcePathComputer extends ISourcePathComputerDelegate {
-	
+
 	/**
 	 * Launch configuration attribute to specify a source path computer
 	 * that should be used for a launch configuration. The value is an identifier
@@ -57,9 +57,9 @@ public interface ISourcePathComputer extends ISourcePathComputerDelegate {
 
 	/**
 	 * Returns the unique identifier for this source path computer.
-	 * 
+	 *
 	 * @return the unique identifier for this source path computer
 	 */
 	public String getId();
-	
+
 }

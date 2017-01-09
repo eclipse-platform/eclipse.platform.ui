@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
- *                 display memory blocks that do not reference IDebugTarget     
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
+ *                 display memory blocks that do not reference IDebugTarget
  *     Ted Williams - WindRiver - Bug 215432 - [Memory View] Memory View: Workflow Enhancements
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;

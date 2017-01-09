@@ -20,15 +20,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Step over action.
- * 
+ *
  * @since 3.3
  */
 public class StepOverCommandAction extends DebugCommandAction {
-	
+
 	public StepOverCommandAction() {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.StepOver"); //$NON-NLS-1$
 	}
- 
+
     @Override
 	public String getText() {
         return ActionMessages.StepOverAction_0;
@@ -63,7 +63,7 @@ public class StepOverCommandAction extends DebugCommandAction {
 	public String getToolTipText() {
         return ActionMessages.StepOverAction_3;
     }
- 
+
 	@Override
 	protected Class<IStepOverHandler> getCommandType() {
 		return IStepOverHandler.class;

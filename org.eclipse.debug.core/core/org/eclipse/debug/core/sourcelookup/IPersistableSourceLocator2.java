@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
  * {@link org.eclipse.debug.core.model.IPersistableSourceLocator}.
  * </p>
  * @see org.eclipse.debug.core.model.IPersistableSourceLocator
- * @since 3.0 
+ * @since 3.0
  */
 public interface IPersistableSourceLocator2 extends IPersistableSourceLocator {
 
@@ -32,14 +32,14 @@ public interface IPersistableSourceLocator2 extends IPersistableSourceLocator {
 	 * is called instead of <code>initializeFrom(String memento)</code>
 	 * defined in <code>IPersistableSourceLocator</code> when a source
 	 * locator implements this interface.
-	 * 
+	 *
 	 * @param memento a memento to initialize this source locator
 	 * @param configuration the launch configuration this source locator is
 	 *  being created for
-	 * @exception CoreException on failure to initialize 
+	 * @exception CoreException on failure to initialize
 	 */
 	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException;
-	
+
 	/**
 	 * Disposes this source locator. This method is called when a source
 	 * locator's associated launch is removed from the launch manager.

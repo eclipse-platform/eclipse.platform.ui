@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,7 +12,7 @@ package org.eclipse.debug.ui;
 
 
 import org.eclipse.ui.IEditorInput;
- 
+
 /**
  * A source presentation is used to resolve an editor in
  * which to display a debug model element, breakpoint, or
@@ -20,7 +20,7 @@ import org.eclipse.ui.IEditorInput;
  * (which implements this interface) is used to resolve
  * editors when performing source lookup. However, a source
  * locator may override default editor resolution by implementing
- * this interface. 
+ * this interface.
  * <p>
  * Source lookup consists of the following steps:<ol>
  * <li>Locating a source element - the source locator associated
@@ -43,7 +43,7 @@ import org.eclipse.ui.IEditorInput;
  * extension to an {@link org.eclipse.debug.core.model.ISourceLocator}.
  * </p>
  * @since 2.0
- */ 
+ */
 public interface ISourcePresentation {
 
 	/**
@@ -57,7 +57,7 @@ public interface ISourcePresentation {
 	 * @return an editor input, or <code>null</code> if none
 	 */
 	public IEditorInput getEditorInput(Object element);
-	
+
 	/**
 	 * Returns the id of the editor to use to display the
 	 * given editor input and object, or <code>null</code> if

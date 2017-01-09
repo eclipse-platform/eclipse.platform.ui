@@ -25,18 +25,18 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.2
  */
 public interface IAddMemoryBlocksTarget {
-	
+
 	/**
 	 * Returns whether an add memory block operation can be performed from the specified
 	 * part and the given selection.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @return <code>true</code> if the add memory block operation can be performed from the given part and selection, <code>false</code> otherwise
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
-	
+
 	/**
 	 * Returns whether this target will support adding memory block from the specified
 	 * part.
@@ -45,19 +45,19 @@ public interface IAddMemoryBlocksTarget {
 	 * part, false otherwise.
 	 */
 	public boolean supportsAddMemoryBlocks(IWorkbenchPart part);
-	
-	
+
+
 	/**
-	 * Perform an add memory block on the given element that is 
+	 * Perform an add memory block on the given element that is
 	 * currently selected in the Debug view. If a memory block can be successfully
 	 * created, implementations must add the resulted memory block to <code>IMemoryBlockManager</code>
 	 * In addition, implementations must query to see if default renderings should be created
 	 * for the given memory block and add these renderings accordingly.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
-	 * @throws CoreException if unable to perform the action 
-	 * 
+	 * @throws CoreException if unable to perform the action
+	 *
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager
 	 * @see org.eclipse.debug.core.IMemoryBlockManager

@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Adapter for the platform's retargettable "add memory rendering" action. 
+ * Adapter for the platform's retargettable "add memory rendering" action.
  * Clients implementing this adapter are expected to add the necessary memory blocks
  * and renderings when the adapter is invoked.
  * <p>
@@ -28,10 +28,10 @@ import org.eclipse.ui.IWorkbenchPart;
  * <li>Create the new rendering from <code>IMemoryRenderingTypeDelegate</code></li>
  * <li>Bring the required memory view to the top. (<code>IMemoryRenderingSite</code>)</li>
  * <li>Find the container from the memory view to host the new memory rendering.
- *    (<code>IMemoryRenderingContainer</code>)</li> 
+ *    (<code>IMemoryRenderingContainer</code>)</li>
  * <li>Initialize the new rendering with the appropriate memory block and container.</li>
  * <li>Add the new rendering to the container.</li>
- * </ol> 
+ * </ol>
  * </p>
  * <p>
  * Clients may implement this interface.
@@ -44,16 +44,16 @@ public interface IAddMemoryRenderingsTarget {
 	 * Returns whether a memory rendering can be added from the specified
 	 * part, based on the the given selection, which is the active debug context
 	 * in the current workbench window.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
-	 * @param selection the active debug context in the active workbench window	
+	 * @param selection the active debug context in the active workbench window
 	 * @return <code>true</code> if a memory rendering can be added from the specified
 	 * part with the given selection, <code>false</code> otherwise
 	 */
 	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection);
-	
+
 	/**
-	 * Adds memory renderings. Based on the part and selection (active debug context), this 
+	 * Adds memory renderings. Based on the part and selection (active debug context), this
 	 * adapter does the following:
 	 * <ol>
 	 * <li>creates and adds the required memory block to the memory block manager</li>
@@ -63,8 +63,8 @@ public interface IAddMemoryRenderingsTarget {
 	 * @param part the part on which the action has been invoked
 	 * @param selection the active debug context
 	 * @param renderingTypes renderings to add
-	 * @throws CoreException if unable to perform the action 
-	 * 
+	 * @throws CoreException if unable to perform the action
+	 *
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager
 	 * @see org.eclipse.debug.core.IMemoryBlockManager
@@ -72,11 +72,11 @@ public interface IAddMemoryRenderingsTarget {
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer
 	 */
 	public void addMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryRenderingType[] renderingTypes) throws CoreException;
-	
+
 	/**
 	 * Returns a list of rendering types that can be added from the given workbench part and active
 	 * debug context, possibly empty.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the active debug context
 	 * @return a list of rendering types that can be added, possibly empty

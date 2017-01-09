@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * Internal implementation of the {@link IViewerInputUpdate} interface.  Allows
  * implementors to translate the active debug context into an appropriate viewer
  * input.
- * 
+ *
  * @since 3.4
  * @see IViewerInputUpdate
  */
@@ -34,32 +34,32 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
      * Presentation context
      */
     private IPresentationContext fContext;
-    
+
     /**
      * New viewer input
      */
     private Object fSource;
-    
+
     /**
      * Whether this update is done
      */
     private boolean fDone;
-    
+
     /**
      * Viewer input to use
      */
     private Object fInputElement;
-    
+
     /**
      * Viewer input at the time the request was made
      */
     private Object fViewerInput;
-    
+
     /**
      * Client making request
      */
     private IViewerInputRequestor fRequestor;
-    
+
     /**
      * When <code>done()</code> is called, the viewer must be informed that the update is complete in the UI thread.
      */
@@ -73,10 +73,10 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
             return Status.OK_STATUS;
         }
     };
-    
+
     /**
      * Constructs a viewer input update request.
-     * 
+     *
      * @param context presentation context
      * @param viewerInput viewer input at the time the request was made
      * @param requestor client making the request
@@ -97,7 +97,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
-	
+
 	/* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
      */
@@ -111,10 +111,10 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 		}
         fViewerInputUpdateJob.schedule();
 	}
-    
+
     /**
      * Returns whether this request is done yet.
-     * 
+     *
      * @return whether this request is done yet
      */
     protected synchronized boolean isDone() {
@@ -144,7 +144,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	public void setInputElement(Object element) {
 		fInputElement = element;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getViewerInput()
 	 */
@@ -160,7 +160,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	public Object getViewerInput() {
 		return fViewerInput;
 	}
-	
-	
+
+
 
 }

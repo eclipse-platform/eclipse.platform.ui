@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -31,14 +31,14 @@ import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Tests to measure the performance of the viewer updates.  
+ * Tests to measure the performance of the viewer updates.
  */
 abstract public class PerformanceTests extends TestCase implements ITestModelUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
-    
+
     public PerformanceTests(String name) {
         super(name);
     }
@@ -55,14 +55,14 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         fVirtualItemValidator = new VisibleVirtualItemValidator(0, Integer.MAX_VALUE);
         fViewer = createViewer(fDisplay, fShell);
-        
+
         fListener = new TestModelUpdatesListener(fViewer, false, false);
 
         fShell.open();
     }
 
     abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -70,7 +70,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 	protected void tearDown() throws Exception {
         fListener.dispose();
         fViewer.getPresentationContext().dispose();
-        
+
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) {
@@ -79,7 +79,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 			}
 		}
     }
-    
+
     @Override
 	protected void runTest() throws Throwable {
         try {
@@ -91,22 +91,22 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
     /**
      * Depth (size) of the test model to be used in the tests.  This number allows
-     * the jface based tests to use a small enough model to fit on the screen, and 
+     * the jface based tests to use a small enough model to fit on the screen, and
      * for the virtual viewer to exercise the content provider to a greater extent.
      */
     abstract protected int getTestModelDepth();
-    
+
     protected VisibleVirtualItemValidator fVirtualItemValidator;
-    
+
     public void testRefreshStruct() throws InterruptedException {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements(model, getTestModelDepth(), "model.")); //$NON-NLS-1$
-        
+
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -123,10 +123,10 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
             for (int i = 0; i < 10; i++) {
                 // Update the model
 				model.setAllAppendix(" - pass " + i); //$NON-NLS-1$
-                
+
                 TestElement element = model.getRootElement();
                 fListener.reset(TreePath.EMPTY, element, -1, false, false);
-                
+
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
@@ -137,7 +137,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.stop();
                 System.gc();
             }
-            
+
             meter.commit();
             perf.assertPerformance(meter);
         } finally {
@@ -149,12 +149,12 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements2(model, new int[] { 2, 3000, 1 }, "model.")); //$NON-NLS-1$
-        
+
         fViewer.setAutoExpandLevel(2);
         // Create the listener
-        //fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+        //fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         fListener.reset();
-        
+
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE))
@@ -165,20 +165,20 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 				//model.validateData(fViewer, TreePath.EMPTY);
 			}
 		}
-        
+
         fVirtualItemValidator.setVisibleRange(0, 50);
-        
+
         Performance perf = Performance.getDefault();
         PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
         try {
             for (int i = 0; i < 100; i++) {
                 // Update the model
 				model.setAllAppendix(" - pass " + i); //$NON-NLS-1$
-                
+
                 TestElement element = model.getRootElement();
                 //fListener.reset(TreePath.EMPTY, element, -1, false, false);
                 fListener.reset();
-                
+
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
@@ -195,7 +195,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.stop();
                 System.gc();
             }
-            
+
             meter.commit();
             perf.assertPerformance(meter);
         } finally {
@@ -208,11 +208,11 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements(model, getTestModelDepth(), "model.")); //$NON-NLS-1$
-        
+
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -229,10 +229,10 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
             for (int i = 0; i < 100; i++) {
                 // Update the model
 				model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements(model, getTestModelDepth(), "pass " + i + ".")); //$NON-NLS-1$ //$NON-NLS-2$
-                
+
                 TestElement element = model.getRootElement();
                 fListener.reset(TreePath.EMPTY, element, -1, false, false);
-                
+
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
@@ -243,7 +243,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.stop();
                 System.gc();
             }
-            
+
             meter.commit();
             perf.assertPerformance(meter);
         } finally {
@@ -251,17 +251,17 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         }
     }
 
-    
+
     public void testRefreshList() throws InterruptedException {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
         int numElements = (int)Math.pow(2, getTestModelDepth());
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, numElements, "model.")); //$NON-NLS-1$
-        
+
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -278,10 +278,10 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
             for (int i = 0; i < 100; i++) {
                 // Update the model
 				model.setAllAppendix(" - pass " + i); //$NON-NLS-1$
-                
+
                 TestElement element = model.getRootElement();
                 fListener.reset(TreePath.EMPTY, element, -1, false, false);
-                
+
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
@@ -292,7 +292,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.stop();
                 System.gc();
             }
-            
+
             meter.commit();
             perf.assertPerformance(meter);
         } finally {
@@ -306,9 +306,9 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         // expand all elements
         fViewer.setAutoExpandLevel(-1);
-        
+
         // Create the listener, only check the first level
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
@@ -321,7 +321,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         // Set a selection in view
 		fViewer.setSelection(new TreeSelection(model.findElement("3.2.3"))); //$NON-NLS-1$
-                
+
         // Turn off the auto-expand now since we want to text the auto-expand logic
         fViewer.setAutoExpandLevel(-1);
 
@@ -334,7 +334,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
                 // Set the viewer input to null.  This will trigger the view to save the viewer state.
                 fListener.reset(true, false);
-        
+
                 meter.start();
                 fViewer.setInput(null);
                 while (!fListener.isFinished(STATE_SAVE_COMPLETE)) {
@@ -342,9 +342,9 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 						Thread.sleep(0);
 					}
 				}
-        
+
                 // Set the viewer input back to the model.  When view updates are complete
-                // the viewer 
+                // the viewer
                 // Note: disable redundant updates because the reveal delta triggers one.
                 fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
                 // TODO: add state updates somehow?
@@ -357,7 +357,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.stop();
                 System.gc();
             }
-            
+
             meter.commit();
             perf.assertPerformance(meter);
         } finally {
@@ -371,11 +371,11 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
         int numElements = (int)Math.pow(2, getTestModelDepth());
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, numElements, "model.")); //$NON-NLS-1$
-        
+
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 
         fViewer.addFilter(new ViewerFilter() {
             @Override
@@ -392,7 +392,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 return true;
             }
         });
-        
+
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished()) {
@@ -408,10 +408,10 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
             for (int i = 0; i < 100; i++) {
                 // Update the model
 				model.setAllAppendix(" - pass " + i); //$NON-NLS-1$
-                
+
                 TestElement element = model.getRootElement();
                 fListener.reset(TreePath.EMPTY, element, -1, false, false);
-                
+
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
@@ -422,12 +422,12 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.stop();
                 System.gc();
             }
-            
+
             meter.commit();
             perf.assertPerformance(meter);
         } finally {
             meter.dispose();
         }
     }
-    
+
 }

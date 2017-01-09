@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christian Georgi - Bug 388321 Perspectives are not sorted in debug's view management preference page
@@ -60,7 +60,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private boolean fResetPressed= false;
 	private PerspectiveLabelProvider fLabelProvider= null;
     private SelectionListener fSelectionListener= new SelectionAdapter() {
-    
+
         @Override
 		public void widgetSelected(SelectionEvent e) {
             Object source = e.getSource();
@@ -70,13 +70,13 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
                 handleTrackViewsToggled();
             }
         }
-    
+
     };
-	
+
 	public ViewManagementPreferencePage() {
 		super();
-		setTitle(DebugPreferencesMessages.ViewManagementPreferencePage_1); 
-		setDescription(DebugPreferencesMessages.ViewManagementPreferencePage_0); 
+		setTitle(DebugPreferencesMessages.ViewManagementPreferencePage_1);
+		setDescription(DebugPreferencesMessages.ViewManagementPreferencePage_0);
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 	}
 
@@ -98,13 +98,13 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
-		
+
 		createPerspectiveViewer(composite);
-		
+
 		createViewTrackingOptions(composite);
-		
+
 		Dialog.applyDialogFont(composite);
-		
+
 		return composite;
 	}
 
@@ -114,25 +114,25 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private void createViewTrackingOptions(Composite composite) {
 		fTrackViewsButton= new Button(composite, SWT.CHECK);
 		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fTrackViewsButton.setText(DebugPreferencesMessages.ViewManagementPreferencePage_3); 
+		fTrackViewsButton.setText(DebugPreferencesMessages.ViewManagementPreferencePage_3);
 		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
         fTrackViewsButton.addSelectionListener(fSelectionListener);
-		
+
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_4); 
+		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_4);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		fResetViewsButton= SWTFactory.createPushButton(composite, DebugPreferencesMessages.ViewManagementPreferencePage_5, null); 
+
+		fResetViewsButton= SWTFactory.createPushButton(composite, DebugPreferencesMessages.ViewManagementPreferencePage_5, null);
 		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
 		fResetViewsButton.addSelectionListener(fSelectionListener);
 		updateResetButton();
 	}
-    
+
     private void handleResetPressed() {
         fResetPressed= true;
         fResetViewsButton.setEnabled(false);
     }
-    
+
     protected void handleTrackViewsToggled() {
         if (fTrackViewsButton.getSelection()) {
             // When toggled on, possibly re-enable the reset button
@@ -148,13 +148,13 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 */
 	private void createPerspectiveViewer(Composite parent) {
 		Label label= new Label(parent, SWT.WRAP);
-		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_2); 
+		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_2);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		table.setLayout(new GridLayout());
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fPerspectiveViewer= new CheckboxTableViewer(table);
 		PerspectiveProvider provider= new PerspectiveProvider();
 		fPerspectiveViewer.setContentProvider(provider);
@@ -162,7 +162,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fPerspectiveViewer.setLabelProvider(fLabelProvider);
 		fPerspectiveViewer.setComparator(new PerspectiveComparator());
 		fPerspectiveViewer.setInput(this);
-		
+
 		Set<String> perspectives;
 		String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
             IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
@@ -173,7 +173,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
         }
 		checkPerspectives(perspectives);
 	}
-	
+
 	private void checkPerspectives(Set<String> perspectives) {
 		fPerspectiveViewer.setAllChecked(false);
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -196,21 +196,21 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		    perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
 		}
 		if (perspectives.equals(ViewContextService.getDefaultEnabledPerspectives())) {
-		    getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, 
+		    getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES,
 		                                  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		} else {
 		    StringBuffer buffer= new StringBuffer();
 			for (Iterator<String> itr = perspectives.iterator(); itr.hasNext();) {
-                buffer.append(itr.next()).append(',');		    
-    		} 
+                buffer.append(itr.next()).append(',');
+    		}
     		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
 		}
-		
+
 		boolean trackViews = fTrackViewsButton.getSelection();
         getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
 		if (fResetPressed || !trackViews) {
             // Reset if the user has pressed reset or chosen to no longer track views
-			getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING); 
+			getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING);
 		}
 		return super.performOk();
 	}
@@ -233,7 +233,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/**
 	 * Updates enablement of the reset button.
 	 * Enable if either persisted view collection is not empty.
@@ -247,7 +247,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	}
 
 	private static class PerspectiveProvider implements IStructuredContentProvider {
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
@@ -255,23 +255,23 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		public Object[] getElements(Object inputElement) {
 			return PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
         @Override
 		public void dispose() {
         }
-		
+
 	}
-	
+
 	private static class PerspectiveComparator extends ViewerComparator {
 
 	    @Override
@@ -282,7 +282,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	    	return super.compare(viewer, e1, e2);
 	    }
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */

@@ -53,11 +53,11 @@ import org.eclipse.ui.part.ShowInContext;
 
 /**
  * Creates and manages process console specific actions
- * 
+ *
  * @since 3.1
  */
 public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, IDebugContextListener {
-	
+
 	// actions
 	private ConsoleTerminateAction fTerminate;
     private ConsoleRemoveLaunchAction fRemoveTerminated;
@@ -70,14 +70,14 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     private IPageBookViewPage fPage;
 
     private IConsoleView fView;
-    
+
     private EOFHandler fEOFHandler;
     private String fContextId = "org.eclipse.debug.ui.console"; //$NON-NLS-1$;
     private IContextActivation fActivatedContext;
     private IHandlerActivation fActivatedHandler;
 	/**
 	 * Handler to send EOF
-	 */	
+	 */
 	private class EOFHandler extends AbstractHandler {
         @Override
 		public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
@@ -91,9 +91,9 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
             }
             return null;
         }
-		
-	}    
-    		
+
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(IPageBookViewPage, IConsole)
      */
@@ -101,26 +101,26 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	public void init(IPageBookViewPage page, IConsole console) {
         fPage = page;
         fConsole = (ProcessConsole) console;
-        
+
         fRemoveTerminated = new ConsoleRemoveLaunchAction(fConsole.getProcess().getLaunch());
         fRemoveAllTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(page.getSite().getWorkbenchWindow(), fConsole);
         fStdOut = new ShowStandardOutAction();
         fStdErr = new ShowStandardErrorAction();
-        
+
         fView = (IConsoleView) fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
-        
+
         DebugPlugin.getDefault().addDebugEventListener(this);
         DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).addDebugContextListener(this);
-        
+
         // contribute to toolbar
         IActionBars actionBars = fPage.getSite().getActionBars();
         configureToolBar(actionBars.getToolBarManager());
-        
+
         // create handler and submissions for EOF
         fEOFHandler = new EOFHandler();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
@@ -193,7 +193,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         IProcess process = getProcess();
         if (process == null) {
             return null;
-        } 
+        }
         IDebugTarget target = process.getAdapter(IDebugTarget.class);
         ISelection selection = null;
         if (target == null) {
@@ -234,12 +234,12 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
                         }
                     }
                 };
-                
-                DebugUIPlugin.getStandardDisplay().asyncExec(r);           
+
+                DebugUIPlugin.getStandardDisplay().asyncExec(r);
             }
         }
     }
-    
+
     protected IProcess getProcess() {
         return fConsole != null ? fConsole.getProcess() : null;
     }
@@ -284,6 +284,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	            fView.display(fConsole);
 	        }
 		}
-		
+
 	}
 }

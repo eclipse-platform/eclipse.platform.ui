@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,13 +19,13 @@ import org.eclipse.debug.ui.actions.RelaunchLastAction;
 
 /**
  * Re-launches the last profile-mode launch
- * 
+ *
  * This menu item appears in the main 'Run' menu
- * 
+ *
  * @see RelaunchLastAction
  * @see RunLastAction
  * @see DebugLastAction
- * 
+ *
  */
 public class ProfileLastAction extends RelaunchLastAction {
 
@@ -35,8 +35,8 @@ public class ProfileLastAction extends RelaunchLastAction {
 	@Override
 	public String getMode() {
 		return ILaunchManager.PROFILE_MODE;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getLaunchGroupId()
 	 */
@@ -65,15 +65,15 @@ public class ProfileLastAction extends RelaunchLastAction {
 	protected String getTooltipText() {
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getCommandId()
 	 */
 	@Override
 	protected String getCommandId() {
 		return "org.eclipse.debug.ui.commands.ProfileLast"; //$NON-NLS-1$
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getDescription()
 	 */
@@ -85,5 +85,5 @@ public class ProfileLastAction extends RelaunchLastAction {
 		else {
 			return ActionMessages.ProfileLastAction_3;
 		}
-	}	
+	}
 }

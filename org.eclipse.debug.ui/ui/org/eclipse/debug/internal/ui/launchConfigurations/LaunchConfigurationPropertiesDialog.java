@@ -28,13 +28,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
- 
+
 
 /**
  * A dialog used to edit a single launch configuration.
  */
 public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDialog implements ILaunchConfigurationListener {
-	
+
 	/**
 	 * The launch configuration to display
 	 */
@@ -43,9 +43,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
-	 * 
+	 *
 	 * @param shell the parent shell
-	 * @param selection the selection used to initialize this dialog, typically the 
+	 * @param selection the selection used to initialize this dialog, typically the
 	 *  current workbench selection
 	 * @param group launch group
 	 */
@@ -54,15 +54,15 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		fLaunchConfiguration = launchConfiguration;
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
-	
+
 	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
-	 * 
+	 *
 	 * @param shell the parent shell
-	 * @param selection the selection used to initialize this dialog, typically the 
+	 * @param selection the selection used to initialize this dialog, typically the
 	 *  current workbench selection
-	 * @param reservednames a set of names of virtual launch configurations that need to be considered 
+	 * @param reservednames a set of names of virtual launch configurations that need to be considered
 	 *  when configuration names are generated
 	 * @param group launch group
 	 */
@@ -72,10 +72,10 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 		fReservedNames = reservednames;
 	}
-	
+
 	/**
 	 * Returns the launch configuration being displayed.
-	 * 
+	 *
 	 * @return ILaunchConfiguration
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration() {
@@ -105,9 +105,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		IStatus status = getInitialStatus();
 		if (status != null) {
 			handleStatus(status);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#close()
 	 */
@@ -119,7 +119,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
 		return super.close();
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#addContent(org.eclipse.swt.widgets.Composite)
 	 */
@@ -135,30 +135,30 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		topLayout.marginWidth = 5;
 		topComp.setLayout(topLayout);
 		topComp.setFont(dialogComp.getFont());
-	
-		// Set the things that TitleAreaDialog takes care of 
+
+		// Set the things that TitleAreaDialog takes care of
 		setTitle(getTitleAreaTitle());
 		setMessage(IInternalDebugCoreConstants.EMPTY_STRING);
 		setModeLabelState();
-	
+
 		// Build the launch configuration edit area and put it into the composite.
 		Composite editAreaComp = createLaunchConfigurationEditArea(topComp);
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
 		editAreaComp.setFont(dialogComp.getFont());
-		
+
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
 	}
-	
+
 	/**
 	 * returns the title area title of the dialog
 	 * @return the title area title
 	 */
 	protected String getTitleAreaTitle() {
-		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Edit_launch_configuration_properties_1; 
+		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Edit_launch_configuration_properties_1;
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -168,7 +168,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
-					
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getShellTitle()
 	 */
@@ -176,7 +176,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	protected String getShellTitle() {
 		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getHelpContextId()
 	 */
@@ -184,7 +184,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_PROPERTIES_DIALOG;
 	}
-  	 	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#updateButtons()
 	 */
@@ -192,9 +192,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	public void updateButtons() {
 		getTabViewer().refresh();
 		getButton(IDialogConstants.OK_ID).setEnabled(getTabViewer().canSave());
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */

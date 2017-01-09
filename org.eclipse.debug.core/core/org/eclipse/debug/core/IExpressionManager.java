@@ -41,7 +41,7 @@ public interface IExpressionManager {
 	 * @param expression the expression to add
 	 */
 	public void addExpression(IExpression expression);
-	
+
 	/**
 	 * Adds the given expressions to the collection of registered expressions
 	 * in the workspace and notifies all registered listeners. Has no effect
@@ -51,33 +51,33 @@ public interface IExpressionManager {
 	 * @since 2.1
 	 */
 	public void addExpressions(IExpression[] expressions);
-	
+
 	/**
 	 * Creates and returns a new watch expression with the
 	 * given text. The returned expression is <b>not</b> added to
 	 * this manager.
-	 * 
+	 *
 	 * @return new watch expression
 	 * @param expressionText the text for the new expression
 	 * @since 3.0
 	 */
 	public IWatchExpression newWatchExpression(String expressionText);
-		
+
 	/**
-	 * Returns a collection of all registered expressions, 
+	 * Returns a collection of all registered expressions,
 	 * possibly empty.
 	 *
 	 * @return an array of expressions
 	 */
 	public IExpression[] getExpressions();
-	
+
 	/**
 	 * Returns whether there are any registered expressions
-	 * 
+	 *
 	 * @return whether there are any registered expressions
 	 */
 	public boolean hasExpressions();
-	
+
 	/**
 	 * Returns a collection of all expressions registered for the
 	 * given debug model,possibly empty.
@@ -86,7 +86,7 @@ public interface IExpressionManager {
 	 * @return an array of expressions
 	 */
 	public IExpression[] getExpressions(String modelIdentifier);
-		
+
 	/**
 	 * Removes the given expression from the expression manager,
 	 * and notifies all registered listeners. Has no effect if the
@@ -95,7 +95,7 @@ public interface IExpressionManager {
 	 * @param expression the expression to remove
 	 */
 	public void removeExpression(IExpression expression);
-	
+
 	/**
 	 * Removes the given expressions from the collection of registered expressions
 	 * in the workspace and notifies all registered listeners. Has no effect
@@ -104,7 +104,7 @@ public interface IExpressionManager {
 	 * @param expressions the expressions to remove
 	 * @since 2.1
 	 */
-	public void removeExpressions(IExpression[] expressions);		
+	public void removeExpressions(IExpression[] expressions);
 
 	/**
 	 * Adds the given listener to the collection of registered expression listeners.
@@ -118,10 +118,10 @@ public interface IExpressionManager {
 	 * Removes the given listener from the collection of registered expression listeners.
 	 * Has no effect if an identical listener is not already registered.
 	 *
-	 * @param listener the listener to remove	
+	 * @param listener the listener to remove
 	 */
 	public void removeExpressionListener(IExpressionListener listener);
-	
+
 	/**
 	 * Adds the given listener to the collection of registered expression listeners.
 	 * Has no effect if an identical listener is already registered.
@@ -135,15 +135,15 @@ public interface IExpressionManager {
 	 * Removes the given listener from the collection of registered expression listeners.
 	 * Has no effect if an identical listener is not already registered.
 	 *
-	 * @param listener the listener to remove	
+	 * @param listener the listener to remove
 	 * @since 2.1
 	 */
 	public void removeExpressionListener(IExpressionsListener listener);
-	
+
 	/**
 	 * Returns a new watch expression delegate for the given debug
 	 * model or <code>null</code> if no delegate is available.
-	 * 
+	 *
 	 * @param id the unique identifier of a debug model for which a
 	 *  watch expression delegate has been contributed
 	 * @return a watch expression delegate associated with the given model
@@ -152,17 +152,17 @@ public interface IExpressionManager {
 	 * @see IWatchExpressionDelegate
 	 */
 	public IWatchExpressionDelegate newWatchExpressionDelegate(String id);
-    
+
     /**
      * Returns whether a watch expression delegate has been contributed for
      * the given debug model.
-     * 
+     *
      * @param id the unique identifier of a debug model
      * @return whether a watch expression delegate has been contributed for
      *    the given debug model
      * @since 3.1
      * @see IWatchExpressionDelegate
-     */    
+     */
     public boolean hasWatchExpressionDelegate(String id);
 }
 

@@ -16,57 +16,57 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Context sensitive label update request for an element.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
 public interface ILabelUpdate extends IViewerUpdate {
-		
+
 	/**
 	 * Returns the id's of the columns which are to be updated
 	 * or <code>null</code> if none.  Note, these columns may be different
-	 * than the visible columns in the view which are returned by 
+	 * than the visible columns in the view which are returned by
 	 * {@link IPresentationContext#getColumns()}.
-	 * 
+	 *
 	 * @return column id's or <code>null</code>
 	 */
 	public String[] getColumnIds();
 
 	/**
 	 * Sets the text of the label of the specified column. Cannot be <code>null</code>.
-	 * 
+	 *
 	 * @param text to set to viewer
 	 * @param columnIndex column index (0 when no columns)
 	 */
     public void setLabel(String text, int columnIndex);
-    
+
     /**
      * Sets the font of the label.
-     * 
+     *
      * @param fontData to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setFontData(FontData fontData, int columnIndex);
-    
+
     /**
      * Sets the image of the label.
-     * 
+     *
      * @param image to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setImageDescriptor(ImageDescriptor image, int columnIndex);
-    
+
     /**
      * Sets the foreground color of the label.
-     * 
+     *
      * @param foreground to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setForeground(RGB foreground, int columnIndex);
-    
+
     /**
      * Sets the background color of the label.
-     * 
+     *
      * @param background to set to viewer
      * @param columnIndex column index (0 when no columns)
      */

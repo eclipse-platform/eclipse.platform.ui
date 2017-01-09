@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,32 +33,32 @@ import org.eclipse.swt.widgets.Shell;
 public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 
 	/**
-	 * to determine if we should delete the working set as well 
+	 * to determine if we should delete the working set as well
 	 */
 	private boolean fDeleteWorkingsets = false;
-	
+
 	/**
 	 * to determine if we should delete all the breakpoints in the set.
-	 * to maintain backward compatibility this is by default true 
+	 * to maintain backward compatibility this is by default true
 	 */
 	private boolean fDeleteBreakpoints = true;
-	
+
 	//widgets
 	private Button fDeleteWS;
 	private Button fDeleteBPS;
-	
+
 	// dialog settings
 	private final static String DIALOG_SETTINGS = "DeleteBreakpointsDialogSettings"; //$NON-NLS-1$
 	private static final String DELETE_BREAKPOINTS = "DeleteBreakpoints";	 //$NON-NLS-1$
 	private static final String DELETE_WORKINGSETS = "DeleteWorkingSets";	 //$NON-NLS-1$
-	
+
 	public DeleteWorkingsetsMessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
 		super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
 		IDialogSettings section = getDialogSettings();
 		fDeleteBreakpoints = section.getBoolean(DELETE_BREAKPOINTS);
 		fDeleteWorkingsets = section.getBoolean(DELETE_WORKINGSETS);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -78,7 +78,7 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 				getButton(0).setEnabled(fDeleteWS.getSelection() || fDeleteBPS.getSelection());
 			}
 		});
-		
+
 		fDeleteBPS = new Button(comp, SWT.CHECK);
 		fDeleteBPS.setText(ActionMessages.DeleteWorkingsetsMessageDialog_1);
 		fDeleteBPS.setFont(font);
@@ -90,12 +90,12 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 				getButton(0).setEnabled(fDeleteWS.getSelection() || fDeleteBPS.getSelection());
 			}
 		});
-		
+
 		fDeleteWS.setSelection(fDeleteWorkingsets);
 		fDeleteBPS.setSelection(fDeleteBreakpoints);
 		return comp;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.MessageDialog#buttonPressed(int)
 	 */
@@ -118,9 +118,9 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 	public boolean deleteWorkingset() {
 		return fDeleteWorkingsets;
 	}
-	
+
 	/**
-	 * returns the checked state of the delete all breakpoints in working set check box 
+	 * returns the checked state of the delete all breakpoints in working set check box
 	 * @return the checked state of the delete all breakpoints... check box
 	 */
 	public boolean deleteAllBreakpoints() {
@@ -129,7 +129,7 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 
 	/**
 	 * Returns the dialog settings for this dialog.
-	 * 
+	 *
 	 * @return dialog settings
 	 */
 	protected IDialogSettings getDialogSettings() {
@@ -143,7 +143,7 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 		}
 		return section;
 	}
-	
-	
-	
+
+
+
 }

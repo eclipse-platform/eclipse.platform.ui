@@ -24,10 +24,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  * @since 3.1
  */
 public abstract class AbstractMemoryRenderingBindingsProvider implements IMemoryRenderingBindingsProvider {
-    	
+
 	// list of binding listeners
 	private ListenerList<IMemoryRenderingBindingsListener> fListeners;
-        
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#addListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
 	 */
@@ -47,7 +47,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 			fListeners.remove(listener);
 		}
 	}
-	
+
 	/**
 	 * Notifies all registered listeners that bindings have changed.
 	 */
@@ -55,7 +55,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 		if (fListeners == null) {
 			return;
 		}
-		
+
 		for (IMemoryRenderingBindingsListener iMemoryRenderingBindingsListener : fListeners) {
 			final IMemoryRenderingBindingsListener listener = iMemoryRenderingBindingsListener;
 			ISafeRunnable runnable = new ISafeRunnable() {

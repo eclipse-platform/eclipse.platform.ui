@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Doug <doug.satchwell@btinternet.com> - Bug 243053
@@ -31,14 +31,14 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 /**
  * This class is used to wrap a contributed <code>ILaunchConfigurationTabGroup</code> with any contributed tabs
  * for that group (from a <code>launchConfigurationTabs</code> extension point).
- * 
+ *
  * @since 3.3
  */
 public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationTabGroup {
-	
+
 	/**
 	 * Collects all tabs and contributed tabs in the correct ordering
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	class TabCollector implements Iterator<ILaunchConfigurationTab> {
@@ -46,16 +46,16 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		private HashSet<String> idSet = null;
 		private ArrayList<ILaunchConfigurationTab> tabList = null;
 		private ArrayList<LaunchConfigurationTabExtension> extList = null;
-		
+
 		public TabCollector(List<ILaunchConfigurationTab> tabs, List<LaunchConfigurationTabExtension> exts) {
 			tabList = new ArrayList<ILaunchConfigurationTab>(tabs);
 			extList = new ArrayList<LaunchConfigurationTabExtension>(exts);
 			idSet = new HashSet<String>(tabList.size() + extList.size());
 		}
-		
+
 		/**
 		 * Get the tab for any extension that is 'relative' to any of the previously returned tabs
-		 * 
+		 *
 		 * @return the next tab extension tab
 		 */
 		private ILaunchConfigurationTab nextExtensionTab() {
@@ -69,7 +69,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			}
 			return null;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
 		 */
@@ -85,7 +85,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		public ILaunchConfigurationTab next() {
 			ILaunchConfigurationTab nextTab = nextExtensionTab();
 			if (nextTab == null) {
-				if (tabList.size() > 0) { 
+				if (tabList.size() > 0) {
 					nextTab = tabList.remove(0);
 				}
 				else {
@@ -110,7 +110,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	private ILaunchConfigurationTabGroup fGroup = null;
 	private String fGroupId = null;
 	/**
@@ -119,7 +119,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	private List<ILaunchConfigurationTab> fTabs = null;
 	private String fMode = null;
 	private ILaunchConfiguration fConfig = null;
-	
+
 	/**
 	 * Constructor
 	 * @param group the existing group to wrapper
@@ -161,7 +161,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			fTabs.clear();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#getTabs()
 	 */
@@ -192,7 +192,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		}
 		return fTabs.toArray(new ILaunchConfigurationTab[fTabs.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

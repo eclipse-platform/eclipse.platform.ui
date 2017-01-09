@@ -19,11 +19,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Step into action
- * 
+ *
  * @since 3.3
  */
 public class StepIntoCommandAction extends DebugCommandAction {
-	
+
 	public StepIntoCommandAction() {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.StepInto"); //$NON-NLS-1$
 	}

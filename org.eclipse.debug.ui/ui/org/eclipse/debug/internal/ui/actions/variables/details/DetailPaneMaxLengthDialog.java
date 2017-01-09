@@ -32,22 +32,22 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides a dialog for changing the maximum length allowed in the detail pane
- * 
+ *
  * @since 3.0
  */
 public class DetailPaneMaxLengthDialog extends TrayDialog {
 
 	private static final String SETTINGS_ID = DebugUIPlugin.getUniqueIdentifier() + ".MAX_DETAILS_LENGTH_DIALOG"; //$NON-NLS-1$
-	
+
 	private Text fTextWidget;
 	private Text fErrorTextWidget;
 	private String fErrorMessage;
 	private String fValue;
 	private IInputValidator fValidator;
-	
+
 	/**
 	 * Constructs a new dialog on the given shell.
-	 * 
+	 *
 	 * @param parent shell
 	 */
 	public DetailPaneMaxLengthDialog(Shell parent) {
@@ -67,7 +67,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 						}
 						return null;
 					}
-				
+
 				};
 	}
 
@@ -80,10 +80,10 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
 		if (section == null) {
 			section = settings.addNewSection(SETTINGS_ID);
-		} 
+		}
 		return section;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -134,23 +134,23 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		String text = getValue();
 		try {
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, Integer.parseInt(text));
-		} 
+		}
 		catch (NumberFormatException e) {
 			DebugUIPlugin.log(e);
 		}
 		super.okPressed();
 	}
-	
+
 	/**
      * Returns the string typed into this input dialog.
-     * 
+     *
      * @return the input string
      * @since 3.3
      */
     public String getValue() {
         return fValue;
     }
-	
+
     /**
      * Validates the current input
      * @since 3.3
@@ -162,7 +162,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
         }
         setErrorMessage(errorMessage);
     }
-    
+
     /**
      * Sets the current error message or none if null
      * @param errorMessage the message to display
@@ -180,5 +180,5 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
     			button.setEnabled(errorMessage == null);
     		}
     	}
-    }	
+    }
 }

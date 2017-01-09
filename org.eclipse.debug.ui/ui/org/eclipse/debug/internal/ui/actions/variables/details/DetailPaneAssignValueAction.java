@@ -47,18 +47,18 @@ public class DetailPaneAssignValueAction extends Action{
 	private IViewSite fViewSite;
 	private ITextViewer fTextViewer;
 	private IStructuredSelection fCurrentSelection;
-	
+
 	/**
 	 * Attempts to evaluate the given string expression and assign the resulting value to the
 	 * specified variable.  Displays error dialogs to the user if a problem is encountered.
-	 * 
+	 *
 	 * @see DetailPaneAssignValueAction
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier
-	 * 
+	 *
 	 * @param shell the shell to use to open dialogs
 	 * @param variable the variable that is getting a new value
 	 * @param newValueExpression the expression to evaluate and set as the new value
-	 * @since 3.3.0 
+	 * @since 3.3.0
 	 */
 	public static void assignValue(Shell shell, IVariable variable, String newValueExpression){
 		String modelIdentifier = variable.getModelIdentifier();
@@ -70,7 +70,7 @@ public class DetailPaneAssignValueAction extends Action{
 		        return;
 		    }
 		}
-		
+
 		try {
 		    // If we failed to delegate to anyone, perform the default assignment.
 			if (variable.verifyValue(newValueExpression)) {
@@ -85,21 +85,21 @@ public class DetailPaneAssignValueAction extends Action{
             MessageDialog.openError(shell, ActionMessages.DetailPaneAssignValueAction_0, e.getStatus().getMessage());
 		}
 	}
-	
+
 	public DetailPaneAssignValueAction(ITextViewer textViewer, IViewSite viewSite) {
 		super(ActionMessages.DetailPaneAssignValueAction_1);
-		
+
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.DETAIL_PANE_ASSIGN_VALUE_ACTION);
 
 		fTextViewer = textViewer;
 		fViewSite = viewSite;
-		
+
 		setEnabled(false);
         IHandlerService service = fViewSite.getService(IHandlerService.class);
         ActionHandler handler = new ActionHandler(this);
         fHandlerActivation = service.activateHandler(getActionDefinitionId(), handler);
 	}
-		
+
 	public void dispose() {
         IHandlerService service = fViewSite.getService(IHandlerService.class);
         service.deactivateHandler(fHandlerActivation);
@@ -113,17 +113,17 @@ public class DetailPaneAssignValueAction extends Action{
 				fCurrentSelection = selection;
 				enabled = true;
 			}
-		} 
-		setEnabled(enabled);		
-	}	
-	
+		}
+		setEnabled(enabled);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
 		IVariable variable = (IVariable) fCurrentSelection.getFirstElement();
-		
+
 		Point selection = fTextViewer.getSelectedRange();
 		String value = null;
 		if (selection.y == 0) {
@@ -139,15 +139,15 @@ public class DetailPaneAssignValueAction extends Action{
 		if (window != null) {
 			activeShell= window.getShell();
 		}
-		
+
 		assignValue(activeShell, variable, value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#getActionDefinitionId()
 	 */
 	@Override
-	public String getActionDefinitionId() {		
+	public String getActionDefinitionId() {
 		return IWorkbenchCommandConstants.FILE_SAVE;
 	}
 

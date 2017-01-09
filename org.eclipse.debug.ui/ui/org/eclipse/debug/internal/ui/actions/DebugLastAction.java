@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,22 +19,22 @@ import org.eclipse.debug.ui.actions.RelaunchLastAction;
 
 /**
  * Re-launches the last debug-mode launch
- * 
+ *
  * This menu item appears in the main 'Run' menu
- * 
+ *
  * @see RelaunchLastAction
  * @see RunLastAction
  * @see ProfileLastAction
  */
 public class DebugLastAction extends RelaunchLastAction {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getMode()
 	 */
 	@Override
 	public String getMode() {
 		return ILaunchManager.DEBUG_MODE;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getLaunchGroupId()
@@ -71,8 +71,8 @@ public class DebugLastAction extends RelaunchLastAction {
 	@Override
 	protected String getCommandId() {
 		return "org.eclipse.debug.ui.commands.DebugLast"; //$NON-NLS-1$
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getDescription()
 	 */
@@ -84,5 +84,5 @@ public class DebugLastAction extends RelaunchLastAction {
 		else {
 			return ActionMessages.DebugLastAction_3;
 		}
-	}	
+	}
 }

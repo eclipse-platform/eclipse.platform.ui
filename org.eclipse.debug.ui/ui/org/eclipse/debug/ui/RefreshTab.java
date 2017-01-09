@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
  * terminates.
  * <p>
  * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
- * creation to alter the default context help associated with this tab. 
+ * creation to alter the default context help associated with this tab.
  * </p>
  * <p>
  * This class may be instantiate.
@@ -68,34 +68,34 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * variable or the default value, <code>null</code>, indicating no refresh.
 	 */
 	public static final String ATTR_REFRESH_SCOPE = RefreshUtil.ATTR_REFRESH_SCOPE;
-		
+
 	// Check Buttons
 	private Button fRefreshButton;
 	private Button fRecursiveButton;
-	
+
 	// Group box
 	private Group fGroup;
-	
+
 	// Radio Buttons
 	private Button fContainerButton;
 	private Button fProjectButton;
 	private Button fResourceButton;
 	private Button fWorkingSetButton;
 	private Button fWorkspaceButton;
-	
+
 	// Push Button
 	private Button fSelectButton;
-	
+
 	// Working set
 	private IWorkingSet fWorkingSet;
-	
+
 	/**
 	 * Constructor
 	 */
 	public RefreshTab() {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -104,14 +104,14 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
-		
+
 		GridLayout layout = new GridLayout();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
-		
-		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.RefreshTab_31); 
+
+		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.RefreshTab_31);
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -119,7 +119,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fGroup = new Group(mainComposite, SWT.NONE);
 		fGroup.setFont(mainComposite.getFont());
 		layout = new GridLayout();
@@ -139,38 +139,38 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 				}
 			}
 		};
-		
-		fWorkspaceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_32); 
+
+		fWorkspaceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_32);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkspaceButton.setLayoutData(gd);
 		fWorkspaceButton.addSelectionListener(adapter);
 
-		fResourceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_33); 
+		fResourceButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_33);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fResourceButton.setLayoutData(gd);
 		fResourceButton.addSelectionListener(adapter);
 
-		fProjectButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_34); 
+		fProjectButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_34);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		fProjectButton.setLayoutData(gd);		
+		fProjectButton.setLayoutData(gd);
 		fProjectButton.addSelectionListener(adapter);
 
-		fContainerButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_35); 
+		fContainerButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_35);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fContainerButton.setLayoutData(gd);
 		fContainerButton.addSelectionListener(adapter);
-				
-		fWorkingSetButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_36); 
+
+		fWorkingSetButton = createRadioButton(fGroup, StringSubstitutionMessages.RefreshTab_36);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		fWorkingSetButton.setLayoutData(gd);
-		fWorkingSetButton.addSelectionListener(adapter);		
-		
-		fSelectButton = createPushButton(fGroup, StringSubstitutionMessages.RefreshTab_37, null); 
+		fWorkingSetButton.addSelectionListener(adapter);
+
+		fSelectButton = createPushButton(fGroup, StringSubstitutionMessages.RefreshTab_37, null);
 		gd = (GridData)fSelectButton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
@@ -179,7 +179,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 				selectResources();
 			}
 		});
-		
+
 		createVerticalSpacer(fGroup, 2);
 		createRecursiveComponent(fGroup);
 	}
@@ -189,29 +189,29 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void selectResources() {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-		
+
 		if (fWorkingSet == null){
-			fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, new IAdaptable[0]); 
+			fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, new IAdaptable[0]);
 		}
 		IWorkingSetEditWizard wizard = workingSetManager.createWorkingSetEditWizard(fWorkingSet);
 		WizardDialog dialog = new WizardDialog(((LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog()).getShell(), wizard);
-		dialog.create();		
-		
+		dialog.create();
+
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 		fWorkingSet = wizard.getSelection();
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Creates the controls needed to edit the refresh recursive
 	 * attribute of a launch configuration
-	 * 
+	 *
 	 * @param parent the composite to create the controls in
 	 */
 	private void createRecursiveComponent(Composite parent) {
-		fRecursiveButton = createCheckButton(parent, StringSubstitutionMessages.RefreshTab_0); 
+		fRecursiveButton = createCheckButton(parent, StringSubstitutionMessages.RefreshTab_0);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fRecursiveButton.setLayoutData(data);
@@ -238,9 +238,9 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		updateRefresh(configuration);
 		updateRecursive(configuration);
 		updateScope(configuration);
-		updateEnabledState();		
+		updateEnabledState();
 	}
-	
+
 	/**
 	 * Updates the tab to display the refresh scope specified by the launch config
 	 * @param configuration the configuration to update scope information on
@@ -263,18 +263,18 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		} else {
 			if (scope.equals(RefreshUtil.MEMENTO_WORKSPACE)) {
 				fWorkspaceButton.setSelection(true);
-			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_RESOURCE)) { 
+			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_RESOURCE)) {
 				fResourceButton.setSelection(true);
-			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_CONTAINER)) { 
+			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_CONTAINER)) {
 				fContainerButton.setSelection(true);
-			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_PROJECT)) { 
+			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_PROJECT)) {
 				fProjectButton.setSelection(true);
 			} else if (scope.startsWith("${resource:")) { //$NON-NLS-1$
 				fWorkingSetButton.setSelection(true);
 				try {
 					IResource[] resources = getRefreshResources(scope);
 					IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-					fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, resources);					 
+					fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, resources);
 				} catch (CoreException e) {
 					fWorkingSet = null;
 				}
@@ -330,7 +330,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Generates a memento for the refresh scope. This is based on old refresh
 	 * variables.
-	 * 
+	 *
 	 * @return a memento
 	 */
 	private String generateScopeMemento() {
@@ -357,9 +357,9 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public String getName() {
-		return StringSubstitutionMessages.RefreshTab_6; 
+		return StringSubstitutionMessages.RefreshTab_6;
 	}
-	
+
 	/**
 	 * Updates the enablement state of the fields.
 	 */
@@ -377,7 +377,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			super.setErrorMessage(null);
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
@@ -391,15 +391,15 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (fRefreshButton.getSelection() && (fWorkingSetButton.getSelection() && (fWorkingSet == null || fWorkingSet.getElements().length == 0))) {
-			setErrorMessage(StringSubstitutionMessages.RefreshTab_42); 
+			setErrorMessage(StringSubstitutionMessages.RefreshTab_42);
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Refreshes the resources as specified by the given launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @param monitor progress monitor which may be <code>null</code>
 	 * @throws CoreException if an exception occurs while refreshing resources
@@ -410,7 +410,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Returns a collection of resources referred to by a refresh scope attribute.
-	 * 
+	 *
 	 * @param scope refresh scope attribute (<code>ATTR_REFRESH_SCOPE</code>)
 	 * @return collection of resources referred to by the refresh scope attribute
 	 * @throws CoreException if unable to resolve a set of resources
@@ -418,11 +418,11 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public static IResource[] getRefreshResources(String scope) throws CoreException {
 		return RefreshUtil.toResources(scope);
 	}
-	
+
 	/**
 	 * Returns the refresh scope attribute specified by the given launch configuration
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return refresh scope attribute (<code>ATTR_REFRESH_SCOPE</code>)
 	 * @throws CoreException if unable to access the associated attribute
@@ -434,19 +434,19 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Returns whether the refresh scope specified by the given launch
 	 * configuration is recursive.
-	 * 
+	 *
 	 * @param configuration the configuration to check for recursive refresh being set
 	 * @return whether the refresh scope is recursive
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ATTR_REFRESH_RECURSIVE, true);
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a memento for the given working set, to be used as a
 	 * refresh attribute.
-	 * 
+	 *
 	 * @param workingSet a working set, or <code>null</code>
 	 * @return an equivalent refresh attribute
 	 */
@@ -462,12 +462,12 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			return RefreshUtil.toMemento(resources);
 		}
 	}
-	
+
 	/**
 	 * Creates and returns a working set from the given refresh attribute created by
 	 * the method <code>getRefreshAttribute(IWorkingSet)</code>, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param refreshAttribute a refresh attribute that represents a working set
 	 * @return equivalent working set, or <code>null</code>
 	 */
@@ -484,7 +484,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -500,10 +500,10 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	@Override

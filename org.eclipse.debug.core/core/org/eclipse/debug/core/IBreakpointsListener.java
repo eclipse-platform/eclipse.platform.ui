@@ -52,7 +52,7 @@ public interface IBreakpointsListener {
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 */
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas);
-	
+
 	/**
 	 * Notifies this listener that the given breakpoints have
 	 * changed, as described by the corresponding deltas.

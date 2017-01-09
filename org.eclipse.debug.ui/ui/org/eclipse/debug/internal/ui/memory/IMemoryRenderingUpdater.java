@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,18 +20,18 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
  * based on connections.  If the memory block implements this interface or returns
  * an object of this type when getAdapter(...) is called, a rendering would
  * call #supportsManagedUpdate to determine if it should handle and refresh
- * upon a debug event.  
- * 
+ * upon a debug event.
+ *
  * If the client wants to manage its own update, it would return true when
  * #supportsManagedUpdate is called.  The rendering will not get refreshed
- * upon any debug events.  Instead, the rendering will update when 
+ * upon any debug events.  Instead, the rendering will update when
  * <code>IMemoryBlockConnection.update</code> is called.
- * 
+ *
  * This interface is EXPERIMENTAL.
  *
  */
 public interface IMemoryRenderingUpdater extends IMemoryBlockExtension {
-	
+
 	/**
 	 * @return true if the updater will manage the update of a rendering
 	 */

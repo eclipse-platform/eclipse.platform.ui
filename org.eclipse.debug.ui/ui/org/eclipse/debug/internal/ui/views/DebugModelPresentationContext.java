@@ -16,17 +16,17 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A presentation context that has a debug model presentation.
- * 
+ *
  * @since 3.3
  */
 public class DebugModelPresentationContext extends PresentationContext {
 
 	private IDebugModelPresentation fPresentation;
-	
+
 	/**
 	 * Constructs a presentation context for the given id using the
 	 * specified model presentation.
-	 * 
+	 *
 	 * @param id context id
 	 * @param part workbench view
 	 * @param presentation debug model presentation
@@ -35,7 +35,7 @@ public class DebugModelPresentationContext extends PresentationContext {
 		super(id, part);
 		fPresentation = presentation;
 	}
-	
+
 	public IDebugModelPresentation getModelPresentation() {
 		return fPresentation;
 	}

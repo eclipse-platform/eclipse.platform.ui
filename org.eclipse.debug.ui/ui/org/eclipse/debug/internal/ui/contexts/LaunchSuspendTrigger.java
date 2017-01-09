@@ -34,17 +34,17 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	private ListenerList<ISuspendTriggerListener> fListeners = new ListenerList<>();
 	private SuspendTriggerAdapterFactory fFactory = null;
 	private ILaunch fLaunch = null;
-	
+
 	public LaunchSuspendTrigger(ILaunch launch, SuspendTriggerAdapterFactory factory) {
 		fFactory = factory;
 		fLaunch = launch;
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
-	
+
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
-	
+
 	protected void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		fListeners = null;
@@ -65,7 +65,7 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#removeSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
 	 */
 	@Override
-	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) { 
+	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) {
         if (fListeners != null) {
             fListeners.remove(listener);
         }
@@ -91,7 +91,7 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 					ILaunch launch = adaptable.getAdapter(ILaunch.class);
 					if (fLaunch.equals(launch)) {
 						// only notify for this launch
-						notifySuspend(event);						
+						notifySuspend(event);
 					}
 				}
 
@@ -125,18 +125,18 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 						public void run() throws Exception {
         					listener.suspended(launch, temp);
         				}
-        			
+
         				@Override
 						public void handleException(Throwable exception) {
         					DebugUIPlugin.log(exception);
         				}
-        			
-        			}); 			
+
+        			});
         		}
             }
 
 		}
-		
+
 	}
 
 }

@@ -28,9 +28,9 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 /**
  * This class provides a base implementation of a selection action delegate, more specifically a delegate
  * that uses a selection context to update its underlying <code>IAction</code>.
- * 
+ *
  * This class is intended to be extended by clients
- * 
+ *
  * @see IViewActionDelegate
  * @see IActionDelegate2
  *
@@ -41,7 +41,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * The underlying action for this delegate
 	 */
 	private IAction fAction;
-	
+
 	/**
 	 * This action's view part, or <code>null</code> if not installed in a
 	 * view.
@@ -57,7 +57,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * Used to schedule jobs, or <code>null</code> if none
 	 */
 	private IWorkbenchSiteProgressService fProgressService = null;
-	
+
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set in
@@ -67,7 +67,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	@Override
@@ -94,7 +94,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * Returns the String to use as an error dialog message for a failed action.
 	 * This message appears as the "Message:" in the error dialog for this
 	 * action. Default is to return null.
-	 * 
+	 *
 	 * @return the message for the error dialog
 	 */
 	protected String getErrorDialogMessage() {
@@ -105,7 +105,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * Returns the String to use as a status message for a failed action. This
 	 * message appears as the "Reason:" in the error dialog for this action.
 	 * Default is to return the empty String.
-	 * 
+	 *
 	 * @return the status message
 	 */
 	protected String getStatusMessage() {
@@ -114,7 +114,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
@@ -126,7 +126,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/**
 	 * Returns this action's view part, or <code>null</code> if not installed
 	 * in a view.
-	 * 
+	 *
 	 * @return the underlying <code>IViewPart</code> or <code>null</code>
 	 */
 	protected IViewPart getView() {
@@ -135,7 +135,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 
 	/**
 	 * Returns the most recent selection
-	 * 
+	 *
 	 * @return structured selection
 	 */
 	protected IStructuredSelection getSelection() {
@@ -144,7 +144,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 
 	/**
 	 * Sets the most recent selection
-	 * 
+	 *
 	 * @param context structured selection
 	 */
 	private void setSelection(IStructuredSelection context) {
@@ -179,7 +179,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * Return whether the action should be enabled or not based on the given
 	 * selection.
 	 * @param selection the current selection
-	 * 
+	 *
 	 * @return true if the action should be enabled for the specified selection context
 	 * false otherwise
 	 */
@@ -225,7 +225,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 
 	/**
 	 * Schedules the given job with this action's progress service
-	 * 
+	 *
 	 * @param job the {@link Job} to schedule
 	 */
 	protected void schedule(Job job) {

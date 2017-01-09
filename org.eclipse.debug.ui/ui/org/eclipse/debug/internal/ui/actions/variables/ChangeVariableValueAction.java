@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
- 
+
 import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
@@ -42,19 +42,19 @@ import com.ibm.icu.text.MessageFormat;
  * variable value editor, if any is provided for the variable's debug model.
  */
 public class ChangeVariableValueAction extends SelectionProviderAction {
-    
+
 	protected IVariable fVariable;
     private VariablesView fView;
     private boolean fEditing= false;
     private boolean isApplicable = false;
-	
+
     /**
      * Creates a new ChangeVariableValueAction for the given variables view
      * @param view the variables view in which this action will appear
      */
 	public ChangeVariableValueAction(VariablesView view) {
-		super(view.getViewer(), ActionMessages.ChangeVariableValue_title); 
-		setDescription(ActionMessages.ChangeVariableValue_toolTipText); 
+		super(view.getViewer(), ActionMessages.ChangeVariableValue_title);
+		setDescription(ActionMessages.ChangeVariableValue_toolTipText);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CHANGE_VARIABLE_VALUE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CHANGE_VARIABLE_VALUE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CHANGE_VARIABLE_VALUE));
@@ -63,24 +63,24 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			IDebugHelpContextIds.CHANGE_VALUE_ACTION);
 		fView= view;
 	}
-	
+
 	/**
 	 * Indicates whether this action is applicable for the current selection.
-	 * If the element selected in the viewer is not a standard debug model 
-	 * element this action is not applicable. 
+	 * If the element selected in the viewer is not a standard debug model
+	 * element this action is not applicable.
 	 * @return if this action applies to the current selection
 	 */
 	public boolean isApplicable() {
 	    return isApplicable;
 	}
-	
+
 	/**
-	 * Edit the variable value with an in-line text editor.  
+	 * Edit the variable value with an in-line text editor.
 	 * @param variable run the action on the given variable
 	 */
 	protected void doActionPerformed(final IVariable variable) {
 	    Shell shell = fView.getViewSite().getShell();
-		// If a previous edit is still in progress, don't start another		
+		// If a previous edit is still in progress, don't start another
 	    if (fEditing) {
 	        return;
 	    }
@@ -91,13 +91,13 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	    }
 		fEditing= false;
 	}
-	
+
 	/**
 	 * Attempts to edit the variable by delegating to anyone who's
 	 * contributed a variable value editor via extension. Returns
 	 * <code>true</code> if a delegate handled the edit, <code>false</code>
 	 * if the variable still needs to be edited.
-	 * 
+	 *
      * @param shell a shell for prompting the user
      * @return whether or not a delegate attempted to edit the variable
      */
@@ -121,7 +121,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			name= fVariable.getName();
 			value= fVariable.getValue().getValueString();
 		} catch (DebugException exception) {
-			DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, exception);	// 
+			DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, exception);	//
 			return;
 		}
 		ChangeVariableValueInputDialog inputDialog = new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new Object[] { name }), value, new IInputValidator() { //
@@ -135,12 +135,12 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 						return null; // null means valid
 					}
 				} catch (DebugException exception) {
-					return ActionMessages.ChangeVariableValue_3; 
+					return ActionMessages.ChangeVariableValue_3;
 				}
-				return ActionMessages.ChangeVariableValue_4; 
+				return ActionMessages.ChangeVariableValue_4;
 			}
 		});
-		
+
 		inputDialog.open();
 		String newValue= inputDialog.getValue();
 		if (newValue != null) {
@@ -149,11 +149,11 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 				fVariable.setValue(newValue);
 				getSelectionProvider().setSelection(new StructuredSelection(fVariable));
 			} catch (DebugException de) {
-				DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, de);	// 
+				DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, de);	//
 			}
 		}
 	}
-		
+
 	/**
 	 * Updates the enabled state of this action based
 	 * on the selection
@@ -186,7 +186,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		Iterator<Object> iterator = getStructuredSelection().iterator();
 		doActionPerformed((IVariable)iterator.next());
 	}
-	
+
 	/**
 	 * @see SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

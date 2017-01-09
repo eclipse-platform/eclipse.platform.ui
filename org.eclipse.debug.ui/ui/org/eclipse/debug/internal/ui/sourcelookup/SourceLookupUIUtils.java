@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Utility methods for the UI portion of the source lookup solution.
- * 
+ *
  * @since 3.0
  */
 public class SourceLookupUIUtils {
@@ -49,14 +49,14 @@ public class SourceLookupUIUtils {
 	 * @since 3.0
 	 */
 	public static final String CONTAINER_ID_ATTRIBUTE = "containerTypeID";	//$NON-NLS-1$
-	
+
 	private static Hashtable<String, IConfigurationElement> fSourceContainerPresentationHashtable;
-	
+
 	/**
 	 * Constructor. Reads in Source Container Presentation extension implementations.
 	 */
 	public SourceLookupUIUtils(){
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), CONTAINER_PRESENTATION_EXTENSION);		
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), CONTAINER_PRESENTATION_EXTENSION);
 		//read in SourceContainer presentation extensions
 		IConfigurationElement[] sourceContainerPresentationExtensions =extensionPoint.getConfigurationElements();
 		fSourceContainerPresentationHashtable = new Hashtable<String, IConfigurationElement>();
@@ -64,11 +64,11 @@ public class SourceLookupUIUtils {
 			fSourceContainerPresentationHashtable.put(
 					sourceContainerPresentationExtensions[i].getAttribute(CONTAINER_ID_ATTRIBUTE),
 					sourceContainerPresentationExtensions[i]);
-			registerContainerImages(sourceContainerPresentationExtensions[i]);			
-		}		
-	}	
-	
-	
+			registerContainerImages(sourceContainerPresentationExtensions[i]);
+		}
+	}
+
+
 	/**
 	 * Retrieves the icon associated with a source container type.
 	 * @param id the container type id
@@ -80,7 +80,7 @@ public class SourceLookupUIUtils {
 		}
 		return DebugPluginImages.getImage(id);
 	}
-	
+
 	/**
 	 * Retrieves the browser class associated with the source container type specified.
 	 * @param typeID the source container type id
@@ -100,7 +100,7 @@ public class SourceLookupUIUtils {
 		}catch(CoreException e){}
 		return browser;
 	}
-	
+
 	private void registerContainerImages(IConfigurationElement configElement){
 		ImageDescriptor imageDescriptor = DebugUIPlugin.getImageDescriptor(configElement, ICON_ATTRIBUTE);
 		if (imageDescriptor == null) {
@@ -108,7 +108,7 @@ public class SourceLookupUIUtils {
 		}
 		String configTypeID = configElement.getAttribute(CONTAINER_ID_ATTRIBUTE);
 		ImageRegistry imageRegistry = DebugPluginImages.getImageRegistry();
-		imageRegistry.put(configTypeID, imageDescriptor);		
+		imageRegistry.put(configTypeID, imageDescriptor);
 	}
-	
+
 }

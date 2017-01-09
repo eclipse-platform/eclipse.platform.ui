@@ -19,7 +19,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Default factory for selection policies.
- * 
+ *
  * @since 3.2
  */
 public class DefaultModelSelectionPolicyFactory implements IModelSelectionPolicyFactory {

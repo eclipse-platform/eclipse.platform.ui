@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 /**
  * Proxy to a breakpointImportParticipant extension.
  * Client can contribute participant through the <code>breakpointImportParticipant</code> extension point
- * 
+ *
  * Example contribution:
  * <pre>
  * <extension
@@ -28,20 +28,20 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
       </ImportParticipant>
    </extension>
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * @since 3.5
  */
 public class BreakpointImportParticipantDelegate {
-	
+
 	/**
 	 * The configuration element for this delegate
 	 */
 	private IConfigurationElement fElement = null;
 	private IBreakpointImportParticipant fParticipant = null;
-	
+
 	/**
 	 * Constructor
 	 * @param element the element this proxy is created on
@@ -53,7 +53,7 @@ public class BreakpointImportParticipantDelegate {
 	/**
 	 * Returns the {@link IBreakpointImportParticipant} delegate or <code>null</code> of there was
 	 * a problem loading the delegate
-	 * 
+	 *
 	 * @return the {@link IBreakpointImportParticipant} or <code>null</code>
 	 * @throws CoreException if a problem is encountered
 	 */
@@ -66,7 +66,7 @@ public class BreakpointImportParticipantDelegate {
 
 	/**
 	 * Returns the marker type this participant is registered for.
-	 * 
+	 *
 	 * @return the marker type this participant is registered for
 	 * @throws CoreException if a problem is encountered
 	 */

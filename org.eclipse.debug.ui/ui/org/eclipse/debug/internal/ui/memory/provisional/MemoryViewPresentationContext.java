@@ -18,11 +18,11 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 /**
  * Presentation context from the Memory View. This presentation provides
  * additional information regarding the originator of the asynchronous request.
- * 
+ *
  * Clients may reference or subclass from this class.
- * 
+ *
  * @since 3.2
- * 
+ *
  */
 public class MemoryViewPresentationContext extends PresentationContext {
 
@@ -32,7 +32,7 @@ public class MemoryViewPresentationContext extends PresentationContext {
 
 	/**
 	 * Constructs MemoryViewPresentationContext
-	 * 
+	 *
 	 * @param site - the memory rendering site that this presentation context is
 	 *            for
 	 * @param container - the memory rendering container that this presentation
@@ -50,7 +50,7 @@ public class MemoryViewPresentationContext extends PresentationContext {
 
 	/**
 	 * Returns the memory rendering site that this presentation context is for
-	 * 
+	 *
 	 * @return the memory rendering site that this presentation context is for
 	 */
 	public IMemoryRenderingSite getMemoryRenderingSite() {
@@ -60,7 +60,7 @@ public class MemoryViewPresentationContext extends PresentationContext {
 	/**
 	 * Returns the memory rendering container that this presentation context is
 	 * for
-	 * 
+	 *
 	 * @return the memory rendering container that this presentation context is
 	 *         for, <code>null</code> if none.
 	 */
@@ -70,7 +70,7 @@ public class MemoryViewPresentationContext extends PresentationContext {
 
 	/**
 	 * Returns the memory rendering that this presentation context is for
-	 * 
+	 *
 	 * @return the memory rendering that this presentation context is for,
 	 *         <code>null</code> if none.
 	 */

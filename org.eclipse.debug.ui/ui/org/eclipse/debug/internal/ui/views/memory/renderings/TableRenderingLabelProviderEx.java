@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Image;
  * This label provider is used by AbstractTableRendering if clients decide to
  * provide customized decorations in the rendering. Otherwise the table
  * rendering uses TableRenderingLabelProvider.
- * 
+ *
  */
 public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider implements ITableColorProvider, ITableFontProvider {
 
@@ -46,7 +46,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 				Color color = fColorProvider.getForeground(renderingElement);
 				if (color != null)
 					return color;
-			}			
+			}
 		}
 		return super.getForeground(element);
 	}
@@ -131,7 +131,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 	/**
 	 * Returns a memory rendering element corresponding to the given element
 	 * or <code>null</code> if none.
-	 *  
+	 *
 	 * @param element element to be rendered
 	 * @param columnIndex column index at which to render
 	 * @return memory rendering element or <code>null</code>
@@ -147,7 +147,7 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 		}
 		return null;
 	}
-	
+
 	private MemoryRenderingElement getMemoryRenderingElement(TableRenderingLine line, BigInteger lineAddress, int offset) {
 		BigInteger cellAddress = lineAddress.add(BigInteger.valueOf(offset));
 		MemoryByte[] bytes = line.getBytes(offset, offset

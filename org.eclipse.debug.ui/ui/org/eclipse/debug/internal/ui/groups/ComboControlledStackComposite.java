@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -128,7 +128,7 @@ class ComboControlledStackComposite extends Composite {
 		Label label = new Label(parent, SWT.WRAP);
 	    return label;
     }
-	
+
 	protected Combo createCombo(Composite parent) {
 		Combo box = new Combo(parent, SWT.READ_ONLY);
 		box.addSelectionListener(new SelectionAdapter() {
@@ -149,8 +149,8 @@ class ComboControlledStackComposite extends Composite {
 		layout.topControl = tabMap.get(label);
 		getStackParent().layout();
 	}
-	
+
 	public Control getTopControl() {
-		return layout != null ? layout.topControl : null; 
+		return layout != null ? layout.topControl : null;
 	}
 }

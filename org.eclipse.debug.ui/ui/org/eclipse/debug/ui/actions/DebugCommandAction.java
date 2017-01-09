@@ -30,23 +30,23 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Abstract base class for re-targeting actions which delegate execution to 
- * {@link org.eclipse.debug.core.commands.IDebugCommandHandler} handlers.  
- * The specific type of <code>IDebugCommandHandler</code> is determined by the 
- * abstract {@link #getCommandType()} method.    
+ * Abstract base class for re-targeting actions which delegate execution to
+ * {@link org.eclipse.debug.core.commands.IDebugCommandHandler} handlers.
+ * The specific type of <code>IDebugCommandHandler</code> is determined by the
+ * abstract {@link #getCommandType()} method.
  * <p>
- * This base class is an action which can be instantiated directly by views, 
- * etc.  In order to contribute an action using an extension point, a class 
+ * This base class is an action which can be instantiated directly by views,
+ * etc.  In order to contribute an action using an extension point, a class
  * implementing {@link org.eclipse.ui.IActionDelegate} should be created first.
- * The delegate should then use a <code>DebugCommandAction</code> to implement 
+ * The delegate should then use a <code>DebugCommandAction</code> to implement
  * the needed functionality. The IActionDelegate must use {@link #setActionProxy(IAction)}
  * specifying the workbench's action that is a proxy to the action delegate. This
  * way, the workbench action can be updated visually as needed.<br>
  * Note: <code>IDebugCommandHandler</code> command typically act on the active
- * debug context as opposed to the active selection in view or window.  The 
- * action delegate should ignore the active window selection, and instead allow 
- * the <code>DebugCommandAction</code> to update itself based on the active 
- * debug context. 
+ * debug context as opposed to the active selection in view or window.  The
+ * action delegate should ignore the active window selection, and instead allow
+ * the <code>DebugCommandAction</code> to update itself based on the active
+ * debug context.
  * </p>
  * <p>
  * Clients may subclass this class.
@@ -57,23 +57,23 @@ import org.eclipse.ui.PlatformUI;
 public abstract class DebugCommandAction extends Action implements IDebugContextListener {
 
     private boolean fInitialized = false;
-    
+
 	/**
 	 * The window this action is working for.
 	 */
     private IWorkbenchWindow fWindow;
-    
+
     /**
      * The part this action is working for, or <code>null</code> if global to
      * a window.
      */
     private IWorkbenchPart fPart;
-    
+
     /**
      * Command service.
      */
     private DebugCommandService fUpdateService;
-    
+
     /**
      * Delegate this action is working for or <code>null</code> if none.
      */
@@ -85,7 +85,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
             DebugCommandAction.this.setEnabled(enabled);
         }
     };
-    
+
     /**
      * Constructor
      */
@@ -103,7 +103,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * that is using this action to perform its actual work. This only needs to be called when
      * an {@link org.eclipse.ui.IActionDelegate} is using one of these actions to perform its
      * function.
-     * 
+     *
      * @param action workbench proxy action
      */
     public void setActionProxy(IAction action) {
@@ -113,39 +113,39 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 
     /**
      * Executes this action on the given target object
-     * @param targets the targets to perform the action on 
+     * @param targets the targets to perform the action on
      * @return if the command stays enabled while the command executes
      */
     private boolean execute(final Object[] targets) {
     	return fUpdateService.executeCommand(
-    	    getCommandType(), targets, 
+    	    getCommandType(), targets,
     	    new ICommandParticipant() {
     	        @Override
 				public void requestDone(org.eclipse.debug.core.IRequest request) {
     	            DebugCommandAction.this.postExecute(request, targets);
-    	        }    	      
+    	        }
     	    });
     }
-        
+
     /**
-     * This method is called after the completion of the execution of this 
+     * This method is called after the completion of the execution of this
      * command.  Extending classes may override this method to perform additional
-     * operation after command execution. 
-     * 
-     * @param request The completed request object which was given to the 
+     * operation after command execution.
+     *
+     * @param request The completed request object which was given to the
      * debug command handler.
      * @param targets Objects which were the targets of this action
      */
     protected void postExecute(IRequest request, Object[] targets) {
         // do nothing by default
     }
-    
+
     /**
-     * Returns the {@link org.eclipse.debug.core.commands.IDebugCommandHandler} 
+     * Returns the {@link org.eclipse.debug.core.commands.IDebugCommandHandler}
      * command handler that type this action executes.
-     * 
+     *
      * @return command class.
-     * 
+     *
      * @see org.eclipse.debug.core.commands.IDebugCommandHandler
      */
 	abstract protected Class<?> getCommandType();
@@ -168,7 +168,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
                 fInitialized = true;
                 notifyAll();
             }
-        }        
+        }
         super.setEnabled(enabled);
         if (fAction != null) {
             fAction.setEnabled(enabled);
@@ -177,7 +177,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 
     /**
      * Initializes this action for a specific part.
-     * 
+     *
      * @param part workbench part
      */
     public void init(IWorkbenchPart part) {
@@ -195,10 +195,10 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         	setEnabled(getInitialEnablement());
         }
     }
-    
+
     /**
      * Initializes this action for a workbench window.
-     * 
+     *
      * @param window the window
      */
     public void init(IWorkbenchWindow window) {
@@ -214,12 +214,12 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         	setEnabled(getInitialEnablement());
         }
     }
-    
+
     /**
      * Returns whether this action should be enabled when initialized
      * and there is no active debug context. By default, <code>false</code>
      * is returned.
-     * 
+     *
      * @return initial enabled state when there is no active context.
      */
     protected boolean getInitialEnablement() {
@@ -230,7 +230,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * Returns the context (selection) this action operates on. By default
      * the active debug context in this action's associated part or window is used,
      * but subclasses may override as required.
-     * 
+     *
      * @return the context this action operates on
      * @since 3.7
      */
@@ -253,9 +253,9 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
                     wait();
                 } catch (InterruptedException e) {
                 }
-            }           
-        }        
-        
+            }
+        }
+
         ISelection selection = getContext();
         if (selection instanceof IStructuredSelection && isEnabled()) {
             IStructuredSelection ss = (IStructuredSelection) selection;
@@ -287,11 +287,11 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         fWindow = null;
         fPart = null;
     }
-    
+
     /**
      * Returns the context service this action linked to. By default, this actions is
      * associated with the context service for the window this action is operating in.
-     * 
+     *
      * @return associated context service
      */
     protected IDebugContextService getDebugContextService() {
@@ -300,9 +300,9 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 
     /**
      * Returns the help context id for this action or <code>null</code> if none.
-     * 
+     *
      * @return The help context id for this action or <code>null</code>
-     */ 
+     */
     public abstract String getHelpContextId();
 
     /*
@@ -346,14 +346,14 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      */
     @Override
 	public abstract ImageDescriptor getImageDescriptor();
-    
+
     /**
      * Returns the workbench proxy associated with this action or <code>null</code>
      * if none. This is the workbench proxy to an {@link org.eclipse.ui.IActionDelegate}
      * that is using this action to perform its actual work. This is only used when
      * an {@link org.eclipse.ui.IActionDelegate} is using one of these actions to perform its
      * function.
-     * 
+     *
      * @return workbench proxy action or <code>null</code>
      */
     protected IAction getActionProxy() {

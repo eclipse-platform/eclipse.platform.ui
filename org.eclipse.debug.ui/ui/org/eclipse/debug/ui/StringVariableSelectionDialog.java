@@ -57,7 +57,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class StringVariableSelectionDialog extends ElementListSelectionDialog {
-	
+
 	// button to configure variable's argument
 	private Button fArgumentButton;
 	// variable description
@@ -68,16 +68,16 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	private Button fShowAllButton;
 	private Label fShowAllDescription;
 
-	/** 
+	/**
 	 * Base class for custom variable filters. Clients may extend this class
-	 * to filter specific dynamic variables from the selection dialog. 
-	 * 
+	 * to filter specific dynamic variables from the selection dialog.
+	 *
 	 * @since 3.6
 	 */
 	public static class VariableFilter {
 		/**
 		 * Returns whether the given variable should be filtered.
-		 *  
+		 *
 		 * @param var variable to be consider
 		 * @return <code>true</code> to filter the variable, otherwise <code>false</code>
 		 */
@@ -93,22 +93,22 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Constructs a new string substitution variable selection dialog.
-	 *  
+	 *
 	 * @param parent parent shell
 	 */
 	public StringVariableSelectionDialog(Shell parent) {
 		super(parent, new StringVariableLabelProvider());
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_2); 
-		setMessage(StringSubstitutionMessages.StringVariableSelectionDialog_3); 
+		setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_2);
+		setMessage(StringSubstitutionMessages.StringVariableSelectionDialog_3);
 		setMultipleSelection(false);
 		setElements(VariablesPlugin.getDefault().getStringVariableManager().getVariables());
 	}
-	
+
 	/**
 	 * Returns the variable expression the user generated from this
 	 * dialog, or <code>null</code> if none.
-	 *  
+	 *
 	 * @return variable expression the user generated from this
 	 * dialog, or <code>null</code> if none
 	 */
@@ -129,10 +129,10 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		return null;
 	}
 
-	/** 
+	/**
 	 *  Add the given variable filter. Has no effect if the given filter has
 	 *  already been added. Must be called before the dialog is opened.
-	 *  
+	 *
 	 *  @param filter the filter to add
 	 * @since 3.6
 	 */
@@ -145,7 +145,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/**
 	 * Sets the filters, replacing any previous filters.
 	 *  Must be called before the dialog is opened.
-	 * 
+	 *
 	 * @param filters
 	 *            an array of variable filters, use empty Array or <code>null</code> to reset all Filters.
 	 * @since 3.6
@@ -170,9 +170,9 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 					}
 				});
 			}
-		});		
+		});
 	}
-	
+
 	private void updateDescription() {
 		if((fShowAllDescription != null) && !fShowAllDescription.isDisposed()) {
 			if(fShowAllSelected) {
@@ -213,7 +213,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IDebugHelpContextIds.VARIABLE_SELECTION_DIALOG);
 		return ctrl;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -227,12 +227,12 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/**
 	 * Creates an area to display a description of the selected variable
 	 * and a button to configure the variable's argument.
-	 * 
+	 *
 	 * @param parent parent widget
 	 */
 	private void createArgumentArea(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		
+
 		Composite btnContainer = SWTFactory.createComposite(container, parent.getFont(), 3, 2, GridData.FILL_HORIZONTAL, 0, 0);
 		boolean bNeedShowAll = false;
 		if(!fFilters.isEmpty()) {
@@ -265,23 +265,23 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		} else {
 			SWTFactory.createHorizontalSpacer(btnContainer, 2);
 		}
-		
+
 		Button editButton = SWTFactory.createPushButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
 		editButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editVariables();
 			}
-		});	
-		
+		});
+
 		SWTFactory.createWrapLabel(container, StringSubstitutionMessages.StringVariableSelectionDialog_6, 2);
-		
+
 		Composite args = SWTFactory.createComposite(container, container.getFont(), 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
 
 		fArgumentText = new Text(args, SWT.BORDER);
 		fArgumentText.setFont(container.getFont());
-		fArgumentText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-		
+		fArgumentText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		fArgumentButton = SWTFactory.createPushButton(args, StringSubstitutionMessages.StringVariableSelectionDialog_7, null);
 		fArgumentButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -291,7 +291,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		});
 
 		SWTFactory.createWrapLabel(container, StringSubstitutionMessages.StringVariableSelectionDialog_8, 2);
-		
+
 		fDescriptionText = new Text(container, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		fDescriptionText.setFont(container.getFont());
 		fDescriptionText.setEditable(false);
@@ -321,12 +321,12 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 					});
 				}
 			}
-		});		
+		});
 	}
-	
+
 	/**
 	 * Shows the string variables preference page and returns <code>true</code> if OK was pressed.
-	 * 
+	 *
 	 * @return whether OK was pressed
 	 */
 	private boolean showVariablesPage() {
@@ -344,9 +344,9 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 				dialog.setMessage(targetNode.getLabelText());
 				result[0]= (dialog.open() == Window.OK);
 			}
-		});	
+		});
 		return result[0];
-	}	
+	}
 
 	/**
 	 * Configures the argument for the selected variable.
@@ -363,7 +363,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Update variable description and argument button enablement.
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleSelectionChanged()
 	 */
 	@Override
@@ -401,13 +401,13 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".STRING_VARIABLE_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -417,7 +417,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
 }

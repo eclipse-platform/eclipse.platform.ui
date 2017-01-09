@@ -30,8 +30,8 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				String title= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1; 
-				String message= DebugUIMessages.WorkingDirectoryStatusHandler_0; 
+				String title= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
+				String message= DebugUIMessages.WorkingDirectoryStatusHandler_0;
 				result[0]= (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
 			}
 		});

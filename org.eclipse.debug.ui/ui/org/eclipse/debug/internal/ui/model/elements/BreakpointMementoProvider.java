@@ -20,7 +20,7 @@ import org.eclipse.ui.IMemento;
 
 /**
  * Memento provider for breakpoints
- * 
+ *
  * @since 3.6
  */
 public class BreakpointMementoProvider extends ElementMementoProvider {
@@ -29,14 +29,14 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	 * Marker ID. Stored as string in order to support the full range of the long type.
 	 */
 	private static final String MARKER_ID = "MARKER_ID"; 	//$NON-NLS-1$
-	
+
 	/**
 	 * Full path from the workspace to the resource referred to by the breakpoint marker.
-	 * 
-	 * Stored as String. 
+	 *
+	 * Stored as String.
 	 */
-	private static final String RESOURCE_PATH = "RESOURCE_PATH"; 	//$NON-NLS-1$	
-	
+	private static final String RESOURCE_PATH = "RESOURCE_PATH"; 	//$NON-NLS-1$
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#supportsContextId(java.lang.String)
 	 */
@@ -50,7 +50,7 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	@Override
 	protected boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IBreakpoint) {
-			
+
 			IMarker marker = ((IBreakpoint)element).getMarker();
 			if (marker != null) {
 
@@ -73,15 +73,15 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	@Override
 	protected boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IBreakpoint) {
-			IBreakpoint breakpoint =(IBreakpoint)element; 
+			IBreakpoint breakpoint =(IBreakpoint)element;
 			IMarker marker = breakpoint.getMarker();
-			
+
 			long markerId = marker.getId();
 			String mementoMarkerId = memento.getString(MARKER_ID);
 			if (!Long.toString(markerId).equals(mementoMarkerId)) {
 				return false;
 			}
-			
+
 			IPath fullPath = marker.getResource().getFullPath();
 			String path = fullPath.toString();
 			String mementoPath = memento.getString(RESOURCE_PATH);

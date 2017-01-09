@@ -13,16 +13,16 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
  * Request to compare an element to a previously created memento.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
 public interface IElementCompareRequest extends IElementMementoRequest {
-	
+
 	/**
 	 * Sets whether this request's memento represents this requests's element.
-	 * 
-	 * @param equal whether the memento represents the element 
+	 *
+	 * @param equal whether the memento represents the element
 	 */
 	public void setEqual(boolean equal);
 }

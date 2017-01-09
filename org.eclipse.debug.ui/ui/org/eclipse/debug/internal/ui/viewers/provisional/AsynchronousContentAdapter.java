@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,9 +28,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * @since 3.2
  */
 public abstract class AsynchronousContentAdapter implements IAsynchronousContentAdapter {
-	
+
 	protected static final Object[] EMPTY = new Object[0];
-	
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#retrieveChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor)
@@ -50,10 +50,10 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 		job.setRule(getRetrieveChildrenRule(parent, context));
 		job.schedule();
 	}
-    
+
     /**
      * Returns the scheduling rule for jobs retrieving children.
-     * 
+     *
      * @param parent the parent
      * @param context the presentation context
      * @return scheduling rule or <code>null</code>
@@ -61,7 +61,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
     protected ISchedulingRule getRetrieveChildrenRule(Object parent, IPresentationContext context) {
     	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
     }
-    
+
 
     /*
      * (non-Javadoc)
@@ -82,10 +82,10 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 		job.setRule(getIsContainerRule(element, context));
 		job.schedule();
 	}
-    
+
     /**
      * Returns the scheduling rule for jobs determining if an element is a container.
-     * 
+     *
      * @param parent the parent
      * @param context the presentation context
      * @return scheduling rule or <code>null</code>
@@ -93,10 +93,10 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
     protected ISchedulingRule getIsContainerRule(Object parent, IPresentationContext context) {
     	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
     }
-    
+
     /**
      * Computes the children for the given parent in the specified context.
-     * 
+     *
      * @param parent parent to retrieve children for
      * @param context presentation context
      * @param monitor result to report to
@@ -113,12 +113,12 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 			}
 			monitor.setStatus(status);
 			monitor.done();
-		}    	
+		}
     }
-    
+
     /**
      * Computes whether the given element is a container.
-     * 
+     *
      * @param parent potential parent
      * @param context presentation context
      * @param monitor result to report to
@@ -133,43 +133,43 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 			}
 			monitor.setStatus(status);
 			monitor.done();
-		}    	
-    }    
-        
+		}
+    }
+
     /**
      * Returns the children for the given parent in the specified context.
-     * 
+     *
      * @param parent element to retrieve children for
      * @param context context children will be presented in
      * @return children
      * @throws CoreException if an exception occurs retrieving children
      */
     protected abstract Object[] getChildren(Object parent, IPresentationContext context) throws CoreException;
-    
+
     /**
      * Returns whether the given element has children in the specified context.
-     * 
+     *
      * @param element element that may have children
      * @param context context element will be presented in
      * @return whether the given element has children in the specified context
      * @throws CoreException if an exception occurs determining whether the
      *  element has children
      */
-    protected abstract boolean hasChildren(Object element, IPresentationContext context) throws CoreException;    
+    protected abstract boolean hasChildren(Object element, IPresentationContext context) throws CoreException;
 
     /**
      * Returns whether this adapter supports the given context.
-     * 
+     *
      * @param context the presentation context
      * @return whether this adapter supports the given context
      */
     protected boolean supportsContext(IPresentationContext context) {
 		return supportsPartId(context.getId());
     }
-    
+
     /**
      * Returns whether this adapter provides content in the specified part.
-     * 
+     *
      * @param id part id
      * @return whether this adapter provides content in the specified part
      */

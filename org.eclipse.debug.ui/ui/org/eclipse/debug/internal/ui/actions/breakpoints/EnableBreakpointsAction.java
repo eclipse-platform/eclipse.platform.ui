@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,13 +38,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 public class EnableBreakpointsAction implements IViewActionDelegate, IPartListener, IBreakpointsListener {
-	
+
 	private IViewPart fView;
 	private IAction fAction;
-	
+
 	public EnableBreakpointsAction() {
 	}
-		
+
 	protected IViewPart getView() {
 		return fView;
 	}
@@ -66,7 +66,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	protected void update() {
 		selectionChanged(getAction(), getView().getViewSite().getSelectionProvider().getSelection());
 	}
-	
+
 	/**
 	 * If this action can enable breakpoints
 	 * @return always <code>true</code>
@@ -74,7 +74,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	protected boolean isEnableAction() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -85,9 +85,9 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		if (size == 0) {
 			return;
 		}
-		
+
 		final Iterator<?> itr = selection.iterator();
-		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.EnableBreakpointAction_Enable_breakpoint_s__failed_2, null); 
+		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.EnableBreakpointAction_Enable_breakpoint_s__failed_2, null);
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) {
@@ -95,7 +95,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					Object element= itr.next();
 					try {
 						IBreakpoint[] breakpoints= null;
-						IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(element, IBreakpoint.class); 
+						IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(element, IBreakpoint.class);
 						if (breakpoint != null) {
 							breakpoints= new IBreakpoint[] { breakpoint };
 						} else if (element instanceof IBreakpointContainer) {
@@ -116,17 +116,17 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 				}
 			}
 		};
-		
+
 		try {
 			ResourcesPlugin.getWorkspace().run(runnable, null, 0, new NullProgressMonitor());
 		} catch (CoreException e) {
 			// Exceptions are handled by runnable
 		}
-		
+
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ms); // 
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ms); //
 			} else {
 				DebugUIPlugin.log(ms);
 			}
@@ -147,14 +147,14 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		IStructuredSelection sel= (IStructuredSelection)selection;
-		
+
 		Iterator<?> itr = sel.iterator();
 		boolean allEnabled= true;
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
 			Object selected= itr.next();
             IBreakpoint bp = (IBreakpoint)DebugPlugin.getAdapter(selected, IBreakpoint.class);
-			
+
             if (bp != null) {
                 try {
                     if (bp.isEnabled()) {
@@ -165,7 +165,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
                 } catch (CoreException ce) {
                     handleException(ce);
                 }
-            } 
+            }
             else if (selected instanceof IBreakpointContainer) {
 				IBreakpoint[] breakpoints = ((IBreakpointContainer) selected).getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
@@ -182,25 +182,25 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			} else {
 				return;
 			}
-			
+
 		}
-			
+
 		if (isEnableAction()) {
 			action.setEnabled(!allEnabled);
 		} else {
 			action.setEnabled(!allDisabled);
 		}
 	}
-	
+
 	private void handleException(CoreException ce) {
 		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
-			DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ce); // 
+			DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.EnableBreakpointAction_Enabling_breakpoints_3, ActionMessages.EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4, ce); //
 		} else {
 			DebugUIPlugin.log(ce);
 		}
 	}
-	
+
 
 	/**
 	 * Removes this action as a breakpoint and part listener.
@@ -209,22 +209,22 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		getView().getViewSite().getPage().removePartListener(this);
 	}
-	
+
 	/**
 	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
 	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 	}
-	
+
 	/**
 	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
 	@Override
-	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {	
+	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		asynchUpdate();
 	}
-	
+
 	/**
 	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
@@ -232,7 +232,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		asynchUpdate();
 	}
-	
+
 	protected void asynchUpdate() {
 		if (getAction() == null) {
 			return;
@@ -259,10 +259,10 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 				update();
 			}
 		};
-		
+
 		shell.getDisplay().asyncExec(r);
 	}
-	
+
 	protected IAction getAction() {
 		return fAction;
 	}

@@ -39,39 +39,39 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * Listing of the complete launch history, which includes favorites in the launched ordering
 	 */
 	private Vector<ILaunchConfiguration> fCompleteHistory = new Vector<ILaunchConfiguration>();
-	
+
 	/**
 	 * The launch group this history is provided for
 	 */
 	private ILaunchGroup fGroup;
-	
+
 	/**
 	 * Ordered listing of the favorites of this history
 	 */
 	private Vector<ILaunchConfiguration> fFavorites = new Vector<ILaunchConfiguration>();
-	
+
 	/**
 	 * A new saved flag to prevent save participants from serializing unchanged launch histories.
 	 * @since 3.3.1
 	 */
 	private boolean fSaved = true;
-	
+
 	/**
-	 * List of instances of this launch history 
+	 * List of instances of this launch history
 	 */
 	private static List<LaunchHistory> fgLaunchHistoryInstances = new ArrayList<LaunchHistory>();
-	
+
 	/**
 	 * Creates a new launch history for the given launch group
 	 */
 	public LaunchHistory(ILaunchGroup group) {
 		fGroup = group;
-		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager(); 
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		manager.addLaunchListener(this);
 		manager.addLaunchConfigurationListener(this);
 		fgLaunchHistoryInstances.add(this);
 	}
-	
+
 	/**
 	 * Disposes this history
 	 */
@@ -92,7 +92,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			addHistory(configuration, true);
 		}
 	}
-	
+
 	/**
 	 * Returns if the current history contains the specified <code>ILaunchConfiguration</code>
 	 * @param config the configuration to look for
@@ -102,10 +102,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public synchronized boolean contains(ILaunchConfiguration configuration) {
 		return fCompleteHistory.contains(configuration);
 	}
-	
+
 	/**
 	 * Adds the given configuration to this history
-	 * 
+	 *
 	 * @param configuration
 	 * @param prepend whether the configuration should be added to the beginning of
 	 * the history list
@@ -138,14 +138,14 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 
 	/**
 	 * Notifies all <code>ILaunchHistoryChangedListener</code>s that the launch history has been modified
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private void fireLaunchHistoryChanged() {
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().fireLaunchHistoryChanged();
 		setSaved(false);
 	}
-	
+
 	/**
 	 * Returns if the launch history requires saving or not
 	 * @return true if the history needs to be saved, false otherwise
@@ -154,7 +154,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public boolean needsSaving() {
 		return !fSaved;
 	}
-	
+
 	/**
 	 * Allows the dirty flag for this launch history to be set.
 	 * It is the clients of this class that must set the saved flag to true
@@ -165,7 +165,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public void setSaved(boolean saved) {
 		fSaved = saved;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
@@ -181,9 +181,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Returns the most recently launched configuration in this history, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return the most recently launched configuration in this history, or
-	 * <code>null</code> if none 
+	 * <code>null</code> if none
 	 */
 	public synchronized ILaunchConfiguration getRecentLaunch() {
 		ILaunchConfiguration[] history = getCompleteLaunchHistory();
@@ -192,19 +192,19 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the launch configurations in this history, in most recently
 	 * launched order, not including any entries from the favorites listing.
-	 * 
+	 *
 	 * @return launch history
 	 */
 	public synchronized ILaunchConfiguration[] getHistory() {
 		Vector<ILaunchConfiguration> history = new Vector<ILaunchConfiguration>();
 		try {
 			for (ILaunchConfiguration config : fCompleteHistory) {
-				if(config.exists() && !fFavorites.contains(config) && 
-						DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
+				if(config.exists() && !fFavorites.contains(config) &&
+						DebugUIPlugin.doLaunchConfigurationFiltering(config) &&
 						!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
 					history.add(config);
 				}
@@ -217,20 +217,20 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		return history.toArray(new ILaunchConfiguration[history.size()]);
 	}
-	
+
 	/**
 	 * Returns the complete launch history in the order they were last launched, this listing includes all
 	 * entries including those from the favorites listing, but not those that have been filtered via
 	 * launch configuration filtering or capabilities filtering
 	 * @return the list of last launched <code>ILaunchConfiguration</code>s
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public synchronized ILaunchConfiguration[] getCompleteLaunchHistory() {
 		Vector<ILaunchConfiguration> history = new Vector<ILaunchConfiguration>();
 		try {
 			for (ILaunchConfiguration config : fCompleteHistory) {
-				if(config.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
+				if(config.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(config) &&
 				!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
 					history.add(config);
 				}
@@ -239,31 +239,31 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		return history.toArray(new ILaunchConfiguration[history.size()]);
 	}
-	
+
 	/**
 	 * Returns the favorite launch configurations in this history, in the order
 	 * they were created.
-	 * 
+	 *
 	 * @return launch favorites
 	 */
 	public synchronized ILaunchConfiguration[] getFavorites() {
 		return fFavorites.toArray(new ILaunchConfiguration[fFavorites.size()]);
 	}
-	
+
 	/**
 	 * Sets this container's favorites.
-	 * 
+	 *
 	 * @param favorites
 	 */
 	public synchronized void setFavorites(ILaunchConfiguration[] favorites) {
 		fFavorites = new Vector<ILaunchConfiguration>(Arrays.asList(favorites));
 		setSaved(false);
 		fireLaunchHistoryChanged();
-	}	
-	
+	}
+
 	/**
 	 * Adds the given configuration to the favorites list.
-	 * 
+	 *
 	 * @param configuration
 	 */
 	public synchronized void addFavorite(ILaunchConfiguration configuration) {
@@ -273,20 +273,20 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			fireLaunchHistoryChanged();
 		}
 	}
-	
+
 	/**
 	 * Returns the launch group associated with this history
-	 * 
+	 *
 	 * @return group
 	 */
 	public ILaunchGroup getLaunchGroup() {
 		return fGroup;
 	}
-	
+
 	/**
 	 * Returns whether the given configuration is included in the group
 	 * associated with this launch history.
-	 * 
+	 *
 	 * @param launch
 	 * @return boolean
 	 */
@@ -308,8 +308,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			DebugUIPlugin.log(e);
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * Notifies all launch histories that the launch history size has changed.
 	 */
@@ -318,7 +318,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			history.resizeHistory();
 		}
 	}
-	
+
 	/**
 	 * The max history size has changed - remove any histories if current
 	 * collection is too long.
@@ -332,13 +332,13 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 
 	/**
 	 * Returns the maximum number of entries allowed in this history
-	 * 
+	 *
 	 * @return the maximum number of entries allowed in this history
 	 */
 	protected int getMaxHistorySize() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -350,15 +350,15 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			checkFavorites(configuration);
 		}
 	}
-	
+
 	/**
 	 * This method checks if the specified <code>ILaunchConfiguration</code> is a favorite in this
 	 * history's launch group.
-	 * 
+	 *
 	 * @param configuration
 	 * @return true if the configuration is a favorite in this history's launch group, false otherwise
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected boolean isFavorite(ILaunchConfiguration configuration) throws CoreException {
@@ -370,18 +370,18 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				return configuration.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
 			} else if (groupId.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP)) {
 				return configuration.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
-			} 
-		} 
+			}
+		}
 		else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Adds the given config to the favorites list if it is a favorite, and
 	 * returns whether the config was added to the favorites list.
-	 * 
+	 *
 	 * @param configuration
 	 * @return whether added to the favorites list
 	 */
@@ -398,17 +398,17 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				removeFavorite(configuration);
 				return false;
 			}
-		} 
+		}
 		catch (CoreException e) {
 		//in the event touching the config  throws an error, remove it
 			removeFavorite(configuration);
-		}		
+		}
 		return false;
 	}
-	
+
 	/**
 	 * Removes the given config from the favorites list, if needed.
-	 * 
+	 *
 	 * @param configuration
 	 */
 	protected synchronized void removeFavorite(ILaunchConfiguration configuration) {
@@ -419,10 +419,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 
 	/**
 	 * This method removes the specified <code>ILaunchConfiguration</code> from this launch history (if present)
-	 * If the launch configuration does not exist in the history nothing is changed. If the configuration does exist 
+	 * If the launch configuration does not exist in the history nothing is changed. If the configuration does exist
 	 * in the history and was removed all history listeners are notified.
 	 * @param configuration the configuration to remove
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public synchronized void removeFromHistory(ILaunchConfiguration configuration) {
@@ -438,7 +438,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		}
 		catch(CoreException ce) {}
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -452,7 +452,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		synchronized (this) {	
+		synchronized (this) {
 			ILaunchConfiguration newConfig = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
 			if (newConfig == null) {
 				//deleted
@@ -464,7 +464,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				if (index >= 0) {
 					fCompleteHistory.remove(index);
 					fCompleteHistory.add(index, newConfig);
-				} 
+				}
 				index = fFavorites.indexOf(configuration);
 				if (index >= 0) {
 					fFavorites.remove(index);

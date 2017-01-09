@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,28 +19,28 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * and the EditSourceLookupPathDialog.
  */
 public class AddContainerAction extends SourceContainerAction {
-	
+
 	private ISourceLookupDirector fDirector;
-	
+
 	public AddContainerAction() {
-		super(SourceLookupUIMessages.sourceTab_addButton); 
+		super(SourceLookupUIMessages.sourceTab_addButton);
 	}
-	
+
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
 		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), fDirector);
-		dialog.open();			
+		dialog.open();
 	}
-	
+
 	public void setSourceLookupDirector(ISourceLookupDirector director) {
 		fDirector = director;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -48,7 +48,7 @@ public class AddContainerAction extends SourceContainerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if(selection == null || selection.isEmpty()) {
 			return true;
-		} 
+		}
 		return getViewer().getTree().getSelection()[0].getParentItem()==null;
 	}
 }

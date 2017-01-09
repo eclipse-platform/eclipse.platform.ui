@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * <p>
  * Clients register debug context providers with a context service - i.e.
  * for a specific window.
- * </p> 
+ * </p>
  * @see IDebugContextProvider
  * @see IDebugContextListener
  * @see IDebugContextService
@@ -29,25 +29,25 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IDebugContextManager {		
-	
+public interface IDebugContextManager {
+
 	/**
 	 * Registers the given listener for debug context notification in all windows.
-	 * 
+	 *
 	 * @param listener debug context listener
-	 */	
+	 */
 	public void addDebugContextListener(IDebugContextListener listener);
-	
+
 	/**
 	 * Unregisters the given listener for context notification in all windows.
-	 * 
+	 *
 	 * @param listener debug context listener
-	 */	
+	 */
 	public void removeDebugContextListener(IDebugContextListener listener);
-	
+
 	/**
 	 * Returns the debug context service for the specified window.
-	 * 
+	 *
 	 * @param window workbench window
 	 * @return debug context service
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,15 +37,15 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Specialized dialog for showing/selecting a specific launch shortcut extension, and allowing it
  * to be marked to be set as the default
- * 
+ *
  * @see {@link org.eclipse.debug.internal.ui.actions.ContextLaunchingAction}
- * 
+ *
  * @since 3.3
  */
 public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_SHORTCUT_DIALOG"; //$NON-NLS-1$;
-	
+
 	/**
 	 * The list of input for the dialog
 	 */
@@ -54,7 +54,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	private IResource fResource = null;
 	private List<LaunchShortcutExtension> fShortcuts = null;
 	private Text fDescriptionText = null;
-	
+
 	/**
 	 * Constructor
 	 * @param input
@@ -74,7 +74,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		}
 		setTitle(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_0, new Object[] { fModeName }));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
@@ -82,7 +82,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_LAUNCH_METHOD_DIALOG;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
@@ -90,7 +90,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	protected String getDialogSettingsId() {
 		return DIALOG_SETTINGS;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
@@ -104,12 +104,12 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 				if (!selection.isEmpty()) {
 					LaunchShortcutExtension shortcutSource = (LaunchShortcutExtension) ((IStructuredSelection)selection).getFirstElement();
 					String description = shortcutSource.getShortcutDescription(fMode);
-					fDescriptionText.setText((description == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : description)); 
+					fDescriptionText.setText((description == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : description));
 				}
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 	 */
@@ -144,7 +144,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 					fModeName.toLowerCase(), fResource.getName() });
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -153,5 +153,5 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setEnabled(!getViewer().getSelection().isEmpty());
 	}
-	
+
 }

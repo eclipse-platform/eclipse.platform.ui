@@ -50,5 +50,5 @@ public class LaunchContentProvider extends ElementContentProvider {
 		return ((ILaunch)element).hasChildren();
 	}
 
-	
+
 }

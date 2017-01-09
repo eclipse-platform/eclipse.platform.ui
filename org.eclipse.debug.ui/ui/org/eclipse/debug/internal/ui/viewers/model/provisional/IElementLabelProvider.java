@@ -16,20 +16,20 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * or implemented directly.
  * <p>
  * Note: provider methods are called in the Display thread of the viewer.
- * To avoid blocking the UI, long running operations should be performed 
+ * To avoid blocking the UI, long running operations should be performed
  * asynchronously.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public interface IElementLabelProvider {
-	
+
 	/**
 	 * Updates the specified labels.
-	 * 
+	 *
 	 * @param updates Each update specifies the element and context for which a label is requested and
-	 *  stores label attributes.  The update array is guaranteed to have at least one element, and for  
-	 *  all updates to have the same presentation context.   
+	 *  stores label attributes.  The update array is guaranteed to have at least one element, and for
+	 *  all updates to have the same presentation context.
 	 */
 	public void update(ILabelUpdate[] updates);
 }

@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
  * Context sensitive update request for whether an element has children.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
@@ -21,7 +21,7 @@ public interface IHasChildrenUpdate extends IViewerUpdate {
 
 	/**
 	 * Sets whether there are children for this update.
-	 * 
+	 *
 	 * @param hasChildren whether there are children
 	 */
 	public void setHasChilren(boolean hasChildren);

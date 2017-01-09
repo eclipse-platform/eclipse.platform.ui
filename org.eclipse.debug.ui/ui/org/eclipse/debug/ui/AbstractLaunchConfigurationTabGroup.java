@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * @since 2.0
  */
 public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConfigurationTabGroup {
-	
+
 	/**
 	 * The tabs in this tab group, or <code>null</code> if not yet instantiated.
 	 */
@@ -40,10 +40,10 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	public ILaunchConfigurationTab[] getTabs() {
 		return fTabs;
 	}
-	
+
 	/**
 	 * Sets the tabs in this group
-	 * 
+	 *
 	 * @param tabs the tabs in this group
 	 */
 	protected void setTabs(ILaunchConfigurationTab[] tabs) {
@@ -52,7 +52,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 
 	/**
 	 * By default, dispose all the tabs in this group.
-	 * 
+	 *
 	 * @see ILaunchConfigurationTabGroup#dispose()
 	 */
 	@Override
@@ -67,7 +67,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 
 	/**
 	 * By default, delegate to all of the tabs in this group.
-	 * 
+	 *
 	 * @see ILaunchConfigurationTabGroup#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -75,12 +75,12 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].setDefaults(configuration);
-		}		
+		}
 	}
 
-	/** 
+	/**
 	 * By default, delegate to all of the tabs in this group.
-	 * 
+	 *
 	 * @see ILaunchConfigurationTabGroup#initializeFrom(ILaunchConfiguration)
 	 */
 	@Override
@@ -88,12 +88,12 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].initializeFrom(configuration);
-		}		
+		}
 	}
 
 	/**
 	 * By default, delegate to all of the tabs in this group.
-	 * 
+	 *
 	 * @see ILaunchConfigurationTabGroup#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -101,12 +101,12 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].performApply(configuration);
-		}		
+		}
 	}
 
 	/**
 	 * By default, delegate to all of the tabs in this group.
-	 * 
+	 *
 	 * @see ILaunchConfigurationTabGroup#launched(ILaunch)
 	 * @deprecated As of R3.0, this method is no longer called by the launch
 	 *  framework. Since tabs do not exist when launching is performed elsewhere
@@ -119,7 +119,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 		ILaunchConfigurationTab[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].launched(launch);
-		}		
+		}
 	}
 
 }

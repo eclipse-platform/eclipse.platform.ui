@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  * The following is a definition of a dynamic variable that resolves to the name of the selected resource:
  * <pre>
  *  &lt;extension point="org.eclipse.core.variables.dynamicVariables"&gt;
- *    &lt;variable 
+ *    &lt;variable
  *       name="resource_name"
  *       resolver="com.example.ResourceNameResolver"
  *       description="The name of the selected resource"
@@ -41,7 +41,7 @@ public interface IDynamicVariable extends IStringVariable {
 	/**
 	 * Returns the value of this variable when referenced with the given
 	 * argument, possibly <code>null</code>.
-	 * 
+	 *
 	 * @param argument argument present in variable expression or <code>null</code>
 	 *   if none
 	 * @return value of this variable when referenced with the given argument, possibly
@@ -49,11 +49,11 @@ public interface IDynamicVariable extends IStringVariable {
 	 * @throws CoreException if unable to resolve a value for this variable
 	 */
 	public String getValue(String argument) throws CoreException;
-	
+
 	/**
 	 * Returns whether this variable supports an argument, as specified
 	 * by this variable's extension definition in plug-in XML.
-	 * 
+	 *
 	 * @return whether this variable supports an argument
 	 */
 	public boolean supportsArgument();

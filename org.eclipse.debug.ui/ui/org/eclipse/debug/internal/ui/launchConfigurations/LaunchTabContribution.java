@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,15 +14,15 @@ import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
 import org.eclipse.ui.IPluginContribution;
 
 /**
- * This class provides a wrapper for a launch tab contribution so that it can be filtered from the UI 
+ * This class provides a wrapper for a launch tab contribution so that it can be filtered from the UI
  * via the use of capabilities
- * 
+ *
  * @since 3.3
  */
 public class LaunchTabContribution implements IPluginContribution {
 
 	LaunchConfigurationTabExtension fTab = null;
-	
+
 	public LaunchTabContribution(LaunchConfigurationTabExtension tab) {
 		fTab = tab;
 	}

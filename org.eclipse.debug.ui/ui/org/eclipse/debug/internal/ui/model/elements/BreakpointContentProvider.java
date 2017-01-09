@@ -17,7 +17,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  *  Breakpoint content provider.
- *  
+ *
  *  @since 3.6
  */
 public class BreakpointContentProvider extends ElementContentProvider {

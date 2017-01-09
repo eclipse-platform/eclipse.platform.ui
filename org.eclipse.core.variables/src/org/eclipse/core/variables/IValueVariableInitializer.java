@@ -22,8 +22,8 @@ package org.eclipse.core.variables;
  */
 public interface IValueVariableInitializer {
 	/**
-	 * Initializes the specified variable. 
-	 * 
+	 * Initializes the specified variable.
+	 *
 	 * @param variable variable to initialize
 	 */
 	public void initialize(IValueVariable variable);

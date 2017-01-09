@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
- 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,34 +73,34 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * The menu created by this action
 	 */
 	private Menu fMenu;
-		
+
 	/**
 	 * The action used to render this delegate.
 	 */
 	private IAction fAction;
-	
+
 	/**
 	 * The associated <code>ILaunchGroup</code>
 	 * @since 3.3
 	 */
 	private ILaunchGroup fLaunchGroup = null;
-	
+
 	/**
 	 * Indicates whether the launch history has changed and
 	 * the sub menu needs to be recreated.
 	 */
 	protected boolean fRecreateMenu = false;
-	
+
 	/**
 	 * Constructs a launch history action.
-	 * 
+	 *
 	 * @param launchGroupIdentifier unique identifier of the launch group
 	 * extension that this action displays a launch history for.
 	 */
 	public AbstractLaunchHistoryAction(String launchGroupIdentifier) {
 		fLaunchGroup = getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
 	}
-	
+
 	/**
 	 * A listener to be notified of launch label updates
 	 * @since 3.3
@@ -115,10 +115,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			updateTooltip();
 		}
 	};
-	
+
 	/**
 	 * Sets the action used to render this delegate.
-	 * 
+	 *
 	 * @param action the action used to render this delegate
 	 */
 	private void setAction(IAction action) {
@@ -127,17 +127,17 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 
 	/**
 	 * Returns the action used to render this delegate.
-	 * 
+	 *
 	 * @return the action used to render this delegate
 	 */
 	protected IAction getAction() {
 		return fAction;
 	}
-	
+
 	/**
 	 * Adds the given action to the specified menu with an accelerator specified
 	 * by the given number.
-	 * 
+	 *
 	 * @param menu the menu to add the action to
 	 * @param action the action to add
 	 * @param accelerator the number that should appear as an accelerator
@@ -158,21 +158,21 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 
 	/**
 	 * Initialize this action so that it can dynamically set its tool-tip.  Also set the enabled state
-	 * of the underlying action based on whether there are any registered launch configuration types that 
+	 * of the underlying action based on whether there are any registered launch configuration types that
 	 * understand how to launch in the mode of this action.
 	 * @param action the {@link IAction} to initialize
 	 */
 	private void initialize(IAction action) {
 		getLaunchConfigurationManager().addLaunchHistoryListener(this);
 		setAction(action);
-		updateTooltip(); 		
-		action.setEnabled(existsConfigTypesForMode());	
+		updateTooltip();
+		action.setEnabled(existsConfigTypesForMode());
 	}
-	
+
 	/**
 	 * Return whether there are any registered launch configuration types for
 	 * the mode of this action.
-	 * 
+	 *
 	 * @return whether there are any registered launch configuration types for
 	 * the mode of this action
 	 */
@@ -182,10 +182,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			if (configTypes[i].supportsMode(getMode())) {
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
-	
+
 	/**
 	 * Updates this action's tool-tip. The tooltip is based on user preference settings
 	 * for launching - either the previous launch, or based on the selection and which
@@ -197,10 +197,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	protected void updateTooltip() {
 		getAction().setToolTipText(getToolTip());
 	}
-	
+
 	/**
 	 * Returns the tooltip specific to a configuration.
-	 * 
+	 *
 	 * @param configuration a <code>ILauncConfiguration</code>
 	 * @return the string for the tool tip
 	 */
@@ -209,22 +209,22 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		String mode= getMode();
 		String label;
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
-			label= ActionMessages.AbstractLaunchHistoryAction_1; 
+			label= ActionMessages.AbstractLaunchHistoryAction_1;
 		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
-			label= ActionMessages.AbstractLaunchHistoryAction_2; 
+			label= ActionMessages.AbstractLaunchHistoryAction_2;
 		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
-			label= ActionMessages.AbstractLaunchHistoryAction_3; 
+			label= ActionMessages.AbstractLaunchHistoryAction_3;
 		} else {
-			label= ActionMessages.AbstractLaunchHistoryAction_4; 
+			label= ActionMessages.AbstractLaunchHistoryAction_4;
 		}
 		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new Object[] {
 				label, launchName });
 	}
-	
+
 	/**
 	 * Returns this action's tooltip. The tooltip is retrieved from the launch resource manager
 	 * which builds tool tips asynchronously for context launching support.
-	 * 
+	 *
 	 * @return the string for the tool tip
 	 */
 	private String getToolTip() {
@@ -235,13 +235,13 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		String label = null;
 		String mode = getMode();
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
-			label = ActionMessages.AbstractLaunchHistoryAction_1; 
+			label = ActionMessages.AbstractLaunchHistoryAction_1;
 		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
-			label = ActionMessages.AbstractLaunchHistoryAction_2; 
+			label = ActionMessages.AbstractLaunchHistoryAction_2;
 		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
-			label = ActionMessages.AbstractLaunchHistoryAction_3; 
+			label = ActionMessages.AbstractLaunchHistoryAction_3;
 		} else {
-			label = ActionMessages.AbstractLaunchHistoryAction_4; 
+			label = ActionMessages.AbstractLaunchHistoryAction_4;
 		}
 		if(IInternalDebugCoreConstants.EMPTY_STRING.equals(launchName)) {
 			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_5, new Object[] { label });
@@ -269,10 +269,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 		DebugUIPlugin.getDefault().getLaunchingResourceManager().removeLaunchLabelChangedListener(fLabelListener);
 	}
-	
+
 	/**
 	 * Return the last launch in this action's launch history.
-	 * 
+	 *
 	 * @return the most recent configuration that was launched from this
 	 *  action's launch history that is not filtered from the menu
 	 */
@@ -290,7 +290,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		initMenu();
 		return fMenu;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
@@ -301,7 +301,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		initMenu();
 		return fMenu;
 	}
-	
+
 	/**
 	 * Creates the menu for the action
 	 */
@@ -326,7 +326,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 
 	/**
 	 * Sets this action's drop-down menu, disposing the previous menu.
-	 * 
+	 *
 	 * @param menu the new menu
 	 */
 	private void setMenu(Menu menu) {
@@ -338,13 +338,13 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 
 	/**
 	 * Fills the drop-down menu with favorites and launch history
-	 * 
+	 *
 	 * @param menu the menu to fill
 	 */
-	protected void fillMenu(Menu menu) {	
+	protected void fillMenu(Menu menu) {
 		ILaunchConfiguration[] historyList= getHistory();
 		ILaunchConfiguration[] favoriteList = getFavorites();
-		
+
 		// Add favorites
 		int accelerator = 1;
 		for (int i = 0; i < favoriteList.length; i++) {
@@ -352,13 +352,13 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			LaunchAction action= new LaunchAction(launch, getMode());
 			addToMenu(menu, action, accelerator);
 			accelerator++;
-		}		
-		
+		}
+
 		// Separator between favorites and history
 		if (favoriteList.length > 0 && historyList.length > 0) {
 			addSeparator(menu);
 		}
-		
+
 		// Add history launches next
 		for (int i = 0; i < historyList.length; i++) {
 			ILaunchConfiguration launch= historyList[i];
@@ -366,24 +366,24 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			addToMenu(menu, action, accelerator);
 			accelerator++;
 		}
-		
+
 		if(accelerator == 1) {
-			IAction action = new Action(ActionMessages.AbstractLaunchHistoryAction_6) {}; 
+			IAction action = new Action(ActionMessages.AbstractLaunchHistoryAction_6) {};
 			action.setEnabled(false);
 			ActionContributionItem item= new ActionContributionItem(action);
 			item.fill(menu, -1);
 		}
 	}
-	
+
 	/**
 	 * Adds a separator to the given menu
-	 * 
+	 *
 	 * @param menu the menu to add the separator to
 	 */
 	protected void addSeparator(Menu menu) {
 		new MenuItem(menu, SWT.SEPARATOR);
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -391,7 +391,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	public void run(IAction action) {
 		// do nothing - this is just a menu
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 * @since 3.6
@@ -411,8 +411,8 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 				configs.add(configuration);
 			}
 			DebugUIPlugin.openLaunchConfigurationsDialog(
-					DebugUIPlugin.getShell(), 
-					new StructuredSelection(configs), 
+					DebugUIPlugin.getShell(),
+					new StructuredSelection(configs),
 					groupid,
 					true);
 			return;
@@ -473,7 +473,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		}
 		return getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
 	}
-	
+
 	/**
 	 * Creates an {@link ILaunchConfiguration} from the given set of {@link ILaunchConfigurationType}s
 	 * @param types the set of {@link String} {@link ILaunchConfigurationType} identifiers
@@ -494,7 +494,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 * @since 3.6
@@ -502,8 +502,8 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	@Override
 	public void init(IAction action) {
 		// do nothing by default
-	}	
-	
+	}
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -511,9 +511,9 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	public void selectionChanged(IAction action, ISelection selection){
 		if (fAction == null) {
 			initialize(action);
-		} 
+		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
@@ -523,10 +523,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			DebugUIPlugin.getDefault().getLaunchingResourceManager().addLaunchLabelUpdateListener(fLabelListener);
 		}
 	}
-	
+
 	/**
 	 * Returns the launch history associated with this action's launch group.
-	 * 
+	 *
 	 * @return the launch history associated with this action's launch group
 	 * @deprecated this method returns a class that is not API and is not intended
 	 *  for clients of the debug platform. Instead, use <code>getHistory()</code>,
@@ -535,68 +535,68 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	@Deprecated
 	protected LaunchHistory getLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
-	} 
-	
+	}
+
 	/**
 	 * Returns the launch history associated with this action's launch group.
-	 * 
+	 *
 	 * @return the launch history associated with this action's launch group
 	 * @since 3.3
 	 */
 	private LaunchHistory internalGetHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
 	}
-	
+
 	/**
 	 * Returns the launch history associated with this action's launch mode and group in most
 	 * recently launched order. Configurations associated with disabled activities are not included
 	 * in the list. As well, configurations are filtered based on workspace preference settings
 	 * to filter configurations from closed projects, deleted projects, working sets and to filter
 	 * specific launch configuration types.
-	 *  
+	 *
 	 * @return launch history
 	 * @since 3.3
 	 */
 	protected ILaunchConfiguration[] getHistory() {
 		return LaunchConfigurationManager.filterConfigs(internalGetHistory().getHistory());
 	}
-	
+
 	/**
 	 * Returns the launch favorites associated with this action's launch mode and group in user
 	 * preference order. Configurations associated with disabled activities are not included
 	 * in the list. As well, configurations are filtered based on workspace preference settings
 	 * to filter configurations from closed projects, deleted projects, working sets and to filter
 	 * specific launch configuration types.
-	 * 
+	 *
 	 * @return favorite launch configurations
 	 * @since 3.3
 	 */
 	protected ILaunchConfiguration[] getFavorites() {
 		return LaunchConfigurationManager.filterConfigs(internalGetHistory().getFavorites());
 	}
-		
+
 	/**
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.
-	 * 
+	 *
 	 * @return the mode of this action
 	 */
 	protected String getMode() {
 		return internalGetHistory().getLaunchGroup().getMode();
 	}
-	
+
 	/**
 	 * Returns the launch configuration manager.
-	 * 
+	 *
 	 * @return launch configuration manager
 	 */
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
-	
+
 	/**
 	 * Returns the identifier of the launch group this action is associated
 	 * with.
-	 * 
+	 *
 	 * @return the identifier of the launch group this action is associated
 	 * with
 	 */

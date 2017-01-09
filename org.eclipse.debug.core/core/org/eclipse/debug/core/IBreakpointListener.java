@@ -50,7 +50,7 @@ public interface IBreakpointListener {
 	 * @since 2.0
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta);
-	
+
 	/**
 	 * Notifies this listener that an attribute of the given breakpoint has
 	 * changed, as described by the delta.

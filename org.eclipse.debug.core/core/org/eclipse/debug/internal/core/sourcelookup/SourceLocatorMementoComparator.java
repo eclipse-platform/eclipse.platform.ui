@@ -14,7 +14,7 @@ import java.util.Comparator;
 
 /**
  * Comparator for source locator mementos. Ignores whitespace differences.
- * 
+ *
  * @since 3.0
  */
 public class SourceLocatorMementoComparator implements Comparator<String> {

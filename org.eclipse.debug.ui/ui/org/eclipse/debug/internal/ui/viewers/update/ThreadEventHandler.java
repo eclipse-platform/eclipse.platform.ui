@@ -31,21 +31,21 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
  * @since 3.2
  */
 public class ThreadEventHandler extends DebugEventHandler {
-	
+
 	/**
 	 * Queue of suspended threads to choose from when needing
 	 * to select a thread when another is resumed. Threads
 	 * are added in the order they suspend.
 	 */
 	private Set<IThread> fThreadQueue = new LinkedHashSet<IThread>();
-	
-	/** 
+
+	/**
 	 * Map of previous TOS per thread
 	 */
 	private Map<IThread, IStackFrame> fLastTopFrame = new HashMap<IThread, IStackFrame>();
 	/**
 	 * Constructs and event handler for a threads in the given viewer.
-	 * 
+	 *
 	 * @param viewer
 	 */
 	public ThreadEventHandler(AbstractModelProxy proxy) {
@@ -102,7 +102,7 @@ public class ThreadEventHandler extends DebugEventHandler {
         	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
         }
 	}
-	
+
 	private boolean isEqual(Object o1, Object o2) {
 		if (o1 == o2) {
 			return true;
@@ -163,7 +163,7 @@ public class ThreadEventHandler extends DebugEventHandler {
                 }
 			} catch (DebugException e) {
 			}
-        } else {	
+        } else {
         	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.STATE | IModelDelta.EXPAND, suspend);
         }
 	}
@@ -174,23 +174,23 @@ public class ThreadEventHandler extends DebugEventHandler {
 		// don't collapse thread when waiting for long step or evaluation to complete
 		fireDeltaUpdatingThread(thread, IModelDelta.STATE);
 	}
-	
+
 	protected ModelDelta buildRootDelta() {
 		return new ModelDelta(getLaunchManager(), IModelDelta.NO_CHANGE);
 	}
 
 	/**
 	 * Returns the launch manager.
-	 * 
+	 *
 	 * @return the launch manager
 	 */
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	/**
 	 * Adds nodes into the delta up to but not including the given thread.
-	 * 
+	 *
 	 * @param delta root delta for the view (includes viewer input)
 	 * @param thread thread for which path is requested
 	 * @return
@@ -217,7 +217,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 		fireDelta(delta);
 	}
-	
+
 	private void fireDeltaUpdatingSelectedFrame(IThread thread, int flags, DebugEvent event) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addPathToThread(delta, thread);
@@ -268,10 +268,10 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
     	fireDelta(delta);
 	}
-	
+
 	/**
 	 * Returns the index of the given thread, relative to its parent in the view.
-	 * 
+	 *
 	 * @param thread thread
 	 * @return index of the thread, relative to its parent
 	 */
@@ -282,10 +282,10 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns the index of the given frame, relative to its parent in the view.
-	 * 
+	 *
 	 * @param frame stack frame
 	 * @return index of the frame, relative to its thread
 	 */
@@ -296,10 +296,10 @@ public class ThreadEventHandler extends DebugEventHandler {
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Returns the number of children the given thread has in the view.
-	 * 
+	 *
 	 * @param thread thread
 	 * @return number of children
 	 */
@@ -310,29 +310,29 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns the number of children the given frame has in the view.
-	 * 
+	 *
 	 * @param frame frame
 	 * @return child count
 	 */
 	protected int childCount(IStackFrame frame) {
 		return 0;
 	}
-	
+
 	private void fireDeltaUpdatingThread(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addPathToThread(delta, thread);
 	    node = node.addNode(thread, flags);
     	fireDelta(delta);
-	}	
-	
+	}
+
 	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof IThread;
 	}
-	
+
 	protected synchronized IThread queueSuspendedThread(DebugEvent event) {
 		IThread thread = (IThread) event.getSource();
 		if (!isDisposed()) {
@@ -340,24 +340,24 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 		return thread;
 	}
-	
+
 	protected synchronized IThread removeSuspendedThread(DebugEvent event) {
 		IThread thread = (IThread)event.getSource();
 		fThreadQueue.remove(thread);
 		return thread;
 	}
-	
+
 	protected synchronized IThread queueSuspendedThread(IThread thread) {
 		if (!isDisposed()) {
 			fThreadQueue.add(thread);
 		}
 		return thread;
-	}	
-	
+	}
+
 	protected synchronized void removeQueuedThread(IThread thread) {
 		fThreadQueue.remove(thread);
 	}
-	
+
 	protected synchronized IThread getNextSuspendedThread() {
 		if (!fThreadQueue.isEmpty()) {
 			return fThreadQueue.iterator().next();

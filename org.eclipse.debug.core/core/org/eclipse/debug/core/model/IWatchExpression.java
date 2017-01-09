@@ -17,7 +17,7 @@ package org.eclipse.debug.core.model;
  * each time a debug target suspends, or when a user provides a context
  * for an evaluation by selecting a debug target or thread. An expression
  * updates its value when it is provided with a context in which it
- * can perform an evaluation. 
+ * can perform an evaluation.
  * <p>
  * An implementation is provided by the debug platform. Clients that support watch expressions
  * should contribute and implement a watch expression delegate. Watch
@@ -30,13 +30,13 @@ package org.eclipse.debug.core.model;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IWatchExpression extends IErrorReportingExpression {
-	
+
 	/**
 	 * Updates this watch expression's value based on the current evaluation
 	 * context. This watch expression fires a debug change event when the
 	 * evaluation is complete. A watch expression can be asked to
 	 * evaluate even when it is disabled. Note that implementations should
-	 * generally be asynchronous to avoid blocking the calling thread. 
+	 * generally be asynchronous to avoid blocking the calling thread.
 	 */
 	public void evaluate();
 	/**
@@ -53,7 +53,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * <li>a stack frame (<code>IStackFrame</code>)</li>
 	 * </ul>
 	 * </p>
-	 *  
+	 *
 	 * @param context context in which to update this expression's value, or
 	 * 	<code>null</code> if none
 	 */
@@ -62,7 +62,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * Sets this watch expression's snippet of code. This method
 	 * causes the new snippet to be evaluated immediately in
 	 * the expression's last context.
-	 * 
+	 *
 	 * @param expressionText the snippet which will be evaluated
 	 */
 	public void setExpressionText(String expressionText);
@@ -70,14 +70,14 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * Returns whether the result of this watch expression is pending.
 	 * An expression is pending if an evaluation has been requested, but
 	 * the value has not yet been returned.
-	 * 
+	 *
 	 * @return whether this expression's result is pending
 	 */
 	public boolean isPending();
 	/**
 	 * Returns whether this expression is enabled. An enabled expression will
 	 * update its value. A disabled expression will not.
-	 * 
+	 *
 	 * @return whether this expression is enabled
 	 */
 	public boolean isEnabled();
@@ -85,7 +85,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * Sets this expression's enabled state. This method
 	 * causes the new snippet to be evaluated immediately in
 	 * the expression's last context.
-	 * 
+	 *
 	 * @param enabled whether this expression should be enabled
 	 */
 	public void setEnabled(boolean enabled);

@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Breakpoint label provider.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointLabelProvider extends DebugElementLabelProvider {
@@ -33,9 +33,9 @@ public class BreakpointLabelProvider extends DebugElementLabelProvider {
 		if (columnIndex == 0)
 			return super.getLabel(elementPath, presentationContext, columnId, columnIndex);
 		else
-			return IInternalDebugCoreConstants.EMPTY_STRING; 
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, int)
 	 */
@@ -46,7 +46,7 @@ public class BreakpointLabelProvider extends DebugElementLabelProvider {
 		else
 			return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getChecked(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
@@ -57,7 +57,7 @@ public class BreakpointLabelProvider extends DebugElementLabelProvider {
 		if (lastSegment instanceof IBreakpoint) {
 			return ((IBreakpoint) lastSegment).isEnabled();
 		}
-		
+
 		return false;
 	}
 }

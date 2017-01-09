@@ -19,11 +19,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Terminate action.
- * 
+ *
  * @since 3.3
  */
 public class TerminateCommandAction extends DebugCommandAction {
-	
+
 	public TerminateCommandAction() {
 		setActionDefinitionId("org.eclipse.debug.ui.commands.Terminate"); //$NON-NLS-1$
 	}

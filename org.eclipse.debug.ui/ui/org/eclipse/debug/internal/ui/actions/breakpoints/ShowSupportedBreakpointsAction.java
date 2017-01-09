@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
@@ -45,27 +45,27 @@ import org.eclipse.ui.PlatformUI;
  * An view filter action that filters showing breakpoints based on whether
  * the IDebugTarget of the selected debug element in the launch view supports
  * the breakpoints.
- * 
+ *
  * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(IBreakpoint)
- * 
+ *
  */
-public class ShowSupportedBreakpointsAction extends ToggleFilterAction implements ISelectionListener {	
+public class ShowSupportedBreakpointsAction extends ToggleFilterAction implements ISelectionListener {
 	/**
 	 * The view associated with this action
 	 */
 	private AbstractDebugView fView;
-		
+
 	/**
 	 * The list of identifiers for the current state
 	 */
 	private List<IDebugTarget> fDebugTargets= new ArrayList<IDebugTarget>(2);
-	
+
 	/**
 	 * A viewer filter that selects breakpoints that have
 	 * the same model identifier as the selected debug element
 	 */
 	class BreakpointFilter extends ViewerFilter {
-		
+
 		/**
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
@@ -89,7 +89,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 				if (target.supportsBreakpoint(breakpoint)) {
 					return true;
 				}
-				
+
 			}
 			return false;
 		}
@@ -98,29 +98,29 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 
 	public ShowSupportedBreakpointsAction(StructuredViewer viewer, IViewPart view) {
 		super();
-		setText(ActionMessages.ShowSupportedBreakpointsAction_Show_For_Selected); 
-		setToolTipText(ActionMessages.ShowSupportedBreakpointsAction_tooltip); 
+		setText(ActionMessages.ShowSupportedBreakpointsAction_Show_For_Selected);
+		setToolTipText(ActionMessages.ShowSupportedBreakpointsAction_tooltip);
 		setViewerFilter(new BreakpointFilter());
 		setViewer(viewer);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
 		setChecked(false);
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ShowSupportedBreakpointsAction"); //$NON-NLS-1$
-		
+
 		setView(view);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION);
-		
+
 	}
 
-	
-		
+
+
 	public void dispose() {
 		if (isChecked()) {
 			getView().getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 	}
-	
+
 	/**
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
@@ -136,7 +136,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			if (debugTargets.isEmpty()) {
 				 if(fDebugTargets.isEmpty()) {
 					return;
-				 } 
+				 }
 				 reapplyFilters(debugTargets);
 				 return;
 			}
@@ -144,7 +144,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 				reapplyFilters(debugTargets);
 				return;
 			}
-			
+
 			if (debugTargets.size() == fDebugTargets.size()) {
 				List<IDebugTarget> copy= new ArrayList<IDebugTarget>(debugTargets.size());
 				for (IDebugTarget target : fDebugTargets) {
@@ -162,29 +162,29 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 					return;
 				}
 				reapplyFilters(copy);
-			} 
+			}
 		}
 	}
 
-	
+
 	/**
 	 * Selection has changed in the debug view
 	 * need to re-apply the filters.
 	 * @param debugTargets the new set of {@link IDebugTarget}s
 	 */
 	protected void reapplyFilters(List<IDebugTarget> debugTargets) {
-		fDebugTargets= debugTargets;		
+		fDebugTargets= debugTargets;
 		getViewer().refresh();
 	}
-	
+
 	protected IViewPart getView() {
 		return fView;
 	}
 
-	protected void setView(IViewPart view) {	
+	protected void setView(IViewPart view) {
 		fView = (AbstractDebugView) view;
 	}
-	
+
 	protected List<IDebugTarget> getDebugTargets(IStructuredSelection ss) {
 		List<IDebugTarget> debugTargets= new ArrayList<IDebugTarget>(2);
 		Iterator<?> i= ss.iterator();
@@ -202,15 +202,15 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 				if (target != null) {
 					debugTargets.add(target);
 				}
-			}	
+			}
 		}
 		return debugTargets;
 	}
-	
+
 	/**
 	 * Adds or removes the viewer filter depending
 	 * on the value of the parameter.
-	 * @param on flag to indicate if viewer filtering should be added or removed 
+	 * @param on flag to indicate if viewer filtering should be added or removed
 	 */
 	@Override
 	protected void valueChanged(boolean on) {
@@ -227,5 +227,5 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		super.valueChanged(on);
 		fView.getViewer().refresh();
 	}
-	
+
 }

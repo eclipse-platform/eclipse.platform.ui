@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech - Bug 154598: DebugModelContextBindingManager does not use IAdaptable.getAdapter() to retrieve IDebugModelProvider adapter
- *     Pawel Piech - Bug 298648:  [View Management] Race conditions and other issues make view management unreliable. 
+ *     Pawel Piech - Bug 298648:  [View Management] Race conditions and other issues make view management unreliable.
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
@@ -63,64 +63,64 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.2
  */
 public class DebugModelContextBindingManager implements IDebugContextListener, ILaunchesListener2, IActivityManagerListener {
-	
+
 	/**
 	 * Map of debug model identifier to associated contexts as defined
 	 * by <code>debugModelContextBindings</code> extensions.
 	 */
 	private Map<String, List<String>> fModelToContextIds = new HashMap<String, List<String>>();
-	
+
 	/**
 	 * Map of launch objects to enabled model ids
 	 */
 	private Map<ILaunch, Set<String>> fLaunchToModelIds = new HashMap<ILaunch, Set<String>>();
-	
+
 	/**
 	 * Map of launch objects to context activations
 	 */
 	private Map<ILaunch, List<IContextActivation>> fLanuchToContextActivations = new HashMap<ILaunch, List<IContextActivation>>();
-	
+
 	/**
-	 * A list of activity pattern bindings for debug models. 
+	 * A list of activity pattern bindings for debug models.
 	 */
 	private List<IActivityPatternBinding> fModelPatternBindings = new ArrayList<IActivityPatternBinding>();
-	
+
 	/**
 	 * Map of debug model ids to associated activity ids.
 	 */
 	private Map<String, Set<String>> fModelToActivities = new HashMap<String, Set<String>>();
-	
+
 	/**
 	 * A set of debug model ids for which activities have been enabled.
 	 * Cleared when enabled activities change.
 	 */
 	private Set<String> fModelsEnabledForActivities = new HashSet<String>();
-	
+
 	// extension point
 	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings"; //$NON-NLS-1$
-	
+
 	// extension point attributes
 	public static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
 	public static final String ATTR_DEBUG_MODEL_ID= "debugModelId"; //$NON-NLS-1$
-	
+
 	// base debug context
 	public static final String DEBUG_CONTEXT= "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
-	
+
 	// suffix for debug activities triggered by debug model context binding activation
 	private static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "/debugModel"; //$NON-NLS-1$
-	
+
 	// singleton manager
 	private static DebugModelContextBindingManager fgManager;
-	
+
 	private static IContextService fgContextService = PlatformUI.getWorkbench().getAdapter(IContextService.class);
-	
+
 	public static DebugModelContextBindingManager getDefault() {
 		if (fgManager == null) {
 			fgManager = new DebugModelContextBindingManager();
 		}
 		return fgManager;
 	}
-	
+
 	private DebugModelContextBindingManager() {
 		loadDebugModelContextBindings();
 		loadDebugModelActivityExtensions();
@@ -129,7 +129,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		activitySupport.getActivityManager().addActivityManagerListener(this);
 	}
-	
+
 	/**
 	 * Loads the extensions which map debug model identifiers
 	 * to context ids.
@@ -152,8 +152,8 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
     			}
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Loads the extensions which map debug model patterns
 	 * to activity ids. This information is used to activate the
@@ -174,7 +174,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 				}
 			}
 		}
-	}	
+	}
 
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
@@ -184,16 +184,16 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				Iterator<?> iterator = ss.iterator();
 				while (iterator.hasNext()) {
-					activated(iterator.next()); 
+					activated(iterator.next());
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * The specified object has been activated. Activate contexts and activities as
 	 * required for the object.
-	 * 
+	 *
 	 * @param object object that has been activated
 	 */
 	private void activated(Object object) {
@@ -226,11 +226,11 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 
 		enableActivitiesFor(modelIds);
 	}
-	
+
 	/**
 	 * Activates the given model identifier for the specified launch. This activates
 	 * associated contexts and all parent contexts for the model.
-	 * 
+	 *
 	 * @param modelId model to be enabled
 	 * @param launch the launch the model is being enabled for
 	 */
@@ -239,7 +239,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	    synchronized (this) {
     		contextIds = fModelToContextIds.get(modelId);
     		if (contextIds == null) {
-    			// if there are no contexts for a model, the base debug context should 
+    			// if there are no contexts for a model, the base debug context should
     			// be activated (i.e. a debug model with no org.eclipse.ui.contexts and
     			// associated org.eclipse.debug.ui.modelContextBindings)
 				contextIds = new ArrayList<String>();
@@ -251,10 +251,10 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			activateContext(id, launch);
 		}
 	}
-	
+
 	/**
 	 * Activates the given context and all its parent contexts.
-	 * 
+	 *
 	 * @param contextId
 	 * @param launch
 	 */
@@ -275,10 +275,10 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			}
 		}
 	}
-	
+
 	/**
 	 * Notes the activation for a context and launch so we can de-activate later.
-	 * 
+	 *
 	 * @param launch
 	 * @param activation
 	 */
@@ -294,8 +294,8 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	/**
 	 * Returns the debug model identifiers associated with the given object or <code>null</code>
 	 * if none.
-	 * 
-	 * @param object 
+	 *
+	 * @param object
 	 * @return debug model identifiers associated with the given object or <code>null</code>
 	 */
 	private String[] getDebugModelIds(Object object) {
@@ -312,12 +312,12 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			return new String[] { ((IStackFrame) object).getModelIdentifier() };
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the ILaunch associated with the given object or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param object object for which launch is required
 	 * @return the ILaunch associated with the given object or <code>null</code>
 	 */
@@ -359,7 +359,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 				job.setSystem(true);
 				job.schedule();
 			}
-			
+
 		}
 		// TODO: Terminated notification
 	}
@@ -382,11 +382,11 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
-	}	
-	
+	}
+
 	/**
 	 * Returns the workbench contexts associated with a debug context
-	 * 
+	 *
 	 * @param target debug context
 	 * @return associated workbench contexts
 	 */
@@ -409,12 +409,12 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			}
 		}
 		return workbenchContexts;
-	}	
-	
+	}
+
 	/**
-	 * Enables activities in the workbench associated with the given debug 
+	 * Enables activities in the workbench associated with the given debug
 	 * model ids that have been activated.
-	 * 
+	 *
 	 * @param debug model ids for which to enable activities
 	 */
 	private void enableActivitiesFor(String[] modelIds) {

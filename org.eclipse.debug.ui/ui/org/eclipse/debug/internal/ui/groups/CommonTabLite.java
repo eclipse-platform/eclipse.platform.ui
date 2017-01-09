@@ -4,14 +4,14 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Freescale Semiconductor (stripped out functionality from platform debug version) 
+ *     Freescale Semiconductor (stripped out functionality from platform debug version)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.groups;
 
- 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,7 +73,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 /**
  * This class was taken from org.eclipse.debug.ui. We expose a Common tab for
  * Multilaunch that has only a subset of the standard tab's properties.
- * 
+ *
  * Launch configuration tab used to specify the location a launch configuration
  * is stored in, whether it should appear in the favorites list, and perspective
  * switching behavior for an associated launch.
@@ -83,9 +83,9 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * Copied from CDT (org.eclipse.cdt.launch)
  */
 class CommonTabLite extends AbstractLaunchConfigurationTab {
-	
+
 	private final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
-	
+
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
 	 * can be revertible. This attribute is not saveable and will never appear in a saved
@@ -93,18 +93,18 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 * @since 3.3
 	 */
 	private static final String BAD_CONTAINER = "bad_container_name"; //$NON-NLS-1$
-	
+
 	// Local/shared UI widgets
 	private Button fLocalRadioButton;
 	private Button fSharedRadioButton;
 	private Text fSharedLocationText;
 	private Button fSharedLocationButton;
-	
+
 	/**
 	 * Check box list for specifying favorites
 	 */
 	private CheckboxTableViewer fFavoritesTable;
-			
+
 	/**
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
@@ -114,22 +114,22 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			updateLaunchConfigurationDialog();
 		}
 	};
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void createControl(Composite parent) {		
+	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 		comp.setLayout(new GridLayout(2, true));
 		comp.setFont(parent.getFont());
-		
+
 		createSharedConfigComponent(comp);
 		createFavoritesComponent(comp);
 	}
-	
+
 	/**
 	 * Creates the favorites control
 	 * @param parent the parent composite to add this one to
@@ -151,7 +151,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 				}
 			});
 	}
-	
+
 	/**
 	 * Creates the shared config component
 	 * @param parent the parent composite to add this component to
@@ -179,18 +179,18 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			}
 		});
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
-		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
+		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
 			}
-		});	
+		});
 
 		fLocalRadioButton.setSelection(true);
-		setSharedEnabled(false);	
+		setSharedEnabled(false);
 	}
-	
+
 	/**
 	 * handles the shared radio button being selected
 	 */
@@ -198,16 +198,16 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		setSharedEnabled(isShared());
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Sets the widgets for specifying that a launch configuration is to be shared to the enable value
-	 * @param enable the enabled value for 
+	 * @param enable the enabled value for
 	 */
 	private void setSharedEnabled(boolean enable) {
 		fSharedLocationText.setEnabled(enable);
 		fSharedLocationButton.setEnabled(enable);
 	}
-	
+
 	private String getDefaultSharedConfigLocation(ILaunchConfiguration config) {
 		String path = IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
@@ -221,11 +221,11 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 					}
 				}
 			}
-		} 
+		}
 		catch (CoreException e) {DebugUIPlugin.log(e);}
 		return path;
 	}
-	
+
 	/**
 	 * if the shared radio button is selected, indicating that the launch configuration is to be shared
 	 * @return true if the radio button is selected, false otherwise
@@ -233,11 +233,11 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	private boolean isShared() {
 		return fSharedRadioButton.getSelection();
 	}
-	
+
 	/**
 	 * Handles the shared location button being selected
 	 */
-	private void handleSharedLocationButtonSelected() { 
+	private void handleSharedLocationButtonSelected() {
 		String currentContainerString = fSharedLocationText.getText();
 		IContainer currentContainer = getContainer(currentContainerString);
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
@@ -247,14 +247,14 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		dialog.showClosedProjects(false);
 		dialog.setDialogBoundsSettings(getDialogBoundsSettings(), Dialog.DIALOG_PERSISTSIZE);
 		dialog.open();
-		Object[] results = dialog.getResult();	
+		Object[] results = dialog.getResult();
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
 			IPath path = (IPath)results[0];
 			String containerName = path.toOSString();
 			fSharedLocationText.setText(containerName);
-		}		
+		}
 	}
-	
+
 	private IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
@@ -273,7 +273,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		Path containerPath = new Path(path);
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -297,7 +297,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		}
 		updateFavoritesFromConfig(configuration);
 	}
-	
+
 
 	/**
 	 * Updates the favorites selections from the local configuration
@@ -353,17 +353,17 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			config.setContainer(null);
 		}
 	}
-	
+
 	/**
 	 * Convenience accessor
 	 */
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
-	
+
 	/**
 	 * Update the favorite settings.
-	 * 
+	 *
 	 * NOTE: set to <code>null</code> instead of <code>false</code> for backwards compatibility
 	 *  when comparing if content is equal, since 'false' is default
 	 * 	and will be missing for older configurations.
@@ -398,7 +398,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 						return;
 					}
 				}
-			} 
+			}
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
 			List<String> groups = null;
@@ -412,16 +412,16 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			config.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, groups);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Convenience method for getting the workspace root.
 	 */
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -429,10 +429,10 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
 		setErrorMessage(null);
-		
+
 		return validateLocalShared();
 	}
-	
+
     /**
      * validates the local shared config file location
      * @return true if the local shared file exists, false otherwise
@@ -442,14 +442,14 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
 			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_shared_configuration_location_14); 
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Invalid_shared_configuration_location_14);
 				return false;
 			} else if (!container.getProject().isOpen()) {
-				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1); 
-				return false;				
+				setErrorMessage(LaunchConfigurationsMessages.CommonTab_Cannot_save_launch_configuration_in_a_closed_project__1);
+				return false;
 			}
 		}
-		return true;		
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -475,19 +475,19 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public String getName() {
-		return LaunchConfigurationsMessages.CommonTab__Common_15; 
+		return LaunchConfigurationsMessages.CommonTab__Common_15;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
@@ -503,7 +503,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -531,7 +531,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 				LaunchHistory history = getLaunchConfigurationManager().getLaunchHistory(extension.getIdentifier());
 				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);
-				} 
+				}
 			}
 			return possibleGroups.toArray();
 		}
@@ -543,13 +543,13 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
 	}
-	
+
 	/**
 	 * Provides the labels for the favorites table
 	 *
 	 */
 	class FavoritesLabelProvider implements ITableLabelProvider {
-		
+
 		private Map<Object, Image> fImages = new HashMap<Object, Image>();
 
 		@Override
@@ -587,7 +587,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		public boolean isLabelProperty(Object element, String property) {return false;}
 
 		@Override
-		public void removeListener(ILabelProviderListener listener) {}		
+		public void removeListener(ILabelProviderListener listener) {}
 	}
 
 }

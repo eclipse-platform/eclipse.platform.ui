@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
- * IBM - Added the abiliity to update view label, context help and the orientation 
+ * IBM - Added the abiliity to update view label, context help and the orientation
  *       action upon input change
 ***********************************************************************/
 package org.eclipse.debug.internal.ui.views.modules;
@@ -35,8 +35,8 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Displays modules and symbols with a detail area.
  */
-public class ModulesView extends VariablesView {	
-	
+public class ModulesView extends VariablesView {
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
@@ -87,7 +87,7 @@ public class ModulesView extends VariablesView {
 	 */
 	@Override
 	protected String getToggleActionLabel() {
-		
+
 		if (getViewer() != null)
 		{
 			Object viewerInput = getViewer().getInput();
@@ -101,10 +101,10 @@ public class ModulesView extends VariablesView {
 				}
 			}
 		}
-		
-		return ModulesViewMessages.ModulesView_0; 
+
+		return ModulesViewMessages.ModulesView_0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
 	 */
@@ -112,21 +112,21 @@ public class ModulesView extends VariablesView {
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_MODULE_VIEW;
 	}
-	
+
 	@Override
 	protected void setViewerInput(Object context) {
 		super.setViewerInput(context);
-		
+
 		// update view label when viewer input is changed
 		updateViewLabels(context);
-		
+
 		// update orientation action based on input
 		updateOrientationAction(context);
-		
+
 		// update context help hook when viewer input is changed
 		updateContextHelp(context);
 	}
-	
+
 	private void updateContextHelp(Object context) {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
@@ -142,15 +142,15 @@ public class ModulesView extends VariablesView {
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl().getParent(), IDebugHelpContextIds.MODULES_VIEW);
 	}
-	
+
 	private void updateViewLabels(Object context)
 	{
 		String viewName = getViewName(context);
-		
+
 		// only update label if the name has changed
 		if (!getPartName().equals(viewName))
 			setPartName(viewName);
-		
+
 		// only update image if the image has changed
 		Image image = getViewImage(context);
 		if (!getTitleImage().equals(image))
@@ -173,7 +173,7 @@ public class ModulesView extends VariablesView {
 		}
 		return ModulesViewMessages.ModulesView_2;
 	}
-	
+
 	private Image getViewImage(Object context)
 	{
 		if (context instanceof IAdaptable) {
@@ -188,7 +188,7 @@ public class ModulesView extends VariablesView {
 		}
 		return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_CVIEW_MODULES_VIEW);
 	}
-	
+
 	private void updateOrientationAction(Object context)
 	{
 		ToggleDetailPaneAction action = getToggleDetailPaneAction(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN);
@@ -198,5 +198,5 @@ public class ModulesView extends VariablesView {
 			action.setText(label);
 		}
 	}
-	
+
 }

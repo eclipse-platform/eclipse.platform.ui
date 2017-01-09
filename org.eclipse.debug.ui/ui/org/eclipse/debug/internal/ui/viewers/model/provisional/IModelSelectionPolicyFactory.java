@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 
 /**
- * A model selection policy factory creates a model selection policy for an element based on 
+ * A model selection policy factory creates a model selection policy for an element based on
  * a specific presentation context. A model selection policy factory is provided for
  * a model element by registering a model selection policy factory adapter for
  * an element.
@@ -26,7 +26,7 @@ public interface IModelSelectionPolicyFactory {
 	/**
 	 * Creates and returns a model selection policy for the given element in the specified
 	 * context or <code>null</code> if none.
-	 * 
+	 *
 	 * @param element model element to create a selection policy for
 	 * @param context presentation context
 	 * @return model selection policy or <code>null</code>

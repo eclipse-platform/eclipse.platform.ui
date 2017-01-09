@@ -109,17 +109,17 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
  * The images will be disposed when this plug-in is shutdown.
  * </p>
  * <p>
- * Note: all methods in this class are expected to be called 
+ * Note: all methods in this class are expected to be called
  * on the Display thread unless otherwise noted.
  * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DebugUITools {
-	
+
 	/**
 	 * The undo context for breakpoints.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private static ObjectUndoContext fgBreakpointsUndoContext;
@@ -141,7 +141,7 @@ public class DebugUITools {
 	public static Image getImage(String key) {
 		return DebugPluginImages.getImage(key);
 	}
-	
+
 	/**
 	 * Returns the shared image descriptor managed under the given key, or
 	 * <code>null</code> if none.
@@ -156,10 +156,10 @@ public class DebugUITools {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return DebugPluginImages.getImageDescriptor(key);
 	}
-		
+
 	/**
 	 * Returns the default image descriptor for the given element.
-	 * 
+	 *
 	 * @param element the element
 	 * @return the image descriptor or <code>null</code> if none
 	 */
@@ -170,11 +170,11 @@ public class DebugUITools {
 		}
 		return DebugPluginImages.getImageDescriptor(imageKey);
 	}
-	
+
 	private static String getDefaultImageKey(Object element) {
 		return ((DefaultLabelProvider)DebugUIPlugin.getDefaultLabelProvider()).getImageKey(element);
 	}
-	
+
 	/**
 	 * Returns the preference store for the debug UI plug-in.
 	 *
@@ -183,14 +183,14 @@ public class DebugUITools {
 	public static IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/**
 	 * Returns a new debug model presentation that delegates to
 	 * appropriate debug models.
 	 * <p>
 	 * It is the client's responsibility dispose the presentation.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 * @return a debug model presentation
 	 * @since 2.0
@@ -198,7 +198,7 @@ public class DebugUITools {
 	public static IDebugModelPresentation newDebugModelPresentation() {
 		return new DelegatingModelPresentation();
 	}
-	
+
 	/**
 	 * Returns a new debug model presentation for specified
 	 * debug model, or <code>null</code> if a presentation does
@@ -206,7 +206,7 @@ public class DebugUITools {
 	 * <p>
 	 * It is the client's responsibility dispose the presentation.
 	 * </p>
-	 * 
+	 *
 	 * @param identifier debug model identifier
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 * @return a debug model presentation, or <code>null</code>
@@ -229,11 +229,11 @@ public class DebugUITools {
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
- 	 * Returns the element of the currently selected context in the 
-	 * active workbench window. Returns <code>null</code> if there is no 
+ 	 * Returns the element of the currently selected context in the
+	 * active workbench window. Returns <code>null</code> if there is no
 	 * current debug context.
 	 * <p>
 	 * This method used to return <code>null</code> when called from a non-UI thread,
@@ -252,11 +252,11 @@ public class DebugUITools {
 	}
 
     /**
-     * Returns the currently selected context in the given part or part's  
-     * workbench window. Returns <code>null</code> if there is no current 
+     * Returns the currently selected context in the given part or part's
+     * workbench window. Returns <code>null</code> if there is no current
      * debug context.
      * @param part workbench part where the active context is to be evaluated
-     * @return the currently selected debug context in the given workbench part, 
+     * @return the currently selected debug context in the given workbench part,
      * or <code>null</code>
      * @since 3.8
      * @see IDebugContextService#getActiveContext(String)
@@ -275,10 +275,10 @@ public class DebugUITools {
         }
         return null;
     }
-	
+
 	/**
 	 * Return the undo context that should be used for operations involving breakpoints.
-	 * 
+	 *
 	 * @return the undo context for breakpoints
 	 * @since 3.7
 	 */
@@ -292,7 +292,7 @@ public class DebugUITools {
 
 	/**
 	 * Deletes the given breakpoints using the operation history, which allows to undo the deletion.
-	 * 
+	 *
 	 * @param breakpoints the breakpoints to delete
 	 * @param shell the shell used for potential user interactions, or <code>null</code> if unknown
 	 * @param progressMonitor the progress monitor
@@ -353,7 +353,7 @@ public class DebugUITools {
     /**
      * Returns the currently active context for the given workbench part. Returns <code>null</code>
      * if there is no current debug context.</p>
-     * 
+     *
      * @param site the part's site where to look up the active context
      * @return the currently active debug context in the given part, or <code>null</code>
      * @since 3.7
@@ -366,7 +366,7 @@ public class DebugUITools {
         if (site instanceof IViewSite) {
             secondaryId = ((IViewSite)site).getSecondaryId();
         }
-        ISelection activeContext = service.getActiveContext(id, secondaryId); 
+        ISelection activeContext = service.getActiveContext(id, secondaryId);
         return getDebugContextElementForSelection(activeContext);
     }
 
@@ -378,10 +378,10 @@ public class DebugUITools {
      * {@link IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)}
      * using the part id parameters extracted from the given part parameter.
      * </p>
-     * 
+     *
      * @param site the part's site to get the part ID and part secondary ID from
      * @param listener Debug context listener to add
-     * 
+     *
      * @see IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)
      * @see IDebugContextManager#addDebugContextListener(IDebugContextListener)
      * @since 3.7
@@ -404,10 +404,10 @@ public class DebugUITools {
      * {@link IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)}
      * using the part id parameters extracted from the given part parameter.
      * </p>
-     * 
+     *
      * @param site the part's site to get the part ID and part secondary ID from
      * @param listener Debug context listener to remove
-     * 
+     *
      * @see IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)
      * @see IDebugContextManager#removeDebugContextListener(IDebugContextListener)
      * @since 3.7
@@ -421,10 +421,10 @@ public class DebugUITools {
         }
         service.removeDebugContextListener(listener, id, secondaryId);
     }
-    
+
     /**
 	 * Extracts the first element from the given selection and casts it to IAdaptable.
-	 * 
+	 *
 	 * @param activeContext the selection
 	 * @return an adaptable
 	 */
@@ -440,25 +440,25 @@ public class DebugUITools {
         }
         return null;
     }
-    
+
 	/**
 	 * Returns the currently selected resource in the active workbench window,
 	 * or <code>null</code> if none. If an editor is active, the resource adapter
 	 * associated with the editor is returned, if any.
-	 * 
+	 *
 	 * @return selected resource or <code>null</code>
 	 * @since 3.0
 	 */
 	public static IResource getSelectedResource() {
 		return SelectedResourceManager.getDefault().getSelectedResource();
 	}
-			
+
 	/**
 	 * Returns the process associated with the current debug context.
 	 * If there is no debug context currently, the most recently
 	 * launched process is returned. If there is no current process
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @return the current process, or <code>null</code>
 	 * @since 2.0
 	 */
@@ -470,15 +470,15 @@ public class DebugUITools {
 				context = launches[launches.length - 1];
 			}
 		}
-        
+
 		if (context instanceof IDebugElement) {
 			return ((IDebugElement)context).getDebugTarget().getProcess();
 		}
-		
+
         if (context instanceof IProcess) {
 			return (IProcess)context;
 		}
-		
+
         if (context instanceof ILaunch) {
 			ILaunch launch= (ILaunch)context;
 			IDebugTarget target= launch.getDebugTarget();
@@ -493,17 +493,17 @@ public class DebugUITools {
 				return ps[ps.length - 1];
 			}
 		}
-        
+
         if (context != null) {
             return context.getAdapter(IProcess.class);
         }
-        
+
 		return null;
 	}
 
 	/**
 	 * Open the launch configuration dialog with the specified initial selection.
-	 * The selection may be <code>null</code>, or contain any mix of 
+	 * The selection may be <code>null</code>, or contain any mix of
 	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
 	 * elements.
 	 * <p>
@@ -515,7 +515,7 @@ public class DebugUITools {
 	 * Note that if an existing dialog is reused, the <code>mode</code> argument is ignored
 	 * and the existing dialog keeps its original mode.
 	 * </p>
-	 * 
+	 *
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
 	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
@@ -527,7 +527,7 @@ public class DebugUITools {
 	 * @since 2.0
 	 * @deprecated use openLaunchConfigurationDialogOnGroup(Shell, IStructuredSelection, String)
 	 *  to specify the launch group that the dialog should be opened on. This method will open
-	 *  on the launch group with the specified mode and a <code>null</code> category 
+	 *  on the launch group with the specified mode and a <code>null</code> category
 	 */
 	@Deprecated
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
@@ -540,10 +540,10 @@ public class DebugUITools {
 		}
 		return Window.CANCEL;
 	}
-	
+
 	/**
 	 * Open the launch configuration dialog with the specified initial selection.
-	 * The selection may be <code>null</code>, or contain any mix of 
+	 * The selection may be <code>null</code>, or contain any mix of
 	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
 	 * elements.
 	 * <p>
@@ -555,7 +555,7 @@ public class DebugUITools {
 	 * Note that if an existing dialog is reused, the <code>mode</code> argument is ignored
 	 * and the existing dialog keeps its original mode.
 	 * </p>
-	 * 
+	 *
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
 	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
@@ -569,10 +569,10 @@ public class DebugUITools {
 	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
 		return openLaunchConfigurationDialogOnGroup(shell, selection, groupIdentifier, null);
 	}
-	
+
 	/**
 	 * Open the launch configuration dialog with the specified initial selection.
-	 * The selection may be <code>null</code>, or contain any mix of 
+	 * The selection may be <code>null</code>, or contain any mix of
 	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
 	 * elements.
 	 * <p>
@@ -616,7 +616,7 @@ public class DebugUITools {
 					dialog.setInitialSelection(selection);
 					dialog.doInitialTreeSelection();
 					if (status != null) {
-						dialog.handleStatus(status); 
+						dialog.handleStatus(status);
 					}
 					result[0] = Window.OK;
 				} else {
@@ -637,7 +637,7 @@ public class DebugUITools {
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
 		return result[0];
 	}
-		
+
 	/**
 	 * Open the launch configuration properties dialog on the specified launch
 	 * configuration.
@@ -655,7 +655,7 @@ public class DebugUITools {
 	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier) {
 		return openLaunchConfigurationPropertiesDialog(shell, configuration, groupIdentifier, null);
 	}
-	
+
 	/**
 	 * Open the launch configuration properties dialog on the specified launch
 	 * configuration.
@@ -677,11 +677,11 @@ public class DebugUITools {
 			LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group);
 			dialog.setInitialStatus(status);
 			return dialog.open();
-		} 
-		
+		}
+
 		return Window.CANCEL;
 	}
-	
+
 	/**
      * Open the launch configuration dialog on the specified launch
      * configuration. The dialog displays the tabs for a single configuration
@@ -697,11 +697,11 @@ public class DebugUITools {
      * @param configuration the configuration to display
      * @param groupIdentifier group identifier of the launch group the launch configuration
      * belongs to
-     * @param status the status to display, or <code>null</code> if none 
+     * @param status the status to display, or <code>null</code> if none
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
 	 *  is returned if an invalid launch group identifier is provided.
-	 * @see ILaunchGroup 
+	 * @see ILaunchGroup
      * @since 2.1
      */
     public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
@@ -710,11 +710,11 @@ public class DebugUITools {
     		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
     		dialog.setInitialStatus(status);
     		return dialog.open();
-    	} 
-    		
+    	}
+
     	return Window.CANCEL;
     }
-    
+
 	/**
 	 * Saves all dirty editors and builds the workspace according to current
 	 * preference settings, and returns whether a launch should proceed.
@@ -730,7 +730,7 @@ public class DebugUITools {
 	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return whether a launch should proceed
 	 * @since 2.0
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
@@ -740,7 +740,7 @@ public class DebugUITools {
 	public static boolean saveAndBuildBeforeLaunch() {
 		return DebugUIPlugin.saveAndBuild();
 	}
-	
+
 	/**
 	 * Saves all dirty editors according to current
 	 * preference settings, and returns whether a launch should proceed.
@@ -752,7 +752,7 @@ public class DebugUITools {
 	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return whether a launch should proceed
 	 * @since 2.1
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
@@ -761,8 +761,8 @@ public class DebugUITools {
 	@Deprecated
 	public static boolean saveBeforeLaunch() {
 		return DebugUIPlugin.preLaunchSave();
-	}	
-	
+	}
+
 	/**
 	 * Saves and builds the workspace according to current preference settings,
 	 * and launches the given launch configuration in the specified mode. It
@@ -771,7 +771,7 @@ public class DebugUITools {
 	 * <p>
 	 * This method must be called in the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @since 2.1
@@ -785,7 +785,7 @@ public class DebugUITools {
 	/**
 	 * Stores the toggle data for launch in a Map to be used while launching to
 	 * decide if previous launch for same configuration can be terminated.
-	 * 
+	 *
 	 * @param data the editor or selected tree node
 	 * @param isShift is Shift pressed (use <code>false</code> if no support for
 	 *            Shift)
@@ -800,7 +800,7 @@ public class DebugUITools {
 	/**
 	 * Stores the toggle data for launch in a Map to be used while launching to
 	 * decide if previous launch for same configuration can be terminated.
-	 * 
+	 *
 	 * @param data the editor or selected tree node
 	 * @since 3.12
 	 */
@@ -901,14 +901,14 @@ public class DebugUITools {
 		return false;
 
 	}
-	
+
 	/**
 	 * Saves and builds the workspace according to current preference settings,
 	 * and launches the given launch configuration in the specified mode.
 	 * <p>
 	 * This method must be called in the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @since 3.12
@@ -937,7 +937,7 @@ public class DebugUITools {
 	 * <p>
 	 * This method must be called in the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @param isShift is Shift pressed (use <code>false</code> if no support for
@@ -1002,7 +1002,7 @@ public class DebugUITools {
 		}
 	};
 
-	
+
 	/**
 	 * Builds the workspace according to current preference settings, and launches
 	 * the given configuration in the specified mode, returning the resulting launch
@@ -1013,7 +1013,7 @@ public class DebugUITools {
 	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode the mode to launch in
 	 * @param monitor progress monitor
@@ -1024,15 +1024,15 @@ public class DebugUITools {
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return DebugUIPlugin.buildAndLaunch(configuration, mode, monitor);
 	}
-	
+
 	/**
 	 * Returns the perspective to switch to when a configuration of the given type
 	 * is launched in the given mode, or <code>null</code> if no switch should take
 	 * place.
-	 * 
+	 *
 	 * In 3.3 this method is equivalent to calling <code>getLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate)</code>,
 	 * with the 'mode' parameter comprising a single element set and passing <code>null</code> as the launch delegate.
-	 * 
+	 *
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
 	 * @return perspective identifier or <code>null</code>
@@ -1041,7 +1041,7 @@ public class DebugUITools {
 	public static String getLaunchPerspective(ILaunchConfigurationType type, String mode) {
 		return DebugUIPlugin.getDefault().getPerspectiveManager().getLaunchPerspective(type, mode);
 	}
-	
+
 	/**
 	 * Returns the perspective id to switch to when a configuration of the given type launched with the specified delegate
 	 * is launched in the given mode set, or <code>null</code> if no switch should occurr.
@@ -1049,23 +1049,23 @@ public class DebugUITools {
 	 * @param delegate the launch delegate
 	 * @param modes the set of modes
 	 * @return the perspective id or <code>null</code> if no switch should occur
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static String getLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes) {
 		return DebugUIPlugin.getDefault().getPerspectiveManager().getLaunchPerspective(type, modes, delegate);
 	}
-	
+
 	/**
 	 * Sets the perspective to switch to when a configuration of the given type
 	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
 	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
 	 * a default perspective switch should take place, as defined by the associated
 	 * launch tab group extension.
-	 * 
-	 * In 3.3 this method is equivalent to calling <code>setLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate, String perspectiveid)</code>, 
+	 *
+	 * In 3.3 this method is equivalent to calling <code>setLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate, String perspectiveid)</code>,
 	 * with the parameter 'mode' used in the set modes, and null passed as the delegate
-	 * 
+	 *
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
 	 * @param perspective identifier, <code>PERSPECTIVE_NONE</code>, or
@@ -1074,32 +1074,32 @@ public class DebugUITools {
 	 */
 	public static void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
 		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, mode, perspective);
-	}	
-	
+	}
+
 	/**
-	 * Sets the perspective to switch to when a configuration of the specified type and launched using the 
+	 * Sets the perspective to switch to when a configuration of the specified type and launched using the
 	 * specified launch delegate is launched in the specified modeset. <code>PERSPECTIVE_NONE</code> indicates no
 	 * perspective switch should take place.
-	 * 
-	 * Passing <code>null</code> for the launch delegate is quivalent to using the default perspective for the specified 
+	 *
+	 * Passing <code>null</code> for the launch delegate is quivalent to using the default perspective for the specified
 	 * type.
 	 * @param type the configuration type
 	 * @param delegate the launch delegate
 	 * @param modes the set of modes
 	 * @param perspectiveid identifier or <code>PERSPECTIVE_NONE</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static void setLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes, String perspectiveid) {
 		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, modes, delegate, perspectiveid);
 	}
-	
+
 	/**
 	 * Returns whether the given launch configuration is private. Generally,
 	 * private launch configurations should not be displayed to the user. The
 	 * private status of a launch configuration is determined by the
 	 * <code>IDebugUIConstants.ATTR_PRIVATE</code> attribute.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return whether the given launch configuration is private
 	 * @since 3.0
@@ -1110,7 +1110,7 @@ public class DebugUITools {
 
 	/**
 	 * Sets whether step filters should be applied to step commands. This
-	 * setting is a global option applied to all registered debug targets. 
+	 * setting is a global option applied to all registered debug targets.
 	 * <p>
 	 * Since 3.3, this is equivalent to calling <code>DebugPlugin.setUseStepFilters(boolean)</code>.
 	 * </p>
@@ -1122,7 +1122,7 @@ public class DebugUITools {
 	public static void setUseStepFilters(boolean useStepFilters) {
 		DebugPlugin.setUseStepFilters(useStepFilters);
 	}
-		
+
 	/**
 	 * Returns whether step filters are applied to step commands.
 	 * <p>
@@ -1135,26 +1135,26 @@ public class DebugUITools {
 	public static boolean isUseStepFilters() {
 		return DebugPlugin.isUseStepFilters();
 	}
-		
+
 	/**
-	 * Returns the console associated with the given process, or 
+	 * Returns the console associated with the given process, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param process a process
-	 * @return console associated with the given process, or 
+	 * @return console associated with the given process, or
 	 * <code>null</code> if none
 	 * @since 3.0
 	 */
 	public static IConsole getConsole(IProcess process) {
 		return DebugUIPlugin.getDefault().getProcessConsoleManager().getConsole(process);
 	}
-	
+
 	/**
-	 * Returns the console associated with the given debug element, or 
+	 * Returns the console associated with the given debug element, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param element a debug model element
-	 * @return console associated with the given element, or 
+	 * @return console associated with the given element, or
 	 * <code>null</code> if none
 	 * @since 3.0
 	 */
@@ -1164,23 +1164,23 @@ public class DebugUITools {
 			return getConsole(process);
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns all registered launch group extensions.
-	 *  
+	 *
 	 * @return all registered launch group extensions
 	 * @since 3.0
 	 */
 	public static ILaunchGroup[] getLaunchGroups() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroups();
 	}
-	
+
 	/**
 	 * Returns the last configuration that was launched for specified launch group or
 	 * <code>null</code>, if there is not one. This method does not provide any form of
 	 * filtering on the returned launch configurations.
-	 * 
+	 *
 	 * @param groupId the unique identifier of a launch group
 	 * @return the last launched configuration for the specified group or <code>null</code>.
 	 * @see DebugUITools#getLaunchGroups()
@@ -1189,11 +1189,11 @@ public class DebugUITools {
 	public static ILaunchConfiguration getLastLaunch(String groupId) {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(groupId);
 	}
-	
+
 	/**
 	 * Returns the launch group that the given launch configuration belongs to, for the specified
 	 * mode, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration the launch configuration
 	 * @param mode the mode
 	 * @return the launch group the given launch configuration belongs to, for the specified mode,
@@ -1208,29 +1208,29 @@ public class DebugUITools {
 			return null;
 		}
 	}
-	
+
     /**
      * Performs source lookup on the given artifact and returns the result.
      * Optionally, a source locator may be specified.
-     *  
+     *
      * @param artifact object for which source is to be resolved
      * @param locator the source locator to use, or <code>null</code>. When <code>null</code>
      *   a source locator is determined from the artifact, if possible. If the artifact
-     *   is a debug element, the source locator from its associated launch is used. 
+     *   is a debug element, the source locator from its associated launch is used.
      * @return a source lookup result
      * @since 3.1
      */
-    public static ISourceLookupResult lookupSource(Object artifact, ISourceLocator locator) {	
+    public static ISourceLookupResult lookupSource(Object artifact, ISourceLocator locator) {
 		return SourceLookupFacility.getDefault().lookup(artifact, locator, false);
     }
-	
+
     /**
      * Displays the given source lookup result in an editor in the given workbench
      * page. Has no effect if the result has an unknown editor id or editor input.
      * The editor is opened, positioned, and annotated.
      * <p>
      * Honors user preference for editors re-use.
-     * </p> 
+     * </p>
      * @param result source lookup result to display
      * @param page the page to display the result in
      * @since 3.1
@@ -1238,21 +1238,21 @@ public class DebugUITools {
     public static void displaySource(ISourceLookupResult result, IWorkbenchPage page) {
     	SourceLookupFacility.getDefault().display(result, page);
     }
-    
+
     /**
      * Returns the memory rendering manager.
-     * 
+     *
      * @return the memory rendering manager
      * @since 3.1
      */
     public static IMemoryRenderingManager getMemoryRenderingManager() {
         return MemoryRenderingManager.getDefault();
     }
-    
+
 	/**
 	 * Returns the image associated with the specified type of source container
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param id unique identifier for a source container type
 	 * @return image associated with the specified type of source container
 	 *    or <code>null</code> if none
@@ -1262,11 +1262,11 @@ public class DebugUITools {
 	public static Image getSourceContainerImage(String id){
 		return SourceLookupUIUtils.getSourceContainerImage(id);
 	}
-	
+
 	/**
 	 * Returns a new source container browser for the specified type of source container
 	 * or <code>null</code> if a browser has not been registered.
-	 * 
+	 *
 	 * @param id unique identifier for a source container type
 	 * @return source container browser or <code>null</code> if none
 	 * @since 3.2
@@ -1275,11 +1275,11 @@ public class DebugUITools {
 	public static ISourceContainerBrowser getSourceContainerBrowser(String id) {
 		return SourceLookupUIUtils.getSourceContainerBrowser(id);
 	}
-	
+
 	/**
-	 * Returns the color associated with the specified preference identifier or 
+	 * Returns the color associated with the specified preference identifier or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param id preference identifier of the color
 	 * @return the color associated with the specified preference identifier
 	 * 	or <code>null</code> if none
@@ -1289,10 +1289,10 @@ public class DebugUITools {
 	public static Color getPreferenceColor(String id) {
 		return DebugUIPlugin.getPreferenceColor(id);
 	}
-	
+
 	/**
 	 * Returns the debug context manager.
-	 * 
+	 *
 	 * @return debug context manager
 	 * @since 3.3
 	 */
@@ -1302,10 +1302,10 @@ public class DebugUITools {
 
     /**
      * Return the debug context for the given executionEvent or <code>null</code> if none.
-     * 
+     *
      * @param event The execution event that contains the application context
      * @return the current debug context, or <code>null</code>.
-     * 
+     *
      * @since 3.5
      */
     public static ISelection getDebugContextForEvent(ExecutionEvent event) {
@@ -1318,11 +1318,11 @@ public class DebugUITools {
 
     /**
      * Return the debug context for the given executionEvent.
-     * 
+     *
      * @param event The execution event that contains the application context
      * @return the debug context. Will not return <code>null</code>.
      * @throws ExecutionException If the current selection variable is not found.
-     * 
+     *
      * @since 3.5
      */
     public static ISelection getDebugContextForEventChecked(ExecutionEvent event)
@@ -1341,9 +1341,9 @@ public class DebugUITools {
 
     /**
      * Returns the global instance of toggle breakpoints target manager.
-     * 
+     *
      * @return toggle breakpoints target manager
-     * 
+     *
      * @since 3.8
      */
     public static IToggleBreakpointsTargetManager getToggleBreakpointsTargetManager() {

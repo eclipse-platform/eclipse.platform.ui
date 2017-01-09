@@ -20,16 +20,16 @@ import org.eclipse.ui.IWorkbench;
 /**
  * This class provides a wizard for importing launch configurations from the local
  * file system into the current workspace.
- * 
- * It allows the suer to specify if the configuration should be shared or local 
+ *
+ * It allows the suer to specify if the configuration should be shared or local
  * once imported
- * 
+ *
  * @since 3.4.0
  */
 public class ImportLaunchConfigurationsWizard extends Wizard implements IImportWizard {
-	
+
 	private String EXPORT_DIALOG_SETTINGS = "ExportLaunchConfigurations"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 */
@@ -59,7 +59,7 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 	public void addPages() {
 		addPage(new ImportLaunchConfigurationsWizardPage());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */

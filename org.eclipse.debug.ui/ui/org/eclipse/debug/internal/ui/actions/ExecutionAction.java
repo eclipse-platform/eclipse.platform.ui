@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,13 +26,13 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This is the super class of the Run & Debug actions which appears in the desktop menu and toolbar.
  */
 public abstract class ExecutionAction implements IActionDelegate2 {
-	
+
 	private String fLaunchGroupIdentifier;
-	
+
 	public ExecutionAction(String launchGroupIdentifier) {
 		fLaunchGroupIdentifier = launchGroupIdentifier;
 	}
-	
+
 	/**
 	 * @see IActionDelegate2#runWithEvent(IAction, Event)
 	 */
@@ -51,16 +51,16 @@ public abstract class ExecutionAction implements IActionDelegate2 {
 		}
 		DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(), fLaunchGroupIdentifier);
 	}
-	
+
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
-	
+
 	/**
 	 * Returns the mode of a launcher to use for this action
 	 */
 	protected abstract String getMode();
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */

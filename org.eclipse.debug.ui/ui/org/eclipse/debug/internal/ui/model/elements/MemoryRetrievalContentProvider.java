@@ -29,14 +29,14 @@ public class MemoryRetrievalContentProvider extends ElementContentProvider {
 	protected Object[] getChildren(Object parent, int index, int length,
 			IPresentationContext context, IViewerUpdate monitor)
 			throws CoreException {
-		
+
 		return getElements(getAllChildren(parent, context, monitor), index, length);
-		
+
 	}
-	
+
 	/**
 	 * Returns all children of the given parent in the given context.
-	 * 
+	 *
 	 * @param parent
 	 * @param context
 	 * @param monitor

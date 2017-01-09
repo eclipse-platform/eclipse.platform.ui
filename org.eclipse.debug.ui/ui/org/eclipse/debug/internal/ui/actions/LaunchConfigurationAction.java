@@ -26,14 +26,14 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * This class provides an action wrapper for adding launch configuration actions to the context menu
  * of the Run->... menu item
- * 
+ *
  * @since 3.3
  */
 public class LaunchConfigurationAction extends Action {
 
 	private ILaunchConfiguration fConfig;
 	private String fMode;
-	
+
 	/**
 	 * Constructor
 	 * @param mode
@@ -46,7 +46,7 @@ public class LaunchConfigurationAction extends Action {
 		fConfig = config;
 		fMode = mode;
 	}
-	
+
 	/**
 	 * Allows access to the launch configuration associated with the action
 	 * @return the associated launch configuration
@@ -62,7 +62,7 @@ public class LaunchConfigurationAction extends Action {
 	public void run() {
 		runInternal(false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */

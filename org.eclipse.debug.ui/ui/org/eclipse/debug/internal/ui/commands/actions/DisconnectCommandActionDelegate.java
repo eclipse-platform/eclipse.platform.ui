@@ -12,11 +12,11 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 /**
  * Disconnect action delegate.
- * 
+ *
  * @since 3.7
  */
 public class DisconnectCommandActionDelegate extends DebugCommandActionDelegate {
-	
+
 	public DisconnectCommandActionDelegate() {
 		super();
 		setAction(new DisconnectCommandAction());

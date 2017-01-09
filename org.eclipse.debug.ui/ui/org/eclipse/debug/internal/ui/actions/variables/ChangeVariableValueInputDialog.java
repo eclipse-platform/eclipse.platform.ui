@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,43 +33,43 @@ import org.eclipse.swt.widgets.Text;
  * A simple input dialog for soliciting an input string
  * from the user.
  * <p>
- * This concrete dialog class can be instantiated as is, 
+ * This concrete dialog class can be instantiated as is,
  * or further subclassed as required.
  * </p>
  */
 public class ChangeVariableValueInputDialog extends TrayDialog {
-	
-	
+
+
 	/**
 	 * The title of the dialog.
 	 */
 	private String title;
-	
+
 	/**
 	 * The message to display, or <code>null</code> if none.
 	 */
 	private String message;
-	
+
 	/**
 	 * The input value; the empty string by default.
 	 */
 	private String value= IInternalDebugCoreConstants.EMPTY_STRING;
-	
+
 	/**
 	 * The input validator, or <code>null</code> if none.
 	 */
 	private IInputValidator validator;
-	
+
 	/**
 	 * Ok button widget.
 	 */
 	private Button okButton;
-	
+
 	/**
 	 * Input text widget.
 	 */
 	private Text text;
-	
+
 	/**
 	 * Error message label widget.
 	 */
@@ -98,7 +98,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		else
 			value = initialValue;
 		this.validator = validator;
-		
+
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	/* (non-Javadoc)
@@ -130,7 +130,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		// create OK and Cancel buttons by default
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		
+
 		//do this here because setting the text will set enablement on the ok button
 		text.setFocus();
 		if (value != null) {
@@ -146,7 +146,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		Font font = parent.getFont();
 		// create composite
 		Composite composite = (Composite)super.createDialogArea(parent);
-		
+
 		// create message
 		if (message != null) {
 			Label label = new Label(composite, SWT.WRAP);
@@ -159,9 +159,9 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 			label.setLayoutData(data);
 			label.setFont(font);
 		}
-		
+
 		text= new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL| SWT.H_SCROLL);
-		
+
 		GridData gridData= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_VERTICAL | GridData.VERTICAL_ALIGN_FILL);
 		gridData.heightHint = 50;
 		gridData.widthHint = 100;
@@ -174,13 +174,13 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 						if (okButton.isEnabled()) {
 							return;
 						}
-						errorMessageLabel.setText(IInternalDebugCoreConstants.EMPTY_STRING); 
+						errorMessageLabel.setText(IInternalDebugCoreConstants.EMPTY_STRING);
 						errorMessageLabel.getParent().update();
 						okButton.setEnabled(true);
 					}
 				}
 		);
-		
+
 		errorMessageLabel = new Label(composite, SWT.NONE);
 		errorMessageLabel.setLayoutData(new GridData(
 				GridData.GRAB_HORIZONTAL |
@@ -240,17 +240,17 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	 * </p>
 	 */
 	protected void validateInput() {
-		
+
 		String errorMessage = null;
-		
+
 		if (validator != null) {
 			errorMessage = validator.isValid(text.getText());
 		}
-		
+
 		// Bug 16256: important not to treat empty string (blank error) the same as null (no error)
 		errorMessageLabel.setText(errorMessage == null ? IInternalDebugCoreConstants.EMPTY_STRING : errorMessage);
 		okButton.setEnabled(errorMessage == null);
-		
+
 		errorMessageLabel.getParent().update();
 	}
 	@Override
@@ -260,16 +260,16 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 			super.okPressed();
 		}
 	}
-	
+
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".CHANGE_VARIABLE_VALUE_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -279,10 +279,10 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
 	 */

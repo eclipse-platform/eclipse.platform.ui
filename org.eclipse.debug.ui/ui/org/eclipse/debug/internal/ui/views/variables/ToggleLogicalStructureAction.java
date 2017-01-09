@@ -26,13 +26,13 @@ import org.eclipse.ui.PlatformUI;
  * is used for all debug models.
  */
 public class ToggleLogicalStructureAction extends Action {
-	
+
 	private VariablesView fView;
 
 	public ToggleLogicalStructureAction(VariablesView view) {
 		super(null, IAction.AS_CHECK_BOX);
 		setView(view);
-		setToolTipText(VariablesViewMessages.ToggleObjectBrowsersAction_1);  
+		setToolTipText(VariablesViewMessages.ToggleObjectBrowsersAction_1);
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_SHOW_LOGICAL_STRUCTURE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_SHOW_LOGICAL_STRUCTURE));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_SHOW_LOGICAL_STRUCTURE));
@@ -48,15 +48,15 @@ public class ToggleLogicalStructureAction extends Action {
 		if (!getView().isAvailable()) {
 			return;
 		}
-		getView().setShowLogicalStructure(isChecked());	
+		getView().setShowLogicalStructure(isChecked());
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
 			@Override
 			public void run() {
-				getView().getViewer().refresh();					
+				getView().getViewer().refresh();
 			}
-		});		
+		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#setChecked(boolean)
 	 */
@@ -64,7 +64,7 @@ public class ToggleLogicalStructureAction extends Action {
 	public void setChecked(boolean value) {
 		super.setChecked(value);
 	}
-	
+
 	protected VariablesView getView() {
 		return fView;
 	}

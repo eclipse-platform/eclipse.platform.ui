@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.TreePath;
  * @since 3.3
  */
 public class FilterTransformTests extends TestCase {
-	
+
 	public Object root;
 	public Object element0;
 	public Object element1;
@@ -30,16 +30,16 @@ public class FilterTransformTests extends TestCase {
 	public Object element5;
 	public Object element6;
 	public Object element7;
-	
+
 	public FilterTransform transform;
-	
+
 	/**
 	 * @param name
 	 */
 	public FilterTransformTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Builds a filter transform. Model has 8 elements,
 	 * and elements 0, 2, 3, 6, 7 are filtered. Elements
@@ -64,7 +64,7 @@ public class FilterTransformTests extends TestCase {
 		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 6, element6));
 		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 7, element7));
 	}
-	
+
 	protected boolean equals(int[] a, int[] b) {
 		if (a.length == b.length) {
 			for (int i = 0; i < b.length; i++) {
@@ -83,13 +83,13 @@ public class FilterTransformTests extends TestCase {
 		assertFalse("Element should be unfiltered", transform.isFiltered(TreePath.EMPTY, 3)); //$NON-NLS-1$
 		assertTrue("Wrong filter state", equals(transform.getFilteredChildren(TreePath.EMPTY), new int[] { 0, 2, 5, 6 })); //$NON-NLS-1$
 	}
-	
+
 	public void testRemoveFirstElementFromFilters() {
 		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 0)); //$NON-NLS-1$
 		transform.removeElementFromFilters(TreePath.EMPTY, element0);
 		assertFalse("Element should be unfiltered", transform.isFiltered(TreePath.EMPTY, 0)); //$NON-NLS-1$
 		assertTrue("Wrong filter state", equals(transform.getFilteredChildren(TreePath.EMPTY), new int[] { 1, 2, 5, 6 })); //$NON-NLS-1$
-	}	
+	}
 
 	public void testRemoveLastFromFilters() {
 		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 7)); //$NON-NLS-1$
@@ -97,45 +97,45 @@ public class FilterTransformTests extends TestCase {
 		assertFalse("Element should be unfiltered", transform.isFiltered(TreePath.EMPTY, 7)); //$NON-NLS-1$
 		assertTrue("Wrong filter state", equals(transform.getFilteredChildren(TreePath.EMPTY), new int[] { 0, 2, 3, 6 })); //$NON-NLS-1$
 	}
-	
+
 	public void testClearMiddleElementFromFilters() {
 		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 3)); //$NON-NLS-1$
 		transform.clear(TreePath.EMPTY, 3);
 		assertFalse("Element should be unfiltered", transform.isFiltered(TreePath.EMPTY, 3)); //$NON-NLS-1$
 		assertTrue("Wrong filter state", equals(transform.getFilteredChildren(TreePath.EMPTY), new int[] { 0, 2, 6, 7 })); //$NON-NLS-1$
 	}
-	
+
 	public void testClearFirstElementFromFilters() {
 		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 0)); //$NON-NLS-1$
 		transform.clear(TreePath.EMPTY, 0);
 		assertFalse("Element should be unfiltered", transform.isFiltered(TreePath.EMPTY, 0)); //$NON-NLS-1$
 		assertTrue("Wrong filter state", equals(transform.getFilteredChildren(TreePath.EMPTY), new int[] { 2, 3, 6, 7 })); //$NON-NLS-1$
-	}	
+	}
 
 	public void testClearLastFromFilters() {
 		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 7)); //$NON-NLS-1$
 		transform.clear(TreePath.EMPTY, 7);
 		assertFalse("Element should be unfiltered", transform.isFiltered(TreePath.EMPTY, 7)); //$NON-NLS-1$
 		assertTrue("Wrong filter state", equals(transform.getFilteredChildren(TreePath.EMPTY), new int[] { 0, 2, 3, 6 })); //$NON-NLS-1$
-	}	
-	
+	}
+
 	public void testViewToModelCount() {
 		assertEquals("Wrong model count", 8, transform.viewToModelCount(TreePath.EMPTY, 3)); //$NON-NLS-1$
 	}
-	
+
 	public void testViewToModelIndex() {
 		assertEquals("Wrong model index", 1, transform.viewToModelIndex(TreePath.EMPTY, 0)); //$NON-NLS-1$
 		assertEquals("Wrong model index", 4, transform.viewToModelIndex(TreePath.EMPTY, 1)); //$NON-NLS-1$
 		assertEquals("Wrong model index", 5, transform.viewToModelIndex(TreePath.EMPTY, 2)); //$NON-NLS-1$
 	}
-	
+
 	public void testAddAlreadyFiltered() {
 		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 0)); //$NON-NLS-1$
 		boolean added = transform.addFilteredIndex(TreePath.EMPTY, 0, element0);
 		assertFalse("Filter should not be added - should already have been there", added); //$NON-NLS-1$
 	}
-	
-	
+
+
 	/**
 	 * Test to make sure that setModelChildCount() updates internal arrays appropriately.
 	 * See bug 200325.

@@ -29,20 +29,20 @@ import org.osgi.service.prefs.BackingStoreException;
 public class DetailPaneWordWrapAction extends Action {
 
 	ITextViewer fTextViewer;
-	
+
 	public DetailPaneWordWrapAction(ITextViewer textViewer) {
 		super(ActionMessages.DetailPaneWordWrapAction_0,IAction.AS_CHECK_BOX);
-        
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.DETAIL_PANE_WORD_WRAP_ACTION);
-		
+
 		fTextViewer = textViewer;
 		setEnabled(true);
-		
+
 		boolean prefSetting = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP);
 		fTextViewer.getTextWidget().setWordWrap(prefSetting);
 		setChecked(prefSetting);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */

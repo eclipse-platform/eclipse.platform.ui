@@ -26,25 +26,25 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * A contributed breakpoint organizer.
  */
 public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBreakpointOrganizerDelegateExtension {
-	
+
 	private IConfigurationElement fElement;
 	private IBreakpointOrganizerDelegate fDelegate;
 	private ImageDescriptor fDescriptor;
-	
+
 	// attributes
 	public static final String ATTR_LABEL = "label"; //$NON-NLS-1$
 	public static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	public static final String ATTR_ID = "id"; //$NON-NLS-1$
 	public static final String ATTR_ICON = "icon"; //$NON-NLS-1$
     public static final String ATTR_OTHERS_LABEL = "othersLabel"; //$NON-NLS-1$
-	
+
 	public BreakpointOrganizerExtension(IConfigurationElement element) {
 		fElement = element;
 	}
-	
+
 	/**
 	 * Returns the image descriptor for this organizer.
-	 * 
+	 *
 	 * @return image descriptor
 	 */
 	@Override
@@ -55,32 +55,32 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 				fDescriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 		}
-		return fDescriptor;		
+		return fDescriptor;
 	}
-	
+
 	/**
 	 * Returns this organizer's label.
-	 * 
+	 *
 	 * @return this organizer's label
 	 */
 	@Override
 	public String getLabel() {
 		return fElement.getAttribute(ATTR_LABEL);
 	}
-    
+
     /**
      * Returns this organizer's identifier.
-     * 
+     *
      * @return this organizer's identifier
      */
     @Override
 	public String getIdentifier() {
         return fElement.getAttribute(ATTR_ID);
     }
-	
+
 	/**
 	 * Returns this organizer's delegate, instantiating it if required.
-	 * 
+	 *
 	 * @return this organizer's delegate
 	 */
 	protected IBreakpointOrganizerDelegate getOrganizer() {
@@ -168,7 +168,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 	public String getOthersLabel() {
         String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
         if (attribute == null) {
-            return DebugUIViewsMessages.OtherBreakpointOrganizer_0; 
+            return DebugUIViewsMessages.OtherBreakpointOrganizer_0;
         }
         return attribute;
     }
@@ -209,6 +209,6 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 				removeBreakpoint(breakpoints[i], category);
 			}
 		}
-		
+
 	}
 }

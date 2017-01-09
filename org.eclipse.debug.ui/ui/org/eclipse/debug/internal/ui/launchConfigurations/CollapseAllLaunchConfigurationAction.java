@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,12 +27,12 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	 * Action identifier for IDebugView#getAction(String)
 	 */
 	public static final String ID_COLLAPSEALL_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_COLLAPSEALL_ACTION"; //$NON-NLS-1$
-	
+
 	/**
-	 * the viewer to perform the collapse all on 
+	 * the viewer to perform the collapse all on
 	 */
 	private TreeViewer fViewer = null;
-	
+
 	/**
 	 * Constructor
 	 * @param viewer the viewer to perform the collapse all on
@@ -87,5 +87,5 @@ public class CollapseAllLaunchConfigurationAction extends Action {
 	@Override
 	public String getDescription() {
 		return LaunchConfigurationsMessages.CollapseAllLaunchConfigurationAction_2;
-	}	
+	}
 }

@@ -33,99 +33,99 @@ public interface IPresentationContext {
 
 	/**
 	 * Property indicating whether the presentation context is disposed.
-	 * It is set to <code>Boolean.TRUE</code> after the presentation context 
-	 * is disposed. This property may be <code>null</code>, which indicates 
+	 * It is set to <code>Boolean.TRUE</code> after the presentation context
+	 * is disposed. This property may be <code>null</code>, which indicates
 	 * that context is not yet disposed.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String PROPERTY_DISPOSED = "PROPERTY_DISPOSED"; //$NON-NLS-1$
-	
+
     /**
      * Returns identifiers of the visible columns in the order
      * labels should be provided, or <code>null</code> if columns
      * are not being displayed. Label providers use this
-     * information. 
-     * 
+     * information.
+     *
      * @return visible column identifiers or <code>null</code>
      * @see IColumnPresentation
      */
     public String[] getColumns();
-    
+
     /**
      * Registers the given listener for property change notification.
-     * 
+     *
      * @param listener property listener
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener);
-    
+
     /**
      * Unregisters the given listener from property change notification.
-     * 
+     *
      * @param listener property listener.
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener);
-    
+
     /**
      * Returns the id of this presentation context. Usually this is the id of
      * the associated part. However, when no part is associated with this context,
      * the id may exist on its own. Allows for a context that is not tied to a part.
-     * 
+     *
      * @return id
      * @since 3.3
      */
     public String getId();
-    
+
     /**
      * Sets the specified property and notifies listeners of changes.
-     * 
+     *
      * @param property property name
      * @param value property value
      */
     public void setProperty(String property, Object value);
-    
+
     /**
      * Returns the property with the specified name or <code>null</code>
      * if none.
-     * 
+     *
      * @param property property name
      * @return property value or <code>null</code>
      */
     public Object getProperty(String property);
-    
+
     /**
      * Disposes this presentation context. Called by the framework
      * when the associated viewer is disposed.
      */
     public void dispose();
-    
+
     /**
      * Returns all keys of properties currently set in this context,
      * possibly an empty collection
-     * 
+     *
      * @return keys of all current properties
      * @since 3.4
      */
     public String[] getProperties();
-    
+
     /**
      * Returns the part that this presentation context is associated with.
-     * May return <code>null</code> if the presentation is not associated 
+     * May return <code>null</code> if the presentation is not associated
      * with a part.
-     *  
-     * @return IWorkbenchPart or <code>null</code> 
+     *
+     * @return IWorkbenchPart or <code>null</code>
      * @since 3.6
      */
     public IWorkbenchPart getPart();
-    
+
     /**
      * Returns the window that this presentation context is associated with.
-     * May return <code>null</code> if the presentation is not associated 
+     * May return <code>null</code> if the presentation is not associated
      * with a window.
-     *  
-     * @return IWorkbenchWindow or <code>null</code> 
+     *
+     * @return IWorkbenchWindow or <code>null</code>
      * @since 3.6
      */
     public IWorkbenchWindow getWindow();
-    
+
 }

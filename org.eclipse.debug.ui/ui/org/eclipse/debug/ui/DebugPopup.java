@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -50,7 +50,7 @@ public abstract class DebugPopup extends PopupDialog {
     private IHandlerService fHandlerService;
 
 	private String fCommandId;
-	
+
 	private boolean fPersisted = false;
 
     /**
@@ -58,7 +58,7 @@ public abstract class DebugPopup extends PopupDialog {
      * @param parent The parent shell
      * @param anchor point at which to anchor the popup dialog in Display coordinate space.
      * 	Since 3.3, <code>null</code> can be specified to use a default anchor point
-     * @param commandId The command id to be used for persistence of 
+     * @param commandId The command id to be used for persistence of
      *  the dialog, or <code>null</code>
      */
     public DebugPopup(Shell parent, Point anchor, String commandId) {
@@ -68,7 +68,7 @@ public abstract class DebugPopup extends PopupDialog {
     }
 
     /**
-     * Returns the text to be shown in the popups's information area. 
+     * Returns the text to be shown in the popups's information area.
      * May return <code>null</code>.
      * <p>
      * By default, if this dialog has a persistence command associated with it,
@@ -82,7 +82,7 @@ public abstract class DebugPopup extends PopupDialog {
 	        IWorkbench workbench = PlatformUI.getWorkbench();
 	        IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 	        String formattedBinding = bindingService.getBestActiveBindingFormattedFor(getCommandId());
-	        
+
 	        String infoText = null;
 	        if (formattedBinding != null) {
 				infoText = MessageFormat.format(DebugUIViewsMessages.InspectPopupDialog_1, new Object[] {
@@ -92,7 +92,7 @@ public abstract class DebugPopup extends PopupDialog {
     	}
     	return null;
     }
-    
+
     /**
      * Returns the text to be shown as the action performed when this dialog's
      * persist command is invoked, or <code>null</code>.
@@ -108,9 +108,9 @@ public abstract class DebugPopup extends PopupDialog {
 
     /**
      * Returns the command id to be used for persisting the contents of the
-     * dialog. If the contents should not be persisted, this method should 
-     * return null. 
-     * 
+     * dialog. If the contents should not be persisted, this method should
+     * return null.
+     *
      * @return The command id to be used for persisting the contents of the
      * dialog or <code>null</code>
      */
@@ -125,10 +125,10 @@ public abstract class DebugPopup extends PopupDialog {
     protected void persist() {
     	fPersisted = true;
     }
-    
+
     /**
      * Returns whether the command handler was invoked to persist this popup's result.
-     * 
+     *
      * @return whether the command handler was invoked to persist this popup's result
      */
     protected boolean wasPersisted() {
@@ -144,11 +144,11 @@ public abstract class DebugPopup extends PopupDialog {
 
 
     /**
-     * Returns the initial location to use for the shell based upon the 
-     * current selection in the viewer. Bottom is preferred to top, and 
+     * Returns the initial location to use for the shell based upon the
+     * current selection in the viewer. Bottom is preferred to top, and
      * right is preferred to left, therefore if possible the popup will
      * be located below and to the right of the selection.
-     * 
+     *
      * @param initialSize
      *            the initial size of the shell, as returned by
      *            <code>getInitialSize</code>.
@@ -180,7 +180,7 @@ public abstract class DebugPopup extends PopupDialog {
         return settings;
     }
 
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.PopupDialog#open()
      */
@@ -206,7 +206,7 @@ public abstract class DebugPopup extends PopupDialog {
         if (infoText != null) {
 			setInfoText(infoText);
 		}
-        
+
         return super.open();
     }
 

@@ -45,7 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * an appropriate <code>IRunToLineTarget</code> adapter.
  * <p>
  * Clients may reference/contribute this class as an action delegate
- * in plug-in XML. 
+ * in plug-in XML.
  * </p>
  * <p>
  * Since 3.1, this action also implements {@link org.eclipse.ui.IViewActionDelegate}.
@@ -55,13 +55,13 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2, IViewActionDelegate {
-	
+
 	private IWorkbenchPart fActivePart = null;
 	private IRunToLineTarget fPartTarget = null;
 	private IAction fAction = null;
 	private DebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
-	
+
 	class DebugContextListener implements IDebugContextListener {
 
 		protected void contextActivated(ISelection selection) {
@@ -80,9 +80,9 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		public void debugContextChanged(DebugContextEvent event) {
 			contextActivated(event.getContext());
 		}
-		
-	}		
-	
+
+	}
+
 	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
@@ -91,7 +91,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		DebugUITools.getDebugContextManager().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
 		fActivePart = null;
 		fPartTarget = null;
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -102,7 +102,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			try {
 				fPartTarget.runToLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.RunToLineAction_0, ActionMessages.RunToLineAction_1, e.getStatus()); // 
+				DebugUIPlugin.errorDialog(fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.RunToLineAction_0, ActionMessages.RunToLineAction_1, e.getStatus()); //
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		this.fAction = action;
 		update();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -136,20 +136,20 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 					    }
 					}
 				}
-				fAction.setEnabled(enabled);				
+				fAction.setEnabled(enabled);
 			}
 		};
 		DebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	@Override
 	public void init(IAction action) {
-		this.fAction = action; 
+		this.fAction = action;
 		if (action != null) {
-			action.setText(ActionMessages.RunToLineActionDelegate_4); 
+			action.setText(ActionMessages.RunToLineActionDelegate_4);
 			action.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_RUN_TO_LINE));
 			action.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RUN_TO_LINE));
 		}
@@ -167,9 +167,9 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
-		bindTo(targetEditor);	
+		bindTo(targetEditor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
@@ -177,10 +177,10 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	public void init(IViewPart view) {
 		bindTo(view);
 	}
-	
+
 	/**
 	 * Binds this action to operate on the given part's run to line adapter.
-	 *  
+	 *
 	 * @param part the workbench part to bind this delegate to
 	 */
 	private void bindTo(IWorkbenchPart part) {
@@ -205,6 +205,6 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			ISelection activeContext = service.getActiveContext();
 			fContextListener.contextActivated(activeContext);
 		}
-		update();			
+		update();
 	}
 }

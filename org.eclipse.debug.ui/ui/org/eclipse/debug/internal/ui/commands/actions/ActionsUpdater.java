@@ -13,18 +13,18 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 /**
  * Collects votes from handler update requests.
- * 
+ *
  * @since 3.3
  *
  */
 public class ActionsUpdater {
-	
+
 	private IEnabledTarget[] fActions;
 	private int fNumVoters;
 	private int fNumOfVotes = 0;
 	private boolean fDone = false;
 	private boolean fEnabled = true;
-	
+
 	public ActionsUpdater(IEnabledTarget[] actions, int numVoters) {
 		fActions = actions;
 		fNumVoters = numVoters;

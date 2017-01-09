@@ -122,7 +122,7 @@ public abstract class AbstractBreadcrumb {
 	        fBreadcrumbViewer.refresh();
 	    }
 	}
-	
+
     /**
      * Activates the breadcrumb. This sets the keyboard focus
      * inside this breadcrumb and retargets the editor
@@ -170,7 +170,7 @@ public abstract class AbstractBreadcrumb {
 			@Override
 			public void handleEvent(Event event) {
 			    if (fComposite.isDisposed()) return;
-			    
+
 				if (isBreadcrumbEvent(event)) {
 					if (fHasFocus)
 						return;
@@ -230,7 +230,7 @@ public abstract class AbstractBreadcrumb {
 	 */
 	private void doOpen(ISelection selection) {
 		if (open(selection)) {
-            fBreadcrumbViewer.setInput(getCurrentInput());		    
+            fBreadcrumbViewer.setInput(getCurrentInput());
 		}
 	}
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public abstract class ToggleFilterAction extends Action {
 	 * The viewer that this action works for
 	 */
 	private StructuredViewer fViewer;
-	
+
 	/**
 	 * The filter this action applies to the viewer
 	 */
@@ -61,7 +61,7 @@ public abstract class ToggleFilterAction extends Action {
 					if (!alreadyAdded) {
 						getViewer().addFilter(filter);
 					}
-					
+
 				} else {
 					getViewer().removeFilter(getViewerFilter());
 				}
@@ -81,7 +81,7 @@ public abstract class ToggleFilterAction extends Action {
 	protected void setViewerFilter(ViewerFilter filter) {
 		fViewerFilter= filter;
 	}
-	
+
 	protected StructuredViewer getViewer() {
 		return fViewer;
 	}

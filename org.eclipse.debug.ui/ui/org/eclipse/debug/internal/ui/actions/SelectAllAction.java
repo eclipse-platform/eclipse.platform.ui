@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 public abstract class SelectAllAction extends AbstractRemoveAllActionDelegate {
-	
+
 	private IViewPart fView;
 
 	/* (non-Javadoc)
@@ -38,13 +38,13 @@ public abstract class SelectAllAction extends AbstractRemoveAllActionDelegate {
 		}
 		super.init(view);
 	}
-	
+
 	protected IViewPart getView() {
 		return fView;
 	}
-	
+
 	protected abstract String getActionId();
-	
+
 	private void collectExpandedAndVisible(TreeItem[] items, List<TreeItem> result) {
 		for (int i= 0; i < items.length; i++) {
 			TreeItem item= items[i];
@@ -73,5 +73,5 @@ public abstract class SelectAllAction extends AbstractRemoveAllActionDelegate {
 			viewer.setSelection(viewer.getSelection());
 		}
 	}
-	
+
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core;
 
- 
+
 /**
  * Notified when a launch configuration is created,
  * deleted, or changed.
@@ -20,34 +20,34 @@ package org.eclipse.debug.core;
  * @since 2.0
  */
 public interface ILaunchConfigurationListener {
-	
+
 	/**
 	 * The given launch configuration has been created.
-	 * 
+	 *
 	 * @param configuration the newly created launch configuration
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration);
-	
+
 	/**
 	 * The given launch configuration has changed in some way.
 	 * The configuration may be a working copy.
-	 * 
+	 *
 	 * @param configuration the launch configuration that has
 	 *  changed
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration);
-	
+
 	/**
 	 * The given launch configuration has been deleted.
 	 * <p>
-	 * The launch configuration no longer exists. Data stored 
+	 * The launch configuration no longer exists. Data stored
 	 * in the configuration can no longer be accessed, however
 	 * handle-only attributes of the launch configuration
 	 * can be retrieved.
 	 * </p>
-	 * 
+	 *
 	 * @param configuration the deleted launch configuration
 	 */
-	public void launchConfigurationRemoved(ILaunchConfiguration configuration);	
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration);
 }
 

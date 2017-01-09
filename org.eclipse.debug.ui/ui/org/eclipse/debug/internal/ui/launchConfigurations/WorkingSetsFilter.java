@@ -28,11 +28,11 @@ import org.eclipse.ui.IWorkingSet;
 /**
  * creates a filter for the current working sets in use on the workbench to be applied in the launch configuration
  * dialog and the launch history/last launched
- * 
+ *
  * @since 3.2
  */
 public class WorkingSetsFilter extends ViewerFilter {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -75,7 +75,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 						return true;
 					}
 				}
-			} 
+			}
 			catch (CoreException e) {}
 		}
 		return false;
@@ -98,7 +98,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 			}
 		}
 		IResource lres = null;
-		for(int i = 0; i < wsets.length; i++) {	
+		for(int i = 0; i < wsets.length; i++) {
 			IAdaptable[] elements = wsets[i].getElements();
 			for(int j = 0; j < elements.length; j++) {
 				lres = elements[j].getAdapter(IResource.class);
@@ -111,5 +111,5 @@ public class WorkingSetsFilter extends ViewerFilter {
 		}
 		return false;
 	}
-	
+
 }

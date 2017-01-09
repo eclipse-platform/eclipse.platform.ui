@@ -16,15 +16,15 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Creates context specific cell modifiers and editors for elements.
- *  
+ *
  * @since 3.3
  */
 public interface IElementEditor {
-	
+
 	/**
 	 * Returns a cell editor to use for the specified column and object or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param context presentation context
 	 * @param columnId column id
 	 * @param element object to be edited
@@ -32,15 +32,15 @@ public interface IElementEditor {
 	 * @return cell editor or <code>null</code>
 	 */
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent);
-	
+
 	/**
 	 * Returns a cell modifier for the specified element in the given context
 	 * or <code>null</code> if none.
 	 * @param context Presentation context
 	 * @param element Model element.
-	 * 
+	 *
 	 * @return cell modifier or <code>null</code>
 	 */
-	public ICellModifier getCellModifier(IPresentationContext context, Object element);	
+	public ICellModifier getCellModifier(IPresentationContext context, Object element);
 
 }

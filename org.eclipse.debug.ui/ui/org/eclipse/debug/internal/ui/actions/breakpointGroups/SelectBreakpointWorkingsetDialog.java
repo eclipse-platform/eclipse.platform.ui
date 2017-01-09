@@ -28,14 +28,14 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Dialog to allow the selection of working sets without all of the overhead of the
  * platform UI working set dialog
- * 
+ *
  * @since 3.3
  */
 public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelectionDialog {
-	
+
 	private static final String SETTINGS_ID = DebugUIPlugin.getUniqueIdentifier() + ".DELETE_ASSOCIATED_CONFIGS_DIALOG"; //$NON-NLS-1$
 	private IWorkingSet[] fWorkingSetList = null;
-	
+
 	/**
 	 * Constructor
 	 * @param parentShell the parent to open this dialog on
@@ -44,7 +44,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 		super(parentShell);
 		fWorkingSetList = getBreakpointWorkingSets();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
@@ -61,7 +61,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 			});
 		}
 	}
-	
+
 	/**
 	 * Returns the current listing of breakpoint <code>IWorkingSet</code>s
 	 * @return an array of the current breakpoint <code>IWorkingSet</code>s
@@ -76,7 +76,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 		}
 		return list.toArray(new IWorkingSet[list.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
@@ -84,7 +84,7 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	protected Object getViewerInput() {
 		return fWorkingSetList;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
@@ -108,5 +108,5 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	protected String getViewerLabel() {
 		return BreakpointGroupMessages.SelectBreakpointWorkingsetDialog_0;
 	}
-	
+
 }

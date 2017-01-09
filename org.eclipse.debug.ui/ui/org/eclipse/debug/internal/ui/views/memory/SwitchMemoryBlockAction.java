@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not
  *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 
@@ -57,7 +57,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	/**
 	 * A job that updates the enablement of the of the backing action delegate
 	 * in the UI thread
-	 * 
+	 *
 	 * @since 3.3.0
 	 */
 	class UpdateActionEnablementJob extends UIJob {
@@ -294,7 +294,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 
 	/**
 	 * Returns the current memory blocks tree viewer, or <code>null</code>
-	 * 
+	 *
 	 * @return the memory blocks tree viewer or <code>null</code>
 	 */
 	private StructuredViewer getViewer() {
@@ -413,7 +413,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 
 	/**
 	 * Returns the current memory block
-	 * 
+	 *
 	 * @return the current memory block or <code>null</code>
 	 */
 	private IMemoryBlock getCurrentMemoryBlock() {
@@ -438,7 +438,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 
 	/**
 	 * Decorate the label for the specified <code>IMemoryBlock</code>
-	 * 
+	 *
 	 * @param memBlk
 	 * @param label
 	 * @return the decorated label for the specified <code>IMemoryBlock</code>
