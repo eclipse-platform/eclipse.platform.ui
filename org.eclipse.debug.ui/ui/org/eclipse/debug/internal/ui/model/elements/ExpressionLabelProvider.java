@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind Rvier Systems - added support for columns (bug 235646)
+ *     Ralf M Petter <ralf.petter@gmail.com> - (bug 470536)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -111,10 +112,10 @@ protected String getLabel(TreePath elementPath, IPresentationContext context, St
         
         String snippet = expression.getExpressionText().trim();
         StringBuffer snippetBuffer = new StringBuffer();
-        if (snippet.length() > 30){
-            snippetBuffer.append(snippet.substring(0, 15));
+		if (snippet.length() > 254) {
+			snippetBuffer.append(snippet.substring(0, 127));
             snippetBuffer.append(DebugUIMessages.DefaultLabelProvider_0);
-            snippetBuffer.append(snippet.substring(snippet.length() - 15));
+			snippetBuffer.append(snippet.substring(snippet.length() - 127));
         } else {
             snippetBuffer.append(snippet);
         }
