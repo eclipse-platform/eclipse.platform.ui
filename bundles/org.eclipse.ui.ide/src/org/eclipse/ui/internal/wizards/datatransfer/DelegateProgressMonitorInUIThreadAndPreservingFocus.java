@@ -40,9 +40,15 @@ class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMo
 
 	private void inUIThread(Runnable r) {
 		if (display == Display.getCurrent()) {
-			r.run();
+			if (!delegate.isDisposed()) {
+				r.run();
+			}
 		} else {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(r);
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+				if (!delegate.isDisposed()) {
+					r.run();
+				}
+			});
 		}
 	}
 
