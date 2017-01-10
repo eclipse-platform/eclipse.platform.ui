@@ -52,17 +52,17 @@ public class SimpleModel {
 		add(objects, false);
 	}
 	public void add(NamedObject[] objs, boolean notify) {
-		for (int i = 0; i < objs.length; i++) {
-			objects.add(objs[i]);
-			objs[i].setModel(this);
+		for (NamedObject obj : objs) {
+			objects.add(obj);
+			obj.setModel(this);
 		}
 		if (notify)
 			fireModelChanged(objs, IModelListener.ADDED, "");
 	}
 	public void remove(NamedObject[] objs, boolean notify) {
-		for (int i = 0; i < objs.length; i++) {
-			objects.remove(objs[i]);
-			objs[i].setModel(null);
+		for (NamedObject obj : objs) {
+			objects.remove(obj);
+			obj.setModel(null);
 		}
 		if (notify)
 			fireModelChanged(objs, IModelListener.REMOVED, "");

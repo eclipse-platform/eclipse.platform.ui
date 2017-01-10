@@ -288,9 +288,9 @@ public class NewStylePage extends FormPage {
 
 		Control[] children = client.getChildren();
 		ArrayList<Button> buttons = new ArrayList<>();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Button) {
-				Button button = (Button) children[i];
+		for (Control element : children) {
+			if (element instanceof Button) {
+				Button button = (Button) element;
 				if ((button.getStyle() & SWT.CHECK) != 0 && !button.equals(dbutton)) {
 					buttons.add(button);
 				}
@@ -311,8 +311,8 @@ public class NewStylePage extends FormPage {
 					addRemoveMessage((Button) e.widget, form.getMessageManager());
 			}
 		};
-		for (int i = 0; i < checkboxes.length; i++)
-			checkboxes[i].addSelectionListener(mmListener);
+		for (Button checkbox : checkboxes)
+			checkbox.addSelectionListener(mmListener);
 
 		final Button autoUpdate = toolkit.createButton(client2,
 				"Auto update message manager", SWT.CHECK);
@@ -386,8 +386,8 @@ public class NewStylePage extends FormPage {
 				IMessageManager mm = form.getMessageManager();
 				mm.setAutoUpdate(false);
 				if (selection) {
-					for (int i = 0; i < checkboxes.length; i++) {
-						addRemoveMessage(checkboxes[i], mm);
+					for (Button checkbox : checkboxes) {
+						addRemoveMessage(checkbox, mm);
 					}
 				}
 				else {
