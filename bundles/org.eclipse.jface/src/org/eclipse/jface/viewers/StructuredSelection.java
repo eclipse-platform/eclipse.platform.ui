@@ -159,7 +159,7 @@ public class StructuredSelection implements IStructuredSelection {
 	@Override
 	public int hashCode() {
 		if (isEmpty()) {
-			return Objects.hashCode(comparer);
+			return 31 + Objects.hashCode(comparer);
 		}
 
 		int r;
