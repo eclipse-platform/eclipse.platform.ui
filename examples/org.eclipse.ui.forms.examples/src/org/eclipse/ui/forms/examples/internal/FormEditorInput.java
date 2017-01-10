@@ -21,27 +21,33 @@ public class FormEditorInput implements IEditorInput {
 		this.name = name;
 	}
 
+	@Override
 	public boolean exists() {
 		return true;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_OBJ_ELEMENT);
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
 
+	@Override
 	public String getToolTipText() {
 		return getName();
 	}
 
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}

@@ -33,6 +33,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 	 * @param title
 	 */
 	class MasterContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof SimpleFormEditorInput) {
 				SimpleFormEditorInput input = (SimpleFormEditorInput) page
@@ -41,17 +42,21 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 			}
 			return new Object[0];
 		}
+		@Override
 		public void dispose() {
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 	class MasterLabelProvider extends LabelProvider
 			implements
 				ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			if (obj instanceof TypeOne) {
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
@@ -64,6 +69,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 			return null;
 		}
 	}
+	@Override
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
 		//final ScrolledForm form = managedForm.getForm();
@@ -95,6 +101,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		managedForm.addPart(spart);
 		TableViewer viewer = new TableViewer(t);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 			}
@@ -103,9 +110,11 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		viewer.setLabelProvider(new MasterLabelProvider());
 		viewer.setInput(page.getEditor().getEditorInput());
 	}
+	@Override
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+			@Override
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);
 				form.reflow(true);
@@ -117,6 +126,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 				.getImageRegistry()
 				.getDescriptor(ExamplesPlugin.IMG_HORIZONTAL));
 		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+			@Override
 			public void run() {
 				sashForm.setOrientation(SWT.VERTICAL);
 				form.reflow(true);
@@ -129,6 +139,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);
 	}
+	@Override
 	protected void registerPages(DetailsPart detailsPart) {
 		detailsPart.registerPage(TypeOne.class, new TypeOneDetailsPage());
 		detailsPart.registerPage(TypeTwo.class, new TypeTwoDetailsPage());

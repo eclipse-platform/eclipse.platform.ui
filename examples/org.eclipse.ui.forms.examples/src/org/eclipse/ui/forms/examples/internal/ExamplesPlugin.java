@@ -63,6 +63,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		}
 	}
 
+	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_FORM_BG, "form_banner.gif");
 		registerImage(registry, IMG_LARGE, "large_image.gif");
@@ -131,6 +132,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			if (formColors != null) {

@@ -74,6 +74,7 @@ public class NewStylePage extends FormPage {
 		super(editor, "newStyle", "New Style");
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
@@ -117,6 +118,7 @@ public class NewStylePage extends FormPage {
 		lbutton.setLayoutData(gd);
 		lbutton.setEnabled(false);
 		tbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTitle(form, tbutton.getSelection(), sbutton
 						.getSelection());
@@ -125,12 +127,14 @@ public class NewStylePage extends FormPage {
 			}
 		});
 		sbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTitle(form, tbutton.getSelection(), sbutton
 						.getSelection());
 			}
 		});
 		lbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTitle(form, tbutton.getSelection(), sbutton
 						.getSelection());
@@ -139,6 +143,7 @@ public class NewStylePage extends FormPage {
 		final Button ibutton = toolkit.createButton(client, "Add image",
 				SWT.CHECK);
 		ibutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateImage(form, ibutton.getSelection());
 			}
@@ -150,6 +155,7 @@ public class NewStylePage extends FormPage {
 		final Button albutton = toolkit.createButton(client, "Set tool bar allignment to SWT.BOTTOM",
 				SWT.CHECK);
 		albutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.getForm().setToolBarVerticalAlignment(albutton.getSelection()?SWT.BOTTOM:SWT.TOP);
 				form.reflow(true);
@@ -160,6 +166,7 @@ public class NewStylePage extends FormPage {
 		albutton.setLayoutData(gd);
 		albutton.setEnabled(false);
 		tbbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addToolBar(toolkit, form, tbbutton.getSelection());
 				albutton.setEnabled(tbbutton.getSelection());
@@ -169,6 +176,7 @@ public class NewStylePage extends FormPage {
 		final Button gbutton = toolkit.createButton(client,
 				"Paint background gradient", SWT.CHECK);
 		gbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addHeadingGradient(toolkit, form, gbutton.getSelection());
 			}
@@ -177,6 +185,7 @@ public class NewStylePage extends FormPage {
 		final Button clbutton = toolkit.createButton(client, "Add head client",
 				SWT.CHECK);
 		clbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addHeadClient(toolkit, form, clbutton.getSelection());
 			}
@@ -185,6 +194,7 @@ public class NewStylePage extends FormPage {
 		final Button mbutton = toolkit.createButton(client,
 				"Add drop-down menu", SWT.CHECK);
 		mbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addMenu(toolkit, form, mbutton.getSelection());
 			}
@@ -193,6 +203,7 @@ public class NewStylePage extends FormPage {
 		final Button dbutton = toolkit.createButton(client, "Add drag support",
 				SWT.CHECK);
 		dbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dbutton.getSelection()) {
 					addDragSupport(form);
@@ -231,6 +242,7 @@ public class NewStylePage extends FormPage {
 		longMessage.setLayoutData(gd);
 
 		final IHyperlinkListener listener = new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String title = e.getLabel();
 				String details = (String)e.getHref();
@@ -265,6 +277,7 @@ public class NewStylePage extends FormPage {
 		gd.horizontalSpan = 4;
 		hyperMessage.setLayoutData(gd);
 		hyperMessage.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (hyperMessage.getSelection())
 					form.getForm().addMessageHyperlinkListener(listener);
@@ -292,6 +305,7 @@ public class NewStylePage extends FormPage {
 		manageMessage.setLayoutData(gd);
 
 		SelectionAdapter mmListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (manageMessage.getSelection() && e.widget instanceof Button)
 					addRemoveMessage((Button) e.widget, form.getMessageManager());
@@ -308,18 +322,21 @@ public class NewStylePage extends FormPage {
 		autoUpdate.setSelection(true);
 		autoUpdate.setEnabled(false);
 		autoUpdate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.getMessageManager().setAutoUpdate(autoUpdate.getSelection());
 			}
 		});
 
 		shortMessage.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(form.getMessageType(),
 						longMessage.getSelection()), form.getMessageType());
 			}
 		});
 		longMessage.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(form.getMessageType(),
 						longMessage.getSelection()), form.getMessageType());
@@ -328,6 +345,7 @@ public class NewStylePage extends FormPage {
 
 		final Button error = toolkit.createButton(client2, "Error", SWT.PUSH);
 		error.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(IMessageProvider.ERROR,
 						longMessage.getSelection()), IMessageProvider.ERROR);
@@ -336,6 +354,7 @@ public class NewStylePage extends FormPage {
 		});
 		final Button warning = toolkit.createButton(client2, "Warning", SWT.PUSH);
 		warning.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(IMessageProvider.WARNING,
 						longMessage.getSelection()), IMessageProvider.WARNING);
@@ -343,6 +362,7 @@ public class NewStylePage extends FormPage {
 		});
 		final Button info = toolkit.createButton(client2, "Info", SWT.PUSH);
 		info.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(IMessageProvider.INFORMATION,
 						longMessage.getSelection()),
@@ -351,11 +371,13 @@ public class NewStylePage extends FormPage {
 		});
 		final Button cancel = toolkit.createButton(client2, "Cancel", SWT.PUSH);
 		cancel.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(null, 0);
 			}
 		});
 		manageMessage.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean selection = manageMessage.getSelection();
 				if (!selection)
@@ -387,6 +409,7 @@ public class NewStylePage extends FormPage {
 		final Button busy = toolkit.createButton(client2, "Start Progress",
 				SWT.PUSH);
 		busy.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// IWorkbenchSiteProgressService service =
 				// (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
@@ -470,6 +493,7 @@ public class NewStylePage extends FormPage {
 	private void addToolBar(FormToolkit toolkit, ScrolledForm form, boolean add) {
 		if (add) {
 			Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+				@Override
 				public void run() {
 				}
 			};
@@ -479,6 +503,7 @@ public class NewStylePage extends FormPage {
 					.getImageRegistry().getDescriptor(
 							ExamplesPlugin.IMG_HORIZONTAL));
 			Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+				@Override
 				public void run() {
 				}
 			};
@@ -488,6 +513,7 @@ public class NewStylePage extends FormPage {
 					.getImageRegistry().getDescriptor(
 							ExamplesPlugin.IMG_VERTICAL));
 			ControlContribution save = new ControlContribution("save") {
+				@Override
 				protected Control createControl(Composite parent) {
 					Button saveButton = new Button(parent, SWT.PUSH);
 					saveButton.setText("Save");
@@ -507,6 +533,7 @@ public class NewStylePage extends FormPage {
 	private void addMenu(FormToolkit toolkit, ScrolledForm form, boolean add) {
 		if (add) {
 			Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+				@Override
 				public void run() {
 				}
 			};
@@ -517,6 +544,7 @@ public class NewStylePage extends FormPage {
 					.getImageRegistry().getDescriptor(
 							ExamplesPlugin.IMG_HORIZONTAL));
 			Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+				@Override
 				public void run() {
 				}
 			};
@@ -563,13 +591,16 @@ public class NewStylePage extends FormPage {
 		Transfer[] transferTypes = { TextTransfer.getInstance() };
 		form.getForm().addTitleDragSupport(operations, transferTypes,
 				new DragSourceListener() {
+					@Override
 					public void dragFinished(DragSourceEvent event) {
 					}
 
+					@Override
 					public void dragSetData(DragSourceEvent event) {
 						event.data = form.getForm().getText();
 					}
 
+					@Override
 					public void dragStart(DragSourceEvent event) {
 						event.doit = true;
 					}

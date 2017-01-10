@@ -18,6 +18,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class OpenFormDialog extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		SampleFormDialog dialog = new SampleFormDialog(window.getShell());

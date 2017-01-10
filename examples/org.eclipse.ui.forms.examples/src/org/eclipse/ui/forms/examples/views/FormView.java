@@ -51,6 +51,7 @@ public class FormView extends ViewPart {
 	 * This is a callback that will allow us to create the viewer and
 	 * initialize it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
@@ -61,6 +62,7 @@ public class FormView extends ViewPart {
 		Hyperlink link = toolkit.createHyperlink(form.getBody(), "Click here.",
 				SWT.WRAP);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				System.out.println("Link activated!");
 			}
@@ -90,11 +92,13 @@ public class FormView extends ViewPart {
 		enableHyperlink = toolkit.createButton(form.getBody(), "Hyperlink Enabled", SWT.CHECK);
 		enableHyperlink.setSelection(true);
 		enableHyperlink.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ih.setEnabled(enableHyperlink.getSelection());
 				form.reflow(true);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -107,6 +111,7 @@ public class FormView extends ViewPart {
 		clearHyperlinkImage.setSelection(true);
 		clearHyperlinkImage.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (clearHyperlinkImage.getSelection()) {
 					ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
@@ -116,6 +121,7 @@ public class FormView extends ViewPart {
 				form.reflow(true);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -138,6 +144,7 @@ public class FormView extends ViewPart {
 		td.colspan = 2;
 		ec.setLayoutData(td);
 		ec.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				form.reflow(true);
 			}
@@ -147,6 +154,7 @@ public class FormView extends ViewPart {
 		td.colspan = 2;
 		section.setLayoutData(td);
 		section.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				form.reflow(true);
 			}
@@ -192,6 +200,7 @@ public class FormView extends ViewPart {
 		rtext.setFont("code", JFaceResources.getTextFont());
 		rtext.setText(buf.toString(), true, false);
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				System.out.println("Link active: "+e.getHref());
 			}
@@ -224,6 +233,7 @@ public class FormView extends ViewPart {
 	/**
 	 * Passing the focus request to the form.
 	 */
+	@Override
 	public void setFocus() {
 		Control focusControl = form.getDisplay().getFocusControl();
 		if (focusControl!=null) {
@@ -241,6 +251,7 @@ public class FormView extends ViewPart {
 	/**
 	 * Disposes the toolkit
 	 */
+	@Override
 	public void dispose() {
 		toolkit.dispose();
 		super.dispose();

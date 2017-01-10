@@ -37,6 +37,7 @@ public class PageWithSubPages extends FormPage {
 	public PageWithSubPages(FormEditor editor) {
 		super(editor, "composite", "Composite Page");
 	}
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -59,6 +60,7 @@ public class PageWithSubPages extends FormPage {
 		createTabs(toolkit);
 		createText(toolkit, form.getBody());
 		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSelection();
 			}

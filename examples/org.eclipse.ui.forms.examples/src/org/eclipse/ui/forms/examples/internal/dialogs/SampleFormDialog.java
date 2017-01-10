@@ -29,6 +29,7 @@ public class SampleFormDialog extends FormDialog {
 		super(parentShell);
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		mform.getForm().setText("An example of a simple form dialog");
 		FreeFormPage.createSharedFormContent(mform);
