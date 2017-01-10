@@ -252,23 +252,20 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 			}
 			if (page != null) {
 				final IDetailsPage fpage = page;
-				BusyIndicator.showWhile(pageBook.getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						if (!pageBook.hasPage(key)) {
-							Composite parent = pageBook.createPage(key);
-							fpage.createContents(parent);
-							parent.setData(fpage);
-						}
-						//commit the current page
-						if (oldPage!=null && oldPage.isDirty())
-							oldPage.commit(false);
-						//refresh the new page
-						if (fpage.isStale())
-							fpage.refresh();
-						fpage.selectionChanged(masterPart, currentSelection);
-						pageBook.showPage(key);
+				BusyIndicator.showWhile(pageBook.getDisplay(), () -> {
+					if (!pageBook.hasPage(key)) {
+						Composite parent = pageBook.createPage(key);
+						fpage.createContents(parent);
+						parent.setData(fpage);
 					}
+					//commit the current page
+					if (oldPage!=null && oldPage.isDirty())
+						oldPage.commit(false);
+					//refresh the new page
+					if (fpage.isStale())
+						fpage.refresh();
+					fpage.selectionChanged(masterPart, currentSelection);
+					pageBook.showPage(key);
 				});
 				return;
 			}
