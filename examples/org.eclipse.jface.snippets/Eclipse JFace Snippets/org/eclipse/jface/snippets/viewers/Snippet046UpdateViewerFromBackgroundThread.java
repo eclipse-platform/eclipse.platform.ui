@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Tom Schindl and others.
+ * Copyright (c) 2006, 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 510301
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -165,8 +166,8 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 			if (!display.readAndDispatch ()) display.sleep ();
 		}
 
-		for( int i = 0; i < images.length; i++ ) {
-			images[i].dispose();
+		for (Image image : images) {
+			image.dispose();
 		}
 
 		display.dispose ();

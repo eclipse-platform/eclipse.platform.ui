@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Tom Schindl and others.
+ * Copyright (c) 2007, 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
- *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 413427, 510301
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
@@ -235,8 +235,8 @@ public class Snippet042ToolTipSupportFor32API {
 				display.sleep();
 		}
 
-		for (int i = 0; i < images.length; i++) {
-			images[i].dispose();
+		for (Image image : images) {
+			image.dispose();
 		}
 
 		display.dispose();

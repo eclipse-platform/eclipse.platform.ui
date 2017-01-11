@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Krkoska - initial API and implementation (bug 188333)
- *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427, 487940
+ *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427, 487940, 510301
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -169,8 +169,8 @@ public class Snippet049StyledCellLabelProvider {
 		@Override
 		public Object[] getElements(Object element) {
 			File[] roots = File.listRoots();
-			for (int i = 0; i < roots.length; i++) {
-				File[] list = roots[i].listFiles();
+			for (File root : roots) {
+				File[] list = root.listFiles();
 				if (list != null && list.length > 0) {
 					return list;
 				}
