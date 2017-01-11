@@ -375,7 +375,7 @@ public class FileCharSequenceProvider {
 				boolean endReached= buffer.fill(fReader, fReaderPos);
 				fReaderPos= buffer.getEndOffset();
 				if (endReached) {
-					fLength= new Integer(fReaderPos); // at least we know the size of the file now
+					fLength= Integer.valueOf(fReaderPos); // at least we know the size of the file now
 					fReaderPos= Integer.MAX_VALUE; // will have to reset next time
 					return true;
 				}

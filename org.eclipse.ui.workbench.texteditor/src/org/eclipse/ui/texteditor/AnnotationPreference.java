@@ -366,7 +366,7 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	protected void setValue(Object attribute, int value) {
-		fAttributes.put(attribute, new Integer(value));
+		fAttributes.put(attribute, Integer.valueOf(value));
 	}
 
 	/**

@@ -449,7 +449,7 @@ public class HippieCompletionTest {
 	private Accessor createAccessor(Iterator<String> suggestions, int startOffset) {
 		return new Accessor("org.eclipse.ui.texteditor.HippieCompleteAction$CompletionState",
 				getClass().getClassLoader(), new Class[] { Iterator.class, int.class }, new
-				Object[] { suggestions, new Integer(startOffset) });
+				Object[] { suggestions, Integer.valueOf(startOffset) });
 	}
 
 	private String next(Accessor state) {

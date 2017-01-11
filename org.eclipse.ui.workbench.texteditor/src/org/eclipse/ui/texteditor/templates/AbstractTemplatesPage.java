@@ -1390,7 +1390,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			message= TemplatesMessages.TemplatesPage_remove_message_single;
 		else
 			message= NLSUtility.format(TemplatesMessages.TemplatesPage_remove_message_multi,
-					new Object[] { new Integer(selectedTemplates.length) });
+					new Object[] { Integer.valueOf(selectedTemplates.length) });
 		if (!MessageDialog.openQuestion(getShell(), title, message))
 			return;
 		for (int i= 0; i < selectedTemplates.length; i++) {

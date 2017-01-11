@@ -273,7 +273,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {
 				markerUpdaterSpecificationsLinkedList.add(elements[i]);
-				markerUpdaterOrderMap.put(elements[i].getAttribute(ID), new Integer(i));
+				markerUpdaterOrderMap.put(elements[i].getAttribute(ID), Integer.valueOf(i));
 			}
 			//start sorting based on required-updater definition
 			HashMap<String, ArrayList<String>> markerUpdaterRequiredByOrderMap= new HashMap<>(2);
@@ -319,8 +319,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 									.getAttribute(ID)).intValue() - 1);
 							IConfigurationElement requiredMarker= markerUpdaterSpecificationsLinkedList.remove(requiredLocation.intValue());
 							markerUpdaterSpecificationsLinkedList.add(newLocation, requiredMarker); // Put the required location before the marker
-							markerUpdaterOrderMap.put(requiredID, new Integer(newLocation));
-							markerUpdaterOrderMap.put(elements[i].getAttribute(ID), new Integer(newLocation + 1));
+							markerUpdaterOrderMap.put(requiredID, Integer.valueOf(newLocation));
+							markerUpdaterOrderMap.put(elements[i].getAttribute(ID), Integer.valueOf(newLocation + 1));
 						}
 					}
 				}

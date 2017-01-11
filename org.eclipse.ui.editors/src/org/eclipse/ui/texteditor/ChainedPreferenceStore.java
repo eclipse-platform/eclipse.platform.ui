@@ -438,7 +438,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		else if (thisValue instanceof Float)
 			return new Float(store.getFloat(property));
 		else if (thisValue instanceof Integer)
-			return new Integer(store.getInt(property));
+			return Integer.valueOf(store.getInt(property));
 		else if (thisValue instanceof Long)
 			return new Long(store.getLong(property));
 		else if (thisValue instanceof String)

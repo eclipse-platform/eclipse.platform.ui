@@ -199,7 +199,7 @@ public class GotoLineAction extends TextEditorAction {
 		}
 
 		String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
-		String message= NLSUtility.format(fBundle.getString(fPrefix + "dialog.message"), new Integer(fLastLine)); //$NON-NLS-1$
+		String message= NLSUtility.format(fBundle.getString(fPrefix + "dialog.message"), Integer.valueOf(fLastLine)); //$NON-NLS-1$
 
 		String currentLineStr= ""; //$NON-NLS-1$
 		ISelection selection= editor.getSelectionProvider().getSelection();

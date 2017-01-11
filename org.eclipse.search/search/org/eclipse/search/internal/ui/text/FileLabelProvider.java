@@ -112,7 +112,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	private StyledString getLineElementLabel(LineElement lineElement) {
 		int lineNumber= lineElement.getLine();
-		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, new Integer(lineNumber));
+		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, Integer.valueOf(lineNumber));
 
 		StyledString str= new StyledString(lineNumberString, StyledString.QUALIFIER_STYLER);
 
@@ -220,7 +220,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (matchCount <= 1)
 			return coloredName;
 
-		String countInfo= Messages.format(SearchMessages.FileLabelProvider_count_format, new Integer(matchCount));
+		String countInfo= Messages.format(SearchMessages.FileLabelProvider_count_format, Integer.valueOf(matchCount));
 		coloredName.append(' ').append(countInfo, StyledString.COUNTER_STYLER);
 		return coloredName;
 	}

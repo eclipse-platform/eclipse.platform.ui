@@ -137,7 +137,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		fSortByNameAction= new SortAction(SearchMessages.FileSearchPage_sort_name_label, this, FileLabelProvider.SHOW_LABEL_PATH);
 		fSortByPathAction= new SortAction(SearchMessages.FileSearchPage_sort_path_label, this, FileLabelProvider.SHOW_PATH_LABEL);
 
-		setElementLimit(new Integer(DEFAULT_ELEMENT_LIMIT));
+		setElementLimit(Integer.valueOf(DEFAULT_ELEMENT_LIMIT));
 	}
 
 	@Override
@@ -360,7 +360,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			if (value != null)
 				elementLimit= value.intValue();
 		}
-		setElementLimit(new Integer(elementLimit));
+		setElementLimit(Integer.valueOf(elementLimit));
 	}
 	@Override
 	public void saveState(IMemento memento) {
@@ -419,12 +419,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				if (showLineMatches()) {
 					int matchCount= getInput().getMatchCount();
 					if (itemCount < matchCount) {
-						return Messages.format(SearchMessages.FileSearchPage_limited_format_matches, new Object[]{label, new Integer(itemCount), new Integer(matchCount)});
+						return Messages.format(SearchMessages.FileSearchPage_limited_format_matches, new Object[]{label, Integer.valueOf(itemCount), Integer.valueOf(matchCount)});
 					}
 				} else {
 					int fileCount= getInput().getElements().length;
 					if (itemCount < fileCount) {
-						return Messages.format(SearchMessages.FileSearchPage_limited_format_files, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
+						return Messages.format(SearchMessages.FileSearchPage_limited_format_files, new Object[]{label, Integer.valueOf(itemCount), Integer.valueOf(fileCount)});
 					}
 				}
 			}

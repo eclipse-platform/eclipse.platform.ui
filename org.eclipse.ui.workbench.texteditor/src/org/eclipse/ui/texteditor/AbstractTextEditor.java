@@ -3838,7 +3838,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						IStatusField statusField= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 						if (statusField != null) {
 							int newHeight= styledText.getFont().getFontData()[0].getHeight();
-							statusField.setText(NLSUtility.format(EditorMessages.Editor_font_reset_message, new Integer(newHeight)));
+							statusField.setText(NLSUtility.format(EditorMessages.Editor_font_reset_message, Integer.valueOf(newHeight)));
 						}
 					}
 				} else if (e.detail == SWT.GESTURE_MAGNIFY && fMagnificationStartFont != null) {
@@ -3854,7 +3854,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						updateCaret();
 						IStatusField statusField= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 						if (statusField != null) {
-							statusField.setText(NLSUtility.format(EditorMessages.Editor_font_zoom_message, new Object[] { new Integer(startHeight), new Integer(newHeight) }));
+							statusField.setText(NLSUtility.format(EditorMessages.Editor_font_zoom_message, new Object[] { Integer.valueOf(startHeight), Integer.valueOf(newHeight) }));
 						}
 					}
 				}

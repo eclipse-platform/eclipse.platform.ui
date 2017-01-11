@@ -165,12 +165,12 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		int l= fDifference.leftLength();
 		int c= Math.min(r, l);
 		int a= r - l;
-		String changed= c > 0 ? NLSUtility.format(QuickDiffMessages.quickdiff_annotation_changed, new Integer(c)) : null;
+		String changed= c > 0 ? NLSUtility.format(QuickDiffMessages.quickdiff_annotation_changed, Integer.valueOf(c)) : null;
 		String added;
 		if (a > 0)
-			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_added, new Integer(a));
+			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_added, Integer.valueOf(a));
 		else if (a < 0)
-			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_deleted, new Integer(-a));
+			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_deleted, Integer.valueOf(-a));
 		else
 			added= null;
 		String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.quickdiff_annotation_line_plural : QuickDiffMessages.quickdiff_annotation_line_singular;

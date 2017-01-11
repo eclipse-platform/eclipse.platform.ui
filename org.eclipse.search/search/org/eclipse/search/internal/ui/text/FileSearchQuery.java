@@ -287,7 +287,7 @@ public class FileSearchQuery implements ISearchQuery {
 					Object[] args= { searchString, fScope.getDescription() };
 					return Messages.format(SearchMessages.FileSearchQuery_singularLabel, args);
 				}
-				Object[] args= { searchString, new Integer(nMatches), fScope.getDescription() };
+				Object[] args= { searchString, Integer.valueOf(nMatches), fScope.getDescription() };
 				return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args);
 			}
 			// search selected file extensions
@@ -295,7 +295,7 @@ public class FileSearchQuery implements ISearchQuery {
 				Object[] args= { searchString, fScope.getDescription(), fScope.getFilterDescription() };
 				return Messages.format(SearchMessages.FileSearchQuery_singularPatternWithFileExt, args);
 			}
-			Object[] args= { searchString, new Integer(nMatches), fScope.getDescription(), fScope.getFilterDescription() };
+			Object[] args= { searchString, Integer.valueOf(nMatches), fScope.getDescription(), fScope.getFilterDescription() };
 			return Messages.format(SearchMessages.FileSearchQuery_pluralPatternWithFileExt, args);
 		}
 		// file search
@@ -303,7 +303,7 @@ public class FileSearchQuery implements ISearchQuery {
 			Object[] args= { fScope.getFilterDescription(), fScope.getDescription() };
 			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args);
 		}
-		Object[] args= { fScope.getFilterDescription(), new Integer(nMatches), fScope.getDescription() };
+		Object[] args= { fScope.getFilterDescription(), Integer.valueOf(nMatches), fScope.getDescription() };
 		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args);
 	}
 

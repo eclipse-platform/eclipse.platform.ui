@@ -72,8 +72,8 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 		IContextInformation[] result= new IContextInformation[5];
 		for (int i= 0; i < result.length; i++)
 			result[i]= new ContextInformation(
-				MessageFormat.format(JavaEditorMessages.getString("CompletionProcessor.ContextInfo.display.pattern"), new Object[] { new Integer(i), new Integer(documentOffset) }),  //$NON-NLS-1$
-				MessageFormat.format(JavaEditorMessages.getString("CompletionProcessor.ContextInfo.value.pattern"), new Object[] { new Integer(i), new Integer(documentOffset - 5), new Integer(documentOffset + 5)})); //$NON-NLS-1$
+				MessageFormat.format(JavaEditorMessages.getString("CompletionProcessor.ContextInfo.display.pattern"), new Object[] { Integer.valueOf(i), Integer.valueOf(documentOffset) }),  //$NON-NLS-1$
+				MessageFormat.format(JavaEditorMessages.getString("CompletionProcessor.ContextInfo.value.pattern"), new Object[] { Integer.valueOf(i), Integer.valueOf(documentOffset - 5), Integer.valueOf(documentOffset + 5)})); //$NON-NLS-1$
 		return result;
 	}
 

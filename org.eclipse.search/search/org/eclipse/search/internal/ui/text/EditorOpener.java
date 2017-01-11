@@ -128,8 +128,8 @@ public class EditorOpener {
 		try {
 			marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap<String, Integer> attributes= new HashMap<>(4);
-			attributes.put(IMarker.CHAR_START, new Integer(offset));
-			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			attributes.put(IMarker.CHAR_START, Integer.valueOf(offset));
+			attributes.put(IMarker.CHAR_END, Integer.valueOf(offset + length));
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
 		} catch (CoreException e) {
