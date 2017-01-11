@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 259846
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -385,7 +386,15 @@ public class FormTextModel {
 	}
 
 	private String getSingleNodeText(Node node) {
-		return getNormalizedText(node.getNodeValue());
+		String text = getNormalizedText(node.getNodeValue());
+		if (!whitespaceNormalized)
+			return text;
+		if (text.length() > 0 && node.getPreviousSibling() == null && isIgnorableWhiteSpace(text.substring(0, 1), true))
+			return text.substring(1);
+		if (text.length() > 1 && node.getNextSibling() == null
+				&& isIgnorableWhiteSpace(text.substring(text.length() - 1), true))
+			return text.substring(0, text.length() - 1);
+		return text;
 	}
 
 	private String getNodeText(Node node) {
@@ -400,7 +409,10 @@ public class FormTextModel {
 				appendText(value, buf, spaceCounter);
 			}
 		}
-		return buf.toString().trim();
+		if (whitespaceNormalized) {
+			return buf.toString().trim();
+		}
+		return buf.toString();
 	}
 
 	private ParagraphSegment processHyperlinkSegment(Node link,
