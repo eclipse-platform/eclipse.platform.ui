@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.ecore.EObject;
@@ -158,6 +159,15 @@ public class UiSwitch<T1> extends Switch<T1> {
 				T1 result = caseCoreExpression(coreExpression);
 				if (result == null) result = caseExpression(coreExpression);
 				if (result == null) result = caseApplicationElement(coreExpression);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case UiPackageImpl.IMPERATIVE_EXPRESSION: {
+				MImperativeExpression imperativeExpression = (MImperativeExpression)theEObject;
+				T1 result = caseImperativeExpression(imperativeExpression);
+				if (result == null) result = caseExpression(imperativeExpression);
+				if (result == null) result = caseContribution(imperativeExpression);
+				if (result == null) result = caseApplicationElement(imperativeExpression);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -343,6 +353,21 @@ public class UiSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Imperative Expression</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Imperative Expression</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseImperativeExpression(MImperativeExpression object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -384,6 +409,21 @@ public class UiSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseApplicationElement(MApplicationElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseContribution(MContribution object) {
 		return null;
 	}
 

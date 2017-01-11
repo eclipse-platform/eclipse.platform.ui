@@ -37,4 +37,14 @@ public interface MUiFactory {
 	 */
 	MCoreExpression createCoreExpression();
 
+	/**
+	 * Returns a new object of class '<em>Imperative Expression</em>'. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return a new object of class '<em>Imperative Expression</em>'.
+	 * @generated
+	 * @since 2.0
+	 */
+	MImperativeExpression createImperativeExpression();
+
 } //MUiFactory

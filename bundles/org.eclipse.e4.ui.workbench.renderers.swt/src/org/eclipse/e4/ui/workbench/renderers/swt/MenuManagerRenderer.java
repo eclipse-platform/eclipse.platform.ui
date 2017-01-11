@@ -48,7 +48,6 @@ import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -1120,9 +1119,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				visible = ((Boolean) rc).booleanValue();
 			}
 		}
-		if (visible && (element.getVisibleWhen() instanceof MCoreExpression)) {
+		if (visible && element.getVisibleWhen() != null) {
 			evaluated = true;
-			visible = ContributionsAnalyzer.isVisible((MCoreExpression) element.getVisibleWhen(), evalContext);
+			visible = ContributionsAnalyzer.isVisible(element.getVisibleWhen(), evalContext);
 		}
 		if (evaluated && visible != current) {
 			element.setVisible(visible);

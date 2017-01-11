@@ -1030,6 +1030,24 @@ public class UIEvents {
 		public static final String SIDE = "side"; //$NON-NLS-1$
 	}
 
+	/**
+	 * @since 1.5
+	 */
+	@SuppressWarnings("javadoc")
+	public static interface ImperativeExpression {
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/ImperativeExpression"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/ImperativeExpression/*"; //$NON-NLS-1$
+		public static final String TOPIC_TRACKING = "org/eclipse/e4/ui/model/ui/ImperativeExpression/tracking/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
+		public static final String TRACKING = "tracking"; //$NON-NLS-1$
+	}
+
 	@SuppressWarnings("javadoc")
 	public static interface Input {
 

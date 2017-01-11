@@ -163,10 +163,8 @@ public class ContributionRecord {
 				currentVisibility = ((Boolean) rc).booleanValue();
 			}
 		}
-		if (currentVisibility
-				&& item.getVisibleWhen() instanceof MCoreExpression) {
-			boolean val = ContributionsAnalyzer.isVisible(
-					(MCoreExpression) item.getVisibleWhen(), exprContext);
+		if (currentVisibility && item.getVisibleWhen() != null) {
+			boolean val = ContributionsAnalyzer.isVisible(item.getVisibleWhen(), exprContext);
 			currentVisibility = val;
 		}
 		return currentVisibility;

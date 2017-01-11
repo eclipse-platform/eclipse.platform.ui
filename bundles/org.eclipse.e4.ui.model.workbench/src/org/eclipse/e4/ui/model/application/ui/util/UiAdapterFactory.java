@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.notify.Adapter;
@@ -119,6 +120,10 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 				return createCoreExpressionAdapter();
 			}
 			@Override
+			public Adapter caseImperativeExpression(MImperativeExpression object) {
+				return createImperativeExpressionAdapter();
+			}
+			@Override
 			public Adapter caseSnippetContainer(MSnippetContainer object) {
 				return createSnippetContainerAdapter();
 			}
@@ -129,6 +134,10 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
 				return createApplicationElementAdapter();
+			}
+			@Override
+			public Adapter caseContribution(MContribution object) {
+				return createContributionAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -305,6 +314,20 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MImperativeExpression <em>Imperative Expression</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MImperativeExpression
+	 * @generated
+	 */
+	public Adapter createImperativeExpressionAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer <em>Snippet Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -343,6 +366,20 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContribution <em>Contribution</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @generated
+	 */
+	public Adapter createContributionAdapter() {
 		return null;
 	}
 
