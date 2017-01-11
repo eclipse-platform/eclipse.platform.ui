@@ -121,8 +121,8 @@ public class PreferenceStore extends EventManager implements
 				&& (oldValue == null || !oldValue.equals(newValue))) {
 			final PropertyChangeEvent pe = new PropertyChangeEvent(this, name,
 					oldValue, newValue);
-			for (int i = 0; i < finalListeners.length; ++i) {
-				final IPropertyChangeListener l = (IPropertyChangeListener) finalListeners[i];
+			for (Object finalListener : finalListeners) {
+				final IPropertyChangeListener l = (IPropertyChangeListener) finalListener;
 				SafeRunnable.run(new SafeRunnable(JFaceResources
 						.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
 							@Override

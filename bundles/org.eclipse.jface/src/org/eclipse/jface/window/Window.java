@@ -913,9 +913,7 @@ public abstract class Window implements IShellProvider {
 		Monitor[] monitors = toSearch.getMonitors();
 		Monitor result = monitors[0];
 
-		for (int idx = 0; idx < monitors.length; idx++) {
-			Monitor current = monitors[idx];
-
+		for (Monitor current : monitors) {
 			Rectangle clientArea = current.getClientArea();
 
 			if (clientArea.contains(toFind)) {
@@ -1004,8 +1002,8 @@ public abstract class Window implements IShellProvider {
 
 		if (manager != null) {
 			Window[] windows = manager.getWindows();
-			for (int i = 0; i < windows.length; i++) {
-				if (windows[i] == this) {
+			for (Window window : windows) {
+				if (window == this) {
 					return;
 				}
 			}

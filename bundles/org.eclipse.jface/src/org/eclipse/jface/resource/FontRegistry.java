@@ -384,9 +384,7 @@ public class FontRegistry extends ResourceRegistry {
 	 */
     @Deprecated
 	public FontData bestData(FontData[] fonts, Display display) {
-        for (int i = 0; i < fonts.length; i++) {
-            FontData fd = fonts[i];
-
+        for (FontData fd : fonts) {
             if (fd == null) {
 				break;
 			}
@@ -448,9 +446,7 @@ public class FontRegistry extends ResourceRegistry {
      */
     public FontData [] filterData(FontData [] fonts, Display display) {
     	ArrayList<FontData> good = new ArrayList<>(fonts.length);
-    	for (int i = 0; i < fonts.length; i++) {
-            FontData fd = fonts[i];
-
+    	for (FontData fd : fonts) {
             if (fd == null) {
 				continue;
 			}
@@ -740,8 +736,7 @@ public class FontRegistry extends ResourceRegistry {
         // set if a fontdata isn't used.
         int height = fd.getHeight();
         String name = fd.getName();
-        for (int i = 0; i < fixedFonts.length; i++) {
-            FontData fixed = fixedFonts[i];
+        for (FontData fixed : fixedFonts) {
             if (fixed.getHeight() == height && fixed.getName().equals(name)) {
 				return true;
 			}

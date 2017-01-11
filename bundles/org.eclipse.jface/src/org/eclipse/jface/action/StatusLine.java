@@ -141,9 +141,8 @@ import org.eclipse.swt.widgets.ToolItem;
 			int totalWidth = 0;
 			int maxHeight = 0;
 			int totalCnt = 0;
-			for (int i = 0; i < children.length; i++) {
+			for (Control w : children) {
 				boolean useWidth = true;
-				Control w = children[i];
 				if (w == fProgressBarComposite && !fProgressIsVisible) {
 					useWidth = false;
 				} else if (w == fToolBar && !fCancelButtonIsVisible) {
@@ -544,8 +543,8 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void setFont(Font font) {
 		super.setFont(font);
 		Control[] children = getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setFont(font);
+		for (Control element : children) {
+			element.setFont(font);
 		}
 	}
 

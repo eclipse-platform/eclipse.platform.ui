@@ -176,9 +176,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             // Lay out the separator, the tool bar control, the cool bar control, the status line, and the page composite.
             // The following code assumes that the page composite is the last child, and that there are no unexpected other controls.
 
-            for (int i = 0; i < ws.length; i++) {
-                Control w = ws[i];
-
+            for (Control w : ws) {
                 if (w == seperator1) { // Separator
                     Point e = w.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                             flushCache);

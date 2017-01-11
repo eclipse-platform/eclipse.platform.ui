@@ -68,11 +68,11 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	public IContentProposal[] getProposals(String contents, int position) {
 		if (filterProposals) {
 			ArrayList<ContentProposal> list = new ArrayList<>();
-			for (int i = 0; i < proposals.length; i++) {
-				if (proposals[i].length() >= contents.length()
-						&& proposals[i].substring(0, contents.length())
+			for (String proposal : proposals) {
+				if (proposal.length() >= contents.length()
+						&& proposal.substring(0, contents.length())
 								.equalsIgnoreCase(contents)) {
-					list.add(new ContentProposal(proposals[i]));
+					list.add(new ContentProposal(proposal));
 				}
 			}
 			return list.toArray(new IContentProposal[list

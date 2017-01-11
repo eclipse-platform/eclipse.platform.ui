@@ -48,8 +48,8 @@ public class PreferenceContentProvider implements ITreeContentProvider {
 
         IPreferenceNode[] children = parent.getSubNodes();
 
-        for (int i = 0; i < children.length; i++) {
-            found = findParent(children[i], target);
+        for (IPreferenceNode element : children) {
+            found = findParent(element, target);
             if (found != null) {
 				return found;
 			}

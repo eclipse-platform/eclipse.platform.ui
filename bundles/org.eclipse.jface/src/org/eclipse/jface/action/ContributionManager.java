@@ -360,8 +360,7 @@ public abstract class ContributionManager implements IContributionManager {
 			return true;
 		}
 		if (hasDynamicItems()) {
-			for (Iterator<IContributionItem> iter = contributions.iterator(); iter.hasNext();) {
-				IContributionItem item = iter.next();
+			for (IContributionItem item : contributions) {
 				if (item.isDirty()) {
 					return true;
 				}
@@ -443,8 +442,7 @@ public abstract class ContributionManager implements IContributionManager {
 	public void removeAll() {
 		IContributionItem[] items = getItems();
 		contributions.clear();
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
+		for (IContributionItem item : items) {
 			itemRemoved(item);
 		}
 		dynamicItems = 0;
@@ -538,9 +536,9 @@ public abstract class ContributionManager implements IContributionManager {
 	 */
 	protected void internalSetItems(IContributionItem[] items) {
 		contributions.clear();
-		for (int i = 0; i < items.length; i++) {
-			if (allowItem(items[i])) {
-				contributions.add(items[i]);
+		for (IContributionItem item : items) {
+			if (allowItem(item)) {
+				contributions.add(item);
 			}
 		}
 	}

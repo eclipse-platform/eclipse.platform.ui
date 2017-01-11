@@ -12,10 +12,9 @@
 package org.eclipse.jface.action;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -343,11 +342,11 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
         Rectangle toolBarBounds = toolBar.getBounds();
         ToolItem[] items = toolBar.getItems();
         ArrayList<ToolItem> hidden = new ArrayList<>();
-        for (int i = 0; i < items.length; ++i) {
-            Rectangle itemBounds = items[i].getBounds();
+        for (ToolItem toolItem : items) {
+            Rectangle itemBounds = toolItem.getBounds();
             if (!((itemBounds.x + itemBounds.width <= toolBarBounds.width) && (itemBounds.y
                     + itemBounds.height <= toolBarBounds.height))) {
-                hidden.add(items[i]);
+                hidden.add(toolItem);
             }
         }
 
@@ -356,8 +355,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             chevronMenuManager.dispose();
         }
         chevronMenuManager = new MenuManager();
-        for (Iterator<ToolItem> i = hidden.iterator(); i.hasNext();) {
-            ToolItem toolItem = i.next();
+        for (ToolItem toolItem : hidden) {
             IContributionItem data = (IContributionItem) toolItem.getData();
             if (data instanceof ActionContributionItem) {
                 ActionContributionItem contribution = new ActionContributionItem(
@@ -441,10 +439,9 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
         boolean visibleItem = false;
         if (toolBarManager != null) {
             IContributionItem[] contributionItems = toolBarManager.getItems();
-            for (int i = 0; i < contributionItems.length; i++) {
-                IContributionItem contributionItem = contributionItems[i];
-                if ((!contributionItem.isGroupMarker())
-                        && (!contributionItem.isSeparator())) {
+            for (IContributionItem item : contributionItems) {
+                IContributionItem contributionItem = item;
+				if ((!contributionItem.isGroupMarker()) && (!contributionItem.isSeparator())) {
                     visibleItem = true;
                     break;
                 }

@@ -113,8 +113,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		final int[] sortedModifierKeys = sortModifierKeys(modifierKeys);
 		final StringBuffer stringBuffer = new StringBuffer();
 		if (sortedModifierKeys != null) {
-			for (int i = 0; i < sortedModifierKeys.length; i++) {
-				final int modifierKey = sortedModifierKeys[i];
+			for (final int modifierKey : sortedModifierKeys) {
 				if (modifierKey != KeyStroke.NO_KEY) {
 					stringBuffer.append(format(modifierKey));
 					stringBuffer.append(keyDelimiter);

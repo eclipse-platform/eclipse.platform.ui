@@ -845,8 +845,7 @@ public class ActionContributionItem extends ContributionItem {
 						final IKeyLookup lookup = KeyLookupFactory.getDefault();
 						final TriggerSequence[] triggerSequences = bindingManagerCallback
 								.getActiveBindingsFor(commandId);
-						for (int i = 0; i < triggerSequences.length; i++) {
-							final TriggerSequence triggerSequence = triggerSequences[i];
+						for (final TriggerSequence triggerSequence : triggerSequences) {
 							final Trigger[] triggers = triggerSequence
 									.getTriggers();
 							if (triggers.length == 1) {
@@ -1261,8 +1260,7 @@ public class ActionContributionItem extends ContributionItem {
 		};
 
 		MenuItem[] items = realMenu.getItems();
-		for (int i = 0; i < items.length; i++) {
-			final MenuItem realItem = items[i];
+		for (final MenuItem realItem : items) {
 			final MenuItem proxyItem = new MenuItem(proxy, realItem.getStyle());
 			proxyItem.setData(realItem);
 			proxyItem.setAccelerator(realItem.getAccelerator());

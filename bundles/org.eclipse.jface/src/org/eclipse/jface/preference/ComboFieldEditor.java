@@ -71,8 +71,7 @@ public class ComboFieldEditor extends FieldEditor {
 		if (table == null) {
 			return false;
 		}
-		for (int i = 0; i < table.length; i++) {
-			String[] array = table[i];
+		for (String[] array : table) {
 			if (array == null || array.length != 2) {
 				return false;
 			}
@@ -170,8 +169,7 @@ public class ComboFieldEditor extends FieldEditor {
 	 * Given the name (label) of an entry, return the corresponding value.
 	 */
 	private String getValueForName(String name) {
-		for (int i = 0; i < fEntryNamesAndValues.length; i++) {
-			String[] entry = fEntryNamesAndValues[i];
+		for (String[] entry : fEntryNamesAndValues) {
 			if (name.equals(entry[0])) {
 				return entry[1];
 			}
@@ -184,9 +182,9 @@ public class ComboFieldEditor extends FieldEditor {
 	 */
 	private void updateComboForValue(String value) {
 		fValue = value;
-		for (int i = 0; i < fEntryNamesAndValues.length; i++) {
-			if (value.equals(fEntryNamesAndValues[i][1])) {
-				fCombo.setText(fEntryNamesAndValues[i][0]);
+		for (String[] fEntryNamesAndValue : fEntryNamesAndValues) {
+			if (value.equals(fEntryNamesAndValue[1])) {
+				fCombo.setText(fEntryNamesAndValue[0]);
 				return;
 			}
 		}

@@ -129,8 +129,8 @@ public class PreferenceManager {
 			sequence.add(node);
 		}
         IPreferenceNode[] subnodes = node.getSubNodes();
-        for (int i = 0; i < subnodes.length; i++) {
-            buildSequence(subnodes[i], sequence, order);
+        for (IPreferenceNode subnode : subnodes) {
+            buildSequence(subnode, sequence, order);
         }
         if (order == POST_ORDER) {
 			sequence.add(node);
@@ -189,8 +189,8 @@ public class PreferenceManager {
                 "invalid traversal order");//$NON-NLS-1$
         ArrayList<IPreferenceNode> sequence = new ArrayList<>();
         IPreferenceNode[] subnodes = getRoot().getSubNodes();
-        for (int i = 0; i < subnodes.length; i++) {
-			buildSequence(subnodes[i], sequence, order);
+        for (IPreferenceNode subnode : subnodes) {
+			buildSequence(subnode, sequence, order);
 		}
         return sequence;
     }

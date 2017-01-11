@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -399,8 +398,7 @@ public class DialogSettings implements IDialogSettings {
 			String[] value = entry.getValue();
             attributes.clear();
             if (value != null) {
-                for (int index = 0; index < value.length; index++) {
-                    String string = value[index];
+                for (String string : value) {
                     attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
                     out.printTag(TAG_ITEM, attributes, true);
                 }
@@ -408,8 +406,8 @@ public class DialogSettings implements IDialogSettings {
             out.endTag(TAG_LIST);
             attributes.clear();
         }
-        for (Iterator<IDialogSettings> i = sections.values().iterator(); i.hasNext();) {
-            ((DialogSettings) i.next()).save(out);
+        for (IDialogSettings iDialogSettings : sections.values()) {
+            ((DialogSettings) iDialogSettings).save(out);
         }
         out.endTag(TAG_SECTION);
     }

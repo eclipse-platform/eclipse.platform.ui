@@ -215,8 +215,8 @@ public class ColorSelector extends EventManager {
 		    if (finalListeners.length > 0) {
 		        PropertyChangeEvent pEvent = new PropertyChangeEvent(
 		                this, PROP_COLORCHANGE, oldValue, newColor);
-		        for (int i = 0; i < finalListeners.length; ++i) {
-		            IPropertyChangeListener listener = (IPropertyChangeListener) finalListeners[i];
+		        for (Object finalListener : finalListeners) {
+		            IPropertyChangeListener listener = (IPropertyChangeListener) finalListener;
 		            listener.propertyChange(pEvent);
 		        }
 		    }

@@ -52,9 +52,7 @@ import org.eclipse.swt.widgets.Scrollable;
     public static void generateLayout(Composite toGenerate) {
         Control[] children = toGenerate.getChildren();
 
-        for (int i = 0; i < children.length; i++) {
-            Control control = children[i];
-
+        for (Control control : children) {
             // Skip any children that already have layout data
             if (control.getLayoutData() != null) {
                 continue;
@@ -100,9 +98,7 @@ import org.eclipse.swt.widgets.Scrollable;
                     boolean growsVertically = false;
 
                     Control[] children = composite.getChildren();
-                    for (int i = 0; i < children.length; i++) {
-                        Control child = children[i];
-
+                    for (Control child : children) {
                         GridData data = (GridData) child.getLayoutData();
 
                         if (data != null) {

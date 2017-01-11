@@ -462,8 +462,7 @@ public final class BindingManager extends HandleObjectManager implements
 	private final int compareSchemes(final String schemeId1,
 			final String schemeId2) {
 		if (!schemeId2.equals(schemeId1)) {
-			for (int i = 0; i < activeSchemeIds.length; i++) {
-				final String schemePointer = activeSchemeIds[i];
+			for (final String schemePointer : activeSchemeIds) {
 				if (schemeId2.equals(schemePointer)) {
 					return 1;
 
@@ -550,8 +549,8 @@ public final class BindingManager extends HandleObjectManager implements
 			final String schemeId = binding.getSchemeId();
 			found = false;
 			if (activeSchemeIds != null) {
-				for (int j = 0; j < activeSchemeIds.length; j++) {
-					if (Util.equals(schemeId, activeSchemeIds[j])) {
+				for (String activeSchemeId : activeSchemeIds) {
+					if (Util.equals(schemeId, activeSchemeId)) {
 						found = true;
 						break;
 					}
@@ -705,8 +704,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 */
 	private final int countStrokes(final Trigger[] triggers) {
 		int strokeCount = triggers.length;
-		for (int i = 0; i < triggers.length; i++) {
-			final Trigger trigger = triggers[i];
+		for (final Trigger trigger : triggers) {
 			if (trigger instanceof KeyStroke) {
 				final KeyStroke keyStroke = (KeyStroke) trigger;
 				final int modifierKeys = keyStroke.getModifierKeys();
@@ -896,8 +894,8 @@ public final class BindingManager extends HandleObjectManager implements
 		}
 
 		final Object[] listeners = getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final IBindingManagerListener listener = (IBindingManagerListener) listeners[i];
+		for (Object l : listeners) {
+			final IBindingManagerListener listener = (IBindingManagerListener) l;
 			listener.bindingManagerChanged(event);
 		}
 	}
@@ -1649,8 +1647,8 @@ public final class BindingManager extends HandleObjectManager implements
 			return true; // shortcut a common case
 		}
 
-		for (int i = 0; i < locales.length; i++) {
-			if (Util.equals(locales[i], locale)) {
+		for (String localString : locales) {
+			if (Util.equals(localString, locale)) {
 				matches = true;
 				break;
 			}
@@ -1682,8 +1680,8 @@ public final class BindingManager extends HandleObjectManager implements
 			return true; // shortcut a common case
 		}
 
-		for (int i = 0; i < platforms.length; i++) {
-			if (Util.equals(platforms[i], platform)) {
+		for (String platformString : platforms) {
+			if (Util.equals(platformString, platform)) {
 				matches = true;
 				break;
 			}
@@ -2272,8 +2270,7 @@ public final class BindingManager extends HandleObjectManager implements
 		if (bindings != null) {
 			// discard bindings not applicable for this platform
 			List newList = new ArrayList();
-			for (int i = 0; i < bindings.length; i++) {
-				Binding binding = bindings[i];
+			for (Binding binding : bindings) {
 				String p = binding.getPlatform();
 				if (p == null) {
 					newList.add(binding);

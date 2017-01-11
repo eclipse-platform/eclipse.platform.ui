@@ -266,9 +266,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
      */
     private TransferData getSupportedTransferType(TransferData[] dataTypes,
             TransferDropTargetListener listener) {
-        for (int i = 0; i < dataTypes.length; i++) {
-            if (listener.getTransfer().isSupportedType(dataTypes[i])) {
-                return dataTypes[i];
+        for (TransferData dataType : dataTypes) {
+            if (listener.getTransfer().isSupportedType(dataType)) {
+                return dataType;
             }
         }
         return null;

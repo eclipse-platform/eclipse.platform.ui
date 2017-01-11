@@ -131,8 +131,8 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 */
 	private void firePropertyChange(final PropertyChangeEvent event) {
 		final Object[] list = getListeners();
-		for (int i = 0; i < list.length; ++i) {
-			((IPropertyChangeListener) list[i]).propertyChange(event);
+		for (Object element : list) {
+			((IPropertyChangeListener) element).propertyChange(event);
 		}
 	}
 

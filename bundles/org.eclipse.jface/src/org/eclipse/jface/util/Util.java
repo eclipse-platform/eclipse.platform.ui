@@ -349,8 +349,7 @@ public final class Util {
 		}
 
 		int hashCode = 89;
-		for (int i = 0; i < objects.length; i++) {
-			final Object object = objects[i];
+		for (final Object object : objects) {
 			if (object != null) {
 				hashCode = hashCode * 31 + object.hashCode();
 			}

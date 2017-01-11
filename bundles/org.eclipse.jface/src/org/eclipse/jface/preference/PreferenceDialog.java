@@ -94,8 +94,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			int x = minimumPageSize.x;
 			int y = minimumPageSize.y;
 			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Point size = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+			for (Control element : children) {
+				Point size = element.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
 				x = Math.max(x, size.x);
 				y = Math.max(y, size.y);
 			}
@@ -121,8 +121,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		public void layout(Composite composite, boolean force) {
 			Rectangle rect = composite.getClientArea();
 			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				children[i].setSize(rect.width, rect.height);
+			for (Control element : children) {
+				element.setSize(rect.width, rect.height);
 			}
 		}
 	}
@@ -566,8 +566,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				Font dialogFont = JFaceResources.getDialogFont();
 				updateTreeFont(dialogFont);
 				Control[] children = ((Composite) buttonBar).getChildren();
-				for (int i = 0; i < children.length; i++) {
-					children[i].setFont(dialogFont);
+				for (Control element : children) {
+					element.setFont(dialogFont);
 				}
 			}
 		};
@@ -726,8 +726,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	protected IPreferenceNode findNodeMatching(String nodeId) {
 		List<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.POST_ORDER);
-		for (Iterator<IPreferenceNode> i = nodes.iterator(); i.hasNext();) {
-			IPreferenceNode node = i.next();
+		for (IPreferenceNode node : nodes) {
 			if (node.getId().equals(nodeId)) {
 				return node;
 			}
@@ -970,12 +969,11 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				comparator.sort(null, nodes);
 			}
 			ViewerFilter[] filters = getTreeViewer().getFilters();
-			for (int i = 0; i < nodes.length; i++) {
-				IPreferenceNode selectedNode = nodes[i];
+			for (IPreferenceNode preferenceNode : nodes) {
+				IPreferenceNode selectedNode = preferenceNode;
 				// See if it passes all filters
 				for (int j = 0; j < filters.length; j++) {
-					if (!filters[j].select(this.treeViewer, preferenceManager
-							.getRoot(), selectedNode)) {
+					if (!filters[j].select(this.treeViewer, preferenceManager.getRoot(), selectedNode)) {
 						selectedNode = null;
 						break;
 					}
@@ -1255,9 +1253,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		// their creation).
 		Control[] children = pageContainer.getChildren();
 		Control currentControl = currentPage.getControl();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] != currentControl) {
-				children[i].setVisible(false);
+		for (Control element : children) {
+			if (element != currentControl) {
+				element.setVisible(false);
 			}
 		}
 		// Make the new page visible

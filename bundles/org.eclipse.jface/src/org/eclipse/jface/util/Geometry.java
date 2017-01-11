@@ -687,9 +687,7 @@ public class Geometry {
         int closestSide = SWT.LEFT;
         int closestDistance = Integer.MAX_VALUE;
 
-        for (int idx = 0; idx < sides.length; idx++) {
-            int side = sides[idx];
-
+        for (int side : sides) {
             int distance = getDistanceFromEdge(boundary, toTest, side);
 
             if (distance < closestDistance) {

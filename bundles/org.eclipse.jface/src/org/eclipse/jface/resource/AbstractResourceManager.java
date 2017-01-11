@@ -12,7 +12,6 @@ package org.eclipse.jface.resource;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
@@ -132,9 +131,7 @@ abstract class AbstractResourceManager extends ResourceManager {
 
         Collection<Entry<DeviceResourceDescriptor, RefCount>> entries = map.entrySet();
 
-        for (Iterator<Entry<DeviceResourceDescriptor, RefCount>> iter = entries.iterator(); iter.hasNext();) {
-            Entry<DeviceResourceDescriptor, RefCount> next = iter.next();
-
+        for (Entry<DeviceResourceDescriptor, RefCount> next : entries) {
             Object key = next.getKey();
             RefCount val = next.getValue();
 

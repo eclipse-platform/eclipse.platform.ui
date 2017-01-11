@@ -113,8 +113,7 @@ final class ArrayFontDescriptor extends FontDescriptor {
 
         int code = 0;
 
-        for (int i = 0; i < data.length; i++) {
-            FontData fd = data[i];
+        for (FontData fd : data) {
             code += fd.hashCode();
         }
         return code;

@@ -172,8 +172,8 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 		/* Detect minimum transparency */
 		boolean transparency = false;
 		byte[] alphaData = imageData.alphaData;
-		for (int i = 0; i < alphaData.length; i++) {
-			int alpha = alphaData[i] & 0xFF;
+		for (byte element : alphaData) {
+			int alpha = element & 0xFF;
 			if (!(alpha == 0 || alpha == 255)) {
 				/* Full alpha channel transparency */
 				return imageData;

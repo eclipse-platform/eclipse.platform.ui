@@ -136,8 +136,8 @@ public class ControlEnableState {
         if (control instanceof Composite) {
             Composite c = (Composite) control;
             Control[] children = c.getChildren();
-            for (int i = 0; i < children.length; i++) {
-                readStateForAndDisable(children[i]);
+            for (Control element : children) {
+                readStateForAndDisable(element);
             }
         }
         // XXX: Workaround for 1G2Q8SS: ITPUI:Linux - Combo box is not enabled

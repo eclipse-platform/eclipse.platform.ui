@@ -1036,8 +1036,8 @@ public abstract class Dialog extends Window {
 		}
 		if (control instanceof Composite) {
 			Control[] children = ((Composite) control).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				applyDialogFont(children[i], dialogFont);
+			for (Control element : children) {
+				applyDialogFont(element, dialogFont);
 			}
 		}
 	}
