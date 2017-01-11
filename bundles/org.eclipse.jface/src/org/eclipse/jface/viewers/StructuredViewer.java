@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * This viewer's filters (element type: <code>ViewerFilter</code>).
 	 * <code>null</code> means there are no filters.
 	 */
-	private List filters;
+	private List<ViewerFilter> filters;
 
 	/**
 	 * Indicates whether the viewer should attempt to preserve the selection
@@ -567,7 +567,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	public void addFilter(ViewerFilter filter) {
 		if (filters == null) {
-			filters = new ArrayList();
+			filters = new ArrayList<>();
 		}
 		filters.add(filter);
 		refresh();
@@ -731,7 +731,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			for (int i = 0; i < elements.length; i++) {
 				boolean add = true;
 				for (int j = 0; j < filters.size(); j++) {
-					add = ((ViewerFilter) filters.get(j)).select(this, root, elements[i]);
+					add = filters.get(j).select(this, root, elements[i]);
 					if (!add) {
 						break;
 					}
@@ -1366,7 +1366,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 		if (filters != null) {
 			for (int i = 0, n = filters.size(); i < n; ++i) {
-				ViewerFilter filter = (ViewerFilter) filters.get(i);
+				ViewerFilter filter = filters.get(i);
 				if (filter.isFilterProperty(element, property)) {
 					return true;
 				}
@@ -1625,7 +1625,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (filters.length == 0) {
 			resetFilters();
 		} else {
-			this.filters = new ArrayList(Arrays.asList(filters));
+			this.filters = new ArrayList<>(Arrays.asList(filters));
 			refresh();
 		}
 	}

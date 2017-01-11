@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	/**
 	 * A look-up table for the string representations of various carbon keys.
 	 */
-	private final static HashMap CARBON_KEY_LOOK_UP = new HashMap();
+	private final static HashMap<String, String> CARBON_KEY_LOOK_UP = new HashMap<>();
 
 	/**
 	 * The resource bundle used by <code>format()</code> to translate formal
@@ -98,7 +98,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 
 		// TODO consider platform-specific resource bundles
 		if (Util.isMac()) {
-			String formattedName = (String) CARBON_KEY_LOOK_UP.get(name);
+			String formattedName = CARBON_KEY_LOOK_UP.get(name);
 			if (formattedName != null) {
 				return formattedName;
 			}

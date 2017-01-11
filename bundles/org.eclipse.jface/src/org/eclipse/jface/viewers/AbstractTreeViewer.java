@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -977,7 +977,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @since 3.1 in TreeViewer, moved to AbstractTreeViewer in 3.3
 	 */
-	protected boolean isSameSelection(List items, Item[] current) {
+	protected boolean isSameSelection(List<Item> items, Item[] current) {
 		// If they are not the same size then they are not equivalent
 		int n = items.size();
 		if (n != current.length) {
@@ -985,8 +985,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		CustomHashtable itemSet = newHashtable(n * 2 + 1);
-		for (Iterator i = items.iterator(); i.hasNext();) {
-			Item item = (Item) i.next();
+		for (Iterator<Item> i = items.iterator(); i.hasNext();) {
+			Item item = i.next();
 			Object element = item.getData();
 			itemSet.put(element, element);
 		}
@@ -1185,11 +1185,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @see #setExpandedElements
 	 */
 	public Object[] getExpandedElements() {
-		ArrayList items = new ArrayList();
+		ArrayList<Item> items = new ArrayList<>();
 		internalCollectExpandedItems(items, getControl());
-		ArrayList result = new ArrayList(items.size());
-		for (Iterator it = items.iterator(); it.hasNext();) {
-			Item item = (Item) it.next();
+		ArrayList<Object> result = new ArrayList<>(items.size());
+		for (Iterator<Item> it = items.iterator(); it.hasNext();) {
+			Item item = it.next();
 			Object data = item.getData();
 			if (data != null) {
 				result.add(data);
@@ -1585,7 +1585,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param widget
 	 *            the widget
 	 */
-	private void internalCollectExpandedItems(List result, Widget widget) {
+	private void internalCollectExpandedItems(List<Item> result, Widget widget) {
 		Item[] items = getChildren(widget);
 		for (int i = 0; i < items.length; i++) {
 			Item item = items[i];
@@ -1635,14 +1635,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					if (expand && pw instanceof Item) {
 						// expand parent items top-down
 						Item item = (Item) pw;
-						LinkedList toExpandList = new LinkedList();
+						LinkedList<Item> toExpandList = new LinkedList<>();
 						while (item != null && !getExpanded(item)) {
 							toExpandList.addFirst(item);
 							item = getParentItem(item);
 						}
-						for (Iterator it = toExpandList.iterator(); it
-								.hasNext();) {
-							Item toExpand = (Item) it.next();
+						for (Iterator<Item> it = toExpandList.iterator(); it.hasNext();) {
+							Item toExpand = it.next();
 							setExpanded(toExpand, true);
 						}
 					}
@@ -2496,7 +2495,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            list of items (element type:
 	 *            <code>org.eclipse.swt.widgets.Item</code>)
 	 */
-	protected abstract void setSelection(List items);
+	protected abstract void setSelection(List<Item> items);
 
 	/**
 	 * This implementation of setSelectionToWidget accepts a list of elements or
@@ -2505,25 +2504,25 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	@Override
 	protected void setSelectionToWidget(List v, boolean reveal) {
 		if (v == null) {
-			setSelection(new ArrayList(0));
+			setSelection(new ArrayList<>(0));
 			return;
 		}
 		int size = v.size();
-		List newSelection = new ArrayList(size);
+		List<Item> newSelection = new ArrayList<>(size);
 		for (int i = 0; i < size; ++i) {
 			Object elementOrTreePath = v.get(i);
 			// Use internalExpand since item may not yet be created. See
 			// 1G6B1AR.
 			Widget w = internalExpand(elementOrTreePath, false);
 			if (w instanceof Item) {
-				newSelection.add(w);
+				newSelection.add((Item) w);
 			} else if (w == null && elementOrTreePath instanceof TreePath) {
 				TreePath treePath = (TreePath) elementOrTreePath;
 				Object element = treePath.getLastSegment();
 				if (element != null) {
 					w = internalExpand(element, false);
 					if (w instanceof Item) {
-						newSelection.add(w);
+						newSelection.add((Item) w);
 					}
 				}
 			}
@@ -2538,7 +2537,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			// Iterate backwards so the first item in the list
 			// is the one guaranteed to be visible
 			for (int i = (newSelection.size()-1); i >= 0; i--) {
-				showItem((Item) newSelection.get(i));
+				showItem(newSelection.get(i));
 			}
 		}
 	}
@@ -2947,15 +2946,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return TreeSelection.EMPTY;
 		}
 		Widget[] items = getSelection(getControl());
-		ArrayList list = new ArrayList(items.length);
+		ArrayList<TreePath> list = new ArrayList<>(items.length);
 		for (int i = 0; i < items.length; i++) {
 			Widget item = items[i];
 			if (item.getData() != null) {
 				list.add(getTreePathFromItem((Item) item));
 			}
 		}
-		return new TreeSelection((TreePath[]) list.toArray(new TreePath[list
-				.size()]), getComparer());
+		return new TreeSelection(list.toArray(new TreePath[list.size()]), getComparer());
 	}
 
 	/**
@@ -3006,17 +3004,17 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.2
 	 */
 	public TreePath[] getExpandedTreePaths() {
-		ArrayList items = new ArrayList();
+		ArrayList<Item> items = new ArrayList<>();
 		internalCollectExpandedItems(items, getControl());
-		ArrayList result = new ArrayList(items.size());
-		for (Iterator it = items.iterator(); it.hasNext();) {
-			Item item = (Item) it.next();
+		ArrayList<TreePath> result = new ArrayList<>(items.size());
+		for (Iterator<Item> it = items.iterator(); it.hasNext();) {
+			Item item = it.next();
 			TreePath treePath = getTreePathFromItem(item);
 			if (treePath != null) {
 				result.add(treePath);
 			}
 		}
-		return (TreePath[]) result.toArray(new TreePath[items.size()]);
+		return result.toArray(new TreePath[items.size()]);
 	}
 
 	private boolean isTreePathContentProvider() {

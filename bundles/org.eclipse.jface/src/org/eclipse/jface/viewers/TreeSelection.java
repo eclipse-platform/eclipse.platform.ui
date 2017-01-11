@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,8 +201,8 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 		} else if (value instanceof TreePath) {
 			return new TreePath[] { (TreePath)value };
 		} else if (value instanceof List) {
-			List l= (List)value;
-			return (TreePath[])l.toArray(new TreePath[l.size()]);
+			List<TreePath> l = (List<TreePath>) value;
+			return l.toArray(new TreePath[l.size()]);
 		} else {
 			// should not happen:
 			Assert.isTrue(false, "Unhandled case"); //$NON-NLS-1$

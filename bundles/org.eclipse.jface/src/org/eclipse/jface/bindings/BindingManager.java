@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ public final class BindingManager extends HandleObjectManager implements
 			return new String[0];
 		}
 
-		final List strings = new ArrayList();
+		final List<String> strings = new ArrayList<>();
 		final StringBuffer stringBuffer = new StringBuffer();
 		string = string.trim(); // remove whitespace
 		if (string.length() > 0) {
@@ -163,7 +163,7 @@ public final class BindingManager extends HandleObjectManager implements
 		Collections.reverse(strings);
 		strings.add(Util.ZERO_LENGTH_STRING);
 		strings.add(null);
-		return (String[]) strings.toArray(new String[strings.size()]);
+		return strings.toArray(new String[strings.size()]);
 	}
 
 	/**
