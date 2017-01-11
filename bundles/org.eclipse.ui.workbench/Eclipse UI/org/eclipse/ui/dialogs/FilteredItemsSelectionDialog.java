@@ -61,6 +61,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -598,8 +599,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	private void createPopupMenu() {
 		removeHistoryItemAction = new RemoveHistoryItemAction();
-		removeHistoryActionContributionItem = new ActionContributionItem(
-				removeHistoryItemAction);
+		removeHistoryActionContributionItem = new ActionContributionItem(removeHistoryItemAction);
 
 		contextMenuManager = new MenuManager();
 		contextMenuManager.setRemoveAllWhenShown(true);
@@ -685,8 +685,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		});
 
 		list.addSelectionChangedListener(event -> {
-			StructuredSelection selection = (StructuredSelection) event
-					.getSelection();
+			StructuredSelection selection = (StructuredSelection) event.getSelection();
 			handleSelected(selection);
 		});
 
@@ -720,8 +719,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 				if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.SHIFT) != 0
 						&& (e.stateMask & SWT.CTRL) != 0) {
-					StructuredSelection selection = (StructuredSelection) list
-							.getSelection();
+					IStructuredSelection selection = list.getStructuredSelection();
 
 					if (selection.size() == 1) {
 						Object element = selection.getFirstElement();
@@ -732,8 +730,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 								.getSelectionIndex() - 1) instanceof ItemsListSeparator)
 							list.getTable().setSelection(
 									list.getTable().getSelectionIndex() - 1);
-						list.getTable().notifyListeners(SWT.Selection,
-								new Event());
+						list.getTable().notifyListeners(SWT.Selection, new Event());
 
 					}
 				}
@@ -1081,8 +1078,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	protected StructuredSelection getSelectedItems() {
 
-		StructuredSelection selection = (StructuredSelection) list
-				.getSelection();
+		StructuredSelection selection = (StructuredSelection) list.getStructuredSelection();
 
 		List selectedItems = selection.toList();
 		Object itemToRemove = null;

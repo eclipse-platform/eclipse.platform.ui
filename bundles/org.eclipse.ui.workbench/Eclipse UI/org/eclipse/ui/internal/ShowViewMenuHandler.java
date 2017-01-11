@@ -67,7 +67,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 				Composite partContainer = (Composite) model.getWidget();
 				if (partContainer != null) {
 					Composite parent = partContainer.getParent();
-					while (parent != null && parent instanceof Composite) {
+					while (parent != null) {
 						if (parent instanceof CTabFolder) {
 							CTabFolder ctf = (CTabFolder) parent;
 							final Control topRight = ctf.getTopRight();
