@@ -114,7 +114,7 @@ public class DocumentCommand {
 
 	/**
 	 * An iterator, which iterates in reverse over a list.
-	 * 
+	 *
 	 * @param <E> the type of elements returned by this iterator
 	 */
 	private static class ReverseListIterator<E> implements Iterator<E> {

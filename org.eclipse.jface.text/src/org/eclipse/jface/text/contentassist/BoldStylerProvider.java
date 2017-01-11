@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
 
 /**
  * Provides {@link Styler} that applies bold style on the given font.
- * 
+ *
  * @since 3.11
  */
 public final class BoldStylerProvider {
@@ -33,7 +33,7 @@ public final class BoldStylerProvider {
 
 	/**
 	 * Creates a {@link BoldStylerProvider} instance which uses the given <code>font</code>.
-	 * 
+	 *
 	 * @param font the font to use for creating the bold font
 	 */
 	public BoldStylerProvider(Font font) {
@@ -52,7 +52,7 @@ public final class BoldStylerProvider {
 
 	/**
 	 * Returns a {@link Styler} that applies bold style to the given {@link TextStyle}'s font.
-	 * 
+	 *
 	 * @return a bold styler
 	 */
 	public Styler getBoldStyler() {
@@ -70,12 +70,12 @@ public final class BoldStylerProvider {
 	/**
 	 * Creates (if not already done) and returns the bold font used by the styler to apply the bold
 	 * style.
-	 * 
+	 *
 	 * <p>
 	 * <strong>Note:</strong> The callers must not cache and re-use the returned font outside the
 	 * current call.
 	 * </p>
-	 * 
+	 *
 	 * @return the bold font used by the styler
 	 */
 	public Font getBoldFont() {
@@ -91,7 +91,7 @@ public final class BoldStylerProvider {
 
 	/**
 	 * Returns the font used by the styler to create the bold font.
-	 * 
+	 *
 	 * @return the font used for creating the bold font
 	 */
 	public Font getFont() {

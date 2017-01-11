@@ -121,7 +121,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 * <p>
 	 * This implementation damages entire lines unless clipped by the given partition.
 	 * </p>
-	 * 
+	 *
 	 * @return the full lines containing the document changes described by the document event,
 	 *         clipped by the given partition. If there was a partitioning change then the whole
 	 *         partition is returned.

@@ -92,7 +92,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		/** The gap between the text viewer and the vertical ruler. */
 		protected int fGap;
-		
+
 		/**
 		 * Cached arrow heights of the vertical scroll bar: An array containing {topArrowHeight, bottomArrowHeight}.
 		 * @since 3.6
@@ -158,16 +158,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			if (overviewRulerWidth != -1) {
 				if (scrollbarHeight <= 0)
 					scrollbarHeight= overviewRulerWidth;
-				
+
 				int bottomOffset= clArea.y + clArea.height - scrollbarHeight;
 				int[] arrowHeights= getVerticalScrollArrowHeights(textWidget, bottomOffset);
-				
+
 				int overviewRulerX= clArea.x + clArea.width - overviewRulerWidth - 1;
 				boolean noSpaceForHeader= (arrowHeights[0] <= 0 && arrowHeights[1] <= 0 && !hScrollVisible);
 				Control headerControl= fOverviewRuler.getHeaderControl();
 				Control rulerControl= fOverviewRuler.getControl();
 				if (noSpaceForHeader) {
-					// If we don't have space to draw because we don't have arrows and the horizontal scroll is invisible, 
+					// If we don't have space to draw because we don't have arrows and the horizontal scroll is invisible,
 					// use the whole space for the ruler and leave the headerControl without any space (will actually be invisible).
 					rulerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, clArea.height);
 					headerControl.setBounds(0, 0, 0, 0);
@@ -188,18 +188,18 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		/**
 		 * Computes and caches the arrow heights of the vertical scroll bar.
-		 * 
+		 *
 		 * @param textWidget the StyledText
 		 * @param bottomOffset y-coordinate of the bottom of the overview ruler area
 		 * @return an array containing {topArrowHeight, bottomArrowHeight}
-		 * 
+		 *
 		 * @since 3.6
 		 */
 		private int[] getVerticalScrollArrowHeights(StyledText textWidget, int bottomOffset) {
 			ScrollBar verticalBar= textWidget.getVerticalBar();
 			if (verticalBar == null || !verticalBar.getVisible())
 				return new int[] { 0, 0 };
-			
+
 			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
 			if (arrowHeights[0] > 0 || arrowHeights[1] > 0) {
 				fScrollArrowHeights= arrowHeights;
@@ -224,11 +224,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		/**
 		 * Computes the arrow heights of the vertical scroll bar.
-		 * 
+		 *
 		 * @param textWidget the StyledText
 		 * @param bottomOffset y-coordinate of the bottom of the overview ruler area
 		 * @return an array containing {topArrowHeight, bottomArrowHeight}
-		 * 
+		 *
 		 * @since 3.6
 		 */
 		private int[] computeScrollArrowHeights(StyledText textWidget, int bottomOffset) {
@@ -239,7 +239,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				// SWT returns bogus values on Windows when the control is too small, see https://bugs.eclipse.org/485540
 				return new int[] { 0, 0 };
 			}
-			
+
 			int topArrowHeight= thumbTrackBounds.y;
 			int bottomArrowHeight= bottomOffset - (thumbTrackBounds.y + thumbTrackBounds.height);
 			return new int[] { topArrowHeight, bottomArrowHeight };
@@ -826,7 +826,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * Position storing block selection information in order to maintain a column selection.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private static final class ColumnPosition extends Position {
@@ -1177,7 +1177,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * Adds the give column as last column to this viewer's vertical ruler.
-	 * 
+	 *
 	 * @param column the column to be added
 	 * @since 3.8
 	 */
@@ -1191,7 +1191,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * Removes the give column from this viewer's vertical ruler.
-	 * 
+	 *
 	 * @param column the column to be removed
 	 * @since 3.8
 	 */

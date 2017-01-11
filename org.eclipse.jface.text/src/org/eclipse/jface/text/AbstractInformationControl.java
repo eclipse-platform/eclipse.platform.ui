@@ -90,7 +90,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	private Font fStatusLabelFont;
 	/**
 	 * Color for the label in the status line or <code>null</code> if none.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private Color fStatusLabelForeground;
@@ -182,7 +182,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fResizable= (shellStyle & SWT.RESIZE) != 0;
 		fShell= new Shell(parentShell, shellStyle);
 		Display display= fShell.getDisplay();
-		
+
 		ColorRegistry colorRegistry =  JFaceResources.getColorRegistry();
 		Color foreground= colorRegistry.get("org.eclipse.ui.workbench.HOVER_FOREGROUND"); //$NON-NLS-1$
 		if (foreground == null) {
@@ -206,7 +206,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		setColor(fContentComposite, foreground, background);
 
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
-		
+
 		addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
@@ -250,7 +250,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		}
 		fStatusLabelFont= new Font(fStatusLabel.getDisplay(), fontDatas);
 		fStatusLabel.setFont(fStatusLabelFont);
-		
+
 		fStatusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
 		setColor(fStatusLabel, fStatusLabelForeground, background);
 		setColor(fStatusComposite, foreground, background);
@@ -484,7 +484,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * The given <code>parent</code> comes with a {@link FillLayout}. Subclasses may set a different
 	 * layout.
 	 * </p>
-	 * 
+	 *
 	 * @param parent the container of the content
 	 */
 	protected abstract void createContent(Composite parent);
@@ -531,7 +531,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	/**
 	 * Frees all resources allocated by this information control. Internally called when the
 	 * information control's shell has been disposed.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	protected void handleDispose() {

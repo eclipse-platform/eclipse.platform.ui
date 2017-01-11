@@ -194,7 +194,7 @@ public class TextSelection implements ITextSelection {
 
 	/**
 	 * Returns the document underlying the receiver, possibly <code>null</code>.
-	 * 
+	 *
 	 * @return the document underlying the receiver, possibly <code>null</code>
 	 * @since 3.5
 	 */

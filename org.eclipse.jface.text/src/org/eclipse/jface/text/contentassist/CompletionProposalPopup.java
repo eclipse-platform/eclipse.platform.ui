@@ -415,7 +415,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * The sorter to be used for sorting the proposals or <code>null</code> if no sorting is
 	 * requested.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private ICompletionProposalSorter fSorter;
@@ -423,7 +423,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Set to true by {@link #computeProposals(int)} when initial sorting is performed on the
 	 * computed proposals using {@link #fSorter}.
-	 * 
+	 *
 	 * @since 3.11
 	 */
 	private boolean fIsInitialSort;
@@ -1134,7 +1134,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Initializes the proposal selector with these given proposals. If a proposal sorter is
 	 * configured, the given proposals are sorted before.
-	 * 
+	 *
 	 * @param proposals the proposals
 	 * @param isFilteredSubset if <code>true</code>, the proposal table is
 	 *        not cleared, but the proposals that are not in the passed array
@@ -1419,7 +1419,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Fires an event after applying the given proposal, see {@link ICompletionListenerExtension2}.
-	 * 
+	 *
 	 * @param proposal the applied proposal
 	 * @since 3.8
 	 */
@@ -1429,7 +1429,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Returns whether the given character is contained in the given array of characters.
-	 * 
+	 *
 	 * @param characters the list of characters
 	 * @param c the character to look for in the list
 	 * @return <code>true</code> if character belongs to the list
@@ -1799,7 +1799,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * proposals are also present along with prefix proposals (i.e. <code>fFilteredProposals</code>
 	 * list has mixed proposals) then casing of substring matches is ignored for the computation of
 	 * common prefix.
-	 * 
+	 *
 	 * @return <code>true</code> if <code>fFilteredProposals</code> list contains proposals based on
 	 *         different rules
 	 */
@@ -1953,7 +1953,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Sets the proposal sorter.
-	 * 
+	 *
 	 * @param sorter the sorter to be used, or <code>null</code> if no sorting is requested
 	 * @since 3.8
 	 * @see ContentAssistant#setSorter(ICompletionProposalSorter)
@@ -1964,7 +1964,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Sorts the given proposal array.
-	 * 
+	 *
 	 * @param proposals the new proposals to display in the popup window
 	 * @throws NullPointerException if no sorter has been set
 	 * @since 3.8

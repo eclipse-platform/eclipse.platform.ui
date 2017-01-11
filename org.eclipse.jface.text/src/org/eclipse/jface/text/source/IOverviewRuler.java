@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Control;
  * Clients may implement this interface or use the default implementation provided by
  * <code>OverviewRuler</code>.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.source.IOverviewRulerExtension
  * @since 2.1

@@ -604,7 +604,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	/**
 	 * Returns the size of the context selector pop-up.
-	 * 
+	 *
 	 * @return a Point containing the size
 	 * @since 3.9
 	 */
@@ -628,7 +628,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	/**
 	 * Sets the contexts in the context selector to the given set.
-	 * 
+	 *
 	 * @param contexts the possible contexts
 	 * @param selectionIndex the index of the proposal to select
 	 */

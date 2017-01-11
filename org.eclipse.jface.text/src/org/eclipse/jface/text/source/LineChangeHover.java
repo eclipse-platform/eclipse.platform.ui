@@ -139,7 +139,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 					return trimTrailing(text.toString());
 			}
 		}
-		
+
 		text = new StringBuffer(text.toString().trim());
 		if (text.length() == 0 && added-- > 0 && maxLines-- > 0) {
 			text.append("+ ");//$NON-NLS-1$

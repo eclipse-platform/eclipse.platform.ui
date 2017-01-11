@@ -26,7 +26,7 @@ import org.eclipse.jface.text.IDocument;
  * <strong>Note:</strong> {@link ICompletionProposal#getDisplayString()} still needs to be correctly
  * implemented as this method might be ignored in case of uninstalled owner draw support.
  * </p>
- * 
+ *
  * @since 3.11
  */
 public interface ICompletionProposalExtension7 {
@@ -35,11 +35,11 @@ public interface ICompletionProposalExtension7 {
 	 * token at the current caret offset. This can for example be used to emphasize prefix, camel
 	 * case or substring matches in the display string. Clients can emphasize the matches using any
 	 * font style. It is encouraged to use the bold font as the style.
-	 * 
+	 *
 	 * @param document the document where content assist is invoked
 	 * @param offset the offset in the document at current caret location
 	 * @param boldStylerProvider to provide a {@link Styler} that applies bold style
-	 * 
+	 *
 	 * @return the styled display string for this proposal with emphasized ranges matching the token
 	 *         at the given offset
 	 */

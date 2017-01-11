@@ -17,7 +17,7 @@ package org.eclipse.jface.text.hyperlink;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.7
  */
 public interface IHyperlinkPresenterExtension2 {
@@ -25,7 +25,7 @@ public interface IHyperlinkPresenterExtension2 {
 	/**
 	 * Tells this hyperlink presenter to show the given hyperlinks on the installed text viewer and
 	 * specifies whether or not the control takes focus when visible.
-	 * 
+	 *
 	 * @param activeHyperlinks the hyperlinks to show
 	 * @param takesFocusWhenVisible <code>true</code> if the control takes the focus when visible,
 	 *            <code>false</code> otherwise. Will be ignored if there is only one hyperlink to

@@ -27,7 +27,7 @@ import org.eclipse.jface.text.ITextViewer;
  * <li>{@link IHyperlinkPresenterExtension2} since version 3.7,
  *      adds the ability distinguish between the modes in which the
  *      control either takes focus or not when visible.
- * </li> 
+ * </li>
  * </ul></p>
  * <p>
  * Clients may implement this interface. A default implementation is provided

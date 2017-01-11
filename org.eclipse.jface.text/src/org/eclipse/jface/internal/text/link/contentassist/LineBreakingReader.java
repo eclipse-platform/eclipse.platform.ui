@@ -36,7 +36,7 @@ public class LineBreakingReader {
 
 	/**
 	 * Creates a reader that breaks an input text to fit in a given width.
-	 * 
+	 *
 	 * @param reader reader for the input text
 	 * @param gc The graphic context that defines the currently used font sizes
 	 * @param maxLineWidth The max width (pixels) where the text has to fit in
@@ -47,7 +47,7 @@ public class LineBreakingReader {
 
 	/**
 	 * Creates a reader that breaks an input text to fit in a given width.
-	 * 
+	 *
 	 * @param reader the reader for the input text
 	 * @param bufferSize the buffer size
 	 * @param gc The graphic context that defines the currently used font sizes
@@ -59,7 +59,7 @@ public class LineBreakingReader {
 
 	/**
 	 * Creates a reader that breaks an input text to fit in a given width.
-	 * 
+	 *
 	 * @param reader the buffered reader for the input text
 	 * @param gc The graphic context that defines the currently used font sizes
 	 * @param maxLineWidth The max width (pixels) where the text has to fit in

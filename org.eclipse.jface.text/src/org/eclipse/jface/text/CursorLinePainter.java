@@ -253,7 +253,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	/**
 	 * Returns <code>true</code> if the widget has a selection spanning multiple lines,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param textWidget the text widget to check
 	 * @return <code>true</code> if <code>textWidget</code> has a multiline selection,
 	 *         <code>false</code> otherwise

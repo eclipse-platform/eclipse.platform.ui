@@ -42,7 +42,7 @@ import org.eclipse.jface.text.TextUtilities;
 
 /**
  * Processes {@link ITextSelection}s.
- * 
+ *
  * @since 3.5
  */
 public final class SelectionProcessor {
@@ -50,7 +50,7 @@ public final class SelectionProcessor {
 		/**
 		 * Returns a text edit describing the text modification that would be executed if the given
 		 * selection was replaced by <code>replacement</code>.
-		 * 
+		 *
 		 * @param selection the selection to replace
 		 * @param replacement the replacement text
 		 * @return a text edit describing the operation needed to replace <code>selection</code>
@@ -62,7 +62,7 @@ public final class SelectionProcessor {
 
 		/**
 		 * Returns the text covered by <code>selection</code>
-		 * 
+		 *
 		 * @param selection the selection
 		 * @return the text covered by <code>selection</code>
 		 * @throws BadLocationException if computing the edit failed
@@ -75,7 +75,7 @@ public final class SelectionProcessor {
 		 * Returns <code>true</code> if the text covered by <code>selection</code> does not contain any
 		 * characters. Note the difference to {@link ITextSelection#isEmpty()}, which returns
 		 * <code>true</code> only for invalid selections.
-		 * 
+		 *
 		 * @param selection the selection
 		 * @return <code>true</code> if <code>selection</code> does not contain any text,
 		 *         <code>false</code> otherwise
@@ -88,11 +88,11 @@ public final class SelectionProcessor {
 		/**
 		 * Returns <code>true</code> if <code>selection</code> covers text on two or more lines,
 		 * <code>false</code> otherwise.
-		 * 
+		 *
 		 * @param selection the selection
 		 * @return <code>true</code> if <code>selection</code> covers text on two or more lines,
 		 *         <code>false</code> otherwise
-		 * @throws BadLocationException if selection is not a valid selection on the target document 
+		 * @throws BadLocationException if selection is not a valid selection on the target document
 		 */
 		boolean isMultiline(ISelection selection) throws BadLocationException {
 			if (selection == null)
@@ -111,7 +111,7 @@ public final class SelectionProcessor {
 		/**
 		 * Returns a selection similar to <code>selection</code> but {@linkplain #isEmpty(ISelection)
 		 * empty}. Typically, the selection is reduced to its left-most offset.
-		 * 
+		 *
 		 * @param selection the selection
 		 * @param beginning <code>true</code> to collapse the selection to its smallest position
 		 *            (i.e. its left-most offset), <code>false</code> to collapse it to its greatest
@@ -125,7 +125,7 @@ public final class SelectionProcessor {
 
 		/**
 		 * Returns the text regions covered by the given selection.
-		 * 
+		 *
 		 * @param selection the selection
 		 * @return the text regions corresponding to <code>selection</code>
 		 * @throws BadLocationException if accessing the document failed
@@ -135,8 +135,8 @@ public final class SelectionProcessor {
 		}
 
 		/**
-		 * Returns the number of lines touched by <code>selection</code>. 
-		 * 
+		 * Returns the number of lines touched by <code>selection</code>.
+		 *
 		 * @param selection the selection
 		 * @return the number of lines touched by <code>selection</code>
 		 * @throws BadLocationException if accessing the document failed
@@ -147,7 +147,7 @@ public final class SelectionProcessor {
 
 		/**
 		 * Returns the selection after replacing <code>selection</code> by <code>replacement</code>.
-		 * 
+		 *
 		 * @param selection the selection to be replaced
 		 * @param replacement the replacement text
 		 * @return the selection that the user expects after the specified replacement operation
@@ -204,7 +204,7 @@ public final class SelectionProcessor {
 		@Override
 		ISelection makeEmpty(ISelection selection, boolean beginning) {
 			ITextSelection ts= (ITextSelection)selection;
-			return beginning ? 
+			return beginning ?
 					  new TextSelection(fDocument, ts.getOffset(), 0)
 					: new TextSelection(fDocument, ts.getOffset() + ts.getLength(), 0);
 		}
@@ -214,13 +214,13 @@ public final class SelectionProcessor {
 			ITextSelection ts= (ITextSelection)selection;
 			return new IRegion[] { new Region(ts.getOffset(), ts.getLength()) };
 		}
-		
+
 		@Override
 		int getCoveredLines(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getEndLine() - ts.getStartLine() + 1;
 		}
-		
+
 		@Override
 		ISelection makeReplaceSelection(ISelection selection, String replacement) {
 			ITextSelection ts= (ITextSelection)selection;
@@ -372,7 +372,7 @@ public final class SelectionProcessor {
 			}
 			return new BlockTextSelection(fDocument, startLine, startColumn, endLine, endColumn, fTabWidth);
 		}
-		
+
 		@Override
 		ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
 			IBlockTextSelection bts= (IBlockTextSelection)selection;
@@ -412,7 +412,7 @@ public final class SelectionProcessor {
 
 			return ranges;
 		}
-		
+
 		@Override
 		int getCoveredLines(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
@@ -530,7 +530,7 @@ public final class SelectionProcessor {
 		 * Returns the increment in visual length represented by <code>character</code> given the
 		 * current visual length. The visual length is <code>1</code> unless <code>character</code>
 		 * is a tabulator (<code>\t</code>).
-		 * 
+		 *
 		 * @param character the character the length of which to compute
 		 * @param visual the current visual length
 		 * @return the increment in visual length represented by <code>character</code>, which is in
@@ -569,7 +569,7 @@ public final class SelectionProcessor {
 
 	/**
 	 * Creates a new processor on the given viewer.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 */
 	public SelectionProcessor(ITextViewer viewer) {
@@ -584,7 +584,7 @@ public final class SelectionProcessor {
 
 	/**
 	 * Creates a new processor on the given document and using the given tab width.
-	 * 
+	 *
 	 * @param document the document
 	 * @param tabWidth the tabulator width in space equivalents, must be <code>&gt;=0</code>
 	 */
@@ -598,7 +598,7 @@ public final class SelectionProcessor {
 	/**
 	 * Returns a text edit describing the text modification that would be executed if the delete key
 	 * was pressed on the given selection.
-	 * 
+	 *
 	 * @param selection the selection to delete
 	 * @return a text edit describing the operation needed to delete <code>selection</code>
 	 * @throws BadLocationException if computing the edit failed
@@ -610,7 +610,7 @@ public final class SelectionProcessor {
 	/**
 	 * Returns a text edit describing the text modification that would be executed if the backspace
 	 * key was pressed on the given selection.
-	 * 
+	 *
 	 * @param selection the selection to delete
 	 * @return a text edit describing the operation needed to delete <code>selection</code>
 	 * @throws BadLocationException if computing the edit failed
@@ -622,7 +622,7 @@ public final class SelectionProcessor {
 	/**
 	 * Returns a text edit describing the text modification that would be executed if the given
 	 * selection was replaced by <code>replacement</code>.
-	 * 
+	 *
 	 * @param selection the selection to replace
 	 * @param replacement the replacement text
 	 * @return a text edit describing the operation needed to replace <code>selection</code>
@@ -634,7 +634,7 @@ public final class SelectionProcessor {
 
 	/**
 	 * Returns the text covered by <code>selection</code>
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return the text covered by <code>selection</code>
 	 * @throws BadLocationException if computing the edit failed
@@ -647,7 +647,7 @@ public final class SelectionProcessor {
 	 * Returns <code>true</code> if the text covered by <code>selection</code> does not contain any
 	 * characters. Note the difference to {@link ITextSelection#isEmpty()}, which returns
 	 * <code>true</code> only for invalid selections.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return <code>true</code> if <code>selection</code> does not contain any text,
 	 *         <code>false</code> otherwise
@@ -660,7 +660,7 @@ public final class SelectionProcessor {
 	/**
 	 * Returns <code>true</code> if <code>selection</code> extends to two or more lines,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return <code>true</code> if <code>selection</code> extends to two or more lines,
 	 *         <code>false</code> otherwise
@@ -674,7 +674,7 @@ public final class SelectionProcessor {
 	/**
 	 * Returns a selection similar to <code>selection</code> but {@linkplain #isEmpty(ISelection)
 	 * empty}. Typically, the selection is reduced to its extreme offsets.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @param beginning <code>true</code> to collapse the selection to its smallest position (i.e.
 	 *            its left-most offset), <code>false</code> to collapse it to its greatest position
@@ -685,7 +685,7 @@ public final class SelectionProcessor {
 	public ISelection makeEmpty(ISelection selection, boolean beginning) throws BadLocationException {
 		return getImplementation(selection).makeEmpty(selection, beginning);
 	}
-	
+
 	private ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
 		return getImplementation(selection).makeReplaceSelection(selection, replacement);
 	}
@@ -693,7 +693,7 @@ public final class SelectionProcessor {
 	/**
 	 * Convenience method that applies the edit returned from {@link #delete(ISelection)} to the
 	 * underlying document.
-	 * 
+	 *
 	 * @param selection the selection to delete
 	 * @throws BadLocationException if accessing the document failed
 	 */
@@ -713,11 +713,11 @@ public final class SelectionProcessor {
 			fRewriteTarget.endCompoundChange();
 		}
 	}
-	
+
 	/**
 	 * Convenience method that applies the edit returned from {@link #replace(ISelection, String)}
 	 * to the underlying document and adapts the selection accordingly.
-	 * 
+	 *
 	 * @param selection the selection to replace
 	 * @param replacement the replacement text
 	 * @throws BadLocationException if accessing the document failed
@@ -739,10 +739,10 @@ public final class SelectionProcessor {
 				fRewriteTarget.endCompoundChange();
 		}
 	}
-	
+
 	/**
 	 * Returns the text regions covered by the given selection.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return the text regions corresponding to <code>selection</code>
 	 * @throws BadLocationException if accessing the document failed
@@ -754,7 +754,7 @@ public final class SelectionProcessor {
 	/**
 	 * Returns the number of lines touched by <code>selection</code>. Note that for linear
 	 * selections, this is the number of contained delimiters plus 1.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return the number of lines touched by <code>selection</code>
 	 * @throws BadLocationException if accessing the document failed
@@ -765,7 +765,7 @@ public final class SelectionProcessor {
 
 	/**
 	 * Returns the implementation.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return the corresponding processor implementation
 	 */

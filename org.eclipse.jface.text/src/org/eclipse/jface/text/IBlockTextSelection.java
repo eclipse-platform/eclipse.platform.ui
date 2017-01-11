@@ -16,7 +16,7 @@ package org.eclipse.jface.text;
  * column may not be equal for two different lines, therefore computing the set of disjunct
  * character ranges covered by a column selection is influenced by the used font and tabulator
  * width. Using column selections with proportional fonts may render unexpected results.
- * 
+ *
  * <h5><a name="virtual">Virtual Spaces</a></h5>
  * The {@linkplain #getStartColumn() start column} and {@linkplain #getEndColumn() end column} may
  * refer to &quot;virtual offsets&quot; in the white space beyond the end of the line. Such an
@@ -30,7 +30,7 @@ package org.eclipse.jface.text;
  * Clients may implement this interface or use the default implementation provided by
  * {@link org.eclipse.jface.text.BlockTextSelection}.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.BlockTextSelection
  * @since 3.5
  */
@@ -40,7 +40,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * selection starts. The returned column is a character count measured from the start of the
 	 * line. It may be larger than the length of the line, in which case it is a <a
 	 * href="IBlockTextSelection.html#virtual">virtual</a> offset.
-	 * 
+	 *
 	 * @return the start column measured from the line start
 	 */
 	int getStartColumn();
@@ -49,7 +49,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * selection ends. The returned column is a character count measured from the start of the
 	 * line. It may be larger than the length of the line, in which case it is a <a
 	 * href="IBlockTextSelection.html#virtual">virtual</a> offset.
-	 * 
+	 *
 	 * @return the end column measured from the line start
 	 */
 	int getEndColumn();
@@ -63,7 +63,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * Any <a href="IBlockTextSelection.html#virtual">virtual</a> spaces beyond the end of the selected lines are
 	 * materialized and returned as text.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.ITextSelection#getText()
 	 */
 	@Override
@@ -71,7 +71,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	/**
 	 * Returns a non-empty array containing the selected text range for each line covered by the
 	 * selection.
-	 * 
+	 *
 	 * @return an array containing a the covered text range for each line covered by the receiver
 	 */
 	IRegion[] getRegions();

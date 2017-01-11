@@ -68,7 +68,7 @@ import org.eclipse.jface.text.TextPresentation;
  * <li>focusLost event is not sent - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532</li>
  * </ul>
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class BrowserInformationControl extends AbstractInformationControl implements IInformationControlExtension2, IDelayedInputChangeProvider {
@@ -77,7 +77,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Tells whether the SWT Browser widget and hence this information
 	 * control is available.
-	 * 
+	 *
 	 * @param parent the parent component used for checking or <code>null</code> if none
 	 * @return <code>true</code> if this control is available
 	 */
@@ -170,7 +170,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param resizable <code>true</code> if the control should be resizable
@@ -184,7 +184,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param statusFieldText the text to be used in the optional status field
@@ -199,7 +199,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
@@ -385,7 +385,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Creates and initializes the text layout used
 	 * to compute the size hint.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void createTextLayout() {
@@ -496,7 +496,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Adds the listener to the collection of listeners who will be
 	 * notified when the current location has changed or is about to change.
-	 * 
+	 *
 	 * @param listener the location listener
 	 * @since 3.4
 	 */
@@ -524,7 +524,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Adds a listener for input changes to this input change provider.
 	 * Has no effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param inputChangeListener the listener to add
 	 * @since 3.4
 	 */
@@ -536,7 +536,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Removes the given input change listener from this input change provider.
 	 * Has no effect if an identical listener is not registered.
-	 * 
+	 *
 	 * @param inputChangeListener the listener to remove
 	 * @since 3.4
 	 */
@@ -551,7 +551,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Tells whether a delayed input change listener is registered.
-	 * 
+	 *
 	 * @return <code>true</code> iff a delayed input change
 	 *         listener is currently registered
 	 * @since 3.4
@@ -562,7 +562,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Notifies listeners of a delayed input change.
-	 * 
+	 *
 	 * @param newInput the new input, or <code>null</code> to request cancellation
 	 * @since 3.4
 	 */

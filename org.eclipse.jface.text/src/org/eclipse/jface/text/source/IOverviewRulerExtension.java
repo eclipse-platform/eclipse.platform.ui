@@ -16,7 +16,7 @@ package org.eclipse.jface.text.source;
  * <p>
  * Allows to set whether to use saturated colors in the overview ruler.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.source.IOverviewRuler
  * @since 3.8
  */
@@ -27,7 +27,7 @@ public interface IOverviewRulerExtension {
 	 * <p>
 	 * The initial value is defined by the ruler implementation.
 	 * </p>
-	 * 
+	 *
 	 * @param useSaturatedColors <code>true</code> if saturated colors should be used,
 	 *            <code>false</code> otherwise
 	 */

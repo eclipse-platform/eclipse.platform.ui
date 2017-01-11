@@ -68,7 +68,7 @@ import org.eclipse.jface.text.IDocument;
  * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension7} since version 3.11 introducing
  *		the following function:
  *			<ul>
- *				<li>Emphasize ranges in the styled display string of the proposal that match the token at the 
+ *				<li>Emphasize ranges in the styled display string of the proposal that match the token at the
  *				current caret offset.</li>
  *			</ul>
  * </li>
@@ -122,8 +122,8 @@ public interface ICompletionProposal {
 	 * Returns the string to be displayed in the list of completion proposals.
 	 *
 	 * @return the string to be displayed
-	 * 
-	 * @see ICompletionProposalExtension6#getStyledDisplayString() 
+	 *
+	 * @see ICompletionProposalExtension6#getStyledDisplayString()
 	 * @see ICompletionProposalExtension7#getStyledDisplayString(IDocument, int, BoldStylerProvider)
 	 */
 	String getDisplayString();

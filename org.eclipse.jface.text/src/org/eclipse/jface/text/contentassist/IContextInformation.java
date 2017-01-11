@@ -69,7 +69,7 @@ public interface IContextInformation {
 	 * <strong>Note:</strong> As specified in {@link Object#equals(Object)} clients will most likely
 	 * also have to implement {@link Object#hashCode()}.
 	 * </p>
-	 * 
+	 *
 	 * @see Object#equals(Object)
 	 */
 	@Override

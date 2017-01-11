@@ -856,28 +856,28 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Dialog store constant for the x-size of the completion proposal pop-up
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String STORE_SIZE_X= "size.x"; //$NON-NLS-1$
 
 	/**
 	 * Dialog store constant for the y-size of the completion proposal pop-up
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String STORE_SIZE_Y= "size.y"; //$NON-NLS-1$
-	
+
 	/**
 	 * Dialog store constant for the x-size of the context selector pop-up
-	 * 
+	 *
 	 * @since 3.9
 	 */
 	public static final String STORE_CONTEXT_SELECTOR_POPUP_SIZE_X= "contextSelector.size.x"; //$NON-NLS-1$
-	
+
 	/**
 	 * Dialog store constant for the y-size of the context selector pop-up
-	 * 
+	 *
 	 * @since 3.9
 	 */
 	public static final String STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y= "contextSelector.size.y"; //$NON-NLS-1$
@@ -1037,7 +1037,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * The sorter to be used for sorting the proposals or <code>null</code> if no sorting is
 	 * requested.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private ICompletionProposalSorter fSorter;
@@ -1200,7 +1200,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
-	 * 
+	 *
 	 * @param delay the auto activation delay (as of 3.6 a negative argument will be set to 0)
 	 */
 	public void setAutoActivationDelay(int delay) {
@@ -1210,7 +1210,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Gets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
-	 * 
+	 *
 	 * @return the auto activation delay (will not be negative)
 	 * @since 3.4
 	 */
@@ -1350,9 +1350,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the {@link BoldStylerProvider} used to emphasize matches in a proposal's styled display
 	 * string.
-	 * 
+	 *
 	 * @param boldStylerProvider the bold styler provider
-	 * 
+	 *
 	 * @see ICompletionProposalExtension7#getStyledDisplayString(IDocument, int, BoldStylerProvider)
 	 * @since 3.11
 	 */
@@ -1363,9 +1363,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Returns the {@link BoldStylerProvider} used to emphasize matches in a proposal's styled
 	 * display string.
-	 * 
+	 *
 	 * @see ICompletionProposalExtension7#getStyledDisplayString(IDocument, int, BoldStylerProvider)
-	 * 
+	 *
 	 * @return the {@link BoldStylerProvider}, or <code>null</code> if not set
 	 * @since 3.11
 	 */
@@ -1770,7 +1770,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				return false;
 			}
 		}
-		
+
 		promoteKeyListener();
 		fireSessionBeginEvent(isAutoActivated);
 		return true;
@@ -2183,7 +2183,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * <li>{@link ContentAssistant#STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y}</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param dialogSettings the dialog settings
 	 * @since 3.0
 	 */
@@ -2209,7 +2209,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Stores the content assist's context selector pop-up size.
-	 * 
+	 *
 	 * @since 3.9
 	 */
 	protected void storeContextSelectorPopupSize() {
@@ -2226,7 +2226,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Restores the content assist's proposal pop-up size.
-	 * 
+	 *
 	 * @return the stored size or <code>null</code> if none
 	 * @since 3.0
 	 */
@@ -2275,7 +2275,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Restores the content assist's context selector pop-up size.
-	 * 
+	 *
 	 * @return the stored size or <code>null</code> if none
 	 * @since 3.9
 	 */
@@ -2320,7 +2320,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the prefix completion property. If enabled, content assist delegates completion to
 	 * prefix completion.
-	 * 
+	 *
 	 * @param enabled <code>true</code> to enable prefix completion, <code>false</code> to
 	 *        disable
 	 */
@@ -2499,7 +2499,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Fires an event after applying a proposal, see {@link ICompletionListenerExtension2}.
-	 * 
+	 *
 	 * @param proposal the applied proposal
 	 * @since 3.8
 	 */
@@ -2604,7 +2604,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Sets the proposal sorter.
-	 * 
+	 *
 	 * @param sorter the sorter to be used, or <code>null</code> if no sorting is requested
 	 * @since 3.8
 	 */

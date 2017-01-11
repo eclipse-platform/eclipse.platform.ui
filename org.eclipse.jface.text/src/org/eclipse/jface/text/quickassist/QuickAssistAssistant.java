@@ -179,7 +179,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	public void setRestoreCompletionProposalSize(IDialogSettings dialogSettings) {
 		fQuickAssistAssistantImpl.setRestoreCompletionProposalSize(dialogSettings);
 	}
-	
+
 	/**
 	 * Callback to signal this quick assist assistant that the presentation of the
 	 * possible completions has been stopped.

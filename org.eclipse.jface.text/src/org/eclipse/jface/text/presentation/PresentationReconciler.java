@@ -217,7 +217,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		/**
 		 * Translates the given text event into the corresponding range of the viewer's document.
-		 * 
+		 *
 		 * @param e the text event
 		 * @return the widget region corresponding the region of the given event or
 		 *         <code>null</code> if none
@@ -488,7 +488,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 					damageStart= Math.min(damageStart, fChangedDocumentPartitions.getOffset());
 					damageEnd= Math.max(damageEnd, fChangedDocumentPartitions.getOffset() + fChangedDocumentPartitions.getLength());
 				}
-				
+
 				damage= damageEnd == -1 ? r : new Region(damageStart, damageEnd - damageStart);
 			}
 

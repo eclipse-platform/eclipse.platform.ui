@@ -58,9 +58,9 @@ public class VerticalRulerEvent {
 	public void setSelectedAnnotation(Annotation annotation) {
 		fAnnotation= annotation;
 	}
-	
+
 	/**
-	 * @return the SWT event that triggered this vertical ruler event, or <code>null</code>. 
+	 * @return the SWT event that triggered this vertical ruler event, or <code>null</code>.
 	 * @since 3.8
 	 */
 	public Event getEvent() {

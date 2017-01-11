@@ -93,7 +93,7 @@ public interface ISourceViewer extends ITextViewer {
 	 * @since 3.2
 	 */
 	int QUICK_ASSIST= ITextOperationTarget.STRIP_PREFIX + 10;
-	
+
 	/*
 	 * XXX: Next free number is HyperlinkManager.OPEN_HYPERLINK + 1
 	 */
@@ -170,7 +170,7 @@ public interface ISourceViewer extends ITextViewer {
 	/**
 	 * Sets the viewers's range indication to the specified range. It is indicated whether the
 	 * cursor should also be moved to the beginning of the specified range.
-	 * 
+	 *
 	 * @param offset the offset of the range
 	 * @param length the length of the range
 	 * @param moveCursor indicates whether the cursor should be moved to the given offset

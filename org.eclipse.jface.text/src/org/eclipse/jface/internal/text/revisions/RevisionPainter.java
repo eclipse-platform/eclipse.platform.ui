@@ -1133,7 +1133,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles the selection of a revision and informs listeners.
-	 * 
+	 *
 	 * @param revision the selected revision, <code>null</code> for none
 	 */
 	void handleRevisionSelected(Revision revision) {
@@ -1266,7 +1266,7 @@ public final class RevisionPainter {
 			fWheelHandlerInstalled= true;
 		}
 	}
-	
+
 	/**
 	 * @return <code>true</code> iff the mouse wheel handler is installed and others should avoid
 	 *         handling mouse wheel events

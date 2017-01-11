@@ -346,7 +346,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			Point loc= styledText.getLocationAtOffset(start);
 			bounds= new Rectangle(loc.x, loc.y, 0, styledText.getLineHeight(start));
 		}
-		
+
 		Rectangle clientArea= styledText.getClientArea();
 		Geometry.moveInside(bounds, clientArea);
 		return bounds;

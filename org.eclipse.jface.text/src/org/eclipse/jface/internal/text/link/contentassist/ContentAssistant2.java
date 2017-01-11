@@ -819,7 +819,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 	/**
 	 * Installs and uninstall the listeners needed for auto activation.
-	 * 
+	 *
 	 * @param start <code>true</code> if listeners must be installed, <code>false</code> if they
 	 *            must be removed
 	 * @since 2.0

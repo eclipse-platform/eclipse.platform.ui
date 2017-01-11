@@ -457,13 +457,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed())
 				fSubjectControl.addMouseTrackListener(this);
-			
+
 			fIsInRestartMode= false;
 			fIsComputing= false;
 			fMouseLostWhileComputing= false;
 			fShellDeactivatedWhileComputing= false;
 		}
-		
+
 		/**
 		 * Stops this mouse tracker. Removes itself  as mouse track, mouse move, and
 		 * shell listener from the subject control.

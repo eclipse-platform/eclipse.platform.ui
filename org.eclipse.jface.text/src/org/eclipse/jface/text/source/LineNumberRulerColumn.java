@@ -917,7 +917,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 	/**
 	 * Handles mouse scrolled events on the ruler by forwarding them to the text widget.
-	 * 
+	 *
 	 * @param e the mouse event
 	 * @since 3.10
 	 */

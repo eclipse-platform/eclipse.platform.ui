@@ -664,7 +664,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		}
 		return super.computeInformationControlLocation(subjectArea, controlSize);
 	}
-	
+
 	@Override
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 		MouseEvent event= getHoverEvent();

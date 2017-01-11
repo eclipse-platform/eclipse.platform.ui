@@ -38,7 +38,7 @@ import org.eclipse.jface.text.TextEvent;
  * <p>
  * Clients instantiate and configure an object of this class.
  * </p>
- * 
+ *
  * @since 2.1
  */
 public final class MatchingCharacterPainter implements IPainter, PaintListener {
@@ -62,42 +62,42 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Whether to highlight enclosing peer characters or not.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private boolean fHighlightEnclosingPeerCharacters;
 
 	/**
 	 * Whether to highlight the character at caret location or not.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private boolean fHighlightCharacterAtCaretLocation;
 
 	/**
 	 * Whether a character is present at caret location or not.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private boolean fCharacterPresentAtCaretLocation;
 
 	/**
 	 * The previous selection, used to determine the need for computing enclosing brackets.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private IRegion fPreviousSelection;
 
 	/**
 	 * Previous length of the document this painter is associated with.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private int fPreviousLengthOfDocument;
 
 	/**
 	 * The text viewer change listener.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private TextListener fTextListener;
@@ -118,7 +118,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Sets whether to highlight the character at caret location or not.
-	 * 
+	 *
 	 * @param highlightCharacterAtCaretLocation whether to highlight the character at caret location
 	 *            or not
 	 * @since 3.8
@@ -130,7 +130,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Sets whether to highlight enclosing peer characters or not.
-	 * 
+	 *
 	 * @param highlightEnclosingPeerCharcters whether to highlight enclosing peer characters or not
 	 * @since 3.8
 	 */
@@ -185,7 +185,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Handles a redraw request.
 	 *
-	 * @param gc the GC to draw into or <code>null</code> to send a redraw request if necessary 
+	 * @param gc the GC to draw into or <code>null</code> to send a redraw request if necessary
 	 */
 	private void handleDrawRequest(GC gc) {
 
@@ -272,7 +272,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * <p>
 	 * The selection offset is model based.
 	 * </p>
-	 * 
+	 *
 	 * @param sourceViewer the source viewer
 	 * @return a region denoting the current signed selection, for a resulting RtoL selections
 	 *         length is < 0
@@ -398,15 +398,15 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Installs or uninstalls the text listener depending on the boolean parameter.
-	 * 
+	 *
 	 * @param install <code>true</code> to install the text listener, <code>false</code> to uninstall
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private void installUninstallTextListener(boolean install) {
 		if (!(fMatcher instanceof ICharacterPairMatcherExtension))
 			return;
-	
+
 		if (install) {
 			fTextListener= new TextListener();
 			fSourceViewer.addTextListener(fTextListener);
@@ -421,7 +421,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Listens to document changes and if required by those document changes causes a re-computation
 	 * of matching characters.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private class TextListener implements ITextListener {
@@ -446,7 +446,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 		/**
 		 * Searches for matched characters in the given string.
-		 * 
+		 *
 		 * @param text the string to search
 		 * @param matcher the pair matcher
 		 * @return <code>true</code> if a matched character is found, <code>false</code> otherwise

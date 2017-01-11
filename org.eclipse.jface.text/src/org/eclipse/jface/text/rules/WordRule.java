@@ -142,7 +142,7 @@ public class WordRule implements IRule {
 				// If case-insensitive, convert to lower case before accessing the map
 				if (fIgnoreCase)
 					buffer= buffer.toLowerCase();
-				
+
 				IToken token= fWords.get(buffer);
 
 				if (token != null)

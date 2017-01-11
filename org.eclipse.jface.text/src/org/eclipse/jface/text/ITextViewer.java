@@ -209,7 +209,7 @@ public interface ITextViewer {
 	/**
 	 * Adds the given view port listener to this viewer. If the listener is already registered with
 	 * this viewer, this call has no effect.
-	 * 
+	 *
 	 * @param listener the listener to be added
 	 */
 	void addViewportListener(IViewportListener listener);

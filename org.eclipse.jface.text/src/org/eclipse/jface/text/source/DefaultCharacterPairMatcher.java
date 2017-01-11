@@ -38,12 +38,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * specified partitioning. The specified list of characters must have the form <blockquote>{
 	 * <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i>
 	 * }</blockquote> For instance:
-	 * 
+	 *
 	 * <pre>
 	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
 	 * new DefaultCharacterPairMatcher(chars, ...);
 	 * </pre>
-	 * 
+	 *
 	 * @param chars a list of characters
 	 * @param partitioning the partitioning to match within
 	 */
@@ -56,12 +56,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * specified partitioning. The specified list of characters must have the form <blockquote>{
 	 * <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i>
 	 * }</blockquote> For instance:
-	 * 
+	 *
 	 * <pre>
 	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
 	 * new DefaultCharacterPairMatcher(chars, ...);
 	 * </pre>
-	 * 
+	 *
 	 * @param chars a list of characters
 	 * @param partitioning the partitioning to match within
 	 * @param caretEitherSideOfBracket controls the matching behavior. When <code>true</code>, the
@@ -82,12 +82,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * Creates a new character pair matcher that matches characters within the default partitioning.
 	 * The specified list of characters must have the form <blockquote>{ <i>start</i>, <i>end</i>,
 	 * <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i> }</blockquote> For instance:
-	 * 
+	 *
 	 * <pre>
 	 * char[] chars= new char[] { '(', ')', '{', '}', '[', ']' };
 	 * new DefaultCharacterPairMatcher(chars);
 	 * </pre>
-	 * 
+	 *
 	 * @param chars a list of characters
 	 */
 	public DefaultCharacterPairMatcher(char[] chars) {
@@ -197,12 +197,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			String currEndContentType= TextUtilities.getContentType(document, fPartitioning, currentEndOffset, false);
 			if (!prevEndContentType.equals(currEndContentType))
 				return true;
-			
+
 			String prevStartContentType= TextUtilities.getContentType(document, fPartitioning, previousStartOffset, true);
 			String currStartContentType= TextUtilities.getContentType(document, fPartitioning, currentStartOffset, true);
 			if (!prevStartContentType.equals(currStartContentType))
 				return true;
-			
+
 			int start;
 			int end;
 			if (currentEndOffset > previousEndOffset) {
@@ -217,7 +217,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 					return true;
 				}
 			}
-			
+
 			if (currentStartOffset > previousStartOffset) {
 				start= previousStartOffset;
 				end= currentStartOffset;
@@ -239,7 +239,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	/**
 	 * Computes the adjustment in the start offset for the purpose of finding a matching peer. This
 	 * is required as the direction of selection can be right-to-left or left-to-right.
-	 * 
+	 *
 	 * @param document the document to work on
 	 * @param offset the start offset
 	 * @param length the selection length
@@ -347,7 +347,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 */
 	private IRegion findEnclosingPeers(IDocument document, DocumentPartitionAccessor doc, int offset, int length, int lowerBoundary, int upperBoundary) throws BadLocationException {
 		char[] pairs= fPairs.fPairs;
-	
+
 		int start;
 		int end;
 		if (length >= 0) {
@@ -357,7 +357,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			end= offset;
 			start= offset + length;
 		}
-	
+
 		boolean lowerFound= false;
 		boolean upperFound= false;
 		int[][] counts= new int[pairs.length][2];
@@ -371,12 +371,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			pos1= start;
 			pos2= doc.getNextPosition(start, true);
 		}
-	
+
 		while ((pos1 >= lowerBoundary && !lowerFound) || (pos2 < upperBoundary && !upperFound)) {
 			for (int i= 0; i < counts.length; i++) {
 				counts[i][0]= counts[i][1]= 0;
 			}
-	
+
 			outer1: while (pos1 >= lowerBoundary && !lowerFound) {
 				final char c= doc.getChar(pos1);
 				int i= getCharacterIndex(c, document, pos1);
@@ -395,7 +395,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 				}
 				pos1= doc.getNextPosition(pos1, false);
 			}
-	
+
 			outer2: while (pos2 < upperBoundary && !upperFound) {
 				final char c= doc.getChar(pos2);
 				int i= getCharacterIndex(c, document, pos2);
@@ -414,7 +414,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 				}
 				pos2= doc.getNextPosition(pos2, true);
 			}
-	
+
 			if (pos1 > start || pos2 < end - 1) {
 				//match inside selection => discard
 				pos1= doc.getNextPosition(pos1, false);
@@ -432,7 +432,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	/**
 	 * Determines the index of the character in the char array passed to the constructor of the pair
 	 * matcher.
-	 * 
+	 *
 	 * @param ch the character
 	 * @param document the document
 	 * @param offset the offset in document
@@ -582,7 +582,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 
 		/**
 		 * Returns true if the specified character occurs in one of the character pairs.
-		 * 
+		 *
 		 * @param c a character
 		 * @return true exactly if the character occurs in one of the pairs
 		 */
@@ -613,7 +613,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 
 		/**
 		 * Returns true if the specified character is a start character.
-		 * 
+		 *
 		 * @param c a character
 		 * @return true exactly if the character is a start character
 		 */
@@ -623,7 +623,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 
 		/**
 		 * Returns true if the specified character is an end character.
-		 * 
+		 *
 		 * @param c a character
 		 * @return true exactly if the character is an end character
 		 * @since 3.8
@@ -634,7 +634,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 
 		/**
 		 * Returns the matching character for the specified character.
-		 * 
+		 *
 		 * @param c a character occurring in a character pair
 		 * @return the matching character
 		 */

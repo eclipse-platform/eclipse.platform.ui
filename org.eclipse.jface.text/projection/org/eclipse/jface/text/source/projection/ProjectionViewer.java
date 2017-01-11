@@ -1554,7 +1554,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	/**
 	 * Deletes the selection and sets the caret before the deleted range.
-	 * 
+	 *
 	 * @param selection the selection to delete
 	 * @param textWidget the widget
 	 * @throws BadLocationException on document access failure

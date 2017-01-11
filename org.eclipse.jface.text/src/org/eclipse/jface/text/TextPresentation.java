@@ -156,7 +156,7 @@ public class TextPresentation {
 	/**
 	 * Creates a new empty text presentation. <code>sizeHint</code> tells the expected size of this
 	 * presentation.
-	 * 
+	 *
 	 * @param sizeHint the expected size of this presentation, must be positive
 	 */
 	public TextPresentation(int sizeHint) {
@@ -167,7 +167,7 @@ public class TextPresentation {
 	/**
 	 * Creates a new empty text presentation with the given extent. <code>sizeHint</code> tells the
 	 * expected size of this presentation.
-	 * 
+	 *
 	 * @param extent the extent of the created <code>TextPresentation</code>
 	 * @param sizeHint the expected size of this presentation, must be positive
 	 * @since 3.0

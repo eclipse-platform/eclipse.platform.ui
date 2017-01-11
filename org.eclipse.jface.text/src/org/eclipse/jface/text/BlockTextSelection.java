@@ -17,7 +17,7 @@ import org.eclipse.jface.internal.text.SelectionProcessor;
 
 /**
  * Standard implementation of {@link org.eclipse.jface.text.IBlockTextSelection}.
- * 
+ *
  * @since 3.5
  */
 public class BlockTextSelection extends TextSelection implements IBlockTextSelection {
@@ -35,7 +35,7 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 
 	/**
 	 * Creates a column selection for the given lines and columns.
-	 * 
+	 *
 	 * @param document the document that this selection refers to
 	 * @param startLine the start line
 	 * @param startColumn the possibly virtual start column, measured in characters from the start
@@ -64,7 +64,7 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 	 * points beyond the end of the line, the end of the line is returned (virtual location). If the
 	 * line points beyond the number of lines, the end of the document is returned; if the line is
 	 * &lt; zero, 0 is returned.
-	 * 
+	 *
 	 * @param document the document to get line information from
 	 * @param line the line in the document, may be greater than the line count
 	 * @param column the offset in the given line, may be greater than the line length

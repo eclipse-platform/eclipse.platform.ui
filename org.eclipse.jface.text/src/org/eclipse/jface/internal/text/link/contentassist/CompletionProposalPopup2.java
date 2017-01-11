@@ -367,7 +367,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		if (fInvocationCounter != fInvocationProcessedCounter)
 			if (!doFilterProposals())
 				return false;
-			
+
 		ICompletionProposal p= getSelectedProposal();
 		hide();
 		if (p != null) {
@@ -588,7 +588,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			} finally {
 				fProposalTable.setRedraw(true);
 			}
-			
+
 			resizeProposalSelector(false);
 
 			selectProposal(selectionIndex, false);
@@ -881,7 +881,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	/**
 	 * Filters the displayed proposal based on the given cursor position and the
 	 * offset of the original invocation of the content assistant.
-	 * 
+	 *
 	 * @return <code>true</code> if there are still proposals left, <code>false</code> if the popup has been closed
 	 * @since 3.7
 	 */
@@ -899,7 +899,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			fDocumentEvents.clear();
 		}
 		fFilterOffset= offset;
-	
+
 		if (proposals != null && proposals.length > 0) {
 			setProposals(proposals);
 			return true;

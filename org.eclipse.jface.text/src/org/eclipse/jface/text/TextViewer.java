@@ -1053,10 +1053,10 @@ public class TextViewer extends Viewer implements
 			fStateMask= stateMask;
 		}
 	}
-	
+
 	/**
 	 * Position storing block selection information in order to maintain a column selection.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private static final class ColumnPosition extends Position {
@@ -1435,7 +1435,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * The shared printer data.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private static PrinterData fgPrinterData= null;
@@ -1643,7 +1643,7 @@ public class TextViewer extends Viewer implements
 	private int fLastEventTime;
 	/**
 	 * Pointer to disposed control.
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	private Control fDisposedControl;
@@ -1928,7 +1928,7 @@ public class TextViewer extends Viewer implements
 	 * <p>
 	 * This implementation returns {@link OpenStrategy#getPostSelectionDelay()}.
 	 * </p>
-	 * 
+	 *
 	 * @return delay in milliseconds
 	 * @see org.eclipse.jface.util.OpenStrategy
 	 * @since 3.0
@@ -2386,7 +2386,7 @@ public class TextViewer extends Viewer implements
 				IRegion endLineInfo= fDocument.getLineInformation(endLine);
 				int endLineLength= endLineInfo.getLength();
 				int endVirtuals= Math.max(0, s.getEndColumn() - endLineLength);
-				
+
 				IRegion startRegion= new Region(startLineInfo.getOffset() + s.getStartColumn() - startVirtuals, 0);
 				int startOffset= modelRange2ClosestWidgetRange(startRegion).getOffset();
 				IRegion endRegion= new Region(endLineInfo.getOffset() + s.getEndColumn() - endVirtuals, 0);
@@ -2426,7 +2426,7 @@ public class TextViewer extends Viewer implements
 			int[] ranges= fTextWidget.getSelectionRanges();
 			int startOffset= ranges[0];
 			int endOffset= ranges[ranges.length - 2] + ranges[ranges.length - 1];
-			
+
 			// getBlockSelectionBounds returns pixel coordinates relative to document
 			Rectangle bounds= fTextWidget.getBlockSelectionBounds();
 			int clientAreaX= fTextWidget.getHorizontalPixel();
@@ -2435,7 +2435,7 @@ public class TextViewer extends Viewer implements
 			int avgCharWidth= getAverageCharWidth();
 			int startVirtuals= computeVirtualChars(startOffset, startX, avgCharWidth);
 			int endVirtuals= computeVirtualChars(endOffset, endX, avgCharWidth);
-			
+
 			IDocument document= getDocument();
 			Point modelSelection= widgetSelection2ModelSelection(new Point(startOffset, endOffset - startOffset));
 			if (modelSelection == null)
@@ -2446,7 +2446,7 @@ public class TextViewer extends Viewer implements
 			try {
 				int startLine= document.getLineOfOffset(startOffset);
 				int endLine= document.getLineOfOffset(endOffset);
-				
+
 				int startColumn= startOffset - document.getLineOffset(startLine) + startVirtuals;
 				int endColumn= endOffset - document.getLineOffset(endLine) + endVirtuals;
 				if (startLine == -1 || endLine == -1)
@@ -2456,7 +2456,7 @@ public class TextViewer extends Viewer implements
 				return TextSelection.emptySelection();
 			}
 		}
-		
+
 		Point p= getSelectedRange();
 		if (p.x == -1 || p.y == -1)
 			return TextSelection.emptySelection();
@@ -2467,7 +2467,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Returns the number of virtual characters that exist beyond the end-of-line at offset
 	 * <code>offset</code> for an x-coordinate <code>x</code>.
-	 * 
+	 *
 	 * @param offset the non-virtual offset to consider
 	 * @param x the x-coordinate (relative to the client area) of the possibly virtual offset
 	 * @param avgCharWidth the average character width to assume for virtual spaces
@@ -3109,7 +3109,7 @@ public class TextViewer extends Viewer implements
 	 * NOTE: Only {@link #revealRange(int, int)} needs to use this method. The other methods are
 	 * called at a time where the editor is already realized.
 	 * </p>
-	 * 
+	 *
 	 * @param start the start offset of the range
 	 * @param end the end offset of the range
 	 * @since 3.8.1, but only used/effective in 4.x
@@ -3132,7 +3132,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * Reveals the given range of the visible document.
-	 * 
+	 *
 	 * @param start the start offset of the range
 	 * @param end the end offset of the range
 	 */
@@ -3548,7 +3548,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Selects from the given map the one which is registered under the content type of the
 	 * partition in which the given offset is located.
-	 * 
+	 *
 	 * @param offset the offset for which to find the plug-in
 	 * @param plugins the map from which to choose
 	 * @return the plug-in registered under the offset's content type or <code>null</code> if none
@@ -3636,7 +3636,7 @@ public class TextViewer extends Viewer implements
 			if (!e.doit)
 				return;
 		}
-		
+
 		if (fTextWidget.getBlockSelection() && (e.text == null || e.text.length() < 2)) {
 			Point sel = fTextWidget.getSelection();
 			if (fTextWidget.getLineAtOffset(sel.x) != fTextWidget.getLineAtOffset(sel.y)) {
@@ -3704,7 +3704,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * Simulates typing behavior in block selection mode.
-	 * 
+	 *
 	 * @param e the verify event.
 	 * @since 3.5
 	 */
@@ -3715,7 +3715,7 @@ public class TextViewer extends Viewer implements
 		 the events share no manifest attribute to group them together or to detect the last event
 		 of a sequence, we simulate the modification at the first event and veto any following
 		 events with an equal event time.
-		 
+
 		 See also bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=268044
 		 */
 		e.doit= false;
@@ -3990,7 +3990,7 @@ public class TextViewer extends Viewer implements
 	 * passed code is wrapped into a begin/endCompoundChange undo session on the
 	 * {@linkplain #getRewriteTarget() rewrite target}; otherwise, the runnable is executed
 	 * directly.
-	 * 
+	 *
 	 * @param runnable the code to wrap when in block selection mode
 	 * @since 3.5
 	 */
@@ -4006,7 +4006,7 @@ public class TextViewer extends Viewer implements
 		} finally {
 			target.endCompoundChange();
 		}
-			
+
 	}
 
 	/**

@@ -128,7 +128,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated This method is no longer called by the framework and clients should overwrite
 	 *             {@link #apply(ITextViewer, char, int, int)} instead
 	 */
@@ -420,7 +420,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated This method is no longer called by the framework and clients should overwrite
 	 *             {@link #apply(ITextViewer, char, int, int)} instead
 	 */

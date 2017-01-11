@@ -36,7 +36,7 @@ public class WhitespaceRule implements IRule {
 	/**
 	 * Creates a rule which, with the help of an whitespace detector, will return
 	 * {@link Token#WHITESPACE} when a whitespace is detected.
-	 * 
+	 *
 	 * @param detector the rule's whitespace detector
 	 */
 	public WhitespaceRule(IWhitespaceDetector detector) {
@@ -46,7 +46,7 @@ public class WhitespaceRule implements IRule {
 	/**
 	 * Creates a rule which, with the help of an whitespace detector, will return the given
 	 * whitespace token when a whitespace is detected.
-	 * 
+	 *
 	 * @param detector the rule's whitespace detector
 	 * @param token the token returned for whitespace
 	 * @since 3.5
@@ -60,7 +60,7 @@ public class WhitespaceRule implements IRule {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @return {@link #fWhitespaceToken} if whitespace got detected, {@link Token#UNDEFINED}
 	 *         otherwise
 	 */

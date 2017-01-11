@@ -31,7 +31,7 @@ public interface IPartitionTokenScanner  extends ITokenScanner {
 	 * range may not only contain complete partitions but starts at the beginning of a line in the
 	 * middle of a partition of the given content type. This requires that a partition delimiter can
 	 * not contain a line delimiter.
-	 * 
+	 *
 	 * @param document the document to scan
 	 * @param offset the offset of the document range to scan
 	 * @param length the length of the document range to scan

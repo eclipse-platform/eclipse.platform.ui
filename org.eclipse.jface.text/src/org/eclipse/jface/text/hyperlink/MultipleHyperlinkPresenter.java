@@ -168,7 +168,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		protected void createContent(Composite parent) {
 			fParent= parent;
 			GridLayout layout= new GridLayout();
-			
+
 			if (IS_OLD_WINDOWS) {
 				layout.marginWidth= 0;
 				layout.marginHeight= 4;
@@ -187,7 +187,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 				layout.marginWidth= 4;
 				layout.marginHeight= 4;
 			}
-			
+
 			fParent.setLayout(layout);
 			fParent.setForeground(fForegroundColor);
 			fParent.setBackground(fBackgroundColor);
@@ -212,7 +212,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 				scrollBarWidth--;
 				scrollBarHeight--;
 			}
-			
+
 			int width;
 			if (preferedSize.y - scrollBarHeight <= constraints.y) {
 				width= preferedSize.x - scrollBarWidth;
@@ -349,7 +349,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		private void openSelectedLink() {
 			if (fTable.getSelectionCount() < 1)
 				return;
-			
+
 			TableItem selection= fTable.getSelection()[0];
 			IHyperlink link= (IHyperlink)selection.getData();
 			fManager.hideInformationControl();
@@ -620,7 +620,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 
 		/**
 		 * Sets the caret where hyperlinking got initiated.
-		 * 
+		 *
 		 * @since 3.5
 		 */
 		private void setCaret() {
@@ -697,7 +697,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 	/**
 	 * Creates a new multiple hyperlink presenter which uses {@link #HYPERLINK_COLOR} to read the
 	 * color from the given preference store.
-	 * 
+	 *
 	 * @param store the preference store
 	 */
 	public MultipleHyperlinkPresenter(IPreferenceStore store) {
@@ -757,7 +757,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	@Override
@@ -790,7 +790,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 
 	/**
 	 * Sets the caret where hyperlinking got initiated.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private void setCaret() {

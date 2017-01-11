@@ -96,7 +96,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Creates a new painter for the given text viewer and the painter options.
-	 * 
+	 *
 	 * @param viewer the text viewer the painter should be attached to
 	 * @param showLeadingSpaces if <code>true</code>, show leading Spaces
 	 * @param showEnclosedSpaces if <code>true</code>, show enclosed Spaces
@@ -182,7 +182,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		int startLine= fTextWidget.getLineIndex(y);
 		int endLine= fTextWidget.getLineIndex(y + h - 1);
 		if (startLine <= endLine && startLine < fTextWidget.getLineCount()) {
-			
+
 			// avoid painting into the margins:
 			Rectangle clipping= gc.getClipping();
 			Rectangle clientArea= fTextWidget.getClientArea();
@@ -279,7 +279,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Draw characters of content range.
-	 * 
+	 *
 	 * @param gc the GC
 	 * @param startOffset inclusive start index of the drawing range
 	 * @param endOffset exclusive end index of the drawing range
@@ -424,11 +424,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>offset</code> is selection in <code>widget</code>,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param widget the widget
 	 * @param offset the offset
 	 * @return <code>true</code> if <code>offset</code> is selection, <code>false</code> otherwise

@@ -340,7 +340,7 @@ public class TemplateReaderWriter {
 
 	/**
 	 * Validates whether the given string only contains valid XML characters.
-	 * 
+	 *
 	 * @param string the string to validate
 	 * @return the input string
 	 * @throws IOException when the first invalid character is detected

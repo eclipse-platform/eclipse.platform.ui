@@ -700,7 +700,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					int lines= endLine - startLine;
 
 					if (startLine != endLine || !isWrapActive || length <= 0) {
-						// line height for different lines includes wrapped line info already, 
+						// line height for different lines includes wrapped line info already,
 						// end we show annotations without offset info at very first line anyway
 						r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 						r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine) - fScrollPos;
@@ -809,7 +809,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				int lines= endLine - startLine;
 
 				if(startLine != endLine || !isWrapActive || length <= 0){
-					// line height for different lines includes wrapped line info already, 
+					// line height for different lines includes wrapped line info already,
 					// end we show annotations without offset info at very first line anyway
 					r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 					r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
@@ -819,7 +819,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					r.height= textBounds.height;
 					r.y = textBounds.y;
 				}
-				
+
 				if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 					fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
 			}

@@ -93,7 +93,7 @@ public class TableOwnerDrawSupport implements Listener {
 
 	/**
 	 * Handles the measure event.
-	 * 
+	 *
 	 * @param event the measure event
 	 */
 	private void measureItem(Event event) {

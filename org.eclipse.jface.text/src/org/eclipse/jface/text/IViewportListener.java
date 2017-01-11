@@ -20,7 +20,7 @@ package org.eclipse.jface.text;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer#addViewportListener(IViewportListener)
  */
 public interface IViewportListener {
@@ -31,7 +31,7 @@ public interface IViewportListener {
 	 * <p>
 	 * <strong>Note:</strong> This event will not be sent when the viewer is resized.
 	 * </p>
-	 * 
+	 *
 	 * @param verticalOffset the vertical offset measured in pixels
 	 */
 	void viewportChanged(int verticalOffset);

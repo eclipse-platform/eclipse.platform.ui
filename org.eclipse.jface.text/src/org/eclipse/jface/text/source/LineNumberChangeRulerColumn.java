@@ -30,7 +30,7 @@ import org.eclipse.jface.text.revisions.RevisionInformation;
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff. Clients
  * usually instantiate and configure object of this class.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -328,7 +328,7 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 		fDiffPainter.setModel(null);
 		super.handleDispose();
 	}
-	
+
 	@Override
 	void handleMouseScrolled(MouseEvent e) {
 		if (fRevisionPainter.isWheelHandlerInstalled()) {

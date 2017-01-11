@@ -160,7 +160,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * Used to workaround ICU bug not treating '.' as word boundary, see
 	 * http://bugs.icu-project.org/trac/ticket/8371 for details.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private BreakIterator fPOSIXWordBreakIterator;
@@ -195,7 +195,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * <strong>Note:</strong> This method must return <code>null</code> if it simply selects the word at
 	 * the given offset.
 	 * </p>
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @return the selection or <code>null</code> if none to indicate simple word selection
@@ -207,7 +207,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 	/**
 	 * Tries to find the word at the given offset.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @return the word or <code>null</code> if none
@@ -219,7 +219,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 	/**
 	 * Returns the locale specific word break iterator.
-	 * 
+	 *
 	 * @return the locale specific word break iterator
 	 * @since 3.7
 	 */
@@ -231,12 +231,12 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 	/**
 	 * Returns the POSIX word break iterator.
-	 * 
+	 *
 	 * <p>
 	 * Used to workaround ICU bug not treating '.' as word boundary, see
 	 * http://bugs.icu-project.org/trac/ticket/8371 for details.
 	 * </p>
-	 * 
+	 *
 	 * @return the POSIX word break iterator.
 	 * @since 3.7
 	 */
@@ -248,7 +248,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 	/**
 	 * Tries to find the word at the given offset.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @param wordBreakIterator the word break iterator
@@ -306,6 +306,6 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		}
 
 		return new Region(start, length);
-		
+
 	}
 }

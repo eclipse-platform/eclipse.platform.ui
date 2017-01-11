@@ -58,7 +58,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string using class
 	 * <code>PreferenceConverter</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
@@ -69,7 +69,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public final static String HYPERLINK_COLOR_SYSTEM_DEFAULT= "hyperlinkColor.SystemDefault"; //$NON-NLS-1$
@@ -82,7 +82,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Tells whether to use native link color.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private boolean fIsUsingNativeLinkColor;
@@ -111,7 +111,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Creates a new default hyperlink presenter.
-	 * 
+	 *
 	 * @param color the hyperlink color or <code>null</code> if the existing text color should be
 	 *            preserved; to be disposed by the caller
 	 */
@@ -121,7 +121,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Creates a new default hyperlink presenter.
-	 * 
+	 *
 	 * @param color the hyperlink color or <code>null</code> if the existing text color should be
 	 *            preserved
 	 */
@@ -208,7 +208,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Sets the hyperlink foreground color.
-	 * 
+	 *
 	 * @param color the hyperlink foreground color or <code>null</code> if the existing text color
 	 *            should be preserved
 	 */
@@ -324,7 +324,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Creates a color from the information stored in the given preference store.
-	 * 
+	 *
 	 * @return the color or <code>null</code> if there is no such information available or i f the
 	 *         text widget is not available
 	 */

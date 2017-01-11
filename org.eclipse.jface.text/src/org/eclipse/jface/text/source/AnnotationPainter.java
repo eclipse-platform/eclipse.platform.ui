@@ -1100,7 +1100,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Adds the given annotation type to the list of annotation types whose annotations should be
 	 * painted by this painter using squiggly drawing. If the annotation type is already in this
 	 * list, this method is without effect.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @deprecated As of 3.4 replaced by
 	 *             {@link #addTextStyleStrategy(Object, AnnotationPainter.ITextStyleStrategy)} and
@@ -1115,7 +1115,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Adds the given annotation type to the list of annotation types whose annotations should be
 	 * painted by this painter using the given strategy. If the annotation type is already in this
 	 * list, the old strategy gets replaced.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @param strategyID the id of the drawing or text style strategy that should be used for this
 	 *            annotation type
@@ -1517,7 +1517,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Returns the widget region that corresponds to the
 	 * given offset and length in the viewer's document.
-	 * 
+	 *
 	 * The returned object can be the fReusableRegion and may used
 	 * only to read the return values and must not used to store
 	 * the region.
