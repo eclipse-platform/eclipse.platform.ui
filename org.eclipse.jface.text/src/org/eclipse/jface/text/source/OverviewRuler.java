@@ -1197,7 +1197,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			int size= fLayersSortedByLayer.size();
 			while (i < size && layer >= fLayersSortedByLayer.get(i).intValue())
 				i++;
-			Integer layerObj= new Integer(layer);
+			Integer layerObj= Integer.valueOf(layer);
 			fLayersSortedByLayer.add(i, layerObj);
 			fAnnotationsSortedByLayer.add(i, annotationType);
 		}

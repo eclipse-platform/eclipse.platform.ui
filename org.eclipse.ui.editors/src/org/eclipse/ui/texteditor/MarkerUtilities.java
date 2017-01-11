@@ -292,7 +292,7 @@ public final class MarkerUtilities {
 	 * @see IMarker#CHAR_END
 	 */
 	public static void setCharEnd(Map<String, Object> map, int charEnd) {
-		map.put(IMarker.CHAR_END, new Integer(charEnd));
+		map.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
 	}
 
 	/**
@@ -316,7 +316,7 @@ public final class MarkerUtilities {
 	 * @see IMarker#CHAR_START
 	 */
 	public static void setCharStart(Map<String, Object> map, int charStart) {
-		map.put(IMarker.CHAR_START, new Integer(charStart));
+		map.put(IMarker.CHAR_START, Integer.valueOf(charStart));
 	}
 
 	/**
@@ -356,7 +356,7 @@ public final class MarkerUtilities {
 	 * @see IMarker#LINE_NUMBER
 	 */
 	public static void setLineNumber(Map<String, Object> map, int lineNum) {
-		map.put(IMarker.LINE_NUMBER, new Integer(lineNum));
+		map.put(IMarker.LINE_NUMBER, Integer.valueOf(lineNum));
 	}
 
 	/**

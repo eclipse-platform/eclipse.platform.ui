@@ -89,7 +89,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 					length= end - offset;
 					Position p= new Position(offset, length);
 					document.addPosition(SEGMENTS, p);
-					fContent.add(new Segment(MessageFormat.format(JavaEditorMessages.getString("OutlinePage.segment.title_pattern"), new Object[] { new Integer(offset) }), p)); //$NON-NLS-1$
+					fContent.add(new Segment(MessageFormat.format(JavaEditorMessages.getString("OutlinePage.segment.title_pattern"), new Object[] { Integer.valueOf(offset) }), p)); //$NON-NLS-1$
 
 				} catch (BadPositionCategoryException x) {
 				} catch (BadLocationException x) {

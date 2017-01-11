@@ -76,10 +76,10 @@ public class MarkerHighlighter extends Highlighter {
 			: fFile.createMarker(NewSearchUI.SEARCH_MARKER);
 		HashMap<String, Integer> attributes= new HashMap<>(4);
 		if (match.getBaseUnit() == Match.UNIT_CHARACTER) {
-			attributes.put(IMarker.CHAR_START, new Integer(position.getOffset()));
-			attributes.put(IMarker.CHAR_END, new Integer(position.getOffset()+position.getLength()));
+			attributes.put(IMarker.CHAR_START, Integer.valueOf(position.getOffset()));
+			attributes.put(IMarker.CHAR_END, Integer.valueOf(position.getOffset()+position.getLength()));
 		} else {
-			attributes.put(IMarker.LINE_NUMBER, new Integer(position.getOffset()));
+			attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(position.getOffset()));
 		}
 		marker.setAttributes(attributes);
 		return marker;

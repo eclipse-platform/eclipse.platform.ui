@@ -344,7 +344,7 @@ public class TextSearchVisitor {
 					}
 					if (file != null) {
 						String fileName= file.getName();
-						Object[] args= { fileName, new Integer(numberOfScannedFiles), new Integer(fNumberOfFilesToScan)};
+						Object[] args= { fileName, Integer.valueOf(numberOfScannedFiles), Integer.valueOf(fNumberOfFilesToScan)};
 						fProgressMonitor.subTask(Messages.format(SearchMessages.TextSearchVisitor_scanning, args));
 						int steps= numberOfScannedFiles - fLastNumberOfScannedFiles;
 						fProgressMonitor.worked(steps);
@@ -417,7 +417,7 @@ public class TextSearchVisitor {
 			fProgressMonitor.done();
 			fCollector.endReporting();
 			if (TRACING) {
-				Object[] args= { new Integer(fNumberOfScannedFiles), new Integer(jobCount), new Integer(NUMBER_OF_LOGICAL_THREADS), new Long(System.currentTimeMillis() - startTime) };
+				Object[] args= { Integer.valueOf(fNumberOfScannedFiles), Integer.valueOf(jobCount), Integer.valueOf(NUMBER_OF_LOGICAL_THREADS), new Long(System.currentTimeMillis() - startTime) };
 				System.out.println(Messages.format(
 						"[TextSearch] Search duration for {0} files in {1} jobs using {2} threads: {3}ms", args)); //$NON-NLS-1$
 			}

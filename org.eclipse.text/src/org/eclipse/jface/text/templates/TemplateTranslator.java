@@ -266,7 +266,7 @@ public class TemplateTranslator {
 		} else {
 			varDesc.mergeType(type);
 		}
-		varDesc.fOffsets.add(new Integer(offset));
+		varDesc.fOffsets.add(Integer.valueOf(offset));
 	}
 
 	/**

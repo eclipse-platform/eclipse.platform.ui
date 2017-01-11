@@ -278,11 +278,11 @@ public class ScopePart {
 		fPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fUseWorkspace= new Button(fPart, SWT.RADIO);
-		fUseWorkspace.setData(new Integer(ISearchPageContainer.WORKSPACE_SCOPE));
+		fUseWorkspace.setData(Integer.valueOf(ISearchPageContainer.WORKSPACE_SCOPE));
 		fUseWorkspace.setText(SearchMessages.ScopePart_workspaceScope_text);
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
-		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
+		fUseSelection.setData(Integer.valueOf(ISearchPageContainer.SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
 
 		boolean canSearchInSelection= canSearchInSelection();
@@ -293,7 +293,7 @@ public class ScopePart {
 		fUseSelection.setLayoutData(gd);
 
 		fUseProject= new Button(fPart, SWT.RADIO);
-		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
+		fUseProject.setData(Integer.valueOf(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
 		fUseProject.setText(SearchMessages.ScopePart_enclosingProjectsScope_text);
 		fUseProject.setEnabled(fSearchDialog.getEnclosingProjectNames().length > 0);
 
@@ -305,7 +305,7 @@ public class ScopePart {
 			fUseProject.setVisible(false);
 
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
-		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
+		fUseWorkingSet.setData(Integer.valueOf(ISearchPageContainer.WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.ScopePart_workingSetScope_text);
 		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fWorkingSetText.getAccessible().addAccessibleListener(new AccessibleAdapter() {

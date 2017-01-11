@@ -57,7 +57,7 @@ public class MatchFilterSelectionAction extends Action {
 				input.setActiveMatchFilters(dialog.getMatchFilters());
 			}
 			if (enableLimitConfiguration) {
-				fPage.setElementLimit(new Integer(dialog.getLimit()));
+				fPage.setElementLimit(Integer.valueOf(dialog.getLimit()));
 			}
 		}
 	}

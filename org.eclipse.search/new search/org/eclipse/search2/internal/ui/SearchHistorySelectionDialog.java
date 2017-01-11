@@ -361,7 +361,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 	private void configureHistoryLink() {
 		int historyLimit= SearchPreferencePage.getHistoryLimit();
-		fLink.setText(MessageFormat.format(SearchMessages.SearchHistorySelectionDialog_configure_link_label, new Integer(historyLimit)));
+		fLink.setText(MessageFormat.format(SearchMessages.SearchHistorySelectionDialog_configure_link_label, Integer.valueOf(historyLimit)));
 	}
 
 	protected final void validateDialogState() {

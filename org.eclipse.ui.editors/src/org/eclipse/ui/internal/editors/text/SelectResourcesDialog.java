@@ -359,7 +359,7 @@ class SelectResourcesDialog extends Dialog {
 				buffer.append(TextEditorMessages.SelectResourcesDialog_oneFileSelected);
 				break;
 			default:
-				buffer.append(NLSUtility.format(TextEditorMessages.SelectResourcesDialog_nFilesSelected, new Integer(checkedFiles)));
+				buffer.append(NLSUtility.format(TextEditorMessages.SelectResourcesDialog_nFilesSelected, Integer.valueOf(checkedFiles)));
 		}
 		fCountIndication.setText(buffer.toString());
 
