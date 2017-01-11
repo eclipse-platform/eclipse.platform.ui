@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -247,15 +247,9 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 				ServiceFactoryHandle handle = (ServiceFactoryHandle) object;
 				Set locatorSet = handle.serviceLocators.keySet();
 				ServiceLocator[] locators = (ServiceLocator[]) locatorSet.toArray(new ServiceLocator[locatorSet.size()]);
-				Arrays.sort(locators, (o1, o2) -> {
-					ServiceLocator loc1 = (ServiceLocator) o1;
-					ServiceLocator loc2 = (ServiceLocator) o2;
-					int l1 = loc1
-							.getService(IWorkbenchLocationService.class)
-							.getServiceLevel();
-					int l2 = loc2
-							.getService(IWorkbenchLocationService.class)
-							.getServiceLevel();
+				Arrays.sort(locators, (loc1, loc2) -> {
+					int l1 = loc1.getService(IWorkbenchLocationService.class).getServiceLevel();
+					int l2 = loc2.getService(IWorkbenchLocationService.class).getServiceLevel();
 					return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 				});
 				for (int j = 0; j < locators.length; j++) {
