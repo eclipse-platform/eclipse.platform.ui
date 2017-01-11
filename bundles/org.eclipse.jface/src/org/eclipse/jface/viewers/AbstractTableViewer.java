@@ -260,8 +260,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			return;
 		Object[] filtered = filter(elements);
 
-		for (int i = 0; i < filtered.length; i++) {
-			Object element = filtered[i];
+		for (Object element : filtered) {
 			int index = indexForElement(element);
 			createItem(element, index);
 		}
@@ -330,8 +329,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	protected Widget doFindItem(Object element) {
 
 		Item[] children = doGetItems();
-		for (int i = 0; i < children.length; i++) {
-			Item item = children[i];
+		for (Item item : children) {
 			Object data = item.getData();
 			if (data != null && equals(data, element)) {
 				return item;
@@ -465,8 +463,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		}
 		Widget[] items = doGetSelection();
 		ArrayList list = new ArrayList(items.length);
-		for (int i = 0; i < items.length; i++) {
-			Widget item = items[i];
+		for (Widget item : items) {
 			Object e = item.getData();
 			if (e != null) {
 				list.add(e);
@@ -488,8 +485,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		int[] selectionIndices = doGetSelectionIndices();
 		if (getContentProvider() instanceof ILazyContentProvider) {
 			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
-			for (int i = 0; i < selectionIndices.length; i++) {
-				int selectionIndex = selectionIndices[i];
+			for (int selectionIndex : selectionIndices) {
 				lazy.updateElement(selectionIndex);// Start the update
 				// check for the case where the content provider changed the number of items
 				if (selectionIndex < doGetItemCount()) {
@@ -503,10 +499,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				}
 			}
 		} else {
-			for (int i = 0; i < selectionIndices.length; i++) {
+			for (int selectionIndex : selectionIndices) {
 				Object element = null;
-				// See if it is cached
-				int selectionIndex = selectionIndices[i];
 				if (selectionIndex < virtualManager.cachedElements.length) {
 					element = virtualManager.cachedElements[selectionIndex];
 				}
@@ -731,8 +725,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	private void internalRemove(final Object[] elements) {
 		Object input = getInput();
-		for (int i = 0; i < elements.length; ++i) {
-			if (equals(elements[i], input)) {
+		for (Object element : elements) {
+			if (equals(element, input)) {
 				boolean oldBusy = isBusy();
 				setBusy(false);
 				try {
@@ -747,10 +741,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		// to allow SWT to optimize multiple removals
 		int[] indices = new int[elements.length];
 		int count = 0;
-		for (int i = 0; i < elements.length; ++i) {
-			Widget w = findItem(elements[i]);
+		for (Object element : elements) {
+			Widget w = findItem(element);
 			if (w == null && virtualManager != null) {
-				int index = virtualManager.find(elements[i]);
+				int index = virtualManager.find(element);
 				if (index != -1) {
 					indices[count++] = index;
 				}

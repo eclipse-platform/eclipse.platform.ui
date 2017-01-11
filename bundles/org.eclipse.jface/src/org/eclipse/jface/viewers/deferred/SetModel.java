@@ -45,16 +45,12 @@ public class SetModel extends AbstractConcurrentModel {
     public void set(Object[] newContents) {
     	Assert.isNotNull(newContents);
     	data.clear();
-        for (int i = 0; i < newContents.length; i++) {
-            Object object = newContents[i];
-
+        for (Object object : newContents) {
             data.add(object);
         }
 
     	IConcurrentModelListener[] listeners = getListeners();
-    	for (int i = 0; i < listeners.length; i++) {
-			IConcurrentModelListener listener = listeners[i];
-
+    	for (IConcurrentModelListener listener : listeners) {
 			listener.setContents(newContents);
 		}
     }
@@ -75,9 +71,7 @@ public class SetModel extends AbstractConcurrentModel {
      */
     public void addAll(Object[] toAdd) {
     	Assert.isNotNull(toAdd);
-        for (int i = 0; i < toAdd.length; i++) {
-            Object object = toAdd[i];
-
+        for (Object object : toAdd) {
             data.add(object);
         }
 
@@ -111,9 +105,7 @@ public class SetModel extends AbstractConcurrentModel {
      */
     public void removeAll(Object[] toRemove) {
     	Assert.isNotNull(toRemove);
-        for (int i = 0; i < toRemove.length; i++) {
-            Object object = toRemove[i];
-
+        for (Object object : toRemove) {
             data.remove(object);
         }
 

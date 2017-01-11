@@ -133,8 +133,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
         assertElementsNotNull(elements);
         Object[] filtered = filter(elements);
         ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-        for (int i = 0; i < filtered.length; i++) {
-            Object element = filtered[i];
+        for (Object element : filtered) {
             int ix = indexForElement(element);
             insertItem(labelProvider, element, ix);
         }
@@ -267,8 +266,8 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	protected List getSelectionFromWidget() {
         int[] ixs = listGetSelectionIndices();
         ArrayList list = new ArrayList(ixs.length);
-        for (int i = 0; i < ixs.length; i++) {
-            Object e = getElementAt(ixs[i]);
+        for (int ix : ixs) {
+            Object e = getElementAt(ix);
             if (e != null) {
 				list.add(e);
 			}
@@ -407,16 +406,16 @@ public abstract class AbstractListViewer extends StructuredViewer {
      */
     private void internalRemove(final Object[] elements) {
         Object input = getInput();
-        for (int i = 0; i < elements.length; ++i) {
-            if (equals(elements[i], input)) {
+        for (Object element : elements) {
+            if (equals(element, input)) {
                 setInput(null);
                 return;
             }
-            int ix = getElementIndex(elements[i]);
+            int ix = getElementIndex(element);
             if (ix >= 0) {
                 listRemove(ix);
                 listMap.remove(ix);
-                unmapElement(elements[i], getControl());
+                unmapElement(element, getControl());
             }
         }
     }

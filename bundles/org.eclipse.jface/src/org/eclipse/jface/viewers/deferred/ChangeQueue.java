@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers.deferred;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -102,9 +101,7 @@ final class ChangeQueue {
 		// them from the queue
 		if (toQueue.type == SET) {
 			LinkedList<Change> newQueue = new LinkedList<>();
-			for (Iterator<Change> iter = queue.iterator(); iter.hasNext();) {
-				Change next = iter.next();
-
+			for (Change next : queue) {
 				if (next.getType() == ADD || next.getType() == REMOVE || next.getType() == SET) {
 					continue;
 				}

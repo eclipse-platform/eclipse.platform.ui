@@ -186,8 +186,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 
         // Fill it in with all existing known objects
         Object[] knownObjects = updator.getKnownObjects();
-        for (int i = 0; i < knownObjects.length; i++) {
-			Object object = knownObjects[i];
+        for (Object object : knownObjects) {
 			if (object != null) {
 				collection.add(object);
 			}
@@ -261,9 +260,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 		        	case ChangeQueue.UPDATE: {
 		        		Object[] items  = next.getElements();
 
-	        	        for (int i = 0; i < items.length; i++) {
-	        	            Object item = items[i];
-
+	        	        for (Object item : items) {
 	        	            if (collection.contains(item)) {
 	        	                // TODO: write a collection.update(...) method
 	        	                collection.remove(item);
@@ -357,9 +354,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 	 */
 	private static void filteredAdd(LazySortedCollection collection, Object[] toAdd, IFilter filter) {
 		if (filter != AcceptAllFilter.getInstance()) {
-			for (int i = 0; i < toAdd.length; i++) {
-				Object object = toAdd[i];
-
+			for (Object object : toAdd) {
 				if (filter.select(object)) {
 					collection.add(object);
 				}
@@ -544,9 +539,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
      * @param collection collection of currently-known elements
      */
     private void flush(Object[] toFlush, LazySortedCollection collection) {
-        for (int i = 0; i < toFlush.length; i++) {
-            Object item = toFlush[i];
-
+        for (Object item : toFlush) {
             if (collection.contains(item)) {
                 updator.clear(item);
             }
