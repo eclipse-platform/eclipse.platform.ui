@@ -29,21 +29,12 @@ public class SimpleFormEditor extends FormEditor {
 	 */
 	public SimpleFormEditor() {
 	}
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
-	 */
 	@Override
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
 		return new FormToolkit(ExamplesPlugin.getDefault().getFormColors(
 				display));
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
-	 */
 	@Override
 	protected void addPages() {
 		try {
@@ -61,27 +52,12 @@ public class SimpleFormEditor extends FormEditor {
 			//
 		}
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
