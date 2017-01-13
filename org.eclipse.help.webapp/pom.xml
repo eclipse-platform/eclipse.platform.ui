@@ -23,9 +23,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-jspc-maven-plugin</artifactId>
-        <version>8.1.8.v20121106</version>
+        <version>9.0.7.v20131107</version>
         <executions>
           <execution>
             <id>jspc</id>
