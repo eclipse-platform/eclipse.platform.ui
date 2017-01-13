@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,23 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
  *******************************************************************************/
 
 package org.eclipse.ui.tests.forms.layout;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+/**
+ * Test all form layouts
+ */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestColumnWrapLayout.class,
+	TestTableWrapLayout.class
+})
 public class AllLayoutTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"org.eclipse.ua.tests.forms.AllLayoutTests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestTableWrapLayout.class);
-		suite.addTestSuite(TestColumnWrapLayout.class);
-		//$JUnit-END$
-		return suite;
-	}
 
 }

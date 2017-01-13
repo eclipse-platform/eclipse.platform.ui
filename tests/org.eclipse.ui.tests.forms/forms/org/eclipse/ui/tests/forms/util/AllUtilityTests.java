@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,32 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.util;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-/*
- * Tests forms performance (automated).
+/**
+ * Tests forms utility (automated).
  */
-public class AllUtilityTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	FormColorsTests.class,
+	FormFontsTests.class,
+	FormImagesTests.class,
+	FormToolkitTest.class,
+	ImageHyperlinkTest.class
+})
+public class AllUtilityTests {
 
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllUtilityTests();
-	}
-
-	/*
-	 * Constructs a new performance test suite.
-	 */
-	public AllUtilityTests() {
-		addTestSuite(FormImagesTests.class);
-		addTestSuite(FormFontsTests.class);
-		addTestSuite(FormColorsTests.class);
-		addTestSuite(FormToolkitTest.class);
-		addTestSuite(ImageHyperlinkTest.class);
-	}
 }

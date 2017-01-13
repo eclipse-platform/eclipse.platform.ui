@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
  *******************************************************************************/
 
 package org.eclipse.ui.tests.forms.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.forms.widgets.FormFonts;
 import org.junit.Assert;
+import org.junit.Test;
 
-public class FormFontsTests extends TestCase {
+public class FormFontsTests {
+	@Test
 	public void testSingleton() {
 		Display display = Display.getCurrent();
 		FormFonts instance = FormFonts.getInstance();
@@ -31,6 +35,7 @@ public class FormFontsTests extends TestCase {
 		Assert.assertTrue("getInstance() returned a different FormFonts instance after creation and disposal of one bold font", instance.equals(FormFonts.getInstance()));
 	}
 
+	@Test
 	public void testDisposeOne() {
 		Display display = Display.getCurrent();
 		Font boldSystemFont = FormFonts.getInstance().getBoldFont(display, display.getSystemFont());
@@ -39,6 +44,7 @@ public class FormFontsTests extends TestCase {
 		Assert.assertTrue("markFinished(...) did not dispose a font after a single getBoldFont()", boldSystemFont.isDisposed());
 	}
 
+	@Test
 	public void testMultipleInstances() {
 		Display display = Display.getCurrent();
 		Font boldSystemFont = FormFonts.getInstance().getBoldFont(display, display.getSystemFont());
@@ -58,6 +64,7 @@ public class FormFontsTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testMultipleFonts() {
 		Display display = Display.getCurrent();
 		Font veranda = new Font(display, "Veranda",12,SWT.NORMAL);
@@ -74,6 +81,7 @@ public class FormFontsTests extends TestCase {
 		arial.dispose();
 	}
 
+	@Test
 	public void testDisposeUnknown() {
 		Display display = Display.getCurrent();
 		Font system = new Font(display, display.getSystemFont().getFontData());

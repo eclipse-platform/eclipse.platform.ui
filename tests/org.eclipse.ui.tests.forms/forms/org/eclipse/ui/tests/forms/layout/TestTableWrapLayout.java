@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
  *******************************************************************************/
 
 package org.eclipse.ui.tests.forms.layout;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
@@ -21,10 +25,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TestTableWrapLayout extends TestCase {
+public class TestTableWrapLayout {
 
 	private final String A1 = "A";
 	private final String A10 = "A A A A A A A A A A";
@@ -41,6 +44,7 @@ public class TestTableWrapLayout extends TestCase {
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
+	@Test
 	public void testTableWrapLayoutNonWrappingLabels() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
@@ -113,6 +117,7 @@ public class TestTableWrapLayout extends TestCase {
 	/**
 	 * Test a 2x2 grid with unequal sizes
 	 */
+	@Test
 	public void testTableWrapLayoutTwoColumnsWrappingLabels() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Ralf M Petter<ralf.petter@gmail.com> and others.
+ * Copyright (c) 2017 Ralf M Petter<ralf.petter@gmail.com> and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,14 @@ package org.eclipse.ui.tests.forms.widgets;
 
 import org.eclipse.ui.internal.forms.widgets.FormTextModel;
 import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+/**
+ * Tests for FormTextModel
+ */
+public class FormTextModelTest {
 
-public class FormTextModelTest extends TestCase {
-
+	@Test
 	public void testWhitespaceNormalized() {
 		FormTextModel formTextModel = new FormTextModel();
 		formTextModel.setWhitespaceNormalized(true);
@@ -25,6 +28,7 @@ public class FormTextModelTest extends TestCase {
 				"line with whitespace Test" + System.lineSeparator(), formTextModel.getAccessibleText());
 	}
 
+	@Test
 	public void testWhitespaceNotNormalized() {
 		FormTextModel formTextModel = new FormTextModel();
 		formTextModel.setWhitespaceNormalized(false);
