@@ -1175,6 +1175,12 @@
             name="%command.fullscreenmode.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.handlers.ToggleStatusBarHandler"
+            description="%command.togglestatusbar.description"
+            id="org.eclipse.ui.window.togglestatusbar"
+            name="%command.togglestatusbar.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.window"
             defaultHandler="org.eclipse.ui.internal.handlers.MinimizePartHandler"
             description="%command.minimizePart.description"
             id="org.eclipse.ui.window.minimizePart"
