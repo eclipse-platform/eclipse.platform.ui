@@ -224,6 +224,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			 * Opens a project along with all projects it references
 			 */
 			private void doOpenWithReferences(IProject project, IProgressMonitor mon) throws CoreException {
+				if (!project.exists() || project.isOpen()) {
+					return;
+				}
 				SubMonitor subMonitor = SubMonitor.convert(mon, openProjectReferences ? 2 : 1);
 				project.open(subMonitor.split(1));
 				final IProject[] references = project.getReferencedProjects();
