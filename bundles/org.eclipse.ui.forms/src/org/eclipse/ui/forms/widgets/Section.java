@@ -113,6 +113,11 @@ public class Section extends ExpandableComposite {
 		reflow();
 	}
 
+	@Override
+	protected void reflow() {
+		super.reflow();
+	}
+
 	/**
 	 * Sets the description text. Has no effect if DESCRIPTION style was not
 	 * used to create the control.
