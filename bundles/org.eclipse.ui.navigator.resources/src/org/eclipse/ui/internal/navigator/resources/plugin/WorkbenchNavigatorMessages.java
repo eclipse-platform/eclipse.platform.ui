@@ -49,7 +49,6 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String WorkingSetRootModeActionGroup_Top_Level_Element_;
 	public static String WorkingSetRootModeActionGroup_Project_;
 	public static String WorkingSetRootModeActionGroup_Working_Set_;
-	public static String WorkingSetRootModeActionGroup_Show_Others_working_set;
 	public static String WorkingSetActionProvider_multipleWorkingSets;
 
 	public static String CopyAction_Cop_;
