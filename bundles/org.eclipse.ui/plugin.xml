@@ -1175,7 +1175,6 @@
             name="%command.fullscreenmode.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
-            defaultHandler="org.eclipse.ui.internal.handlers.ToggleStatusBarHandler"
             description="%command.togglestatusbar.description"
             id="org.eclipse.ui.window.togglestatusbar"
             name="%command.togglestatusbar.name"/>
@@ -2132,6 +2131,18 @@
       <handler
       		class="org.eclipse.ui.internal.handlers.ToggleCoolbarHandler"
       		commandId="org.eclipse.ui.ToggleCoolbarAction">
+      	 <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.ToggleStatusBarHandler"
+            commandId="org.eclipse.ui.window.togglestatusbar">
       	 <enabledWhen>
             <with
                   variable="activeWorkbenchWindow">
