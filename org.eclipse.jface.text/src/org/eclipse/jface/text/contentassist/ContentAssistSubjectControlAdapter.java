@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,17 +261,24 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	}
 
 	/**
-	* Creates and returns a completion proposal popup for the given content assistant.
-	*
-	* @param contentAssistant the content assistant
-	* @param controller the additional info controller, or <code>null</code>
-	* @return the completion proposal popup
-	*/
-	CompletionProposalPopup createCompletionProposalPopup(ContentAssistant contentAssistant, AdditionalInfoController controller) {
-		if (fContentAssistSubjectControl != null)
-			return new CompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
-		return new CompletionProposalPopup(contentAssistant, fViewer, controller);
-
+	 * Creates and returns a completion proposal popup for the given content assistant.
+	 *
+	 * @param contentAssistant the content assistant
+	 * @param controller the additional info controller, or <code>null</code>
+	 * @param asynchronous <true> if this content assistant should present the proposals
+	 *            asynchronously, <code>false</code> otherwise
+	 * @return the completion proposal popup
+	 */
+	CompletionProposalPopup createCompletionProposalPopup(ContentAssistant contentAssistant, AdditionalInfoController controller, boolean asynchronous) {
+		if (asynchronous) {
+			if (fContentAssistSubjectControl != null)
+				return new AsyncCompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
+			return new AsyncCompletionProposalPopup(contentAssistant, fViewer, controller);
+		} else {
+			if (fContentAssistSubjectControl != null)
+				return new CompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
+			return new CompletionProposalPopup(contentAssistant, fViewer, controller);
+		}
 	}
 
 	/**

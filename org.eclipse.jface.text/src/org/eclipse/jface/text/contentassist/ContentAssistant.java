@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,8 +81,11 @@ import org.eclipse.jface.text.TextUtilities;
 
 
 /**
- * The standard implementation of the <code>IContentAssistant</code> interface. Usually, clients
+ * The standard implementation of the {@link IContentAssistant} interface. Usually, clients
  * instantiate this class and configure it before using it.
+ * 
+ * Since 3.12, it can compute and display the proposals asynchronously when invoking
+ * {@link #ContentAssistant(boolean)} with <code>true</code>.
  */
 public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IContentAssistantExtension4, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 
@@ -926,7 +929,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private Color fProposalSelectorBackground;
 	private Color fProposalSelectorForeground;
 
-	ITextViewer fViewer;
+	private ITextViewer fViewer;
 	private String fLastErrorMessage;
 
 	private Closer fCloser;
@@ -966,7 +969,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.0
 	 */
-	ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
+	private ContentAssistSubjectControlAdapter fContentAssistSubjectControlAdapter;
 	/**
 	 * The dialog settings for the control's bounds.
 	 *
@@ -1045,6 +1048,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private ICompletionProposalSorter fSorter;
 
 	/**
+	 * Tells whether this content assistant allows to run asynchronous
+	 * 
+	 * @since 3.12
+	 */
+	private boolean fAsynchronous;
+
+	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
 	 * overlays the completion proposals with context information list if necessary, and shows the
 	 * context information above the location at which it was activated. If auto activation will be
@@ -1052,7 +1062,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * milliseconds delay. It uses the default partitioning.
 	 */
 	public ContentAssistant() {
+		this(false);
+	}
+
+	/**
+	 * Creates a new content assistant. The content assistant is not automatically activated,
+	 * overlays the completion proposals with context information list if necessary, and shows the
+	 * context information above the location at which it was activated. If auto activation will be
+	 * enabled, without further configuration steps, this content assistant is activated after a 500
+	 * milliseconds delay. It uses the default partitioning.
+	 * 
+	 * @param asynchronous <true> if this content assistant should present the proposals
+	 *            asynchronously, <code>false</code> otherwise
+	 * @since 3.12
+	 */
+	public ContentAssistant(boolean asynchronous) {
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
+		fAsynchronous= asynchronous;
 	}
 
 	/**
@@ -1101,7 +1127,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentType Document token content-type it applies to
 	 * @since 3.12
 	 */
-	protected void addContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
+	public void addContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
 		Assert.isNotNull(contentType);
 
 		if (fProcessors == null)
@@ -1134,11 +1160,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * @param contentType Document token content-type it applies to
-	 * @return the available content-assist processors for provide token content-type.
+	 * Returns the content assist processors to be used for the given content type.
+	 *
+	 * @param contentType the type of the content for which this content assistant is to be
+	 *            requested
+	 * @return the content assist processors or <code>null</code> if none exists for the specified
+	 *         content type
 	 * @since 3.12
 	 */
-	protected Set<IContentAssistProcessor> getContentAssistProcessors(String contentType) {
+	Set<IContentAssistProcessor> getContentAssistProcessors(String contentType) {
 		if (fProcessors == null)
 			return null;
 
@@ -1501,7 +1531,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			controller= new AdditionalInfoController(fInformationControlCreator, OpenStrategy.getPostSelectionDelay());
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
-		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
+		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller, fAsynchronous);
 		fProposalPopup.setSorter(fSorter);
 
 		registerHandler(SELECT_NEXT_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_NEXT));

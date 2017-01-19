@@ -37,10 +37,11 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
 
 /**
- * This is the controller for the completion proposal list, which is used
- * by the {@link AsyncContentAssistant}. It is aimed at orchestrating all operations
- * from {@link IContentAssistProcessor} asynchronously and to provide a good user
- * experience, including reporting and eye-candies.
+ * This class is used to present proposals asynchronously to the user. If additional information
+ * exists for a proposal, then selecting that proposal will result in the information being
+ * displayed in a secondary window.
+ * 
+ * @since 3.12
  */
 class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
@@ -81,7 +82,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		@Override
 		public String getDisplayString() {
-			return NLS.bind(JFaceTextMessages.getString("CompletionProposalPopup.computing"), Integer.valueOf(fSize - fRemaining), Integer.valueOf(fSize)); //$NON-NLS-1$
+			return NLS.bind(JFaceTextMessages.getString("AsyncCompletionProposalPopup.computing"), Integer.valueOf(fSize - fRemaining), Integer.valueOf(fSize)); //$NON-NLS-1$
 		}
 
 		@Override

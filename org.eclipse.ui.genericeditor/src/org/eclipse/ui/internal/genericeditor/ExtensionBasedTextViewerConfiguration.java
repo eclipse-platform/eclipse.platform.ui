@@ -17,26 +17,31 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
+
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.contentassist.AsyncContentAssistant;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 /**
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite
@@ -50,7 +55,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private ITextEditor editor;
 	private Set<IContentType> contentTypes;
 	private IDocument document;
-	private AsyncContentAssistant contentAssistant;
+
+	private ContentAssistant contentAssistant;
 	private List<IContentAssistProcessor> processors;
 
 	/**
@@ -96,7 +102,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistProcessorRegistry registry= GenericEditorPlugin.getDefault().getContentAssistProcessorRegistry();
-		contentAssistant = new AsyncContentAssistant();
+		contentAssistant= new ContentAssistant(true);
 		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
 		contentAssistant.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
 		contentAssistant.enableColoredLabels(true);
