@@ -78,6 +78,7 @@
     <module>bundles/org.eclipse.e4.core.di.annotations</module>
     <module>bundles/org.eclipse.e4.core.di</module>
     <module>bundles/org.eclipse.e4.core.di.extensions</module>
+    <module>bundles/org.eclipse.e4.core.di.extensions.supplier</module>
     <module>bundles/org.eclipse.e4.core.services</module>
 
     <module>features/org.eclipse.core.runtime.feature</module>

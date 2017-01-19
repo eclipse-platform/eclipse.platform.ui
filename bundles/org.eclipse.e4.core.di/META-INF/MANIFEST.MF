@@ -9,13 +9,17 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.e4.core.di;
   x-friends:="org.eclipse.e4.core.contexts,
-   org.eclipse.e4.core.di.extensions,
+   org.eclipse.e4.core.di.extensions.supplier,
    org.eclipse.e4.ui.workbench,
    org.eclipse.e4.ui.workbench.swt",
- org.eclipse.e4.core.di.suppliers;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions,org.eclipse.e4.ui.di",
+ org.eclipse.e4.core.di.suppliers;
+  x-friends:="org.eclipse.e4.core.contexts,
+   org.eclipse.e4.core.di.extensions.supplier,
+   org.eclipse.e4.ui.di,
+   org.eclipse.e4.core.services",
  org.eclipse.e4.core.internal.di;x-friends:="org.eclipse.e4.core.contexts",
  org.eclipse.e4.core.internal.di.osgi;x-internal:=true,
- org.eclipse.e4.core.internal.di.shared;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions"
+ org.eclipse.e4.core.internal.di.shared;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions.supplier"
 Require-Bundle: org.eclipse.e4.core.di.annotations;bundle-version="[1.4.0,2.0.0)";visibility:=reexport
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",

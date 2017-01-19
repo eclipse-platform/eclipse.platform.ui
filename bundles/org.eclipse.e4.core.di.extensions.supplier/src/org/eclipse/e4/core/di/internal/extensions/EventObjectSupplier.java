@@ -26,7 +26,6 @@ import javax.annotation.PreDestroy;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.extensions.EventTopic;
-import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
@@ -45,6 +44,9 @@ import org.osgi.service.event.EventHandler;
  */
 @Component(service = ExtendedObjectSupplier.class, immediate = true, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.EventTopic")
 public class EventObjectSupplier extends ExtendedObjectSupplier {
+	
+	// Same as IEventBroker.DATA
+	public static final String DATA = "org.eclipse.e4.data"; //$NON-NLS-1$
 
 	private EventAdmin eventAdmin;
 
@@ -166,7 +168,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
 		if (descriptorsClass.equals(Event.class))
 			return currentEvents.get(topic);
-		return currentEvents.get(topic).getProperty(EventUtils.DATA);
+		return currentEvents.get(topic).getProperty(DATA);
 	}
 
 	private void subscribe(String topic, IRequestor requestor) {

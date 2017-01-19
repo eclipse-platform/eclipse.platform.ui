@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
-package org.eclipse.e4.core.di.extensions;
+package org.eclipse.e4.core.di.internal.extensions.util;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
