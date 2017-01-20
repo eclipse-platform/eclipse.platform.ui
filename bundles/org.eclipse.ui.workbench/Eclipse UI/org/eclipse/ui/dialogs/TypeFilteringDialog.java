@@ -168,8 +168,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         IFileEditorMapping editorMappings[] = ((EditorRegistry) PlatformUI
 				.getWorkbench().getEditorRegistry()).getUnifiedMappings();
         ArrayList selectedMappings = new ArrayList();
-        for (int i = 0; i < editorMappings.length; i++) {
-            IFileEditorMapping mapping = editorMappings[i];
+        for (IFileEditorMapping mapping : editorMappings) {
             //Check for both extension and label matches
             if (this.initialSelections.contains(mapping.getExtension())) {
                 listViewer.setChecked(mapping, true);
@@ -263,9 +262,9 @@ public class TypeFilteringDialog extends SelectionDialog {
             List wildcardEditors = new ArrayList();
             IFileEditorMapping[] allMappings = ((EditorRegistry)PlatformUI.getWorkbench()
                     .getEditorRegistry()).getUnifiedMappings();
-            for (int i = 0; i < allMappings.length; i++) {
-                if (allMappings[i].getName().equals("*")) { //$NON-NLS-1$
-					wildcardEditors.add(allMappings[i]);
+            for (IFileEditorMapping allMapping : allMappings) {
+                if (allMapping.getName().equals("*")) { //$NON-NLS-1$
+					wildcardEditors.add(allMapping);
 				}
             }
             currentInput = new IFileEditorMapping[wildcardEditors.size()];
@@ -292,8 +291,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         IFileEditorMapping[] children = getInput();
         List list = new ArrayList();
         // Build a list of selected children.
-        for (int i = 0; i < children.length; ++i) {
-            IFileEditorMapping element = children[i];
+        for (IFileEditorMapping element : children) {
             if (listViewer.getChecked(element)) {
 				list.add(element.getExtension());
 			}

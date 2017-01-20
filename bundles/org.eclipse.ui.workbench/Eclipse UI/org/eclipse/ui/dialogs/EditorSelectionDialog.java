@@ -475,15 +475,15 @@ public class EditorSelectionDialog extends Dialog {
 		}
 
 		List<IEditorDescriptor> filteredList = new ArrayList<>();
-		for (int i = 0; i < editors.length; i++) {
+		for (IEditorDescriptor editor : editors) {
 			boolean add = true;
-			for (int j = 0; j < editorsToFilter.length; j++) {
-				if (editors[i].getId().equals(editorsToFilter[j].getId())) {
+			for (IEditorDescriptor element : editorsToFilter) {
+				if (editor.getId().equals(element.getId())) {
 					add = false;
 				}
 			}
 			if (add) {
-				filteredList.add(editors[i]);
+				filteredList.add(editor);
 			}
 		}
 

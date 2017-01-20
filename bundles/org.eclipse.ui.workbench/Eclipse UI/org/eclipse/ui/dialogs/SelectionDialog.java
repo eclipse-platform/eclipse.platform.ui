@@ -162,8 +162,8 @@ public abstract class SelectionDialog extends TrayDialog {
 	 */
 	public void setInitialSelections(Object[] selectedElements) {
 		initialSelections = new ArrayList(selectedElements.length);
-		for (int i = 0; i < selectedElements.length; i++) {
-			initialSelections.add(selectedElements[i]);
+		for (Object selectedElement : selectedElements) {
+			initialSelections.add(selectedElement);
 		}
 	}
 

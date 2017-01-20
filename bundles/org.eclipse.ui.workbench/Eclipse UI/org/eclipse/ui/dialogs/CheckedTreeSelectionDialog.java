@@ -389,8 +389,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
                 if (fContainerMode) {
 					fViewer.setCheckedElements(viewerElements);
 				} else {
-                    for (int i = 0; i < viewerElements.length; i++) {
-						fViewer.setSubtreeChecked(viewerElements[i], true);
+                    for (Object viewerElement : viewerElements) {
+						fViewer.setSubtreeChecked(viewerElement, true);
 					}
                 }
                 updateOKStatus();

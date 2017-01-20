@@ -439,12 +439,12 @@ public class FilteredTree extends Composite {
 	 * @return the first matching TreeItem
 	 */
 	private TreeItem getFirstMatchingItem(TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			if (patternFilter.isLeafMatch(treeViewer, items[i].getData())
-					&& patternFilter.isElementSelectable(items[i].getData())) {
-				return items[i];
+		for (TreeItem item : items) {
+			if (patternFilter.isLeafMatch(treeViewer, item.getData())
+					&& patternFilter.isElementSelectable(item.getData())) {
+				return item;
 			}
-			TreeItem treeItem = getFirstMatchingItem(items[i].getItems());
+			TreeItem treeItem = getFirstMatchingItem(item.getItems());
 			if (treeItem != null) {
 				return treeItem;
 			}
@@ -501,8 +501,7 @@ public class FilteredTree extends Composite {
 					if (!narrowingDown) {
 						// collapse all
 						TreeItem[] is = treeViewer.getTree().getItems();
-						for (int i = 0; i < is.length; i++) {
-							TreeItem item = is[i];
+						for (TreeItem item : is) {
 							if (item.getExpanded()) {
 								treeViewer.setExpandedState(item.getData(),
 										false);
@@ -646,8 +645,8 @@ public class FilteredTree extends Composite {
 					private int getFilteredItemsCount() {
 						int total = 0;
 						TreeItem[] items = getViewer().getTree().getItems();
-						for (int i = 0; i < items.length; i++) {
-							total += itemCount(items[i]);
+						for (TreeItem item : items) {
+							total += itemCount(item);
 
 						}
 						return total;
@@ -661,8 +660,8 @@ public class FilteredTree extends Composite {
 					private int itemCount(TreeItem treeItem) {
 						int count = 1;
 						TreeItem[] children = treeItem.getItems();
-						for (int i = 0; i < children.length; i++) {
-							count += itemCount(children[i]);
+						for (TreeItem element : children) {
+							count += itemCount(element);
 
 						}
 						return count;
