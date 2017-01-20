@@ -68,6 +68,7 @@ import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.internal.core.StepFilterManager;
 import org.eclipse.debug.internal.core.commands.CommandAdapterFactory;
+import org.eclipse.debug.internal.core.groups.GroupMemberChangeListener;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.osgi.service.environment.Constants;
 import org.osgi.framework.BundleContext;
@@ -713,6 +714,9 @@ public class DebugPlugin extends Plugin {
 		manager.registerAdapters(actionFactory, ILaunch.class);
 		manager.registerAdapters(actionFactory, IProcess.class);
 		manager.registerAdapters(actionFactory, IDebugElement.class);
+
+		// monitor launch configuration renames for launch groups
+		getLaunchManager().addLaunchConfigurationListener(new GroupMemberChangeListener());
 	}
 
 	/**

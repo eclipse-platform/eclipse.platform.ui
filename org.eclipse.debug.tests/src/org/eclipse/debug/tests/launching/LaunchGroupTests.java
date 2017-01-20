@@ -5,9 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.CoreException;
@@ -274,17 +272,22 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
 
-	protected Set<ILaunch> findRunningLaunch(ILaunchConfiguration cfg) {
-		Set<ILaunch> result = new HashSet<>();
-		for (ILaunch l : getLaunchManager().getLaunches()) {
-			if (l.isTerminated()) {
-				continue;
-			}
-			if (l.getLaunchConfiguration().equals(cfg)) {
-				result.add(l);
-			}
-		}
-		return result;
+	public void testRename() throws Exception {
+		ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
+		ILaunchConfiguration t2 = getLaunchConfiguration("Test2"); //$NON-NLS-1$
+		ILaunchConfiguration grp = createLaunchGroup(DEF_GRP_NAME, createLaunchGroupElement(t1, GroupElementPostLaunchAction.NONE, null, false), createLaunchGroupElement(t2, GroupElementPostLaunchAction.NONE, null, false));
+
+		ILaunchConfigurationWorkingCopy workingCopy = t1.getWorkingCopy();
+		workingCopy.rename("AnotherTest"); //$NON-NLS-1$
+		workingCopy.doSave();
+
+		assertTrue("name should not be transiently updated", grp.getName().equals(DEF_GRP_NAME)); //$NON-NLS-1$
+
+		// need to re-fetch configuration
+		grp = getLaunchConfiguration(DEF_GRP_NAME);
+		List<GroupLaunchElement> elements = GroupLaunchConfigurationDelegate.createLaunchElements(grp);
+
+		assertTrue("group element should be updated", elements.get(0).name.equals("AnotherTest")); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private static DummyStream attachDummyProcess(final ILaunch l) {
@@ -382,8 +385,9 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 
 		@Override
 		public void launchAdded(ILaunch launch) {
-			if (launch.getLaunchConfiguration().equals(cfg))
+			if (launch.getLaunchConfiguration().equals(cfg)) {
 				stream = attachDummyProcess(launch);
+			}
 		}
 
 		@Override
