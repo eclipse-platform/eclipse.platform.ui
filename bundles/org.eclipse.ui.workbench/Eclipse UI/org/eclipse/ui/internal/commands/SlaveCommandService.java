@@ -124,15 +124,15 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	public void dispose() {
 		if (!fExecutionListeners.isEmpty()) {
 			Object[] array = fExecutionListeners.toArray();
-			for (int i = 0; i < array.length; i++) {
-				removeExecutionListener((IExecutionListener) array[i]);
+			for (Object element : array) {
+				removeExecutionListener((IExecutionListener) element);
 			}
 			fExecutionListeners.clear();
 		}
 		if (!fCallbackCache.isEmpty()) {
 			Object[] array = fCallbackCache.toArray();
-			for (int i = 0; i < array.length; i++) {
-				unregisterElement((IElementReference) array[i]);
+			for (Object element : array) {
+				unregisterElement((IElementReference) element);
 			}
 		}
 	}

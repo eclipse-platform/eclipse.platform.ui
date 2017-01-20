@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.activities.ws;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -103,16 +102,13 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 							}
 
                             // refresh the managers on all windows.
-                            final IWorkbench workbench = PlatformUI
-                                    .getWorkbench();
-                            IWorkbenchWindow[] windows = workbench
-                                    .getWorkbenchWindows();
-                            for (int i = 0; i < windows.length; i++) {
-                                if (windows[i] instanceof WorkbenchWindow) {
-                                    final WorkbenchWindow window = (WorkbenchWindow) windows[i];
+							final IWorkbench workbench = PlatformUI.getWorkbench();
+							IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+                            for (IWorkbenchWindow wWindow : windows) {
+                                if (wWindow instanceof WorkbenchWindow) {
+                                    final WorkbenchWindow window = (WorkbenchWindow) wWindow;
 
-                                    final ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-                                            window.getShell());
+									final ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
 
                                     final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
@@ -152,13 +148,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                                             // update all of the (realized) views in all of the pages
                                             IWorkbenchPage[] pages = window
                                                     .getPages();
-                                            for (int j = 0; j < pages.length; j++) {
-                                                IWorkbenchPage page = pages[j];
-                                                IViewReference[] refs = page
-                                                        .getViewReferences();
-                                                for (int k = 0; k < refs.length; k++) {
-                                                    IViewPart part = refs[k]
-                                                            .getView(false);
+                                            for (IWorkbenchPage page : pages) {
+												IViewReference[] refs = page.getViewReferences();
+                                                for (IViewReference ref : refs) {
+													IViewPart part = ref.getView(false);
                                                     if (part != null) {
                                                         updateViewBars(part);
                                                     }
@@ -444,8 +437,8 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 
 	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] == advisor) {
+		for (Object object : objects) {
+			if (object == advisor) {
 				advisor = null;
 				break;
 			}

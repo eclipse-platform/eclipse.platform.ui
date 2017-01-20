@@ -152,8 +152,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
         IConfigurationElement[] configurationElements = extensionRegistry
                 .getConfigurationElementsFor(Persistence.PACKAGE_FULL);
 
-        for (int i = 0; i < configurationElements.length; i++) {
-            IConfigurationElement configurationElement = configurationElements[i];
+        for (IConfigurationElement configurationElement : configurationElements) {
             String name = configurationElement.getName();
 
             if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name)) {

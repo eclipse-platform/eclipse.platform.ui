@@ -306,8 +306,8 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	public Set getDefinedKeyConfigurationIds() {
 		final Set definedIds = new HashSet();
 		final Scheme[] schemes = bindingManager.getDefinedSchemes();
-		for (int i = 0; i < schemes.length; i++) {
-			definedIds.add(schemes[i].getId());
+		for (Scheme scheme : schemes) {
+			definedIds.add(scheme.getId());
 		}
 		return definedIds;
 	}

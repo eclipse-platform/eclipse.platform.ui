@@ -126,11 +126,11 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	 */
 	private String urlEncodeForSpaces(char[] input) {
 		StringBuffer retu = new StringBuffer(input.length);
-		for (int i = 0; i < input.length; i++) {
-			if (input[i] == ' ') {
+		for (char element : input) {
+			if (element == ' ') {
 				retu.append("%20"); //$NON-NLS-1$
 			} else {
-				retu.append(input[i]);
+				retu.append(element);
 			}
 		}
 		return retu.toString();

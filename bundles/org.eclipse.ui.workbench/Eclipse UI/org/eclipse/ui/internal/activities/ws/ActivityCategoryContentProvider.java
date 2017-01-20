@@ -88,8 +88,8 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 				currentCategory = manager.getCategory(currentCategoryId);
 				categoryActivities = getCategoryActivities(currentCategory);
 				// traverse the category's activities to find a duplicate
-				for (int index = 0; index < categoryActivities.length; index++) {
-					currentActivityId = categoryActivities[index].getId();
+				for (IActivity categoryActivity : categoryActivities) {
+					currentActivityId = categoryActivity.getId();
 					if (currentActivityId.equals(categorizedActivity
 							.getActivity().getId())) {
 						duplicateCategorizedactivities
@@ -128,9 +128,9 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 			requiredActivityId = currentActivityRequirementBinding
 					.getRequiredActivityId();
 			currentCategoryIds = getActivityCategories(requiredActivityId);
-			for (int index = 0; index < currentCategoryIds.length; index++) {
+			for (Object currentCategoryId : currentCategoryIds) {
 				childRequiredActivities.add(new CategorizedActivity(manager
-						.getCategory((String) currentCategoryIds[index]),
+						.getCategory((String) currentCategoryId),
 						manager.getActivity(requiredActivityId)));
 			}
 
@@ -166,11 +166,11 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 						.equals(activityId)) {
 					// We found one - add it to the list
 					currentCategoryIds = getActivityCategories(currentActivityId);
-					for (int index = 0; index < currentCategoryIds.length; index++) {
+					for (Object currentCategoryId : currentCategoryIds) {
 						parentRequiredActivities
 								.add(new CategorizedActivity(
 										manager
-												.getCategory((String) currentCategoryIds[index]),
+												.getCategory((String) currentCategoryId),
 										manager.getActivity(currentActivityId)));
 					}
 				}
@@ -196,8 +196,8 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 			currentCategoryId = (String) i.next();
 			categoryActivities = getCategoryActivities(manager
 					.getCategory(currentCategoryId));
-			for (int index = 0; index < categoryActivities.length; index++) {
-				if (categoryActivities[index].getId().equals(activityId)) {
+			for (IActivity categoryActivity : categoryActivities) {
+				if (categoryActivity.getId().equals(activityId)) {
 					activityCategories.add(currentCategoryId);
 					break;
 				}

@@ -117,8 +117,8 @@ public final class CommandImageManagerEvent {
 	 */
 	public final boolean isCommandIdChanged(final String commandId) {
 		// PERFORMANCE
-		for (int i = 0; i < changedCommandIds.length; i++) {
-			if (commandId.equals(changedCommandIds[i])) {
+		for (String changedCommandId : changedCommandIds) {
+			if (commandId.equals(changedCommandId)) {
 				return true;
 			}
 		}

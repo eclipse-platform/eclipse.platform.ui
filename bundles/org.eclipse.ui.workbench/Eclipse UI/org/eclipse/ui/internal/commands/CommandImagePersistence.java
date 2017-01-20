@@ -194,8 +194,7 @@ public final class CommandImagePersistence extends RegistryPersistence {
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandImagesExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_COMMAND_IMAGES);
-		for (int i = 0; i < commandImagesExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = commandImagesExtensionPoint[i];
+		for (final IConfigurationElement configurationElement : commandImagesExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.

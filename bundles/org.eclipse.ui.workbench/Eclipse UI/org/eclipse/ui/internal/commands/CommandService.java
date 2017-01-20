@@ -137,11 +137,9 @@ public final class CommandService implements ICommandService, IUpdateService {
 		 * state has a chance to persist any changes.
 		 */
 		final Command[] commands = commandManager.getAllCommands();
-		for (int i = 0; i < commands.length; i++) {
-			final Command command = commands[i];
+		for (final Command command : commands) {
 			final String[] stateIds = command.getStateIds();
-			for (int j = 0; j < stateIds.length; j++) {
-				final String stateId = stateIds[j];
+			for (final String stateId : stateIds) {
 				final State state = command.getState(stateId);
 				if (state instanceof PersistentState) {
 					final PersistentState persistentState = (PersistentState) state;

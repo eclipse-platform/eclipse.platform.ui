@@ -54,8 +54,8 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
         @Override
 		public void removeExtension(IExtension source, Object[] objects) {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] == activeSupport) {
+			for (Object object : objects) {
+				if (object == activeSupport) {
 					dispose();
 					// remove ourselves - we'll be added again in initalize if
 					// needed
@@ -150,9 +150,9 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
              * @return the element or <code>null</code>
              */
             private IConfigurationElement findDesiredElement(IConfigurationElement [] elements) {
-                for (int i = 0; i < elements.length; i++) {
-                    if (desiredBrowserSupportId.equals(elements[i].getDeclaringExtension().getUniqueIdentifier())) {
-						return elements[i];
+                for (IConfigurationElement element : elements) {
+                    if (desiredBrowserSupportId.equals(element.getDeclaringExtension().getUniqueIdentifier())) {
+						return element;
 					}
                 }
                 return null;
@@ -173,8 +173,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				// find the first default element and
 				// the first non-default element. If non-default
 				// is found, pick it. Otherwise, use default.
-				for (int i = 0; i < elements.length; i++) {
-					IConfigurationElement element = elements[i];
+				for (IConfigurationElement element : elements) {
 					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_SUPPORT)) {
 						String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
 						if (def != null && Boolean.valueOf(def).booleanValue()) {
