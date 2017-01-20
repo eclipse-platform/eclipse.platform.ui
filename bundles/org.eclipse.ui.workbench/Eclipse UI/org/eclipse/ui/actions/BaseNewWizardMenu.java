@@ -61,9 +61,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 
         @Override
 		public void removeExtension(IExtension source, Object[] objects) {
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof NewWizardShortcutAction) {
-                    actions.values().remove(objects[i]);
+            for (Object object : objects) {
+                if (object instanceof NewWizardShortcutAction) {
+                    actions.values().remove(object);
                 }
             }
         }
@@ -136,8 +136,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         IWorkbenchPage page = workbenchWindow.getActivePage();
         if (page != null) {
             String[] wizardIds = page.getNewWizardShortcuts();
-            for (int i = 0; i < wizardIds.length; i++) {
-                IAction action = getAction(wizardIds[i]);
+            for (String wizardId : wizardIds) {
+                IAction action = getAction(wizardId);
                 if (action != null) {
                     if (!WorkbenchActivityHelper.filterItem(action)) {
                         list.add(new ActionContributionItem(action));

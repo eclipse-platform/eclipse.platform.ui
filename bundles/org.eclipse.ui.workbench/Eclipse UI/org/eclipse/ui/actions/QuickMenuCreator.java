@@ -236,8 +236,7 @@ public abstract class QuickMenuCreator {
 	private Point[] getIncludedPositions(Rectangle[] rectangles,
 			Rectangle widgetBounds) {
 		List result = new ArrayList();
-		for (int i = 0; i < rectangles.length; i++) {
-			Rectangle rectangle = rectangles[i];
+		for (Rectangle rectangle : rectangles) {
 			Rectangle intersect = widgetBounds.intersection(rectangle);
 			if (intersect != null && intersect.height == rectangle.height) {
 				result.add(new Point(intersect.x, intersect.y
@@ -250,8 +249,7 @@ public abstract class QuickMenuCreator {
 	private Point findBestLocation(Point[] points, Point relativeCursor) {
 		Point result = null;
 		double bestDist = Double.MAX_VALUE;
-		for (int i = 0; i < points.length; i++) {
-			Point point = points[i];
+		for (Point point : points) {
 			int a = 0;
 			int b = 0;
 			if (point.x > relativeCursor.x) {

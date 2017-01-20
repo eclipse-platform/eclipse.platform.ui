@@ -77,8 +77,7 @@ public class NewWizardDropDownAction extends Action implements
             createDropDownMenuMgr();
             Menu menu = new Menu(parent);
             IContributionItem[] items = dropDownMenuMgr.getItems();
-            for (int i = 0; i < items.length; i++) {
-                IContributionItem item = items[i];
+            for (IContributionItem item : items) {
                 IContributionItem newItem = item;
                 if (item instanceof ActionContributionItem) {
                     newItem = new ActionContributionItem(
