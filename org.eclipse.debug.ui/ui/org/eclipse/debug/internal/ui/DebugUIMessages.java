@@ -243,7 +243,7 @@ public class DebugUIMessages extends NLS {
 	public static String GroupLaunch_Cycle;
 	public static String GroupLaunch_Error;
 	public static String GroupLaunchConfigurationSelectionDialog_0;
-
+	public static String GroupLaunchConfigurationSelectionDialog_1;
 	public static String GroupLaunchConfigurationSelectionDialog_10;
 	public static String GroupLaunchConfigurationSelectionDialog_11;
 	public static String GroupLaunchConfigurationSelectionDialog_12;

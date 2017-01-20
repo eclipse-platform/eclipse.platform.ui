@@ -275,7 +275,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			setControl(comp);
 			//comp.setBackground(PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
 			comp.setLayout(new GridLayout(2, false));
-			treeViewer = new CheckboxTreeViewer(comp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+			treeViewer = new CheckboxTreeViewer(comp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 			Tree table = treeViewer.getTree();
 			table.setFont(parent.getFont());
 			treeViewer.setContentProvider(new ContentProvider());

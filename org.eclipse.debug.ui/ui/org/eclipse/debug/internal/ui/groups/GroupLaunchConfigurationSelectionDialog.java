@@ -40,13 +40,13 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -54,7 +54,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -64,8 +64,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
@@ -81,7 +79,6 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	private boolean adoptIfRunning;
 	private ViewerFilter emptyTypeFilter;
 	private IStructuredSelection fInitialSelection;
-	private ComboControlledStackComposite fStackComposite;
 	private Label fActionParamLabel;
 	private Text fActionParamWidget; // in seconds
 	private boolean fForEditing; // true if dialog was opened to edit an entry,
@@ -143,16 +140,20 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	}
 
 	@Override
+	protected Point getInitialSize() {
+		return new Point(750, 550);
+	}
+
+	@Override
 	protected Control createDialogArea(Composite parent2) {
 		Composite comp = (Composite) super.createDialogArea(parent2);
+		GridLayoutFactory.fillDefaults().margins(10, 10).applyTo(comp);
 
 		// title bar
 		getShell().setText(fForEditing ? DebugUIMessages.GroupLaunchConfigurationSelectionDialog_13 : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_12);
 
 		// dialog message area (not title bar)
 		setTitle(fForEditing ? DebugUIMessages.GroupLaunchConfigurationSelectionDialog_15 : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_14);
-
-		fStackComposite = new ComboControlledStackComposite(comp, SWT.NONE);
 
 		Map<String, ILaunchGroup> modes = new LinkedHashMap<>();
 		modes.put(GroupLaunchElement.MODE_INHERIT, new InheritModeGroup());
@@ -173,46 +174,37 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			}
 		}
 
-		for (Map.Entry<String, ILaunchGroup> entry : modes.entrySet()) {
-			ILaunchGroup launchGroup = entry.getValue();
-			LaunchConfigurationFilteredTree fTree = new LaunchConfigurationFilteredTree(fStackComposite.getStackParent(), SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new PatternFilter(), launchGroup, null);
-			String lgm = entry.getKey();
-			fStackComposite.addItem(lgm, fTree);
-			fTree.createViewControl();
-			ViewerFilter[] filters = fTree.getViewer().getFilters();
-			for (ViewerFilter viewerFilter : filters) {
-				if (viewerFilter instanceof LaunchGroupFilter) {
-					fTree.getViewer().removeFilter(viewerFilter);
-				}
-			}
-			fTree.getViewer().addFilter(emptyTypeFilter);
-			fTree.getViewer().addSelectionChangedListener(this);
-			if (lgm.equals(this.mode)) {
-				fStackComposite.setSelection(lgm);
-			}
-			if (fInitialSelection != null) {
-				fTree.getViewer().setSelection(fInitialSelection, true);
+		// the tree requires a non-null group. use inherit as dummy as this will
+		// not cause filtering.
+		ILaunchGroup launchGroup = modes.get(GroupLaunchElement.MODE_INHERIT);
+		LaunchConfigurationFilteredTree fTree = new LaunchConfigurationFilteredTree(comp, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new PatternFilter(), launchGroup, null);
+		fTree.createViewControl();
+		ViewerFilter[] filters = fTree.getViewer().getFilters();
+		for (ViewerFilter viewerFilter : filters) {
+			if (viewerFilter instanceof LaunchGroupFilter) {
+				fTree.getViewer().removeFilter(viewerFilter);
 			}
 		}
-		fStackComposite.setLabelText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_4);
-		fStackComposite.pack();
-		Rectangle bounds = fStackComposite.getBounds();
-		// adjust size
-		GridData data = ((GridData) fStackComposite.getLayoutData());
-		if (data == null) {
-			data = new GridData(GridData.FILL_BOTH);
-			fStackComposite.setLayoutData(data);
+		fTree.getViewer().addFilter(emptyTypeFilter);
+		fTree.getViewer().addSelectionChangedListener(this);
+		if (fInitialSelection != null) {
+			fTree.getViewer().setSelection(fInitialSelection, true);
 		}
-		data.heightHint = Math.max(convertHeightInCharsToPixels(15), bounds.height);
-		data.widthHint = Math.max(convertWidthInCharsToPixels(40), bounds.width);
-		fStackComposite.getCombo().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				mode = fStackComposite.getSelection();
-			}
-		});
+		GridDataFactory.fillDefaults().grab(true, true).minSize(400, 150).applyTo(fTree.getViewer().getControl());
 
-		Button chkAdopt = new Button(comp, SWT.CHECK);
+		Composite additionalSettings = new Composite(comp, SWT.NONE);
+		additionalSettings.setLayout(new GridLayout(4, false));
+		additionalSettings.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		createModeSelectionControl(modes, additionalSettings);
+		createPostLaunchControl(additionalSettings);
+
+		// skip the first cell and put the checkbox in the second one
+		Composite c = new Composite(additionalSettings, SWT.NONE);
+		GridLayoutFactory.fillDefaults().applyTo(c);
+		GridDataFactory.fillDefaults().applyTo(c);
+
+		Button chkAdopt = new Button(additionalSettings, SWT.CHECK);
 		chkAdopt.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_adoptText);
 		chkAdopt.setToolTipText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_adoptTooltip);
 		chkAdopt.setSelection(adoptIfRunning);
@@ -222,15 +214,47 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 				adoptIfRunning = chkAdopt.getSelection();
 			}
 		});
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(chkAdopt);
 
-		createPostLaunchControl(comp);
 		return comp;
 	}
 
-	private void createPostLaunchControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(4, false));
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	private void createModeSelectionControl(Map<String, ILaunchGroup> modes, Composite comp) {
+		Label label = new Label(comp, SWT.NONE);
+		label.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_4);
+
+		Map<String, String> capitalized = new LinkedHashMap<>();
+		modes.keySet().forEach(m -> capitalized.put(m.substring(0, 1).toUpperCase() + m.substring(1), m));
+
+		Combo cvMode = new Combo(comp, SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(cvMode);
+		cvMode.setItems(capitalized.keySet().toArray(new String[capitalized.size()]));
+
+		// initial selection to the current mode.
+		int index = 0;
+		for (String m : modes.keySet()) {
+			if (m.equals(mode)) {
+				cvMode.select(index);
+				break;
+			}
+			index++;
+		}
+
+		cvMode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				mode = capitalized.get(cvMode.getText());
+				validate();
+			}
+		});
+
+		// fill up the remaining two cells in the parent layout
+		Composite c = new Composite(comp, SWT.NONE);
+		GridLayoutFactory.fillDefaults().applyTo(c);
+		GridDataFactory.fillDefaults().span(2, 1).applyTo(c);
+	}
+
+	private void createPostLaunchControl(Composite comp) {
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_8);
 		Combo combo = new Combo(comp, SWT.READ_ONLY);
@@ -248,10 +272,11 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			}
 		});
 		combo.setText(action.getDescription());
+		GridDataFactory.fillDefaults().grab(true, false).minSize(250, SWT.DEFAULT).applyTo(combo);
 
 		fActionParamLabel = new Label(comp, SWT.NONE);
 		fActionParamWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(fActionParamWidget);
+		GridDataFactory.fillDefaults().grab(true, false).minSize(150, SWT.DEFAULT).applyTo(fActionParamWidget);
 		fActionParamWidget.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -326,40 +351,6 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-
-		// This listener gets called for a selection change in the launch
-		// configuration viewer embedded in the dialog. Problem is, there are
-		// numerous viewers--one for each platform debug ILaunchGroup (run,
-		// debug, profile). These viewers are stacked, so only one is ever
-		// visible to the user. During initialization, we get a selection change
-		// notification for every viewer. We need to ignore all but the one that
-		// matters--the visible one.
-
-		Tree topTree = null;
-		final Control topControl = fStackComposite.getTopControl();
-		if (topControl instanceof FilteredTree) {
-			final TreeViewer viewer = ((FilteredTree) topControl).getViewer();
-			if (viewer != null) {
-				topTree = viewer.getTree();
-			}
-		}
-		if (topTree == null) {
-			return;
-		}
-
-		boolean selectionIsForVisibleViewer = false;
-		final Object src = event.getSource();
-		if (src instanceof Viewer) {
-			final Control viewerControl = ((Viewer) src).getControl();
-			if (viewerControl == topTree) {
-				selectionIsForVisibleViewer = true;
-			}
-		}
-
-		if (!selectionIsForVisibleViewer) {
-			return;
-		}
-
 		fSelection = event.getSelection();
 		validate();
 	}
@@ -391,10 +382,21 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 					isValid = !hasSelfRecursive(sel);
 					setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_0);
 				}
+				if (isValid && !GroupLaunchElement.MODE_INHERIT.equals(mode)) {
+					if (!sel.supportsMode(mode)) {
+						isValid = false;
+					}
+					setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_1);
+				}
+
+				if (!isValid) {
+					break;
+				}
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
+
 
 		if (isValid) {
 			if (action == GroupElementPostLaunchAction.DELAY) {
@@ -418,7 +420,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			return false;
 		}
 
-		if(c.getType().equals(groupType)) {
+		if (c.getType().equals(groupType)) {
 			// it's a launch group
 			if (c.getName().equals(selfRef.getName())) {
 				return true;
