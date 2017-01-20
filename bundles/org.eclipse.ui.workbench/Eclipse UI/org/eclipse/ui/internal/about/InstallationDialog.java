@@ -82,8 +82,7 @@ public class InstallationDialog extends TrayDialog implements
 			int visibleChildren = 0;
 			Button closeButton = getButton(IDialogConstants.CLOSE_ID);
 
-			for (int i = 0; i < children.length; i++) {
-				Control control = children[i];
+			for (Control control : children) {
 				if (closeButton == control)
 					closeButton.dispose();
 				else {
@@ -190,8 +189,7 @@ public class InstallationDialog extends TrayDialog implements
 	protected void createFolderItems(TabFolder folder) {
 		IConfigurationElement[] elements = ConfigurationInfo
 				.getSortedExtensions(loadElements());
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			TabItem item = new TabItem(folder, SWT.NONE);
 			item.setText(element
 					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));

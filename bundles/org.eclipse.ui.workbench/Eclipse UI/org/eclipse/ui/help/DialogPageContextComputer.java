@@ -77,8 +77,8 @@ public class DialogPageContextComputer implements IContextComputer {
 		}
 
         // copy the contexts into our list
-        for (int i = 0; i < contexts.length; i++) {
-			contextList.add(contexts[i]);
+        for (Object ctx : contexts) {
+			contextList.add(ctx);
 		}
     }
 

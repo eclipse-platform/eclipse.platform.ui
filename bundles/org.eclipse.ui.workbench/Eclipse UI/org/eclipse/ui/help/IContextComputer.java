@@ -26,7 +26,7 @@ import org.eclipse.swt.events.HelpEvent;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @noreference This interface is not intended to be referenced by clients.
- * 
+ *
  */
 
 @Deprecated

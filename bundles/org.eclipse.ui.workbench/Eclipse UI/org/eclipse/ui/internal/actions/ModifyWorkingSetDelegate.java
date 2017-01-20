@@ -235,13 +235,10 @@ public class ModifyWorkingSetDelegate extends
 		// separator.
 		boolean needsSeparator = false;
 
-		for (int i = 0; i < typedSets.length; i++) {
+		for (IWorkingSet[] sets : typedSets) {
 			int oldCount = menuItems.size();
 
-			IWorkingSet[] sets = typedSets[i];
-			for (int j = 0; j < sets.length; j++) {
-				IWorkingSet set = sets[j];
-
+			for (IWorkingSet set : sets) {
 				Set existingElements = new HashSet();
 				existingElements.addAll(Arrays
 						.asList(set.getElements()));
@@ -261,8 +258,8 @@ public class ModifyWorkingSetDelegate extends
 					}
 				}
 				else if (adaptables.length > 0) {
-					for (int k = 0; k < adaptables.length; k++) {
-						if (existingElements.contains(adaptables[k])){
+					for (IAdaptable adaptable : adaptables) {
+						if (existingElements.contains(adaptable)){
 							visible = true; // show if any element
 											// is present in removal
 							break;
@@ -315,8 +312,8 @@ public class ModifyWorkingSetDelegate extends
 					.toArray();
 			// ensure every item is of type IAdaptable and is NOT an IWorkingSet (minimal fix for 157799)
 			boolean minimallyOkay = true;
-			for (int i = 0; i < selectedElements.length; i++) {
-				Object object = selectedElements[i];
+			for (Object selectedElement : selectedElements) {
+				Object object = selectedElement;
 				if (!(object instanceof IAdaptable) || object instanceof IWorkingSet) {
 					minimallyOkay = false;
 					break;

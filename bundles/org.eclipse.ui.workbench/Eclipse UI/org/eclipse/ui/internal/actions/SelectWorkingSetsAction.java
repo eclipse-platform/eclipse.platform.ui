@@ -87,11 +87,8 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 	protected void fillMenu(Menu menu) {
 		IWorkingSet[][] typedSets = splitSets();
 
-		for (int i = 0; i < typedSets.length; i++) {
-			IWorkingSet[] sets = typedSets[i];
-			for (int j = 0; j < sets.length; j++) {
-				IWorkingSet set = sets[j];
-
+		for (IWorkingSet[] sets : typedSets) {
+			for (IWorkingSet set : sets) {
 				// only add visible sets
 				// if (set.isVisible()) {
 				ActionContributionItem item = new ActionContributionItem(
@@ -115,8 +112,8 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 
 	private boolean isWorkingSetEnabled(IWorkingSet set) {
 		IWorkingSet[] enabledSets = getEnabledSets();
-		for (int i = 0; i < enabledSets.length; i++) {
-			if (enabledSets[i].equals(set)) {
+		for (IWorkingSet enabledSet : enabledSets) {
+			if (enabledSet.equals(set)) {
 				return true;
 			}
 		}

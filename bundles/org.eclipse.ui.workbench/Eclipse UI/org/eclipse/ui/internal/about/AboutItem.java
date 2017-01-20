@@ -49,9 +49,9 @@ public class AboutItem {
      */
     public boolean isLinkAt(int offset) {
         // Check if there is a link at the offset
-        for (int i = 0; i < linkRanges.length; i++) {
-            if (offset >= linkRanges[i][0]
-                    && offset < linkRanges[i][0] + linkRanges[i][1]) {
+        for (int[] linkRange : linkRanges) {
+            if (offset >= linkRange[0]
+                    && offset < linkRange[0] + linkRange[1]) {
                 return true;
             }
         }

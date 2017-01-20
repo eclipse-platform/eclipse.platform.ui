@@ -287,10 +287,10 @@ public class AboutTextManager {
         int currentSelectionEnd = styledText.getSelection().y;
         int currentSelectionStart = styledText.getSelection().x;
 
-        for (int i = 0; i < ranges.length; i++) {
-            if ((currentSelectionStart >= ranges[i].start)
-                    && (currentSelectionEnd <= (ranges[i].start + ranges[i].length))) {
-                return ranges[i];
+        for (StyleRange range : ranges) {
+            if ((currentSelectionStart >= range.start)
+                    && (currentSelectionEnd <= (range.start + range.length))) {
+                return range;
             }
         }
         return null;
@@ -304,9 +304,9 @@ public class AboutTextManager {
         StyleRange[] ranges = styledText.getStyleRanges();
         int currentSelectionEnd = styledText.getSelection().y;
 
-        for (int i = 0; i < ranges.length; i++) {
-            if (ranges[i].start >= currentSelectionEnd) {
-				return ranges[i];
+        for (StyleRange range : ranges) {
+            if (range.start >= currentSelectionEnd) {
+				return range;
 			}
         }
         return null;
@@ -333,8 +333,8 @@ public class AboutTextManager {
     private void setLinkRanges(int[][] linkRanges) {
         Color fg = JFaceColors.getHyperlinkText(styledText.getShell()
                 .getDisplay());
-        for (int i = 0; i < linkRanges.length; i++) {
-            StyleRange r = new StyleRange(linkRanges[i][0], linkRanges[i][1],
+        for (int[] linkRange : linkRanges) {
+            StyleRange r = new StyleRange(linkRange[0], linkRange[1],
                     fg, null);
             styledText.setStyleRange(r);
         }

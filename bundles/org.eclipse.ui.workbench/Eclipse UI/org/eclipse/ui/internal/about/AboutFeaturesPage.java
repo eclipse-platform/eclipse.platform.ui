@@ -119,11 +119,11 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			// create a descriptive object for each BundleGroup
 			LinkedList groups = new LinkedList();
 			if (providers != null) {
-				for (int i = 0; i < providers.length; ++i) {
-					IBundleGroup[] bundleGroups = providers[i]
+				for (IBundleGroupProvider provider : providers) {
+					IBundleGroup[] bundleGroups = provider
 							.getBundleGroups();
-					for (int j = 0; j < bundleGroups.length; ++j) {
-						groups.add(new AboutBundleGroupData(bundleGroups[j]));
+					for (IBundleGroup bundleGroup : bundleGroups) {
+						groups.add(new AboutBundleGroupData(bundleGroup));
 					}
 				}
 			}
