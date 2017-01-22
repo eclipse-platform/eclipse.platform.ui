@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Wang Yizhuo (wangyizhuo@gmail.com) - patch (see Bugzilla #239178)
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205, 458055
+ *     Ralf M Petter <ralf.petter@gmail.com> - Bug 510826
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -261,8 +262,8 @@ public class FormImages {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof SimpleImageDescriptor) {
-				SimpleImageDescriptor id = (SimpleImageDescriptor) obj;
+			if (obj instanceof SimpleSectionImageDescriptor) {
+				SimpleSectionImageDescriptor id = (SimpleSectionImageDescriptor) obj;
 				if (super.equals(obj) && id.fTheight == fTheight && id.fMarginHeight == fMarginHeight)
 					return true;
 			}

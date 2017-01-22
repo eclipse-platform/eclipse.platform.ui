@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241, 510826
  *******************************************************************************/
 
 package org.eclipse.ui.tests.forms.util;
@@ -65,6 +65,32 @@ public class FormImagesTests {
 			else
 				// ensure that the gradient is disposed on the last markFinished
 				Assert.assertTrue("markFinished(...) did not dispose a shared image on the last call",gradient.isDisposed());
+		}
+		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
+	}
+
+	@Test
+	public void testMultipleSectionGradientInstances() throws Exception {
+		Display display = Display.getCurrent();
+		Image gradient = FormImages.getInstance().getSectionGradientImage(new Color(display, 200, 200, 200),
+				new Color(display, 0, 0, 0), 30, 16, 3, display);
+		int count;
+		// ensure that the same image is returned for many calls with the same
+		// parameter
+		for (count = 1; count < 20; count++)
+			Assert.assertEquals("getSectionGradientImage(...) returned a different image for the same params on iteration " + count,
+					gradient, FormImages.getInstance().getSectionGradientImage(new Color(display, 200, 200, 200),
+							new Color(display, 0, 0, 0), 30, 16, 3, display));
+		for (; count > 0; count--) {
+			FormImages.getInstance().markFinished(gradient, display);
+			if (count != 1)
+				// ensure that the gradient is not disposed early
+				Assert.assertFalse("markFinished(...) disposed a shared image early on iteration " + count,
+						gradient.isDisposed());
+			else
+				// ensure that the gradient is disposed on the last markFinished
+				Assert.assertTrue("markFinished(...) did not dispose a shared image on the last call",
+						gradient.isDisposed());
 		}
 		Assert.assertNull("descriptors map", getDescriptors(FormImages.getInstance()));
 	}
