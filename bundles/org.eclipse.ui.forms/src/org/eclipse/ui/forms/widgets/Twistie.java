@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510902
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -57,6 +58,8 @@ public class Twistie extends ToggleHyperlink {
 	 */
 	@Override
 	protected void paintHyperlink(GC gc) {
+		int as = gc.getAntialias();
+		gc.setAntialias(SWT.ON);
 		Color bg;
 		if (!isEnabled())
 			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
@@ -77,6 +80,7 @@ public class Twistie extends ToggleHyperlink {
 			data = translate(offPoints, x, y);
 		gc.fillPolygon(data);
 		gc.setBackground(getBackground());
+		gc.setAntialias(as);
 	}
 
 	private int[] translate(int[] data, int x, int y) {
