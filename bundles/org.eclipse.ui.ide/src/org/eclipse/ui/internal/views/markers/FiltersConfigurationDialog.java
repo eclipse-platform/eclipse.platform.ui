@@ -190,7 +190,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		int limits = generator.getMarkerLimits();
 		boolean limitsEnabled = generator.isMarkerLimitsEnabled();
 		limitButton.setSelection(limitsEnabled);
-		updateLimitsCompositeEnablement();
+		updateLimitTextEnablement();
 		limitText.setText(Integer.toString(limits));
 		configsTable.getTable().setFocus();
 	}
@@ -202,49 +202,21 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	}
 
 	private void updateConfigComposite(boolean enabled) {
-		recursivelySetEnabled(configComposite, enabled);
 		if (enabled)
 			updateButtonEnablement(getSelectionFromTable());
 	}
 
-	/**
-	 * Recursively walk through the tree of components and set enabled state of
-	 * each control.
-	 *
-	 * @param control
-	 *            The root control
-	 * @param enabled
-	 *            Whether or not we're enabled.
-	 */
-	private void recursivelySetEnabled(Control control, boolean enabled) {
-		if (control instanceof Composite) {
-			for (Control child : ((Composite) control).getChildren()) {
-				recursivelySetEnabled(child, enabled);
-			}
-		}
-		control.setEnabled(enabled);
-	}
-
-	/** Update the enablement of components in the limit composite */
-	private void updateLimitsCompositeEnablement() {
-		boolean enableAll = !allButton.getSelection();
-		recursivelySetEnabled(compositeLimits, enableAll);
-		updateLimitTextEnablement();
-	}
-
 	/** Update the enablement of limitText */
 	private void updateLimitTextEnablement() {
-		boolean enableAll = !allButton.getSelection();
 		boolean useLimits = limitButton.getSelection();
-		limitsLabel.setEnabled(enableAll && useLimits);
-		limitText.setEnabled(enableAll && useLimits);
-
+		limitsLabel.setEnabled(useLimits);
+		limitText.setEnabled(useLimits);
 	}
 
 	private void updateShowAll(boolean showAll) {
 		allButton.setSelection(showAll);
 		updateConfigComposite(!showAll);
-		updateLimitsCompositeEnablement();
+		updateLimitTextEnablement();
 
 		if (showAll) {
 			previouslyChecked = configsTable.getCheckedElements();
@@ -710,7 +682,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		int markerLimits = useMarkerLimits ? preferenceStore.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE) : 1000;
 
 		limitButton.setSelection(useMarkerLimits);
-		updateLimitsCompositeEnablement();
+		updateLimitTextEnablement();
 		limitText.setText(Integer.toString(markerLimits));
 		updateRadioButtonsFromTable();
 	}
