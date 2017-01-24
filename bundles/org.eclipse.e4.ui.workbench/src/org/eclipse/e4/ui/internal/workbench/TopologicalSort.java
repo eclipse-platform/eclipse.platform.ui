@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +66,11 @@ import java.util.Map;
  *            ID
  */
 public abstract class TopologicalSort<T, ID> {
-	private final Map<ID, Collection<T>> mappedObjects = new HashMap<>();
+	private final Map<ID, Collection<T>> mappedObjects = new LinkedHashMap<>();
 	// Captures the bundles that are listed as requirements for a particular bundle.
-	private final Map<ID, Collection<ID>> requires = new HashMap<>();
+	private final Map<ID, Collection<ID>> requires = new LinkedHashMap<>();
 	// Captures the bundles that list a particular bundle as a requirement
-	private final Map<ID, Collection<ID>> depends = new HashMap<>();
+	private final Map<ID, Collection<ID>> depends = new LinkedHashMap<>();
 
 	/**
 	 * Return the identifier for the given object. The implementation properly tracks where multiple
@@ -185,7 +185,7 @@ public abstract class TopologicalSort<T, ID> {
 			ID id = getId(o);
 			Collection<T> exts = mappedObjects.get(id);
 			if (exts == null) {
-				mappedObjects.put(id, exts = new HashSet<>());
+				mappedObjects.put(id, exts = new LinkedHashSet<>());
 			}
 			exts.add(o);
 		}
@@ -196,8 +196,8 @@ public abstract class TopologicalSort<T, ID> {
 		requires.clear();
 		depends.clear();
 		for (ID id : mappedObjects.keySet()) {
-			requires.put(id, new HashSet<ID>());
-			depends.put(id, new HashSet<ID>());
+			requires.put(id, new LinkedHashSet<ID>());
+			depends.put(id, new LinkedHashSet<ID>());
 		}
 
 		// now populate the dependency graph
