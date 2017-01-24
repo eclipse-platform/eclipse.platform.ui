@@ -54,7 +54,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -140,11 +139,6 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	}
 
 	@Override
-	protected Point getInitialSize() {
-		return new Point(750, 550);
-	}
-
-	@Override
 	protected Control createDialogArea(Composite parent2) {
 		Composite comp = (Composite) super.createDialogArea(parent2);
 		GridLayoutFactory.fillDefaults().margins(10, 10).applyTo(comp);
@@ -190,7 +184,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		if (fInitialSelection != null) {
 			fTree.getViewer().setSelection(fInitialSelection, true);
 		}
-		GridDataFactory.fillDefaults().grab(true, true).minSize(400, 150).applyTo(fTree.getViewer().getControl());
+		GridDataFactory.fillDefaults().grab(true, true).hint(convertWidthInCharsToPixels(100), convertHeightInCharsToPixels(15)).applyTo(fTree.getViewer().getControl());
 
 		Composite additionalSettings = new Composite(comp, SWT.NONE);
 		additionalSettings.setLayout(new GridLayout(4, false));
@@ -227,7 +221,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		modes.keySet().forEach(m -> capitalized.put(m.substring(0, 1).toUpperCase() + m.substring(1), m));
 
 		Combo cvMode = new Combo(comp, SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(cvMode);
+		GridDataFactory.fillDefaults().applyTo(cvMode);
 		cvMode.setItems(capitalized.keySet().toArray(new String[capitalized.size()]));
 
 		// initial selection to the current mode.
@@ -272,11 +266,11 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 			}
 		});
 		combo.setText(action.getDescription());
-		GridDataFactory.fillDefaults().grab(true, false).minSize(250, SWT.DEFAULT).applyTo(combo);
+		GridDataFactory.fillDefaults().applyTo(combo);
 
 		fActionParamLabel = new Label(comp, SWT.NONE);
 		fActionParamWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).minSize(150, SWT.DEFAULT).applyTo(fActionParamWidget);
+		GridDataFactory.fillDefaults().applyTo(fActionParamWidget);
 		fActionParamWidget.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
