@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.eclipse.e4.core.internal.contexts.IContextDisposalListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
@@ -106,6 +107,20 @@ public class EclipseContextTest {
 		context.dispose();
 		assertNull(context.get("foo"));
 		assertTrue(((EclipseContext)parentContext).getChildren().isEmpty());
+	}
+
+	@Test
+	public void testDisposeClearsNotifyOnDisposalSet() {
+		((EclipseContext) context).notifyOnDisposal(new IContextDisposalListener() {
+			@Override
+			public void disposed(IEclipseContext context) {
+				runCounter++;
+			}
+		});
+		context.dispose();
+		assertEquals(1, runCounter);
+		context.dispose();
+		assertEquals(1, runCounter);
 	}
 
 	/**
