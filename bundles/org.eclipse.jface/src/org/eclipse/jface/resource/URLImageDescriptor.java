@@ -50,7 +50,9 @@ class URLImageDescriptor extends ImageDescriptor {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
 				URL xUrl = getxURL(tempURL, zoom);
-				return getFilePath(xUrl, zoom == 100); // can be null!
+				if (xUrl != null) {
+					return getFilePath(xUrl, zoom == 100);
+				}
 			}
 			return null;
 		}
@@ -68,7 +70,9 @@ class URLImageDescriptor extends ImageDescriptor {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
 				URL xUrl = getxURL(tempURL, zoom);
-				return URLImageDescriptor.getImageData(xUrl);
+				if (xUrl != null) {
+					return URLImageDescriptor.getImageData(xUrl);
+				}
 			}
 			return null;
 		}
