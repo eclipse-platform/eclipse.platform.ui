@@ -33,7 +33,6 @@ public class DebugCoreMessages extends NLS {
 	public static String DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2;
 	public static String EnvironmentVariableResolver_0;
 	public static String GroupLaunchConfigurationDelegate_waiting;
-	public static String GroupLaunchConfigurationDelegate_failedWait;
 	public static String GroupLaunchConfigurationDelegate_Delay;
 	public static String GroupLaunchConfigurationDelegate_Delaying;
 	public static String GroupLaunchConfigurationDelegate_Launching;

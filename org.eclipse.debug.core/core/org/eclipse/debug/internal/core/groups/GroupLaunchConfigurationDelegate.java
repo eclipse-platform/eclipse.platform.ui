@@ -120,7 +120,9 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					IStatusHandler cycleHandler = DebugPlugin.getDefault().getStatusHandler(GROUP_CYCLE);
 					cycleHandler.handleStatus(GROUP_CYCLE, conf.getName());
 				} else {
-					launchChild(progress.newChild(1000 / launches.size()), group, le, conf, localMode, (i == launches.size() - 1));
+					if (!launchChild(progress.newChild(1000 / launches.size()), group, le, conf, localMode, (i == launches.size() - 1))) {
+						break;
+					}
 				}
 
 				// in case the group has been terminated while waiting in the
@@ -142,7 +144,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		}
 	}
 
-	private void launchChild(SubMonitor monitor, final GroupLaunch group, GroupLaunchElement le, final ILaunchConfiguration child, final String localMode, boolean lastConfig) throws CoreException {
+	private boolean launchChild(SubMonitor monitor, final GroupLaunch group, GroupLaunchElement le, final ILaunchConfiguration child, final String localMode, boolean lastConfig) throws CoreException {
 		final Set<ILaunch> running = le.adoptIfRunning ? findRunningLaunch(le.name) : Collections.emptySet();
 		ILaunch subLaunch = running.stream().findFirst().orElse(null);
 		if (subLaunch == null) {
@@ -170,13 +172,13 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			group.markLaunched();
 		}
 
-		postLaunchAction(subLaunch, le, monitor);
+		return postLaunchAction(subLaunch, le, monitor);
 	}
 
-	private void postLaunchAction(ILaunch subLaunch, GroupLaunchElement le, IProgressMonitor monitor) {
+	private boolean postLaunchAction(ILaunch subLaunch, GroupLaunchElement le, IProgressMonitor monitor) {
 		switch (le.action) {
 			case NONE:
-				return;
+				return true;
 			case WAIT_FOR_TERMINATION:
 				monitor.subTask(NLS.bind(DebugCoreMessages.GroupLaunchConfigurationDelegate_Waiting_for_termination, subLaunch.getLaunchConfiguration().getName()));
 				while (!subLaunch.isTerminated() && !monitor.isCanceled()) {
@@ -205,7 +207,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				if (regexp != null) {
 					monitor.subTask(NLS.bind(DebugCoreMessages.GroupLaunchConfigurationDelegate_waiting, regexp, subLaunch.getLaunchConfiguration().getName()));
 					if (!waitForOutputMatching(subLaunch, monitor, regexp)) {
-						throw new RuntimeException(NLS.bind(DebugCoreMessages.GroupLaunchConfigurationDelegate_failedWait, regexp, le.name));
+						return false;
 					}
 				}
 
@@ -214,6 +216,8 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			default:
 				assert false : "new post launch action type is missing logic"; //$NON-NLS-1$
 		}
+
+		return true;
 	}
 
 	// blocks until a specific string is in the log output
