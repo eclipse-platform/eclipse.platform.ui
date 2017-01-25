@@ -149,7 +149,8 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		if (Policy.DEBUG_AUTO_REFRESH)
 			Policy.debug(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		//don't reschedule the job if the resources plugin has been shut down
-		if (Platform.getBundle(ResourcesPlugin.PI_RESOURCES).getState() == Bundle.ACTIVE)
+		Bundle bundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
+		if (bundle != null && bundle.getState() == Bundle.ACTIVE)
 			schedule(delay);
 		return Status.OK_STATUS;
 	}
