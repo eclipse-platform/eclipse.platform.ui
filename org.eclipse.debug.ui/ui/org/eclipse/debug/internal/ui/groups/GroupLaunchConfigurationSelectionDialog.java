@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -400,6 +401,13 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 
 			if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
 				isValid = actionParam instanceof String && !((String) actionParam).isEmpty();
+				if (isValid) {
+					try {
+						Pattern.compile((String) actionParam);
+					} catch (Exception e) {
+						isValid = false;
+					}
+				}
 				setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_errorNoRegexp);
 			}
 		}
