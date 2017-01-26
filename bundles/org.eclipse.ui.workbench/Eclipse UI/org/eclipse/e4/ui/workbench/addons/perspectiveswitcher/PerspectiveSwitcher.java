@@ -765,7 +765,7 @@ public class PerspectiveSwitcher {
 	private void fixSize() {
 		perspSwitcherToolbar.pack();
 		perspSwitcherToolbar.getParent().pack();
-		perspSwitcherToolbar.getShell().layout(new Control[] { perspSwitcherToolbar }, SWT.DEFER);
+		perspSwitcherToolbar.requestLayout();
 	}
 
 	private void removePerspectiveItem(MPerspective toRemove) {
