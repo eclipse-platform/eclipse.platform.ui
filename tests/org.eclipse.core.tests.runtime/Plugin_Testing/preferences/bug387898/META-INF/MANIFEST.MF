@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: bug387898
-Bundle-SymbolicName: bug387898
-Bundle-Version: 1.0.0
