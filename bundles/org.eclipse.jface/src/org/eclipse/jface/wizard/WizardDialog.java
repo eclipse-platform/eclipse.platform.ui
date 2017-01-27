@@ -78,8 +78,7 @@ import org.eclipse.swt.widgets.Shell;
  * required.
  * </p>
  */
-public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
-		IPageChangeProvider {
+public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, IPageChangeProvider {
 	/**
 	 * Image registry key for error message image (value
 	 * <code>"dialog_title_error_image"</code>).
@@ -148,8 +147,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 
 	private Composite pageContainer;
 
-	private PageContainerFillLayout pageContainerLayout = new PageContainerFillLayout(
-			5, 5, 300, 225);
+	private PageContainerFillLayout pageContainerLayout = new PageContainerFillLayout(5, 5, 300, 225);
 
 	private int pageWidth = SWT.DEFAULT;
 
@@ -500,14 +498,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	protected void createButtonsForButtonBar(Composite parent) {
 		((GridLayout) parent.getLayout()).makeColumnsEqualWidth = false;
 		if (wizard.isHelpAvailable()) {
-			helpButton = createButton(parent, IDialogConstants.HELP_ID,
-					IDialogConstants.HELP_LABEL, false);
+			helpButton = createButton(parent, IDialogConstants.HELP_ID, IDialogConstants.HELP_LABEL, false);
 		}
 		if (wizard.needsPreviousAndNextButtons()) {
 			createPreviousAndNextButtons(parent);
 		}
-		finishButton = createButton(parent, IDialogConstants.FINISH_ID,
-				IDialogConstants.FINISH_LABEL, true);
+		finishButton = createButton(parent, IDialogConstants.FINISH_ID, IDialogConstants.FINISH_LABEL, true);
 		cancelButton = createCancelButton(parent);
 
 		if (parent.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
@@ -727,14 +723,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		composite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER
-				| GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
-		backButton = createButton(composite, IDialogConstants.BACK_ID,
-				IDialogConstants.BACK_LABEL, false);
-		nextButton = createButton(composite, IDialogConstants.NEXT_ID,
-				IDialogConstants.NEXT_LABEL, false);
+		backButton = createButton(composite, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false);
+		nextButton = createButton(composite, IDialogConstants.NEXT_ID, IDialogConstants.NEXT_LABEL, false);
 
 		// make sure screen readers skip visual '<', '>' chars on buttons:
 		final String backReaderText = IDialogConstants.BACK_LABEL.replace('<', ' ');
@@ -884,8 +877,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *         successfully, <code>false</code> otherwise
 	 */
 	private boolean doPageChanging(IWizardPage targetPage) {
-		PageChangingEvent e = new PageChangingEvent(this, getCurrentPage(),
-				targetPage);
+		PageChangingEvent e = new PageChangingEvent(this, getCurrentPage(), targetPage);
 		firePageChanging(e);
 		// Prevent navigation if necessary
 		return e.doit;
@@ -971,8 +963,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *
 	 */
 	@Override
-	public void run(boolean fork, boolean cancelable,
-			IRunnableWithProgress runnable) throws InvocationTargetException,
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+			throws InvocationTargetException,
 			InterruptedException {
 		// The operation can only be canceled if it is executed in a separate
 		// thread.
@@ -1020,8 +1012,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *            <code>false</code> to disable it
 	 * @see #restoreEnableState(Control, Map, String)
 	 */
-	private void saveEnableStateAndSet(Control control, Map<String, Object> saveState, String key,
-			boolean enabled) {
+	private void saveEnableStateAndSet(Control control, Map<String, Object> saveState, String key, boolean enabled) {
 		if (control != null) {
 			saveState.put(key, control.getEnabled() ? Boolean.TRUE : Boolean.FALSE);
 			control.setEnabled(enabled);
@@ -1049,9 +1040,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		saveEnableStateAndSet(cancelButton, savedState,	"cancel", keepCancelEnabled); //$NON-NLS-1$
 		saveEnableStateAndSet(helpButton, savedState, "help", false); //$NON-NLS-1$
 		if (currentPage != null) {
-			savedState
-					.put(
-							"page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
+			savedState.put("page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
 		}
 		return savedState;
 	}
@@ -1298,13 +1287,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		boolean canFlipToNextPage = false;
 		boolean canFinish = wizard.canFinish();
 		if (backButton != null) {
-			boolean backEnabled = currentPage != null
-					&& currentPage.getPreviousPage() != null;
+			boolean backEnabled = currentPage != null && currentPage.getPreviousPage() != null;
 			backButton.setEnabled(backEnabled);
 		}
 		if (nextButton != null) {
-			canFlipToNextPage = currentPage != null
-					&& currentPage.canFlipToNextPage();
+			canFlipToNextPage = currentPage != null && currentPage.canFlipToNextPage();
 			nextButton.setEnabled(canFlipToNextPage);
 		}
 		finishButton.setEnabled(canFinish);
