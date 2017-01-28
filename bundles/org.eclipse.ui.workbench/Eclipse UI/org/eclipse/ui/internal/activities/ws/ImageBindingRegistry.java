@@ -56,8 +56,7 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 					continue; //ignore - malformed
 				}
 				if (registry.getDescriptor(id) == null) { // first come, first serve
-					ImageDescriptor descriptor = AbstractUIPlugin
-							.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), file);
+					ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespace(), file);
 					if (descriptor != null) {
 						registry.put(id, descriptor);
 						tracker.registerObject(extension, id, IExtensionTracker.REF_WEAK);

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.misc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -85,7 +86,7 @@ public class ExternalEditor {
         if (configurationElement != null) {
             try {
                 Bundle bundle = Platform.getBundle(configurationElement
-						.getNamespaceIdentifier());
+                        .getNamespace());
                 // See if the program file is in the plugin directory
                 URL entry = bundle.getEntry(descriptor.getFileName());
                 if (entry != null) {

@@ -115,7 +115,7 @@ public class ActionDescriptor implements IPluginContribution {
             int targetType, Object target) {
         // Load attributes.
         id = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-		pluginId = actionElement.getNamespaceIdentifier();
+        pluginId = actionElement.getNamespace();
         String label = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
         String tooltip = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_TOOLTIP);
         String helpContextId = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_CONTEXT_ID);
@@ -185,7 +185,7 @@ public class ActionDescriptor implements IPluginContribution {
             if (helpContextId.indexOf(".") == -1) { //$NON-NLS-1$
 				// For backward compatibility we auto qualify the id if it is not
                 // qualified)
-				fullID = actionElement.getNamespaceIdentifier()
+                fullID = actionElement.getNamespace()
                         + "." + helpContextId;//$NON-NLS-1$
 			}
             PlatformUI.getWorkbench().getHelpSystem().setHelp(action, fullID);
@@ -213,7 +213,7 @@ public class ActionDescriptor implements IPluginContribution {
         }
 
         String extendingPluginId = actionElement.getDeclaringExtension()
-				.getNamespaceIdentifier();
+                .getNamespace();
 
         if (icon != null) {
             action.setImageDescriptor(AbstractUIPlugin

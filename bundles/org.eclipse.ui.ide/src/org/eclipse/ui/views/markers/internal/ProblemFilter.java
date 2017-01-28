@@ -315,7 +315,7 @@ public class ProblemFilter extends MarkerFilter {
 
 	void createContributionFrom(IConfigurationElement element) {
 		final String id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
-		final String namespace = element.getNamespaceIdentifier();
+		final String namespace = element.getNamespace();
 		contributionDescriptor = new IPluginContribution() {
 			@Override
 			public String getLocalId() {

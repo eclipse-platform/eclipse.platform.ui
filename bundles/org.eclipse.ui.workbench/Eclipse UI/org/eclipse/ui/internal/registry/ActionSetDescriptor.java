@@ -54,7 +54,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
         super();
         this.configElement = configElement;
         id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-		pluginId = configElement.getNamespaceIdentifier();
+        pluginId = configElement.getNamespace();
         label = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
         description = configElement.getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
         String str = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);

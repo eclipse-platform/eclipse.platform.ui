@@ -230,7 +230,7 @@ public abstract class WorkbenchPart extends EventManager implements
 		}
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				configElement.getNamespaceIdentifier(), strIcon);
+                configElement.getNamespace(), strIcon);
 
         if (imageDescriptor == null) {
 			return;

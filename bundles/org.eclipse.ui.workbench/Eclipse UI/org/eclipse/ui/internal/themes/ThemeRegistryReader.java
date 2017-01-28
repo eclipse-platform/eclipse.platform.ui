@@ -115,7 +115,7 @@ public class ThemeRegistryReader extends RegistryReader {
 		}
 
         return new ThemeElementCategory(name, id, parentId, description,
-				element.getNamespaceIdentifier(), element);
+                element.getNamespace(), element);
     }
 
     /**
@@ -162,7 +162,7 @@ public class ThemeRegistryReader extends RegistryReader {
 
         return new ColorDefinition(name, id, defaultMapping, value, categoryId,
                 isEditable, description, element.getDeclaringExtension()
-						.getNamespaceIdentifier());
+                        .getNamespace());
     }
 
     /**

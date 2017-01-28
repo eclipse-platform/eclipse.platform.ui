@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.decorators;
 
 import java.net.URL;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -74,7 +75,7 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
 	public void decorate(Object element, IDecoration decoration) {
         if (descriptor == null) {
             URL url = BundleUtility.find(configElement.getDeclaringExtension()
-					.getNamespaceIdentifier(), iconLocation);
+                    .getNamespace(), iconLocation);
             if (url == null) {
 				return;
 			}

@@ -42,7 +42,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
     	if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) == null) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
-					.getNamespaceIdentifier(), 0,
+                    .getNamespace(), 0,
                     "Invalid extension (Missing class name): " + getId(), //$NON-NLS-1$
                     null));
         }
@@ -76,7 +76,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 		}
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element
-				.getNamespaceIdentifier(), iconName);
+                .getNamespace(), iconName);
         return imageDescriptor;
     }
 
@@ -87,7 +87,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
     @Override
 	public String getPluginId() {
-		return element.getNamespaceIdentifier();
+        return element.getNamespace();
     }
 
     /**

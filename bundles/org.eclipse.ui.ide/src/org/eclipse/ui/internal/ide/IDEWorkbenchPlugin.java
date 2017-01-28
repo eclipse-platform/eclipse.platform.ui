@@ -121,7 +121,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 			final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		Bundle plugin = Platform.getBundle(element.getNamespaceIdentifier());
+		Bundle plugin = Platform.getBundle(element.getNamespace());
 		if (plugin.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		}

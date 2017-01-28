@@ -56,7 +56,7 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
             logMissingAttribute(element, ATT_ICON);
             return true;
         }
-		String extendingPluginId = element.getNamespaceIdentifier();
+		String extendingPluginId = element.getNamespace();
 		ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
 				extendingPluginId, icon);
 

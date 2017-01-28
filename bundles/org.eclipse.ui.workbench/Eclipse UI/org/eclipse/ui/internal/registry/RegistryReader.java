@@ -50,7 +50,7 @@ public abstract class RegistryReader {
         IExtension extension = element.getDeclaringExtension();
         StringBuffer buf = new StringBuffer();
         buf
-				.append("Plugin " + extension.getNamespaceIdentifier() + ", extension " //$NON-NLS-1$//$NON-NLS-2$
+				.append("Plugin " + extension.getNamespace() + ", extension " //$NON-NLS-1$//$NON-NLS-2$
 						+ extension.getExtensionPointUniqueIdentifier());
         // look for an ID if available - this should help debugging
         String id = element.getAttribute("id"); //$NON-NLS-1$

@@ -265,7 +265,7 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
 		}
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				configElement.getNamespaceIdentifier(), strIcon);
+                configElement.getNamespace(), strIcon);
 
         if (imageDescriptor == null) {
 			return;

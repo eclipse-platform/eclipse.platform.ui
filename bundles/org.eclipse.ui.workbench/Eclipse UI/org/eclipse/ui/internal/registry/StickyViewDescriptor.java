@@ -59,7 +59,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor,
     	id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id == null) {
 			throw new CoreException(new Status(IStatus.ERROR, element
-					.getNamespaceIdentifier(), 0,
+                    .getNamespace(), 0,
                     "Invalid extension (missing id) ", null));//$NON-NLS-1$
 		}
     }

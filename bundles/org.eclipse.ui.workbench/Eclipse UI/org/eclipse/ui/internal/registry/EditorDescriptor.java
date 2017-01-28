@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.io.File;
 import java.io.Serializable;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -377,7 +378,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      */
     public String getPluginID() {
     	if (configurationElement != null) {
-			return configurationElement.getNamespaceIdentifier();
+			return configurationElement.getNamespace();
 		}
     	return pluginIdentifier;
     }

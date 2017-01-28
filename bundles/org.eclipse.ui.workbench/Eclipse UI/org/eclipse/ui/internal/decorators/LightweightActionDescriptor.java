@@ -56,7 +56,7 @@ public class LightweightActionDescriptor implements IAdaptable,
         if (iconName != null) {
             IExtension extension = actionElement.getDeclaringExtension();
             this.image = AbstractUIPlugin.imageDescriptorFromPlugin(extension
-					.getNamespaceIdentifier(), iconName);
+                    .getNamespace(), iconName);
         }
     }
 
