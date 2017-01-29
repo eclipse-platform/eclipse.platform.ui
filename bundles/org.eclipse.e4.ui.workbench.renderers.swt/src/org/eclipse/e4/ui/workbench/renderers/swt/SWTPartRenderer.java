@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -40,6 +42,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
+
+	private static final boolean DEBUG = WorkbenchSWTActivator.getDefault().getDebugOptions()
+			.getBooleanOption(WorkbenchSWTActivator.PI_RENDERERS + Policy.DEBUG_RENDERER, false);
+
 	private static final String ICON_URI_FOR_PART = "IconUriForPart"; //$NON-NLS-1$
 
 	private Map<String, Image> imageMap = new HashMap<>();
@@ -376,5 +382,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			if (!ctrl.isDisposed())
 				ctrl.forceFocus();
 		}
+	}
+
+	static boolean isDebugEnabled() {
+		return DEBUG;
 	}
 }

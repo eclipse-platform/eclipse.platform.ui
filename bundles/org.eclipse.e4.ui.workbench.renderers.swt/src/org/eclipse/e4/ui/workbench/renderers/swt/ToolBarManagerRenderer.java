@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -34,6 +35,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
@@ -103,6 +105,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<>();
 
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
+
+	@Inject
+	private Logger logger;
 
 	@Inject
 	private MApplication application;
@@ -346,6 +351,14 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			}
 		};
 		context.runAndTrack(enablementUpdater);
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		if (isDebugEnabled()) {
+			logger.debug("\nTBMR:dispose: modelToManager size = {0}, managerToModel size = {1}", //$NON-NLS-1$
+					modelToManager.size(), managerToModel.size());
+		}
 	}
 
 	@Override
@@ -805,6 +818,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public void linkModelToManager(MToolBar model, ToolBarManager manager) {
 		modelToManager.put(model, manager);
 		managerToModel.put(manager, model);
+		if (isDebugEnabled()) {
+			logger.debug("\nTBMR:linkModelToManager: modelToManager size = {0}, managerToModel size = {1}", //$NON-NLS-1$
+					modelToManager.size(), managerToModel.size());
+		}
 	}
 
 	/**
@@ -814,6 +831,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public void clearModelToManager(MToolBar model, ToolBarManager manager) {
 		modelToManager.remove(model);
 		managerToModel.remove(manager);
+		if (isDebugEnabled()) {
+			logger.debug("\nTBMR:clearModelToManager: modelToManager size = {0}, managerToModel size = {1}", //$NON-NLS-1$
+					modelToManager.size(), managerToModel.size());
+		}
 	}
 
 	/**
@@ -839,6 +860,11 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public void linkModelToContribution(MToolBarElement model, IContributionItem item) {
 		modelToContribution.put(model, item);
 		contributionToModel.put(item, model);
+		if (isDebugEnabled()) {
+			logger.debug(
+					"\nTBMR:linkModelToContribution: modelToContribution size = {0}, contributionToModel size = {1}", //$NON-NLS-1$
+					modelToContribution.size(), contributionToModel.size());
+		}
 	}
 
 	/**
@@ -848,6 +874,11 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public void clearModelToContribution(MToolBarElement model, IContributionItem item) {
 		modelToContribution.remove(model);
 		contributionToModel.remove(item);
+		if (isDebugEnabled()) {
+			logger.debug(
+					"\nTBMR:clearModelToContribution: modelToContribution size = {0}, contributionToModel size = {1}", //$NON-NLS-1$
+					modelToContribution.size(), contributionToModel.size());
+		}
 	}
 
 	/**
