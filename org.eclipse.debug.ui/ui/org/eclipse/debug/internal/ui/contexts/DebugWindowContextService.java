@@ -247,8 +247,10 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
         } else {
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(null);
 			ListenerList<IDebugContextListener> retVal = new ListenerList<>();
-			for (IDebugContextListener iDebugContextListener : listenerList) {
-				retVal.add(iDebugContextListener);
+			if (listenerList != null) {
+				for (IDebugContextListener iDebugContextListener : listenerList) {
+					retVal.add(iDebugContextListener);
+				}
 			}
 
 			outer: for (Iterator<String> itr = fListenersByPartId.keySet().iterator(); itr.hasNext();) {
@@ -261,8 +263,12 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
                         continue outer;
                     }
                 }
-				for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
-					retVal.add(iDebugContextListener); // no effect if listener already present
+				ListenerList<IDebugContextListener> listenersForPart = fListenersByPartId.get(listenerPartId);
+				if (listenersForPart != null) {
+					for (IDebugContextListener iDebugContextListener : listenersForPart) {
+						// no effect if listener already present
+						retVal.add(iDebugContextListener);
+					}
 				}
 			}
 			return retVal;
@@ -277,6 +283,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
 		} else {
 			ListenerList<IDebugContextListener> retVal = fPostListenersByPartId.get(null);
+			if (retVal == null) {
+				retVal = new ListenerList<IDebugContextListener>();
+			}
 
 			outer: for (Iterator<String> itr = fPostListenersByPartId.keySet().iterator(); itr.hasNext();) {
 				String listenerPartId = itr.next();
@@ -286,8 +295,12 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 						continue outer;
 					}
 				}
-				for (IDebugContextListener iDebugContextListener : fPostListenersByPartId.get(listenerPartId)) {
-					retVal.add(iDebugContextListener); // no effect if listener already present
+				ListenerList<IDebugContextListener> listenersForPart = fPostListenersByPartId.get(listenerPartId);
+				if (listenersForPart != null) {
+					for (IDebugContextListener iDebugContextListener : listenersForPart) {
+						// no effect if listener already present
+						retVal.add(iDebugContextListener);
+					}
 				}
 			}
 			return retVal;
