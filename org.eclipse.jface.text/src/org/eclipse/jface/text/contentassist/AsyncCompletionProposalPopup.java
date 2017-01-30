@@ -62,7 +62,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		@Override
 		public void apply(IDocument document) {
-			// Nothing to do
+			// Nothing to do, maybe show some progress report?
 		}
 
 		@Override
@@ -82,12 +82,15 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		@Override
 		public String getDisplayString() {
-			return NLS.bind(JFaceTextMessages.getString("AsyncCompletionProposalPopup.computing"), Integer.valueOf(fSize - fRemaining), Integer.valueOf(fSize)); //$NON-NLS-1$
+			return NLS.bind(JFaceTextMessages.getString("AsyncCompletionProposalPopup.computing"), Long.valueOf(Math.round(100. * (fSize - fRemaining)/fSize))); //$NON-NLS-1$
 		}
 
 		@Override
 		public String getAdditionalProposalInfo() {
-			return null;
+			 return NLS.bind(JFaceTextMessages.getString("AsyncCompletionProposalPopup.computingDetails"), new Object[] { //$NON-NLS-1$;
+				Integer.valueOf(fSize),
+				Integer.valueOf(fSize - fRemaining),
+				Integer.valueOf(fRemaining) });
 		}
 
 		@Override
