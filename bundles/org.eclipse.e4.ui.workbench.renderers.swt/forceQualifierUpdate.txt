@@ -2,3 +2,4 @@
 Bug 403352 - Update all parent versions to match our build stream
 Bug 407961 - Comparator log shows special problem that will require "touches"
 Bug 492759 - Code changed due to change in compiler
+Bug 511251 - Comparator errors in I20170127-2200
