@@ -160,9 +160,9 @@ public final class Log {
 			}
 			return bundle;
 		}
-		Class classFromBundle;
+		Class<?> classFromBundle;
 		if (context instanceof Class) {
-			classFromBundle = (Class) context;
+			classFromBundle = (Class<?>) context;
 		} else {
 			classFromBundle = context.getClass();
 		}
