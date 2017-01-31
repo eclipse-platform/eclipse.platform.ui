@@ -789,35 +789,32 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 			}
 
-			BusyIndicator.showWhile(widget.getDisplay(), () -> {
-				// fix for PR 1FW89L7:
-				// don't complain and remove all "dummies" ...
-				if (items != null) {
-					for (Item item : items) {
-						if (item.getData() != null) {
-							disassociate(item);
-							Assert.isTrue(item.getData() == null,
-									"Second or later child is non -null");//$NON-NLS-1$
+			// fix for PR 1FW89L7:
+			// don't complain and remove all "dummies" ...
+			if (items != null) {
+				for (Item item : items) {
+					if (item.getData() != null) {
+						disassociate(item);
+						Assert.isTrue(item.getData() == null, "Second or later child is non -null");//$NON-NLS-1$
 
-						}
-						item.dispose();
 					}
+					item.dispose();
 				}
-				Object d = widget.getData();
-				if (d != null) {
-					Object parentElement = d;
-					Object[] children;
-					if (isTreePathContentProvider() && widget instanceof Item) {
-						TreePath path = getTreePathFromItem((Item) widget);
-						children = getSortedChildren(path);
-					} else {
-						children = getSortedChildren(parentElement);
-					}
-					for (Object element : children) {
-						createTreeItem(widget, element, -1);
-					}
+			}
+			Object d = widget.getData();
+			if (d != null) {
+				Object parentElement = d;
+				Object[] children;
+				if (isTreePathContentProvider() && widget instanceof Item) {
+					TreePath path = getTreePathFromItem((Item) widget);
+					children = getSortedChildren(path);
+				} else {
+					children = getSortedChildren(parentElement);
 				}
-			});
+				for (Object element : children) {
+					createTreeItem(widget, element, -1);
+				}
+			}
 		} finally {
 			setBusy(oldBusy);
 		}
@@ -1034,7 +1031,20 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * method is equivalent to <code>expandToLevel(ALL_LEVELS)</code>.
 	 */
 	public void expandAll() {
-		expandToLevel(ALL_LEVELS);
+		expandToLevel(ALL_LEVELS, false);
+	}
+
+	/**
+	 * Expands all nodes of the viewer's tree, starting with the root. This method
+	 * is equivalent to <code>expandToLevel(ALL_LEVELS)</code>.
+	 *
+	 * @param disableRedraw
+	 *            <code>true</code> when drawing operations should be disabled
+	 *            during expansion.
+	 * @since 3.14
+	 */
+	public void expandAll(boolean disableRedraw) {
+		expandToLevel(ALL_LEVELS, disableRedraw);
 	}
 
 	/**
@@ -1045,7 +1055,24 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(int level) {
-		expandToLevel(getRoot(), level);
+		expandToLevel(level, false);
+	}
+
+	/**
+	 * Expands the root of the viewer's tree to the given level.
+	 *
+	 * @param level
+	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
+	 *            levels of the tree
+	 * @param disableRedraw
+	 *            <code>true</code> when drawing operations should be disabled
+	 *            during expansion.
+	 * @since 3.14
+	 */
+	public void expandToLevel(int level, boolean disableRedraw) {
+		BusyIndicator.showWhile(getControl().getDisplay(), () -> {
+			expandToLevel(getRoot(), level);
+		});
 	}
 
 	/**
@@ -1060,11 +1087,37 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level) {
+		expandToLevel(elementOrTreePath, level, false);
+	}
+
+	/**
+	 * Expands all ancestors of the given element or tree path so that the given
+	 * element becomes visible in this viewer's tree control, and then expands the
+	 * subtree rooted at the given element to the given level.
+	 *
+	 * @param elementOrTreePath
+	 *            the element
+	 * @param level
+	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
+	 *            levels of the tree
+	 * @param disableRedraw
+	 *            <code>true</code> when drawing operations should be disabled
+	 *            during expansion.
+	 * @since 3.14
+	 */
+	public void expandToLevel(Object elementOrTreePath, int level, boolean disableRedraw) {
 		if (checkBusy())
 			return;
-		Widget w = internalExpand(elementOrTreePath, true);
-		if (w != null) {
-			internalExpandToLevel(w, level);
+		try {
+			if (disableRedraw) {
+				getControl().setRedraw(false);
+			}
+			Widget w = internalExpand(elementOrTreePath, true);
+			if (w != null) {
+				internalExpandToLevel(w, level);
+			}
+		} finally {
+			getControl().setRedraw(true);
 		}
 	}
 
