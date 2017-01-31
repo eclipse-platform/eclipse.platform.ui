@@ -29,9 +29,9 @@ public class BenchCopyFile extends OldCorePerformanceTest {
 			output[i] = getTempStore();
 		}
 		startBench();
-		for (int i = 0; i < output.length; i++) {
+		for (IFileStore element : output) {
 			try {
-				input.copy(output[i], EFS.NONE, null);
+				input.copy(element, EFS.NONE, null);
 			} catch (CoreException e) {
 				fail("4.99", e);
 			}

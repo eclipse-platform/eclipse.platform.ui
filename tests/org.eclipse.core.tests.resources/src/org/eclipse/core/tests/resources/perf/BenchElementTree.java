@@ -74,8 +74,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 
 		startBench();
 		for (int rep = repeat; --rep >= 0;) {
-			for (int i = 0, len = files.length; i < len; ++i) {
-				trees[rep].deleteElement(files[i]);
+			for (IPath file : files) {
+				trees[rep].deleteElement(file);
 			}
 		}
 
@@ -93,8 +93,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		startBench();
 
 		for (int rep = repeat; --rep >= 0;) {
-			for (int i = 0, len = files.length; i < len; ++i) {
-				tree.getElementData(files[i]);
+			for (IPath file : files) {
+				tree.getElementData(file);
 			}
 		}
 
@@ -150,8 +150,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		startBench();
 
 		for (int rep = 500; --rep >= 0;) {
-			for (int i = 0, len = files.length; i < len; ++i) {
-				tree.setElementData(files[i], data);
+			for (IPath file : files) {
+				tree.setElementData(file, data);
 			}
 		}
 
@@ -171,9 +171,9 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		/* create file elements */
 		tree = tree.newEmptyDelta();
 		IPath[] filePaths = getFilePaths();
-		for (int i = 0; i < filePaths.length; i++) {
-			Object data = filePaths[i].toString();
-			tree.createElement(filePaths[i], data);
+		for (IPath filePath : filePaths) {
+			Object data = filePath.toString();
+			tree.createElement(filePath, data);
 
 			tree.immutable();
 			trees.addElement(tree);
@@ -183,8 +183,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		/* modify the data of all file elements a few times */
 		for (int i = 0; i < repeat; i++) {
 			Object data = "data" + i;
-			for (int f = 0; f < filePaths.length; f++) {
-				tree.setElementData(filePaths[f], data);
+			for (IPath filePath : filePaths) {
+				tree.setElementData(filePath, data);
 
 				tree.immutable();
 				trees.addElement(tree);
@@ -193,8 +193,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		}
 
 		/* delete all file elements */
-		for (int i = 0; i < filePaths.length; i++) {
-			tree.deleteElement(filePaths[i]);
+		for (IPath filePath : filePaths) {
+			tree.deleteElement(filePath);
 			tree.immutable();
 			trees.addElement(tree);
 			tree = tree.newEmptyDelta();
@@ -226,12 +226,12 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		}
 		tree.createElement(folder, data);
 
-		for (int i = 0, len = javaLangUnits.length; i < len; ++i) {
+		for (String javaLangUnit : javaLangUnits) {
 			if (withDeltas) {
 				tree.immutable();
 				tree = tree.newEmptyDelta();
 			}
-			IPath file = folder.append(javaLangUnits[i]);
+			IPath file = folder.append(javaLangUnit);
 			tree.createElement(file, data);
 		}
 		return tree;
@@ -249,17 +249,17 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		/* modify the data of all file elements a few times */
 		for (int i = 0; i < repeat; i++) {
 			Object data = "data" + i;
-			for (int f = 0; f < files.length; f++) {
+			for (IPath file : files) {
 				tree = tree.newEmptyDelta();
-				tree.setElementData(files[f], data);
+				tree.setElementData(file, data);
 				tree.immutable();
 			}
 		}
 
 		/* delete all file elements */
-		for (int i = 0; i < files.length; i++) {
+		for (IPath file : files) {
 			tree = tree.newEmptyDelta();
-			tree.deleteElement(files[i]);
+			tree.deleteElement(file);
 			tree.immutable();
 		}
 

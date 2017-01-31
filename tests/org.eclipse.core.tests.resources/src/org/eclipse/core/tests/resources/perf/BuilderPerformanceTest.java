@@ -114,8 +114,8 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 			protected void test() {
 				try {
 					for (int repeats = 0; repeats < REPEAT; repeats++) {
-						for (int i = 0; i < projects.length; i++) {
-							projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+						for (IProject project : projects) {
+							project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 						}
 					}
 				} catch (CoreException e) {

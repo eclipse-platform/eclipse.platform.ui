@@ -62,9 +62,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				@Override
 				public void run(org.eclipse.core.runtime.IProgressMonitor monitor) {
 					ensureExistsInWorkspace(folders, true);
-					for (int i = 0; i < folders.length; i++)
+					for (IFolder folder : folders)
 						for (int j = 0; j < filesPerFolder; j++) {
-							IFile file = folders[i].getFile("file" + j);
+							IFile file = folder.getFile("file" + j);
 							ensureExistsInWorkspace(file, getRandomContents());
 							try {
 								for (int k = 0; k < statesPerFile; k++)

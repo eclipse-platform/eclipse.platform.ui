@@ -52,12 +52,12 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		folders[3] = folders[2].getFolder("folder4");
 		folders[4] = folders[3].getFolder("folder5");
 		List<IResource> resources = new ArrayList<>(filesPerFolder * folders.length);
-		for (int i = 0; i < folders.length; i++)
-			resources.add(folders[i]);
+		for (IFolder folder : folders)
+			resources.add(folder);
 		ensureExistsInWorkspace(folders, true);
-		for (int i = 0; i < folders.length; i++) {
+		for (IFolder folder : folders) {
 			for (int j = 0; j < filesPerFolder; j++) {
-				IFile file = folders[i].getFile("file" + j);
+				IFile file = folder.getFile("file" + j);
 				ensureExistsInWorkspace(file, getRandomContents());
 				resources.add(file);
 			}
@@ -69,8 +69,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		IProject proj1 = getWorkspace().getRoot().getProject("proj1");
 		final IFolder folder1 = proj1.getFolder("folder1");
 		final List<IResource> allResources = createTree(folder1, filesPerFolder);
-		for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
-			IResource resource = i.next();
+		for (IResource resource : allResources) {
 			for (int j = 0; j < properties; j++)
 				try {
 					resource.setPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + j), getPropertyValue(200));
@@ -83,8 +82,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 			@Override
 			protected void test() {
 				for (int j = 0; j < properties; j++)
-					for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
-						IResource resource = i.next();
+					for (IResource resource : allResources) {
 						try {
 							assertNotNull(resource.getPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + j)));
 						} catch (CoreException ce) {
@@ -130,8 +128,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 
 			@Override
 			protected void test() {
-				for (Iterator<IResource> i = allResources.iterator(); i.hasNext();) {
-					IResource resource = i.next();
+				for (IResource resource : allResources) {
 					try {
 						resource.setPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + ((int) Math.random() * 50)), getPropertyValue(200));
 					} catch (CoreException ce) {

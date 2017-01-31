@@ -58,13 +58,13 @@ public class FileSystemPerformanceTest extends LocalStoreTest {
 
 	void setAttributesOnTree() throws CoreException {
 		IFileStore[] dirs = baseStore.childStores(EFS.NONE, null);
-		for (int i = 0; i < dirs.length; i++) {
-			IFileStore[] files = dirs[i].childStores(EFS.NONE, null);
-			for (int j = 0; j < files.length; j++) {
-				IFileInfo fileInfo = files[j].fetchInfo();
+		for (IFileStore dir : dirs) {
+			IFileStore[] files = dir.childStores(EFS.NONE, null);
+			for (IFileStore file : files) {
+				IFileInfo fileInfo = file.fetchInfo();
 				boolean clear = fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 				fileInfo.setAttribute(EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_READ_ONLY, !clear);
-				files[j].putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
+				file.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
 			}
 		}
 	}

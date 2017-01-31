@@ -106,8 +106,8 @@ public class BenchWorkspace extends ResourceTest {
 			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-				for (int i = 0; i < markers.length; i++) {
-					int severity = markers[i].getAttribute(IMarker.SEVERITY, -1);
+				for (IMarker marker : markers) {
+					int severity = marker.getAttribute(IMarker.SEVERITY, -1);
 					if (severity > maxSeverity)
 						maxSeverity = severity;
 				}
