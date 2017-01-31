@@ -79,6 +79,7 @@
     <module>examples/org.eclipse.ui.examples.undo</module>
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.article</module>
     <module>examples/org.eclipse.e4.demo.contacts</module>
+    <module>examples/org.eclipse.e4.demo.cssbridge</module>
     <module>examples/org.eclipse.jface.snippets</module>
     <module>examples/org.eclipse.ui.examples.job</module>
     <module>examples/org.eclipse.ui.examples.navigator</module>
