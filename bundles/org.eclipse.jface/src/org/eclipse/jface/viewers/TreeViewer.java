@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
@@ -865,20 +866,21 @@ public class TreeViewer extends AbstractTreeViewer {
 			applyEditorValue();
 		}
 
-		if (contentProviderIsLazy) {
-			if (event.item.getData() != null) {
-				Item[] children = getChildren(event.item);
-				if (children.length == 1 && children[0].getData()==null) {
-					// we have a dummy child node, ask for an updated child
-					// count
-					virtualLazyUpdateChildCount(event.item, children.length);
+		BusyIndicator.showWhile(event.display, () -> {
+			if (contentProviderIsLazy) {
+				if (event.item.getData() != null) {
+					Item[] children = getChildren(event.item);
+					if (children.length == 1 && children[0].getData() == null) {
+						// we have a dummy child node, ask for an updated child
+						// count
+						virtualLazyUpdateChildCount(event.item, children.length);
+					}
+					fireTreeExpanded(new TreeExpansionEvent(this, event.item.getData()));
 				}
-				fireTreeExpanded(new TreeExpansionEvent(this, event.item
-						.getData()));
+				return;
 			}
-			return;
-		}
-		super.handleTreeExpand(event);
+			super.handleTreeExpand(event);
+		});
 	}
 
 	@Override

@@ -31,7 +31,6 @@ import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
@@ -788,36 +787,30 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					return; // children already there!
 				}
 			}
-
-			BusyIndicator.showWhile(widget.getDisplay(), () -> {
-				// fix for PR 1FW89L7:
-				// don't complain and remove all "dummies" ...
-				if (items != null) {
-					for (Item item : items) {
-						if (item.getData() != null) {
-							disassociate(item);
-							Assert.isTrue(item.getData() == null,
-									"Second or later child is non -null");//$NON-NLS-1$
-
-						}
-						item.dispose();
+			// fix for PR 1FW89L7:
+			// don't complain and remove all "dummies" ...
+			if (items != null) {
+				for (Item item : items) {
+					if (item.getData() != null) {
+						disassociate(item);
+						Assert.isTrue(item.getData() == null, "Second or later child is non -null");//$NON-NLS-1$
 					}
 				}
-				Object d = widget.getData();
-				if (d != null) {
-					Object parentElement = d;
-					Object[] children;
-					if (isTreePathContentProvider() && widget instanceof Item) {
-						TreePath path = getTreePathFromItem((Item) widget);
-						children = getSortedChildren(path);
-					} else {
-						children = getSortedChildren(parentElement);
-					}
-					for (Object element : children) {
-						createTreeItem(widget, element, -1);
-					}
+			}
+			Object d = widget.getData();
+			if (d != null) {
+				Object parentElement = d;
+				Object[] children;
+				if (isTreePathContentProvider() && widget instanceof Item) {
+					TreePath path = getTreePathFromItem((Item) widget);
+					children = getSortedChildren(path);
+				} else {
+					children = getSortedChildren(parentElement);
 				}
-			});
+				for (Object element : children) {
+					createTreeItem(widget, element, -1);
+				}
+			}
 		} finally {
 			setBusy(oldBusy);
 		}
