@@ -1901,8 +1901,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, event -> {
 			if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
 				if (UIEvents.isREMOVE(event)) {
-					for (Object removed : UIEvents.asIterable(event,
-							UIEvents.EventTags.OLD_VALUE)) {
+					for (Object removed : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
 						MWindow window = (MWindow) removed;
 						IEclipseContext windowContext = window.getContext();
 						if (windowContext != null) {
@@ -1917,15 +1916,13 @@ public final class Workbench extends EventManager implements IWorkbench,
 		});
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, event -> {
 			if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
-				if (UIEvents.EventTypes.SET.equals(event
-						.getProperty(UIEvents.EventTags.TYPE))) {
+				if (UIEvents.EventTypes.SET.equals(event.getProperty(UIEvents.EventTags.TYPE))) {
 					MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 					if (window != null) {
 						IWorkbenchWindow wwindow = window.getContext().get(IWorkbenchWindow.class);
 						if (wwindow != null) {
 							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, wwindow);
-							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
-									wwindow.getShell());
+							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, wwindow.getShell());
 						}
 					}
 				}
@@ -1935,31 +1932,28 @@ public final class Workbench extends EventManager implements IWorkbench,
 		// watch for parts' "toBeRendered" attribute being flipped to true, if
 		// they need to be rendered, then they need a corresponding 3.x
 		// reference
-		eventBroker.subscribe(
-UIEvents.UIElement.TOPIC_TOBERENDERED, event -> {
-	if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
-		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (element instanceof MPart) {
-			MPart part = (MPart) element;
-			createReference(part);
-		}
-	}
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED, event -> {
+			if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
+				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+				if (element instanceof MPart) {
+					MPart part = (MPart) element;
+					createReference(part);
+				}
+			}
 });
 
 		// watch for parts' contexts being set, once they've been set, we need
 		// to inject the ViewReference/EditorReference into the context
-		eventBroker.subscribe(
-UIEvents.Context.TOPIC_CONTEXT,
-				event -> {
-					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-					if (element instanceof MPart) {
-						MPart part = (MPart) element;
-						IEclipseContext context = part.getContext();
-						if (context != null) {
-							setReference(part, context);
-						}
-					}
-				});
+		eventBroker.subscribe(UIEvents.Context.TOPIC_CONTEXT, event -> {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (element instanceof MPart) {
+				MPart part = (MPart) element;
+				IEclipseContext context = part.getContext();
+				if (context != null) {
+					setReference(part, context);
+				}
+			}
+		});
 
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, event -> {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -2251,15 +2245,13 @@ UIEvents.Context.TOPIC_CONTEXT,
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
-		final IEvaluationService evaluationService = serviceLocator
-				.getService(IEvaluationService.class);
+		final IEvaluationService evaluationService = serviceLocator.getService(IEvaluationService.class);
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			@Override
 			public void runWithException() {
-				serviceLocator.registerService(ISaveablesLifecycleListener.class,
-						new SaveablesList());
+				serviceLocator.registerService(ISaveablesLifecycleListener.class, new SaveablesList());
 			}
 		});
 
@@ -2336,8 +2328,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		serviceLocator.registerService(IBindingService.class, bindingService[0]);
 
 		final CommandImageManager commandImageManager = new CommandImageManager();
-		final CommandImageService commandImageService = new CommandImageService(
-				commandImageManager, commandService[0]);
+		final CommandImageService commandImageService = new CommandImageService(commandImageManager, commandService[0]);
 		commandImageService.readRegistry();
 		serviceLocator.registerService(ICommandImageService.class, commandImageService);
 
@@ -2361,8 +2352,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		 * services. These source providers notify the services when particular
 		 * pieces of workbench state change.
 		 */
-		final SourceProviderService sourceProviderService = new SourceProviderService(
-				serviceLocator);
+		final SourceProviderService sourceProviderService = new SourceProviderService(serviceLocator);
 		serviceLocator.registerService(ISourceProviderService.class, sourceProviderService);
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
@@ -2412,8 +2402,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 			}
 		});
 		workbenchContextSupport = new WorkbenchContextSupport(this, contextManager);
-		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager, commandManager,
-				contextManager, handlerService[0]);
+		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager, commandManager, contextManager,
+				handlerService[0]);
 		initializeCommandResolver();
 
 		// addWindowListener(windowListener);
@@ -2899,8 +2889,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 					autoSaveJob.schedule(millisecondInterval);
 				}
 
-				// WWinPluginAction.refreshActionList();
-
 				display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -2939,8 +2927,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 	}
 
 	private int getAutoSaveJobTime() {
-		final int minuteSaveInterval = getPreferenceStore().getInt(
-				IPreferenceConstants.WORKBENCH_SAVE_INTERVAL);
+		final int minuteSaveInterval = getPreferenceStore().getInt(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL);
 		final int millisecondInterval = minuteSaveInterval * 60 * 1000;
 		return millisecondInterval;
 	}
