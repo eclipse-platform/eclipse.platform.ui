@@ -270,11 +270,6 @@ import org.osgi.util.tracker.ServiceTracker;
  * Note that any code that is run during the creation of a workbench instance
  * should not required access to the display.
  * </p>
- * <p>
- * Note that this internal class changed significantly between 2.1 and 3.0.
- * Applications that used to define subclasses of this internal class need to be
- * rewritten to use the new workbench advisor API.
- * </p>
  */
 public final class Workbench extends EventManager implements IWorkbench,
 		org.eclipse.e4.ui.workbench.IWorkbench {
