@@ -395,8 +395,8 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 
 			TableItem item;
 			IContextInformation t;
-			for (int i= 0; i < contexts.length; i++) {
-				t= contexts[i];
+			for (IContextInformation context : contexts) {
+				t= context;
 				item= new TableItem(fContextSelectorTable, SWT.NULL);
 				if (t.getImage() != null)
 					item.setImage(t.getImage());

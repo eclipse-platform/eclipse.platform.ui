@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import java.util.Iterator;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -218,8 +217,7 @@ class ContextInformationPopup implements IContentAssistListener {
 						}
 
 						// also check all other contexts
-						for (Iterator<ContextFrame> it= fContextFrameStack.iterator(); it.hasNext(); ) {
-							ContextFrame stackFrame= it.next();
+						for (ContextFrame stackFrame : fContextFrameStack) {
 							if (stackFrame.equals(frame)) {
 								validateContextInformation();
 								return;
@@ -642,8 +640,8 @@ class ContextInformationPopup implements IContentAssistListener {
 
 			TableItem item;
 			IContextInformation t;
-			for (int i= 0; i < contexts.length; i++) {
-				t= contexts[i];
+			for (IContextInformation context : contexts) {
+				t= context;
 				item= new TableItem(fContextSelectorTable, SWT.NULL);
 				if (t.getImage() != null)
 					item.setImage(t.getImage());

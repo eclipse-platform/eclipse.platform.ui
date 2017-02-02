@@ -588,8 +588,8 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		public boolean contains(char c) {
 			char[] pairs= fPairs;
-			for (int i= 0, n= pairs.length; i < n; i++) {
-				if (c == pairs[i])
+			for (char pair : pairs) {
+				if (c == pair)
 					return true;
 			}
 			return false;

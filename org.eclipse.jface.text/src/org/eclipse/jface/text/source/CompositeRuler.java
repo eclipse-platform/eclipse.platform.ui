@@ -87,8 +87,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Control[] children= composite.getChildren();
 			Point size= new Point(0, 0);
-			for (int i= 0; i < children.length; i++) {
-				Point s= children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			for (Control element : children) {
+				Point s= element.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 				size.x += s.x;
 				size.y= Math.max(size.y, s.y);
 			}
@@ -787,8 +787,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 */
 	public void fireAnnotationSelected(VerticalRulerEvent event) {
 		// forward to listeners
-		for (Iterator<IVerticalRulerListener> it= fAnnotationListeners.iterator(); it.hasNext();) {
-			IVerticalRulerListener listener= it.next();
+		for (IVerticalRulerListener listener : fAnnotationListeners) {
 			listener.annotationSelected(event);
 		}
 	}
@@ -803,8 +802,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 */
 	public void fireAnnotationDefaultSelected(VerticalRulerEvent event) {
 		// forward to listeners
-		for (Iterator<IVerticalRulerListener> it= fAnnotationListeners.iterator(); it.hasNext();) {
-			IVerticalRulerListener listener= it.next();
+		for (IVerticalRulerListener listener : fAnnotationListeners) {
 			listener.annotationDefaultSelected(event);
 		}
 	}
@@ -820,8 +818,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 */
 	public void fireAnnotationContextMenuAboutToShow(VerticalRulerEvent event, Menu menu) {
 		// forward to listeners
-		for (Iterator<IVerticalRulerListener> it= fAnnotationListeners.iterator(); it.hasNext();) {
-			IVerticalRulerListener listener= it.next();
+		for (IVerticalRulerListener listener : fAnnotationListeners) {
 			listener.annotationContextMenuAboutToShow(event, menu);
 		}
 	}

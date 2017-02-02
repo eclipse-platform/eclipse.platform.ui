@@ -298,9 +298,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		private boolean contains(char[] characters, char character) {
 			if (characters != null) {
-				for (int i= 0; i < characters.length; i++) {
-					if (character == characters[i])
+				for (char c : characters) {
+					if (character == c) {
 						return true;
+					}
 				}
 			}
 			return false;
@@ -768,9 +769,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Monitor[] monitors = toSearch.getMonitors();
 			Monitor result = monitors[0];
 
-			for (int idx = 0; idx < monitors.length; idx++) {
-				Monitor current = monitors[idx];
-
+			for (Monitor current : monitors) {
 				Rectangle clientArea = current.getClientArea();
 
 				if (clientArea.contains(toFind)) {
@@ -822,9 +821,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			installKeyListener();
 
 			IContentAssistListener[] listeners= fListeners.clone();
-			for (int i= 0; i < listeners.length; i++) {
-				if (listeners[i] != null) {
-					listeners[i].processEvent(event);
+			for (IContentAssistListener listener : listeners) {
+				if (listener != null) {
+					listener.processEvent(event);
 					if (!event.doit)
 						return;
 				}

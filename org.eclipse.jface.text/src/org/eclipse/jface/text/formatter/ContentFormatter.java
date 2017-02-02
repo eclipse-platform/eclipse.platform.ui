@@ -453,8 +453,8 @@ public class ContentFormatter implements IContentFormatter {
 	 * @param indentation the initial indentation
 	 */
 	private void start(TypedPosition[] regions, String indentation) {
-		for (int i= 0; i < regions.length; i++) {
-			IFormattingStrategy s= getFormattingStrategy(regions[i].getType());
+		for (TypedPosition region : regions) {
+			IFormattingStrategy s= getFormattingStrategy(region.getType());
 			if (s != null)
 				s.formatterStarts(indentation);
 		}
@@ -468,10 +468,10 @@ public class ContentFormatter implements IContentFormatter {
 	 * @since 3.0
 	 */
 	private void format(TypedPosition[] ranges) {
-		for (int i= 0; i < ranges.length; i++) {
-			IFormattingStrategy s= getFormattingStrategy(ranges[i].getType());
+		for (TypedPosition range : ranges) {
+			IFormattingStrategy s= getFormattingStrategy(range.getType());
 			if (s != null) {
-				format(s, ranges[i]);
+				format(s, range);
 			}
 		}
 	}
@@ -525,8 +525,8 @@ public class ContentFormatter implements IContentFormatter {
 	 * @param regions the partitioning of the document which has been formatted
 	 */
 	private void stop(TypedPosition[] regions) {
-		for (int i= 0; i < regions.length; i++) {
-			IFormattingStrategy s= getFormattingStrategy(regions[i].getType());
+		for (TypedPosition region : regions) {
+			IFormattingStrategy s= getFormattingStrategy(region.getType());
 			if (s != null)
 				s.formatterStops();
 		}
@@ -585,17 +585,18 @@ public class ContentFormatter implements IContentFormatter {
 	 */
 	private boolean ignoreCategory(String category) {
 
-		if (PARTITIONING.equals(category))
+		if (PARTITIONING.equals(category)) {
 			return true;
+		}
 
 		String[] categories= getPartitionManagingCategories();
 		if (categories != null) {
-			for (int i= 0; i < categories.length; i++) {
-				if (categories[i].equals(category))
+			for (String cat : categories) {
+				if (cat.equals(category)) {
 					return true;
+				}
 			}
 		}
-
 		return false;
 	}
 
@@ -611,25 +612,24 @@ public class ContentFormatter implements IContentFormatter {
 
 		String[] categories= fDocument.getPositionCategories();
 		if (categories != null) {
-			for (int i= 0; i < categories.length; i++) {
+			for (String cat : categories) {
 
-				if (ignoreCategory(categories[i]))
+				if (ignoreCategory(cat))
 					continue;
 
 				try {
 
-					Position[] positions= fDocument.getPositions(categories[i]);
+					Position[] positions= fDocument.getPositions(cat);
 
-					for (int j= 0; j < positions.length; j++) {
+					for (Position p : positions) {
 
-						Position p= positions[j];
 						if (p.overlapsWith(offset, length)) {
 
 							if (offset < p.getOffset())
-								fOverlappingPositionReferences.add(new PositionReference(p, true, categories[i]));
+								fOverlappingPositionReferences.add(new PositionReference(p, true, cat));
 
 							if (p.getOffset() + p.getLength() < offset + length)
-								fOverlappingPositionReferences.add(new PositionReference(p, false, categories[i]));
+								fOverlappingPositionReferences.add(new PositionReference(p, false, cat));
 						}
 					}
 

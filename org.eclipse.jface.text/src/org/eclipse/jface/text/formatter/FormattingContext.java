@@ -80,10 +80,10 @@ public class FormattingContext implements IFormattingContext {
 		String result= null;
 		String preference= null;
 
-		for (int index= 0; index < preferences.length; index++) {
+		for (String pref : preferences) {
 
-			preference= preferences[index];
-			result= (String)map.get(preference);
+			preference= pref;
+			result= (String) map.get(preference);
 
 			if (result != null) {
 
@@ -119,9 +119,9 @@ public class FormattingContext implements IFormattingContext {
 		final String[] preferences= getPreferenceKeys();
 
 		String preference= null;
-		for (int index= 0; index < preferences.length; index++) {
+		for (String pref : preferences) {
 
-			preference= preferences[index];
+			preference= pref;
 
 			if (isBooleanPreference(preference)) {
 				map.put(preference, (useDefault ? store.getDefaultBoolean(preference) : store.getBoolean(preference)) ? IPreferenceStore.TRUE : IPreferenceStore.FALSE);

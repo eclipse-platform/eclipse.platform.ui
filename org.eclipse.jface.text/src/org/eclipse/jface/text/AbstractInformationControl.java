@@ -245,8 +245,8 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fStatusLabel.setText(statusFieldText);
 
 		FontData[] fontDatas= JFaceResources.getDialogFont().getFontData();
-		for (int i= 0; i < fontDatas.length; i++) {
-			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+		for (FontData fontData : fontDatas) {
+			fontData.setHeight(fontData.getHeight() * 9 / 10);
 		}
 		fStatusLabelFont= new Font(fStatusLabel.getDisplay(), fontDatas);
 		fStatusLabel.setFont(fStatusLabelFont);

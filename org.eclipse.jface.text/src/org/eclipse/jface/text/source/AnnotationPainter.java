@@ -591,8 +591,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 			// Remove annotations
 			Annotation[] removedAnnotations= event.getRemovedAnnotations();
-			for (int i= 0, length= removedAnnotations.length; i < length; i++) {
-				Annotation annotation= removedAnnotations[i];
+			for (Annotation annotation : removedAnnotations) {
 				Decoration decoration= highlightedDecorationsMap.remove(annotation);
 				if (decoration != null) {
 					Position position= decoration.fPosition;
@@ -615,9 +614,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 			// Update existing annotations
 			Annotation[] changedAnnotations= event.getChangedAnnotations();
-			for (int i= 0, length= changedAnnotations.length; i < length; i++) {
-				Annotation annotation= changedAnnotations[i];
-
+			for (Annotation annotation : changedAnnotations) {
 				boolean isHighlighting= false;
 
 				Decoration decoration= highlightedDecorationsMap.get(annotation);
@@ -888,8 +885,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
 			IAnnotationAccessExtension ext = (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] sts = ext.getSupertypes(type);
-			for (int i= 0; i < sts.length; i++) {
-				strategy= fPaintingStrategyId2PaintingStrategy.get(fAnnotationType2PaintingStrategyId.get(sts[i]));
+			for (Object st : sts) {
+				strategy= fPaintingStrategyId2PaintingStrategy.get(fAnnotationType2PaintingStrategyId.get(st));
 				if (strategy != null) {
 					fCachedAnnotationType2PaintingStrategy.put(type, strategy);
 					return strategy;
@@ -924,8 +921,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
-				for (int i= 0; i < superTypes.length; i++) {
-					color= fAnnotationType2Color.get(superTypes[i]);
+				for (Object superType : superTypes) {
+					color= fAnnotationType2Color.get(superType);
 					if (color != null) {
 						fCachedAnnotationType2Color.put(annotationType, color);
 						return color;
@@ -992,9 +989,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 
-			for (Iterator<Entry<Annotation, Decoration>> iter= decorations.iterator(); iter.hasNext();) {
-				Entry<Annotation, Decoration> entry= iter.next();
-
+			for (Entry<Annotation, Decoration> entry : decorations) {
 				Annotation a= entry.getKey();
 				if (a.isMarkedDeleted())
 					continue;
@@ -1373,9 +1368,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * expensive. One bucket per drawing layer. Use linked lists as addition is cheap here.
 		 */
 		ArrayList<LinkedList<Entry<Annotation, Decoration>>> toBeDrawn= new ArrayList<>(10);
-		for (Iterator<Entry<Annotation, Decoration>> e = decorations.iterator(); e.hasNext();) {
-			Entry<Annotation, Decoration> entry= e.next();
-
+		for (Entry<Annotation, Decoration> entry : decorations) {
 			Annotation a= entry.getKey();
 			Decoration pp = entry.getValue();
 			// prune any annotation that is not drawable or does not need drawing
@@ -1387,10 +1380,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			}
 		}
 		IDocument document= fSourceViewer.getDocument();
-		for (Iterator<LinkedList<Entry<Annotation, Decoration>>> it= toBeDrawn.iterator(); it.hasNext();) {
-			LinkedList<Entry<Annotation, Decoration>> layer= it.next();
-			for (Iterator<Entry<Annotation, Decoration>> e = layer.iterator(); e.hasNext();) {
-				Entry<Annotation, Decoration> entry= e.next();
+		for (LinkedList<Entry<Annotation, Decoration>> layer : toBeDrawn) {
+			for (Entry<Annotation, Decoration> entry : layer) {
 				Annotation a= entry.getKey();
 				Decoration pp = entry.getValue();
 				drawDecoration(pp, gc, a, clippingRegion, document);

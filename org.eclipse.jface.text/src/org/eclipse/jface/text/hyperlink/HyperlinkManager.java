@@ -269,8 +269,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	private IHyperlink[] findHyperlinks(IRegion region) {
 		List<IHyperlink> allHyperlinks= new ArrayList<>(fHyperlinkDetectors.length * 2);
 		synchronized (fHyperlinkDetectors) {
-			for (int i= 0, length= fHyperlinkDetectors.length; i < length; i++) {
-				IHyperlinkDetector detector= fHyperlinkDetectors[i];
+			for (IHyperlinkDetector detector : fHyperlinkDetectors) {
 				if (detector == null)
 					continue;
 
@@ -468,9 +467,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return true;
 
 		synchronized (fHyperlinkDetectors) {
-			for (int i= 0; i < fHyperlinkDetectors.length; i++) {
-				if (fHyperlinkDetectors[i] instanceof IHyperlinkDetectorExtension2) {
-					if (stateMask == ((IHyperlinkDetectorExtension2)fHyperlinkDetectors[i]).getStateMask())
+			for (IHyperlinkDetector fHyperlinkDetector : fHyperlinkDetectors) {
+				if (fHyperlinkDetector instanceof IHyperlinkDetectorExtension2) {
+					if (stateMask == ((IHyperlinkDetectorExtension2)fHyperlinkDetector).getStateMask())
 						return true;
 				}
 			}

@@ -81,8 +81,8 @@ public final class BoldStylerProvider {
 	public Font getBoldFont() {
 		if (fBoldFont == null) {
 			FontData[] data= fFont.getFontData();
-			for (int i= 0; i < data.length; i++) {
-				data[i].setStyle(SWT.BOLD);
+			for (FontData element : data) {
+				element.setStyle(SWT.BOLD);
 			}
 			fBoldFont= new Font(fFont.getDevice(), data);
 		}

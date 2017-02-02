@@ -487,8 +487,8 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 */
 	protected boolean isSupportedContentType(String contentType) {
 		if (contentType != null) {
-			for (int i= 0; i < fLegalContentTypes.length; i++) {
-				if (fLegalContentTypes[i].equals(contentType))
+			for (String fLegalContentType : fLegalContentTypes) {
+				if (fLegalContentType.equals(contentType))
 					return true;
 			}
 		}

@@ -810,8 +810,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				Font font= fMessageText.getFont();
 				Display display= fProposalShell.getDisplay();
 				FontData[] fontDatas= font.getFontData();
-				for (int i= 0; i < fontDatas.length; i++)
-					fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+				for (FontData fontData : fontDatas)
+					fontData.setHeight(fontData.getHeight() * 9 / 10);
 				fMessageTextFont= new Font(display, fontDatas);
 			}
 			fMessageText.setFont(fMessageTextFont);
@@ -1446,8 +1446,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (characters == null)
 			return false;
 
-		for (int i= 0; i < characters.length; i++) {
-			if (c == characters[i])
+		for (char character : characters) {
+			if (c == character)
 				return true;
 		}
 

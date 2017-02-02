@@ -12,7 +12,6 @@ package org.eclipse.jface.internal.text.link.contentassist;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -263,9 +262,10 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		private boolean contains(char[] characters, char character) {
 			if (characters != null) {
-				for (int i= 0; i < characters.length; i++) {
-					if (character == characters[i])
+				for (char c : characters) {
+					if (character == c) {
 						return true;
+					}
 				}
 			}
 			return false;
@@ -634,9 +634,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			installKeyListener();
 
 			IContentAssistListener2[] listeners= fListeners.clone();
-			for (int i= 0; i < listeners.length; i++) {
-				if (listeners[i] != null) {
-					listeners[i].processEvent(event);
+			for (IContentAssistListener2 listener : listeners) {
+				if (listener != null) {
+					listener.processEvent(event);
 					if (!event.doit)
 						return;
 				}
@@ -1523,8 +1523,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	public void fireProposalChosen(ICompletionProposal proposal) {
 		List<IProposalListener> list= new ArrayList<>(fProposalListeners);
-		for (Iterator<IProposalListener> it= list.iterator(); it.hasNext();) {
-			IProposalListener listener= it.next();
+		for (IProposalListener listener : list) {
 			listener.proposalChosen(proposal);
 		}
 

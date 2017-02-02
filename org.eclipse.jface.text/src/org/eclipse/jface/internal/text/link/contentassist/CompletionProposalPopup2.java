@@ -845,8 +845,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		if (characters == null)
 			return false;
 
-		for (int i= 0; i < characters.length; i++) {
-			if (c == characters[i])
+		for (char character : characters) {
+			if (c == character)
 				return true;
 		}
 

@@ -1105,9 +1105,7 @@ abstract public class AbstractInformationControlManager {
 		Monitor[] monitors = display.getMonitors();
 		Monitor result = monitors[0];
 
-		for (int idx = 0; idx < monitors.length; idx++) {
-			Monitor current = monitors[idx];
-
+		for (Monitor current : monitors) {
 			Rectangle clientArea = current.getClientArea();
 
 			if (clientArea.contains(toFind)) {

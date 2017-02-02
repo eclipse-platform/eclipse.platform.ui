@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -117,8 +116,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		 */
 		StringBuffer text = new StringBuffer();
 		int added= 0;
-		for (Iterator<? extends ILineDiffInfo> it= diffInfos.iterator(); it.hasNext();) {
-			ILineDiffInfo info= it.next();
+		for (ILineDiffInfo info : diffInfos) {
 			String[] original= info.getOriginalText();
 			int type= info.getChangeType();
 			int i= 0;

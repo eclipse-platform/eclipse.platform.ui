@@ -200,9 +200,9 @@ public class HTMLPrinter {
 			return;
 
 		StringBuffer styleBuf= new StringBuffer(10 * styles.length);
-		for (int i= 0; i < styles.length; i++) {
+		for (String style : styles) {
 			styleBuf.append(" style=\""); //$NON-NLS-1$
-			styleBuf.append(styles[i]);
+			styleBuf.append(style);
 			styleBuf.append('"');
 		}
 

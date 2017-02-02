@@ -12,7 +12,6 @@ package org.eclipse.jface.contentassist;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -192,8 +191,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 							dump("before traverse", e, verifyEvent); //$NON-NLS-1$
 
 						verifyEvent.doit= true;
-						for (Iterator<VerifyKeyListener> iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
-							iter.next().verifyKey(verifyEvent);
+						for (VerifyKeyListener verifyKeyListener : fVerifyKeyListeners) {
+							verifyKeyListener.verifyKey(verifyEvent);
 							if (! verifyEvent.doit) {
 								e.detail= SWT.TRAVERSE_NONE;
 								e.doit= true;
@@ -208,8 +207,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						break;
 
 					case SWT.KeyDown:
-						for (Iterator<VerifyKeyListener> iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
-							iter.next().verifyKey(verifyEvent);
+						for (VerifyKeyListener verifyKeyListener : fVerifyKeyListeners) {
+							verifyKeyListener.verifyKey(verifyEvent);
 							if (! verifyEvent.doit) {
 								e.doit= verifyEvent.doit;
 								if (DEBUG)
@@ -221,8 +220,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						if (DEBUG)
 							dump("keyDown OK", e, verifyEvent); //$NON-NLS-1$
 
-						for (Iterator<KeyListener> iter= fKeyListeners.iterator(); iter.hasNext();) {
-							iter.next().keyPressed(keyEvent);
+						for (KeyListener keyListener : fKeyListeners) {
+							keyListener.keyPressed(keyEvent);
 						}
 						break;
 
