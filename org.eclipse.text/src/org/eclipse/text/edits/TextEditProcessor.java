@@ -11,7 +11,6 @@
 package org.eclipse.text.edits;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -202,11 +201,9 @@ public class TextEditProcessor {
 	}
 
 	private void computeSources() {
-		for (Iterator<List<TextEdit>> iter= fSourceEdits.iterator(); iter.hasNext();) {
-			List<TextEdit> list= iter.next();
+		for (List<TextEdit> list : fSourceEdits) {
 			if (list != null) {
-				for (Iterator<TextEdit> edits= list.iterator(); edits.hasNext();) {
-					TextEdit edit= edits.next();
+				for (TextEdit edit : list) {
 					edit.traverseSourceComputation(this, fDocument);
 				}
 			}

@@ -1190,9 +1190,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		IUndoContext oldUndoContext= manager.getUndoContext();
 		// Get the history for the old undo context.
 		IUndoableOperation [] operations= OperationHistoryFactory.getOperationHistory().getUndoHistory(oldUndoContext);
-		for (int i= 0; i < operations.length; i++) {
+		for (IUndoableOperation operation : operations) {
 			// First replace the undo context
-			IUndoableOperation op= operations[i];
+			IUndoableOperation op= operation;
 			if (op instanceof IContextReplacingOperation) {
 				((IContextReplacingOperation)op).replaceContext(oldUndoContext, getUndoContext());
 			} else {

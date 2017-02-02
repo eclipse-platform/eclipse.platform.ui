@@ -212,9 +212,9 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 			fDocument= event.getDocument();
 
 			Position[] category= fDocument.getPositions(fCategory);
-			for (int i= 0; i < category.length; i++) {
+			for (Position element : category) {
 
-				fPosition= category[i];
+				fPosition= element;
 				fOriginalPosition.offset= fPosition.offset;
 				fOriginalPosition.length= fPosition.length;
 

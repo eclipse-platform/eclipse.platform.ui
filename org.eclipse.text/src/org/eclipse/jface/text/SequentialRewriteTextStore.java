@@ -11,7 +11,6 @@
 package org.eclipse.jface.text;
 
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 
@@ -88,8 +87,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 			if (offset + length <= firstReplace.newOffset) {
 				int delta= text.length() - length;
 				if (delta != 0) {
-					for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
-						Replace replace= i.next();
+					for (Replace replace : fReplaceList) {
 						replace.newOffset += delta;
 					}
 				}
@@ -142,9 +140,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		} else {
 
 			int delta= 0;
-			for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
-				Replace replace= i.next();
-
+			for (Replace replace : fReplaceList) {
 				if (offset + length < replace.newOffset) {
 					return fSource.get(offset - delta, length);
 
@@ -200,9 +196,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		} else {
 
 			int delta= 0;
-			for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
-				Replace replace= i.next();
-
+			for (Replace replace : fReplaceList) {
 				if (offset < replace.newOffset)
 					return fSource.get(offset - delta);
 
@@ -244,9 +238,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		StringBuffer buffer= new StringBuffer();
 
 		int delta= 0;
-		for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
-			Replace replace= i.next();
-
+		for (Replace replace : fReplaceList) {
 			int offset= buffer.length() - delta;
 			buffer.append(fSource.get(offset, replace.offset - offset));
 			buffer.append(replace.text);

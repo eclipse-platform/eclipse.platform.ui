@@ -301,8 +301,8 @@ public final class CopySourceEdit extends TextEdit {
 	private void applyTransformation(IDocument document) throws MalformedTreeException {
 		TextEdit newEdit= new MultiTextEdit(0, document.getLength());
 		ReplaceEdit[] replaces= fModifier.getModifications(document.get());
-		for (int i= 0; i < replaces.length; i++) {
-			newEdit.addChild(replaces[i]);
+		for (ReplaceEdit replace : replaces) {
+			newEdit.addChild(replace);
 		}
 		try {
 			newEdit.apply(document, TextEdit.NONE);

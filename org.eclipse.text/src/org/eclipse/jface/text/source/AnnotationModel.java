@@ -387,8 +387,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void replaceAnnotations(Annotation[] annotationsToRemove, Map<? extends Annotation, ? extends Position> annotationsToAdd, boolean fireModelChanged) throws BadLocationException {
 
 		if (annotationsToRemove != null) {
-			for (int i= 0, length= annotationsToRemove.length; i < length; i++)
-				removeAnnotation(annotationsToRemove[i], false);
+			for (Annotation element : annotationsToRemove)
+				removeAnnotation(element, false);
 		}
 
 		if (annotationsToAdd != null) {
@@ -493,8 +493,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			connected();
 		}
 
-		for (Iterator<Object> it= fAttachments.keySet().iterator(); it.hasNext();) {
-			IAnnotationModel model= fAttachments.get(it.next());
+		for (Object object : fAttachments.keySet()) {
+			IAnnotationModel model= fAttachments.get(object);
 			model.connect(document);
 		}
 	}
@@ -518,8 +518,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		Assert.isTrue(fDocument == document);
 
-		for (Iterator<Object> it= fAttachments.keySet().iterator(); it.hasNext();) {
-			IAnnotationModel model= fAttachments.get(it.next());
+		for (Object object : fAttachments.keySet()) {
+			IAnnotationModel model= fAttachments.get(object);
 			model.disconnect(document);
 		}
 

@@ -74,8 +74,8 @@ class LinkedModeManager {
 	 * @return <code>true</code> if there exists a <code>LinkedModeManager</code> on any of the <code>documents</code>, <code>false</code> otherwise
 	 */
 	public static boolean hasManager(IDocument[] documents) {
-		for (int i= 0; i < documents.length; i++) {
-			if (hasManager(documents[i]))
+		for (IDocument document : documents) {
+			if (hasManager(document))
 				return true;
 		}
 		return false;
@@ -96,15 +96,14 @@ class LinkedModeManager {
 
 		Set<LinkedModeManager> mgrs= new HashSet<>();
 		LinkedModeManager mgr= null;
-		for (int i= 0; i < documents.length; i++) {
-			mgr= fgManagers.get(documents[i]);
+		for (IDocument document : documents) {
+			mgr= fgManagers.get(document);
 			if (mgr != null)
 				mgrs.add(mgr);
 		}
 		if (mgrs.size() > 1)
 			if (force) {
-				for (Iterator<LinkedModeManager> it= mgrs.iterator(); it.hasNext(); ) {
-					LinkedModeManager m= it.next();
+				for (LinkedModeManager m : mgrs) {
 					m.closeAllEnvironments();
 				}
 			} else {
@@ -114,8 +113,8 @@ class LinkedModeManager {
 		if (mgrs.size() == 0)
 			mgr= new LinkedModeManager();
 
-		for (int i= 0; i < documents.length; i++)
-			fgManagers.put(documents[i], mgr);
+		for (IDocument document : documents)
+			fgManagers.put(document, mgr);
 
 		return mgr;
 	}

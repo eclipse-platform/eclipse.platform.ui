@@ -164,8 +164,7 @@ public final class MoveTargetEdit extends TextEdit {
 			sourceRoot.internalMoveTree(getOffset());
 			TextEdit[] sourceChildren= sourceRoot.removeChildren();
 			List<TextEdit> children= new ArrayList<>(sourceChildren.length);
-			for (int i= 0; i < sourceChildren.length; i++) {
-				TextEdit child= sourceChildren[i];
+			for (TextEdit child : sourceChildren) {
 				child.internalSetParent(this);
 				children.add(child);
 			}

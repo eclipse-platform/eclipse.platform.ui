@@ -12,7 +12,6 @@ package org.eclipse.text.edits;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +54,7 @@ public final class TextEditCopier {
 	public TextEdit perform() {
 		TextEdit result= doCopy(fEdit);
 		if (result != null) {
-			for (Iterator<TextEdit> iter= fCopies.keySet().iterator(); iter.hasNext();) {
-				TextEdit edit= iter.next();
+			for (TextEdit edit : fCopies.keySet()) {
 				edit.postProcessCopy(this);
 			}
 		}
@@ -83,8 +81,8 @@ public final class TextEditCopier {
 		List<TextEdit> children= edit.internalGetChildren();
 		if (children != null) {
 			List<TextEdit> newChildren= new ArrayList<>(children.size());
-			for (Iterator<TextEdit> iter= children.iterator(); iter.hasNext();) {
-				TextEdit childCopy= doCopy(iter.next());
+			for (TextEdit textEdit : children) {
+				TextEdit childCopy= doCopy(textEdit);
 				childCopy.internalSetParent(result);
 				newChildren.add(childCopy);
 			}

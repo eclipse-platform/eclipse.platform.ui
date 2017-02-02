@@ -343,8 +343,8 @@ public abstract class TextEdit {
 	 * @see #addChild(TextEdit)
 	 */
 	public final void addChildren(TextEdit[] edits) throws MalformedTreeException {
-		for (int i= 0; i < edits.length; i++) {
-			internalAdd(edits[i]);
+		for (TextEdit edit : edits) {
+			internalAdd(edit);
 		}
 	}
 
@@ -459,8 +459,7 @@ public abstract class TextEdit {
 		int offset= Integer.MAX_VALUE;
 		int end= Integer.MIN_VALUE;
 		int deleted= 0;
-		for (int i= 0; i < edits.length; i++) {
-			TextEdit edit= edits[i];
+		for (TextEdit edit : edits) {
 			if (edit.isDeleted()) {
 				deleted++;
 			} else {
@@ -563,8 +562,7 @@ public abstract class TextEdit {
 	private void toStringWithChildren(StringBuffer buffer, int indent) {
 		internalToString(buffer, indent);
 		if (fChildren != null) {
-			for (Iterator<TextEdit> iterator= fChildren.iterator(); iterator.hasNext();) {
-				TextEdit child= iterator.next();
+			for (TextEdit child : fChildren) {
 				buffer.append('\n');
 				child.toStringWithChildren(buffer, indent + 1);
 			}
@@ -939,8 +937,7 @@ public abstract class TextEdit {
 		performRegionUpdating(accumulatedDelta, delete);
 		if (fChildren != null) {
 			boolean childDelete= delete || deleteChildren();
-			for (Iterator<TextEdit> iter= fChildren.iterator(); iter.hasNext();) {
-				TextEdit child= iter.next();
+			for (TextEdit child : fChildren) {
 				accumulatedDelta= child.traverseRegionUpdating(processor, document, accumulatedDelta, childDelete);
 				childRegionUpdated();
 			}
@@ -975,8 +972,8 @@ public abstract class TextEdit {
 	void internalMoveTree(int delta) {
 		adjustOffset(delta);
 		if (fChildren != null) {
-			for (Iterator<TextEdit> iter= fChildren.iterator(); iter.hasNext();) {
-				iter.next().internalMoveTree(delta);
+			for (TextEdit textEdit : fChildren) {
+				textEdit.internalMoveTree(delta);
 			}
 		}
 	}
@@ -984,8 +981,7 @@ public abstract class TextEdit {
 	void deleteTree() {
 		markAsDeleted();
 		if (fChildren != null) {
-			for (Iterator<TextEdit> iter= fChildren.iterator(); iter.hasNext();) {
-				TextEdit child= iter.next();
+			for (TextEdit child : fChildren) {
 				child.deleteTree();
 			}
 		}

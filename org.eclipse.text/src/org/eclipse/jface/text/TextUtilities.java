@@ -310,12 +310,12 @@ public class TextUtilities {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			String[] partitionings= extension3.getPartitionings();
-			for (int i= 0; i < partitionings.length; i++) {
-				IDocumentPartitioner partitioner= extension3.getDocumentPartitioner(partitionings[i]);
+			for (String partitioning : partitionings) {
+				IDocumentPartitioner partitioner= extension3.getDocumentPartitioner(partitioning);
 				if (partitioner != null) {
-					extension3.setDocumentPartitioner(partitionings[i], null);
+					extension3.setDocumentPartitioner(partitioning, null);
 					partitioner.disconnect();
-					partitioners.put(partitionings[i], partitioner);
+					partitioners.put(partitioning, partitioner);
 				}
 			}
 		} else {
@@ -450,14 +450,14 @@ public class TextUtilities {
 			String[] partitionings= extension3.getPartitionings();
 			if (partitionings != null) {
 				Set<String> categories= new HashSet<>();
-				for (int i= 0; i < partitionings.length; i++) {
-					IDocumentPartitioner p= extension3.getDocumentPartitioner(partitionings[i]);
+				for (String partitioning : partitionings) {
+					IDocumentPartitioner p= extension3.getDocumentPartitioner(partitioning);
 					if (p instanceof IDocumentPartitionerExtension2) {
 						IDocumentPartitionerExtension2 extension2= (IDocumentPartitionerExtension2) p;
 						String[] c= extension2.getManagingPositionCategories();
 						if (c != null) {
-							for (int j= 0; j < c.length; j++)
-								categories.add(c[j]);
+							for (String element : c)
+								categories.add(element);
 						}
 					}
 				}
@@ -500,8 +500,8 @@ public class TextUtilities {
 		String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
 		String[] delimiters= document.getLegalLineDelimiters();
 		Assert.isTrue(delimiters.length > 0);
-		for (int i= 0; i < delimiters.length; i++) {
-			if (delimiters[i].equals(sysLineDelimiter)) {
+		for (String delimiter : delimiters) {
+			if (delimiter.equals(sysLineDelimiter)) {
 				lineDelimiter= sysLineDelimiter;
 				break;
 			}

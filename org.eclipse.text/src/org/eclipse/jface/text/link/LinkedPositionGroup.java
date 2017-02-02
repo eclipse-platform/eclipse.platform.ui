@@ -153,8 +153,7 @@ public class LinkedPositionGroup {
 	 * @throws BadLocationException if the disjointness check fails
 	 */
 	private void enforceDisjoint(LinkedPosition position) throws BadLocationException {
-		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= it.next();
+		for (LinkedPosition p : fPositions) {
 			if (p.overlapsWith(position))
 				throw new BadLocationException();
 		}
@@ -168,8 +167,7 @@ public class LinkedPositionGroup {
 	 */
 	void enforceDisjoint(LinkedPositionGroup group) throws BadLocationException {
 		Assert.isNotNull(group);
-		for (Iterator<LinkedPosition> it= group.fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= it.next();
+		for (LinkedPosition p : group.fPositions) {
 			enforceDisjoint(p);
 		}
 	}
@@ -186,8 +184,7 @@ public class LinkedPositionGroup {
 		fLastPosition= null;
 		fLastRegion= null;
 
-		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition pos= it.next();
+		for (LinkedPosition pos : fPositions) {
 			if (overlapsOrTouches(pos, event)) {
 				if (fLastPosition != null) {
 					fLastPosition= null;
@@ -250,8 +247,7 @@ public class LinkedPositionGroup {
 			if (text == null)
 				text= ""; //$NON-NLS-1$
 
-			for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-				LinkedPosition p= it.next();
+			for (LinkedPosition p : fPositions) {
 				if (p == fLastPosition || p.isDeleted())
 					continue; // don't re-update the origin of the change
 
@@ -275,8 +271,7 @@ public class LinkedPositionGroup {
 
 			try {
 				Map<IDocument, TextEdit> result= new HashMap<>();
-				for (Iterator<IDocument> it= map.keySet().iterator(); it.hasNext();) {
-					IDocument d= it.next();
+				for (IDocument d : map.keySet()) {
 					TextEdit edit= new MultiTextEdit(0, d.getLength());
 					edit.addChildren(map.get(d).toArray(new TextEdit[0]));
 					result.put(d, edit);
@@ -321,8 +316,7 @@ public class LinkedPositionGroup {
 	}
 
 	void register(LinkedModeModel model) throws BadLocationException {
-		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-            LinkedPosition pos= it.next();
+		for (LinkedPosition pos : fPositions) {
             model.register(pos);
         }
 	}
@@ -339,11 +333,9 @@ public class LinkedPositionGroup {
 	 */
 	LinkedPosition adopt(LinkedPositionGroup group) throws BadLocationException {
 		LinkedPosition found= null;
-		for (Iterator<LinkedPosition> it= group.fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition pos= it.next();
+		for (LinkedPosition pos : group.fPositions) {
 			LinkedPosition localFound= null;
-			for (Iterator<LinkedPosition> it2= fPositions.iterator(); it2.hasNext(); ) {
-				LinkedPosition myPos= it2.next();
+			for (LinkedPosition myPos : fPositions) {
 				if (myPos.includes(pos)) {
 					if (found == null)
 						found= myPos;
@@ -367,8 +359,7 @@ public class LinkedPositionGroup {
 	 * @return the closest position to <code>toFind</code>.
 	 */
 	LinkedPosition getPosition(LinkedPosition toFind) {
-		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= it.next();
+		for (LinkedPosition p : fPositions) {
 			if (p.includes(toFind))
 				return p;
 		}
@@ -383,8 +374,7 @@ public class LinkedPositionGroup {
 	 * @return <code>true</code> if offset is contained by this group
 	 */
 	boolean contains(int offset) {
-		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition pos= it.next();
+		for (LinkedPosition pos : fPositions) {
 			if (pos.includes(offset)) {
 				return true;
 			}
@@ -431,8 +421,7 @@ public class LinkedPositionGroup {
 	 * @return <code>true</code> if the receiver contains <code>position</code>
 	 */
 	boolean contains(Position position) {
-		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= it.next();
+		for (LinkedPosition p : fPositions) {
 			if (position.equals(p))
 				return true;
 		}
