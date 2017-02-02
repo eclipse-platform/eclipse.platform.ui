@@ -158,8 +158,8 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		fColumn= UNDEFINED;
 
 		if (fRules != null) {
-			for (int i= 0; i < fRules.length; i++) {
-				IToken token= (fRules[i].evaluate(this));
+			for (IRule fRule : fRules) {
+				IToken token= (fRule.evaluate(this));
 				if (!token.isUndefined())
 					return token;
 			}

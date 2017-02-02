@@ -407,8 +407,7 @@ public class TextPresentation {
 		int j= 0;
 		ArrayList<StyleRange> oldRanges= fRanges;
 		ArrayList<StyleRange> newRanges= new ArrayList<>(2*ranges.length + oldRanges.size());
-		for (int i= 0, n= ranges.length; i < n; i++) {
-			StyleRange range= ranges[i];
+		for (StyleRange range : ranges) {
 			fRanges= oldRanges; // for getFirstIndexAfterWindow(...)
 			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++)
 				newRanges.add(oldRanges.get(j));

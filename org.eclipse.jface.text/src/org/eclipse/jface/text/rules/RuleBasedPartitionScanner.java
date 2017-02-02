@@ -96,8 +96,8 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		IPredicateRule rule;
 		IToken token;
 
-		for (int i= 0; i < fRules.length; i++) {
-			rule= (IPredicateRule) fRules[i];
+		for (IRule fRule : fRules) {
+			rule= (IPredicateRule) fRule;
 			token= rule.getSuccessToken();
 			if (fContentType.equals(token.getData())) {
 				token= rule.evaluate(this, resume);

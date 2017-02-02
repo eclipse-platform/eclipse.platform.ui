@@ -107,8 +107,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		List<Annotation> toRemove= new ArrayList<>(fGroupAnnotations.values());
 		Map<Annotation, Position> toAdd= new HashMap<>();
 		if (positions != null) {
-			for (Iterator<Position> iter= positions.iterator(); iter.hasNext();) {
-				Position p= iter.next();
+			for (Position p : positions) {
 				if (fGroupAnnotations.containsKey(p)) {
 					toRemove.remove(fGroupAnnotations.get(p));
 				} else {
@@ -141,8 +140,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		List<Annotation> toRemove= new ArrayList<>(fTargetAnnotations.values());
 		Map<Annotation, Position> toAdd= new HashMap<>();
 		if (positions != null) {
-			for (Iterator<Position> iter= positions.iterator(); iter.hasNext();) {
-				Position p= iter.next();
+			for (Position p : positions) {
 				if (fTargetAnnotations.containsKey(p)) {
 					toRemove.remove(fTargetAnnotations.get(p));
 				} else {

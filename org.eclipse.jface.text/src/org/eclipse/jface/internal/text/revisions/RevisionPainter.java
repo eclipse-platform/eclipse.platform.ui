@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -161,8 +160,7 @@ public final class RevisionPainter {
 			if (info == null)
 				return;
 			List<Long> revisions= new ArrayList<>();
-			for (Iterator<Revision> it= info.getRevisions().iterator(); it.hasNext();) {
-				Revision revision= it.next();
+			for (Revision revision : info.getRevisions()) {
 				revisions.add(new Long(computeAge(revision)));
 			}
 			Collections.sort(revisions);
@@ -694,8 +692,7 @@ public final class RevisionPainter {
 
 		// draw change regions
 		List<RevisionRange> ranges= getRanges(visibleLines);
-		for (Iterator<RevisionRange> it= ranges.iterator(); it.hasNext();) {
-			RevisionRange region= it.next();
+		for (RevisionRange region : ranges) {
 			paintRange(region, gc);
 		}
 	}
@@ -907,8 +904,7 @@ public final class RevisionPainter {
 		if (ranges.isEmpty() || line == -1)
 			return null;
 
-		for (Iterator<RevisionRange> it= ranges.iterator(); it.hasNext();) {
-			RevisionRange range= it.next();
+		for (RevisionRange range : ranges) {
 			if (contains(range, line))
 				return range;
 		}
@@ -1078,8 +1074,7 @@ public final class RevisionPainter {
 		Map<Annotation, Position> added= null;
 		if (revision != null) {
 			added= new HashMap<>();
-			for (Iterator<RevisionRange> it= revision.getRegions().iterator(); it.hasNext();) {
-				RevisionRange range= it.next();
+			for (RevisionRange range : revision.getRegions()) {
 				try {
 					IRegion charRegion= toCharRegion(range);
 					Position position= new Position(charRegion.getOffset(), charRegion.getLength());
@@ -1095,13 +1090,11 @@ public final class RevisionPainter {
 			IAnnotationModelExtension ext= (IAnnotationModelExtension) fAnnotationModel;
 			ext.replaceAnnotations(fAnnotations.toArray(new Annotation[fAnnotations.size()]), added);
 		} else {
-			for (Iterator<Annotation> it= fAnnotations.iterator(); it.hasNext();) {
-				Annotation annotation= it.next();
+			for (Annotation annotation : fAnnotations) {
 				fAnnotationModel.removeAnnotation(annotation);
 			}
 			if (added != null) {
-				for (Iterator<Entry<Annotation, Position>> it= added.entrySet().iterator(); it.hasNext();) {
-					Entry<Annotation, Position> entry= it.next();
+				for (Entry<Annotation, Position> entry : added.entrySet()) {
 					fAnnotationModel.addAnnotation(entry.getKey(), entry.getValue());
 				}
 			}
@@ -1156,8 +1149,7 @@ public final class RevisionPainter {
 		if (fRevisionInfo == null)
 			return;
 
-		for (Iterator<Revision> it= fRevisionInfo.getRevisions().iterator(); it.hasNext();) {
-			Revision revision= it.next();
+		for (Revision revision : fRevisionInfo.getRevisions()) {
 			if (id.equals(revision.getId())) {
 				handleRevisionSelected(revision);
 				return;
@@ -1289,8 +1281,7 @@ public final class RevisionPainter {
 		ILineRange last= null;
 		List<RevisionRange> ranges= fFocusRevision.getRegions();
 		if (up) {
-			for (Iterator<RevisionRange> it= ranges.iterator(); it.hasNext();) {
-				RevisionRange range= it.next();
+			for (RevisionRange range : ranges) {
 				ILineRange widgetRange= modelLinesToWidgetLines(range);
 				if (contains(range, documentHoverLine)) {
 					nextWidgetRange= last;
@@ -1459,8 +1450,7 @@ public final class RevisionPainter {
 			if (hasInformation() && (fShowRevision || fShowAuthor)) {
 				int revisionWidth= 0;
 				int authorWidth= 0;
-				for (Iterator<Revision> it= fRevisionInfo.getRevisions().iterator(); it.hasNext();) {
-					Revision revision= it.next();
+				for (Revision revision : fRevisionInfo.getRevisions()) {
 					revisionWidth= Math.max(revisionWidth, revision.getId().length());
 					authorWidth= Math.max(authorWidth, revision.getAuthor().length());
 				}

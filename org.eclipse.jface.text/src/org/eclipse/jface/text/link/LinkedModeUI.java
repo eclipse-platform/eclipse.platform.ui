@@ -14,7 +14,6 @@ package org.eclipse.jface.text.link;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -339,8 +338,8 @@ public class LinkedModeUI {
 					public void run() {
 						if (fIsActive && viewer instanceof IEditingSupportRegistry) {
 							IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
-							for (int i= 0; i < helpers.length; i++) {
-								if (helpers[i].ownsFocusShell())
+							for (IEditingSupport helper : helpers) {
+								if (helper.ownsFocusShell())
 									return;
 							}
 						}
@@ -388,8 +387,8 @@ public class LinkedModeUI {
 					ITextViewer viewer= fCurrentTarget.getViewer();
 					if (fFramePosition != null && viewer instanceof IEditingSupportRegistry) {
 						IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
-						for (int i= 0; i < helpers.length; i++) {
-							if (helpers[i].isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
+						for (IEditingSupport helper : helpers) {
+							if (helper.isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
 								return;
 						}
 					}
@@ -893,9 +892,9 @@ public class LinkedModeUI {
 				fCurrentTarget.fAnnotationModel.switchToPosition(fModel, pos);
 
 			LinkedModeUITarget target= null;
-			for (int i= 0; i < fTargets.length; i++) {
-				if (fTargets[i].getViewer().getDocument() == newDoc) {
-					target= fTargets[i];
+			for (LinkedModeUITarget fTarget : fTargets) {
+				if (fTarget.getViewer().getDocument() == newDoc) {
+					target= fTarget;
 					break;
 				}
 			}
@@ -1003,8 +1002,8 @@ public class LinkedModeUI {
 			String[] contentTypes= getContentTypes(viewer.getDocument());
 			if (viewer instanceof ITextViewerExtension2) {
 				ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
-				for (int i= 0; i < contentTypes.length; i++) {
-					vExtension.prependAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
+				for (String contentType : contentTypes) {
+					vExtension.prependAutoEditStrategy(fAutoEditVetoer, contentType);
 				}
 			} else {
 				Assert.isTrue(false);
@@ -1020,8 +1019,8 @@ public class LinkedModeUI {
 			String[] contentTypes= getContentTypes(viewer.getDocument());
 			if (viewer instanceof ITextViewerExtension2) {
 				ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
-				for (int i= 0; i < contentTypes.length; i++) {
-					vExtension.removeAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
+				for (String contentType : contentTypes) {
+					vExtension.removeAutoEditStrategy(fAutoEditVetoer, contentType);
 				}
 			} else {
 				Assert.isTrue(false);
@@ -1044,8 +1043,8 @@ public class LinkedModeUI {
 			IDocumentExtension3 ext= (IDocumentExtension3) document;
 			String[] partitionings= ext.getPartitionings();
 			Set<String> contentTypes= new HashSet<>(20);
-			for (int i= 0; i < partitionings.length; i++) {
-				contentTypes.addAll(Arrays.asList(ext.getLegalContentTypes(partitionings[i])));
+			for (String partitioning : partitionings) {
+				contentTypes.addAll(Arrays.asList(ext.getLegalContentTypes(partitioning)));
 			}
 			contentTypes.add(IDocument.DEFAULT_CONTENT_TYPE);
 			return contentTypes.toArray(new String[contentTypes.size()]);
@@ -1123,8 +1122,8 @@ public class LinkedModeUI {
 			fCurrentTarget.fAnnotationModel.removeAllAnnotations();
 		disconnect();
 
-		for (int i= 0; i < fTargets.length; i++) {
-			LinkedModeUITarget target= fTargets[i];
+		for (LinkedModeUITarget fTarget : fTargets) {
+			LinkedModeUITarget target= fTarget;
 			ITextViewer viewer= target.getViewer();
 			if (target.fKeyListener != null) {
 				((ITextViewerExtension) viewer).removeVerifyKeyListener(target.fKeyListener);
@@ -1150,8 +1149,8 @@ public class LinkedModeUI {
 			switchPosition(fExitPosition, true, false);
 
 		final List<IDocument> docs= new ArrayList<>();
-		for (int i= 0; i < fTargets.length; i++) {
-			IDocument doc= fTargets[i].getViewer().getDocument();
+		for (LinkedModeUITarget fTarget : fTargets) {
+			IDocument doc= fTarget.getViewer().getDocument();
 			if (doc != null)
 				docs.add(doc);
 		}
@@ -1164,13 +1163,12 @@ public class LinkedModeUI {
 				if (fExitPosition != null)
 					fExitPosition.getDocument().removePosition(fExitPosition);
 
-				for (Iterator<IDocument> iter = docs.iterator(); iter.hasNext(); ) {
-					IDocument doc= iter.next();
+				for (IDocument doc : docs) {
 					doc.removePositionUpdater(fPositionUpdater);
 					boolean uninstallCat= false;
 					String[] cats= doc.getPositionCategories();
-					for (int j= 0; j < cats.length; j++) {
-						if (getCategory().equals(cats[j])) {
+					for (String cat : cats) {
+						if (getCategory().equals(cat)) {
 							uninstallCat= true;
 							break;
 						}

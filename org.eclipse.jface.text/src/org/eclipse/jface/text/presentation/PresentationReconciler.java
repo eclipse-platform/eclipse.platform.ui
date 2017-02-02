@@ -427,8 +427,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			TextPresentation presentation= new TextPresentation(damage, 1000);
 
 			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength(), false);
-			for (int i= 0; i < partitioning.length; i++) {
-				ITypedRegion r= partitioning[i];
+			for (ITypedRegion r : partitioning) {
 				IPresentationRepairer repairer= getRepairer(r.getType());
 				if (repairer != null)
 					repairer.createPresentation(presentation, r);

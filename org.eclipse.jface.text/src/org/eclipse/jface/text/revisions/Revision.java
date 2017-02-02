@@ -13,14 +13,12 @@ package org.eclipse.jface.text.revisions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
 import org.eclipse.jface.internal.text.revisions.Hunk;
-import org.eclipse.jface.internal.text.revisions.Range;
 
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.source.ILineRange;
@@ -71,10 +69,8 @@ public abstract class Revision {
 	public final List<RevisionRange> getRegions() {
 		if (fRanges == null) {
 			List<RevisionRange> ranges= new ArrayList<>(fChangeRegions.size());
-			for (Iterator<ChangeRegion> it= fChangeRegions.iterator(); it.hasNext();) {
-				ChangeRegion region= it.next();
-				for (Iterator<Range> inner= region.getAdjustedRanges().iterator(); inner.hasNext();) {
-					ILineRange range= inner.next();
+			for (ChangeRegion region : fChangeRegions) {
+				for (ILineRange range : region.getAdjustedRanges()) {
 					ranges.add(new RevisionRange(this, range));
 				}
 			}
@@ -92,11 +88,9 @@ public abstract class Revision {
 	 */
 	final void applyDiff(Hunk[] hunks) {
 		fRanges= null; // mark for recomputation
-		for (Iterator<ChangeRegion> regions= fChangeRegions.iterator(); regions.hasNext();) {
-			ChangeRegion region= regions.next();
+		for (ChangeRegion region : fChangeRegions) {
 			region.clearDiff();
-			for (int i= 0; i < hunks.length; i++) {
-				Hunk hunk= hunks[i];
+			for (Hunk hunk : hunks) {
 				region.adjustTo(hunk);
 			}
 		}

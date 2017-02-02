@@ -15,7 +15,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -185,9 +184,8 @@ public class TemplateStore {
 		if (!data.isCustom()) {
 			// check if the added template is not a duplicate id
 			String id= data.getId();
-			for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-				TemplatePersistenceData d2= it.next();
-				if (d2.getId() != null && d2.getId().equals(id))
+			for (TemplatePersistenceData persistenceData : fTemplates) {
+				if (persistenceData.getId() != null && persistenceData.getId().equals(id))
 					return;
 			}
 			fTemplates.add(data);
@@ -201,8 +199,7 @@ public class TemplateStore {
 	 */
 	public void save() throws IOException {
 		ArrayList<TemplatePersistenceData> custom= new ArrayList<>();
-		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : fTemplates) {
 			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
 				custom.add(data);
 		}
@@ -234,12 +231,11 @@ public class TemplateStore {
 		if (data.isUserAdded()) {
 			fTemplates.add(data);
 		} else {
-			for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-				TemplatePersistenceData d2= it.next();
-				if (d2.getId() != null && d2.getId().equals(data.getId())) {
-					d2.setTemplate(data.getTemplate());
-					d2.setDeleted(data.isDeleted());
-					d2.setEnabled(data.isEnabled());
+			for (TemplatePersistenceData persistenceData : fTemplates) {
+				if (persistenceData.getId() != null && persistenceData.getId().equals(data.getId())) {
+					persistenceData.setTemplate(data.getTemplate());
+					persistenceData.setDeleted(data.isDeleted());
+					persistenceData.setEnabled(data.isEnabled());
 					return;
 				}
 			}
@@ -268,8 +264,7 @@ public class TemplateStore {
 	 * Restores all contributed templates that have been deleted.
 	 */
 	public void restoreDeleted() {
-		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : fTemplates) {
 			if (data.isDeleted())
 				data.setDeleted(false);
 		}
@@ -337,8 +332,7 @@ public class TemplateStore {
 	 */
 	public Template[] getTemplates(String contextTypeId) {
 		List<Template> templates= new ArrayList<>();
-		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : fTemplates) {
 			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId())))
 				templates.add(data.getTemplate());
 		}
@@ -366,8 +360,7 @@ public class TemplateStore {
 	public Template findTemplate(String name, String contextTypeId) {
 		Assert.isNotNull(name);
 
-		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : fTemplates) {
 			Template template= data.getTemplate();
 			if (data.isEnabled() && !data.isDeleted()
 					&& (contextTypeId == null || contextTypeId.equals(template.getContextTypeId()))
@@ -401,8 +394,7 @@ public class TemplateStore {
 	 */
 	public TemplatePersistenceData[] getTemplateData(boolean includeDeleted) {
 		List<TemplatePersistenceData> datas= new ArrayList<>();
-		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : fTemplates) {
 			if (includeDeleted || !data.isDeleted())
 				datas.add(data);
 		}
@@ -420,8 +412,7 @@ public class TemplateStore {
 	 */
 	public TemplatePersistenceData getTemplateData(String id) {
 		Assert.isNotNull(id);
-		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : fTemplates) {
 			if (id.equals(data.getId()))
 				return data;
 		}
@@ -435,8 +426,7 @@ public class TemplateStore {
 			Reader input= new StringReader(pref);
 			TemplateReaderWriter reader= new TemplateReaderWriter();
 			TemplatePersistenceData[] datas= reader.read(input);
-			for (int i= 0; i < datas.length; i++) {
-				TemplatePersistenceData data= datas[i];
+			for (TemplatePersistenceData data : datas) {
 				add(data);
 			}
 		}

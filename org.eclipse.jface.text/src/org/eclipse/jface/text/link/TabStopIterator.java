@@ -13,7 +13,6 @@ package org.eclipse.jface.text.link;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -105,8 +104,7 @@ class TabStopIterator {
 
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
-		for (Iterator<LinkedPosition> it= fList.iterator(); it.hasNext(); ) {
-			LinkedPosition p= it.next();
+		for (LinkedPosition p : fList) {
 			if (p.offset > current.offset)
 				if (found == null || found.offset > p.offset)
 					found= p;
@@ -155,8 +153,7 @@ class TabStopIterator {
 
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
-		for (Iterator<LinkedPosition> it= fList.iterator(); it.hasNext(); ) {
-			LinkedPosition p= it.next();
+		for (LinkedPosition p : fList) {
 			if (p.offset < current.offset)
 				if (found == null || found.offset < p.offset)
 					found= p;

@@ -61,8 +61,8 @@ public final class SubjectControlContextInformationValidator implements ISubject
 		if (fContentAssistSubjectControl != null && fProcessor instanceof ISubjectControlContentAssistProcessor) {
 			IContextInformation[] infos= ((ISubjectControlContentAssistProcessor)fProcessor).computeContextInformation(fContentAssistSubjectControl, offset);
 			if (infos != null && infos.length > 0) {
-				for (int i= 0; i < infos.length; i++) {
-					if (fContextInformation.equals(infos[i]))
+				for (IContextInformation info : infos) {
+					if (fContextInformation.equals(info))
 						return true;
 				}
 			}

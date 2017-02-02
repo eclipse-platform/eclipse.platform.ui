@@ -239,8 +239,8 @@ public class PatternRule implements IPredicateRule {
 				// Skip escaped character(s)
 				if (fEscapeContinuesLine) {
 					c= scanner.read();
-					for (int i= 0; i < fSortedLineDelimiters.length; i++) {
-						if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], fBreaksOnEOF))
+					for (char[] fSortedLineDelimiter : fSortedLineDelimiters) {
+						if (c == fSortedLineDelimiter[0] && sequenceDetected(scanner, fSortedLineDelimiter, fBreaksOnEOF))
 							break;
 					}
 				} else
@@ -252,8 +252,8 @@ public class PatternRule implements IPredicateRule {
 					return true;
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
-				for (int i= 0; i < fSortedLineDelimiters.length; i++) {
-					if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], fBreaksOnEOF))
+				for (char[] fSortedLineDelimiter : fSortedLineDelimiters) {
+					if (c == fSortedLineDelimiter[0] && sequenceDetected(scanner, fSortedLineDelimiter, fBreaksOnEOF))
 						return true;
 				}
 			}

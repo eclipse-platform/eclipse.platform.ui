@@ -502,17 +502,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		// install content type specific plug-ins
 		String[] types= configuration.getConfiguredContentTypes(this);
-		for (int i= 0; i < types.length; i++) {
-
-			String t= types[i];
+		for (String t : types) {
 
 			setAutoEditStrategies(configuration.getAutoEditStrategies(this, t), t);
 			setTextDoubleClickStrategy(configuration.getDoubleClickStrategy(this, t), t);
 
 			int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(this, t);
 			if (stateMasks != null) {
-				for (int j= 0; j < stateMasks.length; j++)	{
-					int stateMask= stateMasks[j];
+				for (int stateMask : stateMasks) {
 					setTextHover(configuration.getTextHover(this, t, stateMask), t, stateMask);
 				}
 			} else {
@@ -1039,9 +1036,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			ISlaveDocumentManagerExtension extension= (ISlaveDocumentManagerExtension) manager;
 			IDocument[] slaves= extension.getSlaveDocuments(masterDocument);
 			if (slaves != null) {
-				for (int i= 0; i < slaves.length; i++) {
-					if (slaves[i] instanceof ChildDocument) {
-						ChildDocument child= (ChildDocument) slaves[i];
+				for (IDocument slave : slaves) {
+					if (slave instanceof ChildDocument) {
+						ChildDocument child= (ChildDocument) slave;
 						Position p= child.getParentDocumentRange();
 						try {
 

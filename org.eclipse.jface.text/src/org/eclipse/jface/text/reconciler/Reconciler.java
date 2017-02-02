@@ -135,8 +135,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 
 		ITypedRegion[] regions= computePartitioning(region.getOffset(), region.getLength());
 
-		for (int i= 0; i < regions.length; i++) {
-			ITypedRegion r= regions[i];
+		for (ITypedRegion r : regions) {
 			IReconcilingStrategy s= getReconcilingStrategy(r.getType());
 			if (s == null)
 				continue;
@@ -179,8 +178,8 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	protected void initialProcess() {
 		ITypedRegion[] regions= computePartitioning(0, getDocument().getLength());
 		List<String> contentTypes= new ArrayList<>(regions.length);
-		for (int i= 0; i < regions.length; i++) {
-			String contentType= regions[i].getType();
+		for (ITypedRegion region : regions) {
+			String contentType= region.getType();
 			if( contentTypes.contains(contentType))
 				continue;
 			contentTypes.add(contentType);

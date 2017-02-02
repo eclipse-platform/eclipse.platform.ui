@@ -3616,8 +3616,8 @@ public class TextViewer extends Viewer implements
 		// make iterator robust against adding/removing strategies from within strategies
 		default:
 			strategies= new ArrayList<>(strategies);
-			for (final Iterator<IAutoEditStrategy> iterator= strategies.iterator(); iterator.hasNext(); )
-				iterator.next().customizeDocumentCommand(document, command);
+				for (IAutoEditStrategy iAutoEditStrategy : strategies)
+					iAutoEditStrategy.customizeDocumentCommand(document, command);
 
 			break;
 		}
@@ -4370,8 +4370,7 @@ public class TextViewer extends Viewer implements
 
 			// OK - change the document
 			int decrement= 0;
-			for (int i= 0; i < occurrences.length; i++) {
-				IRegion r= occurrences[i];
+			for (IRegion r : occurrences) {
 				d.replace(r.getOffset() - decrement, r.getLength(), ""); //$NON-NLS-1$
 				decrement += r.getLength();
 			}
@@ -5516,9 +5515,9 @@ public class TextViewer extends Viewer implements
 	@Override
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask) {
 		if (fHyperlinkDetectors != null) {
-			for (int i= 0; i < fHyperlinkDetectors.length; i++) {
-				if (fHyperlinkDetectors[i] instanceof IHyperlinkDetectorExtension)
-					((IHyperlinkDetectorExtension)fHyperlinkDetectors[i]).dispose();
+			for (IHyperlinkDetector fHyperlinkDetector : fHyperlinkDetectors) {
+				if (fHyperlinkDetector instanceof IHyperlinkDetectorExtension)
+					((IHyperlinkDetectorExtension)fHyperlinkDetector).dispose();
 			}
 		}
 

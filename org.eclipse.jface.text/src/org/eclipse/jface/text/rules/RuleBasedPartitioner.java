@@ -265,8 +265,8 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 							 (p.getOffset() + p.getLength() == fPreviousDocumentLength)));
 
 				fPositionUpdater.update(e);
-				for (int i= 0; i < category.length; i++) {
-					p= category[i];
+				for (Position element : category) {
+					p= element;
 					if (p.isDeleted) {
 						rememberDeletedOffset(e.getOffset());
 						break;
@@ -479,8 +479,8 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 */
 	protected boolean isSupportedContentType(String contentType) {
 		if (contentType != null) {
-			for (int i= 0; i < fLegalContentTypes.length; i++) {
-				if (fLegalContentTypes[i].equals(contentType))
+			for (String fLegalContentType : fLegalContentTypes) {
+				if (fLegalContentType.equals(contentType))
 					return true;
 			}
 		}
@@ -540,9 +540,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 			int start, end, gapOffset;
 			Position gap= null;
 
-			for (int i= 0; i < category.length; i++) {
+			for (Position element : category) {
 
-				current= (TypedPosition) category[i];
+				current= (TypedPosition) element;
 
 				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
 				gap= new Position(gapOffset, current.getOffset() - gapOffset);

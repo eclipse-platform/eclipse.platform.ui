@@ -747,19 +747,17 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 
 		WidgetInfos infos= null;
 
-		for (Iterator<Object> iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
-			Object annotationType= iterator.next();
-
+		for (Object annotationType : fAnnotationsSortedByLayer) {
 			if (skip(annotationType))
 				continue;
 
 			int[] style= new int[] { FilterIterator.PERSISTENT, FilterIterator.TEMPORARY };
-			for (int t=0; t < style.length; t++) {
+			for (int element : style) {
 				boolean areColorsComputed= false;
 				Color fill= null;
 				Color stroke= null;
 
-				Iterator<Annotation> e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
+				Iterator<Annotation> e= new FilterIterator(annotationType, element, fCachedAnnotations.iterator());
 				while (e.hasNext()) {
 					Annotation a= e.next();
 					Position p= fModel.getPosition(a);
@@ -811,8 +809,8 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 						fAnnotationHeight= hh;
 
 						if (!areColorsComputed) {
-							stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
-							fill= fUseSaturatedColors ? stroke : getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+							stroke= getStrokeColor(annotationType, element == FilterIterator.TEMPORARY);
+							fill= fUseSaturatedColors ? stroke : getFillColor(annotationType, element == FilterIterator.TEMPORARY);
 							areColorsComputed= true;
 						}
 
@@ -1361,8 +1359,8 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
-				for (int i= 0; i < superTypes.length; i++) {
-					color= fAnnotationTypes2Colors.get(superTypes[i]);
+				for (Object superType : superTypes) {
+					color= fAnnotationTypes2Colors.get(superType);
 					if (color != null)
 						return color;
 				}

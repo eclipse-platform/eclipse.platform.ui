@@ -267,8 +267,7 @@ public class TemplateReaderWriter {
 			Node root= document.createElement(TEMPLATE_ROOT);
 			document.appendChild(root);
 
-			for (int i= 0; i < templates.length; i++) {
-				TemplatePersistenceData data= templates[i];
+			for (TemplatePersistenceData data : templates) {
 				Template template= data.getTemplate();
 
 				Node node= document.createElement(TEMPLATE_ELEMENT);

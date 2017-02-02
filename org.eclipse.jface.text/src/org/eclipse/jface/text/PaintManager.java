@@ -12,7 +12,6 @@ package org.eclipse.jface.text;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
@@ -264,8 +263,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			fManager= null;
 		}
 
-		for (Iterator<IPainter> e = fPainters.iterator(); e.hasNext();)
-			e.next().dispose();
+		for (IPainter iPainter : fPainters)
+			iPainter.dispose();
 		fPainters.clear();
 
 		fTextViewer.removeTextInputListener(this);
@@ -298,8 +297,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 * @see IPainter
 	 */
 	private void paint(int reason) {
-		for (Iterator<IPainter> e = fPainters.iterator(); e.hasNext();)
-			e.next().paint(reason);
+		for (IPainter iPainter : fPainters)
+			iPainter.paint(reason);
 	}
 
 	@Override
@@ -350,8 +349,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput != null) {
-			for (Iterator<IPainter> e= fPainters.iterator(); e.hasNext();)
-				e.next().deactivate(false);
+			for (IPainter iPainter : fPainters)
+				iPainter.deactivate(false);
 			fManager.uninstall(oldInput);
 			removeListeners();
 		}
