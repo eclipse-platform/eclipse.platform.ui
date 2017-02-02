@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 454143, 461063, 495917
  *     Friederike Schertel <friederike@schertel.org> - Bug 478336
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504089, 509224
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504089, 509224, 509232
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -75,6 +75,19 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 		});
 		return refs;
 
+	}
+
+	/*
+	 * Specialized to get the static label that was shown in the past (509232)
+	 */
+	@Override
+	protected String getWorkbenchPartReferenceText(WorkbenchPartReference ref) {
+		if (ref instanceof EditorReference) {
+			return WorkbenchMessages.CyclePartAction_editor;
+		} else if (ref instanceof ViewReference) {
+			return ref.getPartName();
+		}
+		return super.getWorkbenchPartReferenceText(ref);
 	}
 
 	/**
