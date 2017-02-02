@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
@@ -37,8 +40,7 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class WorkbenchSWTActivator implements BundleActivator { // extends
-																// Plugin {
+public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListener {
 	public static final String PI_RENDERERS = "org.eclipse.e4.ui.workbench.swt"; //$NON-NLS-1$
 
 	private BundleContext context;
@@ -120,9 +122,7 @@ public class WorkbenchSWTActivator implements BundleActivator { // extends
 	}
 
 	public static void trace(String option, String msg, Throwable error) {
-		final DebugOptions debugOptions = activator.getDebugOptions();
-		if (debugOptions.isDebugEnabled()
-				&& debugOptions.getBooleanOption(PI_RENDERERS + option, false)) {
+		if (DEBUG) {
 			System.out.println(msg);
 			if (error != null) {
 				error.printStackTrace(System.out);
@@ -131,21 +131,15 @@ public class WorkbenchSWTActivator implements BundleActivator { // extends
 		activator.getTrace().trace(option, msg, error);
 	}
 
-	public DebugOptions getDebugOptions() {
-		if (debugTracker == null) {
-			if (context == null) {
-				return null;
-			}
-			debugTracker = new ServiceTracker<>(context, DebugOptions.class, null);
-			debugTracker.open();
-		}
-		return debugTracker.getService();
+	@Override
+	public void optionsChanged(DebugOptions options) {
+		trace = options.newDebugTrace(PI_RENDERERS);
+		DEBUG = options.getBooleanOption(PI_RENDERERS + DEBUG_FLAG, false);
+		DEBUG_MENUS = options.getBooleanOption(PI_RENDERERS + DEBUG_MENUS_FLAG, false);
+		DEBUG_RENDERER = options.getBooleanOption(PI_RENDERERS + DEBUG_RENDERER_FLAG, false);
 	}
-
+	
 	public DebugTrace getTrace() {
-		if (trace == null) {
-			trace = getDebugOptions().newDebugTrace(PI_RENDERERS);
-		}
 		return trace;
 	}
 

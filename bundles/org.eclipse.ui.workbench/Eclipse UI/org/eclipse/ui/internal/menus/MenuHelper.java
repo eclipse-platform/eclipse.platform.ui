@@ -100,7 +100,7 @@ import org.osgi.framework.FrameworkUtil;
 public class MenuHelper {
 
 	public static void trace(String msg, Throwable error) {
-		WorkbenchSWTActivator.trace(Policy.MENUS, msg, error);
+		WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, msg, error);
 	}
 
 	private static final Pattern SCHEME_PATTERN = Pattern.compile("\\p{Alpha}[\\p{Alnum}+.-]*:.*"); //$NON-NLS-1$
@@ -392,8 +392,10 @@ public class MenuHelper {
 			return ItemType.RADIO;
 		}
 		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
-			trace("Failed to get style for " + IWorkbenchRegistryConstants.STYLE_PULLDOWN, null); //$NON-NLS-1$
-			// return CommandContributionItem.STYLE_PULLDOWN;
+			if (Policy.DEBUG_MENUS) {
+				trace("Failed to get style for " + IWorkbenchRegistryConstants.STYLE_PULLDOWN, null); //$NON-NLS-1$
+				// return CommandContributionItem.STYLE_PULLDOWN;
+			}
 		}
 		return ItemType.PUSH;
 	}

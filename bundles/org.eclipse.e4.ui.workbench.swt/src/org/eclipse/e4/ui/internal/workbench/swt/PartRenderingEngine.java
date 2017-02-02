@@ -54,9 +54,7 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.PersistState;
-import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -143,7 +141,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		boolean okToRender = parent instanceof MApplication || parent.getWidget() != null;
 
 		if (changedElement.isToBeRendered() && okToRender) {
-			Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
+			if (Policy.DEBUG_RENDERER) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_RENDERER_FLAG, "visible -> true", null); //$NON-NLS-1$
+			}
 
 			// Note that the 'createGui' protocol calls 'childAdded'
 			Object w = createGui(changedElement);
@@ -151,7 +151,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 				fixZOrder(changedElement);
 			}
 		} else {
-			Activator.trace(Policy.DEBUG_RENDERER, "visible -> false", null); //$NON-NLS-1$
+			if (Policy.DEBUG_RENDERER) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_RENDERER_FLAG, "visible -> false", null); //$NON-NLS-1$
+			}
 
 			// Ensure that the element about to be removed is not the
 			// selected element
@@ -279,7 +281,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 
 		if (UIEvents.isADD(event)) {
-			Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
+			if (Policy.DEBUG_RENDERER) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_RENDERER_FLAG, "Child Added", null); //$NON-NLS-1$
+			}
 			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
 				MUIElement added = (MUIElement) o;
 
@@ -318,7 +322,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 		} else if (UIEvents.isREMOVE(event)) {
-			Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
+			if (Policy.DEBUG_RENDERER) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_RENDERER_FLAG, "Child Removed", null); //$NON-NLS-1$
+			}
 			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
 				MUIElement removed = (MUIElement) o;
 				// Removing invisible elements is a NO-OP as far as the
@@ -491,9 +497,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private static void populateModelInterfaces(MContext contextModel,
 			IEclipseContext context, Class<?>[] interfaces) {
 		for (Class<?> intf : interfaces) {
-			Activator.trace(Policy.DEBUG_CONTEXTS,
-					"Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
-							+ contextModel.getClass().getName(), null);
+			if (Policy.DEBUG_CONTEXTS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_CONTEXTS_FLAG,
+						"Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
+								+ contextModel.getClass().getName(), null);
+			}
 			context.set(intf.getName(), contextModel);
 
 			populateModelInterfaces(contextModel, context, intf.getInterfaces());

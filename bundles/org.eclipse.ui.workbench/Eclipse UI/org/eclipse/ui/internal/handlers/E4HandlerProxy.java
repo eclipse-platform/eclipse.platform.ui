@@ -78,8 +78,10 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms, @Optional Event trigger,
 			@Optional IEvaluationContext staticContext) throws ExecutionException,
 			NotHandledException {
-		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
-				+ handler + " with: " + context, null); //$NON-NLS-1$
+		if (Policy.DEBUG_CMDS) {
+			Activator.trace(Policy.DEBUG_CMDS_FLAG, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
+					+ handler + " with: " + context, null); //$NON-NLS-1$
+		}
 		IEvaluationContext appContext = staticContext;
 		if (appContext == null) {
 			appContext = new ExpressionContext(context);

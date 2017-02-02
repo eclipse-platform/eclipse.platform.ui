@@ -569,8 +569,10 @@ public class LegacyHandlerService implements IHandlerService {
 			if (awChildren.length > 0) {
 				final IConfigurationElement[] subChildren = awChildren[0].getChildren();
 				if (subChildren.length != 1) {
-					Activator.trace(Policy.DEBUG_CMDS,
-							"Incorrect activeWhen element " + commandId, null); //$NON-NLS-1$
+					if (Policy.DEBUG_CMDS) {
+						Activator.trace(Policy.DEBUG_CMDS_FLAG,
+								"Incorrect activeWhen element " + commandId, null); //$NON-NLS-1$
+					}
 					continue;
 				}
 				final ElementHandler elementHandler = ElementHandler.getDefault();
@@ -578,8 +580,10 @@ public class LegacyHandlerService implements IHandlerService {
 				try {
 					activeWhen = elementHandler.create(converter, subChildren[0]);
 				} catch (CoreException e) {
-					Activator.trace(Policy.DEBUG_CMDS,
-							"Incorrect activeWhen element " + commandId, e); //$NON-NLS-1$
+					if (Policy.DEBUG_CMDS) {
+						Activator.trace(Policy.DEBUG_CMDS_FLAG,
+								"Incorrect activeWhen element " + commandId, e); //$NON-NLS-1$
+					}
 				}
 			}
 			Expression enabledWhen = null;
@@ -588,8 +592,10 @@ public class LegacyHandlerService implements IHandlerService {
 			if (ewChildren.length > 0) {
 				final IConfigurationElement[] subChildren = ewChildren[0].getChildren();
 				if (subChildren.length != 1) {
-					Activator.trace(Policy.DEBUG_CMDS,
-							"Incorrect enableWhen element " + commandId, null); //$NON-NLS-1$
+					if (Policy.DEBUG_CMDS) {
+						Activator.trace(Policy.DEBUG_CMDS_FLAG,
+								"Incorrect enableWhen element " + commandId, null); //$NON-NLS-1$
+					}
 					continue;
 				}
 				final ElementHandler elementHandler = ElementHandler.getDefault();
@@ -597,8 +603,10 @@ public class LegacyHandlerService implements IHandlerService {
 				try {
 					enabledWhen = elementHandler.create(converter, subChildren[0]);
 				} catch (CoreException e) {
-					Activator.trace(Policy.DEBUG_CMDS,
-							"Incorrect enableWhen element " + commandId, e); //$NON-NLS-1$
+					if (Policy.DEBUG_CMDS) {
+						Activator.trace(Policy.DEBUG_CMDS_FLAG,
+								"Incorrect enableWhen element " + commandId, e); //$NON-NLS-1$
+					}
 				}
 			}
 			registerLegacyHandler(

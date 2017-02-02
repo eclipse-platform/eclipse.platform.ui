@@ -54,7 +54,9 @@ public class ContextProcessingAddon {
 	}
 
 	private void defineContexts() {
-		Activator.trace(Policy.DEBUG_CMDS, "Initialize contexts and parents from model", null); //$NON-NLS-1$
+		if (Policy.DEBUG_CMDS) {
+			Activator.trace(Policy.DEBUG_CMDS_FLAG, "Initialize contexts and parents from model", null); //$NON-NLS-1$
+		}
 		for (MBindingContext root : application.getRootContext()) {
 			defineContexts(null, root);
 		}

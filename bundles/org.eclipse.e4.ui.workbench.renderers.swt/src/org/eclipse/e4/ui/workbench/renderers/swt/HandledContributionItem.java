@@ -36,8 +36,9 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
-import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -143,7 +144,9 @@ public class HandledContributionItem extends AbstractContributionItem {
 				parameters.put(mParm.getName(), mParm.getValue());
 			}
 			ParameterizedCommand parmCmd = commandService.createCommand(cmdId, parameters);
-			Activator.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
+			if (Policy.DEBUG_MENUS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "command: " + parmCmd, null); //$NON-NLS-1$
+			}
 			if (parmCmd == null) {
 				Activator.log(IStatus.ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
 								+ " with " + parameters); //$NON-NLS-1$

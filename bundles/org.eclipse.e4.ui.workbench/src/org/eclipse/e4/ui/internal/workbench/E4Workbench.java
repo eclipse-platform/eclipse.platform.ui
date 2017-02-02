@@ -174,7 +174,9 @@ public class E4Workbench implements IWorkbench {
 	}
 
 	private void init(MApplication appElement) {
-		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
+		if (Policy.DEBUG_WORKBENCH) {
+			Activator.trace(Policy.DEBUG_WORKBENCH_FLAG, "init() workbench", null); //$NON-NLS-1$
+		}
 
 		IEclipseContext context = appElement.getContext();
 		if (context != null) {
@@ -244,9 +246,10 @@ public class E4Workbench implements IWorkbench {
 		} else {
 			context = parentContext.createChild("PartContext(" + contextModel + ')'); //$NON-NLS-1$
 		}
-
-		Activator.trace(Policy.DEBUG_CONTEXTS, "initializeContext(" //$NON-NLS-1$
-				+ parentContext.toString() + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_CONTEXTS) {
+			Activator.trace(Policy.DEBUG_CONTEXTS_FLAG, "initializeContext(" //$NON-NLS-1$
+					+ parentContext.toString() + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		// fill in the interfaces, so MContributedPart.class.getName() will
 		// return the model element, for example.
 		ContributionsAnalyzer.populateModelInterfaces(contextModel, context, contextModel

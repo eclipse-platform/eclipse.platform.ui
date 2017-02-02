@@ -35,7 +35,7 @@ public class MenuManagerServiceFilter implements Listener {
 	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
-		WorkbenchSWTActivator.trace(Policy.MENUS, msg + ": " + menu + ": " //$NON-NLS-1$ //$NON-NLS-2$
+		WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, msg + ": " + menu + ": " //$NON-NLS-1$ //$NON-NLS-2$
 				+ menuModel, null);
 	}
 

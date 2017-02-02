@@ -11,12 +11,11 @@
 
 package org.eclipse.ui.internal.services;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -71,7 +70,9 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 			try {
 				cache = expression.evaluate(context) != EvaluationResult.FALSE;
 			} catch (CoreException e) {
-				Activator.trace(Policy.DEBUG_CMDS, "Failed to calculate active", e); //$NON-NLS-1$
+				if (Policy.DEBUG_CMDS) {
+					Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to calculate active", e); //$NON-NLS-1$
+				}
 			}
 		}
 		return cache;

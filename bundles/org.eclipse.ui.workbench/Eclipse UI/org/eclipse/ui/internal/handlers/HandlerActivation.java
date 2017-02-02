@@ -94,7 +94,9 @@ final class HandlerActivation implements IHandlerActivation {
 				 * information is not really useful to us, so we can just treat
 				 * it as false.
 				 */
-				Activator.trace(Policy.DEBUG_CMDS, "Failed to calculate active", e); //$NON-NLS-1$
+				if (Policy.DEBUG_CMDS) {
+					Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to calculate active", e); //$NON-NLS-1$
+				}
 			}
 		}
 		return active;

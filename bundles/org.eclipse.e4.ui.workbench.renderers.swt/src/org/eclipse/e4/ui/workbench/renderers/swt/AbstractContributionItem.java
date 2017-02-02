@@ -18,10 +18,10 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
@@ -150,7 +150,9 @@ public abstract class AbstractContributionItem extends ContributionItem {
 					iconDescriptor = ImageDescriptor.getMissingImageDescriptor();
 					image = resourceManager.createImage(iconDescriptor);
 					// as we replaced the failed icon, log the message once.
-					Activator.trace(Policy.DEBUG_MENUS, "failed to create image " + iconURI, e); //$NON-NLS-1$
+					if (Policy.DEBUG_MENUS) {
+						WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "failed to create image " + iconURI, e); //$NON-NLS-1$
+					}
 				}
 			}
 		}
