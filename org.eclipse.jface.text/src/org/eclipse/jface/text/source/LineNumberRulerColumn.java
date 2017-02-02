@@ -841,7 +841,12 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
 
 		String s= createDisplayString(line);
-		int indentation= fIndentation[s.length()];
+		int index= s.length();
+		if (index >= fIndentation.length) {
+			// Bug 325434: our data is not in-sync with the document, don't try to paint
+			return;
+		}
+		int indentation= fIndentation[index];
 		int baselineBias= getBaselineBias(gc, widgetLine);
 		gc.drawString(s, indentation, y + baselineBias, true);
 	}
