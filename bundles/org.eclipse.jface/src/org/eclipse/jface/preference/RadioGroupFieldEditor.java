@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -249,15 +249,12 @@ public class RadioGroupFieldEditor extends FieldEditor {
                 radio.setText(labelAndValue[0]);
                 radio.setData(labelAndValue[1]);
                 radio.setFont(font);
-                radio.addSelectionListener(new SelectionAdapter() {
-                    @Override
-					public void widgetSelected(SelectionEvent event) {
-                        String oldValue = value;
-                        value = (String) event.widget.getData();
-                        setPresentsDefaultValue(false);
-                        fireValueChanged(VALUE, oldValue, value);
-                    }
-                });
+                radio.addSelectionListener(widgetSelectedAdapter(event -> {
+				    String oldValue = value;
+				    value = (String) event.widget.getData();
+				    setPresentsDefaultValue(false);
+				    fireValueChanged(VALUE, oldValue, value);
+				}));
             }
             radioBox.addDisposeListener(event -> {
 			    radioBox = null;

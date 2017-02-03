@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -207,12 +207,7 @@ public class ScaleFieldEditor extends FieldEditor {
         if (scale == null) {
             scale = new Scale(parent, SWT.HORIZONTAL);
             scale.setFont(parent.getFont());
-            scale.addSelectionListener(new SelectionAdapter() {
-                @Override
-				public void widgetSelected(SelectionEvent event) {
-                    valueChanged();
-                }
-            });
+            scale.addSelectionListener(widgetSelectedAdapter(event -> valueChanged()));
             scale.addDisposeListener(event -> scale = null);
         } else {
             checkParent(scale, parent);

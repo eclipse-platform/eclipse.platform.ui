@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.action;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Assert;
@@ -18,7 +20,6 @@ import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -215,15 +216,11 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             // Handle for chevron clicking
             if (getUseChevron()) {
                 // Chevron Support
-                coolItem.addSelectionListener(new SelectionAdapter() {
-
-                    @Override
-					public void widgetSelected(SelectionEvent event) {
-                        if (event.detail == SWT.ARROW) {
-                            handleChevron(event);
-                        }
-                    }
-                });
+                coolItem.addSelectionListener(widgetSelectedAdapter(event -> {
+				    if (event.detail == SWT.ARROW) {
+				        handleChevron(event);
+				    }
+				}));
             }
 
             // Handle for disposal

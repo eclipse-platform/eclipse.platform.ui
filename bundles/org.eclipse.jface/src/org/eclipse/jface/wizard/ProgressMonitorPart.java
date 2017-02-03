@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
@@ -21,8 +23,6 @@ import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -256,15 +256,12 @@ public class ProgressMonitorPart extends Composite implements
         	fStopButton = new ToolItem(fToolBar, SWT.PUSH);
         	// It would have been nice to use the fCancelListener, but that
         	// listener operates on the fCancelComponent which must be a control.
-        	fStopButton.addSelectionListener(new SelectionAdapter() {
-        		@Override
-				public void widgetSelected(SelectionEvent e) {
-        			setCanceled(true);
-        			if (fStopButton != null) {
-        				fStopButton.setEnabled(false);
-        			}
-        		}
-        	});
+        	fStopButton.addSelectionListener(widgetSelectedAdapter(e -> {
+				setCanceled(true);
+				if (fStopButton != null) {
+					fStopButton.setEnabled(false);
+				}
+			}));
         	final Image stopImage = ImageDescriptor.createFromFile(
         			ProgressMonitorPart.class, "images/stop.png").createImage(getDisplay()); //$NON-NLS-1$
         	final Cursor arrowCursor = new Cursor(this.getDisplay(), SWT.CURSOR_ARROW);
