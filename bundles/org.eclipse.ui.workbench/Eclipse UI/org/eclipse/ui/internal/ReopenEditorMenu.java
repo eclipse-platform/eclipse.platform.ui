@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
@@ -20,8 +22,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
@@ -229,12 +229,7 @@ public class ReopenEditorMenu extends ContributionItem {
                     MenuItem mi = new MenuItem(menu, SWT.PUSH, menuIndex[0]);
                     ++menuIndex[0];
                     mi.setText(text);
-                    mi.addSelectionListener(new SelectionAdapter() {
-                        @Override
-						public void widgetSelected(SelectionEvent e) {
-                            open(item);
-                        }
-                    });
+                    mi.addSelectionListener(widgetSelectedAdapter(e -> open(item)));
                 }
 
                 @Override

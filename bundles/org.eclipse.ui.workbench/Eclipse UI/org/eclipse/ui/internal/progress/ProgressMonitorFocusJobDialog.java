@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
@@ -24,8 +26,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.ProgressMonitorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -91,16 +91,12 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				IDialogConstants.CLOSE_ID,
 				ProgressMessages.ProgressMonitorFocusJobDialog_RunInBackgroundButton,
 				true);
-		runInWorkspace.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Rectangle shellPosition = getShell().getBounds();
-				job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG,
-						Boolean.FALSE);
-				finishedRun();
-				ProgressManagerUtil.animateDown(shellPosition);
-			}
-		});
+		runInWorkspace.addSelectionListener(widgetSelectedAdapter(e -> {
+			Rectangle shellPosition = getShell().getBounds();
+			job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.FALSE);
+			finishedRun();
+			ProgressManagerUtil.animateDown(shellPosition);
+		}));
 		runInWorkspace.setCursor(arrowCursor);
 
 		cancel = createButton(parent, IDialogConstants.CANCEL_ID,
@@ -279,12 +275,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		gd.horizontalAlignment = GridData.FILL;
 		showUserDialogButton.setLayoutData(gd);
 
-		showUserDialogButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showDialog = showUserDialogButton.getSelection();
-			}
-		});
+		showUserDialogButton.addSelectionListener(widgetSelectedAdapter(e -> showDialog = showUserDialogButton.getSelection()));
 
 		super.createExtendedDialogArea(parent);
 	}

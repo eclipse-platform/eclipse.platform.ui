@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
@@ -68,12 +68,7 @@ public class PreferenceLinkArea extends Object {
 			result = MessageFormat.format(message, node.getLabelText());
 
             //Only add the selection listener if the node is found
-            pageLink.addSelectionListener(new SelectionAdapter() {
-                @Override
-				public void widgetSelected(SelectionEvent e) {
-                    pageContainer.openPage(pageId, pageData);
-                }
-            });
+            pageLink.addSelectionListener(widgetSelectedAdapter(e -> pageContainer.openPage(pageId, pageData)));
         }
         pageLink.setText(result);
 

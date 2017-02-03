@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,8 +23,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -174,12 +174,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
         detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
                 ProgressMessages.ProgressMonitorJobsDialog_DetailsTitle,
                 false);
-        detailsButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                handleDetailsButtonSelect();
-            }
-        });
+        detailsButton.addSelectionListener(widgetSelectedAdapter(e -> handleDetailsButtonSelect()));
         detailsButton.setCursor(arrowCursor);
         detailsButton.setEnabled(enableDetailsButton);
     }

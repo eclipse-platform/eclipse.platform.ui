@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +30,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -177,24 +177,14 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		openSameWindowButton
 				.setSelection(IPreferenceConstants.OPM_ACTIVE_PAGE == openPerspMode);
 		openSameWindowButton.setFont(font);
-		openSameWindowButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openPerspMode = IPreferenceConstants.OPM_ACTIVE_PAGE;
-			}
-		});
+		openSameWindowButton.addSelectionListener(widgetSelectedAdapter(e -> openPerspMode = IPreferenceConstants.OPM_ACTIVE_PAGE));
 
 		openNewWindowButton = new Button(buttonComposite, SWT.RADIO);
 		openNewWindowButton.setText(OPM_NEW_WINDOW);
 		openNewWindowButton
 				.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
 		openNewWindowButton.setFont(font);
-		openNewWindowButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openPerspMode = IPreferenceConstants.OPM_NEW_WINDOW;
-			}
-		});
+		openNewWindowButton.addSelectionListener(widgetSelectedAdapter(e -> openPerspMode = IPreferenceConstants.OPM_NEW_WINDOW));
 
 	}
 
@@ -232,12 +222,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		// Add perspectivesTable.
 		perspectivesTable = new Table(perspectivesComponent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.BORDER);
-	    perspectivesTable.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateButtons();
-			}
-		});
+	    perspectivesTable.addSelectionListener(widgetSelectedAdapter(e -> updateButtons()));
         perspectivesTable.setFont(font);
 
 		data = new GridData(GridData.FILL_BOTH);
@@ -298,12 +283,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		GridData data = setButtonLayoutData(button);
 		data.horizontalAlignment = GridData.FILL;
 
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				verticalButtonPressed(event.widget);
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(event -> verticalButtonPressed(event.widget)));
 		button.setToolTipText(label);
 		if (defaultButton) {
 			Shell shell = parent.getShell();

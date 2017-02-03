@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -67,24 +67,19 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
 
             toolItem.setText(""); //$NON-NLS-1$
             toolItem.setToolTipText(WorkbenchMessages.PerspectiveBarNewContributionItem_toolTip);
-            toolItem.addSelectionListener(new SelectionAdapter() {
-
-                @Override
-				public void widgetSelected(SelectionEvent event) {
-                    menuManager.update(true);
-                    Point point = new Point(event.x, event.y);
-                    if (event.widget instanceof ToolItem) {
-                        ToolItem toolItem = (ToolItem) event.widget;
-                        Rectangle rectangle = toolItem.getBounds();
-                        point = new Point(rectangle.x, rectangle.y
-                                + rectangle.height);
-                    }
-                    Menu menu = menuManager.createContextMenu(parent);
-                    point = parent.toDisplay(point);
-                    menu.setLocation(point.x, point.y);
-                    menu.setVisible(true);
-                }
-            });
+            toolItem.addSelectionListener(widgetSelectedAdapter(event -> {
+			    menuManager.update(true);
+			    Point point = new Point(event.x, event.y);
+			    if (event.widget instanceof ToolItem) {
+			        ToolItem toolItem = (ToolItem) event.widget;
+			        Rectangle rectangle = toolItem.getBounds();
+					point = new Point(rectangle.x, rectangle.y + rectangle.height);
+			    }
+			    Menu menu = menuManager.createContextMenu(parent);
+			    point = parent.toDisplay(point);
+			    menu.setLocation(point.x, point.y);
+			    menu.setVisible(true);
+			}));
         }
     }
 }
