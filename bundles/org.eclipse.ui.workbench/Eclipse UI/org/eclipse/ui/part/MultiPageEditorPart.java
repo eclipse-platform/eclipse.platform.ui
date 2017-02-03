@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,8 +36,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -280,13 +280,10 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		parent.setLayout(new FillLayout());
 		final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM
 				| SWT.FLAT);
-		newContainer.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int newPageIndex = newContainer.indexOf((CTabItem) e.item);
-				pageChange(newPageIndex);
-			}
-		});
+		newContainer.addSelectionListener(widgetSelectedAdapter(e -> {
+			int newPageIndex = newContainer.indexOf((CTabItem) e.item);
+			pageChange(newPageIndex);
+		}));
 		newContainer.addTraverseListener(e -> {
 			switch (e.detail) {
 				case SWT.TRAVERSE_PAGE_NEXT:

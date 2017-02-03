@@ -13,6 +13,9 @@
 
 package org.eclipse.ui.internal.keys;
 
+import static org.eclipse.swt.events.SelectionListener.widgetDefaultSelectedAdapter;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.MessageFormat;
 import java.io.BufferedWriter;
@@ -576,12 +579,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		comboScheme.setLayoutData(gridData);
 		comboScheme.setVisibleItemCount(ITEMS_TO_SHOW);
 
-		comboScheme.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public final void widgetSelected(final SelectionEvent e) {
-				selectedComboScheme();
-			}
-		});
+		comboScheme.addSelectionListener(widgetSelectedAdapter(e -> selectedComboScheme()));
 
 		labelSchemeExtends = new Label(compositeKeyConfiguration, SWT.LEFT);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -611,12 +609,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		comboCategory.setLayoutData(gridData);
 		comboCategory.setVisibleItemCount(ITEMS_TO_SHOW);
 
-		comboCategory.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public final void widgetSelected(final SelectionEvent e) {
-				update();
-			}
-		});
+		comboCategory.addSelectionListener(widgetSelectedAdapter(e -> update()));
 
 		final Label labelCommand = new Label(groupCommand, SWT.LEFT);
 		gridData = new GridData();
@@ -630,12 +623,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		comboCommand.setLayoutData(gridData);
 		comboCommand.setVisibleItemCount(9);
 
-		comboCommand.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public final void widgetSelected(final SelectionEvent e) {
-				update();
-			}
-		});
+		comboCommand.addSelectionListener(widgetSelectedAdapter(e -> update()));
 
 		labelBindingsForCommand = new Label(groupCommand, SWT.LEFT);
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -680,13 +668,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			}
 		});
 
-		tableBindingsForCommand.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedTableBindingsForCommand();
-			}
-		});
+		tableBindingsForCommand.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedTableBindingsForCommand()));
 
 		final Group groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
 		gridLayout = new GridLayout();
@@ -762,30 +744,19 @@ public final class KeysPreferencePage extends PreferencePage implements
 			final KeyStroke trappedKey = (KeyStroke) trappedKeyItr.next();
 			final MenuItem menuItem = new MenuItem(menuButtonAddKey, SWT.PUSH);
 			menuItem.setText(trappedKey.format());
-			menuItem.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textTriggerSequenceManager.insert(trappedKey);
-					textTriggerSequence.setFocus();
-					textTriggerSequence.setSelection(textTriggerSequence
-							.getTextLimit());
-				}
-			});
+			menuItem.addSelectionListener(widgetSelectedAdapter(e -> {
+				textTriggerSequenceManager.insert(trappedKey);
+				textTriggerSequence.setFocus();
+				textTriggerSequence.setSelection(textTriggerSequence.getTextLimit());
+			}));
 		}
-		buttonAddKey.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				Point buttonLocation = buttonAddKey.getLocation();
-				buttonLocation = groupKeySequence.toDisplay(buttonLocation.x,
-						buttonLocation.y);
-				Point buttonSize = buttonAddKey.getSize();
-				menuButtonAddKey.setLocation(buttonLocation.x, buttonLocation.y
-						+ buttonSize.y);
-				menuButtonAddKey.setVisible(true);
-			}
-		});
+		buttonAddKey.addSelectionListener(widgetSelectedAdapter(selectionEvent -> {
+			Point buttonLocation = buttonAddKey.getLocation();
+			buttonLocation = groupKeySequence.toDisplay(buttonLocation.x, buttonLocation.y);
+			Point buttonSize = buttonAddKey.getSize();
+			menuButtonAddKey.setLocation(buttonLocation.x, buttonLocation.y + buttonSize.y);
+			menuButtonAddKey.setVisible(true);
+		}));
 
 		labelBindingsForTriggerSequence = new Label(groupKeySequence, SWT.LEFT);
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -830,13 +801,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		});
 
 		tableBindingsForTriggerSequence
-				.addSelectionListener(new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(SelectionEvent selectionEvent) {
-						selectedTableBindingsForTriggerSequence();
-					}
-				});
+				.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedTableBindingsForTriggerSequence()));
 
 		final Composite compositeContext = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
@@ -853,12 +818,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		comboContext.setLayoutData(gridData);
 		comboContext.setVisibleItemCount(ITEMS_TO_SHOW);
 
-		comboContext.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public final void widgetSelected(final SelectionEvent e) {
-				update();
-			}
-		});
+		comboContext.addSelectionListener(widgetSelectedAdapter(e -> update()));
 
 		labelContextExtends = new Label(compositeContext, SWT.LEFT);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -879,13 +839,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAdd.setLayoutData(gridData);
 
-		buttonAdd.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonAdd();
-			}
-		});
+		buttonAdd.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedButtonAdd()));
 
 		buttonRemove = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
 		gridData = new GridData();
@@ -896,13 +850,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonRemove.setLayoutData(gridData);
 
-		buttonRemove.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonRemove();
-			}
-		});
+		buttonRemove.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedButtonRemove()));
 
 		buttonRestore = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
 		gridData = new GridData();
@@ -913,13 +861,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonRestore.setLayoutData(gridData);
 
-		buttonRestore.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonRestore();
-			}
-		});
+		buttonRestore.addSelectionListener(widgetSelectedAdapter(selectionEvent -> selectedButtonRestore()));
 
 		return composite;
 	}
@@ -980,12 +922,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				.setText(UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX]);
 		tableColumnContext.addSelectionListener(new SortOrderSelectionListener(
 				VIEW_CONTEXT_COLUMN_INDEX));
-		tableBindings.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public final void widgetDefaultSelected(final SelectionEvent e) {
-				selectedTableKeyBindings();
-			}
-		});
+		tableBindings.addSelectionListener(widgetDefaultSelectedAdapter(e -> selectedTableKeyBindings()));
 
 		// A composite for the buttons.
 		final Composite buttonBar = new Composite(composite, SWT.NONE);

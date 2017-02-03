@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Arrays;
 import java.util.Optional;
 import org.eclipse.core.commands.AbstractHandler;
@@ -25,8 +27,6 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -136,14 +136,11 @@ public class FullScreenHandler extends AbstractHandler {
 			gd2.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
 			btnDoNotShow.setLayoutData(gd2);
 
-			link.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					WorkbenchPlugin.getDefault().getPreferenceStore()
-							.setValue(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID, btnDoNotShow.getSelection());
-					close();
-				}
-			});
+			link.addSelectionListener(widgetSelectedAdapter(e -> {
+				WorkbenchPlugin.getDefault().getPreferenceStore()
+						.setValue(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID, btnDoNotShow.getSelection());
+				close();
+			}));
 
 			return composite;
 		}

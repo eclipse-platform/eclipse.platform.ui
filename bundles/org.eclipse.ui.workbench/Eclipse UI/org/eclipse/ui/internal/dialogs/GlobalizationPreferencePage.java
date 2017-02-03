@@ -12,6 +12,8 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -21,8 +23,6 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
@@ -107,13 +107,8 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 				WorkbenchMessages.GlobalizationPreference_layoutDirection, 0);
 		layoutDirectionCombo.setItems(new String[] { DEFAULT_DIR, LTR_DIR, RTL_DIR });
 		layoutDirectionCombo.select(getLayoutDirectionIndex(layoutDirection));
-		layoutDirectionCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				layoutDirection = getLayoutDirectionInteger(layoutDirectionCombo
-						.getSelectionIndex());
-			}
-		});
+		layoutDirectionCombo.addSelectionListener(widgetSelectedAdapter(
+				e -> layoutDirection = getLayoutDirectionInteger(layoutDirectionCombo.getSelectionIndex())));
 
 		createSpace(composite);
 
@@ -121,12 +116,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		bidiSupportClickButton.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 		bidiSupportClickButton.setText(WorkbenchMessages.GlobalizationPreference_bidiSupport);
 		bidiSupportClickButton.setSelection(bidiSupport);
-		bidiSupportClickButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectClickMode(bidiSupportClickButton.getSelection());
-			}
-		});
+		bidiSupportClickButton.addSelectionListener(widgetSelectedAdapter(e -> selectClickMode(bidiSupportClickButton.getSelection())));
 
 		textDirectionCombo = addComboBox(composite,
 				WorkbenchMessages.GlobalizationPreference_textDirection,
@@ -134,12 +124,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		textDirectionCombo.setItems(new String[] { DEFAULT_DIR, LTR_DIR, AUTO_DIR, RTL_DIR });
 		textDirectionCombo.setEnabled(bidiSupport);
 		textDirectionCombo.select(getTextDirectionIndex(textDirection));
-		textDirectionCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				textDirection = getTextDirectionString(textDirectionCombo.getSelectionIndex());
-			}
-		});
+		textDirectionCombo.addSelectionListener(widgetSelectedAdapter(e -> textDirection = getTextDirectionString(textDirectionCombo.getSelectionIndex())));
 
 		createSpace(composite);
 

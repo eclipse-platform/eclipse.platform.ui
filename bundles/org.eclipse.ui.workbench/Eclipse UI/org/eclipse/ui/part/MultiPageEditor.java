@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
@@ -98,12 +98,7 @@ public abstract class MultiPageEditor extends EditorPart {
     @Override
 	public void createPartControl(Composite parent) {
         tabFolder = new TabFolder(parent, SWT.NONE);
-        tabFolder.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                sync();
-            }
-        });
+        tabFolder.addSelectionListener(widgetSelectedAdapter(e -> sync()));
     }
 
     /**
