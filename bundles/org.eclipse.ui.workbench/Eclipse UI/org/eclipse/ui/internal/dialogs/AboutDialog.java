@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import org.eclipse.core.runtime.IBundleGroup;
@@ -32,8 +34,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -442,19 +442,12 @@ public class AboutDialog extends TrayDialog {
 				e.result = info.getProviderName();
 			}
         });
-        button.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent event) {
-                AboutBundleGroupData[] groupInfos = buttonManager
-                        .getRelatedInfos(info);
-                AboutBundleGroupData selection = (AboutBundleGroupData) event.widget
-                        .getData();
-
-                AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(),
-                        productName, groupInfos, selection);
-                d.open();
-            }
-        });
+        button.addSelectionListener(widgetSelectedAdapter(event -> {
+			AboutBundleGroupData[] groupInfos = buttonManager.getRelatedInfos(info);
+			AboutBundleGroupData selection = (AboutBundleGroupData) event.widget.getData();
+			AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(), productName, groupInfos, selection);
+		    d.open();
+		}));
 
         return button;
     }

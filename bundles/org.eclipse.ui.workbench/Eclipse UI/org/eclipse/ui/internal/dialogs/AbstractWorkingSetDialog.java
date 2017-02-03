@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,8 +25,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -117,33 +117,18 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 
 		newButton = createButton(buttonComposite, ID_NEW, WorkbenchMessages.WorkingSetSelectionDialog_newButton_label,
 				false);
-		newButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				createWorkingSet();
-			}
-		});
+		newButton.addSelectionListener(widgetSelectedAdapter(e -> createWorkingSet()));
 
 		if (canEdit) {
 			detailsButton = createButton(buttonComposite, ID_DETAILS,
 					WorkbenchMessages.WorkingSetSelectionDialog_detailsButton_label, false);
 			detailsButton.setEnabled(false);
-			detailsButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					editSelectedWorkingSet();
-				}
-			});
+			detailsButton.addSelectionListener(widgetSelectedAdapter(e -> editSelectedWorkingSet()));
 
 			removeButton = createButton(buttonComposite, ID_REMOVE,
 					WorkbenchMessages.WorkingSetSelectionDialog_removeButton_label, false);
 			removeButton.setEnabled(false);
-			removeButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					removeSelectedWorkingSets();
-				}
-			});
+			removeButton.addSelectionListener(widgetSelectedAdapter(e -> removeSelectedWorkingSets()));
 		}
 
 		layout.numColumns = 1; // must manually reset the number of columns
@@ -168,21 +153,11 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 
 		selectAllButton = createButton(buttonComposite, ID_SELECTALL, WorkbenchMessages.SelectionDialog_selectLabel,
 				false);
-		selectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectAllSets();
-			}
-		});
+		selectAllButton.addSelectionListener(widgetSelectedAdapter(e -> selectAllSets()));
 
 		deselectAllButton = createButton(buttonComposite, ID_DESELECTALL,
 				WorkbenchMessages.SelectionDialog_deselectLabel, false);
-		deselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				deselectAllSets();
-			}
-		});
+		deselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> deselectAllSets()));
 	}
 
 	/**

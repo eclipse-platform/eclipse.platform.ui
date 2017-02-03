@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +31,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -382,31 +382,25 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         Button selectButton = createButton(buttonComposite,
                 IDialogConstants.SELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_select_all,
                 false);
-        SelectionListener listener = new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                Object[] viewerElements = fContentProvider.getElements(fInput);
-                if (fContainerMode) {
-					fViewer.setCheckedElements(viewerElements);
-				} else {
-                    for (Object viewerElement : viewerElements) {
-						fViewer.setSubtreeChecked(viewerElement, true);
-					}
-                }
-                updateOKStatus();
-            }
-        };
+        SelectionListener listener = widgetSelectedAdapter(e -> {
+		    Object[] viewerElements = fContentProvider.getElements(fInput);
+		    if (fContainerMode) {
+				fViewer.setCheckedElements(viewerElements);
+			} else {
+		        for (Object viewerElement : viewerElements) {
+					fViewer.setSubtreeChecked(viewerElement, true);
+				}
+		    }
+		    updateOKStatus();
+		});
         selectButton.addSelectionListener(listener);
         Button deselectButton = createButton(buttonComposite,
                 IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_deselect_all,
                 false);
-        listener = new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                fViewer.setCheckedElements(new Object[0]);
-                updateOKStatus();
-            }
-        };
+        listener = widgetSelectedAdapter(e -> {
+		    fViewer.setCheckedElements(new Object[0]);
+		    updateOKStatus();
+		});
         deselectButton.addSelectionListener(listener);
         return buttonComposite;
     }

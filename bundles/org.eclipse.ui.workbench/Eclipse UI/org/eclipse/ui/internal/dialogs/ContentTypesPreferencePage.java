@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
@@ -39,8 +41,6 @@ import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -292,23 +292,19 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 				.setText(WorkbenchMessages.ContentTypes_characterSetUpdateLabel);
 		setButton.setEnabled(false);
 		setButtonLayoutData(setButton);
-		setButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					String text = charsetField.getText().trim();
-					if (text.length() == 0) {
-						text = null;
-					}
-					getSelectedContentType().setDefaultCharset(text);
-					setButton.setEnabled(false);
-				} catch (CoreException e1) {
-					StatusUtil.handleStatus(e1.getStatus(), StatusManager.SHOW,
-							parent.getShell());
+		setButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			try {
+				String text = charsetField.getText().trim();
+				if (text.length() == 0) {
+					text = null;
 				}
+				getSelectedContentType().setDefaultCharset(text);
+				setButton.setEnabled(false);
+			} catch (CoreException e1) {
+				StatusUtil.handleStatus(e1.getStatus(), StatusManager.SHOW,
+						parent.getShell());
 			}
-		});
+		}));
 
 		charsetField.addKeyListener(new KeyAdapter() {
 			@Override
@@ -392,43 +388,40 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 					.setText(WorkbenchMessages.ContentTypes_fileAssociationsAddLabel);
 			addButton.setEnabled(false);
 			setButtonLayoutData(addButton);
-			addButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					Shell shell = composite.getShell();
-					IContentType selectedContentType = getSelectedContentType();
-					FileExtensionDialog dialog = new FileExtensionDialog(
-							shell,
-							WorkbenchMessages.ContentTypes_addDialog_title,
-							IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
-							WorkbenchMessages.ContentTypes_addDialog_messageHeader,
-							WorkbenchMessages.ContentTypes_addDialog_message,
-							WorkbenchMessages.ContentTypes_addDialog_label);
-					if (dialog.open() == Window.OK) {
-						String name = dialog.getName();
-						String extension = dialog.getExtension();
-						try {
-							if (name.equals("*")) { //$NON-NLS-1$
-								selectedContentType.addFileSpec(extension,
-										IContentType.FILE_EXTENSION_SPEC);
-							} else {
-								selectedContentType
-										.addFileSpec(
-												name
-														+ (extension.length() > 0 ? ('.' + extension)
-																: ""), //$NON-NLS-1$
-												IContentType.FILE_NAME_SPEC);
-							}
-						} catch (CoreException ex) {
-							StatusUtil.handleStatus(ex.getStatus(),
-									StatusManager.SHOW, shell);
-							WorkbenchPlugin.log(ex);
-						} finally {
-							fileAssociationViewer.refresh(false);
+			addButton.addSelectionListener(widgetSelectedAdapter(e -> {
+				Shell shell = composite.getShell();
+				IContentType selectedContentType = getSelectedContentType();
+				FileExtensionDialog dialog = new FileExtensionDialog(
+						shell,
+						WorkbenchMessages.ContentTypes_addDialog_title,
+						IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
+						WorkbenchMessages.ContentTypes_addDialog_messageHeader,
+						WorkbenchMessages.ContentTypes_addDialog_message,
+						WorkbenchMessages.ContentTypes_addDialog_label);
+				if (dialog.open() == Window.OK) {
+					String name = dialog.getName();
+					String extension = dialog.getExtension();
+					try {
+						if (name.equals("*")) { //$NON-NLS-1$
+							selectedContentType.addFileSpec(extension,
+									IContentType.FILE_EXTENSION_SPEC);
+						} else {
+							selectedContentType
+									.addFileSpec(
+											name
+													+ (extension.length() > 0 ? ('.' + extension)
+															: ""), //$NON-NLS-1$
+											IContentType.FILE_NAME_SPEC);
 						}
+					} catch (CoreException ex) {
+						StatusUtil.handleStatus(ex.getStatus(),
+								StatusManager.SHOW, shell);
+						WorkbenchPlugin.log(ex);
+					} finally {
+						fileAssociationViewer.refresh(false);
 					}
 				}
-			});
+			}));
 
 			editButton = new Button(buttonArea, SWT.PUSH);
 			editButton.setFont(composite.getFont());
@@ -436,95 +429,89 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 					.setText(WorkbenchMessages.ContentTypes_fileAssociationsEditLabel);
 			editButton.setEnabled(false);
 			setButtonLayoutData(editButton);
-			editButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					Shell shell = composite.getShell();
-					IContentType selectedContentType = getSelectedContentType();
-					Spec spec = getSelectedSpecs()[0];
-					FileExtensionDialog dialog = new FileExtensionDialog(
-							shell,
-							WorkbenchMessages.ContentTypes_editDialog_title,
-							IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
-							WorkbenchMessages.ContentTypes_editDialog_messageHeader,
-							WorkbenchMessages.ContentTypes_editDialog_message,
-							WorkbenchMessages.ContentTypes_editDialog_label);
-					if (spec.name == null) {
-						dialog.setInitialValue("*." + spec.ext); //$NON-NLS-1$
-					} else {
-						dialog.setInitialValue(spec.name);
-					}
-					if (dialog.open() == Window.OK) {
-						String name = dialog.getName();
-						String extension = dialog.getExtension();
-						try {
-							// remove the original spec
-							if (spec.name != null) {
-								selectedContentType.removeFileSpec(spec.name,
-										IContentType.FILE_NAME_SPEC);
-							} else if (spec.ext != null) {
-								selectedContentType.removeFileSpec(spec.ext,
-										IContentType.FILE_EXTENSION_SPEC);
-							}
-
-							// add the new one
-							if (name.equals("*")) { //$NON-NLS-1$
-								selectedContentType.addFileSpec(extension,
-										IContentType.FILE_EXTENSION_SPEC);
-							} else {
-								selectedContentType
-										.addFileSpec(
-												name
-														+ (extension.length() > 0 ? ('.' + extension)
-																: ""), //$NON-NLS-1$
-												IContentType.FILE_NAME_SPEC);
-							}
-						} catch (CoreException ex) {
-							StatusUtil.handleStatus(ex.getStatus(),
-									StatusManager.SHOW, shell);
-							WorkbenchPlugin.log(ex);
-						} finally {
-							fileAssociationViewer.refresh(false);
+			editButton.addSelectionListener(widgetSelectedAdapter(e -> {
+				Shell shell = composite.getShell();
+				IContentType selectedContentType = getSelectedContentType();
+				Spec spec = getSelectedSpecs()[0];
+				FileExtensionDialog dialog = new FileExtensionDialog(
+						shell,
+						WorkbenchMessages.ContentTypes_editDialog_title,
+						IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
+						WorkbenchMessages.ContentTypes_editDialog_messageHeader,
+						WorkbenchMessages.ContentTypes_editDialog_message,
+						WorkbenchMessages.ContentTypes_editDialog_label);
+				if (spec.name == null) {
+					dialog.setInitialValue("*." + spec.ext); //$NON-NLS-1$
+				} else {
+					dialog.setInitialValue(spec.name);
+				}
+				if (dialog.open() == Window.OK) {
+					String name = dialog.getName();
+					String extension = dialog.getExtension();
+					try {
+						// remove the original spec
+						if (spec.name != null) {
+							selectedContentType.removeFileSpec(spec.name,
+									IContentType.FILE_NAME_SPEC);
+						} else if (spec.ext != null) {
+							selectedContentType.removeFileSpec(spec.ext,
+									IContentType.FILE_EXTENSION_SPEC);
 						}
+
+						// add the new one
+						if (name.equals("*")) { //$NON-NLS-1$
+							selectedContentType.addFileSpec(extension,
+									IContentType.FILE_EXTENSION_SPEC);
+						} else {
+							selectedContentType
+									.addFileSpec(
+											name
+													+ (extension.length() > 0 ? ('.' + extension)
+															: ""), //$NON-NLS-1$
+											IContentType.FILE_NAME_SPEC);
+						}
+					} catch (CoreException ex) {
+						StatusUtil.handleStatus(ex.getStatus(),
+								StatusManager.SHOW, shell);
+						WorkbenchPlugin.log(ex);
+					} finally {
+						fileAssociationViewer.refresh(false);
 					}
 				}
-			});
+			}));
 
 			removeButton = new Button(buttonArea, SWT.PUSH);
 			removeButton.setEnabled(false);
 			removeButton
 					.setText(WorkbenchMessages.ContentTypes_fileAssociationsRemoveLabel);
 			setButtonLayoutData(removeButton);
-			removeButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent event) {
-					IContentType contentType = getSelectedContentType();
-					Spec[] specs = getSelectedSpecs();
-					MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-							0, new IStatus[0],
-							WorkbenchMessages.ContentTypes_errorDialogMessage,
-							null);
-					for (int i = 0; i < specs.length; i++) {
-						Spec spec = specs[i];
-						try {
-							if (spec.name != null) {
-								contentType.removeFileSpec(spec.name,
-										IContentType.FILE_NAME_SPEC);
-							} else if (spec.ext != null) {
-								contentType.removeFileSpec(spec.ext,
-										IContentType.FILE_EXTENSION_SPEC);
-							}
-						} catch (CoreException e) {
-							result.add(e.getStatus());
+			removeButton.addSelectionListener(widgetSelectedAdapter(event -> {
+				IContentType contentType = getSelectedContentType();
+				Spec[] specs = getSelectedSpecs();
+				MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
+						0, new IStatus[0],
+						WorkbenchMessages.ContentTypes_errorDialogMessage,
+						null);
+				for (int i = 0; i < specs.length; i++) {
+					Spec spec = specs[i];
+					try {
+						if (spec.name != null) {
+							contentType.removeFileSpec(spec.name,
+									IContentType.FILE_NAME_SPEC);
+						} else if (spec.ext != null) {
+							contentType.removeFileSpec(spec.ext,
+									IContentType.FILE_EXTENSION_SPEC);
 						}
+					} catch (CoreException e) {
+						result.add(e.getStatus());
 					}
-					if (!result.isOK()) {
-						StatusUtil.handleStatus(result, StatusManager.SHOW,
-								composite.getShell());
-					}
-					fileAssociationViewer.refresh(false);
 				}
-			});
+				if (!result.isOK()) {
+					StatusUtil.handleStatus(result, StatusManager.SHOW,
+							composite.getShell());
+				}
+				fileAssociationViewer.refresh(false);
+			}));
 		}
 	}
 
@@ -597,66 +584,57 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		Button addRootContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
 		setButtonLayoutData(addRootContentTypeButton);
 		addRootContentTypeButton.setText(WorkbenchMessages.ContentTypes_addRootContentTypeButton);
-		addRootContentTypeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String id = "userCreated" + System.currentTimeMillis(); //$NON-NLS-1$
-				IContentTypeManager manager = (IContentTypeManager) contentTypesViewer.getInput();
-				NewContentTypeDialog dialog = new NewContentTypeDialog(ContentTypesPreferencePage.this.getShell(),
-						manager, null);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					try {
-						IContentType newContentType = manager.addContentType(id, dialog.getName(), null);
-						contentTypesViewer.refresh();
-						contentTypesViewer.setSelection(new StructuredSelection(newContentType));
-					} catch (CoreException e1) {
-						MessageDialog.openError(getShell(), WorkbenchMessages.ContentTypes_failedAtEditingContentTypes,
-								e1.getMessage());
-					}
-				}
-			}
-		});
-		addChildContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
-		setButtonLayoutData(addChildContentTypeButton);
-		addChildContentTypeButton.setText(WorkbenchMessages.ContentTypes_addChildContentTypeButton);
-		addChildContentTypeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String id = "userCreated" + System.currentTimeMillis(); //$NON-NLS-1$
-				IContentTypeManager manager = (IContentTypeManager) contentTypesViewer.getInput();
-				NewContentTypeDialog dialog = new NewContentTypeDialog(ContentTypesPreferencePage.this.getShell(),
-						manager,
-						getSelectedContentType());
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					try {
-						IContentType newContentType = manager.addContentType(id, dialog.getName(),
-								getSelectedContentType());
-						contentTypesViewer.refresh(getSelectedContentType());
-						contentTypesViewer.setSelection(new StructuredSelection(newContentType));
-					} catch (CoreException e1) {
-						MessageDialog.openError(getShell(), WorkbenchMessages.ContentTypes_failedAtEditingContentTypes,
-								e1.getMessage());
-					}
-				}
-			}
-		});
-		addChildContentTypeButton.setEnabled(getSelectedContentType() != null);
-		removeContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
-		setButtonLayoutData(removeContentTypeButton);
-		removeContentTypeButton.setText(WorkbenchMessages.ContentTypes_removeContentTypeButton);
-		removeContentTypeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IContentType selectedContentType = getSelectedContentType();
+		addRootContentTypeButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			String id = "userCreated" + System.currentTimeMillis(); //$NON-NLS-1$
+			IContentTypeManager manager = (IContentTypeManager) contentTypesViewer.getInput();
+			NewContentTypeDialog dialog = new NewContentTypeDialog(ContentTypesPreferencePage.this.getShell(),
+					manager, null);
+			if (dialog.open() == IDialogConstants.OK_ID) {
 				try {
-					Platform.getContentTypeManager().removeContentType(selectedContentType.getId());
+					IContentType newContentType = manager.addContentType(id, dialog.getName(), null);
 					contentTypesViewer.refresh();
+					contentTypesViewer.setSelection(new StructuredSelection(newContentType));
 				} catch (CoreException e1) {
 					MessageDialog.openError(getShell(), WorkbenchMessages.ContentTypes_failedAtEditingContentTypes,
 							e1.getMessage());
 				}
 			}
-		});
+		}));
+		addChildContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
+		setButtonLayoutData(addChildContentTypeButton);
+		addChildContentTypeButton.setText(WorkbenchMessages.ContentTypes_addChildContentTypeButton);
+		addChildContentTypeButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			String id = "userCreated" + System.currentTimeMillis(); //$NON-NLS-1$
+			IContentTypeManager manager = (IContentTypeManager) contentTypesViewer.getInput();
+			NewContentTypeDialog dialog = new NewContentTypeDialog(ContentTypesPreferencePage.this.getShell(),
+					manager,
+					getSelectedContentType());
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				try {
+					IContentType newContentType = manager.addContentType(id, dialog.getName(),
+							getSelectedContentType());
+					contentTypesViewer.refresh(getSelectedContentType());
+					contentTypesViewer.setSelection(new StructuredSelection(newContentType));
+				} catch (CoreException e1) {
+					MessageDialog.openError(getShell(), WorkbenchMessages.ContentTypes_failedAtEditingContentTypes,
+							e1.getMessage());
+				}
+			}
+		}));
+		addChildContentTypeButton.setEnabled(getSelectedContentType() != null);
+		removeContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
+		setButtonLayoutData(removeContentTypeButton);
+		removeContentTypeButton.setText(WorkbenchMessages.ContentTypes_removeContentTypeButton);
+		removeContentTypeButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			IContentType selectedContentType = getSelectedContentType();
+			try {
+				Platform.getContentTypeManager().removeContentType(selectedContentType.getId());
+				contentTypesViewer.refresh();
+			} catch (CoreException e1) {
+				MessageDialog.openError(getShell(), WorkbenchMessages.ContentTypes_failedAtEditingContentTypes,
+						e1.getMessage());
+			}
+		}));
 		removeContentTypeButton
 				.setEnabled(getSelectedContentType() != null && getSelectedContentType().isUserDefined());
 	}

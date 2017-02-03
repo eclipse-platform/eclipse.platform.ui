@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,8 +35,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -321,22 +321,12 @@ public class ActivityEnabler {
 
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(ActivityMessages.ActivityEnabler_selectAll);
-		selectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				toggleTreeEnablement(true);
-			}
-		});
+		selectAllButton.addSelectionListener(widgetSelectedAdapter(e -> toggleTreeEnablement(true)));
 		setButtonLayoutData(selectAllButton, fontMetrics);
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
 		deselectAllButton.setText(ActivityMessages.ActivityEnabler_deselectAll);
-		deselectAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				toggleTreeEnablement(false);
-			}
-		});
+		deselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> toggleTreeEnablement(false)));
 		setButtonLayoutData(deselectAllButton, fontMetrics);
 
 

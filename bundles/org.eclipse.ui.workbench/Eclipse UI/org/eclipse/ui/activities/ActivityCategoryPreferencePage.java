@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -37,8 +39,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -306,25 +306,13 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         composite.setLayoutData(data);
 
         Button enableAll = new Button(composite, SWT.PUSH);
-        enableAll.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                workingCopy.setEnabledActivityIds(workingCopy
-                        .getDefinedActivityIds());
-            }
-        });
+		enableAll.addSelectionListener(
+				widgetSelectedAdapter(e -> workingCopy.setEnabledActivityIds(workingCopy.getDefinedActivityIds())));
         enableAll.setText(ActivityMessages.ActivityEnabler_selectAll);
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
-        disableAll.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-                workingCopy.setEnabledActivityIds(Collections.EMPTY_SET);
-            }
-        });
+        disableAll.addSelectionListener(widgetSelectedAdapter(e -> workingCopy.setEnabledActivityIds(Collections.EMPTY_SET)));
         disableAll.setText(ActivityMessages.ActivityEnabler_deselectAll);
         setButtonLayoutData(disableAll);
 
@@ -375,55 +363,45 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         Label label = new Label(composite, SWT.NONE);
         label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories));
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
-        table.addSelectionListener(new SelectionAdapter() {
+        table.addSelectionListener(widgetSelectedAdapter(e -> {
+        	if (e.detail == SWT.CHECK) {
+        		TableItem tableItem = (TableItem) e.item;
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (e.detail == SWT.CHECK) {
-					TableItem tableItem = (TableItem) e.item;
+        		ICategory category = (ICategory) tableItem.getData();
+        		if (isLocked(category)) {
+        			tableItem.setChecked(true);
+        			e.doit = false; // veto the check
+        			return;
+        		}
+				Set activitySet = WorkbenchActivityHelper.getActivityIdsForCategory(category);
+        		if (tableItem.getChecked()) {
+        			activitySet.addAll(workingCopy.getEnabledActivityIds());
+        		} else {
+        			HashSet newSet = new HashSet(workingCopy.getEnabledActivityIds());
+        			newSet.removeAll(activitySet);
+        			activitySet = newSet;
+        		}
 
-					ICategory category = (ICategory) tableItem.getData();
-					if (isLocked(category)) {
-						tableItem.setChecked(true);
-						e.doit = false; // veto the check
-						return;
-					}
-					Set activitySet = WorkbenchActivityHelper
-							.getActivityIdsForCategory(category);
-					if (tableItem.getChecked()) {
-						activitySet.addAll(workingCopy.getEnabledActivityIds());
-					} else {
-						HashSet newSet = new HashSet(workingCopy
-								.getEnabledActivityIds());
-						newSet.removeAll(activitySet);
-						activitySet = newSet;
-					}
-
-					workingCopy.setEnabledActivityIds(activitySet);
-					updateCategoryCheckState(); // even though we're reacting to
-					// a check change we may need to
-					// refresh a greying change.
-					// Just process the whole thing.
-				}
-			}
-		});
+        		workingCopy.setEnabledActivityIds(activitySet);
+        		updateCategoryCheckState(); // even though we're reacting to
+        		// a check change we may need to
+        		// refresh a greying change.
+        		// Just process the whole thing.
+        	}
+        }));
         categoryViewer = new CheckboxTableViewer(table);
-        categoryViewer.getControl().setLayoutData(
-                new GridData(GridData.FILL_BOTH));
+		categoryViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
         categoryViewer.setContentProvider(new CategoryContentProvider());
-        CategoryLabelProvider categoryLabelProvider = new CategoryLabelProvider(
-                true);
+        CategoryLabelProvider categoryLabelProvider = new CategoryLabelProvider(true);
         workingCopy.addActivityManagerListener(categoryLabelProvider);
         categoryViewer.setLabelProvider(categoryLabelProvider);
         categoryViewer.setComparator(new ViewerComparator());
         categoryViewer.addFilter(new EmptyCategoryFilter());
 
-        categoryViewer
-                .addSelectionChangedListener(event -> {
-				    ICategory element = (ICategory) ((IStructuredSelection) event
-				            .getSelection()).getFirstElement();
-				    setDetails(element);
-				});
+		categoryViewer.addSelectionChangedListener(event -> {
+			ICategory element = (ICategory) ((IStructuredSelection) event.getSelection()).getFirstElement();
+			setDetails(element);
+		});
         categoryViewer.setInput(workingCopy.getDefinedCategoryIds());
 
 		updateCategoryCheckState();

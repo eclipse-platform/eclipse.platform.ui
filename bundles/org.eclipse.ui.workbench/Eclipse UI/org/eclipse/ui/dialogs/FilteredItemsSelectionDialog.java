@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -82,8 +84,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -524,12 +524,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
 		toolItem
 				.setToolTipText(WorkbenchMessages.FilteredItemsSelectionDialog_menu);
-		toolItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showViewMenu();
-			}
-		});
+		toolItem.addSelectionListener(widgetSelectedAdapter(e -> showViewMenu()));
 
 		menuManager = new MenuManager();
 
