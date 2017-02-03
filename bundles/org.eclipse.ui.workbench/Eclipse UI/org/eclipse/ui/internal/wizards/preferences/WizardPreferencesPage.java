@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -31,8 +33,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -284,16 +284,13 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		descriptionData.heightHint = convertHeightInCharsToPixels(3);
 		descText.setLayoutData(descriptionData);
 
-		transferAllButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (transferAllButton.getSelection()) {
-					viewer.setAllChecked(false);
-				}
-				updateEnablement();
-				updatePageCompletion();
+		transferAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			if (transferAllButton.getSelection()) {
+				viewer.setAllChecked(false);
 			}
-		});
+			updateEnablement();
+			updatePageCompletion();
+		}));
 
 		viewer.addSelectionChangedListener(event -> updateDescription());
 
@@ -357,13 +354,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		selectAllButton.setData(Integer.valueOf(IDialogConstants.SELECT_ALL_ID));
 		setButtonLayoutData(selectAllButton);
 
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				viewer.setAllChecked(true);
-				updatePageCompletion();
-			}
-		};
+		SelectionListener listener = widgetSelectedAdapter(e -> {
+			viewer.setAllChecked(true);
+			updatePageCompletion();
+		});
 		selectAllButton.addSelectionListener(listener);
 		selectAllButton.setFont(parentFont);
 
@@ -372,13 +366,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		deselectAllButton.setData(Integer.valueOf(IDialogConstants.DESELECT_ALL_ID));
 		setButtonLayoutData(deselectAllButton);
 
-		listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				viewer.setAllChecked(false);
-				updatePageCompletion();
-			}
-		};
+		listener = widgetSelectedAdapter(e -> {
+			viewer.setAllChecked(false);
+			updatePageCompletion();
+		});
 		deselectAllButton.addSelectionListener(listener);
 		deselectAllButton.setFont(parentFont);
 	}

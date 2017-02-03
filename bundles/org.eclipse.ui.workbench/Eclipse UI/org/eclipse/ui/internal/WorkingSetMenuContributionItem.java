@@ -11,11 +11,12 @@
 
 package org.eclipse.ui.internal;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -23,7 +24,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Menu contribution item which shows a working set.
@@ -76,15 +76,11 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
         MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
         mi.setText("&" + id + " " + workingSet.getLabel()); //$NON-NLS-1$  //$NON-NLS-2$
         mi.setSelection(workingSet.equals(actionGroup.getWorkingSet()));
-        mi.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                IWorkingSetManager manager = PlatformUI.getWorkbench()
-                        .getWorkingSetManager();
-                actionGroup.setWorkingSet(workingSet);
-                manager.addRecentWorkingSet(workingSet);
-            }
-        });
+        mi.addSelectionListener(widgetSelectedAdapter(e -> {
+			IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+		    actionGroup.setWorkingSet(workingSet);
+		    manager.addRecentWorkingSet(workingSet);
+		}));
         if (image == null) {
 			ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
 			if (imageDescriptor != null)

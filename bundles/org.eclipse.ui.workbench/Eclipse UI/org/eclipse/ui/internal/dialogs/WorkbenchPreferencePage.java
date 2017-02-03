@@ -14,6 +14,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.FieldEditor;
@@ -24,8 +26,6 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -216,24 +216,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
         String label = WorkbenchMessages.WorkbenchPreference_doubleClick;
         doubleClickButton = createRadioButton(buttonComposite, label);
-        doubleClickButton.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                selectClickMode(singleClickButton.getSelection());
-            }
-        });
+        doubleClickButton.addSelectionListener(widgetSelectedAdapter(e -> selectClickMode(singleClickButton.getSelection())));
         doubleClickButton.setSelection(!openOnSingleClick);
 
         label = WorkbenchMessages.WorkbenchPreference_singleClick;
         singleClickButton = createRadioButton(buttonComposite, label);
-        singleClickButton.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                selectClickMode(singleClickButton.getSelection());
-            }
-        });
+        singleClickButton.addSelectionListener(widgetSelectedAdapter(e -> selectClickMode(singleClickButton.getSelection())));
         singleClickButton.setSelection(openOnSingleClick);
 
         label = WorkbenchMessages.WorkbenchPreference_singleClick_SelectOnHover;
@@ -241,13 +229,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         selectOnHoverButton.setText(label);
         selectOnHoverButton.setEnabled(openOnSingleClick);
         selectOnHoverButton.setSelection(selectOnHover);
-        selectOnHoverButton.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                selectOnHover = selectOnHoverButton.getSelection();
-            }
-        });
+        selectOnHoverButton.addSelectionListener(widgetSelectedAdapter(e -> selectOnHover = selectOnHoverButton.getSelection()));
         data = new GridData();
 		data.horizontalIndent = LayoutConstants.getIndent();
         selectOnHoverButton.setLayoutData(data);
@@ -257,13 +239,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         openAfterDelayButton.setText(label);
         openAfterDelayButton.setEnabled(openOnSingleClick);
         openAfterDelayButton.setSelection(openAfterDelay);
-        openAfterDelayButton.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                openAfterDelay = openAfterDelayButton.getSelection();
-            }
-        });
+        openAfterDelayButton.addSelectionListener(widgetSelectedAdapter(e -> openAfterDelay = openAfterDelayButton.getSelection()));
         data = new GridData();
 		data.horizontalIndent = LayoutConstants.getIndent();
         openAfterDelayButton.setLayoutData(data);

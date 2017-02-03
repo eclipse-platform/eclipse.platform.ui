@@ -13,6 +13,8 @@
 
 package org.eclipse.ui.internal;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,8 +41,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -806,12 +806,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				 checkboxComposite.setLayout(new GridLayout(2, false));
 
 				 checkbox = new Button(checkboxComposite, SWT.CHECK);
-				 checkbox.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						dontPromptSelection = checkbox.getSelection();
-					}
-				 });
+				 checkbox.addSelectionListener(widgetSelectedAdapter(e -> dontPromptSelection = checkbox.getSelection()));
 				 GridData gd = new GridData();
 				 gd.horizontalAlignment = SWT.BEGINNING;
 				 checkbox.setLayoutData(gd);

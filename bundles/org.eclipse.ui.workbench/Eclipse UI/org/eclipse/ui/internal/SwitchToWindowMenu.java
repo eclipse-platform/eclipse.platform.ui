@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -101,17 +101,14 @@ public class SwitchToWindowMenu extends ContributionItem {
                     index++;
                     count++;
                     mi.setText(name);
-                    mi.addSelectionListener(new SelectionAdapter() {
-                        @Override
-						public void widgetSelected(SelectionEvent e) {
-                            Shell windowShell = window.getShell();
-                            if (windowShell.getMinimized()) {
-								windowShell.setMinimized(false);
-							}
-                            windowShell.setActive();
-                            windowShell.moveAbove(null);
-                        }
-                    });
+                    mi.addSelectionListener(widgetSelectedAdapter(e -> {
+					    Shell windowShell = window.getShell();
+					    if (windowShell.getMinimized()) {
+							windowShell.setMinimized(false);
+						}
+					    windowShell.setActive();
+					    windowShell.moveAbove(null);
+					}));
                     mi.setSelection(window == workbenchWindow);
                 }
             }
