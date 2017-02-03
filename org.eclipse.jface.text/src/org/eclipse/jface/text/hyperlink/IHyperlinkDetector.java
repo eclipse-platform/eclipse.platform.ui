@@ -37,6 +37,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  * @see SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
  * @since 3.1
  */
+@FunctionalInterface
 public interface IHyperlinkDetector {
 
 	/**
