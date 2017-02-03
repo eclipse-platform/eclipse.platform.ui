@@ -12,10 +12,10 @@
 package org.eclipse.jface.preference;
 
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -151,16 +151,13 @@ public class ComboFieldEditor extends FieldEditor {
 				fCombo.add(fEntryNamesAndValues[i][0], i);
 			}
 
-			fCombo.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent evt) {
-					String oldValue = fValue;
-					String name = fCombo.getText();
-					fValue = getValueForName(name);
-					setPresentsDefaultValue(false);
-					fireValueChanged(VALUE, oldValue, fValue);
-				}
-			});
+			fCombo.addSelectionListener(widgetSelectedAdapter(evt -> {
+				String oldValue = fValue;
+				String name = fCombo.getText();
+				fValue = getValueForName(name);
+				setPresentsDefaultValue(false);
+				fireValueChanged(VALUE, oldValue, fValue);
+			}));
 		}
 		return fCombo;
 	}

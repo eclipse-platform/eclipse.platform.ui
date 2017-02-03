@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -23,8 +25,6 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -616,12 +616,7 @@ public abstract class Dialog extends Window {
 		button.setText(label);
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(Integer.valueOf(id));
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				buttonPressed(((Integer) event.widget.getData()).intValue());
-			}
-		});
+		button.addSelectionListener(widgetSelectedAdapter(event -> buttonPressed(((Integer) event.widget.getData()).intValue())));
 		if (defaultButton) {
 			Shell shell = parent.getShell();
 			if (shell != null) {

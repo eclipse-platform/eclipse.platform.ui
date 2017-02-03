@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
@@ -240,30 +240,24 @@ public class FontFieldEditor extends FieldEditor {
             if (changeButtonText != null) {
 				changeFontButton.setText(changeButtonText);
 			}
-            changeFontButton.addSelectionListener(new SelectionAdapter() {
-                @Override
-				public void widgetSelected(SelectionEvent event) {
-                    FontDialog fontDialog = new FontDialog(changeFontButton
-                            .getShell());
-                    if (chosenFont != null) {
-						fontDialog.setFontList(chosenFont);
+            changeFontButton.addSelectionListener(widgetSelectedAdapter(event -> {
+				FontDialog fontDialog = new FontDialog(changeFontButton.getShell());
+			    if (chosenFont != null) {
+					fontDialog.setFontList(chosenFont);
+				}
+			    FontData font = fontDialog.open();
+			    if (font != null) {
+			        FontData[] oldFont = chosenFont;
+			        if (oldFont == null) {
+						oldFont = JFaceResources.getDefaultFont().getFontData();
 					}
-                    FontData font = fontDialog.open();
-                    if (font != null) {
-                        FontData[] oldFont = chosenFont;
-                        if (oldFont == null) {
-							oldFont = JFaceResources.getDefaultFont()
-                                    .getFontData();
-						}
-                        setPresentsDefaultValue(false);
-                        FontData[] newData = new FontData[1];
-                        newData[0] = font;
-                        updateFont(newData);
-                        fireValueChanged(VALUE, oldFont[0], font);
-                    }
-
-                }
-            });
+			        setPresentsDefaultValue(false);
+			        FontData[] newData = new FontData[1];
+			        newData[0] = font;
+			        updateFont(newData);
+			        fireValueChanged(VALUE, oldFont[0], font);
+			    }
+			}));
             changeFontButton.addDisposeListener(event -> changeFontButton = null);
             changeFontButton.setFont(parent.getFont());
             setButtonLayoutData(changeFontButton);

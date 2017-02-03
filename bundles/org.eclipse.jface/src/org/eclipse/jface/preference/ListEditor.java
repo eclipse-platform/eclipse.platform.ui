@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -169,23 +169,20 @@ public abstract class ListEditor extends FieldEditor {
      * Creates a selection listener.
      */
     public void createSelectionListener() {
-        selectionListener = new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent event) {
-                Widget widget = event.widget;
-                if (widget == addButton) {
-                    addPressed();
-                } else if (widget == removeButton) {
-                    removePressed();
-                } else if (widget == upButton) {
-                    upPressed();
-                } else if (widget == downButton) {
-                    downPressed();
-                } else if (widget == list) {
-                    selectionChanged();
-                }
-            }
-        };
+        selectionListener = widgetSelectedAdapter(event -> {
+		    Widget widget = event.widget;
+		    if (widget == addButton) {
+		        addPressed();
+		    } else if (widget == removeButton) {
+		        removePressed();
+		    } else if (widget == upButton) {
+		        upPressed();
+		    } else if (widget == downButton) {
+		        downPressed();
+		    } else if (widget == list) {
+		        selectionChanged();
+		    }
+		});
     }
 
     @Override

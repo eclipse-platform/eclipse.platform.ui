@@ -13,8 +13,6 @@ package org.eclipse.jface.preference;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -26,6 +24,8 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.commands.common.EventManager;
 
@@ -72,12 +72,7 @@ public class ColorSelector extends EventManager {
         gc.fillRectangle(0, 0, fExtent.x, fExtent.y);
         gc.dispose();
         fButton.setImage(fImage);
-        fButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent event) {
-                open();
-            }
-        });
+        fButton.addSelectionListener(widgetSelectedAdapter(event -> open()));
         fButton.addDisposeListener(event -> {
 		    if (fImage != null) {
 		        fImage.dispose();

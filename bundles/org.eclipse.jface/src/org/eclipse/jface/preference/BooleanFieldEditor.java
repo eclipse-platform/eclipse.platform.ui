@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -185,14 +185,11 @@ public class BooleanFieldEditor extends FieldEditor {
 		if (checkBox == null) {
 			checkBox = new Button(parent, SWT.CHECK | SWT.LEFT);
 			checkBox.setFont(parent.getFont());
-			checkBox.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					boolean isSelected = checkBox.getSelection();
-					valueChanged(wasSelected, isSelected);
-					wasSelected = isSelected;
-				}
-			});
+			checkBox.addSelectionListener(widgetSelectedAdapter(e -> {
+				boolean isSelected = checkBox.getSelection();
+				valueChanged(wasSelected, isSelected);
+				wasSelected = isSelected;
+			}));
 			checkBox.addDisposeListener(event -> checkBox = null);
 		} else {
 			checkParent(checkBox, parent);

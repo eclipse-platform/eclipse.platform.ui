@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetDefaultSelectedAdapter;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -52,8 +54,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Font;
@@ -664,18 +664,15 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				}
 			}
 		});
-		((Tree) viewer.getControl()).addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent event) {
-				ISelection selection = viewer.getSelection();
-				if (selection.isEmpty()) {
-					return;
-				}
-				IPreferenceNode singleSelection = getSingleSelection(selection);
-				boolean expanded = viewer.getExpandedState(singleSelection);
-				viewer.setExpandedState(singleSelection, !expanded);
+		((Tree) viewer.getControl()).addSelectionListener(widgetDefaultSelectedAdapter(event -> {
+			ISelection selection = viewer.getSelection();
+			if (selection.isEmpty()) {
+				return;
 			}
-		});
+			IPreferenceNode singleSelection = getSingleSelection(selection);
+			boolean expanded = viewer.getExpandedState(singleSelection);
+			viewer.setExpandedState(singleSelection, !expanded);
+		}));
 		//Register help listener on the tree to use context sensitive help
 		viewer.getControl().addHelpListener(new HelpListener() {
 			@Override

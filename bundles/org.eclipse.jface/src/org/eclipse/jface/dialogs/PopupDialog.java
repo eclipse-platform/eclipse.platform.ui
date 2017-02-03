@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +31,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -942,12 +942,7 @@ public class PopupDialog extends Window {
 		viewMenuButton.setImage(JFaceResources.getImage(POPUP_IMG_MENU));
 		viewMenuButton.setDisabledImage(JFaceResources.getImage(POPUP_IMG_MENU_DISABLED));
 		viewMenuButton.setToolTipText(JFaceResources.getString("PopupDialog.menuTooltip")); //$NON-NLS-1$
-		viewMenuButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showDialogMenu();
-			}
-		});
+		viewMenuButton.addSelectionListener(widgetSelectedAdapter(e -> showDialogMenu()));
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=177183
 		toolBar.addMouseListener(new MouseAdapter() {
 			@Override

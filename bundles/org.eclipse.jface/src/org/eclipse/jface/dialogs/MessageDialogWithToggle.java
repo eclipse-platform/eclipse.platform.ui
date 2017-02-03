@@ -12,11 +12,11 @@
 
 package org.eclipse.jface.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -468,14 +468,7 @@ public class MessageDialogWithToggle extends MessageDialog {
         button.setLayoutData(data);
         button.setFont(parent.getFont());
 
-        button.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                toggleState = button.getSelection();
-            }
-
-        });
+        button.addSelectionListener(widgetSelectedAdapter(e -> toggleState = button.getSelection()));
 
         return button;
     }
