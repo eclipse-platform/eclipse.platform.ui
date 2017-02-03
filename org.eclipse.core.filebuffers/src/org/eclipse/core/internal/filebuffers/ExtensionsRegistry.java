@@ -196,11 +196,11 @@ public class ExtensionsRegistry {
 		}
 
 		IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
-		for (int i= 0; i < elements.length; i++) {
+		for (IConfigurationElement element : elements) {
 			if (isContentTypeId)
-				readContentType(childElementName, elements[i], descriptors);
+				readContentType(childElementName, element, descriptors);
 			else
-				read(childElementName, elements[i], descriptors);
+				read(childElementName, element, descriptors);
 		}
 	}
 
@@ -453,8 +453,8 @@ public class ExtensionsRegistry {
 	 */
 	private IContentType[] computeBaseContentTypes(IContentType[] contentTypes) {
 		List<IContentType> baseTypes= new ArrayList<>();
-		for (int i= 0; i < contentTypes.length; i++) {
-			IContentType baseType= contentTypes[i].getBaseType();
+		for (IContentType contentType : contentTypes) {
+			IContentType baseType= contentType.getBaseType();
 			if (baseType != null)
 				baseTypes.add(baseType);
 		}

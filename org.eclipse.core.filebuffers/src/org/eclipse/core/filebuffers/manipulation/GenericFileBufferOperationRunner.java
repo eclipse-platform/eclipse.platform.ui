@@ -183,9 +183,9 @@ public class GenericFileBufferOperationRunner {
 
 	private IFileBuffer[] findSynchronizedFileBuffers(IFileBuffer[] fileBuffers) {
 		ArrayList<IFileBuffer> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i].isSynchronizationContextRequested())
-				list.add(fileBuffers[i]);
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (fileBuffer.isSynchronizationContextRequested())
+				list.add(fileBuffer);
 		}
 		return list.toArray(new IFileBuffer[list.size()]);
 	}
@@ -220,8 +220,8 @@ public class GenericFileBufferOperationRunner {
 
 	private IFileBuffer[] findFileBuffersToSave(IFileBuffer[] fileBuffers) {
 		ArrayList<IFileBuffer> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			IFileBuffer buffer= fileBuffers[i];
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			IFileBuffer buffer= fileBuffer;
 			if (!buffer.isDirty())
 				list.add(buffer);
 		}
@@ -238,8 +238,8 @@ public class GenericFileBufferOperationRunner {
 
 	protected ISchedulingRule computeCommitRule(IFileBuffer[] fileBuffers) {
 		ArrayList<ISchedulingRule> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			ISchedulingRule rule= fileBuffers[i].computeCommitRule();
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			ISchedulingRule rule= fileBuffer.computeCommitRule();
 			if (rule != null)
 				list.add(rule);
 		}

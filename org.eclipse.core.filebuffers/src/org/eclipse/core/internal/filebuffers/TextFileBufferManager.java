@@ -285,8 +285,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		IContentType[] contentTypes= manager.findContentTypesFor(fileStore.getName());
 		if (contentTypes != null && contentTypes.length > 0) {
-			for (int i= 0; i < contentTypes.length; i++)
-				if (contentTypes[i].isKindOf(TEXT_CONTENT_TYPE))
+			for (IContentType contentType : contentTypes)
+				if (contentType.isKindOf(TEXT_CONTENT_TYPE))
 					return true;
 			return false;
 		}
@@ -450,8 +450,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location, locationKind);
 		if (participants != null) {
-			for (int i= 0; i < participants.length; i++) {
-				final IDocumentSetupParticipant participant= participants[i];
+			for (final IDocumentSetupParticipant participant : participants) {
 				ISafeRunnable runnable= new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {

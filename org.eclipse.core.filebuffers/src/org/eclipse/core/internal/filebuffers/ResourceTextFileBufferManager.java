@@ -83,8 +83,8 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 				IContentTypeManager manager= Platform.getContentTypeManager();
 				IContentType[] contentTypes= manager.findContentTypesFor(file.getName());
 				if (contentTypes != null && contentTypes.length > 0) {
-					for (int i= 0; i < contentTypes.length; i++)
-						if (contentTypes[i].isKindOf(TEXT_CONTENT_TYPE))
+					for (IContentType contentType : contentTypes)
+						if (contentType.isKindOf(TEXT_CONTENT_TYPE))
 							return true;
 					return false;
 				}
@@ -137,8 +137,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 		final IDocumentSetupParticipant[] participants= ((ResourceExtensionRegistry)fRegistry).getDocumentSetupParticipants(file);
 		if (participants != null) {
-			for (int i= 0; i < participants.length; i++) {
-				final IDocumentSetupParticipant participant= participants[i];
+			for (final IDocumentSetupParticipant participant : participants) {
 				ISafeRunnable runnable= new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
@@ -237,8 +236,8 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	private IStatus validateEdit(IFileBuffer[] fileBuffers, Object computationContext) {
 		ArrayList<IFile> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			IFile file= getWorkspaceFile(fileBuffers[i]);
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			IFile file= getWorkspaceFile(fileBuffer);
 			if (file != null)
 				list.add(file);
 		}
@@ -257,27 +256,27 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	}
 
 	private void validationStateAboutToBeChanged(IFileBuffer[] fileBuffers) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i] instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (fileBuffer instanceof IStateValidationSupport) {
+				IStateValidationSupport support= (IStateValidationSupport) fileBuffer;
 				support.validationStateAboutToBeChanged();
 			}
 		}
 	}
 
 	private void validationStateChanged(IFileBuffer[] fileBuffers, boolean validationState, IStatus status) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i] instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (fileBuffer instanceof IStateValidationSupport) {
+				IStateValidationSupport support= (IStateValidationSupport) fileBuffer;
 				support.validationStateChanged(validationState, status);
 			}
 		}
 	}
 
 	private void validationStateChangedFailed(IFileBuffer[] fileBuffers) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i] instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			if (fileBuffer instanceof IStateValidationSupport) {
+				IStateValidationSupport support= (IStateValidationSupport) fileBuffer;
 				support.validationStateChangeFailed();
 			}
 		}
@@ -289,8 +288,8 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	private ISchedulingRule computeValidateStateRule(IFileBuffer[] fileBuffers) {
 		ArrayList<IResource> list= new ArrayList<>();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			IResource resource= getWorkspaceFile(fileBuffers[i]);
+		for (IFileBuffer fileBuffer : fileBuffers) {
+			IResource resource= getWorkspaceFile(fileBuffer);
 			if (resource != null)
 				list.add(resource);
 		}
