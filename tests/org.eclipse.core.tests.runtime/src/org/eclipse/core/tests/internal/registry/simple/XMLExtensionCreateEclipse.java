@@ -51,8 +51,8 @@ public class XMLExtensionCreateEclipse extends BaseExtensionRegistryRun {
 		assertNotNull(dynamicExtensionPoint);
 		IConfigurationElement[] elements = eclipseRegistry.getConfigurationElementsFor(uniqueId);
 		assertTrue(elements.length == 1);
-		for (int i = 0; i < elements.length; i++) {
-			assertTrue("org.eclipse.core.tests.internal.registry.simple.utils.ExecutableRegistryObject".equals(elements[i].getAttribute("class")));
+		for (IConfigurationElement element : elements) {
+			assertTrue("org.eclipse.core.tests.internal.registry.simple.utils.ExecutableRegistryObject".equals(element.getAttribute("class")));
 		}
 	}
 

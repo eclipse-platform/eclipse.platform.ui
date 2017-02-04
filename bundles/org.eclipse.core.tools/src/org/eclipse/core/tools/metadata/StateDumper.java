@@ -30,8 +30,8 @@ public class StateDumper extends AbstractDumper {
 		contents.append("\n"); //$NON-NLS-1$
 		BundleDescription[] allBundles = state.getBundles();
 		admin.getStateHelper().sortBundles(allBundles);
-		for (int i = 0; i < allBundles.length; i++)
-			dumpBundle(allBundles[i], contents);
+		for (BundleDescription allBundle : allBundles)
+			dumpBundle(allBundle, contents);
 	}
 
 	private void dumpBundle(BundleDescription bundle, StringBuffer contents) {
@@ -49,8 +49,8 @@ public class StateDumper extends AbstractDumper {
 		if (host != null)
 			dumpHost(host, contents);
 		BundleSpecification[] required = bundle.getRequiredBundles();
-		for (int i = 0; i < required.length; i++)
-			dumpRequired(required[i], contents);
+		for (BundleSpecification element : required)
+			dumpRequired(element, contents);
 	}
 
 	private void dumpRequired(BundleSpecification required, StringBuffer contents) {

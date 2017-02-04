@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
@@ -59,8 +58,8 @@ public class SetupManager {
 	private Collection<Setup> setups;
 
 	private static boolean contains(Object[] set, Object element) {
-		for (int i = 0; i < set.length; i++) {
-			if (element.equals(set[i])) {
+		for (Object setElement : set) {
+			if (element.equals(setElement)) {
 				return true;
 			}
 		}
@@ -118,8 +117,7 @@ public class SetupManager {
 
 	public Setup buildSetup(String[] optionSets) {
 		Setup defaultSetup = Setup.getDefaultSetup(this);
-		for (Iterator<Setup> i = setups.iterator(); i.hasNext();) {
-			Setup customSetup = i.next();
+		for (Setup customSetup : setups) {
 			if ((customSetup.getId() == null || contains(optionSets, customSetup.getId())) && customSetup.isSatisfied(optionSets)) {
 				defaultSetup.merge(customSetup);
 			}

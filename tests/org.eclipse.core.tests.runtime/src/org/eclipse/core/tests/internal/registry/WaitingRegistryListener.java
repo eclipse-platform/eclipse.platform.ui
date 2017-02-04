@@ -157,8 +157,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 
 	private void extensionsToString(IExtension[] extensions) {
 		extensionIDs = new ArrayList<>(extensions.length);
-		for (int i = 0; i < extensions.length; i++) {
-			IExtension extension = extensions[i];
+		for (IExtension extension : extensions) {
 			extensionIDs.add(extension.getUniqueIdentifier());
 
 			// test navigation: to extension point
@@ -188,8 +187,8 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 
 	private void extPointsToString(IExtensionPoint[] extensionPoints) {
 		extPointIDs = new ArrayList<>(extensionPoints.length);
-		for (int i = 0; i < extensionPoints.length; i++) {
-			extPointIDs.add(extensionPoints[i].getUniqueIdentifier());
+		for (IExtensionPoint extensionPoint : extensionPoints) {
+			extPointIDs.add(extensionPoint.getUniqueIdentifier());
 		}
 	}
 

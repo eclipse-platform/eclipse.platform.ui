@@ -522,8 +522,7 @@ public class SubMonitorTest extends TestCase {
 		expected.put("style 7 below style 6", new String[] {"", "subTask0", ""});
 		HashMap<String, String[]> results = new HashMap<>();
 
-		for (int i = 0; i < styles.length; i++) {
-			int style = styles[i];
+		for (int style : styles) {
 			{
 				TestProgressMonitor top = new TestProgressMonitor();
 				top.beginTask("", 100);
@@ -536,9 +535,7 @@ public class SubMonitorTest extends TestCase {
 				results.put(testName, runChildTest(0, top, styled, 100 * styles.length));
 			}
 
-			for (int j = 0; j < styles.length; j++) {
-				int innerStyle = styles[j];
-
+			for (int innerStyle : styles) {
 				TestProgressMonitor newTop = new TestProgressMonitor();
 				newTop.beginTask("", 100);
 				SubMonitor newConverted = SubMonitor.convert(newTop, 100);
@@ -602,8 +599,7 @@ public class SubMonitorTest extends TestCase {
 
 		StringBuffer buf = new StringBuffer();
 		boolean isFirst = true;
-		for (int i = 0; i < value.length; i++) {
-			String nextValue = value[i];
+		for (String nextValue : value) {
 			if (!isFirst) {
 				buf.append(", ");
 			}

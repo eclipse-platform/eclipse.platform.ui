@@ -30,8 +30,8 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		public void cancelAllJobs() {
 			Job[] jobs = scheduled.toArray(new Job[0]);
-			for (int i = 0; i < jobs.length; i++) {
-				jobs[i].cancel();
+			for (Job job : jobs) {
+				job.cancel();
 			}
 		}
 
@@ -84,21 +84,21 @@ public class YieldTest extends AbstractJobManagerTest {
 		scheduledJobs = 0;
 		jobListeners = new IJobChangeListener[] {/* new VerboseJobListener(),*/
 		new TestJobListener()};
-		for (int i = 0; i < jobListeners.length; i++) {
-			manager.addJobChangeListener(jobListeners[i]);
+		for (IJobChangeListener jobListener : jobListeners) {
+			manager.addJobChangeListener(jobListener);
 		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		for (int i = 0; i < jobListeners.length; i++) {
-			if (jobListeners[i] instanceof TestJobListener) {
-				((TestJobListener) jobListeners[i]).cancelAllJobs();
+		for (IJobChangeListener jobListener : jobListeners) {
+			if (jobListener instanceof TestJobListener) {
+				((TestJobListener) jobListener).cancelAllJobs();
 			}
 		}
 		waitForCompletion();
-		for (int i = 0; i < jobListeners.length; i++) {
-			manager.removeJobChangeListener(jobListeners[i]);
+		for (IJobChangeListener jobListener : jobListeners) {
+			manager.removeJobChangeListener(jobListener);
 		}
 		super.tearDown();
 	}
@@ -701,8 +701,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			jobs.add(conflictingJob);
 		}
 
-		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs) {
 			conflict.schedule();
 		}
 
@@ -721,8 +720,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		// wait for jobs to finish within 5s
 		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 5000);
 
-		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs) {
 			assertNotNull("Null result for " + conflict, conflict.getResult());
 			assertTrue(conflict.getResult().isOK());
 		}
@@ -772,8 +770,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			jobs_A.add(conflictingJob);
 		}
 
-		for (Iterator<Job> job = jobs_A.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs_A) {
 			conflict.schedule();
 		}
 
@@ -829,8 +826,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			jobs_B.add(conflictingJob);
 		}
 
-		for (Iterator<Job> job = jobs_B.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs_B) {
 			conflict.schedule();
 		}
 
@@ -853,14 +849,12 @@ public class YieldTest extends AbstractJobManagerTest {
 		// wait for jobs to finish within 5s
 		waitForJobsCompletion(jobs_B.toArray(new Job[jobs_B.size()]), 5000);
 
-		for (Iterator<Job> job = jobs_A.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs_A) {
 			assertNotNull("Null result for " + conflict, conflict.getResult());
 			assertTrue(conflict.getResult().isOK());
 		}
 
-		for (Iterator<Job> job = jobs_B.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs_B) {
 			assertNotNull("Null result for " + conflict, conflict.getResult());
 			assertTrue(conflict.getResult().isOK());
 		}
@@ -1003,8 +997,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			fail("4.99", e);
 		}
 		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 20000);
-		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
-			Job conflict = job.next();
+		for (Job conflict : jobs) {
 			assertTrue(conflict.getResult().isOK());
 		}
 	}

@@ -166,8 +166,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			IConfigurationElement[] ces= registry.getConfigurationElementsFor(
 				ExpressionPlugin.getPluginId(),
 				fExtensionPoint);
-			for (int i= 0; i < ces.length; i++) {
-				IConfigurationElement config= ces[i];
+			for (IConfigurationElement config : ces) {
 				String typeAttr= config.getAttribute(TYPE);
 				List<IConfigurationElement> typeConfigs= fConfigurationElementMap.get(typeAttr);
 				if (typeConfigs == null) {

@@ -143,8 +143,8 @@ public class TypeExtension {
 				}
 			}
 		}
-		for (int i= 0; i < fImplements.length; i++) {
-			result= fImplements[i].findTypeExtender(manager, namespace, method, staticMethod, forcePluginActivation);
+		for (TypeExtension fImplement : fImplements) {
+			result= fImplement.findTypeExtender(manager, namespace, method, staticMethod, forcePluginActivation);
 			if (result != CONTINUE)
 				return result;
 		}

@@ -16,7 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -243,8 +242,7 @@ public class Setup implements Cloneable {
 	}
 
 	private void fillEclipseArgs(List<String> params) {
-		for (Iterator<Entry<String, String>> i = eclipseArguments.entrySet().iterator(); i.hasNext();) {
-			Entry<String, String> entry = i.next();
+		for (Entry<String, String> entry : eclipseArguments.entrySet()) {
 			params.add('-' + entry.getKey());
 			if (entry.getValue() != null && entry.getValue().length() > 0) {
 				params.add(entry.getValue());
@@ -253,8 +251,7 @@ public class Setup implements Cloneable {
 	}
 
 	private void fillSystemProperties(List<String> command) {
-		for (Iterator<Entry<String, String>> iter = systemProperties.entrySet().iterator(); iter.hasNext();) {
-			Entry<String, String> entry = iter.next();
+		for (Entry<String, String> entry : systemProperties.entrySet()) {
 			// null-valued properties are ignored
 			if (entry.getValue() == null) {
 				continue;
@@ -270,8 +267,7 @@ public class Setup implements Cloneable {
 	}
 
 	private void fillVMArgs(List<String> params) {
-		for (Iterator<Entry<String, String>> i = vmArguments.entrySet().iterator(); i.hasNext();) {
-			Entry<String, String> entry = i.next();
+		for (Entry<String, String> entry : vmArguments.entrySet()) {
 			params.add('-' + entry.getKey());
 			if (entry.getValue() != null && entry.getValue().length() > 0) {
 				params.add(entry.getValue());
@@ -293,8 +289,8 @@ public class Setup implements Cloneable {
 		List<String> eclipseArgs = new ArrayList<>();
 		fillEclipseArgs(eclipseArgs);
 		StringBuffer result = new StringBuffer();
-		for (Iterator<String> i = eclipseArgs.iterator(); i.hasNext();) {
-			result.append(i.next());
+		for (String string : eclipseArgs) {
+			result.append(string);
 			result.append(' ');
 		}
 		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
@@ -328,8 +324,8 @@ public class Setup implements Cloneable {
 		List<String> sysProperties = new ArrayList<>();
 		fillSystemProperties(sysProperties);
 		StringBuffer result = new StringBuffer();
-		for (Iterator<String> i = sysProperties.iterator(); i.hasNext();) {
-			result.append(i.next());
+		for (String string : sysProperties) {
+			result.append(string);
 			result.append(' ');
 		}
 		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
@@ -343,8 +339,8 @@ public class Setup implements Cloneable {
 		List<String> vmArgs = new ArrayList<>();
 		fillVMArgs(vmArgs);
 		StringBuffer result = new StringBuffer();
-		for (Iterator<String> i = vmArgs.iterator(); i.hasNext();) {
-			result.append(i.next());
+		for (String string : vmArgs) {
+			result.append(string);
 			result.append(' ');
 		}
 		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
@@ -365,8 +361,8 @@ public class Setup implements Cloneable {
 		if (baseSetups == null) {
 			return false;
 		}
-		for (int i = 0; i < baseSetups.length; i++) {
-			Setup base = manager.getSetup(baseSetups[i]);
+		for (String baseSetup : baseSetups) {
+			Setup base = manager.getSetup(baseSetup);
 			if (base != null && base.isA(baseOptionSet)) {
 				return true;
 			}
@@ -375,11 +371,11 @@ public class Setup implements Cloneable {
 	}
 
 	public boolean isSatisfied(String[] availableSets) {
-		for (int i = 0; i < requiredSets.length; i++) {
+		for (String requiredSet : requiredSets) {
 			boolean satisfied = false;
 			for (int j = 0; !satisfied && j < availableSets.length; j++) {
 				Setup available = manager.getSetup(availableSets[j]);
-				if (available != null && available.isA(requiredSets[i])) {
+				if (available != null && available.isA(requiredSet)) {
 					satisfied = true;
 				}
 			}
@@ -482,9 +478,9 @@ public class Setup implements Cloneable {
 		String[] commandLine = getCommandLine();
 		StringBuffer result = new StringBuffer();
 		result.append("[\n");
-		for (int i = 0; i < commandLine.length; i++) {
+		for (String element : commandLine) {
 			result.append('\t');
-			result.append(commandLine[i]);
+			result.append(element);
 			result.append('\n');
 		}
 		result.append(']');

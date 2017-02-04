@@ -195,8 +195,8 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				String result = ""; //$NON-NLS-1$
 				String[] columnHeaders = getColumnHeaders();
-				for (int i = 0; i < columnHeaders.length; i++)
-					result += columnHeaders[i] + ","; //$NON-NLS-1$
+				for (String columnHeader : columnHeaders)
+					result += columnHeader + ","; //$NON-NLS-1$
 				result += "\n\n"; //$NON-NLS-1$
 
 				ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();

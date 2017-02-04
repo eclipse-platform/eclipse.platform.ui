@@ -103,8 +103,8 @@ public class Util {
 		if (list == null || list.length == 0)
 			return null;
 		StringBuffer result = new StringBuffer();
-		for (int i = 0; i < list.length; i++) {
-			result.append(list[i]);
+		for (Object element : list) {
+			result.append(element);
 			result.append(separator);
 		}
 		// ignore last comma

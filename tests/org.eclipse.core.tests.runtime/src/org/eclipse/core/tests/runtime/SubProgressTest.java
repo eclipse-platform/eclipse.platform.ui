@@ -134,8 +134,7 @@ public class SubProgressTest extends TestCase {
 		expected.put("style 4 below style 4", new String[] {"setTaskName1", "beginTask0 beginTask1 subTask1", "setTaskName1"});
 		HashMap<String, String[]> results = new HashMap<>();
 
-		for (int i = 0; i < styles.length; i++) {
-			int style = styles[i];
+		for (int style : styles) {
 			TestProgressMonitor top = new TestProgressMonitor();
 			top.beginTask("", 100);
 			SubProgressMonitor child = new SubProgressMonitor(top, 100, style);
@@ -143,8 +142,7 @@ public class SubProgressTest extends TestCase {
 			String testName = "style " + style + " as top-level monitor";
 			results.put(testName, runChildTest(0, top, child, 100 * styles.length));
 
-			for (int j = 0; j < styles.length; j++) {
-				int innerStyle = styles[j];
+			for (int innerStyle : styles) {
 				SubProgressMonitor innerChild = new SubProgressMonitor(child, 100, innerStyle);
 				testName = "style " + innerStyle + " below style " + style;
 				results.put(testName, runChildTest(1, top, innerChild, 100));
@@ -185,8 +183,7 @@ public class SubProgressTest extends TestCase {
 	private String concatArray(String[] value) {
 		StringBuffer buf = new StringBuffer();
 		boolean isFirst = true;
-		for (int i = 0; i < value.length; i++) {
-			String nextValue = value[i];
+		for (String nextValue : value) {
 			if (!isFirst)
 				buf.append(", ");
 			isFirst = false;

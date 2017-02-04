@@ -68,9 +68,9 @@ public class XMLExecutableExtension extends BaseExtensionRegistryRun {
 	private void checkRegistry(String namespace) {
 		IConfigurationElement[] elements = simpleRegistry.getConfigurationElementsFor(qualifiedName(namespace, "XMLExecutableExtPoint")); //$NON-NLS-1$
 		assertTrue(elements.length == 1);
-		for (int i = 0; i < elements.length; i++) {
+		for (IConfigurationElement element : elements) {
 			try {
-				Object object = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				Object object = element.createExecutableExtension("class"); //$NON-NLS-1$
 				assertNotNull(object);
 			} catch (CoreException e) {
 				assertTrue(false);

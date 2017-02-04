@@ -68,8 +68,7 @@ public class XMLExtensionCreate extends BaseExtensionRegistryRun {
 		IExtension[] extensions = extensionPoint.getExtensions();
 		assertNotNull(extensions);
 		assertTrue(extensions.length == 1);
-		for (int i = 0; i < extensions.length; i++) {
-			IExtension extension = extensions[i];
+		for (IExtension extension : extensions) {
 			String extensionId = extension.getUniqueIdentifier();
 			assertTrue(extensionId.equals(qualifiedName(namespace, "XMLDirectExtensionID"))); //$NON-NLS-1$
 			String extensionNamespace = extension.getNamespaceIdentifier();
@@ -78,8 +77,7 @@ public class XMLExtensionCreate extends BaseExtensionRegistryRun {
 			assertTrue(extensionContributor.equals(namespace));
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
 			assertNotNull(configElements);
-			for (int j = 0; j < configElements.length; j++) {
-				IConfigurationElement configElement = configElements[j];
+			for (IConfigurationElement configElement : configElements) {
 				String configElementName = configElement.getName();
 				assertTrue(configElementName.equals("StorageDevice")); //$NON-NLS-1$
 				String[] attributeNames = configElement.getAttributeNames();
@@ -94,8 +92,7 @@ public class XMLExtensionCreate extends BaseExtensionRegistryRun {
 		IRegistryChangeEvent event = listener.getEvent(5000);
 		IExtensionDelta[] deltas = event.getExtensionDeltas();
 		assertTrue(deltas.length == 1); // only one notification
-		for (int i = 0; i < deltas.length; i++) {
-			IExtensionDelta delta = deltas[i];
+		for (IExtensionDelta delta : deltas) {
 			assertTrue(delta.getKind() == IExtensionDelta.ADDED);
 			IExtensionPoint theExtensionPoint = delta.getExtensionPoint();
 			IExtension theExtension = delta.getExtension();

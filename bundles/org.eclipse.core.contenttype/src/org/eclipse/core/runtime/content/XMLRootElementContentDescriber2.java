@@ -238,12 +238,12 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 			IConfigurationElement describerElement = config.getChildren("describer")[0]; //$NON-NLS-1$
 			IConfigurationElement[] params = describerElement.getChildren("parameter"); //$NON-NLS-1$
 			String pname = null;
-			for (int i = 0; i < params.length; i++) {
-				pname = params[i].getAttribute("name"); //$NON-NLS-1$
+			for (IConfigurationElement param : params) {
+				pname = param.getAttribute("name"); //$NON-NLS-1$
 				if (ELEMENT_TO_FIND.equals(pname)) {
 					if (elements == null)
 						elements = new LinkedList<>();
-					elements.add(new QualifiedElement(params[i].getAttribute("value"))); //$NON-NLS-1$
+					elements.add(new QualifiedElement(param.getAttribute("value"))); //$NON-NLS-1$
 				}
 			}
 
@@ -251,8 +251,8 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 
 			// create list of qualified elements
 			if (elements != null) {
-				for (Iterator<QualifiedElement> it = elements.iterator(); it.hasNext();) {
-					qualifiedElements.add(it.next());
+				for (QualifiedElement qualifiedElement : elements) {
+					qualifiedElements.add(qualifiedElement);
 				}
 			}
 			elementsToFind = qualifiedElements.toArray(new QualifiedElement[qualifiedElements.size()]);
