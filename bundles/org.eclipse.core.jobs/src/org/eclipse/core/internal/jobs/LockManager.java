@@ -324,8 +324,8 @@ public class LockManager {
 			if (prevLocks.empty())
 				suspendedLocks.remove(owner);
 		}
-		for (int i = 0; i < toResume.length; i++)
-			toResume[i].resume();
+		for (LockState element : toResume)
+			element.resume();
 	}
 
 	public void setLockListener(LockListener listener) {

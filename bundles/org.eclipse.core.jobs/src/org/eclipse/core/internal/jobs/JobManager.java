@@ -367,8 +367,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	@Override
 	public void cancel(Object family) {
 		//don't synchronize because cancel calls listeners
-		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();)
-			cancel(it.next());
+		for (InternalJob internalJob : select(family))
+			cancel(internalJob);
 	}
 
 	void cancel(InternalJobGroup jobGroup) {
@@ -536,8 +536,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		if (current instanceof Worker)
 			return ((Worker) current).currentJob();
 		synchronized (lock) {
-			for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
-				Job job = (Job) it.next();
+			for (InternalJob internalJob : running) {
+				Job job = (Job) internalJob;
 				if (job.getThread() == current)
 					return job;
 			}
@@ -626,8 +626,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 		// Give running jobs a chance to finish. Wait 0.1 seconds for up to 3 times.
 		if (toCancel != null && toCancel.length > 0) {
-			for (int i = 0; i < toCancel.length; i++) {
-				cancel(toCancel[i]); // cancel jobs outside sync block to avoid deadlock
+			for (Job element : toCancel) {
+				cancel(element); // cancel jobs outside sync block to avoid deadlock
 			}
 
 			for (int waitAttempts = 0; waitAttempts < 3; waitAttempts++) {
@@ -643,8 +643,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 						stillRunning = running.toArray(new Job[running.size()]);
 					}
 					if (stillRunning != null) {
-						for (int j = 0; j < stillRunning.length; j++) {
-							JobManager.debug("\tJob: " + printJobName(stillRunning[j])); //$NON-NLS-1$
+						for (Job element : stillRunning) {
+							JobManager.debug("\tJob: " + printJobName(element)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -662,8 +662,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		}
 		internalWorker.cancel();
 		if (toCancel != null) {
-			for (int i = 0; i < toCancel.length; i++) {
-				String jobName = printJobName(toCancel[i]);
+			for (Job element : toCancel) {
+				String jobName = printJobName(element);
 				//this doesn't need to be translated because it's just being logged
 				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
 				RuntimeLog.log(new Status(IStatus.WARNING, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, msg, null));
@@ -750,8 +750,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 				return null;
 			//check the running jobs
 			boolean hasBlockedJobs = false;
-			for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
-				InternalJob job = it.next();
+			for (InternalJob job : running) {
 				if (waitingJob.isConflicting(job))
 					return job;
 				if (!hasBlockedJobs)
@@ -761,8 +760,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			if (!hasBlockedJobs)
 				return null;
 			//check all jobs blocked by running jobs
-			for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
-				InternalJob job = it.next();
+			for (InternalJob job : running) {
 				while (true) {
 					job = job.previous();
 					if (job == null)
@@ -1309,14 +1307,14 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		List<InternalJob> members = new ArrayList<>();
 		synchronized (lock) {
 			if ((stateMask & Job.RUNNING) != 0) {
-				for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
-					select(members, family, it.next(), stateMask);
+				for (InternalJob internalJob : running) {
+					select(members, family, internalJob, stateMask);
 				}
 			}
 			if ((stateMask & Job.WAITING) != 0) {
 				select(members, family, waiting.peek(), stateMask);
-				for (Iterator<InternalJob> it = yielding.iterator(); it.hasNext();) {
-					select(members, family, it.next(), stateMask);
+				for (InternalJob internalJob : yielding) {
+					select(members, family, internalJob, stateMask);
 				}
 			}
 			if ((stateMask & Job.SLEEPING) != 0)
@@ -1396,8 +1394,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	@Override
 	public void sleep(Object family) {
 		//don't synchronize because sleep calls listeners
-		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();) {
-			sleep(it.next());
+		for (InternalJob internalJob : select(family)) {
+			sleep(internalJob);
 		}
 	}
 
@@ -1548,8 +1546,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		if (DEBUG_YIELDING) {
 			// extra assert: make sure no other conflicting jobs are running now
 			synchronized (lock) {
-				for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {
-					InternalJob other = it.next();
+				for (InternalJob other : running) {
 					if (other == job)
 						continue;
 					Assert.isTrue(!other.isConflicting(job), other + " conflicts and ran simultaneously with " + job); //$NON-NLS-1$
@@ -1691,9 +1688,9 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			return;
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] children = ((MultiRule) rule).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Assert.isLegal(children[i] != rule);
-				validateRule(children[i]);
+			for (ISchedulingRule element : children) {
+				Assert.isLegal(element != rule);
+				validateRule(element);
 			}
 		}
 		//contains method must be reflexive
@@ -1725,8 +1722,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	@Override
 	public void wakeUp(Object family) {
 		//don't synchronize because wakeUp calls listeners
-		for (Iterator<InternalJob> it = select(family).iterator(); it.hasNext();) {
-			wakeUp(it.next(), 0L);
+		for (InternalJob internalJob : select(family)) {
+			wakeUp(internalJob, 0L);
 		}
 	}
 

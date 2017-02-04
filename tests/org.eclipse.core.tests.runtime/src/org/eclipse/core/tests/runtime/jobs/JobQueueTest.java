@@ -68,8 +68,8 @@ public class JobQueueTest extends TestCase {
 		assertTrue("1.0", queue.isEmpty());
 		assertTrue("1.1", queue.dequeue() == null);
 		assertTrue("1.2", queue.peek() == null);
-		for (int i = 0; i < entries.length; i++) {
-			queue.enqueue(entries[i]);
+		for (Entry entry : entries) {
+			queue.enqueue(entry);
 			assertTrue("1.3", queue.peek() != null);
 		}
 		for (int i = 0; i < entries.length; i++) {
@@ -80,8 +80,8 @@ public class JobQueueTest extends TestCase {
 		assertTrue("2.0", queue.isEmpty());
 		assertTrue("2.1", queue.dequeue() == null);
 		assertTrue("2.2", queue.peek() == null);
-		for (int i = 0; i < entries.length; i++) {
-			queue.enqueue(entries[i]);
+		for (Entry entry : entries) {
+			queue.enqueue(entry);
 		}
 		int count = entries.length;
 		while (!queue.isEmpty()) {

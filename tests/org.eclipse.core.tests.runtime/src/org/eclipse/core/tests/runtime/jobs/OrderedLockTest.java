@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.LockManager;
 import org.eclipse.core.internal.jobs.OrderedLock;
@@ -40,8 +39,8 @@ public class OrderedLockTest extends TestCase {
 	}
 
 	private void kill(ArrayList<LockAcquiringRunnable> allRunnables) {
-		for (Iterator<LockAcquiringRunnable> it = allRunnables.iterator(); it.hasNext();) {
-			it.next().kill();
+		for (LockAcquiringRunnable lockAcquiringRunnable : allRunnables) {
+			lockAcquiringRunnable.kill();
 		}
 	}
 
@@ -266,8 +265,8 @@ public class OrderedLockTest extends TestCase {
 	}
 
 	private void start(ArrayList<LockAcquiringRunnable> allRunnables) {
-		for (Iterator<LockAcquiringRunnable> it = allRunnables.iterator(); it.hasNext();) {
-			new Thread(it.next()).start();
+		for (LockAcquiringRunnable lockAcquiringRunnable : allRunnables) {
+			new Thread(lockAcquiringRunnable).start();
 		}
 	}
 }

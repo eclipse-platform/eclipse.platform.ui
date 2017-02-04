@@ -90,15 +90,13 @@ public class PerformanceStatsProcessor extends Job {
 		long totalTime = 0;
 		int totalCount = 0;
 		PerformanceStats[] allStats = PerformanceStats.getAllStats();
-		for (int i = 0; i < allStats.length; i++) {
-			PerformanceStats stats = allStats[i];
+		for (PerformanceStats stats : allStats) {
 			totalTime += stats.getRunningTime();
 			totalCount += stats.getRunCount();
 		}
 		//dump stats
 		out.println("---------------------------------------------------------------"); //$NON-NLS-1$
-		for (int i = 0; i < allStats.length; i++) {
-			PerformanceStats stats = allStats[i];
+		for (PerformanceStats stats : allStats) {
 			out.print("Event: "); //$NON-NLS-1$
 			out.print(stats.getEvent());
 			out.print(" Blame: "); //$NON-NLS-1$

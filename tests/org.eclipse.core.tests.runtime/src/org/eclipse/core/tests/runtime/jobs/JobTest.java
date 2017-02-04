@@ -82,8 +82,8 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	private void cancel(Job[] jobs) {
-		for (int i = 0; i < jobs.length; i++)
-			jobs[i].cancel();
+		for (Job job : jobs)
+			job.cancel();
 	}
 
 	@Override
@@ -1621,8 +1621,8 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	private void waitForState(Job[] jobs, int state) {
-		for (int i = 0; i < jobs.length; i++)
-			waitForState(jobs[i], state);
+		for (Job job : jobs)
+			waitForState(job, state);
 	}
 
 	/**

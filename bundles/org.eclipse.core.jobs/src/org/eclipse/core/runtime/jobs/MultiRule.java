@@ -41,14 +41,14 @@ public class MultiRule implements ISchedulingRule {
 	 */
 	public static ISchedulingRule combine(ISchedulingRule[] ruleArray) {
 		ISchedulingRule result = null;
-		for (int i = 0; i < ruleArray.length; i++) {
-			if (ruleArray[i] == null)
+		for (ISchedulingRule element : ruleArray) {
+			if (element == null)
 				continue;
 			if (result == null) {
-				result = ruleArray[i];
+				result = element;
 				continue;
 			}
-			result = combine(result, ruleArray[i]);
+			result = combine(result, element);
 		}
 		return result;
 	}
@@ -88,13 +88,13 @@ public class MultiRule implements ISchedulingRule {
 	 */
 	private static ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
 		ArrayList<ISchedulingRule> myRules = new ArrayList<>(nestedRules.length);
-		for (int i = 0; i < nestedRules.length; i++) {
-			if (nestedRules[i] instanceof MultiRule) {
-				ISchedulingRule[] children = ((MultiRule) nestedRules[i]).getChildren();
-				for (int j = 0; j < children.length; j++)
-					myRules.add(children[j]);
+		for (ISchedulingRule nestedRule : nestedRules) {
+			if (nestedRule instanceof MultiRule) {
+				ISchedulingRule[] children = ((MultiRule) nestedRule).getChildren();
+				for (ISchedulingRule element : children)
+					myRules.add(element);
 			} else {
-				myRules.add(nestedRules[i]);
+				myRules.add(nestedRule);
 			}
 		}
 		return myRules.toArray(new ISchedulingRule[myRules.size()]);
@@ -132,17 +132,17 @@ public class MultiRule implements ISchedulingRule {
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] otherRules = ((MultiRule) rule).getChildren();
 			//for each child of the target, there must be some child in this rule that contains it.
-			for (int other = 0; other < otherRules.length; other++) {
+			for (ISchedulingRule otherRule : otherRules) {
 				boolean found = false;
 				for (int mine = 0; !found && mine < rules.length; mine++)
-					found = rules[mine].contains(otherRules[other]);
+					found = rules[mine].contains(otherRule);
 				if (!found)
 					return false;
 			}
 			return true;
 		}
-		for (int i = 0; i < rules.length; i++)
-			if (rules[i].contains(rule))
+		for (ISchedulingRule rule2 : rules)
+			if (rule2.contains(rule))
 				return true;
 		return false;
 	}
@@ -153,13 +153,13 @@ public class MultiRule implements ISchedulingRule {
 			return true;
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] otherRules = ((MultiRule) rule).getChildren();
-			for (int j = 0; j < otherRules.length; j++)
-				for (int i = 0; i < rules.length; i++)
-					if (rules[i].isConflicting(otherRules[j]))
+			for (ISchedulingRule otherRule : otherRules)
+				for (ISchedulingRule rule2 : rules)
+					if (rule2.isConflicting(otherRule))
 						return true;
 		} else {
-			for (int i = 0; i < rules.length; i++)
-				if (rules[i].isConflicting(rule))
+			for (ISchedulingRule rule3 : rules)
+				if (rule3.isConflicting(rule))
 					return true;
 		}
 		return false;

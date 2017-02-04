@@ -151,8 +151,8 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			File[] selectedFiles = dir.listFiles(fileFilter);
 			monitor.worked(1);
 			Arrays.sort(selectedFiles);
-			for (int i = 0; i < selectedFiles.length; i++) {
-				childNode = makeNode(selectedFiles[i]);
+			for (File selectedFile : selectedFiles) {
+				childNode = makeNode(selectedFile);
 				dirNode.addChild(childNode);
 			}
 			// looks for files of registered types in its subdirectories
@@ -160,10 +160,10 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 			monitor.worked(1);
 			Arrays.sort(subDirs);
 
-			for (int i = 0; i < subDirs.length; i++) {
+			for (File subDir : subDirs) {
 				// constructs a node for each subdir...
-				childNode = makeNode(subDirs[i]);
-				if (extractInfo(subDirs[i], childNode, new SubProgressMonitor(monitor, 98 / subDirs.length)))
+				childNode = makeNode(subDir);
+				if (extractInfo(subDir, childNode, new SubProgressMonitor(monitor, 98 / subDirs.length)))
 					// ...but only adds them if they have files of registered types
 					dirNode.addChild(childNode);
 			}

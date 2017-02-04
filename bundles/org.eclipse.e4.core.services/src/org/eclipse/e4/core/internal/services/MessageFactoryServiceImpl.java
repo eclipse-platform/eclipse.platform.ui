@@ -252,8 +252,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	private void processPostConstruct(Object messageObject, Class<?> messageClass) {
 		if (messageObject != null) {
 			Method[] methods = messageClass.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				Method method = methods[i];
+			for (Method method : methods) {
 				if (!method.isAnnotationPresent(PostConstruct.class)) {
 					continue;
 				} else {

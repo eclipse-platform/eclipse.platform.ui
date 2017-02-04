@@ -234,8 +234,8 @@ public class LogSerializationTest extends RuntimeTest {
 		if (logFile.exists()) {
 			logFile.delete();
 		}
-		for (int i = 0; i < statuses.length; i++) {
-			RuntimeLog.log(statuses[i]);
+		for (IStatus status : statuses) {
+			RuntimeLog.log(status);
 		}
 	}
 }

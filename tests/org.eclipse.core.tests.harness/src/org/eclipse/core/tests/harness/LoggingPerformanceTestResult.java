@@ -15,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
-import java.util.Iterator;
 import junit.framework.TestFailure;
 
 /**
@@ -146,8 +145,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		out.println("<ul>");
 
 		// print out all timing results to the console
-		for (Iterator<PerformanceTimer> it = timerList.iterator(); it.hasNext();) {
-			PerformanceTimer timer = it.next();
+		for (PerformanceTimer timer : timerList) {
 			out.println("<li>" + timer.getName() + " : " + timer.getElapsedTime() + " ms</li>");
 		}
 		out.println("</ul>");

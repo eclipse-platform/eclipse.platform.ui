@@ -89,8 +89,7 @@ public class Log implements ILog, SynchronousLogListener, LogFilter {
 		synchronized (logListeners) {
 			listeners = logListeners.toArray(new ILogListener[logListeners.size()]);
 		}
-		for (int i = 0; i < listeners.length; i++) {
-			final ILogListener listener = listeners[i];
+		for (final ILogListener listener : listeners) {
 			ISafeRunnable code = new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {

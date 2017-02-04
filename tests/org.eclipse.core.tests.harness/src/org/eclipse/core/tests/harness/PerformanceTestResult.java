@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import junit.framework.Test;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
@@ -116,8 +115,7 @@ public class PerformanceTestResult extends TestResult {
 	 */
 	protected void printTimings(PrintWriter out) {
 		// print out all timing results to the console
-		for (Iterator<PerformanceTimer> it = timerList.iterator(); it.hasNext();) {
-			PerformanceTimer timer = it.next();
+		for (PerformanceTimer timer : timerList) {
 			out.println("Timing " + timer.getName() + " : " + timer.getElapsedTime() + " ms ");
 		}
 	}
@@ -163,8 +161,8 @@ public class PerformanceTestResult extends TestResult {
 	 * Stops all timers
 	 */
 	protected void stopTimers() {
-		for (Iterator<PerformanceTimer> it = timerList.iterator(); it.hasNext();) {
-			it.next().stopTiming();
+		for (PerformanceTimer performanceTimer : timerList) {
+			performanceTimer.stopTiming();
 		}
 	}
 }

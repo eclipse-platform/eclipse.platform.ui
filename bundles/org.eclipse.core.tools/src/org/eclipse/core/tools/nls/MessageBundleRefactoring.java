@@ -63,8 +63,7 @@ public class MessageBundleRefactoring extends Refactoring {
 		fChange = new CompositeChange("Accessor Class Changes");
 		ICompilationUnit[] affectedUnits = RefactoringSearchEngine.findAffectedCompilationUnits(SearchPattern.createPattern(fAccessorClass, IJavaSearchConstants.REFERENCES), RefactoringScopeFactory.create(fAccessorClass), new SubProgressMonitor(monitor, 5), result);
 		monitor.beginTask("", affectedUnits.length + 1);
-		for (int i = 0; i < affectedUnits.length; i++) {
-			ICompilationUnit unit = affectedUnits[i];
+		for (ICompilationUnit unit : affectedUnits) {
 			if (unit.equals(fAccessorClass.getCompilationUnit()))
 				continue;
 			processCompilationUnit(result, unit, new SubProgressMonitor(monitor, 1));

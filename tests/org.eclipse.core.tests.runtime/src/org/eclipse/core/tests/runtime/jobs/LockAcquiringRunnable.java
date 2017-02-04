@@ -41,8 +41,8 @@ public class LockAcquiringRunnable implements Runnable {
 			} catch (InterruptedException e) {
 				//ignore
 			}
-			for (int i = 0; i < locks.length; i++) {
-				locks[i].acquire();
+			for (ILock lock : locks) {
+				lock.acquire();
 				try {
 					Thread.sleep(random.nextInt(500));
 				} catch (InterruptedException e1) {
