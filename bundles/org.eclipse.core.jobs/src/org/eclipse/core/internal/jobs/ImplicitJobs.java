@@ -174,8 +174,8 @@ class ImplicitJobs {
 	private boolean isSuspended(ISchedulingRule rule) {
 		if (suspendedRules.size() == 0)
 			return false;
-		for (Iterator<ISchedulingRule> it = suspendedRules.iterator(); it.hasNext();)
-			if (it.next().contains(rule))
+		for (ISchedulingRule iSchedulingRule : suspendedRules)
+			if (iSchedulingRule.contains(rule))
 				return true;
 		return false;
 	}

@@ -13,7 +13,6 @@ package org.eclipse.core.internal.expressions.tests;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -45,8 +44,8 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 			}
 		});
 		TestSuite result= new TestSuite();
-		for (Iterator<Test> iter = tests.iterator(); iter.hasNext();) {
-			result.addTest(iter.next());
+		for (Test test : tests) {
+			result.addTest(test);
 		}
 		return result;
 	}
@@ -112,8 +111,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	private static Bundle getBundle(String bundleName) {
 		BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
 		Bundle[] bundles= bundleContext.getBundles();
-		for (int i= 0; i < bundles.length; i++) {
-			Bundle bundle= bundles[i];
+		for (Bundle bundle : bundles) {
 			if (bundleName.equals(bundle.getSymbolicName())) {
 				return bundle;
 			}

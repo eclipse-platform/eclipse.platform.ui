@@ -279,8 +279,8 @@ public class ExpressionInfoTests extends TestCase {
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
 		Set<String> accessedVariableNames= new HashSet<>(Arrays.asList(info.getAccessedVariableNames()));
 		assertEquals("All variable accessed", variables.length, accessedVariableNames.size());
-		for (int i= 0; i < variables.length; i++) {
-			assertTrue("Variable accessed", accessedVariableNames.contains(variables[i]));
+		for (String variable : variables) {
+			assertTrue("Variable accessed", accessedVariableNames.contains(variable));
 		}
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
@@ -301,8 +301,8 @@ public class ExpressionInfoTests extends TestCase {
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
 		Set<String> accessedPropertyNames= new HashSet<>(Arrays.asList(info.getAccessedPropertyNames()));
 		assertEquals("All properties accessed", properties.length, accessedPropertyNames.size());
-		for (int i= 0; i < properties.length; i++) {
-			assertTrue("Property accessed", accessedPropertyNames.contains(properties[i]));
+		for (String property : properties) {
+			assertTrue("Property accessed", accessedPropertyNames.contains(property));
 		}
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No variable accesses", 0, info.getAccessedVariableNames().length);
@@ -315,8 +315,8 @@ public class ExpressionInfoTests extends TestCase {
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 		Set<?> misbehavedTypes = new HashSet<>(Arrays.asList(info.getMisbehavingExpressionTypes()));
 		assertEquals("All types accessed", types.length, misbehavedTypes.size());
-		for (int i= 0; i < types.length; i++) {
-			assertTrue("Type collected", misbehavedTypes.contains(types[i]));
+		for (Class<?> type : types) {
+			assertTrue("Type collected", misbehavedTypes.contains(type));
 		}
 	}
 }

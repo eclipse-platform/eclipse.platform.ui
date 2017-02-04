@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.junit.Assert;
 
@@ -86,8 +85,8 @@ public class FileSystemComparator {
 		Map<?, ?> oldSnapshot = (Map<?, ?>) oldOne;
 		Map<?, ?> newSnapshot = (Map<?, ?>) newOne;
 		boolean sameSize = oldSnapshot.size() == newSnapshot.size();
-		for (Iterator<?> i = newSnapshot.values().iterator(); i.hasNext();) {
-			FileSummary newElement = (FileSummary) i.next();
+		for (Object element : newSnapshot.values()) {
+			FileSummary newElement = (FileSummary) element;
 			FileSummary oldElement = (FileSummary) oldSnapshot.get(newElement.getPath());
 			Assert.assertNotNull(tag + " - " + newElement.getPath() + " was added", oldElement);
 			Assert.assertEquals(tag + " - " + newElement.getPath() + " changed timestamp ", oldElement.getTimestamp(), newElement.getTimestamp());
@@ -96,8 +95,8 @@ public class FileSystemComparator {
 		// one or more entries were removed
 		// need to do the reverse (take the old snapshot as basis) to figure out what are the missing entries
 		if (!sameSize) {
-			for (Iterator<?> i = oldSnapshot.values().iterator(); i.hasNext();) {
-				FileSummary oldElement = (FileSummary) i.next();
+			for (Object element : oldSnapshot.values()) {
+				FileSummary oldElement = (FileSummary) element;
 				FileSummary newElement = (FileSummary) newSnapshot.get(oldElement.getPath());
 				Assert.assertNotNull(tag + " - " + oldElement.getPath() + " was removed", newElement);
 			}
@@ -127,11 +126,11 @@ public class FileSystemComparator {
 		PrintWriter out = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(summaryFile))));
 		Map<?, ?> snapshot = (Map<?, ?>) toSave;
 		try {
-			for (Iterator<?> i = snapshot.values().iterator(); i.hasNext();) {
-				FileSummary element = (FileSummary) i.next();
-				out.println(element.getPath());
-				out.println(element.getTimestamp());
-				out.println(element.getSize());
+			for (Object element : snapshot.values()) {
+				FileSummary fileSummary = (FileSummary) element;
+				out.println(fileSummary.getPath());
+				out.println(fileSummary.getTimestamp());
+				out.println(fileSummary.getSize());
 			}
 		} finally {
 			out.close();
@@ -160,8 +159,8 @@ public class FileSystemComparator {
 		if (entries == null) {
 			return;
 		}
-		for (int i = 0; i < entries.length; i++) {
-			takeSnapshot(snapshot, entries[i], false);
+		for (File fileEntry : entries) {
+			takeSnapshot(snapshot, fileEntry, false);
 		}
 	}
 

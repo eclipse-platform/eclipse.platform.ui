@@ -11,7 +11,6 @@
 package org.eclipse.core.expressions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -219,8 +218,7 @@ public class ExpressionInfo {
 			fAccessedVariableNames= other.fAccessedVariableNames; //TODO: shares the two lists! Can propagate further additions up into sibling branches.
 		} else {
 			if (other.fAccessedVariableNames != null) {
-				for (Iterator<String> iter= other.fAccessedVariableNames.iterator(); iter.hasNext();) {
-					String variableName= iter.next();
+				for (String variableName : other.fAccessedVariableNames) {
 					if (!fAccessedVariableNames.contains(variableName))
 						fAccessedVariableNames.add(variableName);
 				}
@@ -240,8 +238,7 @@ public class ExpressionInfo {
 			fAccessedPropertyNames= other.fAccessedPropertyNames; //TODO: shares the two lists!
 		} else {
 			if (other.fAccessedPropertyNames != null) {
-				for (Iterator<String> iter= other.fAccessedPropertyNames.iterator(); iter.hasNext();) {
-					String variableName= iter.next();
+				for (String variableName : other.fAccessedPropertyNames) {
 					if (!fAccessedPropertyNames.contains(variableName))
 						fAccessedPropertyNames.add(variableName);
 				}
@@ -259,8 +256,7 @@ public class ExpressionInfo {
 			fMisbehavingExpressionTypes= other.fMisbehavingExpressionTypes; //TODO: shares the two lists!
 		} else  {
 			if (other.fMisbehavingExpressionTypes != null) {
-				for (Iterator<Class<?>> iter= other.fMisbehavingExpressionTypes.iterator(); iter.hasNext();) {
-					Class<?> clazz= iter.next();
+				for (Class<?> clazz : other.fMisbehavingExpressionTypes) {
 					if (!fMisbehavingExpressionTypes.contains(clazz))
 						fMisbehavingExpressionTypes.add(clazz);
 				}

@@ -944,9 +944,9 @@ public class ExpressionTests extends TestCase {
 	}
 
 	private IConfigurationElement findExtension(IConfigurationElement[] ces, String id) {
-		for (int i= 0; i < ces.length; i++) {
-			if (id.equals(ces[i].getAttribute("id"))) //$NON-NLS-1$
-				return ces[i];
+		for (IConfigurationElement ce : ces) {
+			if (id.equals(ce.getAttribute("id"))) //$NON-NLS-1$
+				return ce;
 		}
 		return null;
 	}

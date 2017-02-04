@@ -26,8 +26,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		public void cancelAllJobs() {
 			Job[] jobs = scheduled.toArray(new Job[0]);
-			for (int i = 0; i < jobs.length; i++) {
-				jobs[i].cancel();
+			for (Job job : jobs) {
+				job.cancel();
 			}
 		}
 
@@ -94,8 +94,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 * Cancels a list of jobs
 	 */
 	protected void cancel(ArrayList<Job> jobs) {
-		for (Iterator<Job> it = jobs.iterator(); it.hasNext();) {
-			it.next().cancel();
+		for (Job job : jobs) {
+			job.cancel();
 		}
 	}
 
@@ -120,21 +120,21 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		scheduledJobs = 0;
 		jobListeners = new IJobChangeListener[] {/* new VerboseJobListener(),*/
 		new TestJobListener()};
-		for (int i = 0; i < jobListeners.length; i++) {
-			manager.addJobChangeListener(jobListeners[i]);
+		for (IJobChangeListener jobListener : jobListeners) {
+			manager.addJobChangeListener(jobListener);
 		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		for (int i = 0; i < jobListeners.length; i++) {
-			if (jobListeners[i] instanceof TestJobListener) {
-				((TestJobListener) jobListeners[i]).cancelAllJobs();
+		for (IJobChangeListener jobListener : jobListeners) {
+			if (jobListener instanceof TestJobListener) {
+				((TestJobListener) jobListener).cancelAllJobs();
 			}
 		}
 		waitForCompletion();
-		for (int i = 0; i < jobListeners.length; i++) {
-			manager.removeJobChangeListener(jobListeners[i]);
+		for (IJobChangeListener jobListener : jobListeners) {
+			manager.removeJobChangeListener(jobListener);
 		}
 		super.tearDown();
 		//		manager.startup();
@@ -2487,9 +2487,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 */
 	private void waitForFamilyCancel(Job[] jobs, TestJobFamily type) {
 
-		for (int j = 0; j < jobs.length; j++) {
+		for (Job job : jobs) {
 			int i = 0;
-			while (jobs[j].belongsTo(type) && (jobs[j].getState() != Job.NONE)) {
+			while (job.belongsTo(type) && (job.getState() != Job.NONE)) {
 				Thread.yield();
 				sleep(100);
 				Thread.yield();

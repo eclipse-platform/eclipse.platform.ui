@@ -183,9 +183,9 @@ public final class InternalPlatform {
 		if (bundles == null)
 			return null;
 		//Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
+		for (Bundle bundle : bundles) {
+			if ((bundle.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return bundle;
 			}
 		}
 		return null;
@@ -249,9 +249,9 @@ public final class InternalPlatform {
 		//Remove all the bundles that are installed or uninstalled
 		Bundle[] selectedBundles = new Bundle[bundles.length];
 		int added = 0;
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				selectedBundles[added++] = bundles[i];
+		for (Bundle bundle : bundles) {
+			if ((bundle.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				selectedBundles[added++] = bundle;
 			}
 		}
 		if (added == 0)

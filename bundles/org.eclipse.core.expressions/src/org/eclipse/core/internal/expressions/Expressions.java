@@ -159,8 +159,8 @@ public class Expressions {
 		if (superClass != null && uncachedIsSubtype(superClass, type))
 			return true;
 		Class<?>[] interfaces= clazz.getInterfaces();
-		for (int i= 0; i < interfaces.length; i++) {
-			if (uncachedIsSubtype(interfaces[i], type))
+		for (Class<?> interfaze : interfaces) {
+			if (uncachedIsSubtype(interfaze, type))
 				return true;
 		}
 		return false;
@@ -176,8 +176,8 @@ public class Expressions {
 
 	public static void checkAttribute(String name, String value, String[] validValues) throws CoreException {
 		checkAttribute(name, value);
-		for (int i= 0; i < validValues.length; i++) {
-			if (value.equals(validValues[i]))
+		for (String validValue : validValues) {
+			if (value.equals(validValue))
 				return;
 		}
 		throw new CoreException(new ExpressionStatus(

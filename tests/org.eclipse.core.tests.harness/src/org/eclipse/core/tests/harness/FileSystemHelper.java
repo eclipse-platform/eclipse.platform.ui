@@ -11,7 +11,10 @@
 package org.eclipse.core.tests.harness;
 
 import java.io.IOException;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Home for file system-related utility methods.
@@ -60,13 +63,16 @@ public class FileSystemHelper {
 	}
 
 	public static void clear(java.io.File file) {
-		if (!file.exists())
+		if (!file.exists()) {
 			return;
+		}
 		if (file.isDirectory()) {
 			String[] files = file.list();
-			if (files != null) // be careful since file.list() can return null
-				for (int i = 0; i < files.length; ++i)
-					clear(new java.io.File(file, files[i]));
+			if (files != null) {
+				for (String child : files) {
+					clear(new java.io.File(file, child));
+				}
+			}
 		}
 		if (!file.delete()) {
 			String message = "ensureDoesNotExistInFileSystem(File) could not delete: " + file.getPath();

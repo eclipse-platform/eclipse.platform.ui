@@ -41,8 +41,8 @@ import org.eclipse.core.runtime.Status;
 public final class ExpressionConverter {
 
 	private ElementHandler[] fHandlers;
-	private static final ExpressionConverter INSTANCE= new ExpressionConverter(
-		new ElementHandler[] { ElementHandler.getDefault() } );
+	private static final ExpressionConverter INSTANCE = new ExpressionConverter(
+			new ElementHandler[] { ElementHandler.getDefault() });
 
 	/**
 	 * Returns the default expression converter. The default expression converter
@@ -85,8 +85,7 @@ public final class ExpressionConverter {
 	 *  expression tree is malformed.
 	 */
 	public Expression perform(IConfigurationElement root) throws CoreException {
-		for (int i= 0; i < fHandlers.length; i++) {
-			ElementHandler handler= fHandlers[i];
+		for (ElementHandler handler : fHandlers) {
 			Expression result= handler.create(this, root);
 			if (result != null)
 				return result;
@@ -110,8 +109,7 @@ public final class ExpressionConverter {
 	 * @since 3.3
 	 */
 	public Expression perform(Element root) throws CoreException {
-		for (int i= 0; i < fHandlers.length; i++) {
-			ElementHandler handler= fHandlers[i];
+		for (ElementHandler handler : fHandlers) {
 			Expression result= handler.create(this, root);
 			if (result != null)
 				return result;
@@ -122,14 +120,14 @@ public final class ExpressionConverter {
 	/* package */ void processChildren(IConfigurationElement element, CompositeExpression result) throws CoreException {
 		IConfigurationElement[] children= element.getChildren();
 		if (children != null) {
-			for (int i= 0; i < children.length; i++) {
-				Expression child= perform(children[i]);
+			for (IConfigurationElement configElement : children) {
+				Expression child= perform(configElement);
 				if (child == null)
 					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
 						IStatus.ERROR,
 						Messages.format(
 							ExpressionMessages.Expression_unknown_element,
-							getDebugPath(children[i])),
+							getDebugPath(configElement)),
 						null));
 				result.add(child);
 			}

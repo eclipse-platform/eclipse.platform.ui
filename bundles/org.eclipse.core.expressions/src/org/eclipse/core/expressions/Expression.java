@@ -118,8 +118,8 @@ public abstract class Expression {
 			return 0;
 		}
 		int hashCode= array.getClass().getName().hashCode();
-		for (int i= 0; i < array.length; i++) {
-			hashCode= hashCode * HASH_FACTOR + hashCode(array[i]);
+		for (Object element : array) {
+			hashCode= hashCode * HASH_FACTOR + hashCode(element);
 		}
 		return hashCode;
 	}

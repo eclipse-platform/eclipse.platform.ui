@@ -85,8 +85,8 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 					return 1;
 				int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
 				int result = 0;
-				for (int i = 0; i < columnSortOrder.length; ++i) {
-					result = compareColumnValue(columnSortOrder[i], s1, s2);
+				for (int element : columnSortOrder) {
+					result = compareColumnValue(element, s1, s2);
 					if (result != 0)
 						break;
 				}

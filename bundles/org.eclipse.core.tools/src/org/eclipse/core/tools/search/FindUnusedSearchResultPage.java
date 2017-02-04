@@ -86,14 +86,14 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		}
 
 		public void elementsChanged(Object[] updatedElements) {
-			for (int i = 0; i < updatedElements.length; i++) {
-				if (fSearchResult.getMatchCount(updatedElements[i]) > 0) {
-					if (fTableViewer.testFindItem(updatedElements[i]) != null)
-						fTableViewer.refresh(updatedElements[i]);
+			for (Object updatedElement : updatedElements) {
+				if (fSearchResult.getMatchCount(updatedElement) > 0) {
+					if (fTableViewer.testFindItem(updatedElement) != null)
+						fTableViewer.refresh(updatedElement);
 					else
-						fTableViewer.add(updatedElements[i]);
+						fTableViewer.add(updatedElement);
 				} else {
-					fTableViewer.remove(updatedElements[i]);
+					fTableViewer.remove(updatedElement);
 				}
 			}
 		}
