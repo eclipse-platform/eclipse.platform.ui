@@ -462,10 +462,10 @@ public class ResourceBundleHelper {
 			return null;
 		}
 		// Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundleName.equals(bundles[i].getSymbolicName())
-					&& (bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
+		for (Bundle localBundle : bundles) {
+			if (bundleName.equals(localBundle.getSymbolicName())
+					&& (localBundle.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return localBundle;
 			}
 		}
 		return null;

@@ -103,8 +103,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		State state = Platform.getPlatformAdmin().getState(false);
 		BundleDescription[] plugins = state.getBundles();
 		dependencyGraph = new HashMap();
-		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription descriptor = plugins[i];
+		for (BundleDescription descriptor : plugins) {
 			PluginDependencyGraphNode node = (PluginDependencyGraphNode) dependencyGraph.get(new Long(descriptor.getBundleId()));
 			if (node == null) {
 				node = new PluginDependencyGraphNode(descriptor);
@@ -113,8 +112,8 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 
 			// Cycle through the prerequisites
 			BundleSpecification[] requires = descriptor.getRequiredBundles();
-			for (int j = 0; j < requires.length; j++) {
-				BundleDescription childDesc = (BundleDescription) requires[j].getSupplier();
+			for (BundleSpecification require : requires) {
+				BundleDescription childDesc = (BundleDescription) require.getSupplier();
 				// if the child doesn't exist then move to the next child
 				if (childDesc == null)
 					continue;

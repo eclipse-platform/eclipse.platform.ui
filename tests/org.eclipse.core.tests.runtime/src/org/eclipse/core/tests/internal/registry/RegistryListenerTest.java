@@ -275,11 +275,10 @@ public class RegistryListenerTest extends TestCase {
 		assertNotNull(receivedIDs);
 		assertNotNull(expectedIDs);
 		assertTrue(receivedIDs.length == expectedIDs.length);
-		for (int i = 0; i < expectedIDs.length; i++) {
-			String expected = expectedIDs[i];
+		for (String expected : expectedIDs) {
 			boolean found = false;
-			for (int j = 0; j < receivedIDs.length; j++) {
-				if (expected.equals(receivedIDs[j])) {
+			for (String receivedID : receivedIDs) {
+				if (expected.equals(receivedID)) {
 					found = true;
 					break;
 				}

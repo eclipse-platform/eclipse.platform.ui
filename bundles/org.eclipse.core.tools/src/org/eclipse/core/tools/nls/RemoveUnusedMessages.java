@@ -70,10 +70,9 @@ public class RemoveUnusedMessages extends Refactoring {
 		// 10 units of work for modifying the properties file and AST
 		monitor.beginTask("Searching for references.", fields.length + 10);
 		try {
-			for (int i = 0; i < fields.length; i++) {
+			for (IField field : fields) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				IField field = fields[i];
 				String fieldName = field.getElementName();
 				monitor.subTask("Searching for references to: " + fieldName);
 				int flags = field.getFlags();

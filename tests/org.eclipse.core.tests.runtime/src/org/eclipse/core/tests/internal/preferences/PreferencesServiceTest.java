@@ -98,8 +98,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 				return;
 			}
 			assertEquals("3.0", expected.size(), properties.size());
-			for (Iterator<String> i = expected.iterator(); i.hasNext();) {
-				String key = i.next();
+			for (String key : expected) {
 				assertNotNull("4.0." + key, properties.get(key));
 			}
 		}
@@ -555,16 +554,16 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 
 		// store some values
-		for (int i = 0; i < qualifiers.length; i++) {
-			Preferences current = node.node(qualifiers[i]);
-			for (int j = 0; j < oldKeys.length; j++) {
-				current.put(oldKeys[j], getUniqueString());
-				actual = current.get(oldKeys[j], null);
-				assertNotNull("2.0." + current.absolutePath() + IPath.SEPARATOR + oldKeys[j], actual);
+		for (String qualifier : qualifiers) {
+			Preferences current = node.node(qualifier);
+			for (String oldKey : oldKeys) {
+				current.put(oldKey, getUniqueString());
+				actual = current.get(oldKey, null);
+				assertNotNull("2.0." + current.absolutePath() + IPath.SEPARATOR + oldKey, actual);
 			}
-			for (int j = 0; j < newKeys.length; j++) {
-				actual = current.get(newKeys[j], null);
-				assertNull("2.1." + current.absolutePath() + IPath.SEPARATOR + newKeys[j], actual);
+			for (String newKey : newKeys) {
+				actual = current.get(newKey, null);
+				assertNull("2.1." + current.absolutePath() + IPath.SEPARATOR + newKey, actual);
 			}
 		}
 
@@ -576,24 +575,24 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 
 		// old values shouldn't exist anymore
-		for (int i = 0; i < qualifiers.length; i++) {
-			Preferences current = node.node(qualifiers[i]);
-			for (int j = 0; j < oldKeys.length; j++)
-				assertNull("4.0." + current.absolutePath() + IPath.SEPARATOR + oldKeys[j], current.get(oldKeys[j], null));
-			for (int j = 0; j < newKeys.length; j++) {
-				actual = current.get(newKeys[j], null);
-				assertNotNull("4.1." + current.absolutePath() + IPath.SEPARATOR + newKeys[j], actual);
+		for (String qualifier : qualifiers) {
+			Preferences current = node.node(qualifier);
+			for (String oldKey : oldKeys)
+				assertNull("4.0." + current.absolutePath() + IPath.SEPARATOR + oldKey, current.get(oldKey, null));
+			for (String newKey : newKeys) {
+				actual = current.get(newKey, null);
+				assertNotNull("4.1." + current.absolutePath() + IPath.SEPARATOR + newKey, actual);
 			}
 		}
 	}
 
 	private InputStream getLegacyExportFile(String[] qualifiers, String[] keys) {
 		Properties properties = new Properties();
-		for (int i = 0; i < qualifiers.length; i++) {
+		for (String qualifier : qualifiers) {
 			// version id
-			properties.put(qualifiers[i], "2.1.3");
-			for (int j = 0; j < keys.length; j++)
-				properties.put(qualifiers[i] + IPath.SEPARATOR + keys[j], getUniqueString());
+			properties.put(qualifier, "2.1.3");
+			for (String key : keys)
+				properties.put(qualifier + IPath.SEPARATOR + key, getUniqueString());
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
@@ -1040,8 +1039,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 			@Override
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				String[] keys = node.keys();
-				for (int i = 0; i < keys.length; i++)
-					verifier.addExpected(node.absolutePath(), keys[i]);
+				for (String key : keys)
+					verifier.addExpected(node.absolutePath(), key);
 				return true;
 			}
 		};

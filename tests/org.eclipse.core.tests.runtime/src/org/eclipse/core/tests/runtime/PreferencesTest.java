@@ -203,8 +203,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.0", 0, Preferences.INT_DEFAULT_DEFAULT);
 		assertEquals("1.1", Preferences.INT_DEFAULT_DEFAULT, ps.getInt(k1));
 
-		for (int i = 0; i < values.length; i++) {
-			int v1 = values[i];
+		for (int v1 : values) {
 			int v2 = v1 + 1;
 			ps.setValue(k1, v1);
 			assertEquals("1.2", v1, ps.getInt(k1));
@@ -222,8 +221,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.0", 0L, Preferences.LONG_DEFAULT_DEFAULT);
 		assertEquals("1.1", Preferences.LONG_DEFAULT_DEFAULT, ps.getLong(k1));
 
-		for (int i = 0; i < values.length; i++) {
-			long v1 = values[i];
+		for (long v1 : values) {
 			long v2 = v1 + 1;
 			ps.setValue(k1, v1);
 			assertEquals("1.2", v1, ps.getLong(k1));
@@ -242,8 +240,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.0", 0.0f, Preferences.FLOAT_DEFAULT_DEFAULT, tol);
 		assertEquals("1.1", Preferences.FLOAT_DEFAULT_DEFAULT, ps.getFloat(k1), tol);
 
-		for (int i = 0; i < values.length; i++) {
-			float v1 = values[i];
+		for (float v1 : values) {
 			float v2 = v1 + 1.0f;
 			ps.setValue(k1, v1);
 			assertEquals("1.2", v1, ps.getFloat(k1), tol);
@@ -270,8 +267,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.0", 0.0, Preferences.DOUBLE_DEFAULT_DEFAULT, tol);
 		assertEquals("1.1", Preferences.DOUBLE_DEFAULT_DEFAULT, ps.getDouble(k1), tol);
 
-		for (int i = 0; i < values.length; i++) {
-			double v1 = values[i];
+		for (double v1 : values) {
 			double v2 = v1 + 1.0;
 			ps.setValue(k1, v1);
 			assertEquals("1.2", v1, ps.getDouble(k1), tol);
@@ -297,8 +293,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.0", "", Preferences.STRING_DEFAULT_DEFAULT);
 		assertEquals("1.1", ps.getString(k1), Preferences.STRING_DEFAULT_DEFAULT);
 
-		for (int i = 0; i < values.length; i++) {
-			String v1 = values[i];
+		for (String v1 : values) {
 			String v2 = v1 + "x";
 			ps.setValue(k1, v1);
 			assertEquals("1.2", v1, ps.getString(k1));
@@ -317,14 +312,14 @@ public class PreferencesTest extends RuntimeTest {
 		String[] keys = {"a", "b", "c", "d"};
 
 		// setting defaults does not add name to set
-		for (int i = 0; i < keys.length; i++) {
-			ps.setDefault(keys[i], "default");
+		for (String key : keys) {
+			ps.setDefault(key, "default");
 		}
 		assertEquals("1.1", 0, ps.propertyNames().length);
 
 		// setting real values does add name to set
-		for (int i = 0; i < keys.length; i++) {
-			ps.setValue(keys[i], "actual");
+		for (String key : keys) {
+			ps.setValue(key, "actual");
 		}
 		assertEquals("1.2", keys.length, ps.propertyNames().length);
 
@@ -385,14 +380,14 @@ public class PreferencesTest extends RuntimeTest {
 		String[] keys = {"a", "b", "c", "d"};
 
 		// setting actual values does not add name to set
-		for (int i = 0; i < keys.length; i++) {
-			ps.setValue(keys[i], "actual");
+		for (String key : keys) {
+			ps.setValue(key, "actual");
 		}
 		assertEquals("1.1", 0, ps.defaultPropertyNames().length);
 
 		// setting defaults does add name to set
-		for (int i = 0; i < keys.length; i++) {
-			ps.setDefault(keys[i], "default");
+		for (String key : keys) {
+			ps.setDefault(key, "default");
 		}
 		assertEquals("1.2", keys.length, ps.defaultPropertyNames().length);
 
@@ -401,38 +396,38 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.3", s1, s2);
 
 		// setting to default does not remove name from set
-		for (int i = 0; i < keys.length; i++) {
-			ps.setToDefault(keys[i]);
+		for (String key : keys) {
+			ps.setToDefault(key);
 			Set<String> s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.4", s.contains(keys[i]));
+			assertTrue("1.4", s.contains(key));
 		}
 		assertEquals("1.5", keys.length, ps.defaultPropertyNames().length);
 
 		// setting to default-default does not remove name from set either
-		for (int i = 0; i < keys.length; i++) {
-			ps.setDefault(keys[i], Preferences.STRING_DEFAULT_DEFAULT);
+		for (String key : keys) {
+			ps.setDefault(key, Preferences.STRING_DEFAULT_DEFAULT);
 			Set<String> s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.1", s.contains(keys[i]));
+			assertTrue("1.6.1", s.contains(key));
 
-			ps.setDefault(keys[i], Preferences.BOOLEAN_DEFAULT_DEFAULT);
+			ps.setDefault(key, Preferences.BOOLEAN_DEFAULT_DEFAULT);
 			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.2", s.contains(keys[i]));
+			assertTrue("1.6.2", s.contains(key));
 
-			ps.setDefault(keys[i], Preferences.INT_DEFAULT_DEFAULT);
+			ps.setDefault(key, Preferences.INT_DEFAULT_DEFAULT);
 			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.3", s.contains(keys[i]));
+			assertTrue("1.6.3", s.contains(key));
 
-			ps.setDefault(keys[i], Preferences.LONG_DEFAULT_DEFAULT);
+			ps.setDefault(key, Preferences.LONG_DEFAULT_DEFAULT);
 			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.4", s.contains(keys[i]));
+			assertTrue("1.6.4", s.contains(key));
 
-			ps.setDefault(keys[i], Preferences.FLOAT_DEFAULT_DEFAULT);
+			ps.setDefault(key, Preferences.FLOAT_DEFAULT_DEFAULT);
 			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.5", s.contains(keys[i]));
+			assertTrue("1.6.5", s.contains(key));
 
-			ps.setDefault(keys[i], Preferences.DOUBLE_DEFAULT_DEFAULT);
+			ps.setDefault(key, Preferences.DOUBLE_DEFAULT_DEFAULT);
 			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.6", s.contains(keys[i]));
+			assertTrue("1.6.6", s.contains(key));
 		}
 		assertEquals("1.7", keys.length, ps.defaultPropertyNames().length);
 	}

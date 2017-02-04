@@ -91,9 +91,9 @@ public class PreferenceStatsView extends SpyView {
 			// key/value pairs
 			try {
 				String[] keys = node.keys();
-				for (int i = 0; i < keys.length; i++) {
-					count += sizeof(keys[i]);
-					String value = node.get(keys[i], null);
+				for (String key : keys) {
+					count += sizeof(key);
+					String value = node.get(key, null);
 					count += sizeof(value);
 				}
 			} catch (BackingStoreException e) {
@@ -110,8 +110,7 @@ public class PreferenceStatsView extends SpyView {
 			IPluginDescriptor[] descriptors = registry.getPluginDescriptors();
 			if (descriptors == null)
 				return count;
-			for (int i = 0; i < descriptors.length; i++) {
-				IPluginDescriptor desc = descriptors[i];
+			for (IPluginDescriptor desc : descriptors) {
 				//				if (desc.isPluginActivated())
 				count += calculateOldSizeFor(desc.getUniqueIdentifier());
 			}
@@ -138,9 +137,9 @@ public class PreferenceStatsView extends SpyView {
 				// TODO rough estimate
 				try {
 					String[] keys = node.keys();
-					for (int i = 0; i < keys.length; i++) {
-						count += sizeof(keys[i]);
-						String value = node.get(keys[i], null);
+					for (String key : keys) {
+						count += sizeof(key);
+						String value = node.get(key, null);
 						count += sizeof(value);
 					}
 				} catch (BackingStoreException e) {
@@ -156,9 +155,9 @@ public class PreferenceStatsView extends SpyView {
 				// TODO rough estimate
 				try {
 					String[] keys = node.keys();
-					for (int i = 0; i < keys.length; i++) {
-						count += sizeof(keys[i]);
-						String value = node.get(keys[i], null);
+					for (String key : keys) {
+						count += sizeof(key);
+						String value = node.get(key, null);
 						count += sizeof(value);
 					}
 				} catch (BackingStoreException e) {
@@ -197,8 +196,8 @@ public class PreferenceStatsView extends SpyView {
 			count += 4;
 			try {
 				String[] childrenNames = node.childrenNames();
-				for (int i = 0; i < childrenNames.length; i++)
-					count += sizeof(childrenNames[i]);
+				for (String childrenName : childrenNames)
+					count += sizeof(childrenName);
 			} catch (BackingStoreException e) {
 				//this is truly exceptional!
 			}
@@ -219,9 +218,9 @@ public class PreferenceStatsView extends SpyView {
 			// TODO this isn't quite right but is ok for now
 			count += 4;
 			String[] keys = node.keys();
-			for (int i = 0; i < keys.length; i++) {
-				count += sizeof(keys[i]);
-				String value = node.get(keys[i], null);
+			for (String key : keys) {
+				count += sizeof(key);
+				String value = node.get(key, null);
 				count += sizeof(value);
 			}
 

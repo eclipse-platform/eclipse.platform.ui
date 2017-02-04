@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.preferences.legacy;
 
 import java.io.*;
-import java.util.Iterator;
 import java.util.Properties;
 import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
@@ -877,8 +876,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	private void convertFromProperties(Properties props) {
 		IEclipsePreferences preferences = getPluginPreferences(true);
-		for (Iterator<Object> i = props.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
+		for (Object object : props.keySet()) {
+			String key = (String) object;
 			String value = props.getProperty(key);
 			if (value != null)
 				preferences.put(key, value);
@@ -897,8 +896,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	private Properties convertToProperties() {
 		Properties result = new Properties();
 		String[] keys = propertyNames();
-		for (int i = 0; i < keys.length; i++) {
-			String key = keys[i];
+		for (String key : keys) {
 			String value = getString(key);
 			if (!Preferences.STRING_DEFAULT_DEFAULT.equals(value))
 				result.put(key, value);

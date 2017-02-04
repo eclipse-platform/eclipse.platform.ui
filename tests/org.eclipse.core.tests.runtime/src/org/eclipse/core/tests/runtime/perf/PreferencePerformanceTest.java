@@ -132,8 +132,8 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// test retrieval
 			@Override
 			protected void test() {
-				for (int i = 0; i < keys.length; i++)
-					prefs.get(keys[i], null);
+				for (String key : keys)
+					prefs.get(key, null);
 			}
 		};
 		runner.setFingerprintName("Retrieve preference values");
@@ -219,8 +219,8 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// how long to get the values?
 			@Override
 			protected void test() {
-				for (int i = 0; i < keys.length; i++)
-					prefs.get(keys[i], null);
+				for (String key : keys)
+					prefs.get(key, null);
 			}
 		}.run(this, 10, INNER_LOOP);
 	}
@@ -260,8 +260,8 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// how long to get the values?
 			@Override
 			protected void test() {
-				for (int i = 0; i < keys.length; i++)
-					prefs.get(keys[i], null);
+				for (String key : keys)
+					prefs.get(key, null);
 			}
 		}.run(this, 10, INNER_LOOP);
 	}
@@ -353,8 +353,8 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// the test is how long it takes to remove all the values
 			@Override
 			protected void test() {
-				for (int i = 0; i < keys.length; i++)
-					prefs.remove(keys[i]);
+				for (String key : keys)
+					prefs.remove(key);
 			}
 		}.run(this, 50, 1);
 	}

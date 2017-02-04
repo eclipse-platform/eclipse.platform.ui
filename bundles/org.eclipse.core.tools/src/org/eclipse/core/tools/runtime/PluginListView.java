@@ -73,8 +73,8 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 			BundleContext context = CoreToolsPlugin.getDefault().getContext();
 			Bundle[] allBundles = context.getBundles();
 			State state = Platform.getPlatformAdmin().getState(false);
-			for (int i = 0; i < allBundles.length; i++)
-				set.add(state.getBundle(allBundles[i].getBundleId()));
+			for (Bundle allBundle : allBundles)
+				set.add(state.getBundle(allBundle.getBundleId()));
 			bundles = set.toArray();
 		}
 		return bundles;

@@ -50,8 +50,8 @@ public class RuntimeTestsPlugin extends Plugin {
 			return true;
 		if (file.isDirectory()) {
 			File[] children = file.listFiles();
-			for (int i = 0; i < children.length; i++)
-				delete(children[i]);
+			for (File element : children)
+				delete(element);
 		}
 		return file.delete();
 	}
@@ -116,8 +116,8 @@ public class RuntimeTestsPlugin extends Plugin {
 			if (!target.exists())
 				target.mkdirs();
 			File[] children = source.listFiles(filter);
-			for (int i = 0; i < children.length; i++)
-				copy(children[i], new File(target, children[i].getName()));
+			for (File element : children)
+				copy(element, new File(target, element.getName()));
 			return;
 		}
 		InputStream input = null;

@@ -17,7 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -118,8 +117,7 @@ public class RunAndTrackTest {
 
 	@After
 	public void tearDown() throws Exception {
-		for (Iterator<IEclipseContext> i = createdContexts.iterator(); i.hasNext();) {
-			IEclipseContext context = i.next();
+		for (IEclipseContext context : createdContexts) {
 			context.dispose();
 		}
 		createdContexts.clear();
