@@ -339,8 +339,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	protected void processScheduled(Set<Scheduled> scheduledList) {
-		for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
-			Scheduled scheduled = i.next();
+		for (Scheduled scheduled : scheduledList) {
 			scheduled.runnable.update(scheduled.event);
 		}
 	}
@@ -485,8 +484,7 @@ public class EclipseContext implements IEclipseContext {
 		collectDependentNames(usedNames);
 
 		// 2) for each used name:
-		for (Iterator<String> i = usedNames.iterator(); i.hasNext();) {
-			String name = i.next();
+		for (String name : usedNames) {
 			if (localValues.containsKey(name))
 				continue; // it is a local value
 			Object oldValue = get(name);
@@ -534,9 +532,9 @@ public class EclipseContext implements IEclipseContext {
 		Computation[] ls = waiting.toArray(new Computation[waiting.size()]);
 		waiting.clear();
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UPDATE, null, null, null);
-		for (int i = 0; i < ls.length; i++) {
-			if (ls[i] instanceof TrackableComputationExt)
-				((TrackableComputationExt) ls[i]).update(event);
+		for (Computation element : ls) {
+			if (element instanceof TrackableComputationExt)
+				((TrackableComputationExt) element).update(event);
 		}
 	}
 

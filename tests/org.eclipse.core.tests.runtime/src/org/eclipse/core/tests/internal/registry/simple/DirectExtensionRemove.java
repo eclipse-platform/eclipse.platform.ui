@@ -100,9 +100,9 @@ public class DirectExtensionRemove extends BaseExtensionRegistryRun {
 			public void registryChanged(IRegistryChangeEvent event) {
 				IExtensionDelta[] deltas = event.getExtensionDeltas();
 				assertTrue(deltas.length == 1);
-				for (int i = 0; i < deltas.length; i++) {
-					assertTrue(deltas[i].getKind() == IExtensionDelta.REMOVED);
-					IExtension extension = deltas[i].getExtension();
+				for (IExtensionDelta delta : deltas) {
+					assertTrue(delta.getKind() == IExtensionDelta.REMOVED);
+					IExtension extension = delta.getExtension();
 					assertNotNull(extension);
 
 					IConfigurationElement[] l_ces11 = extension.getConfigurationElements();
@@ -197,10 +197,10 @@ public class DirectExtensionRemove extends BaseExtensionRegistryRun {
 		IRegistryChangeEvent event = listener.getEvent(5000);
 		IExtensionDelta[] deltas = event.getExtensionDeltas();
 		assertTrue(deltas.length == 2);
-		for (int i = 0; i < deltas.length; i++) {
-			assertTrue(deltas[i].getKind() == IExtensionDelta.REMOVED);
-			assertNotNull(deltas[i].getExtension());
-			assertNotNull(deltas[i].getExtensionPoint());
+		for (IExtensionDelta delta : deltas) {
+			assertTrue(delta.getKind() == IExtensionDelta.REMOVED);
+			assertNotNull(delta.getExtension());
+			assertNotNull(delta.getExtensionPoint());
 		}
 	}
 

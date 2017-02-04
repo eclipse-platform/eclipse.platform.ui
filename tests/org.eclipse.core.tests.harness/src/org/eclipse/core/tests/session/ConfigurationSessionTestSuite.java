@@ -19,7 +19,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -101,8 +100,8 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		Assert.assertTrue("1.0", !bundles.isEmpty());
 		Properties contents = new Properties();
 		StringBuffer osgiBundles = new StringBuffer();
-		for (Iterator<String> i = this.bundles.iterator(); i.hasNext();) {
-			osgiBundles.append(i.next());
+		for (String string : this.bundles) {
+			osgiBundles.append(string);
 			osgiBundles.append(',');
 		}
 		osgiBundles.deleteCharAt(osgiBundles.length() - 1);
@@ -155,8 +154,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		}
 		Bundle[] allVersions = Platform.getBundles(id, null);
 		Assert.assertNotNull("0.0.1." + id, allVersions);
-		for (int i = 0; i < allVersions.length; i++) {
-			Bundle bundle = allVersions[i];
+		for (Bundle bundle : allVersions) {
 			Assert.assertNotNull("0.1 " + id, bundle);
 			URL url = bundle.getEntry("/");
 			Assert.assertNotNull("0.2 " + id, url);

@@ -133,8 +133,7 @@ public class EvaluationContext implements IEvaluationContext {
 	@Override
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
 		if (fVariableResolvers != null && fVariableResolvers.length > 0) {
-			for (int i= 0; i < fVariableResolvers.length; i++) {
-				IVariableResolver resolver= fVariableResolvers[i];
+			for (IVariableResolver resolver : fVariableResolvers) {
 				Object variable= resolver.resolve(name, args);
 				if (variable != null)
 					return variable;

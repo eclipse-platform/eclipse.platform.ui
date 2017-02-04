@@ -63,11 +63,11 @@ public class DefinitionRegistry implements IRegistryChangeListener {
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions", "definitions"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Expression foundExpression= null;
-		for (int i= 0; i < ces.length; i++) {
-			String cid= ces[i].getAttribute("id"); //$NON-NLS-1$
+		for (IConfigurationElement ce : ces) {
+			String cid= ce.getAttribute("id"); //$NON-NLS-1$
 			if (cid != null && cid.equals(id)) {
 				try {
-					foundExpression= getExpression(id, ces[i]);
+					foundExpression= getExpression(id, ce);
 					break;
 				} catch (InvalidRegistryObjectException e) {
 					throw new CoreException(new ExpressionStatus(ExpressionStatus.MISSING_EXPRESSION, Messages.format(
@@ -94,11 +94,11 @@ public class DefinitionRegistry implements IRegistryChangeListener {
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] extensionDeltas= event.getExtensionDeltas("org.eclipse.core.expressions", "definitions"); //$NON-NLS-1$//$NON-NLS-2$
-		for (int i= 0; i < extensionDeltas.length; i++) {
-			if (extensionDeltas[i].getKind() == IExtensionDelta.REMOVED) {
-				IConfigurationElement[] ces= extensionDeltas[i].getExtension().getConfigurationElements();
-				for (int j= 0; j < ces.length; j++) {
-					String id= ces[j].getAttribute("id"); //$NON-NLS-1$
+		for (IExtensionDelta extensionDelta : extensionDeltas) {
+			if (extensionDelta.getKind() == IExtensionDelta.REMOVED) {
+				IConfigurationElement[] ces= extensionDelta.getExtension().getConfigurationElements();
+				for (IConfigurationElement ce : ces) {
+					String id= ce.getAttribute("id"); //$NON-NLS-1$
 					if (id != null) {
 						getCache().remove(id);
 					}

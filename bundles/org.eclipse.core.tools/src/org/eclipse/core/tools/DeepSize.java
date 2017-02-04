@@ -100,8 +100,8 @@ public class DeepSize {
 	Set getDefaultIgnoreTypeNames() {
 		Set ignored = new HashSet();
 		String[] ignore = {"org.eclipse.core.runtime.Plugin", "java.lang.ClassLoader", "org.eclipse.team.internal.ccvs.core.CVSTeamProvider", "org.eclipse.core.internal.events.BuilderPersistentInfo", "org.eclipse.core.internal.resources.Workspace", "org.eclipse.core.internal.events.EventStats", "java.net.URL"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-6$
-		for (int i = 0; i < ignore.length; i++) {
-			ignored.add(ignore[i]);
+		for (String element : ignore) {
+			ignored.add(element);
 		}
 		return ignored;
 	}
@@ -200,8 +200,8 @@ public class DeepSize {
 			return size;
 		}
 		Object[] a = (Object[]) array;
-		for (int i = 0; i < a.length; i++) {
-			size += POINTER_SIZE + sizeOf(a[i]);
+		for (Object element : a) {
+			size += POINTER_SIZE + sizeOf(element);
 		}
 		count(type, ARRAY_HEADER_SIZE + POINTER_SIZE * a.length);
 		return size;
@@ -215,8 +215,8 @@ public class DeepSize {
 		Class clazz = type;
 		while (clazz != null) {
 			Field[] fields = clazz.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				Field f = fields[i];
+			for (Field field : fields) {
+				Field f = field;
 				if (!isStaticField(f)) {
 					Class fieldType = f.getType();
 					if (fieldType.isPrimitive()) {

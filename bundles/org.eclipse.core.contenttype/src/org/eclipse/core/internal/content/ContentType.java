@@ -99,10 +99,10 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
 			contentType.builtInAssociations = true;
 			contentType.fileSpecs = new ArrayList<>(fileExtensions.length + fileNames.length);
-			for (int i = 0; i < fileNames.length; i++)
-				contentType.internalAddFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_PRE_DEFINED);
-			for (int i = 0; i < fileExtensions.length; i++)
-				contentType.internalAddFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED);
+			for (String fileName : fileNames)
+				contentType.internalAddFileSpec(fileName, FILE_NAME_SPEC | SPEC_PRE_DEFINED);
+			for (String fileExtension : fileExtensions)
+				contentType.internalAddFileSpec(fileExtension, FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED);
 		}
 		contentType.defaultProperties = defaultProperties;
 		contentType.contentTypeElement = contentTypeElement;
@@ -320,8 +320,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		// invert the last two bits so it is easier to compare
 		typeMask ^= (IGNORE_PRE_DEFINED | IGNORE_USER_DEFINED);
 		List<String> result = new ArrayList<>(fileSpecs.size());
-		for (Iterator<FileSpec> i = fileSpecs.iterator(); i.hasNext();) {
-			FileSpec spec = i.next();
+		for (FileSpec spec : fileSpecs) {
 			if ((spec.getType() & typeMask) == spec.getType())
 				result.add(spec.getText());
 		}
@@ -368,8 +367,8 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		if (context.equals(manager.getContext()) || (typeMask & IGNORE_USER_DEFINED) != 0)
 			return hasFileSpec(text, typeMask, false);
 		String[] fileSpecs = ContentTypeSettings.getFileSpecs(context, id, typeMask);
-		for (int i = 0; i < fileSpecs.length; i++)
-			if (text.equalsIgnoreCase(fileSpecs[i]))
+		for (String fileSpec : fileSpecs)
+			if (text.equalsIgnoreCase(fileSpec))
 				return true;
 		// no user defined association... try built-in
 		return hasFileSpec(text, typeMask | IGNORE_PRE_DEFINED, false);
@@ -386,8 +385,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	boolean hasFileSpec(String text, int typeMask, boolean strict) {
 		if (fileSpecs.isEmpty())
 			return false;
-		for (Iterator<FileSpec> i = fileSpecs.iterator(); i.hasNext();) {
-			FileSpec spec = i.next();
+		for (FileSpec spec : fileSpecs) {
 			if (spec.equals(text, typeMask, strict))
 				return true;
 		}
@@ -537,13 +535,13 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		// user set file names
 		String userSetFileNames = contentTypeNode.get(PREF_FILE_NAMES, null);
 		String[] fileNames = Util.parseItems(userSetFileNames);
-		for (int i = 0; i < fileNames.length; i++)
-			internalAddFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_USER_DEFINED);
+		for (String fileName : fileNames)
+			internalAddFileSpec(fileName, FILE_NAME_SPEC | SPEC_USER_DEFINED);
 		// user set file extensions
 		String userSetFileExtensions = contentTypeNode.get(PREF_FILE_EXTENSIONS, null);
 		String[] fileExtensions = Util.parseItems(userSetFileExtensions);
-		for (int i = 0; i < fileExtensions.length; i++)
-			internalAddFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
+		for (String fileExtension : fileExtensions)
+			internalAddFileSpec(fileExtension, FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
 	}
 
 	@Override

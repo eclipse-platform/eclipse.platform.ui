@@ -113,8 +113,8 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	private static String getSignatureString(int number) {
 		byte[] signature = getSignature(number);
 		StringBuffer result = new StringBuffer(signature.length * 3 - 1);
-		for (int i = 0; i < signature.length; i++) {
-			result.append(Integer.toHexString(0xFF & signature[i]));
+		for (byte element : signature) {
+			result.append(Integer.toHexString(0xFF & element));
 			result.append(' ');
 		}
 		result.deleteCharAt(result.length() - 1);
@@ -157,8 +157,8 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	private int countTestContentTypes(IContentType[] all) {
 		String namespace = TEST_DATA_ID + '.';
 		int count = 0;
-		for (int i = 0; i < all.length; i++) {
-			if (all[i].getId().startsWith(namespace)) {
+		for (IContentType element : all) {
+			if (element.getId().startsWith(namespace)) {
 				count++;
 			}
 		}
@@ -232,14 +232,14 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	private void loadChildren() {
 		final IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType[] allTypes = manager.getAllContentTypes();
-		for (int i = 0; i < allTypes.length; i++) {
-			String[] fileNames = allTypes[i].getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC);
-			for (int j = 0; j < fileNames.length; j++) {
-				manager.findContentTypeFor(fileNames[j]);
+		for (IContentType allType : allTypes) {
+			String[] fileNames = allType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC);
+			for (String fileName : fileNames) {
+				manager.findContentTypeFor(fileName);
 			}
-			String[] fileExtensions = allTypes[i].getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC);
-			for (int j = 0; j < fileExtensions.length; j++) {
-				manager.findContentTypeFor("anyname." + fileExtensions[j]);
+			String[] fileExtensions = allType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC);
+			for (String fileExtension : fileExtensions) {
+				manager.findContentTypeFor("anyname." + fileExtension);
 			}
 		}
 	}
@@ -258,8 +258,8 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	private void loadDescribers() {
 		final IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType[] allTypes = manager.getAllContentTypes();
-		for (int i = 0; i < allTypes.length; i++) {
-			((ContentTypeHandler) allTypes[i]).getTarget().getDescriber();
+		for (IContentType allType : allTypes) {
+			((ContentTypeHandler) allType).getTarget().getDescriber();
 		}
 	}
 

@@ -743,8 +743,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 
 		// set all keys
-		for (int i = 0; i < keys.length; i++) {
-			String key = keys[i];
+		for (String key : keys) {
 			node.put(key, getUniqueString());
 		}
 
@@ -783,8 +782,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		assertEquals("1.1", 0, result.length);
 
 		// add children
-		for (int i = 0; i < childrenNames.length; i++)
-			node.node(childrenNames[i]);
+		for (String childrenName : childrenNames)
+			node.node(childrenName);
 		try {
 			result = node.childrenNames();
 		} catch (BackingStoreException e) {
@@ -837,16 +836,16 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		Preferences[] nodes = new Preferences[childrenNames.length];
 		for (int i = 0; i < childrenNames.length; i++)
 			nodes[i] = parent.node(childrenNames[i]);
-		for (int i = 0; i < childrenNames.length; i++)
+		for (String childrenName : childrenNames)
 			try {
-				assertTrue("4.0", parent.nodeExists(childrenNames[i]));
+				assertTrue("4.0", parent.nodeExists(childrenName));
 				assertTrue("4.1", !parent.nodeExists(fake));
 			} catch (BackingStoreException e) {
 				fail("4.99", e);
 			}
-		for (int i = 0; i < nodes.length; i++)
+		for (Preferences preferenceNode : nodes)
 			try {
-				assertTrue("4.2", nodes[i].nodeExists(""));
+				assertTrue("4.2", preferenceNode.nodeExists(""));
 			} catch (BackingStoreException e) {
 				fail("4.100", e);
 			}
@@ -946,8 +945,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		actual.clear();
 		expected.clear();
 		expected.add(scopeRoot.absolutePath());
-		for (Iterator<String> i = children.iterator(); i.hasNext();) {
-			String s = i.next();
+		for (String s : children) {
 			expected.add(scopeRoot.absolutePath() + '/' + s);
 			scopeRoot.node(s);
 		}
@@ -1190,8 +1188,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		Preferences node = Platform.getPreferencesService().getRootNode().node(TestScope.SCOPE).node(getUniqueString());
 
 		// test keys
-		for (int i = 0; i < keys.length; i++) {
-			String key = keys[i];
+		for (String key : keys) {
 			String value = getUniqueString();
 			node.put(key, value);
 			assertEquals("1.0." + key, value, node.get(key, null));
@@ -1199,8 +1196,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 		// test paths
 		String root = node.absolutePath();
-		for (int i = 0; i < paths.length; i++) {
-			String path = paths[i];
+		for (String path : paths) {
 			String expected = root + IPath.SEPARATOR + path;
 			String actual = node.node(path).absolutePath();
 			assertEquals("2.0." + path, expected, actual);
@@ -1245,8 +1241,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			fail("1.0", e);
 		}
 
-		for (Iterator<Object> i = properties.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
+		for (Object object : properties.keySet()) {
+			String key = (String) object;
 			String value = properties.getProperty(key);
 			try {
 				Info info = list.get(Integer.parseInt(value));
@@ -1338,8 +1334,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 				new String[] {"/instance/", "1"}, //
 				new String[] {"instance/", "1"}, //
 		};
-		for (int i = 0; i < data.length; i++) {
-			String[] line = data[i];
+		for (String[] line : data) {
 			assertEquals("1.0:" + line[0], Integer.parseInt(line[1]), EclipsePreferences.getSegmentCount(line[0]));
 		}
 	}

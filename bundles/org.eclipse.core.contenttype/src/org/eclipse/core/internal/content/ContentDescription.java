@@ -89,8 +89,8 @@ public final class ContentDescription extends BasicDescription {
 			return keys.equals(propertyKey);
 		// some (but not all) options requested
 		QualifiedName[] tmpKeys = (QualifiedName[]) this.keys;
-		for (int i = 0; i < tmpKeys.length; i++)
-			if (tmpKeys[i].equals(propertyKey))
+		for (QualifiedName tmpKey : tmpKeys)
+			if (tmpKey.equals(propertyKey))
 				return true;
 		return false;
 	}
@@ -101,8 +101,8 @@ public final class ContentDescription extends BasicDescription {
 		if (keys instanceof QualifiedName)
 			return true;
 		Object[] tmpValues = (Object[]) this.values;
-		for (int i = 0; i < tmpValues.length; i++)
-			if (tmpValues[i] != null)
+		for (Object tmpValue : tmpValues)
+			if (tmpValue != null)
 				return true;
 		return false;
 	}

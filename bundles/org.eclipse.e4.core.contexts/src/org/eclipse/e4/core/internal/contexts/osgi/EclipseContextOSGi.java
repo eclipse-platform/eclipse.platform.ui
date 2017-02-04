@@ -41,10 +41,10 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 			if (existing != null) {
 				// Reorder so that lowest is first
 				Arrays.sort(existing);
-				for (int i = 0; i < existing.length; i++) {
-					String name = (String) existing[i].getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
-					refs.put(name, existing[i]);
-					localValues.put(name, bundleContext.getService(existing[i]));
+				for (ServiceReference<?> element : existing) {
+					String name = (String) element.getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
+					refs.put(name, element);
+					localValues.put(name, bundleContext.getService(element));
 				}
 			}
 		} catch (InvalidSyntaxException e) {

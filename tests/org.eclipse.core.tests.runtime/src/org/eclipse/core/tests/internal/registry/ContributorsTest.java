@@ -140,9 +140,9 @@ public class ContributorsTest extends TestCase {
 		assertNotNull(contributors);
 		assertTrue(contributors.length == 2);
 		IContributor contributorB = null;
-		for (int i = 0; i < contributors.length; i++) {
-			if ("B".equals(contributors[i].getName())) {
-				contributorB = contributors[i];
+		for (IContributor contributor : contributors) {
+			if ("B".equals(contributor.getName())) {
+				contributorB = contributor;
 				break;
 			}
 		}

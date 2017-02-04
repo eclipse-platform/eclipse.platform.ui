@@ -230,8 +230,8 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 			array = values.toArray(new ServiceRegistration[values.size()]);
 			registrations.clear();
 		}
-		for (int i = 0; i < array.length; i++) {
-			array[i].unregister();
+		for (ServiceRegistration element : array) {
+			element.unregister();
 		}
 	}
 

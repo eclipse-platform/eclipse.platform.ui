@@ -110,8 +110,8 @@ public class CoreTest extends TestCase {
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++)
-				write(children[i], indent + 1);
+			for (IStatus element : children)
+				write(element, indent + 1);
 		}
 	}
 
@@ -182,9 +182,9 @@ public class CoreTest extends TestCase {
 		if (expected.length != actual.length)
 			assertTrue(message + ".2", false);
 		boolean[] found = new boolean[expected.length];
-		for (int i = 0; i < expected.length; i++) {
+		for (Object element : expected) {
 			for (int j = 0; j < expected.length; j++) {
-				if (!found[j] && expected[i].equals(actual[j]))
+				if (!found[j] && element.equals(actual[j]))
 					found[j] = true;
 			}
 		}

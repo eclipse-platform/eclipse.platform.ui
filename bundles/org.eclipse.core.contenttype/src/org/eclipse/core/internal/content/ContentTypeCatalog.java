@@ -169,11 +169,11 @@ public final class ContentTypeCatalog {
 
 	private void associate(ContentType contentType) {
 		String[] builtInFileNames = contentType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC);
-		for (int i = 0; i < builtInFileNames.length; i++)
-			associate(contentType, builtInFileNames[i], IContentType.FILE_NAME_SPEC);
+		for (String builtInFileName : builtInFileNames)
+			associate(contentType, builtInFileName, IContentType.FILE_NAME_SPEC);
 		String[] builtInFileExtensions = contentType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC);
-		for (int i = 0; i < builtInFileExtensions.length; i++)
-			associate(contentType, builtInFileExtensions[i], IContentType.FILE_EXTENSION_SPEC);
+		for (String builtInFileExtension : builtInFileExtensions)
+			associate(contentType, builtInFileExtension, IContentType.FILE_EXTENSION_SPEC);
 	}
 
 	synchronized void associate(ContentType contentType, String text, int type) {
@@ -186,8 +186,8 @@ public final class ContentTypeCatalog {
 	}
 
 	private int collectMatchingByContents(int valid, IContentType[] subset, List<ContentType> destination, ILazySource contents, Map<String, Object> properties) throws IOException {
-		for (int i = 0; i < subset.length; i++) {
-			ContentType current = (ContentType) subset[i];
+		for (IContentType element : subset) {
+			ContentType current = (ContentType) element;
 			IContentDescriber describer = current.getDescriber();
 			int status = IContentDescriber.INDETERMINATE;
 			if (describer != null) {
@@ -322,8 +322,8 @@ public final class ContentTypeCatalog {
 
 	synchronized public IContentType[] getAllContentTypes() {
 		List<ContentType> result = new ArrayList<>(contentTypes.size());
-		for (Iterator<IContentType> i = contentTypes.values().iterator(); i.hasNext();) {
-			ContentType type = (ContentType) i.next();
+		for (IContentType iContentType : contentTypes.values()) {
+			ContentType type = (ContentType) iContentType;
 			if (type.isValid() && !type.isAlias())
 				result.add(type);
 		}
@@ -335,8 +335,8 @@ public final class ContentTypeCatalog {
 		if (children != null)
 			return children;
 		List<ContentType> result = new ArrayList<>(5);
-		for (Iterator<IContentType> i = this.contentTypes.values().iterator(); i.hasNext();) {
-			ContentType next = (ContentType) i.next();
+		for (IContentType iContentType : this.contentTypes.values()) {
+			ContentType next = (ContentType) iContentType;
 			if (next.getBaseType() == parent)
 				result.add(next);
 		}
@@ -542,8 +542,8 @@ public final class ContentTypeCatalog {
 
 	private void makeAliases() {
 		// process all content types marking aliases appropriately
-		for (Iterator<IContentType> i = contentTypes.values().iterator(); i.hasNext();) {
-			ContentType type = (ContentType) i.next();
+		for (IContentType iContentType : contentTypes.values()) {
+			ContentType type = (ContentType) iContentType;
 			String targetId = type.getAliasTargetId();
 			if (targetId == null)
 				continue;
@@ -560,14 +560,14 @@ public final class ContentTypeCatalog {
 		// build the aliasing
 		makeAliases();
 		// do the validation
-		for (Iterator<IContentType> i = contentTypes.values().iterator(); i.hasNext();) {
-			ContentType type = (ContentType) i.next();
+		for (IContentType iContentType : contentTypes.values()) {
+			ContentType type = (ContentType) iContentType;
 			if (ensureValid(type))
 				associate(type);
 		}
 		if (ContentTypeManager.DEBUGGING)
-			for (Iterator<IContentType> i = contentTypes.values().iterator(); i.hasNext();) {
-				ContentType type = (ContentType) i.next();
+			for (IContentType iContentType : contentTypes.values()) {
+				ContentType type = (ContentType) iContentType;
 				if (!type.isValid())
 					ContentMessages.message("Invalid: " + type); //$NON-NLS-1$
 			}
@@ -582,8 +582,7 @@ public final class ContentTypeCatalog {
 			return Collections.EMPTY_SET;
 		final Set<ContentType> destination = new HashSet<>(5);
 		// process all content types in the given collection
-		for (Iterator<ContentType> i = source.iterator(); i.hasNext();) {
-			final ContentType root = i.next();
+		for (ContentType root : source) {
 			// From a given content type, check if it matches, and
 			// include any children that match as well.
 			internalAccept(new ContentTypeVisitor() {

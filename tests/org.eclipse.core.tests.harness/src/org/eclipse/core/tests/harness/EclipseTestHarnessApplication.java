@@ -14,7 +14,6 @@ package org.eclipse.core.tests.harness;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import junit.framework.Test;
 import junit.textui.TestRunner;
@@ -57,8 +56,7 @@ public class EclipseTestHarnessApplication implements IApplication {
 	protected Object findTestFor(String testName) {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PI_TESTHARNESS, PT_TESTS);
 		IConfigurationElement[] elements = point.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			if (element.getName().equals("test")) {
 				String id = element.getAttribute("id");
 				if (id != null && id.equals(testName)) {
@@ -162,8 +160,8 @@ public class EclipseTestHarnessApplication implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 		args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		processCommandLine(args);
-		for (Iterator<String> i = tests.iterator(); i.hasNext();) {
-			run(i.next());
+		for (String string : tests) {
+			run(string);
 		}
 		return null;
 	}

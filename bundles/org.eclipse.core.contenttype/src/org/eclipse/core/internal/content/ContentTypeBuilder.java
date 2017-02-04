@@ -72,11 +72,11 @@ public class ContentTypeBuilder {
 
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
 		String[] fileNames = Util.parseItems(fileAssociationElement.getAttribute("file-names")); //$NON-NLS-1$
-		for (int i = 0; i < fileNames.length; i++)
-			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
+		for (String fileName : fileNames)
+			target.internalAddFileSpec(fileName, IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
 		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttribute("file-extensions")); //$NON-NLS-1$
-		for (int i = 0; i < fileExtensions.length; i++)
-			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
+		for (String fileExtension : fileExtensions)
+			target.internalAddFileSpec(fileExtension, IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
 
 	/**
@@ -84,9 +84,9 @@ public class ContentTypeBuilder {
 	 */
 	public void buildCatalog(IScopeContext context) {
 		IConfigurationElement[] allContentTypeCEs = getConfigurationElements();
-		for (int i = 0; i < allContentTypeCEs.length; i++)
-			if (allContentTypeCEs[i].getName().equals("content-type")) //$NON-NLS-1$
-				registerContentType(allContentTypeCEs[i]);
+		for (IConfigurationElement allContentTypeCE : allContentTypeCEs)
+			if (allContentTypeCE.getName().equals("content-type")) //$NON-NLS-1$
+				registerContentType(allContentTypeCE);
 		for (String id : ContentTypeManager.getUserDefinedContentTypeIds(context)) {
 			IEclipsePreferences node = context.getNode(id);
 			catalog.addContentType(ContentType.createContentType(catalog, id,
@@ -94,9 +94,9 @@ public class ContentTypeBuilder {
 					(byte) 0, new String[0], new String[0], node.get(ContentType.PREF_USER_DEFINED__BASE_TYPE_ID, null), null, Collections.emptyMap(),
 					null));
 		}
-		for (int i = 0; i < allContentTypeCEs.length; i++)
-			if (allContentTypeCEs[i].getName().equals("file-association")) //$NON-NLS-1$
-				registerFileAssociation(allContentTypeCEs[i]);
+		for (IConfigurationElement allContentTypeCE : allContentTypeCEs)
+			if (allContentTypeCE.getName().equals("file-association")) //$NON-NLS-1$
+				registerFileAssociation(allContentTypeCE);
 		applyPreferences();
 	}
 
@@ -151,12 +151,12 @@ public class ContentTypeBuilder {
 		Map<QualifiedName, String> defaultProperties = null;
 		if ((propertyCEs = contentTypeCE.getChildren("property")).length > 0) { //$NON-NLS-1$
 			defaultProperties = new HashMap<>();
-			for (int i = 0; i < propertyCEs.length; i++) {
-				String defaultValue = propertyCEs[i].getAttribute("default"); //$NON-NLS-1$
+			for (IConfigurationElement propertyCE : propertyCEs) {
+				String defaultValue = propertyCE.getAttribute("default"); //$NON-NLS-1$
 				if (defaultValue == null)
 					// empty string means: default value is null
 					defaultValue = ""; //$NON-NLS-1$
-				String propertyKey = propertyCEs[i].getAttribute("name"); //$NON-NLS-1$
+				String propertyKey = propertyCE.getAttribute("name"); //$NON-NLS-1$
 				QualifiedName qualifiedKey = parseQualifiedName(namespace, propertyKey);
 				if (qualifiedKey == null) {
 					if (ContentTypeManager.DEBUGGING) {

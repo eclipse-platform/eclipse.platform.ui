@@ -111,8 +111,7 @@ public class DirectExtensionCreate extends BaseExtensionRegistryRun {
 		IExtension[] extensions = extensionPoint.getExtensions();
 		assertNotNull(extensions);
 		assertTrue(extensions.length == 1);
-		for (int i = 0; i < extensions.length; i++) {
-			IExtension extension = extensions[i];
+		for (IExtension extension : extensions) {
 			String storedExtensionId = extension.getUniqueIdentifier();
 			assertTrue(storedExtensionId.equals(qualifiedName(namespace, extensionId)));
 			String extensionNamespace = extension.getNamespaceIdentifier();
@@ -121,8 +120,7 @@ public class DirectExtensionCreate extends BaseExtensionRegistryRun {
 			assertTrue(extensionContributor.equals(namespace));
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
 			assertNotNull(configElements);
-			for (int j = 0; j < configElements.length; j++) {
-				IConfigurationElement configElement = configElements[j];
+			for (IConfigurationElement configElement : configElements) {
 				String configElementName = configElement.getName();
 				assertTrue(configElementName.equals(extensionName));
 				String configElementValue = configElement.getValue();

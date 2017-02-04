@@ -76,8 +76,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/testComplexRuleStarting/B/C"), status, 2, NUM_REPEATS, true);
 
 		//schedule the jobs
-		for (int i = 0; i < jobs.length; i++)
-			jobs[i].schedule();
+		for (Job job : jobs)
+			job.schedule();
 
 		//wait until all the jobs start
 		for (int i = 0; i < jobs.length; i++)
@@ -138,8 +138,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 
 		//wait until all jobs are done
-		for (int i = 0; i < order.length; i++) {
-			waitForEnd(jobs[order[i]]);
+		for (int element : order) {
+			waitForEnd(jobs[element]);
 		}
 
 		for (int i = 0; i < jobs.length; i++) {
@@ -265,8 +265,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 
 		//adding rules in proper order, then adding a rule from a bypassed branch
 		//trying to end previous rules should not work
-		for (int i = 0; i < rules.length; i++) {
-			manager.beginRule(rules[i], null);
+		for (ISchedulingRule rule : rules) {
+			manager.beginRule(rule, null);
 		}
 		try {
 			manager.endRule(rules[2]);

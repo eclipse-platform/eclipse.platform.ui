@@ -76,8 +76,8 @@ public class DumpTool implements IApplication {
 			files = extractFiles(fileName);
 		}
 
-		for (int i = 0; i < files.length; i++) {
-			dump(files[i]);
+		for (String file : files) {
+			dump(file);
 		}
 
 		System.out.println("DumpTool finished...");
@@ -145,17 +145,17 @@ public class DumpTool implements IApplication {
 			File[] selectedFiles = dir.listFiles(fileFilter);
 			monitor.worked(1);
 			Arrays.sort(selectedFiles);
-			for (int i = 0; i < selectedFiles.length; i++) {
-				fileList.add(selectedFiles[i].getAbsolutePath());
+			for (File selectedFile : selectedFiles) {
+				fileList.add(selectedFile.getAbsolutePath());
 			}
 			// looks for files of registered types in its subdirectories
 			File[] subDirs = dir.listFiles(directoryFilter);
 			monitor.worked(1);
 			Arrays.sort(subDirs);
 
-			for (int i = 0; i < subDirs.length; i++) {
+			for (File subDir : subDirs) {
 				// Recursive call
-				extractInfo(subDirs[i], fileList, new SubProgressMonitor(monitor, 98 / subDirs.length));
+				extractInfo(subDir, fileList, new SubProgressMonitor(monitor, 98 / subDirs.length));
 			}
 		} finally {
 			monitor.done();

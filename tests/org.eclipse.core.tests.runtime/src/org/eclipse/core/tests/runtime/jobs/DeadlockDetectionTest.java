@@ -371,8 +371,8 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		};
 
-		for (int i = 0; i < jobs.length; i++) {
-			jobs[i].schedule();
+		for (Job job : jobs) {
+			job.schedule();
 		}
 		//wait until the first job starts
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
@@ -399,8 +399,8 @@ public class DeadlockDetectionTest extends TestCase {
 		//let the job finish
 		status[2] = TestBarrier.STATUS_RUNNING;
 
-		for (int i = 0; i < jobs.length; i++) {
-			waitForCompletion(jobs[i]);
+		for (Job job : jobs) {
+			waitForCompletion(job);
 		}
 
 		for (int i = 0; i < jobs.length; i++) {
@@ -479,8 +479,8 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		};
 
-		for (int i = 0; i < jobs.length; i++) {
-			jobs[i].schedule();
+		for (Job job : jobs) {
+			job.schedule();
 		}
 		//wait until the first job starts
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
@@ -504,8 +504,8 @@ public class DeadlockDetectionTest extends TestCase {
 		//let the job finish
 		status[1] = TestBarrier.STATUS_RUNNING;
 		//wait until all jobs are done
-		for (int i = 0; i < jobs.length; i++) {
-			waitForCompletion(jobs[i]);
+		for (Job job : jobs) {
+			waitForCompletion(job);
 		}
 
 		for (int i = 0; i < jobs.length; i++) {
@@ -579,8 +579,8 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		};
 		//schedule all the jobs
-		for (int i = 0; i < jobs.length; i++) {
-			jobs[i].schedule();
+		for (Job job : jobs) {
+			job.schedule();
 		}
 		//wait until the first job starts
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
@@ -602,8 +602,8 @@ public class DeadlockDetectionTest extends TestCase {
 		//end the first job
 		status[0] = TestBarrier.STATUS_RUNNING;
 		//wait until all jobs are done
-		for (int i = 0; i < jobs.length; i++) {
-			waitForCompletion(jobs[i]);
+		for (Job job : jobs) {
+			waitForCompletion(job);
 		}
 
 		//the underlying graph has to be empty
@@ -756,8 +756,8 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		};
 
-		for (int i = 0; i < jobs.length; i++) {
-			jobs[i].schedule();
+		for (Job job : jobs) {
+			job.schedule();
 		}
 		//wait until the first 2 jobs start
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
@@ -795,8 +795,8 @@ public class DeadlockDetectionTest extends TestCase {
 			assertTrue("Timeout waiting for job to end: " + elapsed, elapsed < 30000);
 		}
 		//wait until all jobs are done
-		for (int i = 0; i < jobs.length; i++)
-			waitForCompletion(jobs[i]);
+		for (Job job : jobs)
+			waitForCompletion(job);
 
 		for (int i = 0; i < jobs.length; i++) {
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
@@ -905,8 +905,8 @@ public class DeadlockDetectionTest extends TestCase {
 			}
 		};
 
-		for (int i = 0; i < jobs.length; i++) {
-			jobs[i].schedule();
+		for (Job job : jobs) {
+			job.schedule();
 		}
 		//wait until the first job starts
 		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
@@ -948,8 +948,8 @@ public class DeadlockDetectionTest extends TestCase {
 		//let the fifth job end
 		status[4] = TestBarrier.STATUS_RUNNING;
 
-		for (int i = 0; i < jobs.length; i++) {
-			waitForCompletion(jobs[i]);
+		for (Job job : jobs) {
+			waitForCompletion(job);
 		}
 
 		for (int i = 0; i < jobs.length; i++) {
@@ -1090,9 +1090,9 @@ public class DeadlockDetectionTest extends TestCase {
 
 		status[0] = TestBarrier.STATUS_DONE;
 
-		for (int i = 0; i < jobs.length; i++) {
+		for (Job job : jobs) {
 			int j = 0;
-			while (jobs[i].getState() != Job.NONE) {
+			while (job.getState() != Job.NONE) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e1) {

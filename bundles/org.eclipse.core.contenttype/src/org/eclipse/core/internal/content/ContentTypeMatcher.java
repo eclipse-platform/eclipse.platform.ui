@@ -103,8 +103,8 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 					if (node == root)
 						return true;
 					String[] fileSpecs = ContentTypeSettings.getFileSpecs(node, typeMask);
-					for (int i = 0; i < fileSpecs.length; i++)
-						if (fileSpecs[i].equalsIgnoreCase(fileSpec)) {
+					for (String fileSpecification : fileSpecs)
+						if (fileSpecification.equalsIgnoreCase(fileSpec)) {
 							ContentType associated = catalog.getContentType(node.name());
 							if (associated != null)
 								result.add(associated);

@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.expressions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.expressions.EvaluationResult;
@@ -48,8 +47,7 @@ public abstract class CompositeExpression extends Expression {
 		if (fExpressions == null)
 			return EvaluationResult.TRUE;
 		EvaluationResult result= EvaluationResult.TRUE;
-		for (Iterator<Expression> iter= fExpressions.iterator(); iter.hasNext();) {
-			Expression expression= iter.next();
+		for (Expression expression : fExpressions) {
 			result= result.and(expression.evaluate(scope));
 			// keep iterating even if we have a not loaded found. It can be
 			// that we find a false which will result in a better result.
@@ -63,8 +61,7 @@ public abstract class CompositeExpression extends Expression {
 		if (fExpressions == null)
 			return EvaluationResult.TRUE;
 		EvaluationResult result= EvaluationResult.FALSE;
-		for (Iterator<Expression> iter= fExpressions.iterator(); iter.hasNext();) {
-			Expression expression= iter.next();
+		for (Expression expression : fExpressions) {
 			result= result.or(expression.evaluate(scope));
 			if (result == EvaluationResult.TRUE)
 				return result;
@@ -76,8 +73,7 @@ public abstract class CompositeExpression extends Expression {
 	public void collectExpressionInfo(ExpressionInfo info) {
 		if (fExpressions == null)
 			return;
-		for (Iterator<Expression> iter= fExpressions.iterator(); iter.hasNext();) {
-			Expression expression= iter.next();
+		for (Expression expression : fExpressions) {
 			expression.collectExpressionInfo(info);
 		}
 	}

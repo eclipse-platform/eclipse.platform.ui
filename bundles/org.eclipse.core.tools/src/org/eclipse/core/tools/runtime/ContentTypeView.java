@@ -62,8 +62,8 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 		protected void rebuild(Viewer viewer, Object input) {
 			IContentType[] allTypes = ContentTypeManager.getInstance().getAllContentTypes();
 			Set visited = new HashSet(allTypes.length);
-			for (int i = 0; i < allTypes.length; i++)
-				addContentType(allTypes[i], visited);
+			for (IContentType allType : allTypes)
+				addContentType(allType, visited);
 		}
 	}
 

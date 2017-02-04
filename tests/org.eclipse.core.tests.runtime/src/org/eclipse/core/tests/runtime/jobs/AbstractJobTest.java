@@ -81,8 +81,8 @@ public class AbstractJobTest extends TestCase {
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				write(children[i], indent + 1);
+			for (IStatus element : children) {
+				write(element, indent + 1);
 			}
 		}
 	}
@@ -119,8 +119,8 @@ public class AbstractJobTest extends TestCase {
 	protected void dumpState() {
 		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****");
 		Job[] jobs = Job.getJobManager().find(null);
-		for (int j = 0; j < jobs.length; j++)
-			System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j]));
+		for (Job job : jobs)
+			System.out.println("" + job + " state: " + JobManager.printState(job));
 		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
 	}
 
