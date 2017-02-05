@@ -124,6 +124,8 @@ public class AreaRenderer extends SWTPartRenderer {
 		Composite curComp = (Composite) areaModel.getWidget();
 		Composite parentComp = curComp.getParent();
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
+		// don't paint the split editor area tab highlighted, it looks ugly
+		ctf.setHighlightEnabled(false);
 
 		// Find the stack in the area that used to have the min/max state
 		List<MPartStack> stacks = modelService.findElements(areaModel, null,
