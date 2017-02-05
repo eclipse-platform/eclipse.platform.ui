@@ -301,7 +301,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
 			for (int i = 0; i < sources.length; i++) {
-				if (sources[0].getType() != IResource.FILE) {
+				if (sources[i].getType() != IResource.FILE) {
 					shouldLinkAutomatically = false;
 					break;
 				}
