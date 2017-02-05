@@ -1,7 +1,5 @@
-org.eclipse.core.tests.harness
+org.eclipse.core.tests.runtime
 ==============================
-
-Contains helper classes and base test cases for other test plug-ins. This plug-in does not contain real tests.
 
 Dependencies
 ============
