@@ -70,21 +70,6 @@
   </profiles>
 
   <modules>
-    <module>examples/org.eclipse.jface.examples.databinding</module>
-    <module>examples/org.eclipse.ui.examples.contributions</module>
-    <module>examples/org.eclipse.ui.examples.fieldassist</module>
-    <module>examples/org.eclipse.ui.examples.multipageeditor</module>
-    <module>examples/org.eclipse.ui.examples.propertysheet</module>
-    <module>examples/org.eclipse.ui.examples.readmetool</module>
-    <module>examples/org.eclipse.ui.examples.undo</module>
-    <module>examples/org.eclipse.ui.examples.views.properties.tabbed.article</module>
-    <module>examples/org.eclipse.e4.demo.contacts</module>
-    <module>examples/org.eclipse.e4.demo.cssbridge</module>
-    <module>examples/org.eclipse.jface.snippets</module>
-    <module>examples/org.eclipse.ui.examples.job</module>
-    <module>examples/org.eclipse.ui.examples.navigator</module>
-    <module>examples/org.eclipse.ui.forms.examples</module>
-    <module>examples/org.eclipse.ui.examples.rcp.mail</module>
     <module>bundles/org.eclipse.core.commands</module>
     <module>bundles/org.eclipse.core.databinding</module>
     <module>bundles/org.eclipse.core.databinding.beans</module>
@@ -128,6 +113,7 @@
     <module>bundles/org.eclipse.ui.navigator.resources</module>
 
     <module>tests</module>
+    <module>examples</module>
 
   </modules>
 
