@@ -48,7 +48,6 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 	private ServiceTracker<?, PackageAdmin> pkgAdminTracker;
 	private ServiceTracker<?, Location> locationTracker;
 	private static WorkbenchSWTActivator activator;
-	private ServiceTracker<?, DebugOptions> debugTracker;
 	private DebugTrace trace;
 
 
