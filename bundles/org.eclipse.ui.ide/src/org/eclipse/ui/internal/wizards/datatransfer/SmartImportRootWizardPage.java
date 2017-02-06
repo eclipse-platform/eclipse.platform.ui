@@ -579,11 +579,11 @@ public class SmartImportRootWizardPage extends WizardPage {
 		ViewerColumn pathColumn = new TreeViewerColumn(tree, SWT.NONE);
 		pathColumn.setLabelProvider(new FolderForProjectsLabelProvider());
 		tree.getTree().getColumn(0).setText(DataTransferMessages.SmartImportProposals_folder);
-		tree.getTree().getColumn(0).setWidth(400);
+		tree.getTree().getColumn(0).setWidth(500);
 		ViewerColumn projectTypeColumn = new TreeViewerColumn(tree, SWT.NONE);
 		projectTypeColumn.setLabelProvider(new ProjectConfiguratorLabelProvider());
 		tree.getTree().getColumn(1).setText(DataTransferMessages.SmartImportProposals_importAs);
-		tree.getTree().getColumn(1).setWidth(250);
+		tree.getTree().getColumn(1).setWidth(150);
 
 		this.proposalSelectionDecorator = new ControlDecoration(tree.getTree(), SWT.TOP | SWT.LEFT);
 		Image errorImage = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
