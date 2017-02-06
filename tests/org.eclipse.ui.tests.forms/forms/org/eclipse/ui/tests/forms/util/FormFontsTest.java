@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241, 510830
  *******************************************************************************/
 
 package org.eclipse.ui.tests.forms.util;
@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.forms.widgets.FormFonts;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FormFontsTests {
+public class FormFontsTest {
 	@Test
 	public void testSingleton() {
 		Display display = Display.getCurrent();

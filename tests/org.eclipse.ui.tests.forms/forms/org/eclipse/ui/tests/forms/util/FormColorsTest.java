@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241
+ *     Ralf M Petter<ralf.petter@gmail.com> - Bug 510241, 510830
  *******************************************************************************/
 
 package org.eclipse.ui.tests.forms.util;
@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-public class FormColorsTests {
+public class FormColorsTest {
 
 	// these keys should always return a Color until disposed
 	private static String[] KEYS_NON_NULL = {

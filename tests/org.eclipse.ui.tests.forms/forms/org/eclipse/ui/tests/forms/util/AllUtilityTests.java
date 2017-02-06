@@ -19,9 +19,9 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	FormColorsTests.class,
-	FormFontsTests.class,
-	FormImagesTests.class,
+	FormColorsTest.class,
+	FormFontsTest.class,
+	FormImagesTest.class,
 	FormToolkitTest.class,
 	ImageHyperlinkTest.class
 })
