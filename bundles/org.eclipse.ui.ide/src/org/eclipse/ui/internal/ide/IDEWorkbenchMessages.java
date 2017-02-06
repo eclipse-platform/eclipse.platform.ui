@@ -200,6 +200,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String PromptOnExitDialog_message0;
 	public static String PromptOnExitDialog_message1;
 	public static String PromptOnExitDialog_choice;
+	public static String PromptOnExitDialog_button_label_exit;
 
 	public static String Workbench_shortcuts;
 	public static String Workbench_openNewWindow;
