@@ -60,6 +60,10 @@ public class SashLayout extends Layout {
 	boolean draggingSashes = false;
 	List<SashRect> sashesToDrag;
 
+	/**
+	 * @deprecated Always false. Don't use it.
+	 */
+	@Deprecated
 	public boolean layoutUpdateInProgress = false;
 
 	public SashLayout(final Composite host, MUIElement root) {
@@ -90,14 +94,7 @@ public class SashLayout extends Layout {
 					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
 				}
 			} else {
-				try {
-					layoutUpdateInProgress = true;
-					adjustWeights(sashesToDrag, e.x, e.y);
-					host.layout();
-					host.update();
-				} finally {
-					layoutUpdateInProgress = false;
-				}
+				adjustWeights(sashesToDrag, e.x, e.y);
 			}
 		});
 
@@ -183,6 +180,7 @@ public class SashLayout extends Layout {
 			setWeight(sr.left, leftWeight);
 			setWeight(sr.right, rightWeight);
 		}
+		host.requestLayout();
 	}
 
 	private void setWeight(MUIElement element, int weight) {
