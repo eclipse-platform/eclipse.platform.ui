@@ -29,11 +29,14 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.IEditorPart;
@@ -42,6 +45,8 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistProcessor;
 
 /**
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite
@@ -161,4 +166,17 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 	}
 
+	@Override
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
+		quickAssistAssistant.setQuickAssistProcessor(new MarkerResoltionQuickAssistProcessor());
+		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
+		quickAssistAssistant.setInformationControlCreator(new IInformationControlCreator() {
+			@Override
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString());
+			}
+		});
+		return quickAssistAssistant;
+	}
 }

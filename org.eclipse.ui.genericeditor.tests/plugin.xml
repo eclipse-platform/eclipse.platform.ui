@@ -36,5 +36,12 @@
 					contentType="org.eclipse.core.runtime.text">
 		</presentationReconciler>
    </extension>
+ <extension
+       point="org.eclipse.ui.ide.markerResolution">
+    <markerResolutionGenerator
+          class="org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator"
+          markerType="org.eclipse.core.resources.problemmarker">
+    </markerResolutionGenerator>
+ </extension>
 
 </plugin>

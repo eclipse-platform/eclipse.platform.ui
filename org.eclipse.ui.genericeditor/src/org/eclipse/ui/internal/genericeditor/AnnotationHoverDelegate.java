@@ -18,6 +18,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
  * Delegate to {@link DefaultTextHover}, since we need a parameter-less
@@ -33,6 +34,10 @@ public class AnnotationHoverDelegate implements ITextHover {
 			this.delegate = new DefaultTextHover(sourceViewer) {
 				@Override
 				protected boolean isIncluded(Annotation annotation) {
+					if (annotation instanceof MarkerAnnotation) {
+						// this is handled by MarkerAnnotationHover
+						return false;
+					}
 					AnnotationPreference preference= EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
 					if (preference == null)
 						return false;

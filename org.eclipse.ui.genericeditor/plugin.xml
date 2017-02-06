@@ -74,7 +74,14 @@
    <extension
          point="org.eclipse.ui.genericeditor.hoverProviders">
       <hoverProvider
+         isBefore="*"
+         class="org.eclipse.ui.internal.genericeditor.markers.MarkerAnnotationHover"
+         contentType="org.eclipse.core.runtime.text"
+         id="org.eclipse.ui.genericeditor.markers.annotationsHoverProvider">
+      </hoverProvider>
+      <hoverProvider
             isBefore="*"
+            isAfter="org.eclipse.ui.genericeditor.markers.annotationsHoverProvider"
             class="org.eclipse.ui.internal.genericeditor.AnnotationHoverDelegate"
             contentType="org.eclipse.core.runtime.text"
             id="org.eclipse.ui.genericeditor.annotationsHoverProvider">

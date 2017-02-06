@@ -18,6 +18,8 @@ import org.eclipse.jface.text.Region;
 
 public class MagicHoverProvider implements ITextHover,ITextHoverExtension2 {
 
+	public static final String LABEL= "Alrighty!";
+
 	@Deprecated
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
@@ -31,7 +33,7 @@ public class MagicHoverProvider implements ITextHover,ITextHoverExtension2 {
 
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-		return "Alrighty!";
+		return LABEL;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.Collections;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -23,18 +25,28 @@ import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.resources.IMarker;
 
-import org.eclipse.jface.text.AbstractHoverInformationControlManager;
+import org.eclipse.text.tests.Accessor;
+
+import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.genericeditor.tests.contributions.MagicHoverProvider;
+import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -71,7 +83,8 @@ public class HoverTest {
 
 	@Test
 	public void testHover() throws Exception {
-		assertEquals("Alrighty!", getHoverData());
+		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
+		assertNotNull(findControl(shell, StyledText.class, MagicHoverProvider.LABEL));
 	}
 	
 	@Test
@@ -85,19 +98,84 @@ public class HoverTest {
 			marker.setAttribute(IMarker.CHAR_START, 0);
 			marker.setAttribute(IMarker.CHAR_END, 5);
 			marker.setAttribute(IMarker.MESSAGE, problemMessage);
-			assertEquals(problemMessage, getHoverData());
+			marker.setAttribute(MarkerResolutionGenerator.FIXME, true);
+			AbstractInformationControlManager manager = triggerCompletionAndRetrieveInformationControlManager();
+			assertEquals(Collections.singletonList(marker), getHoverData(manager));
+			// check dialog content
+			Shell shell= getHoverShell(manager);
+			assertNotNull(findControl(shell, Label.class, marker.getAttribute(IMarker.MESSAGE, "NONE")));
+			Link link = findControl(shell, Link.class, MarkerResolutionGenerator.FIXME);
+			assertNotNull(link);
+			Event event = new Event();
+			event.widget = link;
+			event.display = link.getDisplay();
+			event.doit = true;
+			event.type = SWT.Selection;
+			link.notifyListeners(SWT.Selection, event);
+			assertFalse(marker.exists());
 		} finally {
-			if (marker != null) {
+			if (marker != null && marker.exists()) {
 				marker.delete();
 			}
 		}
 	}
 
-	private Object getHoverData() throws Exception {
+	private Shell getHoverShell(AbstractInformationControlManager manager) {
+		AbstractInformationControl control = null;
+		do {
+			DisplayHelper.runEventLoop(this.editor.getSite().getShell().getDisplay(), 100);
+			control = (AbstractInformationControl)new Accessor(manager, AbstractInformationControlManager.class).get("fInformationControl");
+		} while (control == null);
+		Shell shell = (Shell)new Accessor(control, AbstractInformationControl.class).get("fShell");
+		assertTrue(shell.isVisible());
+		return shell;
+	}
+
+	private <T extends Control> T findControl(Control control, Class<T> controlType, String label) {
+		if (control.getClass() == controlType) {
+			T res = (T)control;
+			if (label == null) {
+				return res;
+			}
+			String controlLabel = null;
+			if (control instanceof Label) {
+				controlLabel = ((Label)control).getText();
+			} else if (control instanceof Link) {
+				controlLabel = ((Link) control).getText();
+			} else if (control instanceof Text) {
+				controlLabel = ((Text) control).getText();
+			} else if (control instanceof StyledText) {
+				controlLabel = ((StyledText) control).getText();
+			}
+			if (controlLabel != null && controlLabel.contains(label)) {
+				return res;
+			}
+		} else if (control instanceof Composite) {
+			for (Control child : ((Composite) control).getChildren()) {
+				T res = findControl(child, controlType, label);
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return null;
+	}
+
+	private Object getHoverData(AbstractInformationControlManager manager) throws Exception {
+		Object hoverData = new Accessor(manager, AbstractInformationControlManager.class).get("fInformation");
+		return hoverData;
+	}
+
+	private AbstractInformationControlManager triggerCompletionAndRetrieveInformationControlManager() {
 		this.editor.selectAndReveal(2, 0);
-		GenericEditorTestUtils.waitAndDispatch(1000);
+		final StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == 2;
+			}
+		}.waitForCondition(editorTextWidget.getDisplay(), 1000);
 		// sending event to trigger hover computation
-		StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
 		editorTextWidget.getShell().forceActive();
 		editorTextWidget.getShell().setActive();
 		editorTextWidget.getShell().setFocus();
@@ -109,21 +187,14 @@ public class HoverTest {
 		hoverEvent.y = editorTextWidget.getClientArea().y + 5;
 		hoverEvent.display = editorTextWidget.getDisplay();
 		hoverEvent.doit = true;
+		editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
 		// Events need to be processed for hover listener to work correctly
-		GenericEditorTestUtils.waitAndDispatch(1000);
+		DisplayHelper.runEventLoop(editorTextWidget.getDisplay(), 1000);
 		// retrieving hover content
-		Method getSourceViewerMethod= AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");
-		getSourceViewerMethod.setAccessible(true);
-		ITextViewer viewer = (ITextViewer) getSourceViewerMethod.invoke(editor);
-		Field textHoverManagerField= TextViewer.class.getDeclaredField("fTextHoverManager");
-		textHoverManagerField.setAccessible(true);
-		AbstractHoverInformationControlManager hover = (AbstractHoverInformationControlManager) textHoverManagerField.get(viewer);
-		Field informationField = AbstractInformationControlManager.class.getDeclaredField("fInformation");
-		informationField.setAccessible(true);
-		Object hoverData = informationField.get(hover);
-		GenericEditorTestUtils.waitAndDispatch(1000);
-		return hoverData;
+		ITextViewer viewer = (ITextViewer)new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
+		AbstractInformationControlManager textHoverManager = (AbstractInformationControlManager)new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
+		return textHoverManager;
 	}
 
 }
