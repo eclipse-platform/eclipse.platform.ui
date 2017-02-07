@@ -252,4 +252,39 @@ public class IAdapterManagerTest extends TestCase {
 			assertEquals("1.1." + i, expected[i], actual[i]);
 		}
 	}
+
+	public void testFactoryViolatingContract() {
+		class Private {
+		}
+
+		IAdapterFactory fac = new IAdapterFactory() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == Private.class) {
+					// Cast below violates the contract of the factory
+					return (T) Boolean.FALSE;
+				}
+				return null;
+			}
+
+			@Override
+			public Class<?>[] getAdapterList() {
+				return new Class[] { Private.class };
+			}
+		};
+		try {
+			manager.registerAdapters(fac, Private.class);
+			try {
+				manager.getAdapter(new Private(), Private.class);
+				fail("Should throw AssertionFailedException!");
+			} catch (AssertionFailedException e) {
+				assertTrue(e.getMessage().contains(fac.getClass().getName()));
+				assertTrue(e.getMessage().contains(Boolean.class.getName()));
+				assertTrue(e.getMessage().contains(Private.class.getName()));
+			}
+		} finally {
+			manager.unregisterAdapters(fac, Private.class);
+		}
+	}
 }
