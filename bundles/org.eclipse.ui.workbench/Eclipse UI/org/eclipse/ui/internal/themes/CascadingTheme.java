@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Set;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -51,9 +50,8 @@ public class CascadingTheme extends EventManager implements ITheme {
      * @param event
      */
     protected void fire(PropertyChangeEvent event) {
-        Object[] listeners = getListeners();
-        for (int i = 0; i < listeners.length; i++) {
-            ((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		for (Object listener : getListeners()) {
+			((IPropertyChangeListener) listener).propertyChange(event);
         }
     }
 

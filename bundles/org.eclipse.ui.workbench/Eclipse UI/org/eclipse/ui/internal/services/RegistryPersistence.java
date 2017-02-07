@@ -385,9 +385,7 @@ public abstract class RegistryPersistence implements IDisposable,
 		}
 
 		final Collection parameters = new ArrayList();
-		for (int i = 0; i < parameterElements.length; i++) {
-			final IConfigurationElement parameterElement = parameterElements[i];
-
+		for (final IConfigurationElement parameterElement : parameterElements) {
 			// Read out the id.
 			final String id = parameterElement.getAttribute(ATT_ID);
 			if ((id == null) || (id.length() == 0)) {
@@ -402,8 +400,7 @@ public abstract class RegistryPersistence implements IDisposable,
 			try {
 				final IParameter[] commandParameters = command.getParameters();
 				if (parameters != null) {
-					for (int j = 0; j < commandParameters.length; j++) {
-						final IParameter currentParameter = commandParameters[j];
+					for (final IParameter currentParameter : commandParameters) {
 						if (Util.equals(currentParameter.getId(), id)) {
 							parameter = currentParameter;
 							break;

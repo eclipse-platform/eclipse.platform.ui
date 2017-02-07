@@ -86,10 +86,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 IPreferenceFilter[] matches = service.matches(prefs, filters);
                 PreferenceTransferElement[] returnTransfers = new PreferenceTransferElement[matches.length];
                 int index = 0;
-                for (int i = 0; i < matches.length; i++) {
-                    IPreferenceFilter filter = matches[i];
-                    for (int j = 0; j < transfers.length; j++) {
-                        PreferenceTransferElement element = transfers[j];
+                for (IPreferenceFilter filter : matches) {
+                    for (PreferenceTransferElement element : transfers) {
                         if (element.getFilter().equals(filter)) {
 							returnTransfers[index++] = element;
 						}

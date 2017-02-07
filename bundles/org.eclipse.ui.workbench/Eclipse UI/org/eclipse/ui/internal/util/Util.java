@@ -644,11 +644,11 @@ public final class Util {
 	 */
 	public static String createList(Object[] items) {
 		String list = null;
-		for (int i = 0; i < items.length; i++) {
+		for (Object item : items) {
 			if(list == null) {
-				list = items[i].toString();
+				list = item.toString();
 			} else {
-				list = createList(list, items[i].toString());
+				list = createList(list, item.toString());
 			}
 		}
 		return safeString(list);

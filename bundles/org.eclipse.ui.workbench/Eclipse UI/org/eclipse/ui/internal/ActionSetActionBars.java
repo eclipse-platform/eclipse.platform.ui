@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -84,12 +83,10 @@ public class ActionSetActionBars extends SubActionBars2 {
 		if (coolItemToolBarMgr == null) {
 			return;
 		}
-		IContributionItem[] items = coolItemToolBarMgr.getItems();
 		// remove the action set's items from its action bar, don't use
 		// removeAll since other items from other actions sets may be in
 		// the action bar's cool item
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
+		for (IContributionItem item : coolItemToolBarMgr.getItems()) {
 			if (item instanceof PluginActionCoolBarContributionItem) {
 				PluginActionCoolBarContributionItem actionSetItem = (PluginActionCoolBarContributionItem) item;
 				if (actionSetItem.getActionSetId().equals(actionSetId)) {
@@ -284,9 +281,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 		// 1. Need to set visibility for all non-adjunct actions
 		if (coolItemToolBarMgr != null) {
-			IContributionItem[] items = coolItemToolBarMgr.getItems();
-			for (int i = 0; i < items.length; i++) {
-				IContributionItem item = items[i];
+			for (IContributionItem item : coolItemToolBarMgr.getItems()) {
 				if (item instanceof PluginActionCoolBarContributionItem) {
 					PluginActionCoolBarContributionItem actionSetItem = (PluginActionCoolBarContributionItem) item;
 					// Only if the action set id for this contribution item is

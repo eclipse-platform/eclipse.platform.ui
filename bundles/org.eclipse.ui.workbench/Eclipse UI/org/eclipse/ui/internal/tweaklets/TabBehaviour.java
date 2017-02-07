@@ -123,8 +123,8 @@ public abstract class TabBehaviour {
 	public Font createInvisibleEditorsFont(Display display, Font originalFont) {
         FontData fontData[] = originalFont.getFontData();
         // Adding the bold attribute
-        for (int i = 0; i < fontData.length; i++) {
-			fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
+        for (FontData element : fontData) {
+			element.setStyle(element.getStyle() | SWT.BOLD);
 		}
         return new Font(display, fontData);
 	}

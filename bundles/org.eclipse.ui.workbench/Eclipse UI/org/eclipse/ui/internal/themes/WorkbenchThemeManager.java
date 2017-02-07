@@ -133,8 +133,8 @@ public class WorkbenchThemeManager extends EventManager implements
 
 		// copy the font values from preferences.
 		FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
-		for (Iterator i = jfaceFonts.getKeySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
+		for (Object fontRegistryKey : jfaceFonts.getKeySet()) {
+			String key = (String) fontRegistryKey;
 			defaultThemeFontRegistry.put(key, jfaceFonts.getFontData(key));
 		}
 
@@ -181,9 +181,8 @@ public class WorkbenchThemeManager extends EventManager implements
 
         IThemeDescriptor[] themeDescriptors = getThemeRegistry().getThemes();
 
-       	for (int i=0; i < themeDescriptors.length; i++) {
-        	IThemeDescriptor themeDescriptor = themeDescriptors[i];
-    		ITheme theme = (ITheme) themes.get(themeDescriptor);
+       	for (IThemeDescriptor themeDescriptor : themeDescriptors) {
+        	ITheme theme = (ITheme) themes.get(themeDescriptor);
     		//If theme is in our themes table then its already been populated
     		if (theme != null) {
                 ColorDefinition[] colorDefinitions = themeDescriptor.getColors();
@@ -228,10 +227,8 @@ public class WorkbenchThemeManager extends EventManager implements
 	}
 
 	protected void firePropertyChange(PropertyChangeEvent event) {
-		Object[] listeners = getListeners();
-
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		for (Object listener : getListeners()) {
+			((IPropertyChangeListener) listener).propertyChange(event);
 		}
 	}
 
@@ -352,18 +349,16 @@ public class WorkbenchThemeManager extends EventManager implements
 			{
 				ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
 				ColorRegistry themeColors = currentTheme.getColorRegistry();
-				for (Iterator i = themeColors.getKeySet().iterator(); i
-						.hasNext();) {
-					String key = (String) i.next();
+				for (Object themeColorKey : themeColors.getKeySet()) {
+					String key = (String) themeColorKey;
 					jfaceColors.put(key, themeColors.getRGB(key));
 				}
 			}
 			{
 				FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
 				FontRegistry themeFonts = currentTheme.getFontRegistry();
-				for (Iterator i = themeFonts.getKeySet().iterator(); i
-						.hasNext();) {
-					String key = (String) i.next();
+				for (Object themeFontKey : themeFonts.getKeySet()) {
+					String key = (String) themeFontKey;
 					jfaceFonts.put(key, themeFonts.getFontData(key));
 				}
 			}

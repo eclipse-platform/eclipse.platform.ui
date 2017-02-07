@@ -136,8 +136,8 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 							handle, IExtensionTracker.REF_WEAK);
 
 			    	List serviceNames = new ArrayList();
-					for (int j = 0; j < serviceNameElements.length; j++) {
-						String serviceName = serviceNameElements[j].getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
+					for (IConfigurationElement configElement : serviceNameElements) {
+						String serviceName = configElement.getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
 						if (factories.containsKey(serviceName)) {
 							WorkbenchPlugin.log("Factory already exists for " //$NON-NLS-1$
 									+ serviceName);
@@ -166,27 +166,23 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	public AbstractSourceProvider[] getSourceProviders() {
 		ArrayList providers = new ArrayList();
 		IExtensionPoint ep = getExtensionPoint();
-		IConfigurationElement[] elements = ep.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].getName().equals(
+		for (IConfigurationElement configElement : ep.getConfigurationElements()) {
+			if (configElement.getName().equals(
 					IWorkbenchRegistryConstants.TAG_SOURCE_PROVIDER)) {
 				try {
-					Object sourceProvider = elements[i]
+					Object sourceProvider = configElement
 							.createExecutableExtension(IWorkbenchRegistryConstants.ATTR_PROVIDER);
 					if (!(sourceProvider instanceof AbstractSourceProvider)) {
-						String attributeName = elements[i]
-								.getAttribute(IWorkbenchRegistryConstants.ATTR_PROVIDER);
+						String attributeName = configElement.getAttribute(IWorkbenchRegistryConstants.ATTR_PROVIDER);
 						final String message = "Source Provider '" + //$NON-NLS-1$
 								attributeName
 								+ "' should extend AbstractSourceProvider"; //$NON-NLS-1$
-						final IStatus status = new Status(IStatus.ERROR,
-								WorkbenchPlugin.PI_WORKBENCH, message);
+						final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message);
 						WorkbenchPlugin.log(status);
 						continue;
 					}
 					providers.add(sourceProvider);
-					processVariables(elements[i]
-							.getChildren(IWorkbenchRegistryConstants.TAG_VARIABLE));
+					processVariables(configElement.getChildren(IWorkbenchRegistryConstants.TAG_VARIABLE));
 				} catch (CoreException e) {
 					StatusManager.getManager().handle(e.getStatus());
 				}
@@ -205,14 +201,12 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	};
 
 	private void processVariables(IConfigurationElement[] children) {
-		for (int i = 0; i < children.length; i++) {
-			String name = children[i]
-					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+		for (IConfigurationElement configElement : children) {
+			String name = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 			if (name == null || name.length() == 0) {
 				continue;
 			}
-			String level = children[i]
-					.getAttribute(IWorkbenchRegistryConstants.ATT_PRIORITY_LEVEL);
+			String level = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_PRIORITY_LEVEL);
 			if (level == null || level.length() == 0) {
 				level = WORKBENCH_LEVEL;
 			} else {
@@ -241,8 +235,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 
 	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
+		for (Object object : objects) {
 			if (object instanceof ServiceFactoryHandle) {
 				ServiceFactoryHandle handle = (ServiceFactoryHandle) object;
 				Set locatorSet = handle.serviceLocators.keySet();
@@ -252,15 +245,14 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 					int l2 = loc2.getService(IWorkbenchLocationService.class).getServiceLevel();
 					return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
 				});
-				for (int j = 0; j < locators.length; j++) {
-					ServiceLocator serviceLocator = locators[j];
+				for (ServiceLocator locator : locators) {
+					ServiceLocator serviceLocator = locator;
 					if (!serviceLocator.isDisposed()) {
 						serviceLocator.unregisterServices(handle.serviceNames);
 					}
 				}
 				handle.factory = null;
-				for (int j = 0; j < handle.serviceNames.length; j++) {
-					String serviceName = handle.serviceNames[j];
+				for (String serviceName : handle.serviceNames) {
 					if (factories.get(serviceName) == handle) {
 						factories.remove(serviceName);
 					}

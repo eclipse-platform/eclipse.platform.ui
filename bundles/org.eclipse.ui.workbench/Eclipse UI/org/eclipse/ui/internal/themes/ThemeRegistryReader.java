@@ -210,8 +210,7 @@ public class ThemeRegistryReader extends RegistryReader {
         String osname = Platform.getOS();
         String wsname = Platform.getWS();
 
-        for (int i = 0; i < elements.length; i++) {
-            IConfigurationElement element = elements[i];
+        for (IConfigurationElement element : elements) {
             String elementOs = element.getAttribute(IWorkbenchRegistryConstants.ATT_OS);
             String elementWs = element.getAttribute(IWorkbenchRegistryConstants.ATT_WS);
 

@@ -178,11 +178,8 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			memento.putString(AbstractWorkingSet.TAG_AGGREGATE, Boolean.TRUE
 					.toString());
 
-			IWorkingSet[] localComponents = getComponentsInternal();
-			for (int i = 0; i < localComponents.length; i++) {
-				IWorkingSet componentSet = localComponents[i];
-				memento.createChild(IWorkbenchConstants.TAG_WORKING_SET,
-						componentSet.getName());
+			for (IWorkingSet workingSet : getComponentsInternal()) {
+				memento.createChild(IWorkbenchConstants.TAG_WORKING_SET, workingSet.getName());
 			}
 		}
 	}
@@ -240,8 +237,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		} else if (property
 				.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 			IWorkingSet[] localComponents = getComponentsInternal();
-			for (int i = 0; i < localComponents.length; i++) {
-				IWorkingSet set = localComponents[i];
+			for (IWorkingSet set : localComponents) {
 				if (set.equals(event.getNewValue())) {
 					constructElements(true);
 					break;
@@ -260,9 +256,8 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 				.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
 		ArrayList list = new ArrayList(workingSetReferences.length);
 
-		for (int i = 0; i < workingSetReferences.length; i++) {
-			IMemento setReference = workingSetReferences[i];
-			String setId = setReference.getID();
+		for (IMemento memento : workingSetReferences) {
+			String setId = memento.getID();
 			IWorkingSet set = manager.getWorkingSet(setId);
 			if (set != null) {
 				list.add(set);

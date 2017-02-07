@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.SubActionBars;
@@ -97,9 +96,7 @@ public class ActionPresentation {
         // Convert array to list.
         HashSet newList = new HashSet();
 
-        for (int i = 0; i < newArray.length; i++) {
-            IActionSetDescriptor descriptor = newArray[i];
-
+        for (IActionSetDescriptor descriptor : newArray) {
             newList.add(descriptor);
         }
         List oldList = new ArrayList(mapDescToRec.keySet());
@@ -126,9 +123,7 @@ public class ActionPresentation {
         // Add new actions.
         ArrayList sets = new ArrayList();
 
-        for (int i = 0; i < newArray.length; i++) {
-            IActionSetDescriptor desc = newArray[i];
-
+		for (IActionSetDescriptor desc : newArray) {
             if (!mapDescToRec.containsKey(desc)) {
                 try {
                     SetRec rec;
@@ -199,8 +194,8 @@ public class ActionPresentation {
      * @since 3.1
      */
     private boolean containsRegistration(Object[] existingRegistrations, IActionSetDescriptor set) {
-        for (int i = 0; i < existingRegistrations.length; i++) {
-            if (existingRegistrations[i] == set) {
+        for (Object existingRegistration : existingRegistrations) {
+            if (existingRegistration == set) {
 				return true;
 			}
         }

@@ -87,11 +87,11 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 			// Combine the two sets of transfers into one array
 			Transfer[] allTransfers = new Transfer[secondaryTransfers.length+primaryTransfers.length];
 			int curTransfer = 0;
-			for (int i = 0; i < primaryTransfers.length; i++) {
-				allTransfers[curTransfer++] = primaryTransfers[i];
+			for (Transfer primaryTransfer : primaryTransfers) {
+				allTransfers[curTransfer++] = primaryTransfer;
 			}
-			for (int i = 0; i < secondaryTransfers.length; i++) {
-				allTransfers[curTransfer++] = secondaryTransfers[i];
+			for (Transfer secondaryTransfer : secondaryTransfers) {
+				allTransfers[curTransfer++] = secondaryTransfer;
 			}
 			realDropTarget.setTransfer(allTransfers);
 
@@ -139,8 +139,8 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 		}
 
 		private boolean isSupportedType(Transfer[] transfers, TransferData transferType) {
-			for (int i = 0; i < transfers.length; i++) {
-				if (transfers[i].isSupportedType(transferType))
+			for (Transfer transfer : transfers) {
+				if (transfer.isSupportedType(transferType))
 					return true;
 			}
 			return false;

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.splash;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -55,12 +54,10 @@ public final class SplashHandlerFactory {
 		IExtension[] extensions = point.getExtensions();
 		Map idToSplash = new HashMap(); // String->ConfigurationElement
 		String[] targetId = new String[1];
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] children = extensions[i]
-					.getConfigurationElements();
-			for (int j = 0; j < children.length; j++) {
-				AbstractSplashHandler handler = processElement(children[j],
-						idToSplash, targetId, product);
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] children = extension.getConfigurationElements();
+			for (IConfigurationElement element : children) {
+				AbstractSplashHandler handler = processElement(element, idToSplash, targetId, product);
 				if (handler != null)
 					return handler;
 

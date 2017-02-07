@@ -147,8 +147,8 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 	            "Working set elements array must not be null"); //$NON-NLS-1$
 
 	    elements = new ArrayList(newElements.length);
-	    for (int i = 0; i < newElements.length; i++) {
-	        elements.add(newElements[i]);
+	    for (IAdaptable newElement : newElements) {
+	        elements.add(newElement);
 	    }
 	}
 

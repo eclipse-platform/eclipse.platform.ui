@@ -64,14 +64,13 @@ public final class ThemeElementHelper {
         Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(
                 definitions));
 
-        for (int i = 0; i < copyOfDefinitions.length; i++) {
-            FontDefinition definition = copyOfDefinitions[i];
+        for (FontDefinition definition : copyOfDefinitions) {
             installFont(definition, theme, store, true);
         }
 
         if (defaults != null) {
-            for (int i = 0; i < defaults.length; i++) {
-                installFont(defaults[i], theme, store, false);
+            for (FontDefinition fontDef : defaults) {
+                installFont(fontDef, theme, store, false);
             }
         }
     }
@@ -124,11 +123,8 @@ public final class ThemeElementHelper {
 
 			//If in high contrast, ignore the defaults in jface and use the default (system) font.
 			//This is a hack to address bug #205474. See bug #228207 for a future fix.
-			FontData[] fontData = JFaceResources.getFontRegistry().getFontData(
-				display.getHighContrast()
-					? JFaceResources.DEFAULT_FONT
-					: id
-			);
+			FontData[] fontData = JFaceResources.getFontRegistry()
+					.getFontData(display.getHighContrast() ? JFaceResources.DEFAULT_FONT : id);
 			defaultFont = registry.bestDataArray(fontData, display);
         }
 
@@ -188,14 +184,13 @@ public final class ThemeElementHelper {
         Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(
                 definitions));
 
-        for (int i = 0; i < copyOfDefinitions.length; i++) {
-            ColorDefinition definition = copyOfDefinitions[i];
+        for (ColorDefinition definition : copyOfDefinitions) {
             installColor(definition, theme, store, true);
         }
 
         if (defaults != null) {
-            for (int i = 0; i < defaults.length; i++) {
-                installColor(defaults[i], theme, store, false);
+			for (ColorDefinition colorDef : defaults) {
+				installColor(colorDef, theme, store, false);
             }
         }
     }
@@ -264,8 +259,7 @@ public final class ThemeElementHelper {
 		System.arraycopy(allDefs, 0, copy, 0, allDefs.length);
 
         Arrays.sort(allDefs, new IThemeRegistry.HierarchyComparator(copy));
-        for (int i = 0; i < allDefs.length; i++) {
-            IHierarchalThemeElementDefinition def = allDefs[i];
+        for (IHierarchalThemeElementDefinition def : allDefs) {
             if (def.getDefaultsTo() != null) {
                 if (set.contains(def.getDefaultsTo())) {
 					set.add(def);
@@ -367,8 +361,7 @@ public final class ThemeElementHelper {
     public static String[] splitPropertyName(Theme theme, String property) {
     	IThemeDescriptor[] descriptors = WorkbenchPlugin.getDefault()
 				.getThemeRegistry().getThemes();
-		for (int i = 0; i < descriptors.length; i++) {
-			IThemeDescriptor themeDescriptor = descriptors[i];
+		for (IThemeDescriptor themeDescriptor : descriptors) {
 			String id = themeDescriptor.getId();
 			if (property.startsWith(id + '.')) { // the property starts with
 													// a known theme ID -

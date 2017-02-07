@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -125,26 +124,21 @@ public class SlaveEvaluationService implements IEvaluationService {
 	@Override
 	public void dispose() {
 		if (!evaluationReferences.isEmpty()) {
-			Object[] array = evaluationReferences.toArray();
-			for (int i = 0; i < array.length; i++) {
-				parentService
-						.removeEvaluationListener((IEvaluationReference) array[i]);
+			for (Object evaluationListener : evaluationReferences.toArray()) {
+				parentService.removeEvaluationListener((IEvaluationReference) evaluationListener);
 			}
 		}
 		if (!serviceListeners.isEmpty()) {
-			Object[] array = serviceListeners.toArray();
-			for (int i = 0; i < array.length; i++) {
-				parentService
-						.removeServiceListener((IPropertyChangeListener) array[i]);
+			for (Object serviceListener : serviceListeners.toArray()) {
+				parentService.removeServiceListener((IPropertyChangeListener) serviceListener);
 			}
 			serviceListeners.clear();
 		}
 		// Remove any "resource", like listeners, that were associated
 		// with this service.
 		if (!sourceProviders.isEmpty()) {
-			Object[] array = sourceProviders.toArray();
-			for (int i = 0; i < array.length; i++) {
-				parentService.removeSourceProvider((ISourceProvider) array[i]);
+			for (Object sourceProvider : sourceProviders.toArray()) {
+				parentService.removeSourceProvider((ISourceProvider) sourceProvider);
 			}
 			sourceProviders.clear();
 		}
