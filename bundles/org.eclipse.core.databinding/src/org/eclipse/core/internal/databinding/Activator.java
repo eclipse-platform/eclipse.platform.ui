@@ -82,9 +82,8 @@ public class Activator implements BundleActivator {
 		}
 
 		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				childlist.add(createLogEntry(children[i]));
+			for (IStatus child : status.getChildren()) {
+				childlist.add(createLogEntry(child));
 			}
 		}
 

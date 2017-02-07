@@ -196,8 +196,7 @@ public class WritableList<E> extends ObservableList<E> {
 		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
 				c.size());
 		int addIndex = wrappedList.size();
-		for (Iterator<? extends E> it = c.iterator(); it.hasNext();) {
-			E element = it.next();
+		for (E element : c) {
 			entries.add(Diffs.createListDiffEntry(addIndex++, true, element));
 		}
 		boolean added = wrappedList.addAll(c);
@@ -211,8 +210,7 @@ public class WritableList<E> extends ObservableList<E> {
 		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
 				c.size());
 		int addIndex = index;
-		for (Iterator<? extends E> it = c.iterator(); it.hasNext();) {
-			E element = it.next();
+		for (E element : c) {
 			entries.add(Diffs.createListDiffEntry(addIndex++, true, element));
 		}
 		boolean added = wrappedList.addAll(index, c);
@@ -241,8 +239,7 @@ public class WritableList<E> extends ObservableList<E> {
 	public boolean removeAll(Collection<?> c) {
 		checkRealm();
 		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
-		for (Iterator<?> it = c.iterator(); it.hasNext();) {
-			Object element = it.next();
+		for (Object element : c) {
 			int removeIndex = wrappedList.indexOf(element);
 			if (removeIndex != -1) {
 				E removedElement = wrappedList.get(removeIndex);

@@ -163,8 +163,7 @@ public class ListDetailValueObservableList<M, E> extends
 		boolean hasListeners = hasListeners();
 		ListDiffEntry<? extends M>[] masterEntries = masterListDiff.getDifferences();
 		List<ListDiffEntry<E>> detailEntries = new ArrayList<>(masterEntries.length);
-		for (int i = 0; i < masterEntries.length; i++) {
-			ListDiffEntry<? extends M> masterEntry = masterEntries[i];
+		for (ListDiffEntry<? extends M> masterEntry : masterEntries) {
 			int index = masterEntry.getPosition();
 
 			M masterElement = masterEntry.getElement();

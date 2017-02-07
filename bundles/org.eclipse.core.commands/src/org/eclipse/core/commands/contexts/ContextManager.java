@@ -156,10 +156,9 @@ public final class ContextManager extends HandleObjectManager implements IContex
 			throw new NullPointerException();
 		}
 
-		final Object[] listeners = getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final IContextManagerListener listener = (IContextManagerListener) listeners[i];
-			listener.contextManagerChanged(event);
+		for (Object listener : getListeners()) {
+			final IContextManagerListener contextManagerListener = (IContextManagerListener) listener;
+			contextManagerListener.contextManagerChanged(event);
 		}
 	}
 

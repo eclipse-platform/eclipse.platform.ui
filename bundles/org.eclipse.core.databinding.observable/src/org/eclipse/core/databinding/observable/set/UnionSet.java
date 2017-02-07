@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -133,9 +132,7 @@ public final class UnionSet<E> extends ObservableSet<E> {
 		Set<E> addsToFire = new HashSet<>();
 		Set<E> removesToFire = new HashSet<>();
 
-		for (Iterator<? extends E> iter = adds.iterator(); iter.hasNext();) {
-			E added = iter.next();
-
+		for (E added : adds) {
 			Integer refCount = refCounts.get(added);
 			if (refCount == null) {
 				refCounts.put(added, Integer.valueOf(1));
@@ -147,9 +144,7 @@ public final class UnionSet<E> extends ObservableSet<E> {
 			}
 		}
 
-		for (Iterator<? extends E> iter = removes.iterator(); iter.hasNext();) {
-			E removed = iter.next();
-
+		for (E removed : removes) {
 			Integer refCount = refCounts.get(removed);
 			if (refCount != null) {
 				int refs = refCount.intValue();
@@ -201,9 +196,7 @@ public final class UnionSet<E> extends ObservableSet<E> {
 	private ArrayList<E> incrementRefCounts(Collection<? extends E> added) {
 		ArrayList<E> adds = new ArrayList<>();
 
-		for (Iterator<? extends E> iter = added.iterator(); iter.hasNext();) {
-			E next = iter.next();
-
+		for (E next : added) {
 			Integer refCount = refCounts.get(next);
 			if (refCount == null) {
 				adds.add(next);

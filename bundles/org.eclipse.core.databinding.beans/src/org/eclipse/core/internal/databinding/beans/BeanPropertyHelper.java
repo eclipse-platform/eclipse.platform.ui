@@ -145,23 +145,17 @@ public class BeanPropertyHelper {
 			}
 			PropertyDescriptor[] propertyDescriptors = beanInfo
 					.getPropertyDescriptors();
-			for (int i = 0; i < propertyDescriptors.length; i++) {
-				PropertyDescriptor descriptor = propertyDescriptors[i];
+			for (PropertyDescriptor descriptor : propertyDescriptors) {
 				if (descriptor.getName().equals(propertyName)) {
 					return descriptor;
 				}
 			}
 		} else {
 			try {
-				PropertyDescriptor propertyDescriptors[];
 				List<PropertyDescriptor> pds = new ArrayList<PropertyDescriptor>();
 				getInterfacePropertyDescriptors(pds, beanClass);
 				if (pds.size() > 0) {
-					propertyDescriptors = pds
-							.toArray(new PropertyDescriptor[pds.size()]);
-					PropertyDescriptor descriptor;
-					for (int i = 0; i < propertyDescriptors.length; i++) {
-						descriptor = propertyDescriptors[i];
+					for (PropertyDescriptor descriptor : pds.toArray(new PropertyDescriptor[pds.size()])) {
 						if (descriptor.getName().equals(propertyName))
 							return descriptor;
 					}
@@ -191,13 +185,12 @@ public class BeanPropertyHelper {
 			throws IntrospectionException {
 		BeanInfo beanInfo = Introspector.getBeanInfo(iface);
 		PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
-		for (int i = 0; i < pds.length; i++) {
-			PropertyDescriptor pd = pds[i];
+		for (PropertyDescriptor pd : pds) {
 			propertyDescriptors.add(pd);
 		}
 		Class<?>[] subIntfs = iface.getInterfaces();
-		for (int j = 0; j < subIntfs.length; j++) {
-			getInterfacePropertyDescriptors(propertyDescriptors, subIntfs[j]);
+		for (Class<?> subIntf : subIntfs) {
+			getInterfacePropertyDescriptors(propertyDescriptors, subIntf);
 		}
 	}
 

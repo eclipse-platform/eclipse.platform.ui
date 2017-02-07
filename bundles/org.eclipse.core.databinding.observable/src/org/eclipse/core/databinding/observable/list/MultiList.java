@@ -134,8 +134,8 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		}
 		this.elementType = elementType;
 
-		for (int i = 0; i < lists.length; i++) {
-			Assert.isTrue(realm.equals(lists[i].getRealm()),
+		for (IObservableList<E> list : lists) {
+			Assert.isTrue(realm.equals(list.getRealm()),
 					"All source lists in a MultiList must belong to the same realm"); //$NON-NLS-1$
 		}
 	}

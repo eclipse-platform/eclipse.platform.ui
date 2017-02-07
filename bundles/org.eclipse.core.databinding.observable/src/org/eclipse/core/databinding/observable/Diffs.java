@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -270,8 +269,7 @@ public class Diffs {
 	private static <E> void createListDiffs(List<E> oldList, List<? extends E> newList,
 			List<ListDiffEntry<E>> listDiffs) {
 		int index = 0;
-		for (Iterator<? extends E> it = newList.iterator(); it.hasNext();) {
-			E newValue = it.next();
+		for (E newValue : newList) {
 			if (oldList.size() <= index) {
 				// append newValue to newList
 				listDiffs.add(createListDiffEntry(index, true, newValue));
@@ -475,8 +473,7 @@ public class Diffs {
 				oldValues.put(oldKey, oldEntry.getValue());
 			}
 		}
-		for (Iterator<K> it = addedKeys.iterator(); it.hasNext();) {
-			K newKey = it.next();
+		for (K newKey : addedKeys) {
 			newValues.put(newKey, newMap.get(newKey));
 		}
 		return new MapDiff<K, V>() {

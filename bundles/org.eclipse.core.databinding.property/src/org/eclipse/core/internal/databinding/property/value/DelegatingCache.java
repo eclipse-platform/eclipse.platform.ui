@@ -14,7 +14,6 @@
 package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -196,8 +195,7 @@ abstract class DelegatingCache<S, K extends S, V> {
 		}
 
 		if (delegateCaches != null) {
-			for (Iterator<DelegateCache> it = delegateCaches.values().iterator(); it.hasNext();) {
-				DelegateCache cache = it.next();
+			for (DelegatingCache<S, K, V>.DelegateCache cache : delegateCaches.values()) {
 				cache.dispose();
 			}
 			delegateCaches.clear();

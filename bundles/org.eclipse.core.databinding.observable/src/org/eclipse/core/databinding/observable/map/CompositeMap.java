@@ -14,7 +14,6 @@ package org.eclipse.core.databinding.observable.map;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -183,16 +182,14 @@ public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 					pendingChanges.remove(oldKey);
 					pendingAdds.remove(addedKey);
 					pendingRemoves.remove(oldKey);
-					for (Iterator<K> it2 = elements.iterator(); it2.hasNext();) {
-						K element = it2.next();
+					for (K element : elements) {
 						changes.add(element);
 						oldValues.put(element, oldValue);
 						newValues.put(element, newValue);
 						wrappedMap.put(element, newValue);
 					}
 				} else if (pendingAdds.remove(addedKey)) {
-					for (Iterator<K> it2 = elements.iterator(); it2.hasNext();) {
-						K element = it2.next();
+					for (K element : elements) {
 						adds.add(element);
 						newValues.put(element, newValue);
 						wrappedMap.put(element, newValue);
@@ -203,8 +200,7 @@ public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 			}
 			for (I changedKey : diff.getChangedKeys()) {
 				Set<K> elements = firstMap.getKeys(changedKey);
-				for (Iterator<K> it2 = elements.iterator(); it2.hasNext();) {
-					K element = it2.next();
+				for (K element : elements) {
 					changes.add(element);
 					oldValues.put(element, diff.getOldValue(changedKey));
 					V newValue = diff.getNewValue(changedKey);
@@ -302,8 +298,7 @@ public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 		rangeSet.addAll(this.firstMap.values());
 		this.secondMap = secondMapFactory.createObservable(rangeSet);
 		secondMap.addMapChangeListener(secondMapListener);
-		for (Iterator<Map.Entry<K, I>> it = this.firstMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry<K, I> entry = it.next();
+		for (Entry<K, I> entry : this.firstMap.entrySet()) {
 			wrappedMap.put(entry.getKey(), secondMap.get(entry.getValue()));
 		}
 	}

@@ -13,7 +13,6 @@
 
 package org.eclipse.core.internal.databinding.property;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,8 +65,7 @@ public class SetPropertyDetailValuesMap<S, M, T> extends MapProperty<S, M, T> {
 	protected Map<M, T> doGetMap(S source) {
 		Set<M> set = masterProperty.getSet(source);
 		Map<M, T> map = new IdentityMap<>();
-		for (Iterator<M> it = set.iterator(); it.hasNext();) {
-			M key = it.next();
+		for (M key : set) {
 			map.put(key, detailProperty.getValue(key));
 		}
 		return map;

@@ -112,8 +112,7 @@ public class IdentityObservableSet<E> extends AbstractObservableSet<E> {
 	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
 		Set<E> additions = new IdentitySet<>();
-		for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();) {
-			E element = iterator.next();
+		for (E element : c) {
 			if (wrappedSet.add(element))
 				additions.add(element);
 		}
@@ -143,8 +142,7 @@ public class IdentityObservableSet<E> extends AbstractObservableSet<E> {
 	public boolean removeAll(Collection<?> c) {
 		getterCalled();
 		Set<E> removals = new IdentitySet<>();
-		for (Iterator<?> iterator = c.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
+		for (Object element : c) {
 			if (wrappedSet.remove(element)) {
 				removals.add((E) element);
 			}

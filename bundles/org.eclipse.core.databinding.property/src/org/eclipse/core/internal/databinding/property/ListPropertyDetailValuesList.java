@@ -14,7 +14,6 @@
 package org.eclipse.core.internal.databinding.property;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -60,8 +59,8 @@ public class ListPropertyDetailValuesList<S, T, E> extends ListProperty<S, E> {
 	protected List<E> doGetList(S source) {
 		List<T> masterList = masterProperty.getList(source);
 		List<E> detailList = new ArrayList<E>(masterList.size());
-		for (Iterator<T> it = masterList.iterator(); it.hasNext();)
-			detailList.add(detailProperty.getValue(it.next()));
+		for (T t : masterList)
+			detailList.add(detailProperty.getValue(t));
 		return detailList;
 	}
 

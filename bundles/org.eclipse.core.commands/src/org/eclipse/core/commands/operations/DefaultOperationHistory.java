@@ -189,8 +189,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 			// flush redo stack for related contexts
 			IUndoContext[] contexts = operation.getContexts();
-			for (int i = 0; i < contexts.length; i++) {
-				flushRedo(contexts[i]);
+			for (IUndoContext context : contexts) {
+				flushRedo(context);
 			}
 		} else {
 			// Dispose the operation since we will not have a reference to it.
@@ -272,13 +272,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private boolean checkRedoLimit(IUndoableOperation operation) {
 		IUndoContext[] contexts = operation.getContexts();
-		for (int i = 0; i < contexts.length; i++) {
-			int limit = getLimit(contexts[i]);
+		for (IUndoContext context : contexts) {
+			int limit = getLimit(context);
 			if (limit > 0) {
-				forceRedoLimit(contexts[i], limit - 1);
+				forceRedoLimit(context, limit - 1);
 			} else {
 				// this context has a 0 limit
-				operation.removeContext(contexts[i]);
+				operation.removeContext(context);
 			}
 		}
 		return operation.getContexts().length > 0;
@@ -290,13 +290,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private boolean checkUndoLimit(IUndoableOperation operation) {
 		IUndoContext[] contexts = operation.getContexts();
-		for (int i = 0; i < contexts.length; i++) {
-			int limit = getLimit(contexts[i]);
+		for (IUndoContext context : contexts) {
+			int limit = getLimit(context);
 			if (limit > 0) {
-				forceUndoLimit(contexts[i], limit - 1);
+				forceUndoLimit(context, limit - 1);
 			} else {
 				// this context has a 0 limit
-				operation.removeContext(contexts[i]);
+				operation.removeContext(context);
 			}
 		}
 		return operation.getContexts().length > 0;
@@ -551,8 +551,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		synchronized (undoRedoHistoryLock) {
 
 			Object[] filtered = filter(redoList, context);
-			for (int i = 0; i < filtered.length; i++) {
-				IUndoableOperation operation = (IUndoableOperation) filtered[i];
+			for (Object element : filtered) {
+				IUndoableOperation operation = (IUndoableOperation) element;
 				if (context == GLOBAL_UNDO_CONTEXT || operation.getContexts().length == 1) {
 					// remove the operation if it only has the context or we are
 					// flushing all
@@ -564,10 +564,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 					// It is not enough to simply remove the context. There could
 					// be one or more contexts that match the one we are trying to
 					// dispose.
-					IUndoContext[] contexts = operation.getContexts();
-					for (int j = 0; j < contexts.length; j++) {
-						if (contexts[j].matches(context)) {
-							operation.removeContext(contexts[j]);
+					for (IUndoContext undoContext : operation.getContexts()) {
+						if (undoContext.matches(context)) {
+							operation.removeContext(undoContext);
 						}
 					}
 					if (operation.getContexts().length == 0) {
@@ -591,8 +590,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 			// Get all operations that have the context (or one that matches)
 			Object[] filtered = filter(undoList, context);
-			for (int i = 0; i < filtered.length; i++) {
-				IUndoableOperation operation = (IUndoableOperation) filtered[i];
+			for (Object element : filtered) {
+				IUndoableOperation operation = (IUndoableOperation) element;
 				if (context == GLOBAL_UNDO_CONTEXT || operation.getContexts().length == 1) {
 					// remove the operation if it only has the context or we are
 					// flushing all
@@ -604,10 +603,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 					// It is not enough to simply remove the context. There could
 					// be one or more contexts that match the one we are trying to
 					// dispose.
-					IUndoContext[] contexts = operation.getContexts();
-					for (int j = 0; j < contexts.length; j++) {
-						if (contexts[j].matches(context)) {
-							operation.removeContext(contexts[j]);
+					for (IUndoContext undoContext : operation.getContexts()) {
+						if (undoContext.matches(context)) {
+							operation.removeContext(undoContext);
 						}
 					}
 					if (operation.getContexts().length == 0) {
@@ -1051,12 +1049,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				undoList.remove(operation);
 				// notify listeners after the lock on undoList is released
 				ArrayList<IUndoContext> allContexts = new ArrayList<>(replacements.length);
-				for (int i = 0; i < replacements.length; i++) {
-					IUndoContext[] opContexts = replacements[i].getContexts();
-					for (int j = 0; j < opContexts.length; j++) {
-						allContexts.add(opContexts[j]);
+				for (IUndoableOperation replacement : replacements) {
+					IUndoContext[] opContexts = replacement.getContexts();
+					for (IUndoContext opContext : opContexts) {
+						allContexts.add(opContext);
 					}
-					undoList.add(index, replacements[i]);
+					undoList.add(index, replacement);
 					// notify listeners after the lock on the history is
 					// released
 				}
@@ -1071,8 +1069,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		if (inUndo) {
 			// notify listeners of operations added and removed
 			internalRemove(operation);
-			for (int i = 0; i < replacements.length; i++) {
-				notifyAdd(replacements[i]);
+			for (IUndoableOperation replacement : replacements) {
+				notifyAdd(replacement);
 			}
 			return;
 		}
@@ -1087,12 +1085,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			ArrayList<IUndoContext> allContexts = new ArrayList<>(replacements.length);
 			redoList.remove(operation);
 			// notify listeners after we release the lock on redoList
-			for (int i = 0; i < replacements.length; i++) {
-				IUndoContext[] opContexts = replacements[i].getContexts();
-				for (int j = 0; j < opContexts.length; j++) {
-					allContexts.add(opContexts[j]);
+			for (IUndoableOperation replacement : replacements) {
+				IUndoContext[] opContexts = replacement.getContexts();
+				for (IUndoContext opContext : opContexts) {
+					allContexts.add(opContext);
 				}
-				redoList.add(index, replacements[i]);
+				redoList.add(index, replacement);
 				// notify listeners after we release the lock on redoList
 			}
 			// recheck all the limits. We do this at the end so the index
@@ -1104,8 +1102,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 		// send listener notifications after we release the lock on the history
 		internalRemove(operation);
-		for (int i = 0; i < replacements.length; i++) {
-			notifyAdd(replacements[i]);
+		for (IUndoableOperation replacement : replacements) {
+			notifyAdd(replacement);
 		}
 	}
 

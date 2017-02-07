@@ -97,8 +97,7 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 	public final IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
 		IUndoContext[] contexts = operation.getContexts();
-		for (int i = 0; i < contexts.length; i++) {
-			IUndoContext context = contexts[i];
+		for (IUndoContext context : contexts) {
 			if (history.getRedoOperation(context) != operation) {
 				IStatus status = allowLinearRedoViolation(operation, context,
 						history, info);
@@ -115,8 +114,7 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 	public final IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
 		IUndoContext[] contexts = operation.getContexts();
-		for (int i = 0; i < contexts.length; i++) {
-			IUndoContext context = contexts[i];
+		for (IUndoContext context : contexts) {
 			if (history.getUndoOperation(context) != operation) {
 				IStatus status = allowLinearUndoViolation(operation, context,
 						history, info);

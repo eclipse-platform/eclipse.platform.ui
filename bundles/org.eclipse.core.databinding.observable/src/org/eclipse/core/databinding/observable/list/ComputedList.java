@@ -207,16 +207,16 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 			// even if we were already stale before recomputing. This is in case
 			// clients assume that a list change is indicative of non-staleness.
 			stale = false;
-			for (int i = 0; i < newDependencies.length; i++) {
-				if (newDependencies[i].isStale()) {
+			for (IObservable newDependency : newDependencies) {
+				if (newDependency.isStale()) {
 					makeStale();
 					break;
 				}
 			}
 
 			if (!stale) {
-				for (int i = 0; i < newDependencies.length; i++) {
-					newDependencies[i].addStaleListener(privateInterface);
+				for (IObservable newDependency : newDependencies) {
+					newDependency.addStaleListener(privateInterface);
 				}
 			}
 
@@ -271,9 +271,7 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 
 	private void stopListening() {
 		if (dependencies != null) {
-			for (int i = 0; i < dependencies.length; i++) {
-				IObservable observable = dependencies[i];
-
+			for (IObservable observable : dependencies) {
 				observable.removeChangeListener(privateInterface);
 				observable.removeStaleListener(privateInterface);
 			}
