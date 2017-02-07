@@ -124,8 +124,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			IResource[] selectedResources = getSelectedResources();
 
 			boolean bProjectDrop = false;
-			for (int iRes = 0; iRes < selectedResources.length; iRes++) {
-				IResource res = selectedResources[iRes];
+			for (IResource res : selectedResources) {
 				if(res instanceof IProject) {
 					bProjectDrop = true;
 				}
@@ -364,8 +363,8 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
-			for (int i = 0; i < sources.length; i++) {
-				if ((sources[i].getType() != IResource.FILE) && (sources[i].getLocation() != null)) {
+			for (IResource source : sources) {
+				if ((source.getType() != IResource.FILE) && (source.getLocation() != null)) {
 					// If the source is a folder, but the location is null (a
 					// broken link, for example),
 					// we still generate a link automatically (the best option).
@@ -433,8 +432,8 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
-			for (int i = 0; i < sources.length; i++) {
-				if (sources[i].isVirtual() || sources[i].isLinked()) {
+			for (IResource source : sources) {
+				if (source.isVirtual() || source.isLinked()) {
 					shouldLinkAutomatically = false;
 					break;
 				}

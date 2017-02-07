@@ -16,9 +16,7 @@ package org.eclipse.ui.internal.ide.application;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import org.eclipse.core.resources.IFile;
@@ -599,11 +597,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		} else {
 			// Show the welcome page for any newly installed features
 			List<AboutInfo> welcomeFeatures = new ArrayList<>();
-			for (Iterator it = wbAdvisor.getNewlyAddedBundleGroups().entrySet()
-					.iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				AboutInfo info = (AboutInfo) entry.getValue();
-
+			for (AboutInfo info : wbAdvisor.getNewlyAddedBundleGroups().values()) {
 				if (info != null && info.getWelcomePageURL() != null) {
 					welcomeFeatures.add(info);
 					// activate the feature plug-in so it can run some install
@@ -616,13 +610,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							try {
 								bundle.start(Bundle.START_TRANSIENT);
 							} catch (BundleException exception) {
-								StatusManager
-										.getManager()
-										.handle(
-												new Status(
-														IStatus.ERROR,
-														IDEApplication.PLUGIN_ID,
-														"Failed to load feature", exception));//$NON-NLS-1$
+								StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID,
+										"Failed to load feature", exception));//$NON-NLS-1$
 							}
 						}
 					}

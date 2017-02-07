@@ -53,8 +53,7 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	public void applyChanges() throws BackingStoreException {
 		Collection values = workingCopies.values();
 		WorkingCopyPreferences[] valuesArray = (WorkingCopyPreferences[]) values.toArray(new WorkingCopyPreferences[values.size()]);
-		for (int i = 0; i < valuesArray.length; i++) {
-			WorkingCopyPreferences prefs = valuesArray[i];
+		for (WorkingCopyPreferences prefs : valuesArray) {
 			if (prefs.nodeExists(EMPTY_STRING))
 				prefs.flush();
 		}

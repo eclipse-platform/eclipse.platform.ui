@@ -113,11 +113,10 @@ public abstract class WorkbenchPart extends EventManager implements
      * @param propertyId the id of the property that changed
      */
     protected void firePropertyChange(final int propertyId) {
-        Object[] array = getListeners();
-        for (int nX = 0; nX < array.length; nX++) {
-            final IPropertyListener l = (IPropertyListener) array[nX];
+		for (Object listener : getListeners()) {
+			final IPropertyListener propertyListener = (IPropertyListener) listener;
             try {
-                l.propertyChanged(WorkbenchPart.this, propertyId);
+				propertyListener.propertyChanged(WorkbenchPart.this, propertyId);
             } catch (RuntimeException e) {
                 WorkbenchPlugin.log(e);
             }

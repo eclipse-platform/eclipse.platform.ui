@@ -656,19 +656,19 @@ public class TabbedPropertySheetPage
 	protected void updateTabs(ITabDescriptor[] descriptors) {
 		Map newTabs = new HashMap(descriptors.length * 2);
 		boolean disposingCurrentTab = (currentTab != null);
-		for (int i = 0; i < descriptors.length; i++) {
+		for (ITabDescriptor descriptor : descriptors) {
 			TabContents tab = (TabContents) descriptorToTab
-					.remove(descriptors[i]);
+					.remove(descriptor);
 
 			if (tab != null && tab.controlsHaveBeenCreated()) {
 				if (tab == currentTab) {
 					disposingCurrentTab = false;
 				}
 			} else {
-				tab = createTab(descriptors[i]);
+				tab = createTab(descriptor);
 			}
 
-			newTabs.put(descriptors[i], tab);
+			newTabs.put(descriptor, tab);
 		}
 		if (disposingCurrentTab) {
 			/**

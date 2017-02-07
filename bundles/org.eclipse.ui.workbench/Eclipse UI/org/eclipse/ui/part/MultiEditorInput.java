@@ -123,11 +123,11 @@ public class MultiEditorInput implements IEditorInput {
     @Override
 	public int hashCode() {
         int hash = 0;
-        for (int i = 0; i < editors.length; i++) {
-            hash = hash * 37 + editors[i].hashCode();
+        for (String editor : editors) {
+            hash = hash * 37 + editor.hashCode();
         }
-        for (int i = 0; i < input.length; i++) {
-            hash = hash * 37 + input[i].hashCode();
+        for (IEditorInput editorInput : input) {
+            hash = hash * 37 + editorInput.hashCode();
         }
         return hash;
     }

@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.ide.application;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -414,8 +413,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 
 		// Do not refresh if it was already done by core on startup.
-		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-refresh")) { //$NON-NLS-1$
+		for (String commandLineArg : commandLineArgs) {
+			if (commandLineArg.equalsIgnoreCase("-refresh")) { //$NON-NLS-1$
 				return;
 			}
 		}
@@ -588,10 +587,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		Map<String, AboutInfo> ids = new TreeMap<>();
 
 		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-		for (int i = 0; i < providers.length; ++i) {
-			IBundleGroup[] groups = providers[i].getBundleGroups();
-			for (int j = 0; j < groups.length; ++j) {
-				IBundleGroup group = groups[j];
+		for (IBundleGroupProvider provider : providers) {
+			IBundleGroup[] groups = provider.getBundleGroups();
+			for (IBundleGroup group : groups) {
 				AboutInfo info = new AboutInfo(group);
 
 				String version = info.getVersionId();
@@ -639,8 +637,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// remove the previously known from the current set
 		if (previousFeaturesArray != null) {
-			for (int i = 0; i < previousFeaturesArray.length; ++i) {
-				bundleGroups.remove(previousFeaturesArray[i]);
+			for (String previousFeature : previousFeaturesArray) {
+				bundleGroups.remove(previousFeature);
 			}
 		}
 
@@ -942,8 +940,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			if (!hasIntro()) {
 				Map<String, AboutInfo> m = getNewlyAddedBundleGroups();
 				ArrayList<AboutInfo> list = new ArrayList<>(m.size());
-				for (Iterator<AboutInfo> i = m.values().iterator(); i.hasNext();) {
-					AboutInfo info = i.next();
+				for (AboutInfo info : m.values()) {
 					if (info != null && info.getWelcomePerspectiveId() != null
 							&& info.getWelcomePageURL() != null) {
 						list.add(info);

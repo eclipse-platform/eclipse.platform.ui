@@ -89,8 +89,8 @@ public final class BasicWorkingSetElementAdapter implements
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		List adaptedElements = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
-			IAdaptable adaptable = adapt(elements[i]);
+		for (IAdaptable element : elements) {
+			IAdaptable adaptable = adapt(element);
 			if (adaptable != null)
 				adaptedElements.add(adaptable);
 		}
@@ -109,8 +109,8 @@ public final class BasicWorkingSetElementAdapter implements
 	 *         adaptable, or <code>null</code>.
 	 */
 	private IAdaptable adapt(IAdaptable adaptable) {
-		for (int i = 0; i < preferredTypes.length; i++) {
-			IAdaptable adaptedAdaptable = adapt(preferredTypes[i], adaptable);
+		for (Type preferredType : preferredTypes) {
+			IAdaptable adaptedAdaptable = adapt(preferredType, adaptable);
 			if (adaptedAdaptable != null)
 				return adaptedAdaptable;
 		}
@@ -131,8 +131,7 @@ public final class BasicWorkingSetElementAdapter implements
 		IAdapterManager adapterManager = Platform.getAdapterManager();
 		Class[] directClasses = adapterManager.computeClassOrder(adaptable
 				.getClass());
-		for (int i = 0; i < directClasses.length; i++) {
-			Class clazz = directClasses[i];
+		for (Class clazz : directClasses) {
 			if (clazz.getName().equals(type.className))
 				return adaptable;
 		}

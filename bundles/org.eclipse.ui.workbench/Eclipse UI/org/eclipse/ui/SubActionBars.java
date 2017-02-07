@@ -291,8 +291,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 */
 	protected void firePropertyChange(PropertyChangeEvent event) {
 		Object[] listeners = getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		for (Object listener : listeners) {
+			((IPropertyChangeListener) listener).propertyChange(event);
 		}
 	}
 

@@ -225,8 +225,8 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 				}
 			} else {
 				IAdaptable[] elements = getWorkingSetElements(workingSet);
-				for (int elementsIndex = 0; elementsIndex < elements.length; elementsIndex++) {
-					parents.put(elements[elementsIndex], workingSet);
+				for (IAdaptable element : elements) {
+					parents.put(element, workingSet);
 				}
 			}
 

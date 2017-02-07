@@ -426,8 +426,7 @@ public final class SelectionEnabler {
 				.getChildren(IWorkbenchRegistryConstants.TAG_SELECTION);
 		if (children.length > 0) {
 			classes = new ArrayList();
-			for (int i = 0; i < children.length; i++) {
-				IConfigurationElement sel = children[i];
+			for (IConfigurationElement sel : children) {
 				String cname = sel
 						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 				String name = sel
@@ -457,8 +456,8 @@ public final class SelectionEnabler {
 			}
 			// test all the interfaces it implements
 			Class[] interfaces = clazz.getInterfaces();
-			for (int i = 0; i < interfaces.length; i++) {
-				if (interfaces[i].getName().equals(className)) {
+			for (Class currentInterface : interfaces) {
+				if (currentInterface.getName().equals(className)) {
 					match = true;
 					break;
 				}
