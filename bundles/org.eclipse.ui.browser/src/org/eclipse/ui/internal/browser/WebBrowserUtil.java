@@ -254,12 +254,12 @@ public class WebBrowserUtil {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return roots;
 		ArrayList<File> list = new ArrayList<>();
-		for (int i = 0; i < roots.length; i++) {
-			String path = roots[i].getAbsolutePath();
+		for (File root : roots) {
+			String path = root.getAbsolutePath();
 			if (path != null
 					&& (path.toLowerCase().startsWith("a:") || path.toLowerCase().startsWith("b:"))) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
-			list.add(roots[i]);
+			list.add(root);
 		}
 		return list.toArray(new File[list.size()]);
 	}

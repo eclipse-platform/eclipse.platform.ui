@@ -64,8 +64,8 @@ public class LinkHelperService {
 		}
 
 		Set helpers = new LinkedHashSet();
-		for (int i = 0; i < descriptors.length; i++) {
-			helpers.add(getLinkHelper(descriptors[i]));
+		for (LinkHelperDescriptor descriptor : descriptors) {
+			helpers.add(getLinkHelper(descriptor));
 		}
 		if (helpers.size() == 0)
 			return CANT_GET_NO_HELP;
@@ -88,8 +88,8 @@ public class LinkHelperService {
 		}
 
 		Set helpers = new LinkedHashSet();
-		for (int i = 0; i < descriptors.length; i++) {
-			helpers.add(getLinkHelper(descriptors[i]));
+		for (LinkHelperDescriptor descriptor : descriptors) {
+			helpers.add(getLinkHelper(descriptor));
 		}
 		if (helpers.size() == 0)
 			return CANT_GET_NO_HELP;
@@ -122,8 +122,8 @@ public class LinkHelperService {
 		IStructuredSelection selection = StructuredSelection.EMPTY;
 		IStructuredSelection newSelection = StructuredSelection.EMPTY;
 
-		for (int i = 0; i < helpers.length; i++) {
-			selection = helpers[i].findSelection(input);
+		for (ILinkHelper helper : helpers) {
+			selection = helper.findSelection(input);
 			if (selection != null && !selection.isEmpty()) {
 				newSelection = mergeSelection(newSelection, selection);
 			}

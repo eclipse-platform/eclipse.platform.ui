@@ -180,8 +180,8 @@ public abstract class RegistryReader {
 				}
 				IExtension[] extensions = point.getExtensions();
 				extensions = orderExtensions(extensions);
-				for (int i = 0; i < extensions.length; i++) {
-					readExtension(extensions[i]);
+				for (IExtension extension : extensions) {
+					readExtension(extension);
 				}
 				isInitialized = true;
 			}

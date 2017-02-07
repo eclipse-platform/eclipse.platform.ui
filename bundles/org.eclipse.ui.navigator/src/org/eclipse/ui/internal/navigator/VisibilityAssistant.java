@@ -86,10 +86,10 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 		if (theExtensions == null) {
 			return;
 		}
-		for (int i = 0; i < theExtensions.length; i++) {
-			programmaticVisibilityBindings.add(theExtensions[i]);
+		for (String extension : theExtensions) {
+			programmaticVisibilityBindings.add(extension);
 			if (isRoot) {
-				programmaticRootBindings.add(theExtensions[i]);
+				programmaticRootBindings.add(extension);
 			}
 		}
 		notifyClients();
@@ -121,8 +121,8 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	private void notifyClients() {
 		Object[] clients = listeners.getListeners();
-		for (int i = 0; i < clients.length; i++) {
-			((VisibilityListener) clients[i]).onVisibilityOrActivationChange();
+		for (Object client : clients) {
+			((VisibilityListener) client).onVisibilityOrActivationChange();
 		}
 	}
 

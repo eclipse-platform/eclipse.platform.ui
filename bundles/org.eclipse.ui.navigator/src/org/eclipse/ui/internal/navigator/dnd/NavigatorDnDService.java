@@ -147,8 +147,8 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			TransferData aTransferType) {
 
 		Set assistants = new LinkedHashSet();
-		for (int i = 0; i < descriptors.length; i++) {
-			CommonDropAdapterAssistant asst = getAssistant(descriptors[i]);
+		for (CommonDropAdapterDescriptor descriptor : descriptors) {
+			CommonDropAdapterAssistant asst = getAssistant(descriptor);
 			if (asst.isSupportedType(aTransferType)) {
 				assistants.add(asst);
 			}
@@ -163,9 +163,9 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 		Set assistants = new LinkedHashSet();
 
-		for (int i = 0; i < descriptors.length; i++) {
-			if(descriptors[i].areDragElementsSupported(aSelection)) {
-				assistants.add(getAssistant(descriptors[i]));
+		for (CommonDropAdapterDescriptor descriptor : descriptors) {
+			if(descriptor.areDragElementsSupported(aSelection)) {
+				assistants.add(getAssistant(descriptor));
 			}
 		}
 

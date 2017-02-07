@@ -169,9 +169,7 @@ public class NavigatorContentDescriptorManager {
 			addDescriptorsConsideringOverrides(anElement, firstClassDescriptorsSet, aVisibilityAssistant, descriptors, possibleChild);
 		} else {
 			/* Find other ContentProviders which enable for this object */
-			for (Iterator<NavigatorContentDescriptor> contentDescriptorsItr = firstClassDescriptorsSet.iterator(); contentDescriptorsItr.hasNext();) {
-				NavigatorContentDescriptor descriptor = contentDescriptorsItr.next();
-
+			for (NavigatorContentDescriptor descriptor : firstClassDescriptorsSet) {
 				if (aVisibilityAssistant.isActive(descriptor) && aVisibilityAssistant.isVisible(descriptor)
 						&& (possibleChild ? descriptor.isPossibleChild(anElement) : descriptor.isTriggerPoint(anElement))) {
 					descriptors.add(descriptor);
@@ -424,8 +422,8 @@ public class NavigatorContentDescriptorManager {
 		NavigatorContentDescriptor[] descs = getAllContentDescriptors();
 
 		LinkedList<NavigatorContentDescriptor> list = new LinkedList<NavigatorContentDescriptor>();
-		for (int i = 0; i < descs.length; i++) {
-			list.add(descs[i]);
+		for (NavigatorContentDescriptor desc : descs) {
+			list.add(desc);
 		}
 
 		boolean changed = true;

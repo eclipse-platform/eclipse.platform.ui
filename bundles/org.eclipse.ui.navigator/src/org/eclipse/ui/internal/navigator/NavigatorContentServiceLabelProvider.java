@@ -18,6 +18,7 @@ import java.util.Iterator;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -28,7 +29,6 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerLabel;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -131,11 +131,11 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		if (labelProviders.length == 0)
 			return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement));
 		String text = null;
-		for (int i = 0; i < labelProviders.length; i++) {
-			if (labelProviders[i] instanceof ITableLabelProvider && aColumn != -1)
-				text = ((ITableLabelProvider)labelProviders[i]).getColumnText(anElement, aColumn);
+		for (ILabelProvider labelProvider : labelProviders) {
+			if (labelProvider instanceof ITableLabelProvider && aColumn != -1)
+				text = ((ITableLabelProvider)labelProvider).getColumnText(anElement, aColumn);
 			else
-				text = labelProviders[i].getText(anElement);
+				text = labelProvider.getText(anElement);
 			if (text != null && text.length() > 0)
 				return text;
 		}
@@ -204,8 +204,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	@Override
 	public Font getFont(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		for (int i = 0; i < labelProviders.length; i++) {
-			ILabelProvider provider = labelProviders[i];
+		for (ILabelProvider provider : labelProviders) {
 			if (provider instanceof IFontProvider) {
 				IFontProvider fontProvider = (IFontProvider) provider;
 				Font font = fontProvider.getFont(anElement);
@@ -220,8 +219,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	@Override
 	public Color getForeground(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		for (int i = 0; i < labelProviders.length; i++) {
-			ILabelProvider provider = labelProviders[i];
+		for (ILabelProvider provider : labelProviders) {
 			if (provider instanceof IColorProvider) {
 				IColorProvider colorProvider = (IColorProvider) provider;
 				Color color = colorProvider.getForeground(anElement);
@@ -236,8 +234,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	@Override
 	public Color getBackground(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		for (int i = 0; i < labelProviders.length; i++) {
-			ILabelProvider provider = labelProviders[i];
+		for (ILabelProvider provider : labelProviders) {
 			if (provider instanceof IColorProvider) {
 				IColorProvider colorProvider = (IColorProvider) provider;
 				Color color = colorProvider.getBackground(anElement);
@@ -331,13 +328,12 @@ public class NavigatorContentServiceLabelProvider extends EventManager
      */
     protected void fireLabelProviderChanged(
             final LabelProviderChangedEvent event) {
-        Object[] theListeners = getListeners();
-        for (int i = 0; i < theListeners.length; ++i) {
-            final ILabelProviderListener l = (ILabelProviderListener) theListeners[i];
+		for (Object listener : getListeners()) {
+			final ILabelProviderListener labelProviderListener = (ILabelProviderListener) listener;
             SafeRunner.run(new SafeRunnable() {
                 @Override
 				public void run() {
-                    l.labelProviderChanged(event);
+					labelProviderListener.labelProviderChanged(event);
                 }
             });
 

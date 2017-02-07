@@ -47,9 +47,9 @@ public class ContentExtensionsTab extends CustomizationTab {
 	private void updateCheckedState() {
 		INavigatorContentDescriptor[] visibleExtensions = getContentService()
 				.getVisibleExtensions();
-		for (int i = 0; i < visibleExtensions.length; i++) {
-			if (getContentService().isActive(visibleExtensions[i].getId())) {
-				getTableViewer().setChecked(visibleExtensions[i], true);
+		for (INavigatorContentDescriptor visibleExtension : visibleExtensions) {
+			if (getContentService().isActive(visibleExtension.getId())) {
+				getTableViewer().setChecked(visibleExtension, true);
 			}
 		}
 

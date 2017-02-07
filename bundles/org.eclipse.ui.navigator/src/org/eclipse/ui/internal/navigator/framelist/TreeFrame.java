@@ -126,13 +126,13 @@ public class TreeFrame extends Frame {
         IMemento[] elementMem = memento.getChildren(TAG_ELEMENT);
         List<IAdaptable> elements = new ArrayList<IAdaptable>(elementMem.length);
 
-        for (int i = 0; i < elementMem.length; i++) {
-            String factoryID = elementMem[i].getString(TAG_FACTORY_ID);
+        for (IMemento element : elementMem) {
+            String factoryID = element.getString(TAG_FACTORY_ID);
             if (factoryID != null) {
                 IElementFactory factory = PlatformUI.getWorkbench()
                         .getElementFactory(factoryID);
                 if (factory != null) {
-					elements.add(factory.createElement(elementMem[i]));
+					elements.add(factory.createElement(element));
 				}
             }
         }
@@ -187,8 +187,8 @@ public class TreeFrame extends Frame {
      * @param memento memento to persist elements in
      */
     private void saveElements(Object[] elements, IMemento memento) {
-        for (int i = 0; i < elements.length; i++) {
-			IPersistableElement persistable = Adapters.adapt(elements[i], IPersistableElement.class);
+        for (Object element : elements) {
+			IPersistableElement persistable = Adapters.adapt(element, IPersistableElement.class);
 			if (persistable != null) {
 				IMemento elementMem = memento.createChild(TAG_ELEMENT);
 				elementMem.putString(TAG_FACTORY_ID, persistable.getFactoryId());

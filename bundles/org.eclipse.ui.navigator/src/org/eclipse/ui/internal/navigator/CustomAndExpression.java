@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.navigator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.expressions.ElementHandler;
@@ -50,9 +49,9 @@ public class CustomAndExpression extends Expression {
 			@Override
 			public void run() throws Exception {
 				fExpressions = new ArrayList<Expression>();
-				for (int i = 0; i < children.length; i++) {
+				for (IConfigurationElement configurationElement : children) {
 					fExpressions.add(ElementHandler.getDefault().create(
-							ExpressionConverter.getDefault(), children[i]));
+							ExpressionConverter.getDefault(), configurationElement));
 				}
 			}
 		});
@@ -66,8 +65,7 @@ public class CustomAndExpression extends Expression {
 		}
 		NavigatorPlugin.Evaluator evaluator = new NavigatorPlugin.Evaluator();
 		EvaluationResult result = EvaluationResult.TRUE;
-		for (Iterator<Expression> iter = fExpressions.iterator(); iter.hasNext();) {
-			Expression expression = iter.next();
+		for (Expression expression : fExpressions) {
 			evaluator.expression = expression;
 			evaluator.scope = scope;
 			SafeRunner.run(evaluator);

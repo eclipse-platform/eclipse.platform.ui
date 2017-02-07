@@ -152,9 +152,9 @@ public final class Priority {
 	 * @return The corresponding Priority Enum or NORMAL if aLiteral is invalid
 	 */
 	public static Priority get(String aLiteral) {
-		for (int i = 0; i < ENUM_ARRAY.length; i++) {
-			if (ENUM_ARRAY[i].getLiteral().equals(aLiteral)) {
-				return ENUM_ARRAY[i];
+		for (Priority priority : ENUM_ARRAY) {
+			if (priority.getLiteral().equals(aLiteral)) {
+				return priority;
 			}
 		}
 		return NORMAL;

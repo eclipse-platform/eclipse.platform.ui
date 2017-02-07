@@ -168,8 +168,7 @@ public class WebBrowserPreference {
 
 		// For each default editor that matches the oldId, change
 		// the default editor to the newId
-		for (int i = 0; i < extensions.length; i++) {
-			String[] ext = extensions[i];
+		for (String[] ext : extensions) {
 			IEditorDescriptor ddesc = registry.getDefaultEditor(ext[0]);
 			if (ddesc != null && ddesc.getId().equals(oldId)) {
 				registry.setDefaultEditor(ext[1], newId);

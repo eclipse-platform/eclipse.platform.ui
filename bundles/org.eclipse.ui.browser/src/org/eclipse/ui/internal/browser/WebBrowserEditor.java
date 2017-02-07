@@ -309,8 +309,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
         String editorId = null;
-        for (int i = 0; i < editors.length; i++) {
-            IEditorDescriptor editor = editors[i];
+        for (IEditorDescriptor editor : editors) {
             if (editor.getId().equals(id))
                 continue;
             editorId = editor.getId();

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,15 +73,15 @@ public class NavigatorFilterService implements INavigatorFilterService {
 					String activatedFiltersPreferenceValue = prefs.get(
 							getFilterActivationPreferenceKey(), null);
 					String[] activeFilterIds = activatedFiltersPreferenceValue.split(DELIM);
-					for (int i = 0; i < activeFilterIds.length; i++) {
-						activeFilters.add(activeFilterIds[i]);
+					for (String activeFilterId : activeFilterIds) {
+						activeFilters.add(activeFilterId);
 					}
 
 				} else {
 					ICommonFilterDescriptor[] visibleFilterDescriptors = getVisibleFilterDescriptors();
-					for (int i = 0; i < visibleFilterDescriptors.length; i++) {
-						if (visibleFilterDescriptors[i].isActiveByDefault()) {
-							activeFilters.add(visibleFilterDescriptors[i].getId());
+					for (ICommonFilterDescriptor visibleFilterDescriptor : visibleFilterDescriptors) {
+						if (visibleFilterDescriptor.isActiveByDefault()) {
+							activeFilters.add(visibleFilterDescriptor.getId());
 						}
 					}
 				}
@@ -103,8 +102,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			 */
 			StringBuffer activatedFiltersPreferenceValue = new StringBuffer(DELIM);
 
-			for (Iterator<String> activeItr = activeFilters.iterator(); activeItr.hasNext();) {
-				String id = activeItr.next().toString();
+			for (String id : activeFilters) {
 				if (!dm.getFilterById(id).isVisibleInUi())
 					continue;
 				activatedFiltersPreferenceValue.append(id).append(DELIM);
@@ -141,9 +139,9 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		List<ViewerFilter> filters = new ArrayList<ViewerFilter>();
 
 		ViewerFilter instance;
-		for (int i = 0; i < descriptors.length; i++) {
-			if (!toReturnOnlyActiveFilters || isActive(descriptors[i].getId())) {
-				instance = getViewerFilter(descriptors[i]);
+		for (CommonFilterDescriptor descriptor : descriptors) {
+			if (!toReturnOnlyActiveFilters || isActive(descriptor.getId())) {
+				instance = getViewerFilter(descriptor);
 				if (instance != null) {
 					filters.add(instance);
 				}
@@ -245,8 +243,8 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		/* If so, update */
 		if (updateFilterActivation) {
 			if (nonUiVisible != null) {
-				for (int i = 0; i < filterIdsToActivate.length; i++)
-					nonUiVisible.add(filterIdsToActivate[i]);
+				for (String filterIdToActivate : filterIdsToActivate)
+					nonUiVisible.add(filterIdToActivate);
 				filterIdsToActivate = nonUiVisible.toArray(new String[]{});
 			}
 

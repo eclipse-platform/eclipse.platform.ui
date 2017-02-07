@@ -61,10 +61,10 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 							selection);
 
 			IStatus valid = null;
-			for (int i = 0; i < assistants.length; i++) {
-				valid = assistants[i].validatePluginTransferDrop(selection, target);
+			for (CommonDropAdapterAssistant assistant : assistants) {
+				valid = assistant.validatePluginTransferDrop(selection, target);
 				if (valid != null && valid.isOK()) {
-					valid = assistants[i].handlePluginTransferDrop(selection, target);
+					valid = assistant.handlePluginTransferDrop(selection, target);
 					return valid != null && valid.isOK();
 				}
 			}

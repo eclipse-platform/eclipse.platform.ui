@@ -167,8 +167,8 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 			createMenuGroups();
 		}
 
-		for (int i = 0; i < menuGroups.length; i++) {
-			aMenu.add(menuGroups[i]);
+		for (IContributionItem menuGroup : menuGroups) {
+			aMenu.add(menuGroup);
 		}
 
 		addCommonActionProviderMenu(aMenu);
@@ -214,8 +214,8 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		final CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
 				.getInstance().findRelevantActionDescriptors(contentService, getContext());
 		if (providerDescriptors.length > 0) {
-			for (int i = 0; i < providerDescriptors.length; i++) {
-				final CommonActionProviderDescriptor providerDescriptorLocal = providerDescriptors[i];
+			for (CommonActionProviderDescriptor providerDescriptor : providerDescriptors) {
+				final CommonActionProviderDescriptor providerDescriptorLocal = providerDescriptor;
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override
 					public void run() throws Exception {
@@ -252,8 +252,8 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		final CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
 				.getInstance().findRelevantActionDescriptors(contentService, context);
 		if (providerDescriptors.length > 0) {
-			for (int i = 0; i < providerDescriptors.length; i++) {
-				final CommonActionProviderDescriptor providerDesciptorLocal = providerDescriptors[i];
+			for (CommonActionProviderDescriptor providerDescriptor : providerDescriptors) {
+				final CommonActionProviderDescriptor providerDesciptorLocal = providerDescriptor;
 				final ActionContext actionContextLocal = context;
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override

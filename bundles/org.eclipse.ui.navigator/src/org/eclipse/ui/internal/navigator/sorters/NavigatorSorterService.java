@@ -52,13 +52,11 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	private synchronized void computeSortOnlyDescriptors() {
-		INavigatorContentDescriptor[] allDescriptors;
-		allDescriptors = NavigatorContentDescriptorManager.getInstance().getSortOnlyContentDescriptors();
-
 		List sortOnlyList = new ArrayList();
-		for (int i = 0; i < allDescriptors.length; i++) {
-			if (contentService.isActive(allDescriptors[i].getId())) {
-				sortOnlyList.add(allDescriptors[i]);
+		for (INavigatorContentDescriptor descriptor : NavigatorContentDescriptorManager.getInstance()
+				.getSortOnlyContentDescriptors()) {
+			if (contentService.isActive(descriptor.getId())) {
+				sortOnlyList.add(descriptor);
 			}
 		}
 
@@ -125,11 +123,11 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 		Map sorters = new HashMap();
 
 		int count = 0;
-		for (int i = 0; i < descriptors.length; i++) {
-			if(descriptors[i].getId() != null && descriptors[i].getId().length() > 0)
-				sorters.put(descriptors[i].getId(), getSorter(descriptors[i]));
+		for (CommonSorterDescriptor descriptor : descriptors) {
+			if(descriptor.getId() != null && descriptor.getId().length() > 0)
+				sorters.put(descriptor.getId(), getSorter(descriptor));
 			else
-				sorters.put(theSource.getId()+".sorter."+ (++count), getSorter(descriptors[i])); //$NON-NLS-1$
+				sorters.put(theSource.getId()+".sorter."+ (++count), getSorter(descriptor)); //$NON-NLS-1$
 		}
 		return sorters;
 	}

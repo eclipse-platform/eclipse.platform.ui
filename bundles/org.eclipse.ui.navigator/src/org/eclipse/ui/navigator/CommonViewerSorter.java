@@ -149,8 +149,8 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
     	// Have to get the parent path from the content provider
     	NavigatorContentServiceContentProvider cp = (NavigatorContentServiceContentProvider) contentService.createCommonContentProvider();
     	TreePath[] parentPaths = cp.getParents(element);
-    	for (int i = 0; i < parentPaths.length; i++) {
-    		if (isSorterProperty(parentPaths[i], element, property))
+    	for (TreePath parentPath : parentPaths) {
+    		if (isSorterProperty(parentPath, element, property))
     			return true;
     	}
     	return false;

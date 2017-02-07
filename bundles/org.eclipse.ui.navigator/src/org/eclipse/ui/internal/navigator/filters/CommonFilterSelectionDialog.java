@@ -227,11 +227,11 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 			List<String> checkedExtensions = new ArrayList<String>();
 			TableItem[] tableItems = contentExtensionsTab.getTable().getItems();
 			INavigatorContentDescriptor descriptor;
-			for (int i = 0; i < tableItems.length; i++) {
-				descriptor = (INavigatorContentDescriptor) tableItems[i]
+			for (TableItem tableItem : tableItems) {
+				descriptor = (INavigatorContentDescriptor) tableItem
 						.getData();
 
-				if (tableItems[i].getChecked()) {
+				if (tableItem.getChecked()) {
 					checkedExtensions.add(descriptor.getId());
 				}
 			}

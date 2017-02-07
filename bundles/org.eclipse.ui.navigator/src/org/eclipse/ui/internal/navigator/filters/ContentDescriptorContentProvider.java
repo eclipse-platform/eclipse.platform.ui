@@ -82,9 +82,9 @@ class ContentDescriptorContentProvider implements ITreeContentProvider {
 		boolean enabled;
 
 		TableItem[] descriptorTableItems = talbleViewer.getTable().getItems();
-		for (int i = 0; i < descriptorTableItems.length; i++) {
-			if (descriptorTableItems[i].getData() instanceof INavigatorContentDescriptor) {
-				descriptor = (INavigatorContentDescriptor) descriptorTableItems[i]
+		for (TableItem descriptorTableItem : descriptorTableItems) {
+			if (descriptorTableItem.getData() instanceof INavigatorContentDescriptor) {
+				descriptor = (INavigatorContentDescriptor) descriptorTableItem
 						.getData();
 				enabled = contentService.getActivationService()
 						.isNavigatorExtensionActive(descriptor.getId());

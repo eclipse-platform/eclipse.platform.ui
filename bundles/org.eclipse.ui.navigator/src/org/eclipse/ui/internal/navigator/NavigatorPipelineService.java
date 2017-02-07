@@ -185,8 +185,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 
 		final NavigatorContentExtension[] overridingExtensions = overrideableExtension
 				.getOverridingExtensions();
-		for (int i = 0; i < overridingExtensions.length; i++) {
-			final NavigatorContentExtension nceLocal = overridingExtensions[i];
+		for (final NavigatorContentExtension nceLocal : overridingExtensions) {
 			if (nceLocal.internalGetContentProvider().isPipelined()) {
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override
@@ -239,9 +238,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		final boolean[] intercepted = new boolean[1];
 		final NavigatorContentExtension[] overridingExtensions = overrideableExtension
 				.getOverridingExtensions();
-		for (int i = 0; i < overridingExtensions.length; i++) {
-			if (overridingExtensions[i].internalGetContentProvider().isPipelined()) {
-				final NavigatorContentExtension nceLocal = overridingExtensions[i];
+		for (final NavigatorContentExtension nceLocal : overridingExtensions) {
+			if (nceLocal.internalGetContentProvider().isPipelined()) {
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override
 					public void run() throws Exception {

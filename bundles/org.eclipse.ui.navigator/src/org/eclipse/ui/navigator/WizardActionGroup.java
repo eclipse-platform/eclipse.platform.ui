@@ -225,14 +225,14 @@ public final class WizardActionGroup extends ActionGroup {
 		Map<String, SortedSet> groups = new TreeMap<String, SortedSet>();
 		SortedSet<IAction> sortedWizards = null;
 		String menuGroupId = null;
-		for (int i = 0; i < descriptors.length; i++) {
-			menuGroupId = descriptors[i].getMenuGroupId() != null ?
-							descriptors[i].getMenuGroupId() : CommonWizardDescriptor.DEFAULT_MENU_GROUP_ID;
+		for (CommonWizardDescriptor descriptor : descriptors) {
+			menuGroupId = descriptor.getMenuGroupId() != null ?
+							descriptor.getMenuGroupId() : CommonWizardDescriptor.DEFAULT_MENU_GROUP_ID;
 			sortedWizards = groups.get(menuGroupId);
 			if(sortedWizards == null) {
-				groups.put(descriptors[i].getMenuGroupId(), sortedWizards = new TreeSet<IAction>(ActionComparator.INSTANCE));
+				groups.put(descriptor.getMenuGroupId(), sortedWizards = new TreeSet<IAction>(ActionComparator.INSTANCE));
 			}
-			if ((action = getAction(descriptors[i].getWizardId())) != null) {
+			if ((action = getAction(descriptor.getWizardId())) != null) {
 				sortedWizards.add(action);
 			}
 		}

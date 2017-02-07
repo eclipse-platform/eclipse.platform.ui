@@ -95,11 +95,11 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		supportedTypes.add(PluginTransfer.getInstance());
 		supportedTypes.add(LocalSelectionTransfer.getTransfer());
 		Transfer[] transferTypes = null;
-		for (int i = 0; i < assistants.length; i++) {
-			transferTypes = assistants[i].getSupportedTransferTypes();
-			for (int j = 0; j < transferTypes.length; j++) {
-				if (transferTypes[j] != null) {
-					supportedTypes.add(transferTypes[j]);
+		for (CommonDragAdapterAssistant assistant : assistants) {
+			transferTypes = assistant.getSupportedTransferTypes();
+			for (Transfer transferType : transferTypes) {
+				if (transferType != null) {
+					supportedTypes.add(transferType);
 				}
 			}
 		}
@@ -135,20 +135,20 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 								.getCommonDragAssistants();
 						if (assistants.length == 0)
 							doIt = true;
-						for (int i = 0; i < assistants.length; i++) {
+						for (CommonDragAdapterAssistant assistant : assistants) {
 							if (Policy.DEBUG_DND) {
 								System.out
-										.println("CommonDragAdapter.dragStart assistant: " + assistants[i]); //$NON-NLS-1$
+										.println("CommonDragAdapter.dragStart assistant: " + assistant); //$NON-NLS-1$
 							}
 							event.doit = true;
-							assistants[i].dragStart(event, (IStructuredSelection) selection);
+							assistant.dragStart(event, (IStructuredSelection) selection);
 							doIt |= event.doit;
 							if (event.doit) {
 								if (Policy.DEBUG_DND) {
 									System.out
 											.println("CommonDragAdapter.dragStart assistant - event.doit == true"); //$NON-NLS-1$
 								}
-								assistantsToUse.add(assistants[i]);
+								assistantsToUse.add(assistant);
 							}
 						}
 
@@ -209,8 +209,8 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 				Transfer[] supportedTransferTypes = assistant
 						.getSupportedTransferTypes();
 				final boolean[] getOut = new boolean[1];
-				for (int j = 0; j < supportedTransferTypes.length; j++) {
-					if (supportedTransferTypes[j].isSupportedType(event.dataType)) {
+				for (Transfer supportedTransferType : supportedTransferTypes) {
+					if (supportedTransferType.isSupportedType(event.dataType)) {
 						SafeRunner.run(new NavigatorSafeRunnable() {
 							@Override
 							public void run() throws Exception {
