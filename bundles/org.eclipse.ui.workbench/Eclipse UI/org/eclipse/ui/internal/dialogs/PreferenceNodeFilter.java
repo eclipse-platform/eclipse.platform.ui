@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Collection;
 import java.util.HashSet;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -33,8 +32,8 @@ public class PreferenceNodeFilter extends ViewerFilter {
 	 */
 	public PreferenceNodeFilter(String[] filteredIds) {
 		super();
-		for (int i = 0; i < filteredIds.length; i++) {
-			ids.add(filteredIds[i]);
+		for (String filteredId : filteredIds) {
+			ids.add(filteredId);
 		}
 	}
 
@@ -55,9 +54,8 @@ public class PreferenceNodeFilter extends ViewerFilter {
 			return true;
 		}
 
-		IPreferenceNode[] subNodes = node.getSubNodes();
-		for (int i = 0; i < subNodes.length; i++) {
-			if(checkNodeAndChildren(subNodes[i])) {
+		for (IPreferenceNode subNode : node.getSubNodes()) {
+			if(checkNodeAndChildren(subNode)) {
 				return true;
 			}
 

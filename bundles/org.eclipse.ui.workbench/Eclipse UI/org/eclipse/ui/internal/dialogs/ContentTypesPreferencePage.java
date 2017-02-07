@@ -157,33 +157,33 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 				String[] usernamefileSpecs, String[] preextfileSpecs,
 				String[] prenamefileSpecs) {
 			List returnValues = new ArrayList();
-			for (int i = 0; i < usernamefileSpecs.length; i++) {
+			for (String usernamefileSpec : usernamefileSpecs) {
 				Spec spec = new Spec();
-				spec.name = usernamefileSpecs[i];
+				spec.name = usernamefileSpec;
 				spec.isPredefined = false;
 				spec.sortValue = 0;
 				returnValues.add(spec);
 			}
 
-			for (int i = 0; i < prenamefileSpecs.length; i++) {
+			for (String prenamefileSpec : prenamefileSpecs) {
 				Spec spec = new Spec();
-				spec.name = prenamefileSpecs[i];
+				spec.name = prenamefileSpec;
 				spec.isPredefined = true;
 				spec.sortValue = 1;
 				returnValues.add(spec);
 			}
 
-			for (int i = 0; i < userextfileSpecs.length; i++) {
+			for (String userextfileSpec : userextfileSpecs) {
 				Spec spec = new Spec();
-				spec.ext = userextfileSpecs[i];
+				spec.ext = userextfileSpec;
 				spec.isPredefined = false;
 				spec.sortValue = 2;
 				returnValues.add(spec);
 			}
 
-			for (int i = 0; i < preextfileSpecs.length; i++) {
+			for (String preextfileSpec : preextfileSpecs) {
 				Spec spec = new Spec();
-				spec.ext = preextfileSpecs[i];
+				spec.ext = preextfileSpec;
 				spec.isPredefined = true;
 				spec.sortValue = 3;
 				returnValues.add(spec);
@@ -209,11 +209,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		public Object[] getChildren(Object parentElement) {
 			List elements = new ArrayList();
 			IContentType baseType = (IContentType) parentElement;
-			IContentType[] contentTypes = manager.getAllContentTypes();
-			for (int i = 0; i < contentTypes.length; i++) {
-				IContentType type = contentTypes[i];
-				if (Util.equals(type.getBaseType(), baseType)) {
-					elements.add(type);
+			for (IContentType contentType : manager.getAllContentTypes()) {
+				if (Util.equals(contentType.getBaseType(), baseType)) {
+					elements.add(contentType);
 				}
 			}
 			return elements.toArray();
@@ -492,8 +490,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 						0, new IStatus[0],
 						WorkbenchMessages.ContentTypes_errorDialogMessage,
 						null);
-				for (int i = 0; i < specs.length; i++) {
-					Spec spec = specs[i];
+				for (Spec spec : specs) {
 					try {
 						if (spec.name != null) {
 							contentType.removeFileSpec(spec.name,

@@ -405,8 +405,7 @@ public final class BindingService implements IBindingService {
 			return 0;
 		}
 		if (!schemeId2.equals(schemeId1)) {
-			for (int i = 0; i < activeSchemeIds.length; i++) {
-				final String schemePointer = activeSchemeIds[i];
+			for (final String schemePointer : activeSchemeIds) {
 				if (schemeId2.equals(schemePointer)) {
 					return 1;
 				} else if (schemeId1.equals(schemePointer)) {

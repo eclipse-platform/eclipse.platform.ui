@@ -669,8 +669,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		control.setFont(dialogFont);
 		if (control instanceof Composite) {
 			Control[] children = ((Composite) control).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				applyDialogFont(children[i], dialogFont);
+			for (Control element : children) {
+				applyDialogFont(element, dialogFont);
 			}
 		}
 	}

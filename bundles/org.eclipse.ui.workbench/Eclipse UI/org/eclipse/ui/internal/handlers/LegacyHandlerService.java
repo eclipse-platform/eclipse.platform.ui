@@ -324,8 +324,8 @@ public class LegacyHandlerService implements IHandlerService {
 			((HandlerActivation) array[i]).participating = false;
 		}
 
-		for (int i = 0; i < array.length; i++) {
-			deactivateHandler((IHandlerActivation) array[i]);
+		for (Object element : array) {
+			deactivateHandler((IHandlerActivation) element);
 		}
 	}
 

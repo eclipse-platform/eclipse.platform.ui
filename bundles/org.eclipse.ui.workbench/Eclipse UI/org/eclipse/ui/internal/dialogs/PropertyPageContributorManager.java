@@ -81,8 +81,8 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		Collection result = null;
 		if (object instanceof IStructuredSelection) {
 			Object[] objs = ((IStructuredSelection) object).toArray();
-			for (int i = 0; i < objs.length; i++) {
-				List contribs = getContributors(objs[i]);
+			for (Object obj : objs) {
+				List contribs = getContributors(obj);
 				if (result == null)
 					result = new LinkedHashSet(contribs);
 				else
@@ -194,10 +194,9 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
     @Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-        IConfigurationElement[] addedElements = extension.getConfigurationElements();
-        for (int i = 0; i < addedElements.length; i++) {
+		for (IConfigurationElement addedElement : extension.getConfigurationElements()) {
             PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
-            reader.readElement(addedElements[i]);
+            reader.readElement(addedElement);
         }
     }
 

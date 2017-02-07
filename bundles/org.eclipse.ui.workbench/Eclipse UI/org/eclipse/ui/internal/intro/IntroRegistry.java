@@ -56,14 +56,14 @@ public class IntroRegistry implements IIntroRegistry {
 		extensions = RegistryReader.orderExtensions(extensions);
 
 		ArrayList list = new ArrayList(extensions.length);
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i]
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension
 					.getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				if (elements[j].getName().equals(TAG_INTRO)) {
+			for (IConfigurationElement element : elements) {
+				if (element.getName().equals(TAG_INTRO)) {
 					try {
 						IIntroDescriptor descriptor = new IntroDescriptor(
-								elements[j]);
+								element);
 						list.add(descriptor);
 					} catch (CoreException e) {
 						// log an error since its not safe to open a dialog here
@@ -99,9 +99,9 @@ public class IntroRegistry implements IIntroRegistry {
 		IIntroDescriptor descriptor = null;
 
 		IIntroDescriptor[] intros = getIntros();
-		for (int i = 0; i < intros.length; i++) {
-			if (intros[i].getId().equals(targetIntroId)) {
-				descriptor = intros[i];
+		for (IIntroDescriptor intro : intros) {
+			if (intro.getId().equals(targetIntroId)) {
+				descriptor = intro;
 				break;
 			}
 		}
@@ -116,18 +116,18 @@ public class IntroRegistry implements IIntroRegistry {
 	 */
 	private String getIntroForProduct(String targetProductId,
 			IExtension[] extensions) {
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements = extensions[i]
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension
 					.getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				if (elements[j].getName().equals(TAG_INTROPRODUCTBINDING)) {
-					String introId = elements[j].getAttribute(ATT_INTROID);
-					String productId = elements[j].getAttribute(ATT_PRODUCTID);
+			for (IConfigurationElement element : elements) {
+				if (element.getName().equals(TAG_INTROPRODUCTBINDING)) {
+					String introId = element.getAttribute(ATT_INTROID);
+					String productId = element.getAttribute(ATT_PRODUCTID);
 
 					if (introId == null || productId == null) {
 						IStatus status = new Status(
 								IStatus.ERROR,
-								elements[j].getDeclaringExtension()
+								element.getDeclaringExtension()
 										.getNamespace(),
 								IStatus.ERROR,
 								"introId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
@@ -147,8 +147,7 @@ public class IntroRegistry implements IIntroRegistry {
 	@Override
 	public IIntroDescriptor getIntro(String id) {
 		IIntroDescriptor[] intros = getIntros();
-		for (int i = 0; i < intros.length; i++) {
-			IIntroDescriptor desc = intros[i];
+		for (IIntroDescriptor desc : intros) {
 			if (desc.getId().equals(id)) {
 				return desc;
 			}

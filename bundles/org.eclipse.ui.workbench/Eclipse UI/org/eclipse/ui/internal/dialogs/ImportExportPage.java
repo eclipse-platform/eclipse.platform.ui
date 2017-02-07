@@ -123,9 +123,8 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 
 	        if (wizardCategories != null) {
 	            if (wizardCategories.getParent() == null) {
-	                IWizardCategory [] children = wizardCategories.getCategories();
-	                for (int i = 0; i < children.length; i++) {
-                		inputArray.add(children[i]);
+					for (IWizardCategory wizardCategory : wizardCategories.getCategories()) {
+						inputArray.add(wizardCategory);
 	                }
 	            } else {
 	                expandTop = true;
@@ -324,9 +323,9 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
         List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
 
         if (wizardCategories != null) {
-            for (int i = 0; i < expandedCategoryPaths.length; i++) {
+            for (String expandedCategoryPath : expandedCategoryPaths) {
                 IWizardCategory category = wizardCategories
-                        .findCategory(new Path(expandedCategoryPaths[i]));
+                        .findCategory(new Path(expandedCategoryPath));
                 if (category != null) {
 					categoriesToExpand.add(category);
 				}
@@ -377,10 +376,10 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
     protected void storeExpandedCategories(String setting, TreeViewer viewer) {
         Object[] expandedElements = viewer.getExpandedElements();
         List expandedElementPaths = new ArrayList(expandedElements.length);
-        for (int i = 0; i < expandedElements.length; ++i) {
-            if (expandedElements[i] instanceof IWizardCategory) {
+        for (Object expandedElement : expandedElements) {
+            if (expandedElement instanceof IWizardCategory) {
 				expandedElementPaths
-                        .add(((IWizardCategory) expandedElements[i])
+                        .add(((IWizardCategory) expandedElement)
                                 .getPath().toString());
 			}
         }

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.AdaptableList;
@@ -36,14 +35,12 @@ public class WizardContentProvider implements ITreeContentProvider {
             ArrayList list = new ArrayList();
             WizardCollectionElement element = (WizardCollectionElement) parentElement;
 
-            Object[] childCollections = element.getChildren();
-            for (int i = 0; i < childCollections.length; i++) {
-                handleChild(childCollections[i], list);
+			for (Object childCollection : element.getChildren()) {
+                handleChild(childCollection, list);
             }
 
-            Object[] childWizards = element.getWizards();
-            for (int i = 0; i < childWizards.length; i++) {
-                handleChild(childWizards[i], list);
+			for (Object childWizard : element.getWizards()) {
+                handleChild(childWizard, list);
             }
 
             // flatten lists with only one category
@@ -57,8 +54,8 @@ public class WizardContentProvider implements ITreeContentProvider {
             AdaptableList aList = (AdaptableList) parentElement;
             Object[] children = aList.getChildren();
             ArrayList list = new ArrayList(children.length);
-            for (int i = 0; i < children.length; i++) {
-                handleChild(children[i], list);
+            for (Object element : children) {
+                handleChild(element, list);
             }
             // if there is only one category, return it's children directly (flatten list)
             if (list.size() == 1
@@ -80,9 +77,8 @@ public class WizardContentProvider implements ITreeContentProvider {
     @Override
 	public Object getParent(Object element) {
         if (element instanceof WizardCollectionElement) {
-            Object[] children = input.getChildren();
-            for (int i = 0; i < children.length; i++) {
-                if (children[i].equals(element)) {
+			for (Object child : input.getChildren()) {
+                if (child.equals(element)) {
 					return input;
 				}
             }

@@ -418,8 +418,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 	 */
 	private void updateHeapStatus(boolean selection) {
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindow window = windows[i];
+		for (IWorkbenchWindow window : windows) {
 			if(window instanceof WorkbenchWindow){
 				((WorkbenchWindow) window).showHeapStatus(selection);
 			}

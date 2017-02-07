@@ -183,11 +183,9 @@ public class CompatibilityView extends CompatibilityPart {
 				ActionDescriptor[] actionDescriptors = actionBuilder.getExtendedActions();
 				if (actionDescriptors != null) {
 					IHandlerService hs = partContext.get(IHandlerService.class);
-					for (int i = 0; i < actionDescriptors.length; i++) {
-						ActionDescriptor actionDescriptor = actionDescriptors[i];
-
+					for (ActionDescriptor actionDescriptor : actionDescriptors) {
 						if (actionDescriptor != null) {
-							IAction action = actionDescriptors[i].getAction();
+							IAction action = actionDescriptor.getAction();
 
 							if (action != null && action.getActionDefinitionId() != null) {
 								hs.activateHandler(action.getActionDefinitionId(),

@@ -666,8 +666,7 @@ if (!event.getOldValue().equals(event.getNewValue())) {
 		// Arrow buttons aren't normally added to the tab list. Let's fix that.
 		final Control[] tabStops = dataArea.getTabList();
 		final ArrayList<Control> newTabStops = new ArrayList<>();
-		for (int i = 0; i < tabStops.length; i++) {
-			Control tabStop = tabStops[i];
+		for (Control tabStop : tabStops) {
 			newTabStops.add(tabStop);
 			if (fBindingText.equals(tabStop)) {
 				newTabStops.add(addKeyButton);
@@ -801,8 +800,8 @@ if (!event.getOldValue().equals(event.getNewValue())) {
 						boolean selectionVisible = false;
 						TreeItem[] items = fFilteredTree.getViewer()
 								.getTree().getItems();
-						for (int i = 0; i < items.length; i++) {
-							if (items[i].getData().equals(binding)) {
+						for (TreeItem item : items) {
+							if (item.getData().equals(binding)) {
 								selectionVisible = true;
 								break;
 							}

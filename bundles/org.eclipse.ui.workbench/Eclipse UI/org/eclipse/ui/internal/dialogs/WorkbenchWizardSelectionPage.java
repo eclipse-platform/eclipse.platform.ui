@@ -59,9 +59,8 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
      *	@param searchId the id to search on
      */
     protected WorkbenchWizardElement findWizard(String searchId) {
-        Object[] children = wizardElements.getChildren();
-        for (int i = 0; i < children.length; ++i) {
-            WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) children[i];
+		for (Object element : wizardElements.getChildren()) {
+            WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) element;
             if (currentWizard.getId().equals(searchId)) {
 				return currentWizard;
 			}

@@ -370,8 +370,8 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
     private String getAggregateIdForSets(IWorkingSet[] typedResult) {
     		StringBuffer buffer = new StringBuffer();
     		buffer.append("Aggregate:"); //$NON-NLS-1$
-    		for (int i = 0; i < typedResult.length; i++) {
-			buffer.append(typedResult[i].getName()).append(':');
+    		for (IWorkingSet element : typedResult) {
+			buffer.append(element.getName()).append(':');
 		}
 		return buffer.toString();
 	}

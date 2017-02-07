@@ -198,11 +198,11 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	public static void updateStaleCEs(IConfigurationElement[] replacements) {
-		for (int i = 0; i < replacements.length; i++) {
+		for (IConfigurationElement replacement : replacements) {
 			HandlerProxy proxy = (HandlerProxy) CEToProxyMap
-					.get(replacements[i]);
+					.get(replacement);
 			if (proxy != null)
-				proxy.configurationElement = replacements[i];
+				proxy.configurationElement = replacement;
 		}
 	}
 
@@ -412,10 +412,8 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 		String attribute = configurationElement
 				.getAttribute(handlerAttributeName);
 		if (attribute == null) {
-			IConfigurationElement[] children = configurationElement
-					.getChildren(handlerAttributeName);
-			for (int i = 0; i < children.length; i++) {
-				String childAttribute = children[i]
+			for (IConfigurationElement configElement : configurationElement.getChildren(handlerAttributeName)) {
+				String childAttribute = configElement
 						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 				if (childAttribute != null) {
 					return childAttribute;

@@ -246,8 +246,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 
 			if (isAdaptable()) {
 				String[] classes = getObjectClasses();
-				for (int i = 0; i < classes.length; i++) {
-					String className = classes[i];
+				for (String className : classes) {
 					Object adapted = LegacyResourceSupport.getAdapter(element,
 							className);
 					if (adapted != null) {

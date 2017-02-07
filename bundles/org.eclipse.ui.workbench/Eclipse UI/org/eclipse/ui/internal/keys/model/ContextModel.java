@@ -53,12 +53,12 @@ public class ContextModel extends CommonModel {
 		contextIdToElement = new HashMap();
 
 		Context[] definedContexts = contextService.getDefinedContexts();
-		for (int i = 0; i < definedContexts.length; i++) {
+		for (Context definedContext : definedContexts) {
 			ContextElement ce = new ContextElement(controller);
-			ce.init(definedContexts[i]);
+			ce.init(definedContext);
 			ce.setParent(this);
 			contexts.add(ce);
-			contextIdToElement.put(definedContexts[i].getId(), ce);
+			contextIdToElement.put(definedContext.getId(), ce);
 		}
 	}
 

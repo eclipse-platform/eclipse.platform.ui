@@ -181,8 +181,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandsExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_COMMANDS);
-		for (int i = 0; i < commandsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = commandsExtensionPoint[i];
+		for (final IConfigurationElement configurationElement : commandsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.
@@ -200,8 +199,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 		// Sort the handler extension point based on element name.
 		final IConfigurationElement[] handlersExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_HANDLERS);
-		for (int i = 0; i < handlersExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = handlersExtensionPoint[i];
+		for (final IConfigurationElement configurationElement : handlersExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a handler submission or a command definition.

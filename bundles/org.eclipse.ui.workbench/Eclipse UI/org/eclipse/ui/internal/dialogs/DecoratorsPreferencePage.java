@@ -14,7 +14,6 @@ import com.ibm.icu.text.Collator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -198,8 +197,8 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     private void populateDecorators() {
         DecoratorDefinition[] definitions = getAllDefinitions();
         checkboxViewer.setInput(definitions);
-        for (int i = 0; i < definitions.length; i++) {
-            checkboxViewer.setChecked(definitions[i], definitions[i]
+        for (DecoratorDefinition definition : definitions) {
+            checkboxViewer.setChecked(definition, definition
                     .isEnabled());
         }
     }
@@ -235,12 +234,9 @@ public class DecoratorsPreferencePage extends PreferencePage implements
     @Override
 	protected void performDefaults() {
         super.performDefaults();
-        DecoratorManager manager = WorkbenchPlugin.getDefault()
-				.getDecoratorManager();
-        DecoratorDefinition[] definitions = manager
-                .getAllDecoratorDefinitions();
-        for (int i = 0; i < definitions.length; i++) {
-            checkboxViewer.setChecked(definitions[i], definitions[i]
+		DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+		for (DecoratorDefinition definition : manager.getAllDecoratorDefinitions()) {
+            checkboxViewer.setChecked(definition, definition
                     .getDefaultValue());
         }
     }
@@ -254,11 +250,9 @@ public class DecoratorsPreferencePage extends PreferencePage implements
             DecoratorManager manager = getDecoratorManager();
             //Clear the caches first to avoid unneccessary updates
             manager.clearCaches();
-            DecoratorDefinition[] definitions = manager
-                    .getAllDecoratorDefinitions();
-            for (int i = 0; i < definitions.length; i++) {
-                boolean checked = checkboxViewer.getChecked(definitions[i]);
-                definitions[i].setEnabled(checked);
+			for (DecoratorDefinition definition : manager.getAllDecoratorDefinitions()) {
+                boolean checked = checkboxViewer.getChecked(definition);
+                definition.setEnabled(checked);
 
             }
             //Have the manager clear again as there may have been

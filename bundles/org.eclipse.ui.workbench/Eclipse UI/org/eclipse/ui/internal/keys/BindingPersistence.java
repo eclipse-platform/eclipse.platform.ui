@@ -718,9 +718,8 @@ public class BindingPersistence extends PreferencePersistence {
 
 		List bindings = new ArrayList();
 
-		for (int i = 0; i < sequenceModifiers.length; i++) {
+		for (IConfigurationElement sequenceModifier : sequenceModifiers) {
 
-			IConfigurationElement sequenceModifier = sequenceModifiers[i];
 			String findSequence = sequenceModifier.getAttribute(ATT_FIND);
 
 			if (keySequenceText.startsWith(findSequence)) {
@@ -801,8 +800,8 @@ public class BindingPersistence extends PreferencePersistence {
 
 		String platform = SWT.getPlatform();
 		boolean modifierExists = false;
-		for (int i = 0; i < platforms.length; i++) {
-			if(platforms[i].equals(platform)) {
+		for (String currentPlatform : platforms) {
+			if(currentPlatform.equals(platform)) {
 				modifierExists = true;
 				break;
 			}
@@ -826,12 +825,10 @@ public class BindingPersistence extends PreferencePersistence {
 	private static IConfigurationElement[] getSequenceModifierElements(IConfigurationElement configurationElement) {
 
 		IExtension extension = configurationElement.getDeclaringExtension();
-		IConfigurationElement[] configurationElements = extension.getConfigurationElements();
 		List modifierElements = new ArrayList();
-		for (int i = 0; i < configurationElements.length; i++) {
-			final IConfigurationElement anElement = configurationElements[i];
-			if(TAG_SEQUENCE_MODIFIER.equals(anElement.getName()))
-				modifierElements.add(anElement);
+		for (final IConfigurationElement configElement : extension.getConfigurationElements()) {
+			if(TAG_SEQUENCE_MODIFIER.equals(configElement.getName()))
+				modifierElements.add(configElement);
 		}
 		return (IConfigurationElement[]) modifierElements.toArray(new IConfigurationElement[modifierElements.size()]);
 	}
@@ -1005,8 +1002,8 @@ public class BindingPersistence extends PreferencePersistence {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = bindingManager.getDefinedSchemes();
 		if (handleObjects != null) {
-			for (int i = 0; i < handleObjects.length; i++) {
-				handleObjects[i].undefine();
+			for (HandleObject handleObject : handleObjects) {
+				handleObject.undefine();
 			}
 		}
 
@@ -1292,8 +1289,7 @@ public class BindingPersistence extends PreferencePersistence {
 		// Sort the bindings extension point based on element name.
 		final IConfigurationElement[] bindingsExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_BINDINGS);
-		for (int i = 0; i < bindingsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = bindingsExtensionPoint[i];
+		for (final IConfigurationElement configurationElement : bindingsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
@@ -1314,8 +1310,7 @@ public class BindingPersistence extends PreferencePersistence {
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandsExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_COMMANDS);
-		for (int i = 0; i < commandsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = commandsExtensionPoint[i];
+		for (final IConfigurationElement configurationElement : commandsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if it is a binding definition.
@@ -1344,8 +1339,7 @@ public class BindingPersistence extends PreferencePersistence {
 		 */
 		final IConfigurationElement[] acceleratorConfigurationsExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_ACCELERATOR_CONFIGURATIONS);
-		for (int i = 0; i < acceleratorConfigurationsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = acceleratorConfigurationsExtensionPoint[i];
+		for (final IConfigurationElement configurationElement : acceleratorConfigurationsExtensionPoint) {
 			final String name = configurationElement.getName();
 
 			// Check if the name matches the accelerator configuration element

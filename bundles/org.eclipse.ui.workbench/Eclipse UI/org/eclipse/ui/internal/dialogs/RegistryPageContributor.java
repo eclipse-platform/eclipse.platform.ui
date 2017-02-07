@@ -252,8 +252,8 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 		String nameFilter = pageElement
 				.getAttribute(PropertyPagesRegistryReader.ATT_NAME_FILTER);
 
-		for (int i = 0; i < objs.length; i++) {
-			object = objs[i];
+		for (Object obj : objs) {
+			object = obj;
 			// Name filter
 			if (nameFilter != null) {
 				String objectName = object.toString();
@@ -408,8 +408,8 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 			Map<String, String> map = new HashMap<>();
 			filterProperties = new SoftReference<>(map);
 			IConfigurationElement[] children = pageElement.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				processChildElement(map, children[i]);
+			for (IConfigurationElement element : children) {
+				processChildElement(map, element);
 			}
 		}
 		return filterProperties.get();

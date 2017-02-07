@@ -329,8 +329,8 @@ public class WindowBuilder {
 			List<MStackElement> originalOrder = new ArrayList<>(stackChildren);
 			MStackElement selectedElement = editorStack.getSelectedElement();
 			stackChildren.clear();
-			for (int i = 0; i < partOrder.length; i++) {
-				stackChildren.add(originalOrder.get(partOrder[i]));
+			for (int element : partOrder) {
+				stackChildren.add(originalOrder.get(element));
 			}
 			if (selectedElement != null) {
 				editorStack.setSelectedElement(selectedElement);
