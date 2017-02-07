@@ -550,17 +550,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * requested with {@link #fSorter}.
 	 *
 	 * @param offset the offset
-	 * @return the completion proposals available at this offset
+	 * @return the completion proposals available at this offset, never null
 	 */
 	private List<ICompletionProposal> computeProposals(int offset) {
-		List<ICompletionProposal> proposals;
+		ICompletionProposal[] completionProposals;
 		if (fContentAssistSubjectControl != null) {
-			proposals= Arrays.asList(fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset));
+			completionProposals= fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
 		} else {
-			proposals= Arrays.asList(fContentAssistant.computeCompletionProposals(fViewer, offset));
+			completionProposals= fContentAssistant.computeCompletionProposals(fViewer, offset);
 		}
-		if (proposals == null)
+		if (completionProposals == null) {
 			return Collections.emptyList();
+		}
+		List<ICompletionProposal> proposals= Arrays.asList(completionProposals);
 		if (fSorter != null) {
 			sortProposals(proposals);
 			fIsInitialSort= true;
