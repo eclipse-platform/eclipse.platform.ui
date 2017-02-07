@@ -228,8 +228,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			Saveable[] models = event.getSaveables();
 			Map<Saveable, Integer> modelsDecrementing = new HashMap<>();
 			Set<Saveable> modelsClosing = new HashSet<>();
-			for (int i = 0; i < models.length; i++) {
-				incrementRefCount(modelsDecrementing, models[i]);
+			for (Saveable model : models) {
+				incrementRefCount(modelsDecrementing, model);
 			}
 
 			fillModelsClosing(modelsClosing, modelsDecrementing);
@@ -269,8 +269,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	private void removeModels(Object source, Saveable[] modelArray) {
 		List<Saveable> removed = new ArrayList<>();
-		for (int i = 0; i < modelArray.length; i++) {
-			Saveable model = modelArray[i];
+		for (Saveable model : modelArray) {
 			if (removeModel(source, model)) {
 				removed.add(model);
 			}
@@ -288,8 +287,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	private void addModels(Object source, Saveable[] modelArray) {
 		List<Saveable> added = new ArrayList<>();
-		for (int i = 0; i < modelArray.length; i++) {
-			Saveable model = modelArray[i];
+		for (Saveable model : modelArray) {
 			if (addModel(source, model)) {
 				added.add(model);
 			}
@@ -382,10 +380,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					continue;
 				}
 			}
-			Saveable[] modelsFromSource = getSaveables(part);
-			for (int i = 0; i < modelsFromSource.length; i++) {
-				incrementRefCount(postCloseInfo.modelsDecrementing,
-						modelsFromSource[i]);
+			for (Saveable saveableModel : getSaveables(part)) {
+				incrementRefCount(postCloseInfo.modelsDecrementing, saveableModel);
 			}
 		}
 		fillModelsClosing(postCloseInfo.modelsClosing,

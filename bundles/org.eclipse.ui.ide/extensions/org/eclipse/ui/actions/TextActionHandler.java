@@ -296,9 +296,8 @@ public class TextActionHandler {
         		boolean canPaste = false;
             	if (activeTextControl.getEditable()) {
             		Clipboard clipboard = new Clipboard(activeTextControl.getDisplay());
-            		TransferData[] td = clipboard.getAvailableTypes();
-            		for (int i = 0; i < td.length; ++i) {
-            			if (TextTransfer.getInstance().isSupportedType(td[i])) {
+					for (TransferData transferData : clipboard.getAvailableTypes()) {
+						if (TextTransfer.getInstance().isSupportedType(transferData)) {
             				canPaste = true;
             				break;
             			}

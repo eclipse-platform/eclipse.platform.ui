@@ -332,12 +332,12 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
             // Create separators.
             IConfigurationElement[] children = menuElement.getChildren();
-            for (int i = 0; i < children.length; i++) {
-                String childName = children[i].getName();
+            for (IConfigurationElement element : children) {
+                String childName = element.getName();
                 if (childName.equals(IWorkbenchRegistryConstants.TAG_SEPARATOR)) {
-                    contributeSeparator(newMenu, children[i]);
+                    contributeSeparator(newMenu, element);
                 } else if (childName.equals(IWorkbenchRegistryConstants.TAG_GROUP_MARKER)) {
-                    contributeGroupMarker(newMenu, children[i]);
+                    contributeGroupMarker(newMenu, element);
                 }
             }
         }

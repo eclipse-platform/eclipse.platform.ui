@@ -25,8 +25,8 @@ public class WorkbenchColors {
      * Dispose all color pre-allocated by the workbench.
      */
     private static void disposeWorkbenchColors() {
-        for (int i = 0; i < workbenchColors.length; i++) {
-            workbenchColors[i].dispose();
+        for (Color workbenchColor : workbenchColors) {
+            workbenchColor.dispose();
         }
         workbenchColors = null;
     }

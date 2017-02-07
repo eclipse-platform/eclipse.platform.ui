@@ -189,8 +189,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
-				for (int i = 0; i < projDeltas.length; ++i) {
-					IResourceDelta projDelta = projDeltas[i];
+				for (IResourceDelta projDelta : projDeltas) {
 					if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
 						if (sel.contains(projDelta.getResource())) {
 							selectionChanged(getStructuredSelection());
@@ -254,8 +253,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 				}
 				if (openProjectReferences) {
 					SubMonitor loopMonitor = subMonitor.split(1).setWorkRemaining(references.length);
-					for (int i = 0; i < references.length; i++) {
-						doOpenWithReferences(references[i], loopMonitor.split(1));
+					for (IProject reference : references) {
+						doOpenWithReferences(reference, loopMonitor.split(1));
 					}
 				}
 			}

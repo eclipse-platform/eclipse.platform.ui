@@ -70,18 +70,18 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	private static DisjointSet<IProject> buildConnectedComponents(IProject[] projects) {
 		//initially each vertex is in a set by itself
 		DisjointSet<IProject> set = new DisjointSet<>();
-		for (int i = 0; i < projects.length; i++) {
-			set.makeSet(projects[i]);
+		for (IProject project : projects) {
+			set.makeSet(project);
 		}
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				IProject[] references = projects[i].getReferencedProjects();
+				IProject[] references = project.getReferencedProjects();
 				//each reference represents an edge in the project reference
 				//digraph from projects[i] -> references[j]
-				for (int j = 0; j < references.length; j++) {
-					IProject setOne = set.findSet(projects[i]);
+				for (IProject reference : references) {
+					IProject setOne = set.findSet(project);
 					//note that referenced projects may not exist in the workspace
-					IProject setTwo = set.findSet(references[j]);
+					IProject setTwo = set.findSet(reference);
 					//these two projects are related, so join their sets
 					if (setOne != null && setTwo != null && setOne != setTwo) {
 						set.union(setOne, setTwo);
@@ -229,8 +229,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
-				for (int i = 0; i < projDeltas.length; ++i) {
-					IResourceDelta projDelta = projDeltas[i];
+				for (IResourceDelta projDelta : projDeltas) {
 					//changing either the description or the open state can affect enablement
 					if ((projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
 						selectionChanged(getStructuredSelection());

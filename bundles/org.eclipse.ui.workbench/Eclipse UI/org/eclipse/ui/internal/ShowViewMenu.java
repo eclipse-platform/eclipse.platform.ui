@@ -321,8 +321,8 @@ public class ShowViewMenu extends ContributionItem {
 			item.setText(NO_TARGETS_MSG);
 			item.setEnabled(false);
 		} else {
-			for (int i = 0; i < items.length; i++) {
-				items[i].fill(menu, index++);
+			for (IContributionItem item : items) {
+				item.fill(menu, index++);
 			}
 		}
 	}

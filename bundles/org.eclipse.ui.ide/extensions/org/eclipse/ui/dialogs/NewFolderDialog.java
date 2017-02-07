@@ -346,9 +346,9 @@ public class NewFolderDialog extends SelectionStatusDialog {
 			IProject project = container.getProject();
 			String[] natureIds = project.getDescription().getNatureIds();
 
-			for (int i = 0; i < natureIds.length; i++) {
+			for (String natureId : natureIds) {
 				IProjectNatureDescriptor descriptor = workspace
-						.getNatureDescriptor(natureIds[i]);
+						.getNatureDescriptor(natureId);
 				if (descriptor != null
 						&& descriptor.isLinkingAllowed() == false) {
 					return false;

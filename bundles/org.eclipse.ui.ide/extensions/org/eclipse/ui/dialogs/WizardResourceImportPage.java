@@ -421,8 +421,8 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         Object[] newSelectedTypes = dialog.getResult();
         if (newSelectedTypes != null) { // ie.- did not press Cancel
             this.selectedTypes = new ArrayList(newSelectedTypes.length);
-            for (int i = 0; i < newSelectedTypes.length; i++) {
-				this.selectedTypes.add(newSelectedTypes[i]);
+            for (Object newSelectedType : newSelectedTypes) {
+				this.selectedTypes.add(newSelectedType);
 			}
 
             setupSelectionsBasedOnSelectedTypes();
@@ -591,10 +591,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
      * @return boolean
      */
     private boolean noOpenProjects() {
-        IProject[] projects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot()
-                .getProjects();
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen()) {
+		IProject[] projects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
+        for (IProject project : projects) {
+            if (project.isOpen()) {
 				return false;
 			}
         }

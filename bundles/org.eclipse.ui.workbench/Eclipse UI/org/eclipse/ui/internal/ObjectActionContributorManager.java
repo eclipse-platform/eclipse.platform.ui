@@ -99,9 +99,8 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
         // Second pass, add the contributions that are applicable to
         // the selection.
-		for (Iterator<IObjectActionContributor> it = contributors.iterator(); it.hasNext();) {
-			IObjectActionContributor contributor = it.next();
-            if (contributor.contributeObjectActions(part, popupMenu, selProv,
+		for (IObjectActionContributor contributor : contributors) {
+			if (contributor.contributeObjectActions(part, popupMenu, selProv,
                     overrides)) {
 				actualContributions = true;
 				alreadyContributed.add(contributor);
@@ -132,10 +131,10 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension addedExtension) {
         IConfigurationElement[] addedElements = addedExtension.getConfigurationElements();
-        for (int i = 0; i < addedElements.length; i++) {
+        for (IConfigurationElement addedElement : addedElements) {
             ObjectActionContributorReader reader = new ObjectActionContributorReader();
             reader.setManager(this);
-            reader.readElement(addedElements[i]);
+            reader.readElement(addedElement);
         }
     }
 

@@ -279,9 +279,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         List input = new ArrayList();
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
                 .getProjects();
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen()) {
-				input.add(projects[i]);
+        for (IProject project : projects) {
+            if (project.isOpen()) {
+				input.add(project);
 			}
         }
 
@@ -369,10 +369,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
                 // filter out the desired resource types
                 List<IResource> results = new ArrayList<>();
-                for (int i = 0; i < members.length; i++) {
-                    // And the test bits with the resource types to see if they
-                    // are what we want
-                    IResource resource = members[i];
+                for (IResource resource : members) {
                     if (!showLinkedResources && resource.isLinked()) {
                         continue;
                     }
@@ -489,8 +486,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
         if (newSelectedTypes != null) { // ie.- did not press Cancel
             this.selectedTypes = new ArrayList(newSelectedTypes.length);
-            for (int i = 0; i < newSelectedTypes.length; i++) {
-                this.selectedTypes.add(newSelectedTypes[i]);
+            for (Object newSelectedType : newSelectedTypes) {
+                this.selectedTypes.add(newSelectedType);
             }
             setupSelectionsBasedOnSelectedTypes();
         }
@@ -648,8 +645,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
             return;
         }
 
-        for (int i = 0; i < resources.length; i++) {
-            IResource resource = resources[i];
+        for (IResource resource : resources) {
             if (resource.getType() == IResource.FILE) {
                 if (hasExportableExtension(resource.getName())) {
                     hasFiles = true;

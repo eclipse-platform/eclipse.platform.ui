@@ -443,8 +443,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 				if (jobFamilies == null || family == null) {
 					return false;
 				}
-				for (int i = 0; i < jobFamilies.length; i++) {
-					if (family.equals(jobFamilies[i])) {
+				for (Object jobFamily : jobFamilies) {
+					if (family.equals(jobFamily)) {
 						return true;
 					}
 				}

@@ -92,14 +92,12 @@ public class SlavePartService implements IPartService, IDisposable {
 
 	@Override
 	public void dispose() {
-		Object list[] = listeners.getListeners();
-		for (int i = 0; i < list.length; i++) {
-			Object obj = list[i];
-			if (obj instanceof IPartListener) {
-				parent.removePartListener((IPartListener) obj);
+		for (Object listener : listeners.getListeners()) {
+			if (listener instanceof IPartListener) {
+				parent.removePartListener((IPartListener) listener);
 			}
-			if (obj instanceof IPartListener2) {
-				parent.removePartListener((IPartListener2) obj);
+			if (listener instanceof IPartListener2) {
+				parent.removePartListener((IPartListener2) listener);
 			}
 		}
 		listeners.clear();

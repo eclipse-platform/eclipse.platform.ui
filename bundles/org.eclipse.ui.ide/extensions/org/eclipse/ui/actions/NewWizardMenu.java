@@ -106,9 +106,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
         // Remove all.
         innerMgr.removeAll();
 
-        IContributionItem[] items = getContributionItems();
-        for (int i = 0; i < items.length; i++) {
-            innerMgr.add(items[i]);
+		for (IContributionItem item : getContributionItems()) {
+            innerMgr.add(item);
         }
     }
 
@@ -153,9 +152,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 				}
 			}
 		}
-		IWizardCategory[] categories = category.getCategories();
-		for (int i = 0; i < categories.length; i++) {
-			if (hasWizards(categories[i])) {
+		for (IWizardCategory wizardCategory : category.getCategories()) {
+			if (hasWizards(wizardCategory)) {
 				return true;
 			}
 		}
@@ -191,8 +189,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 		if (action instanceof NewWizardShortcutAction) {
 			IWizardDescriptor wizardDescriptor= ((NewWizardShortcutAction) action).getWizardDescriptor();
 			String [] tags = wizardDescriptor.getTags();
-			for (int i = 0; i < tags.length; i++) {
-				if (WorkbenchWizardElement.TAG_PROJECT.equals(tags[i])) {
+			for (String tag : tags) {
+				if (WorkbenchWizardElement.TAG_PROJECT.equals(tag)) {
 					return true;
 				}
 			}
