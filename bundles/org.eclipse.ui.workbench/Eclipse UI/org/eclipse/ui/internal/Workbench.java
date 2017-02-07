@@ -234,7 +234,6 @@ import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
@@ -2711,7 +2710,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public String[] getDisabledEarlyActivatedPlugins() {
 		String pref = PrefUtil.getInternalPreferenceStore().getString(
 				IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
-		return Util.getArrayFromList(pref, ";"); //$NON-NLS-1$
+		return pref.split(";"); //$NON-NLS-1$
 	}
 
 	/*

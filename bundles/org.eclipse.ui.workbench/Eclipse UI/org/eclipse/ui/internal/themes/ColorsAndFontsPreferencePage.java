@@ -84,7 +84,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
@@ -1787,7 +1786,7 @@ getPreferenceStore(),
 		String expandedElementsString = getPreferenceStore().getString(EXPANDED_ELEMENTS_PREF);
 		if (expandedElementsString == null)
 			return;
-		String[] expandedElementIDs = Util.getArrayFromList(expandedElementsString, EXPANDED_ELEMENTS_TOKEN);
+		String[] expandedElementIDs = expandedElementsString.split(EXPANDED_ELEMENTS_TOKEN);
 		if (expandedElementIDs.length == 0)
 			return;
 
