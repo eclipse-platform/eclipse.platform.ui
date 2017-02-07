@@ -50,8 +50,7 @@ public class ViewerLabelProvider implements IViewerLabelProvider,
 				this, changes.toArray());
 		ILabelProviderListener[] listenerArray = listeners
 				.toArray(new ILabelProviderListener[listeners.size()]);
-		for (int i = 0; i < listenerArray.length; i++) {
-			ILabelProviderListener listener = listenerArray[i];
+		for (ILabelProviderListener listener : listenerArray) {
 			try {
 				listener.labelProviderChanged(event);
 			} catch (Exception e) {

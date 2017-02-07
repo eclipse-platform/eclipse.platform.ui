@@ -430,8 +430,8 @@ public class E4Application implements IApplication {
 			return Optional.empty();
 
 		if (singledCmdArgValue) {
-			for (int i = 0; i < args.length; i++) {
-				if (("-" + argName).equals(args[i]))
+			for (String arg : args) {
+				if (("-" + argName).equals(arg))
 					return Optional.of("true");
 			}
 		} else {

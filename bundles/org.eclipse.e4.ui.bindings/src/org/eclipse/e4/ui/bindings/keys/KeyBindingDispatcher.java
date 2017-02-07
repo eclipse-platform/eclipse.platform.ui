@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.bindings.keys;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
@@ -494,9 +493,9 @@ public class KeyBindingDispatcher {
 		Collection<Binding> errorMatch = null;
 
 		KeySequence sequenceBeforeKeyStroke = state;
-		for (Iterator<KeyStroke> iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
+		for (KeyStroke keyStroke : potentialKeyStrokes) {
 			KeySequence sequenceAfterKeyStroke = KeySequence.getInstance(sequenceBeforeKeyStroke,
-					iterator.next());
+					keyStroke);
 			if (isPartialMatch(sequenceAfterKeyStroke)) {
 				incrementState(sequenceAfterKeyStroke);
 				return true;

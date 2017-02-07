@@ -44,15 +44,15 @@ public class WidgetListener extends NativePropertyListener implements Listener {
 	@Override
 	public void handleEvent(Event event) {
 		if (staleEvents != null)
-			for (int i = 0; i < staleEvents.length; i++)
-				if (event.type == staleEvents[i]) {
+			for (int staleEvent : staleEvents)
+				if (event.type == staleEvent) {
 					fireStale(event.widget);
 					break;
 				}
 
 		if (changeEvents != null)
-			for (int i = 0; i < changeEvents.length; i++)
-				if (event.type == changeEvents[i]) {
+			for (int changeEvent : changeEvents)
+				if (event.type == changeEvent) {
 					fireChange(event.widget, null);
 					break;
 				}
@@ -62,16 +62,14 @@ public class WidgetListener extends NativePropertyListener implements Listener {
 	protected void doAddTo(Object source) {
 		Widget widget = (Widget) source;
 		if (changeEvents != null) {
-			for (int i = 0; i < changeEvents.length; i++) {
-				int event = changeEvents[i];
+			for (int event : changeEvents) {
 				if (event != SWT.None) {
 					WidgetListenerUtil.asyncAddListener(widget, event, this);
 				}
 			}
 		}
 		if (staleEvents != null) {
-			for (int i = 0; i < staleEvents.length; i++) {
-				int event = staleEvents[i];
+			for (int event : staleEvents) {
 				if (event != SWT.None) {
 					WidgetListenerUtil.asyncAddListener(widget, event, this);
 				}
@@ -84,16 +82,14 @@ public class WidgetListener extends NativePropertyListener implements Listener {
 		Widget widget = (Widget) source;
 		if (!widget.isDisposed()) {
 			if (changeEvents != null) {
-				for (int i = 0; i < changeEvents.length; i++) {
-					int event = changeEvents[i];
+				for (int event : changeEvents) {
 					if (event != SWT.None)
 						WidgetListenerUtil.asyncRemoveListener(widget, event,
 								this);
 				}
 			}
 			if (staleEvents != null) {
-				for (int i = 0; i < staleEvents.length; i++) {
-					int event = staleEvents[i];
+				for (int event : staleEvents) {
 					if (event != SWT.None) {
 						WidgetListenerUtil.asyncRemoveListener(widget, event,
 								this);

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.modeling;
 
-import java.util.Iterator;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -64,8 +63,8 @@ public class EObjModelHandler extends ModelHandlerBase implements IAdapterFactor
 		EList<EStructuralFeature> features = eObj.eClass().getEAllStructuralFeatures();
 		String[] ids = new String[features.size()];
 		int count = 0;
-		for (Iterator<?> iterator = features.iterator(); iterator.hasNext();) {
-			EStructuralFeature structuralFeature = (EStructuralFeature) iterator.next();
+		for (Object name : features) {
+			EStructuralFeature structuralFeature = (EStructuralFeature) name;
 			String featureName = structuralFeature.getName();
 			ids[count++] = featureName;
 		}

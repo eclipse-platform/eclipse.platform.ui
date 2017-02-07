@@ -121,8 +121,7 @@ public class TreeViewerUpdater {
 		if (!selection.isEmpty()) {
 			IElementComparer comparer = viewer.getComparer();
 			TreePath[] paths = selection.getPaths();
-			for (int i = 0; i < paths.length; i++) {
-				TreePath path = paths[i];
+			for (TreePath path : paths) {
 				for (int j = 0; j < path.getSegmentCount() - 1; j++) {
 					Object pathParent = path.getSegment(j);
 					Object pathElement = path.getSegment(j + 1);

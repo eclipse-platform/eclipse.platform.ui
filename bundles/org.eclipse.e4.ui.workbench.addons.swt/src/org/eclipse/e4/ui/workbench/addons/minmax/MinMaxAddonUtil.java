@@ -270,11 +270,11 @@ public class MinMaxAddonUtil {
 		}
 		if (foundRelevantArea) {
 			List<MUIElement> elementsToRemove = new ArrayList<MUIElement>();
-			for (MUIElement element2 : elementsToMinimize) {
-				List<Object> findElements = modelService.findElements(element2, element.getElementId(),
+			for (MUIElement elementMUI : elementsToMinimize) {
+				List<Object> findElements = modelService.findElements(elementMUI, element.getElementId(),
 						null, null);
 				if (findElements != null && findElements.size() != 0) {
-					elementsToRemove.add(element2);
+					elementsToRemove.add(elementMUI);
 				}
 			}
 			elementsToMinimize.removeAll(elementsToRemove);

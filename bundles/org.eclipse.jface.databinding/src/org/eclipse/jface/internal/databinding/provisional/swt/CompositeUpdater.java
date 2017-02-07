@@ -93,9 +93,7 @@ public abstract class CompositeUpdater {
 
 		private void stopListening() {
 			// Stop listening for dependency changes
-			for (int i = 0; i < dependencies.length; i++) {
-				IObservable observable = dependencies[i];
-
+			for (IObservable observable : dependencies) {
 				observable.removeChangeListener(this);
 			}
 		}
@@ -149,8 +147,7 @@ public abstract class CompositeUpdater {
 		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiffEntry[] diffs = event.diff.getDifferences();
-			for (int i = 0; i < diffs.length; i++) {
-				ListDiffEntry listDiffEntry = diffs[i];
+			for (ListDiffEntry listDiffEntry : diffs) {
 				if (listDiffEntry.isAddition()) {
 					createChild(listDiffEntry.getElement(), listDiffEntry
 							.getPosition());

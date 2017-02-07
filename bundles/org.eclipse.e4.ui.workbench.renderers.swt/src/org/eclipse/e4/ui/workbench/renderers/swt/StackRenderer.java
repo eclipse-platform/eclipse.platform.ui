@@ -911,9 +911,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			return null;
 
 		CTabItem[] items = tabFolder.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].getData(OWNING_ME) == element)
-				return items[i];
+		for (CTabItem item : items) {
+			if (item.getData(OWNING_ME) == element)
+				return item;
 		}
 		return null;
 	}

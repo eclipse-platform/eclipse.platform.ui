@@ -107,9 +107,7 @@ public abstract class TableUpdater {
 
 		private void stopListening() {
 			// Stop listening for dependency changes
-			for (int i = 0; i < dependencies.length; i++) {
-				IObservable observable = dependencies[i];
-
+			for (IObservable observable : dependencies) {
 				observable.removeChangeListener(this);
 			}
 		}
@@ -156,8 +154,7 @@ public abstract class TableUpdater {
 		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiffEntry[] differences = event.diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry entry = differences[i];
+			for (ListDiffEntry entry : differences) {
 				if (entry.isAddition()) {
 					TableItem item = new TableItem(table, SWT.NONE, entry
 							.getPosition());

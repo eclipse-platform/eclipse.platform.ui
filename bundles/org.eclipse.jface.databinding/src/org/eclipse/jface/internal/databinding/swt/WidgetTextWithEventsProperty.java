@@ -35,8 +35,8 @@ public class WidgetTextWithEventsProperty extends WidgetDelegatingValueProperty 
 	}
 
 	private static int[] checkEvents(int[] events) {
-		for (int i = 0; i < events.length; i++)
-			checkEvent(events[i]);
+		for (int event : events)
+			checkEvent(event);
 		return events;
 	}
 

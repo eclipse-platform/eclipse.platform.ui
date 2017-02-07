@@ -479,9 +479,9 @@ public class ProgressInfoItem extends Composite {
 					// Only do it if there is an indeterminate task
 					// There may be no task so we don't want to create it
 					// until we know for sure
-					for (int i = 0; i < infos.length; i++) {
-						if (infos[i].hasTaskInfo()
-								&& infos[i].getTaskInfo().totalWork == IProgressMonitor.UNKNOWN) {
+					for (JobInfo info : infos) {
+						if (info.hasTaskInfo()
+								&& info.getTaskInfo().totalWork == IProgressMonitor.UNKNOWN) {
 							createProgressBar(SWT.INDETERMINATE);
 							break;
 						}
@@ -580,8 +580,8 @@ public class ProgressInfoItem extends Composite {
 	private boolean isCompleted() {
 
 		JobInfo[] infos = getJobInfos();
-		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getJob().getState() != Job.NONE) {
+		for (JobInfo info : infos) {
+			if (info.getJob().getState() != Job.NONE) {
 				return false;
 			}
 		}
@@ -612,8 +612,8 @@ public class ProgressInfoItem extends Composite {
 	private boolean isRunning() {
 
 		JobInfo[] infos = getJobInfos();
-		for (int i = 0; i < infos.length; i++) {
-			int state = infos[i].getJob().getState();
+		for (JobInfo info : infos) {
+			int state = info.getJob().getState();
 			if (state == Job.WAITING || state == Job.RUNNING)
 				return true;
 		}
@@ -664,9 +664,9 @@ public class ProgressInfoItem extends Composite {
 		}
 		JobInfo[] infos = getJobInfos();
 
-		for (int i = 0; i < infos.length; i++) {
+		for (JobInfo info : infos) {
 			// Only disable if there is an unresponsive operation
-			if (infos[i].isCanceled() && !isCompleted()) {
+			if (info.isCanceled() && !isCompleted()) {
 				actionButton.setEnabled(false);
 				return;
 			}

@@ -600,8 +600,8 @@ public final class ContributionsAnalyzer {
 					continue;
 				}
 				Object[] array = item.getChildren().toArray();
-				for (int c = 0; c < array.length; c++) {
-					MToolBarElement me = (MToolBarElement) array[c];
+				for (Object element : array) {
+					MToolBarElement me = (MToolBarElement) element;
 					if (!containsMatching(toContribute.getChildren(), me)) {
 						toContribute.getChildren().add(me);
 					}
@@ -653,8 +653,8 @@ public final class ContributionsAnalyzer {
 				if (idx == -1) {
 					idx = 0;
 				}
-				for (int c = 0; c < array.length; c++) {
-					MMenuElement me = (MMenuElement) array[c];
+				for (Object element : array) {
+					MMenuElement me = (MMenuElement) element;
 					if (!containsMatching(toContribute.getChildren(), me)) {
 						toContribute.getChildren().add(idx, me);
 						idx++;
@@ -752,8 +752,8 @@ public final class ContributionsAnalyzer {
 					continue;
 				}
 				Object[] array = item.getChildren().toArray();
-				for (int c = 0; c < array.length; c++) {
-					MTrimElement me = (MTrimElement) array[c];
+				for (Object element : array) {
+					MTrimElement me = (MTrimElement) element;
 					if (!containsMatching(toContribute.getChildren(), me)) {
 						toContribute.getChildren().add(me);
 					}

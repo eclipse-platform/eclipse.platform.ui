@@ -340,11 +340,11 @@ public class TrimBarLayout extends Layout {
 			return null;
 
 		Control[] kids = trimComp.getChildren();
-		for (int i = 0; i < kids.length; i++) {
-			if (kids[i].isDisposed())
+		for (Control kid : kids) {
+			if (kid.isDisposed())
 				continue;
-			if (kids[i].getBounds().contains(trimPos))
-				return kids[i];
+			if (kid.getBounds().contains(trimPos))
+				return kid;
 		}
 
 		return null;

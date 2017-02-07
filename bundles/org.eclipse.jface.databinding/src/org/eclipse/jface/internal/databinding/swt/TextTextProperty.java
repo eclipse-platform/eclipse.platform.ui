@@ -39,8 +39,8 @@ public class TextTextProperty extends WidgetStringValueProperty {
 
 	private static int[] checkEvents(int[] events) {
 		if (events != null)
-			for (int i = 0; i < events.length; i++)
-				checkEvent(events[i]);
+			for (int event : events)
+				checkEvent(event);
 		return events;
 	}
 
@@ -53,8 +53,8 @@ public class TextTextProperty extends WidgetStringValueProperty {
 
 	private static int[] staleEvents(int[] changeEvents) {
 		if (changeEvents != null)
-			for (int i = 0; i < changeEvents.length; i++)
-				if (changeEvents[i] == SWT.Modify)
+			for (int changeEvent : changeEvents)
+				if (changeEvent == SWT.Modify)
 					return null;
 		return new int[] { SWT.Modify };
 	}

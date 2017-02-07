@@ -135,8 +135,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 	protected String getHandlerClassName(String property) {
 		StringBuilder handlerClassName = new StringBuilder("CSSProperty"); //$NON-NLS-1$
 		String[] s = StringUtils.split(property, "-"); //$NON-NLS-1$
-		for (int i = 0; i < s.length; i++) {
-			String p = s[i];
+		for (String p : s) {
 			handlerClassName.append(p.substring(0, 1).toUpperCase());
 			handlerClassName.append(p.substring(1));
 		}
@@ -158,8 +157,8 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 				String[] compositePropertiesNames = engine
 						.getCSSCompositePropertiesNames(propertyName);
 				if (compositePropertiesNames != null) {
-					for (int j = 0; j < compositePropertiesNames.length; j++) {
-						propertyName = compositePropertiesNames[j];
+					for (String compositePropertyName : compositePropertiesNames) {
+						propertyName = compositePropertyName;
 						String s = getCSSPropertyStyle(engine, stylableElement,
 								propertyName, pseudoE);
 						if (s != null) {

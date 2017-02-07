@@ -79,8 +79,8 @@ public final class WorkbenchLogger extends Logger {
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				childlist.add(getLog(children[i]));
+			for (IStatus element : children) {
+				childlist.add(getLog(element));
 			}
 		}
 

@@ -505,9 +505,8 @@ public class ProgressManager extends ProgressProvider {
 			sleepGroup(group,info);
 		}
 
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+		for (Object element : listeners.getListeners()) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
 			// Is this one the user never sees?
 			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
 				continue;
@@ -538,10 +537,9 @@ public class ProgressManager extends ProgressProvider {
 	 * @param group
 	 */
 	private void sleepGroup(GroupInfo group, JobInfo info) {
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
+		for (Object element : listeners.getListeners()) {
 
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
 			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
 				continue;
 
@@ -584,9 +582,8 @@ public class ProgressManager extends ProgressProvider {
 			refreshGroup(group);
 		}
 
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+		for (Object element : listeners.getListeners()) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
 			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.refreshJobInfo(info);
 			}
@@ -600,9 +597,8 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public void refreshGroup(GroupInfo info) {
 
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			((IJobProgressManagerListener)listenersArray[i]).refreshGroup(info);
+		for (Object element : listeners.getListeners()) {
+			((IJobProgressManagerListener)element).refreshGroup(info);
 		}
 	}
 
@@ -613,9 +609,8 @@ public class ProgressManager extends ProgressProvider {
 	public void refreshAll() {
 
 		pruneStaleJobs();
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			((IJobProgressManagerListener)listenersArray[i]).refreshAll();
+		for (Object element : listeners.getListeners()) {
+			((IJobProgressManagerListener)element).refreshAll();
 		}
 
 	}
@@ -632,9 +627,8 @@ public class ProgressManager extends ProgressProvider {
 		jobs.remove(job);
 		runnableMonitors.remove(job);
 
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+		for (Object element : listeners.getListeners()) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
 			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.removeJob(info);
 			}
@@ -649,9 +643,8 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public void removeGroup(GroupInfo group) {
 
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			((IJobProgressManagerListener)listenersArray[i]).removeGroup(group);
+		for (Object element : listeners.getListeners()) {
+			((IJobProgressManagerListener)element).removeGroup(group);
 		}
 	}
 
@@ -667,9 +660,8 @@ public class ProgressManager extends ProgressProvider {
 		}
 
 		jobs.put(info.getJob(), info);
-		Object[] listenersArray = listeners.getListeners();
-		for (int i = 0; i < listenersArray.length; i++) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+		for (Object element : listeners.getListeners()) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
 			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.addJob(info);
 			}
@@ -897,8 +889,8 @@ public class ProgressManager extends ProgressProvider {
 	private boolean pruneStaleJobs() {
 		Object[] jobsToCheck = jobs.keySet().toArray();
 		boolean pruned = false;
-		for (int i = 0; i < jobsToCheck.length; i++) {
-			Job job = (Job) jobsToCheck[i];
+		for (Object element : jobsToCheck) {
+			Job job = (Job) element;
 			if (checkForStaleness(job)) {
 				pruned = true;
 			}

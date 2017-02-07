@@ -138,9 +138,7 @@ public abstract class MenuUpdater {
 
 	private void stopListening() {
 		// Stop listening for dependency changes
-		for (int i = 0; i < dependencies.length; i++) {
-			IObservable observable = dependencies[i];
-
+		for (IObservable observable : dependencies) {
 			observable.removeChangeListener(privateInterface);
 		}
 	}

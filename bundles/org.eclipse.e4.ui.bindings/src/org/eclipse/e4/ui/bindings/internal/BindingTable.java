@@ -37,8 +37,7 @@ public class BindingTable {
 			return 0;
 		}
 		if (!schemeId2.equals(schemeId1)) {
-			for (int i = 0; i < activeSchemeIds.length; i++) {
-				final String schemePointer = activeSchemeIds[i];
+			for (final String schemePointer : activeSchemeIds) {
 				if (schemeId2.equals(schemePointer)) {
 					return 1;
 				} else if (schemeId1.equals(schemePointer)) {
@@ -93,8 +92,7 @@ public class BindingTable {
 
 		private final int countStrokes(final Trigger[] triggers) {
 			int strokeCount = triggers.length;
-			for (int i = 0; i < triggers.length; i++) {
-				final Trigger trigger = triggers[i];
+			for (final Trigger trigger : triggers) {
 				if (trigger instanceof KeyStroke) {
 					final KeyStroke keyStroke = (KeyStroke) trigger;
 					final int modifierKeys = keyStroke.getModifierKeys();

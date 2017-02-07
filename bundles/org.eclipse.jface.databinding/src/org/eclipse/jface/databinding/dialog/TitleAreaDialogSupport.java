@@ -82,9 +82,7 @@ public class TitleAreaDialogSupport {
 		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiff diff = event.diff;
-			ListDiffEntry[] differences = diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry listDiffEntry = differences[i];
+			for (ListDiffEntry listDiffEntry : diff.getDifferences()) {
 				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) listDiffEntry
 						.getElement();
 				IObservableList targets = validationStatusProvider.getTargets();
@@ -110,9 +108,7 @@ public class TitleAreaDialogSupport {
 		@Override
 		public void handleListChange(ListChangeEvent event) {
 			ListDiff diff = event.diff;
-			ListDiffEntry[] differences = diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry listDiffEntry = differences[i];
+			for (ListDiffEntry listDiffEntry : diff.getDifferences()) {
 				IObservable target = (IObservable) listDiffEntry.getElement();
 				if (listDiffEntry.isAddition()) {
 					target.addChangeListener(uiChangeListener);
