@@ -104,11 +104,11 @@ class CopyBookmarkAction extends BookmarkAction {
         report += System.getProperty("line.separator"); //$NON-NLS-1$
 
         //write markers
-        for (int i = 0; i < markers.length; i++) {
-            report += MarkerUtil.getMessage(markers[i]) + '\t';
-            report += MarkerUtil.getResourceName(markers[i]) + '\t';
-            report += MarkerUtil.getContainerName(markers[i]) + '\t';
-            int line = MarkerUtil.getLineNumber(markers[i]);
+        for (IMarker marker : markers) {
+            report += MarkerUtil.getMessage(marker) + '\t';
+            report += MarkerUtil.getResourceName(marker) + '\t';
+            report += MarkerUtil.getContainerName(marker) + '\t';
+            int line = MarkerUtil.getLineNumber(marker);
             report += NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
             report += System.getProperty("line.separator"); //$NON-NLS-1$
         }

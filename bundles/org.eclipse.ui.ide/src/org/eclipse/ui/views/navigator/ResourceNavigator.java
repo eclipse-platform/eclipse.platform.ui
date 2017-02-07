@@ -1023,14 +1023,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                     && children[0].getString(TAG_IS_ENABLED) != null) {
                 ArrayList selectedFilters = new ArrayList();
                 ArrayList unSelectedFilters = new ArrayList();
-                for (int i = 0; i < children.length; i++) {
-                    if (children[i].getString(TAG_IS_ENABLED).equals(
-                            String.valueOf(true))) {
-						selectedFilters.add(children[i].getString(TAG_ELEMENT));
+				for (IMemento memento : children) {
+					if (memento.getString(TAG_IS_ENABLED).equals(String.valueOf(true))) {
+						selectedFilters.add(memento.getString(TAG_ELEMENT));
 					} else {
 						//enabled == false
-                        unSelectedFilters.add(children[i]
-                                .getString(TAG_ELEMENT));
+						unSelectedFilters.add(memento.getString(TAG_ELEMENT));
 					}
                 }
 
@@ -1084,10 +1082,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             IMemento childMem = memento.getChild(TAG_EXPANDED);
             if (childMem != null) {
                 ArrayList elements = new ArrayList();
-                IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
-                for (int i = 0; i < elementMem.length; i++) {
-                    Object element = container.findMember(elementMem[i]
-                            .getString(TAG_PATH));
+				for (IMemento mem : childMem.getChildren(TAG_ELEMENT)) {
+					Object element = container.findMember(mem.getString(TAG_PATH));
                     if (element != null) {
                         elements.add(element);
                     }
@@ -1097,10 +1093,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             childMem = memento.getChild(TAG_SELECTION);
             if (childMem != null) {
                 ArrayList list = new ArrayList();
-                IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
-                for (int i = 0; i < elementMem.length; i++) {
-                    Object element = container.findMember(elementMem[i]
-                            .getString(TAG_PATH));
+				for (IMemento mem : childMem.getChildren(TAG_ELEMENT)) {
+					Object element = container.findMember(mem.getString(TAG_PATH));
                     if (element != null) {
                         list.add(element);
                     }
@@ -1164,12 +1158,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             Object expandedElements[] = viewer.getVisibleExpandedElements();
             if (expandedElements.length > 0) {
                 IMemento expandedMem = memento.createChild(TAG_EXPANDED);
-                for (int i = 0; i < expandedElements.length; i++) {
-                    if (expandedElements[i] instanceof IResource) {
+                for (Object expandedElement : expandedElements) {
+                    if (expandedElement instanceof IResource) {
                         IMemento elementMem = expandedMem
                                 .createChild(TAG_ELEMENT);
                         elementMem.putString(TAG_PATH,
-                                ((IResource) expandedElements[i]).getFullPath()
+                                ((IResource) expandedElement).getFullPath()
                                         .toString());
                     }
                 }
@@ -1179,13 +1173,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                     .toArray();
             if (elements.length > 0) {
                 IMemento selectionMem = memento.createChild(TAG_SELECTION);
-                for (int i = 0; i < elements.length; i++) {
-                    if (elements[i] instanceof IResource) {
-                        IMemento elementMem = selectionMem
-                                .createChild(TAG_ELEMENT);
-                        elementMem.putString(TAG_PATH,
-                                ((IResource) elements[i]).getFullPath()
-                                        .toString());
+                for (Object selectionElement : elements) {
+                    if (selectionElement instanceof IResource) {
+						IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
+						elementMem.putString(TAG_PATH, ((IResource) selectionElement).getFullPath().toString());
                     }
                 }
             }

@@ -477,11 +477,10 @@ public class BookmarkNavigator extends ViewPart {
         IMemento selectionMem = memento.getChild(TAG_SELECTION);
         if (selectionMem != null) {
             ArrayList selectionList = new ArrayList();
-            IMemento markerMems[] = selectionMem.getChildren(TAG_MARKER);
-            for (int i = 0; i < markerMems.length; i++) {
+			for (IMemento markerMem : selectionMem.getChildren(TAG_MARKER)) {
                 try {
-                    long id = Long.parseLong(markerMems[i].getString(TAG_ID));
-                    IResource resource = root.findMember(markerMems[i]
+                    long id = Long.parseLong(markerMem.getString(TAG_ID));
+                    IResource resource = root.findMember(markerMem
                             .getString(TAG_RESOURCE));
                     if (resource != null) {
                         IMarker marker = resource.findMarker(id);
@@ -536,11 +535,10 @@ public class BookmarkNavigator extends ViewPart {
                 .toArray();
         if (markers.length > 0) {
             IMemento selectionMem = memento.createChild(TAG_SELECTION);
-            for (int i = 0; i < markers.length; i++) {
+            for (Object currentMarker : markers) {
                 IMemento elementMem = selectionMem.createChild(TAG_MARKER);
-                IMarker marker = (IMarker) markers[i];
-                elementMem.putString(TAG_RESOURCE, marker.getResource()
-                        .getFullPath().toString());
+                IMarker marker = (IMarker) currentMarker;
+				elementMem.putString(TAG_RESOURCE, marker.getResource().getFullPath().toString());
                 elementMem.putString(TAG_ID, String.valueOf(marker.getId()));
             }
         }
@@ -702,9 +700,9 @@ public class BookmarkNavigator extends ViewPart {
         IMarker[] markerData = (IMarker[]) getClipboard().getContents(transfer);
         boolean canPaste = false;
         if (markerData != null) {
-            for (int i = 0; i < markerData.length; i++) {
+            for (IMarker marker : markerData) {
                 try {
-                    if (markerData[i].getType().equals(IMarker.BOOKMARK)) {
+                    if (marker.getType().equals(IMarker.BOOKMARK)) {
                         canPaste = true;
                         break;
                     }

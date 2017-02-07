@@ -154,16 +154,16 @@ public class CopyResourcesOperation extends
 					resourcesAtDestination, subMonitor.split(1), uiInfo, true, fCreateGroups, fCreateLinks,
 					fRelativeToVariable);
 			// Accumulate the overwrites into the full list
-			for (int j = 0; j < overwrites.length; j++) {
-				overwrittenResources.add(overwrites[j]);
+			for (ResourceDescription overwrite : overwrites) {
+				overwrittenResources.add(overwrite);
 			}
 		}
 
 		// Are there any previously overwritten resources to restore now?
 		if (resourceDescriptions != null) {
-			for (int i = 0; i < resourceDescriptions.length; i++) {
-				if (resourceDescriptions[i] != null) {
-					resourceDescriptions[i].createResource(subMonitor.split(1));
+			for (ResourceDescription resourceDescription : resourceDescriptions) {
+				if (resourceDescription != null) {
+					resourceDescription.createResource(subMonitor.split(1));
 				}
 			}
 		}
@@ -204,16 +204,14 @@ public class CopyResourcesOperation extends
 			IResourceChangeDescriptionFactory factory, int operation) {
 		boolean update = false;
 		if (operation == UNDO) {
-			for (int i = 0; i < resources.length; i++) {
+			for (IResource resource : resources) {
 				update = true;
-				IResource resource = resources[i];
 				factory.delete(resource);
 			}
-			for (int i = 0; i < resourceDescriptions.length; i++) {
-				if (resourceDescriptions[i] != null) {
+			for (ResourceDescription resourceDescription : resourceDescriptions) {
+				if (resourceDescription != null) {
 					update = true;
-					IResource resource = resourceDescriptions[i]
-							.createResourceHandle();
+					IResource resource = resourceDescription.createResourceHandle();
 					factory.create(resource);
 				}
 			}

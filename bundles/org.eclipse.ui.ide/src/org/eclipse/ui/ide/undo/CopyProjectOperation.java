@@ -154,9 +154,8 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			IResourceChangeDescriptionFactory factory, int operation) {
 		boolean update = false;
 		if (operation == UNDO) {
-			for (int i = 0; i < resources.length; i++) {
+			for (IResource resource : resources) {
 				update = true;
-				IResource resource = resources[i];
 				factory.delete(resource);
 			}
 		} else {

@@ -191,8 +191,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (elementPath.isEmpty() || elementPath.isRoot()) {
             return false;
         }
-        for (int i = 0; i < workingSetElements.length; i++) {
-            IAdaptable workingSetElement = workingSetElements[i];
+        for (IAdaptable workingSetElement : workingSetElements) {
             IContainmentAdapter containmentAdapter = workingSetElement.getAdapter(IContainmentAdapter.class);
 
             // if there is no IContainmentAdapter defined for the working
@@ -320,8 +319,8 @@ class TasksFilter extends ViewerFilter implements Cloneable {
      * @param memento a memento to receive the object state
      */
     public void saveState(IMemento memento) {
-        for (int i = 0; i < types.length; i++) {
-            memento.createChild(TAG_TYPE).putString(TAG_ID, types[i]);
+        for (String type : types) {
+            memento.createChild(TAG_TYPE).putString(TAG_ID, type);
         }
         memento.putInteger(TAG_ON_RESOURCE, onResource);
         if (workingSet != null) {
@@ -362,8 +361,8 @@ class TasksFilter extends ViewerFilter implements Cloneable {
     }
 
     private boolean selectByType(IMarker marker) {
-        for (int i = 0; i < types.length; ++i) {
-            if (MarkerUtil.isMarkerType(marker, types[i])) {
+        for (String type : types) {
+            if (MarkerUtil.isMarkerType(marker, type)) {
 				return true;
 			}
         }
@@ -371,8 +370,8 @@ class TasksFilter extends ViewerFilter implements Cloneable {
     }
 
     private boolean selectByType(IMarkerDelta markerDelta) {
-        for (int i = 0; i < types.length; ++i) {
-            if (markerDelta.isSubtypeOf(types[i])) {
+        for (String type : types) {
+            if (markerDelta.isSubtypeOf(type)) {
 				return true;
 			}
         }

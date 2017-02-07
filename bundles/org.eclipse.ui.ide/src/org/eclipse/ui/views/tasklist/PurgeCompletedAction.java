@@ -62,8 +62,7 @@ class PurgeCompletedAction extends TaskAction {
         	return;
         }
         final List completed = new ArrayList();
-        for (int i = 0; i < tasks.length; i++) {
-            IMarker task = tasks[i];
+		for (IMarker task : tasks) {
             if (MarkerUtil.isComplete(task) && !MarkerUtil.isReadOnly(task)) {
                 completed.add(task);
             }

@@ -148,8 +148,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
     private int sum(int[] counts) {
         int sum = 0;
 
-        for (int i = 0, l = counts.length; i < l; ++i) {
-            sum += counts[i];
+        for (int count : counts) {
+            sum += count;
         }
 
         return sum;
@@ -169,8 +169,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
                 IMarker[] markers = root.findMarkers(null, true,
                         IResource.DEPTH_INFINITE);
 
-                for (int i = 0; i < markers.length; ++i) {
-                    if (isRootType(markers[i])) {
+                for (IMarker marker : markers) {
+                    if (isRootType(marker)) {
                         ++totalMarkerCount;
                     }
                 }
@@ -188,8 +188,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
     private boolean isRootType(IMarker marker) {
         String[] rootTypes = TasksFilter.ROOT_TYPES;
 
-        for (int i = 0, l = rootTypes.length; i < l; ++i) {
-            if (MarkerUtil.isMarkerType(marker, rootTypes[i])) {
+        for (String rootType : rootTypes) {
+            if (MarkerUtil.isMarkerType(marker, rootType)) {
                 return true;
             }
         }
@@ -250,9 +250,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
             if (resource != null) {
                 IMarker[] markers = resource.findMarkers(null, true, depth);
 
-                for (int j = 0; j < markers.length; ++j) {
-                    IMarker marker = markers[j];
-
+                for (IMarker marker : markers) {
                     if (filter.select(marker)) {
                         set.add(marker);
                     }
@@ -443,17 +441,15 @@ class TaskListContentProvider implements IStructuredContentProvider,
         final List removals = new ArrayList();
         final List changes = new ArrayList();
 
-        for (int i = 0; i < markerDeltas.length; i++) {
-            IMarkerDelta markerDelta = markerDeltas[i];
-
+        for (IMarkerDelta markerDelta : markerDeltas) {
             if (markerDelta == null) {
 				continue;
 			}
 
             int iKind = markerDelta.getKind();
 
-            for (int j = 0; j < TasksFilter.ROOT_TYPES.length; j++) {
-                if (markerDelta.isSubtypeOf(TasksFilter.ROOT_TYPES[j])) {
+            for (String rootType : TasksFilter.ROOT_TYPES) {
+                if (markerDelta.isSubtypeOf(rootType)) {
 
                     /*
                      * Updates the total count of markers given the applicable

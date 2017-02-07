@@ -163,12 +163,10 @@ public final class IDEEncoding {
 			return new ArrayList();
 		}
 
-		String[] preferenceEncodings = encodings.split(PREFERENCE_SEPARATOR);
 		ArrayList result = new ArrayList();
 
 		//Drop any encodings that are not valid
-		for (int i = 0; i < preferenceEncodings.length; i++) {
-			String string = preferenceEncodings[i];
+		for (String string : encodings.split(PREFERENCE_SEPARATOR)) {
 			boolean isSupported;
 			try {
 				isSupported = Charset.isSupported(string);

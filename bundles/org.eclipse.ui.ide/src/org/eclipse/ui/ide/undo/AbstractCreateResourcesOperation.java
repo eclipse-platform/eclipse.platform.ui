@@ -72,16 +72,14 @@ abstract class AbstractCreateResourcesOperation extends
 			IResourceChangeDescriptionFactory factory, int operation) {
 		boolean modified = false;
 		if (operation == UNDO) {
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				factory.delete(resource);
 				modified = true;
 			}
 		} else {
-			for (int i = 0; i < resourceDescriptions.length; i++) {
-				if (resourceDescriptions[i] != null) {
-					IResource resource = resourceDescriptions[i]
-							.createResourceHandle();
+			for (ResourceDescription resourceDescription : resourceDescriptions) {
+				if (resourceDescription != null) {
+					IResource resource = resourceDescription.createResourceHandle();
 					factory.create(resource);
 					modified = true;
 				}

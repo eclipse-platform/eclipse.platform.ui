@@ -134,16 +134,16 @@ public class MoveResourcesOperation extends
 					resourcesAtDestination, undoDestinationPaths, subMonitor.split(1), uiInfo, true);
 
 			// Accumulate the overwrites into the full list
-			for (int j = 0; j < overwrites.length; j++) {
-				overwrittenResources.add(overwrites[j]);
+			for (ResourceDescription overwrite : overwrites) {
+				overwrittenResources.add(overwrite);
 			}
 		}
 
 		// Are there any previously overwritten resources to restore now?
 		if (resourceDescriptions != null) {
-			for (int i = 0; i < resourceDescriptions.length; i++) {
-				if (resourceDescriptions[i] != null) {
-					resourceDescriptions[i].createResource(subMonitor.split(1));
+			for (ResourceDescription resourceDescription : resourceDescriptions) {
+				if (resourceDescription != null) {
+					resourceDescription.createResource(subMonitor.split(1));
 				}
 			}
 		}

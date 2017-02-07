@@ -98,9 +98,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
                     CHECK_DELETE_MESSAGE);
             resources = checker.checkReadOnlyResources(resources);
             //delete the old elements
-            for (int i = 0; i < resources.length; i++) {
+            for (IResource resource : resources) {
                 try {
-                    resources[i].delete(IResource.KEEP_HISTORY
+                    resource.delete(IResource.KEEP_HISTORY
                             | IResource.FORCE, null);
                 } catch (CoreException e) {
                     StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
@@ -114,9 +114,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
             if (resources == null) {
 				return;
 			}
-            for (int i = 0; i < resources.length; i++) {
+            for (IResource resource : resources) {
                 try {
-                    resources[i].refreshLocal(IResource.DEPTH_INFINITE, null);
+                    resource.refreshLocal(IResource.DEPTH_INFINITE, null);
                 } catch (CoreException e) {
                 	 StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
                 }

@@ -127,9 +127,8 @@ public class ResourcePatternFilter extends ViewerFilter {
 		IResource resource = Adapters.adapt(element, IResource.class);
         if (resource != null) {
             String name = resource.getName();
-            StringMatcher[] testMatchers = getMatchers();
-            for (int i = 0; i < testMatchers.length; i++) {
-                if (testMatchers[i].match(name)) {
+			for (StringMatcher testMatcher : getMatchers()) {
+                if (testMatcher.match(name)) {
 					return false;
 				}
             }

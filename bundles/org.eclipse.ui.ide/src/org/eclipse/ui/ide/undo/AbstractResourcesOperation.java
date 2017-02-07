@@ -313,17 +313,13 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		// Remove any descendants if the parent has also
 		// been specified.
 		Set subResources = new HashSet();
-		for (int i = 0; i < targetResources.length; i++) {
-			IResource subResource = targetResources[i];
-			for (int j = 0; j < targetResources.length; j++) {
-				IResource superResource = targetResources[j];
-				if (isDescendantOf(subResource, superResource)
-						&& !subResources.contains(subResource))
+		for (IResource subResource : targetResources) {
+			for (IResource superResource : targetResources) {
+				if (isDescendantOf(subResource, superResource) && !subResources.contains(subResource))
 					subResources.add(subResource);
 			}
 		}
-		IResource[] nestedResourcesRemoved = new IResource[targetResources.length
-				- subResources.size()];
+		IResource[] nestedResourcesRemoved = new IResource[targetResources.length - subResources.size()];
 		int j = 0;
 		for (int i = 0; i < targetResources.length; i++) {
 			if (!subResources.contains(targetResources[i])) {

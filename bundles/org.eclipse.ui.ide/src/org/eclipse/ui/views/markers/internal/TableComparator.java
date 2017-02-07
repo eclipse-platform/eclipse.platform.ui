@@ -252,8 +252,8 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	}
 
 	private boolean verifyDirections(int[] directions) {
-		for (int i = 0; i < directions.length; i++) {
-			if (directions[i] != ASCENDING && directions[i] != DESCENDING) {
+		for (int direction : directions) {
+			if (direction != ASCENDING && direction != DESCENDING) {
 				return false;
 			}
 		}

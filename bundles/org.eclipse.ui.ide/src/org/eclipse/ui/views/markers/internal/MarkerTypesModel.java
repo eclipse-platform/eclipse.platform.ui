@@ -97,21 +97,17 @@ public class MarkerTypesModel {
 				ResourcesPlugin.PT_MARKERS);
 		if (point != null) {
 			// Gather all registered marker types.
-			IExtension[] extensions = point.getExtensions();
-			for (int i = 0; i < extensions.length; ++i) {
-				IExtension ext = extensions[i];
+			for (IExtension ext : point.getExtensions()) {
 				String id = ext.getUniqueIdentifier();
 				String label = ext.getLabel();
 				if (label.equals("")) {//$NON-NLS-1$
 					label = getWellKnownLabel(id);
 				}
 				ArrayList<String> supersList = new ArrayList<>();
-				IConfigurationElement[] configElements = ext
-						.getConfigurationElements();
-				for (int j = 0; j < configElements.length; ++j) {
-					IConfigurationElement elt = configElements[j];
-					if (elt.getName().equalsIgnoreCase("super")) {//$NON-NLS-1$
-						String sup = elt.getAttribute("type");//$NON-NLS-1$
+				IConfigurationElement[] configElements = ext.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
+					if (configElement.getName().equalsIgnoreCase("super")) {//$NON-NLS-1$
+						String sup = configElement.getAttribute("type");//$NON-NLS-1$
 						if (sup != null) {
 							supersList.add(sup);
 						}

@@ -122,13 +122,10 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         if (delta == null) {
             return;
         }
-        IResourceDelta[] projDeltas = delta
-                .getAffectedChildren(IResourceDelta.CHANGED);
-        for (int i = 0; i < projDeltas.length; ++i) {
-            IResourceDelta projDelta = projDeltas[i];
+		for (IResourceDelta projectDelta : delta.getAffectedChildren(IResourceDelta.CHANGED)) {
             //changing the project open state or description will affect open/close/build action enablement
-            if ((projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
-                if (sel.contains(projDelta.getResource())) {
+			if ((projectDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
+				if (sel.contains(projectDelta.getResource())) {
                     getNavigator().getSite().getShell().getDisplay().syncExec(
                             () -> {
 							    addTaskAction.selectionChanged(selection);

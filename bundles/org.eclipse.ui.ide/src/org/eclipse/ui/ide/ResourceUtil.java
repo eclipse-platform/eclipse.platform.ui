@@ -94,9 +94,7 @@ public final class ResourceUtil {
         }
         // check for editors that have their own kind of input that adapts to IFile,
         // being careful not to force loading of the editor
-        IEditorReference[] refs = page.getEditorReferences();
-        for (int i = 0; i < refs.length; i++) {
-            IEditorReference ref = refs[i];
+		for (IEditorReference ref : page.getEditorReferences()) {
             IEditorPart part = ref.getEditor(false);
             if (part != null) {
                 IFile editorFile = getFile(part.getEditorInput());

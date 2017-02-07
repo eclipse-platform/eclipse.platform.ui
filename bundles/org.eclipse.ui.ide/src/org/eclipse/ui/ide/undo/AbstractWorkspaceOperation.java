@@ -619,8 +619,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		if (resources == null || resources.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].getType() == IResource.PROJECT) {
+		for (IResource resource : resources) {
+			if (resource.getType() == IResource.PROJECT) {
 				return true;
 			}
 		}

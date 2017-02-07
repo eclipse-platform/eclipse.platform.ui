@@ -43,9 +43,9 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	 */
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 
-		for (int i = 0; i < markers.length; i++) {
-			monitor.subTask(Util.getProperty(IMarker.MESSAGE, markers[i]));
-			run(markers[i]);
+		for (IMarker marker : markers) {
+			monitor.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+			run(marker);
 		}
 	}
 }
