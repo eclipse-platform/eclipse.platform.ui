@@ -479,13 +479,13 @@ public class QuickFixPage extends WizardPage {
 			try {
 				getWizard().getContainer().run(false, true, monitor1 -> {
 					monitor1.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, checked.length);
-					for (int i = 0; i < checked.length; i++) {
+					for (Object checkedElement : checked) {
 						// Allow paint events and wake up the button
 						getShell().getDisplay().readAndDispatch();
 						if (monitor1.isCanceled()) {
 							return;
 						}
-						IMarker marker = (IMarker) checked[i];
+						IMarker marker = (IMarker) checkedElement;
 						monitor1.subTask(Util.getProperty(IMarker.MESSAGE, marker));
 						resolution.run(marker);
 						monitor1.worked(1);

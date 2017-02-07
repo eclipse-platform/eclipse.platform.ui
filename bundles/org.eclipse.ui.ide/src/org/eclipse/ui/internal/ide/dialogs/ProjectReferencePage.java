@@ -119,12 +119,12 @@ public class ProjectReferencePage extends PropertyPage {
                 IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
                 ArrayList referenced = new ArrayList(projects.length);
                 boolean found = false;
-                for (int i = 0; i < projects.length; i++) {
-                    if (!found && projects[i].equals(project)) {
+                for (IProject currentProject : projects) {
+                    if (!found && currentProject.equals(project)) {
                         found = true;
                         continue;
                     }
-                    referenced.add(projects[i]);
+                    referenced.add(currentProject);
                 }
 
                 // Add any referenced that do not exist in the workspace currently

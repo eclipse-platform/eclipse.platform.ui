@@ -104,8 +104,8 @@ public class BuildSetMenu extends ContributionItem {
         if (last != null) {
 			// add it only if it has not been removed
 			boolean found = false;
-			for (int i = 0; i < sets.length; i++) {
-				if (sets[i].equals(last.getWorkingSet())){
+			for (IWorkingSet set : sets) {
+				if (set.equals(last.getWorkingSet())){
 					found = true;
 					break;
 				}
@@ -122,11 +122,11 @@ public class BuildSetMenu extends ContributionItem {
 			}
         }
         //add build actions for the most recently used working sets
-        for (int i = 0; i < sets.length; i++) {
-            if (lastSet != null && lastSet.equals(sets[i])) {
+        for (IWorkingSet set : sets) {
+            if (lastSet != null && lastSet.equals(set)) {
 				continue;
 			}
-            BuildSetAction action = new BuildSetAction(sets[i], window,
+            BuildSetAction action = new BuildSetAction(set, window,
                     actionBars);
             addMnemonic(action, accel++);
             action.setEnabled(!isAutoBuilding);

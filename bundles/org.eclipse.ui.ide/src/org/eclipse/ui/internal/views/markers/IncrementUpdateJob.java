@@ -103,9 +103,8 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		synchronized (clone) {
 			clone = clone.getClone();
 		}
-		MarkerEntry[] entries = clone.getMarkerEntryArray();
-		for (int i = 0; i < entries.length; i++) {
-			markerEntries.add(entries[i]);
+		for (MarkerEntry entry : clone.getMarkerEntryArray()) {
+			markerEntries.add(entry);
 		}
 		return true;
 	}
@@ -154,8 +153,8 @@ class IncrementUpdateJob extends MarkerUpdateJob {
 		} while (next != null);
 		boolean[] changeFlags = new boolean[] { addCount > 0, removedCount > 0,
 				changedCount > 0 };
-		for (int i = 0; i < changeFlags.length; i++) {
-			if (changeFlags[i]) {
+		for (boolean changeFlag : changeFlags) {
+			if (changeFlag) {
 				builder.updateChangeFlags(changeFlags);
 				return true;
 			}

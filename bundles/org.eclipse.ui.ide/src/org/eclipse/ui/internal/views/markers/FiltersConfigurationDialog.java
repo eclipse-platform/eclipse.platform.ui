@@ -608,11 +608,11 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		List<MarkerFieldFilterGroup> selectedElements = new ArrayList<>();
 
 		if (selectedElementNames != null) {
-			for (int i = 0; i < selectedElementNames.length; i++) {
+			for (String selectedElementName : selectedElementNames) {
 				Iterator<MarkerFieldFilterGroup> filterGroupIterator = filterGroups.iterator();
 				while (filterGroupIterator.hasNext()) {
 					MarkerFieldFilterGroup group = filterGroupIterator.next();
-					if (Util.equals(group.getName(), selectedElementNames[i])) {
+					if (Util.equals(group.getName(), selectedElementName)) {
 						selectedElements.add(group);
 						break;
 					}
@@ -734,9 +734,8 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	private void setEnabled(boolean enabled, Control control) {
 		control.setEnabled(enabled);
 		if (control instanceof Composite) {
-			Control[] children = ((Composite) control).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				setEnabled(enabled, children[i]);
+			for (Control child : ((Composite) control).getChildren()) {
+				setEnabled(enabled, child);
 			}
 		}
 	}

@@ -66,12 +66,12 @@ public class MarkersViewPropertyTester extends PropertyTester {
 	private boolean testContentGenerator(ExtendedMarkersView view, Object[] args) {
 
 		String currentGenerator = view.getBuilder().getGenerator().getId();
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals(currentGenerator))
+		for (Object arg : args) {
+			if (arg.equals(currentGenerator))
 				return true;
 
 			// The value 'any' works for any content generator
-			if (args[i].equals(ANY_CONTENT_GENERATOR))
+			if (arg.equals(ANY_CONTENT_GENERATOR))
 				return true;
 		}
 		return false;

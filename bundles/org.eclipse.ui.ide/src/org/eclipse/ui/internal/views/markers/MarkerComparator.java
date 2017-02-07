@@ -103,11 +103,11 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 */
 	public int compareFields(MarkerItem item0, MarkerItem item1) {
 		int value = 0;
-		for (int i = 0; i < fields.length; i++) {
-			if (descendingFields.contains(fields[i])) {
-				value = fields[i].compare(item1, item0);
+		for (MarkerField field : fields) {
+			if (descendingFields.contains(field)) {
+				value = field.compare(item1, item0);
 			} else {
-				value = fields[i].compare(item0, item1);
+				value = field.compare(item0, item1);
 			}
 			if (value != 0) {
 				break;
@@ -183,13 +183,12 @@ class MarkerComparator implements Comparator<MarkerItem> {
 		}
 		IMemento[] descending = memento.getChildren(DESCENDING_FIELDS);
 
-		for (int i = 0; i < fields.length; i++) {
-			for (int j = 0; j < descending.length; j++) {
-				if (descending[j].getID().equals(MarkerSupportInternalUtilities.getId(fields[i]))) {
-					descendingFields.add(fields[i]);
+		for (MarkerField field : fields) {
+			for (IMemento currentMemento : descending) {
+				if (currentMemento.getID().equals(MarkerSupportInternalUtilities.getId(field))) {
+					descendingFields.add(field);
 					continue;
 				}
-
 			}
 		}
 	}

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.ui.views.markers.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
@@ -68,10 +69,9 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	protected void calculateFilters() {
 		super.calculateFilters();
 		// Now initialize with the ProblemFilter
-		for (int i = 0; i < fieldFilters.length; i++) {
-			if (fieldFilters[i] instanceof CompatibilityFieldFilter)
-				((CompatibilityFieldFilter) fieldFilters[i])
-						.initialize(problemFilter);
+		for (MarkerFieldFilter fieldFilter : fieldFilters) {
+			if (fieldFilter instanceof CompatibilityFieldFilter)
+				((CompatibilityFieldFilter) fieldFilter).initialize(problemFilter);
 		}
 	}
 

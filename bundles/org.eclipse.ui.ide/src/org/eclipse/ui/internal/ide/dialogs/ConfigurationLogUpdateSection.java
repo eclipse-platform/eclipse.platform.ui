@@ -98,13 +98,11 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 		PlatformAdmin admin = (PlatformAdmin) context.getService(reference);
 		try {
 			State state = admin.getState(false);
-			BundleDescription[] bundles = state.getBundles();
 			// Since this code is only called in the Help -> About -> Configuration Details case we
 			// won't worry too much about performance here and we will sort the query results
 			// afterwards, but before printing them out.
 			SortedSet sorted = new TreeSet();
-			for (int i = 0; i < bundles.length; i++) {
-				BundleDescription bundle = bundles[i];
+			for (BundleDescription bundle : state.getBundles()) {
 				String name = bundle.getName();
 				if (name == null)
 					name = bundle.getLocation();

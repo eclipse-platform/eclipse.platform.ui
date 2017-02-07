@@ -73,10 +73,10 @@ class QuickFixWizard extends Wizard {
 			SubMonitor subMonitor = SubMonitor.convert(mon, MarkerMessages.MarkerResolutionDialog_Fixing,
 					(10 * pages.length) + 1);
 			subMonitor.worked(1);
-			for (int i = 0; i < pages.length; i++) {
+			for (IWizardPage page : pages) {
 				// Allow for cancel event processing
 				getShell().getDisplay().readAndDispatch();
-				QuickFixPage wizardPage = (QuickFixPage) pages[i];
+				QuickFixPage wizardPage = (QuickFixPage) page;
 				wizardPage.performFinish(subMonitor.split(10));
 			}
 		};

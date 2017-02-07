@@ -188,13 +188,12 @@ public class WelcomeEditor extends EditorPart {
 		}
 
         WelcomeItem item = (WelcomeItem) text.getData();
-        StyleRange[] ranges = text.getStyleRanges();
         int currentSelectionEnd = text.getSelection().y;
 
-        for (int i = 0; i < ranges.length; i++) {
-            if (ranges[i].start >= currentSelectionEnd) {
-				if (item.isLinkAt(ranges[i].start)) {
-					return ranges[i];
+		for (StyleRange range : text.getStyleRanges()) {
+            if (range.start >= currentSelectionEnd) {
+				if (item.isLinkAt(range.start)) {
+					return range;
 				}
 			}
         }
@@ -227,14 +226,13 @@ public class WelcomeEditor extends EditorPart {
      * Finds the current link of the current selection.
      */
     protected StyleRange getCurrentLink(StyledText text) {
-        StyleRange[] ranges = text.getStyleRanges();
         int currentSelectionEnd = text.getSelection().y;
         int currentSelectionStart = text.getSelection().x;
 
-        for (int i = 0; i < ranges.length; i++) {
-            if ((currentSelectionStart >= ranges[i].start)
-                    && (currentSelectionEnd <= (ranges[i].start + ranges[i].length))) {
-                return ranges[i];
+        for (StyleRange range : text.getStyleRanges()) {
+            if ((currentSelectionStart >= range.start)
+                    && (currentSelectionEnd <= (range.start + range.length))) {
+                return range;
             }
         }
         return null;
@@ -538,16 +536,11 @@ public class WelcomeEditor extends EditorPart {
 
         // Create the welcome items
         Label imageLabel = null;
-        WelcomeItem[] items = getItems();
-        for (int i = 0; i < items.length; i++) {
+		for (WelcomeItem welcomeItem : getItems()) {
             Label label = new Label(infoArea, SWT.NONE);
             label.setBackground(background);
-            label
-                    .setImage(PlatformUI
-                            .getWorkbench()
-                            .getSharedImages()
-                            .getImage(
-                                    IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM));
+			label.setImage(PlatformUI.getWorkbench().getSharedImages()
+					.getImage(IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM));
             GridData gd = new GridData();
             gd.horizontalIndent = HINDENT;
             gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
@@ -561,15 +554,15 @@ public class WelcomeEditor extends EditorPart {
             sampleStyledText = styledText;
             styledText.setCursor(null);
             JFaceColors.setColors(styledText, foreground, background);
-            styledText.setText(items[i].getText());
-            setBoldRanges(styledText, items[i].getBoldRanges());
-            setLinkRanges(styledText, items[i].getActionRanges());
-            setLinkRanges(styledText, items[i].getHelpRanges());
+			styledText.setText(welcomeItem.getText());
+			setBoldRanges(styledText, welcomeItem.getBoldRanges());
+			setLinkRanges(styledText, welcomeItem.getActionRanges());
+			setLinkRanges(styledText, welcomeItem.getHelpRanges());
             gd = new GridData(GridData.FILL_HORIZONTAL);
             gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
             gd.verticalSpan = 2;
             styledText.setLayoutData(gd);
-            styledText.setData(items[i]);
+			styledText.setData(welcomeItem);
             addListeners(styledText);
 
             Label spacer = new Label(infoArea, SWT.NONE);
@@ -984,9 +977,8 @@ public class WelcomeEditor extends EditorPart {
      * Sets the styled text's bold ranges
      */
     private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
-        for (int i = 0; i < boldRanges.length; i++) {
-            StyleRange r = new StyleRange(boldRanges[i][0], boldRanges[i][1],
-                    null, null, SWT.BOLD);
+        for (int[] boldRange : boldRanges) {
+			StyleRange r = new StyleRange(boldRange[0], boldRange[1], null, null, SWT.BOLD);
             styledText.setStyleRange(r);
         }
     }
@@ -1013,8 +1005,8 @@ public class WelcomeEditor extends EditorPart {
         //Color fg = styledText.getDisplay().getSystemColor(SWT.COLOR_BLUE);
         Color fg = JFaceColors.getHyperlinkText(styledText.getShell()
                 .getDisplay());
-        for (int i = 0; i < linkRanges.length; i++) {
-            StyleRange r = new StyleRange(linkRanges[i][0], linkRanges[i][1],
+        for (int[] linkRange : linkRanges) {
+            StyleRange r = new StyleRange(linkRange[0], linkRange[1],
                     fg, null);
             styledText.setStyleRange(r);
             hyperlinkRanges.add(r);

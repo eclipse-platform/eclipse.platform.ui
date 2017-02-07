@@ -192,15 +192,15 @@ class MarkersChangeListener implements IResourceChangeListener {
 		}
 		Collection<MarkerEntry> removed = new LinkedList<>(), added = new LinkedList<>(), changed = new LinkedList<>();
 		String[] types = listeningTypes;
-		for (int i = 0; i < markerDeltas.length; i++) {
+		for (IMarkerDelta markerDelta : markerDeltas) {
 			try {
-				String typeId = markerDeltas[i].getType();
+				String typeId = markerDelta.getType();
 				if (!isApplicableType(types, typeId)) {
 					continue;
 				}
-				IMarker marker = markerDeltas[i].getMarker();
+				IMarker marker = markerDelta.getMarker();
 				MarkerEntry markerEntry = new MarkerEntry(marker);
-				switch (markerDeltas[i].getKind()) {
+				switch (markerDelta.getKind()) {
 				case IResourceDelta.REMOVED: {
 					removed.add(markerEntry);
 					break;
@@ -243,8 +243,8 @@ class MarkersChangeListener implements IResourceChangeListener {
 		if (types.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < markerDeltas.length; i++) {
-			if (isApplicableType(types, markerDeltas[i].getType())) {
+		for (IMarkerDelta markerDelta : markerDeltas) {
+			if (isApplicableType(types, markerDelta.getType())) {
 				return true;
 			}
 		}
@@ -258,8 +258,8 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 * @param typeId
 	 */
 	private boolean isApplicableType(String[] types, String typeId) {
-		for (int i = 0; i < types.length; i++) {
-			if (types[i].equals(typeId)) {
+		for (String type : types) {
+			if (type.equals(typeId)) {
 				return true;
 			}
 		}

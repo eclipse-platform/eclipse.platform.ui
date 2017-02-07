@@ -121,8 +121,8 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 				nonVisible.add(entry);
 			}
 		}
-		for (int i = 0; i < visibleFields.length; i++) {
-			entry = new FieldEntry(visibleFields[i], -1);
+		for (MarkerField visibleField : visibleFields) {
+			entry = new FieldEntry(visibleField, -1);
 			entry.width = extendedView.getFieldWidth(entry.field, defaultWidths ? 0 : -1, !defaultWidths);
 			entry.visible = true;
 			visible.add(entry);
@@ -130,8 +130,8 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 	}
 
 	private boolean contains(MarkerField[] visibleFields, MarkerField field) {
-		for (int i = 0; i < visibleFields.length; i++) {
-			if (visibleFields[i].equals(field)) {
+		for (MarkerField visibleField : visibleFields) {
+			if (visibleField.equals(field)) {
 				return true;
 			}
 		}

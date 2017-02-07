@@ -45,10 +45,9 @@ public class EditablePropertyTester extends PropertyTester {
 			if (item.isConcrete()) {
 				markers.add(((MarkerEntry) receiver).getMarker());
 			} else {
-				MarkerSupportItem[] children = item.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].isConcrete()) {
-						markers.add(((MarkerEntry) children[i]).getMarker());
+				for (MarkerSupportItem child : item.getChildren()) {
+					if (child.isConcrete()) {
+						markers.add(((MarkerEntry) child).getMarker());
 					}
 				}
 			}

@@ -889,8 +889,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
            		errorTable.add(status);
            		ArrayList filteredFiles = new ArrayList();
 
-           		for (int i = 0; i < files.length; i++) {
-           			filteredFiles.add(files[i].getFullPath());
+           		for (IFile file : files) {
+           			filteredFiles.add(file.getFullPath());
            		}
            		return filteredFiles;
            }
