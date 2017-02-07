@@ -58,8 +58,8 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
      */
     public AdaptableList(IAdaptable[] newChildren) {
         this(newChildren.length);
-        for (int i = 0; i < newChildren.length; i++) {
-            children.add(newChildren[i]);
+        for (IAdaptable adaptable : newChildren) {
+            children.add(adaptable);
         }
     }
 

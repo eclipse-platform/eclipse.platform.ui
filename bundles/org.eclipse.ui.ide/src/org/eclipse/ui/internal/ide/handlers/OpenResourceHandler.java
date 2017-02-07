@@ -96,9 +96,9 @@ public final class OpenResourceHandler extends Action implements IHandler,
 			Object[] result = queryFileResource();
 
 			if (result != null) {
-				for (int i = 0; i < result.length; i++) {
-					if (result[i] instanceof IFile) {
-						files.add(result[i]);
+				for (Object fileResource : result) {
+					if (fileResource instanceof IFile) {
+						files.add(fileResource);
 					}
 				}
 			}

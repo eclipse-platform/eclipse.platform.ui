@@ -343,11 +343,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			if (delta == null) {
 				return;
 			}
-			IResourceDelta[] projectDeltas = delta.getAffectedChildren();
-			for (int i = 0; i < projectDeltas.length; i++) {
-				int kind = projectDeltas[i].getKind();
+			for (IResourceDelta projectDelta : delta.getAffectedChildren()) {
+				int kind = projectDelta.getKind();
 				//affected by projects being opened/closed or description changes
-				boolean changed = (projectDeltas[i].getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) != 0;
+				boolean changed = (projectDelta.getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) != 0;
 				if (kind != IResourceDelta.CHANGED || changed) {
 					updateBuildActions(false);
 					return;
@@ -1268,8 +1267,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * @return <code>true</code> if a welcome page was found, <code>false</code> if not
      */
     private boolean hasWelcomePage(AboutInfo[] infos) {
-        for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getWelcomePageURL() != null) {
+        for (AboutInfo info : infos) {
+            if (info.getWelcomePageURL() != null) {
             	return true;
             }
         }
@@ -1283,8 +1282,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * @return <code>true</code> if tips and tricks were found, <code>false</code> if not
      */
     private boolean hasTipsAndTricks(AboutInfo[] infos) {
-        for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getTipsAndTricksHref() != null) {
+        for (AboutInfo info : infos) {
+            if (info.getTipsAndTricksHref() != null) {
             	return true;
             }
         }

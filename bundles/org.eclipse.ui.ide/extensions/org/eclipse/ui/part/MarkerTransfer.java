@@ -132,8 +132,8 @@ public class MarkerTransfer extends ByteArrayTransfer {
             out.writeInt(markers.length);
 
             /* write markers */
-            for (int i = 0; i < markers.length; i++) {
-                writeMarker((IMarker) markers[i], out);
+            for (Object marker : markers) {
+                writeMarker((IMarker) marker, out);
             }
             out.close();
             bytes = byteOut.toByteArray();

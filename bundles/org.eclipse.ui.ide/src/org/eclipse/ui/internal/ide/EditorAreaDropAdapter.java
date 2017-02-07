@@ -34,6 +34,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.EditorInputTransfer.EditorInputData;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -92,32 +93,27 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
             /* event.data is an array of EditorInputData, which contains an IEditorInput and
              * the corresponding editorId */
             Assert.isTrue(event.data instanceof EditorInputTransfer.EditorInputData[]);
-            EditorInputTransfer.EditorInputData[] editorInputs = (EditorInputTransfer.EditorInputData []) event.data;
-            for (int i = 0; i < editorInputs.length; i++) {
-                IEditorInput editorInput = editorInputs[i].input;
-                String editorId = editorInputs[i].editorId;
+			for (EditorInputData editorInputData : (EditorInputTransfer.EditorInputData[]) event.data) {
+                IEditorInput editorInput = editorInputData.input;
+                String editorId = editorInputData.editorId;
                 openNonExternalEditor(page, editorInput, editorId);
             }
         }
 
         /* Open Editor for Marker (e.g. Tasks, Bookmarks, etc) */
-        else if (MarkerTransfer.getInstance().isSupportedType(
-                event.currentDataType)) {
+		else if (MarkerTransfer.getInstance().isSupportedType(event.currentDataType)) {
             Assert.isTrue(event.data instanceof IMarker[]);
-            IMarker[] markers = (IMarker[]) event.data;
-            for (int i = 0; i < markers.length; i++) {
-                openNonExternalEditor(page, markers[i]);
+			for (IMarker marker : (IMarker[]) event.data) {
+                openNonExternalEditor(page, marker);
             }
         }
 
         /* Open Editor for resource */
-        else if (ResourceTransfer.getInstance().isSupportedType(
-                event.currentDataType)) {
+		else if (ResourceTransfer.getInstance().isSupportedType(event.currentDataType)) {
             Assert.isTrue(event.data instanceof IResource[]);
-            IResource[] files = (IResource[]) event.data;
-            for (int i = 0; i < files.length; i++) {
-                if (files[i] instanceof IFile) {
-                    IFile file = (IFile) files[i];
+			for (IResource resource : (IResource[]) event.data) {
+				if (resource instanceof IFile) {
+					IFile file = (IFile) resource;
 
                     if (!file.isPhantom())
                     	openNonExternalEditor(page, file);
@@ -129,9 +125,8 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
         else if (FileTransfer.getInstance().isSupportedType(
                 event.currentDataType)) {
             Assert.isTrue(event.data instanceof String[]);
-            String[] paths = (String[]) event.data;
-            for (int i = 0; i < paths.length; i++) {
-            	IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(paths[i]));
+			for (String path : (String[]) event.data) {
+            	IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(path));
             	try {
 					IDE.openEditorOnFileStore(page, fileStore);
 				} catch (PartInitException e) {

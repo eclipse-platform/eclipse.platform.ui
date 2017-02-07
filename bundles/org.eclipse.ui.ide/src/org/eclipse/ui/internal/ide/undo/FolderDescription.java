@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
 
 /**
  * FolderDescription is a lightweight description that describes a folder to be
@@ -84,8 +85,8 @@ public class FolderDescription extends ContainerDescription {
 		subMonitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
 		if (filters != null) {
 			SubMonitor loopMonitor = subMonitor.split(100).setWorkRemaining(filters.length);
-			for (int i = 0; i < filters.length; i++) {
-				folderHandle.createFilter(filters[i].getType(), filters[i].getFileInfoMatcherDescription(), 0,
+			for (UIResourceFilterDescription filter : filters) {
+				folderHandle.createFilter(filter.getType(), filter.getFileInfoMatcherDescription(), 0,
 						loopMonitor.split(1));
 			}
 		}

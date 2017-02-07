@@ -365,8 +365,8 @@ public class WizardArchiveFileResourceExportPage1 extends
 
             // destination
             setDestinationValue(directoryNames[0]);
-            for (int i = 0; i < directoryNames.length; i++) {
-				addDestinationItem(directoryNames[i]);
+            for (String directoryName : directoryNames) {
+				addDestinationItem(directoryName);
 			}
 
             boolean setStructure = settings

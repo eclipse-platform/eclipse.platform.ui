@@ -187,9 +187,9 @@ public class FileDescription extends AbstractResourceDescription {
 	 * the most recent copy of the file state is used.
 	 */
 	private IFileState getMatchingFileState(IFileState[] states) {
-		for (int i = 0; i < states.length; i++) {
-			if (localTimeStamp == states[i].getModificationTime()) {
-				return states[i];
+		for (IFileState state : states) {
+			if (localTimeStamp == state.getModificationTime()) {
+				return state;
 			}
 		}
 		return states[0];

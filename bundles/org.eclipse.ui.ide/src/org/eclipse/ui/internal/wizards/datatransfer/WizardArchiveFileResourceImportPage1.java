@@ -449,8 +449,8 @@ public class WizardArchiveFileResourceImportPage1 extends
 			}
 
             // set filenames history
-            for (int i = 0; i < sourceNames.length; i++) {
-				sourceNameField.add(sourceNames[i]);
+            for (String sourceName : sourceNames) {
+				sourceNameField.add(sourceName);
 			}
 
             // radio buttons and checkboxes

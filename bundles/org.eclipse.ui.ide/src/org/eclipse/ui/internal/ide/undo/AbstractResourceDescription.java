@@ -112,9 +112,9 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 			resource.setResourceAttributes(resourceAttributes);
 		}
 		if (markerDescriptions != null) {
-			for (int i = 0; i < markerDescriptions.length; i++) {
-				if (markerDescriptions[i].resource.exists())
-					markerDescriptions[i].createMarker();
+			for (MarkerDescription markerDescription : markerDescriptions) {
+				if (markerDescription.resource.exists())
+					markerDescription.createMarker();
 			}
 		}
 	}

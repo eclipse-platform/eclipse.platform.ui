@@ -144,8 +144,8 @@ public class MarkerQuery {
 			hashCode = hashCode * 37 + type.hashCode();
 		}
 
-        for (int i = 0; i < attributes.length; i++) {
-            hashCode = hashCode * 37 + attributes[i].hashCode();
+        for (String attribute : attributes) {
+            hashCode = hashCode * 37 + attribute.hashCode();
         }
     }
 
