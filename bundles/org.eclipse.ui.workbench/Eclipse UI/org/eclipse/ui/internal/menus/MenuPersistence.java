@@ -114,17 +114,13 @@ final public class MenuPersistence extends RegistryPersistence {
 	private void readAdditions() {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ArrayList<IConfigurationElement> configElements = new ArrayList<>();
-
-		final IConfigurationElement[] menusExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_MENUS);
-
 		// Create a cache entry for every menu addition;
-		for (int i = 0; i < menusExtensionPoint.length; i++) {
-			if (PL_MENU_CONTRIBUTION.equals(menusExtensionPoint[i].getName())) {
+		for (IConfigurationElement configElement : registry.getConfigurationElementsFor(EXTENSION_MENUS)) {
+			if (PL_MENU_CONTRIBUTION.equals(configElement.getName())) {
 				if (contributorFilter == null
 						|| contributorFilter.matcher(
-								menusExtensionPoint[i].getContributor().getName()).matches()) {
-					configElements.add(menusExtensionPoint[i]);
+								configElement.getContributor().getName()).matches()) {
+					configElements.add(configElement);
 				}
 			}
 		}

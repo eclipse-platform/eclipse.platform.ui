@@ -76,10 +76,8 @@ public final class PropertyListenerList {
             Collection result = Collections.EMPTY_SET;
             HashSet union = null;
 
-            for (int i = 0; i < propertyIds.length; i++) {
-                String property = propertyIds[i];
-
-    	        List existingListeners = (List)listeners.get(property);
+            for (String property : propertyIds) {
+                List existingListeners = (List)listeners.get(property);
 
     	        if (existingListeners != null) {
     	            if (result == Collections.EMPTY_SET) {
@@ -138,9 +136,7 @@ public final class PropertyListenerList {
     }
 
     public void add(String[] propertyIds, IPropertyMapListener newListener) {
-        for (int i = 0; i < propertyIds.length; i++) {
-            String id = propertyIds[i];
-
+        for (String id : propertyIds) {
             addInternal(id, newListener);
         }
         newListener.listenerAttached();

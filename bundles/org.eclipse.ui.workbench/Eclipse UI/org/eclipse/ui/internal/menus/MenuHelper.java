@@ -418,9 +418,9 @@ public class MenuHelper {
 		HashMap<String, String> map = new HashMap<>();
 		IConfigurationElement[] parameters = element
 				.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
-		for (int i = 0; i < parameters.length; i++) {
-			String name = parameters[i].getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-			String value = parameters[i].getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
+		for (IConfigurationElement parameter : parameters) {
+			String name = parameter.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+			String value = parameter.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
 			if (name != null && value != null) {
 				map.put(name, value);
 			}

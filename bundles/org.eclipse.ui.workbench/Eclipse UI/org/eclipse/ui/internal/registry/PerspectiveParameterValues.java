@@ -31,8 +31,7 @@ public final class PerspectiveParameterValues implements IParameterValues {
 
 		final IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench()
 				.getPerspectiveRegistry().getPerspectives();
-		for (int i = 0; i < perspectives.length; i++) {
-			final IPerspectiveDescriptor perspective = perspectives[i];
+		for (final IPerspectiveDescriptor perspective : perspectives) {
 			values.put(perspective.getLabel(), perspective.getId());
 		}
 

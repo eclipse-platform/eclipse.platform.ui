@@ -99,8 +99,8 @@ public class QuickAccessDialog extends PopupDialog {
 							new WizardProvider(), new PreferenceProvider(),
 							new PropertiesProvider() };
 					providerMap = new HashMap();
-					for (int i = 0; i < providers.length; i++) {
-						providerMap.put(providers[i].getId(), providers[i]);
+					for (QuickAccessProvider provider : providers) {
+						providerMap.put(provider.getId(), provider);
 					}
 					QuickAccessDialog.this.contents = new QuickAccessContents(providers) {
 						@Override
@@ -282,8 +282,8 @@ public class QuickAccessDialog extends PopupDialog {
 					TriggerSequence[] sequences = getInvokingCommandKeySequences();
 					if (sequences == null)
 						return;
-					for (int i = 0; i < sequences.length; i++) {
-						if (sequences[i].equals(keySequence)) {
+					for (TriggerSequence sequence : sequences) {
+						if (sequence.equals(keySequence)) {
 							e.doit = false;
 							contents.setShowAllMatches(!contents.getShowAllMatches());
 							return;

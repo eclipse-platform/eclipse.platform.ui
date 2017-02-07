@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,9 +87,7 @@ final class ContributionRoot implements
 	 * Unregister all visible when expressions from the menu service.
 	 */
 	public void release() {
-		for (Iterator<IContributionItem> itemIter = itemsToExpressions.keySet().iterator(); itemIter
-				.hasNext();) {
-			IContributionItem item = itemIter.next();
+		for (IContributionItem item : itemsToExpressions.keySet()) {
 			// menuService.unregisterVisibleWhen(item, restriction);
 			item.dispose();
 		}

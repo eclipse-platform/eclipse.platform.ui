@@ -57,9 +57,8 @@ public class ActionProvider extends QuickAccessProvider {
 				collectContributions(menu, result);
 				ActionContributionItem[] actions = (ActionContributionItem[]) result
 						.toArray(new ActionContributionItem[result.size()]);
-				for (int i = 0; i < actions.length; i++) {
-					ActionElement actionElement = new ActionElement(actions[i],
-							this);
+				for (ActionContributionItem action : actions) {
+					ActionElement actionElement = new ActionElement(action, this);
 					idToElement.put(actionElement.getId(), actionElement);
 				}
 			}
@@ -69,9 +68,7 @@ public class ActionProvider extends QuickAccessProvider {
 	}
 
 	private void collectContributions(MenuManager menu, Set result) {
-		IContributionItem[] items = menu.getItems();
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
+		for (IContributionItem item : menu.getItems()) {
 			if (item instanceof SubContributionItem) {
 				item = ((SubContributionItem) item).getInnerItem();
 			}

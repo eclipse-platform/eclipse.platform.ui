@@ -113,8 +113,8 @@ public class LayoutCache {
      * Flushes the cache.
      */
     public void flush() {
-        for (int idx = 0; idx < caches.length; idx++) {
-            caches[idx].flush();
+        for (SizeCache cache : caches) {
+            cache.flush();
         }
     }
 }

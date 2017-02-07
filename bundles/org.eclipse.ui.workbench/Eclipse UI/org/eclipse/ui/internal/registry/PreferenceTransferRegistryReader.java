@@ -149,29 +149,24 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	 *         <code>null</code> for all nodes
 	 */
 	public static Map getEntry(IConfigurationElement element) {
-		IConfigurationElement[] entries = element
-				.getChildren(IWorkbenchRegistryConstants.TAG_ENTRY);
+		IConfigurationElement[] entries = element.getChildren(IWorkbenchRegistryConstants.TAG_ENTRY);
 		if (entries.length == 0) {
 			return null;
 		}
 		Map map = new HashMap(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			IConfigurationElement entry = entries[i];
-			IConfigurationElement[] keys = entry
-					.getChildren(IWorkbenchRegistryConstants.ATT_KEY);
+		for (IConfigurationElement entry : entries) {
+			IConfigurationElement[] keys = entry.getChildren(IWorkbenchRegistryConstants.ATT_KEY);
 			PreferenceFilterEntry[] prefFilters = null;
 			if (keys.length > 0) {
 				prefFilters = new PreferenceFilterEntry[keys.length];
 				for (int j = 0; j < keys.length; j++) {
 					IConfigurationElement keyElement = keys[j];
-					prefFilters[j] = new PreferenceFilterEntry(keyElement
-									.getAttribute(IWorkbenchRegistryConstants.ATT_NAME),
-							keyElement
-									.getAttribute(IWorkbenchRegistryConstants.ATT_MATCH_TYPE));
+					prefFilters[j] = new PreferenceFilterEntry(
+							keyElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME),
+							keyElement.getAttribute(IWorkbenchRegistryConstants.ATT_MATCH_TYPE));
 				}
 			}
-			map.put(entry.getAttribute(IWorkbenchRegistryConstants.ATT_NODE),
-					prefFilters);
+			map.put(entry.getAttribute(IWorkbenchRegistryConstants.ATT_NODE), prefFilters);
 		}
 		return map;
 	}
