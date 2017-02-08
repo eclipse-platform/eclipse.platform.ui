@@ -84,6 +84,8 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 	private boolean alreadyDisposed = false;
 
+	private boolean focusDelegatingInProgress;
+
 	/**
 	 * This handler will be notified when the part's widget has been un/set.
 	 */
@@ -198,6 +200,13 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 	@Focus
 	void delegateSetFocus() {
+		if (focusDelegatingInProgress) {
+			if (logger != null && logger.isDebugEnabled()) {
+				logger.debug("Ignored attempt to set focus during set focus for: " + this); //$NON-NLS-1$
+			}
+			return;
+		}
+		focusDelegatingInProgress = true;
 		try {
 			// first involve @Focus if present
 			if (part.getTags().contains(IWorkbenchConstants.TAG_USE_DEPENDENCY_INJECTION)) {
@@ -211,6 +220,8 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 				msg += ' ' + part.getLocalizedLabel();
 				logger.error(e, msg);
 			}
+		} finally {
+			focusDelegatingInProgress = false;
 		}
 	}
 

@@ -1084,7 +1084,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 				}
 
 				// If the user clicks on the tab or empty stack space, call
-				// setFocus()
+				// setFocus() to transfer it from the tabfolder to the client widget
 				if (e.button == 1) {
 					if (item == null) {
 						Rectangle clientArea = tabFolder.getClientArea();
@@ -1093,8 +1093,11 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 							item = tabFolder.getSelection();
 						}
 					}
-
-					if (item != null) {
+					
+					// but only transfer focus if we have it.
+					// If we don't own it, the widget has already the focus
+					// so don't set it second time
+					if (item != null && tabFolder.isFocusControl()) {
 						MUIElement ele = (MUIElement) item.getData(OWNING_ME);
 						if (ele.getParent().getSelectedElement() == ele) {
 							Control ctrl = (Control) ele.getWidget();
