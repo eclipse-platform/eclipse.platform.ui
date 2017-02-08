@@ -916,7 +916,6 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			if (VerticalRuler.AVOID_NEW_GC) {
 				fCanvas.redraw();
-				fCanvas.update();
 			} else {
 				GC gc= new GC(fCanvas);
 				doubleBufferPaint(gc);

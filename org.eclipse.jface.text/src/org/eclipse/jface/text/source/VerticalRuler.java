@@ -471,7 +471,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			if (AVOID_NEW_GC) {
 				fCanvas.redraw();
-				fCanvas.update();
 			} else {
 				GC gc= new GC(fCanvas);
 				doubleBufferPaint(gc);
