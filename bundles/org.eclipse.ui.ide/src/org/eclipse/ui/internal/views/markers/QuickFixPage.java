@@ -191,7 +191,7 @@ public class QuickFixPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(true);
-				setPageComplete(!resolutionsList.getSelection().isEmpty());
+				setPageComplete(!resolutionsList.getStructuredSelection().isEmpty());
 			}
 		});
 

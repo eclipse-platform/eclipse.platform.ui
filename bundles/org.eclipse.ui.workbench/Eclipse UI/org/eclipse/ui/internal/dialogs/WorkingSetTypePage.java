@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -166,13 +165,13 @@ public class WorkingSetTypePage extends WizardPage {
      * @since 3.4
 	 */
 	private WorkingSetDescriptor getSelectedWorkingSet() {
-		ISelection selection = typesListViewer.getSelection();
+		IStructuredSelection selection = typesListViewer.getStructuredSelection();
         boolean hasSelection = selection != null
                 && selection.isEmpty() == false;
 
         WorkingSetDescriptor descriptor = null;
-        if (hasSelection && selection instanceof IStructuredSelection) {
-            descriptor = (WorkingSetDescriptor) ((IStructuredSelection) selection)
+		if (hasSelection && selection != null) {
+            descriptor = (WorkingSetDescriptor) selection
                     .getFirstElement();
         }
 		return descriptor;
@@ -190,7 +189,7 @@ public class WorkingSetTypePage extends WizardPage {
      * Called when the selection has changed.
      */
     private void handleSelectionChanged() {
-        ISelection selection = typesListViewer.getSelection();
+		IStructuredSelection selection = typesListViewer.getStructuredSelection();
         boolean hasSelection = selection != null
                 && selection.isEmpty() == false;
 

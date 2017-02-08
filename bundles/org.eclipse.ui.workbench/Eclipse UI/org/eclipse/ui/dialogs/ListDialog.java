@@ -11,7 +11,6 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.List;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -142,8 +141,7 @@ public class ListDialog extends SelectionDialog {
     @Override
 	protected void okPressed() {
         // Build a list of selected children.
-        IStructuredSelection selection = (IStructuredSelection) fTableViewer
-                .getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
         setResult(selection.toList());
         super.okPressed();
     }

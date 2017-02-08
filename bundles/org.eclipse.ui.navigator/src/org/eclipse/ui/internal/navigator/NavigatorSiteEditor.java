@@ -161,7 +161,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 	 */
 	@Override
 	public void edit(Runnable runnable) {
-		IStructuredSelection selection = (IStructuredSelection) commonViewer.getSelection();
+		IStructuredSelection selection = commonViewer.getStructuredSelection();
 
 		if (selection.size() != 1) {
 			return;

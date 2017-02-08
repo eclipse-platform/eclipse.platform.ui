@@ -185,7 +185,7 @@ public class Snippet070GenericSelectionDialog {
 		protected Control createButtonBar(Composite parent) {
 			Control buttonSection = super.createButtonBar(parent);
 			// disable ok button if the selection is empty
-			getButton(IDialogConstants.OK_ID).setEnabled(!listViewer.getSelection().isEmpty());
+			getButton(IDialogConstants.OK_ID).setEnabled(!listViewer.getStructuredSelection().isEmpty());
 
 			return buttonSection;
 		}

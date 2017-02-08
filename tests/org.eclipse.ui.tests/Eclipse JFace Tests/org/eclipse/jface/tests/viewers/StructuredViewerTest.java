@@ -134,7 +134,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         StructuredSelection selection = new StructuredSelection(first);
         fViewer.setSelection(selection);
         fViewer.setSelection(new StructuredSelection());
-        ISelection result = fViewer.getSelection();
+		ISelection result = fViewer.getStructuredSelection();
         assertTrue(result.isEmpty());
     }
 

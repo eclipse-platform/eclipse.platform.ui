@@ -24,7 +24,6 @@ import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 
@@ -80,8 +79,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		assertArrayEquals(lodgingStrings, combo.getItems());
 
 		// Verify that the combo has no selected item
-		assertEquals(null, ((IStructuredSelection) comboViewer.getSelection())
-				.getFirstElement());
+		assertEquals(null, comboViewer.getStructuredSelection().getFirstElement());
 
 		// Now bind the selection of the combo to the "defaultLodging" property
 		// of an adventure
@@ -92,24 +90,20 @@ public class ComboViewerScenario extends ScenariosTestCase {
 				BeansObservables.observeValue(adventure, "defaultLodging"));
 
 		// Verify that the combo selection is the default lodging
-		assertEquals(((IStructuredSelection) comboViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(comboViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 		// Change the model and verify that the combo selection changes
 		adventure.setDefaultLodging(SampleData.CAMP_GROUND);
 		assertEquals(adventure.getDefaultLodging(), SampleData.CAMP_GROUND);
-		assertEquals(((IStructuredSelection) comboViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(comboViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 		// Change the combo selection and verify that the model changes
 		comboViewer.getCombo().select(3);
-		assertEquals(((IStructuredSelection) comboViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(comboViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 		adventure.setDefaultLodging(SampleData.YOUTH_HOSTEL);
 		spinEventLoop(0);
-		assertEquals(((IStructuredSelection) comboViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(comboViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 	}
 
 }

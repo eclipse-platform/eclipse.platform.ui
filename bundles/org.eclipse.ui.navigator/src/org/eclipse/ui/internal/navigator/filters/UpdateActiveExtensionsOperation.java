@@ -83,7 +83,7 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 		try {
 			commonViewer.getControl().setRedraw(false);
 
-			ISelection selection = commonViewer.getSelection();
+			ISelection selection = commonViewer.getStructuredSelection();
 			if(selection instanceof IStructuredSelection)
 				ssel = (IStructuredSelection) selection;
 

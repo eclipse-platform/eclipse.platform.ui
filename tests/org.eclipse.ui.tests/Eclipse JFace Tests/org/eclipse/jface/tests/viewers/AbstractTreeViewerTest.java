@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -38,12 +37,10 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
 	@Override
 	protected void assertSelectionEquals(String message, TestElement expected) {
-	    ISelection selection = fViewer.getSelection();
-	    assertTrue(selection instanceof IStructuredSelection);
-	    List expectedList = new ArrayList();
-	    expectedList.add(expected);
-	    IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-	    assertEquals("selectionEquals - " + message, expectedList, (structuredSelection).toList());
+		IStructuredSelection selection = fViewer.getStructuredSelection();
+		List expectedList = new ArrayList();
+		expectedList.add(expected);
+		assertEquals("selectionEquals - " + message, expectedList, selection.toList());
 	}
 
     protected abstract int getItemCount(TestElement element); //was IElement

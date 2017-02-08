@@ -466,7 +466,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				removeFilters(configsTable.getSelection());
+				removeFilters(configsTable.getStructuredSelection());
 			}
 		});
 		removeButton.setEnabled(false);

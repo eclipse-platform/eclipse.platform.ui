@@ -334,10 +334,9 @@ public class UndoHistoryView extends ViewPart implements
 		manager.add(filterAction);
 		manager.add(refreshListAction);
 
-		ISelection selection = viewer.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
-			IUndoableOperation operation = (IUndoableOperation) ((IStructuredSelection) selection)
-					.getFirstElement();
+			IUndoableOperation operation = (IUndoableOperation) selection.getFirstElement();
 			selectiveUndoAction.setEnabled(operation.canUndo());
 		} else {
 			selectiveUndoAction.setEnabled(false);
@@ -369,9 +368,7 @@ public class UndoHistoryView extends ViewPart implements
 		selectiveUndoAction = new Action() {
 			@Override
 			public void run() {
-				ISelection selection = viewer.getSelection();
-				IUndoableOperation operation = (IUndoableOperation) ((IStructuredSelection) selection)
-						.getFirstElement();
+				IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
 				if (operation.canUndo()) {
 					try {
 						history.undoOperation(operation, null, undoAction);
@@ -403,9 +400,7 @@ public class UndoHistoryView extends ViewPart implements
 		doubleClickAction = new Action() {
 			@Override
 			public void run() {
-				ISelection selection = viewer.getSelection();
-				IUndoableOperation operation = (IUndoableOperation) ((IStructuredSelection) selection)
-						.getFirstElement();
+				IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
 				StringBuffer buf = new StringBuffer(operation.getLabel());
 				buf.append("\n");
 				buf.append("Enabled=");	//$NON-NLS-1$
@@ -443,7 +438,7 @@ public class UndoHistoryView extends ViewPart implements
 	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection selection = viewer.getSelection();
+		ISelection selection = viewer.getStructuredSelection();
 		boolean enabled = !selection.isEmpty();
 		selectiveUndoAction.setEnabled(enabled);
 	}

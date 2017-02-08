@@ -72,6 +72,6 @@ class RemoveTaskAction extends TaskAction {
         	table.setSelection(count - 1);
         }
         // update the viewer's selection, since setting the table selection does not notify the viewer
-        viewer.setSelection(viewer.getSelection(), true);
+		viewer.setSelection(viewer.getStructuredSelection(), true);
     }
 }

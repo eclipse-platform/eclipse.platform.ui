@@ -23,7 +23,6 @@ import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
@@ -80,8 +79,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 		assertArrayEquals(lodgingStrings, list.getItems());
 
 		// Verify that the list has no selected item
-		assertEquals(null, ((IStructuredSelection) listViewer.getSelection())
-				.getFirstElement());
+		assertEquals(null, listViewer.getStructuredSelection().getFirstElement());
 
 		// Now bind the selection of the combo to the "defaultLodging" property
 		// of an adventure
@@ -93,24 +91,20 @@ public class ListViewerScenario extends ScenariosTestCase {
 				BeansObservables.observeValue(adventure, "defaultLodging"));
 
 		// Verify that the list selection is the default lodging
-		assertEquals(((IStructuredSelection) listViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(listViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 		// Change the model and verify that the list selection changes
 		adventure.setDefaultLodging(SampleData.CAMP_GROUND);
 		assertEquals(adventure.getDefaultLodging(), SampleData.CAMP_GROUND);
-		assertEquals(((IStructuredSelection) listViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(listViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 		// Change the list selection and verify that the model changes
 		listViewer.getList().select(3);
-		assertEquals(((IStructuredSelection) listViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(listViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 		adventure.setDefaultLodging(SampleData.YOUTH_HOSTEL);
 		spinEventLoop(0);
-		assertEquals(((IStructuredSelection) listViewer.getSelection())
-				.getFirstElement(), adventure.getDefaultLodging());
+		assertEquals(listViewer.getStructuredSelection().getFirstElement(), adventure.getDefaultLodging());
 
 	}
 }

@@ -18,19 +18,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for SelectionProviderMultiSelectionObservableList.
@@ -144,7 +143,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		assertDiff(listener.event.diff, Collections.EMPTY_LIST, Collections
 				.singletonList(model[1]));
 		assertEquals(observable, listener.event.getObservableList());
-		assertEquals(1, ((IStructuredSelection) viewer.getSelection()).size());
+		assertEquals(1, viewer.getStructuredSelection().size());
 
 		observable.add(0, model[2]);
 		assertEquals(6, listener.count);
@@ -156,7 +155,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		assertDiff(listener.event.diff, Collections.singletonList(model[1]),
 				Arrays.asList(new Object[] { model[1], model[2] }));
 		assertEquals(observable, listener.event.getObservableList());
-		assertEquals(2, ((IStructuredSelection) viewer.getSelection()).size());
+		assertEquals(2, viewer.getStructuredSelection().size());
 
 		observable.clear();
 		assertEquals(7, listener.count);
@@ -164,7 +163,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		assertDiff(listener.event.diff, Arrays.asList(new Object[] { model[1],
 				model[2] }), Collections.EMPTY_LIST);
 		assertEquals(observable, listener.event.getObservableList());
-		assertEquals(0, ((IStructuredSelection) viewer.getSelection()).size());
+		assertEquals(0, viewer.getStructuredSelection().size());
 	}
 
 	private void assertDiff(ListDiff diff, List oldList, List newList) {

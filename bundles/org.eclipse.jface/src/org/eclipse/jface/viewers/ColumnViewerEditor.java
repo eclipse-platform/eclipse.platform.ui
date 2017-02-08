@@ -447,7 +447,7 @@ public abstract class ColumnViewerEditor {
 	void handleDoubleClickEvent() {
 		viewer.fireDoubleClick(new DoubleClickEvent(viewer, viewer
 				.getSelection()));
-		viewer.fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+		viewer.fireOpen(new OpenEvent(viewer, viewer.getStructuredSelection()));
 	}
 
 	/**

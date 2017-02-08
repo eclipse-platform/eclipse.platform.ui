@@ -72,7 +72,7 @@ public class ComboViewerComparerTest extends TestCase {
 		// Select equal element with different identity
 		TestElement aElement = new TestElement("a");
 		viewer.setSelection(new StructuredSelection(aElement));
-		StructuredSelection sel = ((StructuredSelection) viewer.getSelection());
+		StructuredSelection sel = ((StructuredSelection) viewer.getStructuredSelection());
 		assertEquals(false, sel.isEmpty());
 		TestElement selectedElement = (TestElement) sel.getFirstElement();
 		assertEquals(aElement.getName(), selectedElement.getName());

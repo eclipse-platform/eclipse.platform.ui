@@ -14,13 +14,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -65,7 +63,7 @@ public class LinkEditorAction extends Action implements
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
 			if (!commonViewer.getControl().isDisposed()) {
-				ISelection selection = commonViewer.getSelection();
+				ISelection selection = commonViewer.getStructuredSelection();
 				if (selection != null && !selection.isEmpty()
 						&& selection instanceof IStructuredSelection) {
 
@@ -221,7 +219,7 @@ public class LinkEditorAction extends Action implements
 	 * Update the active editor based on the current selection in the Navigator.
 	 */
 	protected void activateEditor() {
-		ISelection selection = commonViewer.getSelection();
+		ISelection selection = commonViewer.getStructuredSelection();
 		if (selection != null && !selection.isEmpty()
 				&& selection instanceof IStructuredSelection) {
 			/*

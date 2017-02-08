@@ -513,14 +513,12 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	}
 
 	protected Spec[] getSelectedSpecs() {
-		List list = ((IStructuredSelection) fileAssociationViewer
-				.getSelection()).toList();
-		return (Spec[]) list.toArray(new Spec[list.size()]);
+		List<Spec> list = fileAssociationViewer.getStructuredSelection().toList();
+		return list.toArray(new Spec[list.size()]);
 	}
 
 	protected IContentType getSelectedContentType() {
-		return (IContentType) ((IStructuredSelection) contentTypesViewer
-				.getSelection()).getFirstElement();
+		return (IContentType) contentTypesViewer.getStructuredSelection().getFirstElement();
 	}
 
 	/**

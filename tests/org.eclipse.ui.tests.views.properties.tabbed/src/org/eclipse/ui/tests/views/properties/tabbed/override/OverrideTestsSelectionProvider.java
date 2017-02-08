@@ -48,8 +48,7 @@ public class OverrideTestsSelectionProvider implements ISelectionProvider {
 
 	@Override
 	public ISelection getSelection() {
-		ISelection selection = viewer.getSelection();
-		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		IStructuredSelection structuredSelection = viewer.getStructuredSelection();
 		if (structuredSelection.isEmpty()) {
 			return new OverrideTestsSelection(null);
 		}

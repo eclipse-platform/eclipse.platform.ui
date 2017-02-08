@@ -29,7 +29,6 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -976,13 +975,9 @@ public class InternalDialog extends TrayDialog {
 	 * @return StatusAdapter or <code>null</code>.
 	 */
 	private StatusAdapter getSingleSelection() {
-		ISelection rawSelection = statusListViewer.getSelection();
-		if (rawSelection != null
-				&& rawSelection instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) rawSelection;
-			if (selection.size() == 1) {
-				return (StatusAdapter) selection.getFirstElement();
-			}
+		IStructuredSelection selection = statusListViewer.getStructuredSelection();
+		if (selection != null && selection.size() == 1) {
+			return (StatusAdapter) selection.getFirstElement();
 		}
 		return null;
 	}

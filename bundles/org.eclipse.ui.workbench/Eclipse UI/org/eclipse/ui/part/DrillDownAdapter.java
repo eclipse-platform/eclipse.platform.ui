@@ -12,7 +12,6 @@ package org.eclipse.ui.part;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -133,8 +132,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
      * @return <code>true</code> if "go into" is possible; <code>false</code> otherwise
      */
     public boolean canGoInto() {
-        IStructuredSelection oSelection = (IStructuredSelection) fChildTree
-                .getSelection();
+		IStructuredSelection oSelection = fChildTree.getStructuredSelection();
         if (oSelection == null || oSelection.size() != 1) {
 			return false;
 		}
@@ -276,8 +274,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
      * </p>
      */
     public void goInto() {
-        IStructuredSelection sel = (IStructuredSelection) fChildTree
-                .getSelection();
+		IStructuredSelection sel = fChildTree.getStructuredSelection();
         Object element = sel.getFirstElement();
         goInto(element);
     }

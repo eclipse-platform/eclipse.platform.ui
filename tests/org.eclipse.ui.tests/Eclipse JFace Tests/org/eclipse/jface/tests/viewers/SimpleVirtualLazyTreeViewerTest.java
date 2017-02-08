@@ -12,7 +12,6 @@
 package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -212,8 +211,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		assertEquals(NUM_ROOTS - 1, treeViewer.getTree().getItemCount());
 		treeViewer.setSelection(new StructuredSelection(new Object[] { "R-0",
 				"R-1" }));
-		assertEquals(2,
-				((IStructuredSelection) treeViewer.getSelection()).size());
+		assertEquals(2, treeViewer.getStructuredSelection().size());
 		processEvents();
 		assertTrue("expected less than " + (NUM_ROOTS / 2) + " but got "
 				+ updateElementCallCount,
@@ -225,8 +223,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		treeViewer.remove(treeViewer.getInput(), 1);
 		assertEquals(NUM_ROOTS - 2, treeViewer.getTree().getItemCount());
 		processEvents();
-		assertEquals(1,
-				((IStructuredSelection) treeViewer.getSelection()).size());
+		assertEquals(1, treeViewer.getStructuredSelection().size());
 		assertEquals(1, updateElementCallCount);
 		// printCallbacks = false;
 	}

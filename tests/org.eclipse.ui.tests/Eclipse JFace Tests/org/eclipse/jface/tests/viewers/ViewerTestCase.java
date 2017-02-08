@@ -18,7 +18,6 @@ import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -49,11 +48,9 @@ public abstract class ViewerTestCase extends TestCase {
 	}
 
 	protected void assertSelectionEquals(String message, TestElement expected) {
-	    ISelection selection = fViewer.getSelection();
-	    assertTrue(selection instanceof IStructuredSelection);
-	    IStructuredSelection expectedSelection = new StructuredSelection(
-	            expected);
-	    assertEquals("selectionEquals - " + message, selection, expectedSelection);
+		IStructuredSelection structuredSelection = fViewer.getStructuredSelection();
+		IStructuredSelection expectedSelection = new StructuredSelection(expected);
+		assertEquals("selectionEquals - " + message, structuredSelection, expectedSelection);
 	}
 
 	protected abstract StructuredViewer createViewer(Composite parent);

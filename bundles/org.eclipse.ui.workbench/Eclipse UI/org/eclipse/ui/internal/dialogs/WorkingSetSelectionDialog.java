@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -215,8 +214,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
         listViewer.addSelectionChangedListener(event -> handleSelectionChanged());
         listViewer.addDoubleClickListener(event -> {
-			Object obj = ((IStructuredSelection) listViewer.getSelection())
-					.getFirstElement();
+			Object obj = listViewer.getStructuredSelection().getFirstElement();
 			listViewer.setCheckedElements(new Object[] {obj});
 			buttonWindowSet.setSelection(false);
 			buttonNoSet.setSelection(false);
@@ -300,9 +298,9 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      */
     @Override
 	protected List getSelectedWorkingSets() {
-        ISelection selection = listViewer.getSelection();
-        if (selection instanceof IStructuredSelection) {
-			return ((IStructuredSelection) selection).toList();
+		IStructuredSelection selection = listViewer.getStructuredSelection();
+		if (selection != null) {
+			return selection.toList();
 		}
         return null;
     }

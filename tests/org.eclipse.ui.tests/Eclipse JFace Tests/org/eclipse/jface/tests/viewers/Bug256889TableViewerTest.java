@@ -152,7 +152,7 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 
 	public void testBug256889() {
 		table.selectAll();
-		tableViewer.getSelection();
+		tableViewer.getStructuredSelection();
 
 	}
 

@@ -188,7 +188,7 @@ public abstract class WorkbenchWizardListSelectionPage extends
      * that they will persist into the next invocation of this wizard page
      */
     public void saveWidgetValues() {
-        IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection sel = viewer.getStructuredSelection();
         if (sel.size() > 0) {
             WorkbenchWizardElement selectedWizard = (WorkbenchWizardElement) sel
                     .getFirstElement();

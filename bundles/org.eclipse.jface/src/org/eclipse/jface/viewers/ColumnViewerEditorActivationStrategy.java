@@ -44,7 +44,7 @@ public class ColumnViewerEditorActivationStrategy {
 	 */
 	protected boolean isEditorActivationEvent(
 			ColumnViewerEditorActivationEvent event) {
-		boolean singleSelect = ((IStructuredSelection)viewer.getSelection()).size() == 1;
+		boolean singleSelect = viewer.getStructuredSelection().size() == 1;
 		boolean isLeftMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
 
 		return singleSelect && (isLeftMouseSelect
