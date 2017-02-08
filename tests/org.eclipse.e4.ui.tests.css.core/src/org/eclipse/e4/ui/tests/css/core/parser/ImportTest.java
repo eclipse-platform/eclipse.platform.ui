@@ -7,10 +7,12 @@
  * Contributors:
  *   Stefan Winkler <stefan@winklerweb.net> - initial API and implementation
  *   Lars Vogel <Lars.Vogel@gmail.com> - Bug 430468
+ *   Daniel Raap <raap@subshell.com> - Bug 511836
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,9 +27,13 @@ import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.css.sac.InputSource;
+import org.w3c.dom.css.CSSRule;
+import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.ViewCSS;
 import org.w3c.dom.stylesheets.StyleSheet;
+import org.w3c.dom.stylesheets.StyleSheetList;
 
 public class ImportTest {
 
@@ -52,16 +58,15 @@ public class ImportTest {
 				+ "  }";
 
 		File importedFile = createTempCssFile(importedCss);
-		String importedFileName = importedFile.getName();
-		String importedFilePath = importedFile.getParent();
 
-		String importingCss = "@import url('" + importedFileName + "');\n" //
+		String importingCss = createImport(importedFile) //
 				+ "  .ClassBeta {\n" //
 				+ "     property: value2;\n" //
 				+ "  }";
 
 		// we need a file URL so that the import can be resolved
-		String importingUrl = "file:///" + importedFilePath + "/importing.css";
+		String importedFolderPath = importedFile.getParent();
+		String importingUrl = "file:///" + importedFolderPath + "/importing.css";
 
 		ViewCSS viewCSS = createViewCss(importingUrl, importingCss);
 
@@ -82,26 +87,70 @@ public class ImportTest {
 				.getCssText());
 	}
 
-	private File createTempCssFile(String cssString) throws Exception {
+	/**
+	 * Test for [CSS] nested imports duplicate rules
+	 */
+	@Test
+	public void testNestedImports() throws IOException {
+		String deepNestedCss = "ChildChild { property: value; }\n";
+
+		File importedFile = createTempCssFile(deepNestedCss);
+
+		String childStyle = "Child { property: value; }\n";
+		String childCss = createImport(importedFile) + childStyle;
+
+		importedFile = createTempCssFile(childCss);
+
+		String rootStyle = "Root { property: value; }\n";
+		String rootCss = createImport(importedFile) + rootStyle;
+		// we need a file URL so that the import can be resolved
+		String importedFolderPath = importedFile.getParent();
+		String importingUrl = "file:///" + importedFolderPath + "/root.css";
+
+		CSSStyleSheet result = parseStyleSheet(importingUrl, rootCss);
+
+		// check the parsing result
+		assertNotNull(result);
+		CSSRuleList cssRules = result.getCssRules();
+		assertEquals(3, cssRules.getLength());
+		assertStyle(deepNestedCss, cssRules, 0);
+		assertStyle(childStyle, cssRules, 1);
+		assertStyle(rootStyle, cssRules, 2);
+		// check the full DocumentCSS of the engine
+		StyleSheetList documentStyleSheets = engine.getDocumentCSS().getStyleSheets();
+		assertEquals(1, documentStyleSheets.getLength());
+		StyleSheet documentStyleSheet = documentStyleSheets.item(0);
+		assertEquals(result, documentStyleSheet);
+	}
+
+	private void assertStyle(String expectedStyleText, CSSRuleList cssRules, int index) {
+		assertEquals(CSSRule.STYLE_RULE, cssRules.item(index).getType());
+		assertEquals(expectedStyleText.trim(), cssRules.item(index).getCssText());
+	}
+
+	private File createTempCssFile(String cssString) throws IOException {
 		File result = File.createTempFile("e4.ui.tests-", ".css");
-		FileWriter fileWriter = new FileWriter(result);
-		try {
+		try (FileWriter fileWriter = new FileWriter(result)) {
 			fileWriter.write(cssString);
 			return result;
-		} finally {
-			try {
-				fileWriter.close();
-			} catch (IOException e) {
-			}
 		}
+	}
+
+	private String createImport(File importedFile) {
+		String cssUrl = importedFile.getName();
+		return "@import url('" + cssUrl + "');\n";
+	}
+
+	private CSSStyleSheet parseStyleSheet(String sourceUrl, String cssString) throws IOException {
+		InputSource source = new InputSource();
+		source.setURI(sourceUrl); // must not be null
+		source.setCharacterStream(new StringReader(cssString));
+		return (CSSStyleSheet) engine.parseStyleSheet(source);
 	}
 
 	private ViewCSS createViewCss(String sourceUrl, String cssString)
 			throws IOException {
-		InputSource source = new InputSource();
-		source.setURI(sourceUrl); // must not be null
-		source.setCharacterStream(new StringReader(cssString));
-		StyleSheet styleSheet = engine.parseStyleSheet(source);
+		StyleSheet styleSheet = parseStyleSheet(sourceUrl, cssString);
 
 		DocumentCSSImpl docCss = new DocumentCSSImpl();
 		docCss.addStyleSheet(styleSheet);

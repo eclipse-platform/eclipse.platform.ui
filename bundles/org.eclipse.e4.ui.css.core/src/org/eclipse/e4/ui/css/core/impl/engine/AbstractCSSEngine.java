@@ -14,6 +14,7 @@
  *     Brian de Alwis (MTI) - Performance tweaks (Bug 430829)
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 479896
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500402
+ *     Daniel Raap <raap@subshell.com> - Bug 511836
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
@@ -145,7 +146,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	private Map<Object, ICSSValueConverter> valueConverters = null;
 
-	private boolean parseImport;
+	private int parseImport;
 
 	private ResourceRegistryKeyFactory keyFactory;
 
@@ -219,9 +220,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				InputSource tempStream = new InputSource();
 				tempStream.setURI(url.toString());
 				tempStream.setByteStream(stream);
-				parseImport = true;
+				parseImport++;
 				styleSheet = (CSSStyleSheet) this.parseStyleSheet(tempStream);
-				parseImport = false;
+				parseImport--;
 				CSSRuleList tempRules = styleSheet.getCssRules();
 				for (int j = 0; j < tempRules.getLength(); j++) {
 					masterList.add(tempRules.item(j));
@@ -241,7 +242,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		// final stylesheet
 		CSSStyleSheetImpl s = new CSSStyleSheetImpl();
 		s.setRuleList(masterList);
-		if (!parseImport) {
+		if (parseImport == 0) {
 			documentCSS.addStyleSheet(s);
 		}
 		return s;
@@ -434,12 +435,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				 */
 				NodeList nodes = elt instanceof ChildVisibilityAwareElement
 						? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes() : elt.getChildNodes();
-				if (nodes != null) {
-					for (int k = 0; k < nodes.getLength(); k++) {
-						applyStyles(nodes.item(k), applyStylesToChildNodes);
-					}
-					onStylesAppliedToChildNodes(elt, nodes);
-				}
+						if (nodes != null) {
+							for (int k = 0; k < nodes.getLength(); k++) {
+								applyStyles(nodes.item(k), applyStylesToChildNodes);
+							}
+							onStylesAppliedToChildNodes(elt, nodes);
+						}
 			}
 		}
 
