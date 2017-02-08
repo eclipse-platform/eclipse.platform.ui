@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,14 +81,17 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 	}
 
-    /**
-     * <code>true</code> if we're on a Mac/GTK, where "new GC(canvas)" is expensive.
-     * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
-     * @see <a href="https://bugs.eclipse.org/467499">bug 467499</a>
-     * @since 3.6
-     */
-    static final boolean AVOID_NEW_GC= Util.isMac() || Util.isGtk();
-
+	/**
+	 * <code>true</code> if we're on a Mac/GTK, where "new GC(canvas)" is expensive.
+	 * <b>Warning:</b> On Windows, we can't switch to direct-paint mode, because
+	 * calls to update() have been removed, and now repaints would only happen with huge
+	 * delays when scrolling, see <a href="https://bugs.eclipse.org/511596#c26">bug 511596 comment 26</a>.
+	 *
+	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
+	 * @see <a href="https://bugs.eclipse.org/467499">bug 467499</a>
+	 * @since 3.6
+	 */
+	static final boolean AVOID_NEW_GC= Util.isMac() || Util.isGtk();
 
 
 	/** The vertical ruler's text viewer */
