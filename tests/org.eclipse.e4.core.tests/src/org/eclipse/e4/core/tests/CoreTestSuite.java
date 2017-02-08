@@ -53,6 +53,7 @@ import org.eclipse.e4.core.internal.tests.di.extensions.InjectionMixedSuppliersT
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiHandlerTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
+import org.eclipse.e4.core.internal.tests.di.extensions.ServiceSupplierTestCase;
 import org.eclipse.e4.core.internal.tests.nls.NLSTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -68,6 +69,7 @@ import junit.framework.Test;
 		InjectionEventTest.class,
 		InjectionOSGiTest.class,
 		InjectionOSGiHandlerTest.class,
+		ServiceSupplierTestCase.class,
 
 		// DI
 		InjectionOrderTest.class,
