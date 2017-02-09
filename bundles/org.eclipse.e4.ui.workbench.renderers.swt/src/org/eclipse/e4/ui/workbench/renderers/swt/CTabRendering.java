@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
@@ -49,6 +48,14 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 				return RIGHT_BOTTOM;
 			}
 			return RIGHT_TOP;
+		}
+
+		public boolean isLeft() {
+			return this == LEFT_TOP || this == LEFT_BOTTOM;
+		}
+
+		public boolean isTop() {
+			return this == LEFT_TOP || this == RIGHT_TOP;
 		}
 	}
 
@@ -215,6 +222,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			return;
 		case PART_HEADER:
 			this.drawTabHeader(gc, bounds, state);
+			this.drawCorners(gc, bounds);
 			return;
 		default:
 			if (0 <= part && part < parent.getItemCount()) {
@@ -243,6 +251,45 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		super.draw(part, state, bounds, gc);
 	}
 
+	void drawCorners(GC gc, Rectangle bounds) {
+		Color bg = gc.getBackground();
+		Color fg = gc.getForeground();
+		Color toFill = parent.getParent().getBackground();
+		gc.setAlpha(255);
+		gc.setBackground(toFill);
+		gc.setForeground(toFill);
+		int radius = cornerSize / 2 + 1;
+		int leftX = bounds.x - 1;
+		int topY = bounds.y - 1;
+		int rightX = bounds.x + bounds.width;
+		int bottomY = bounds.y + bounds.height;
+		drawCutout(gc, leftX, topY, radius, CirclePart.LEFT_TOP);
+		drawCutout(gc, rightX, topY, radius, CirclePart.RIGHT_TOP);
+		drawCutout(gc, leftX, bottomY, radius, CirclePart.LEFT_BOTTOM);
+		drawCutout(gc, rightX, bottomY, radius, CirclePart.RIGHT_BOTTOM);
+		gc.setBackground(bg);
+		gc.setForeground(fg);
+	}
+
+	private void drawCutout(GC gc, int x, int y, int radius, CirclePart side) {
+		int centerX = x + (side.isLeft() ? radius : -radius);
+		int centerY = y + (side.isTop() ? radius : -radius);
+
+		int[] circle = drawCircle(centerX, centerY, radius, side);
+		int[] result = new int[circle.length + 2];
+		result[0] = x;
+		result[1] = y;
+		int count = circle.length / 2;
+		for (int idx = 0; idx < count; idx++) {
+			int destIdx = idx * 2 + 2;
+			int srcIdx = (count - 1 - idx) * 2;
+			result[destIdx] = circle[srcIdx];
+			result[destIdx + 1] = circle[srcIdx + 1];
+		}
+
+		gc.fillPolygon(result);
+	}
+
 	void drawTabHeader(GC gc, Rectangle bounds, int state) {
 		// gc.setClipping(bounds.x, bounds.y, bounds.width,
 		// parent.getTabHeight() + 1);
@@ -260,31 +307,21 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		int circX = bounds.x + delta / 2 + radius;
 		int circY = bounds.y + radius;
 
-		// Fill in background
-		Region clipping = new Region();
-		gc.getClipping(clipping);
-		Region region = new Region();
-		region.add(shape);
-		region.intersect(clipping);
-		gc.setClipping(region);
-
-		int header = shadowEnabled ? onBottom ? 6 : 3 : 1; // TODO: this needs
+		int header = shadowEnabled ? onBottom ? 6 : 3 : 1; // TODO: this
+															// needs
 		// to be added to
 		// computeTrim for
 		// HEADER
 		Rectangle trim = computeTrim(PART_HEADER, state, 0, 0, 0, 0);
 		trim.width = bounds.width - trim.width;
 
-		// XXX: The magic numbers need to be cleaned up. See https://bugs.eclipse.org/425777 for details.
+		// XXX: The magic numbers need to be cleaned up. See
+		// https://bugs.eclipse.org/425777 for details.
 		trim.height = (parent.getTabHeight() + (onBottom ? 7 : 4)) - trim.height;
 
 		trim.x = -trim.x;
 		trim.y = onBottom ? bounds.height - parent.getTabHeight() - 1 - header : -trim.y;
 		draw(PART_BACKGROUND, SWT.NONE, trim, gc);
-
-		gc.setClipping(clipping);
-		clipping.dispose();
-		region.dispose();
 
 		int[] ltt = drawCircle(circX + 1, circY + 1, radius, CirclePart.LEFT_TOP);
 		System.arraycopy(ltt, 0, points, index, ltt.length);
@@ -356,26 +393,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		gc.fillPolygon(tempPoints);
 
 		// Fill in parent background for non-rectangular shape
-		Region r = new Region();
-		r.add(bounds);
-		r.subtract(tempPoints);
-		gc.setBackground(parent.getParent().getBackground());
 		Display display = parent.getDisplay();
-		Region clipping = new Region();
-		gc.getClipping(clipping);
-		r.intersect(clipping);
-		gc.setClipping(r);
-		Rectangle mappedBounds = display.map(parent, parent.getParent(), bounds);
-		parent.getParent().drawBackground(gc, bounds.x, bounds.y, bounds.width, bounds.height, mappedBounds.x,
-				mappedBounds.y);
 
 		// Shadow
 		if (shadowEnabled)
 			drawShadow(display, bounds, gc);
-
-		gc.setClipping(clipping);
-		clipping.dispose();
-		r.dispose();
 
 		// Remember for use in header drawing
 		shape = tempPoints;
