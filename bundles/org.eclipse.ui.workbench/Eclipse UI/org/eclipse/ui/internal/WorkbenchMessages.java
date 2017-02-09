@@ -14,7 +14,7 @@
  * 		Implemented workbench auto-save to correctly restore state in case of crash.
  * Andrey Loskutov <loskutov@gmx.de> - Bug 388476, 445538, 463262
  * Alain Bernard <alain.bernard1224@gmail.com> - Bug 281490
- * Patrik Suzzi <psuzzi@gmail.com> - Bug 491785, 368977, 501811, 511198
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 491785, 368977, 501811
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -630,7 +630,6 @@ public class WorkbenchMessages extends NLS {
 	public static String Save_Resource;
 	public static String Saving_Modifications;
 	public static String Save_All;
-	public static String Dont_Save;
 
 
 	// ==============================================================================

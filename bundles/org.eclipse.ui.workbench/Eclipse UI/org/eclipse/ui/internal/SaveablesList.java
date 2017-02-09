@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700, 511198
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -494,10 +494,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				// Show a dialog.
 				String[] buttons;
 				if(canCancel) {
-					buttons = new String[] { WorkbenchMessages.Save, WorkbenchMessages.Dont_Save,
+					buttons = new String[] { IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
 							IDialogConstants.CANCEL_LABEL };
 				} else {
-					buttons = new String[] { WorkbenchMessages.Save, WorkbenchMessages.Dont_Save };
+					buttons = new String[] { IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL};
 				}
 
 				// don't save if we don't prompt
@@ -788,7 +790,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			createButton(parent, IDialogConstants.OK_ID,
-					WorkbenchMessages.Save, true);
+					IDialogConstants.OK_LABEL, true);
 			if (canCancel) {
 				createButton(parent, IDialogConstants.CANCEL_ID,
 						IDialogConstants.CANCEL_LABEL, false);
