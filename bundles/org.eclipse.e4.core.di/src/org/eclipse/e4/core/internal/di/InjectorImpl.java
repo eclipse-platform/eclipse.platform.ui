@@ -217,7 +217,8 @@ public class InjectorImpl implements IInjector {
 
 	@Override
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) {
-		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier, null, true);
+		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier,
+				null, true, /* initial */ true, /* track */ false);
 		if (result == IInjector.NOT_A_VALUE) {
 			if (object != null && qualifier != null) {
 				throw new InjectionException("Unable to find matching method to invoke. Searching for the annotation \"" + qualifier.toString() + "\" on an instance of \"" + object.getClass().getSimpleName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -229,22 +230,71 @@ public class InjectorImpl implements IInjector {
 
 	@Override
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) {
-		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, null, false);
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, null, false,
+				/* initial */ true, /* track */false);
 	}
 
 	@Override
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier) {
-		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, localSupplier, false);
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, localSupplier,
+				false, /* initial */ true, /* track */false);
 	}
 
-	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean throwUnresolved) {
+	/**
+	 * Call the annotated method on an object, injecting the parameters from the
+	 * suppliers.
+	 * <p>
+	 * If no matching method is found on the class, the defaultValue will be
+	 * returned.
+	 * </p>
+	 * <p>
+	 * NOTE: There is no way to turn off tracking of such a method. It continues
+	 * to be re-injected on change until the object suppliers are disposed.
+	 * </p>
+	 * <p>
+	 * This method is not intended to be used by clients and not public API and
+	 * therefore might change in future releases.
+	 * </p>
+	 *
+	 * @param object
+	 *            the object on which the method should be called
+	 * @param qualifier
+	 *            the annotation tagging method to be called
+	 * @param defaultValue
+	 *            a value to be returned if the method cannot be called, might
+	 *            be <code>null</code>
+	 * @param objectSupplier
+	 *            primary object supplier
+	 * @param localSupplier
+	 *            primary object supplier, values override objectSupplier
+	 * @param initial
+	 *            <code>true</code> true if this is the initial request from the
+	 *            requestor
+	 * @param track
+	 *            <code>true</code> if the object suppliers should notify
+	 *            requestor of changes to the returned objects;
+	 *            <code>false</code> otherwise
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionException
+	 *             if an exception occurred while performing this operation
+	 */
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue,
+			PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier, boolean initial, boolean track) {
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, null, false,
+				initial, track);
+	}
+
+	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier,
+			Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier,
+			boolean throwUnresolved, boolean initial, boolean track) {
 		Method[] methods = getDeclaredMethods(currentClass);
 		for (Method method : methods) {
 			if (method.getAnnotation(qualifier) == null)
 				continue;
-			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, false);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject,
+					track);
 
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, true, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, initial, track);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (throwUnresolved)
@@ -258,7 +308,8 @@ public class InjectorImpl implements IInjector {
 		if (superClass == null)
 			return defaultValue;
 
-		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, tempSupplier, throwUnresolved);
+		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, tempSupplier,
+				throwUnresolved, initial, track);
 	}
 
 	@Override
