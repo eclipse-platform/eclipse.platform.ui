@@ -60,6 +60,7 @@ public class SashLayout extends Layout {
 	boolean draggingSashes = false;
 	List<SashRect> sashesToDrag;
 
+	public boolean layoutUpdateInProgress = false;
 
 	public SashLayout(final Composite host, MUIElement root) {
 		this.root = root;
@@ -89,7 +90,14 @@ public class SashLayout extends Layout {
 					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
 				}
 			} else {
+				try {
+					layoutUpdateInProgress = true;
 				adjustWeights(sashesToDrag, e.x, e.y);
+					host.layout();
+					host.update();
+				} finally {
+					layoutUpdateInProgress = false;
+			}
 			}
 		});
 
@@ -175,7 +183,6 @@ public class SashLayout extends Layout {
 			setWeight(sr.left, leftWeight);
 			setWeight(sr.right, rightWeight);
 		}
-		host.requestLayout();
 	}
 
 	private void setWeight(MUIElement element, int weight) {
