@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1151,6 +1151,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			return;
 
 		if (Helper.okToUse(fProposalTable)) {
+			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
+				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
+
 			if (proposals == null || proposals.isEmpty()) {
 				fEmptyProposal.fOffset= fFilterOffset;
 				fEmptyProposal.fDisplayString= fEmptyMessage != null ? fEmptyMessage : JFaceTextMessages.getString("CompletionProposalPopup.no_proposals"); //$NON-NLS-1$
@@ -1163,13 +1166,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fIsInitialSort= false;
 
 			fFilteredProposals= proposals;
-			int index = fFilteredProposals.indexOf(oldProposal);
-			if (index == -1) {
-				index = 0;
-				if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null) {
-					((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
-				}
-			}
 			final int newLen= proposals.size();
 
 			fProposalTable.clearAll();
@@ -1180,7 +1176,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y)
 				fProposalShell.setLocation(newLocation);
 
-			selectProposal(index, false);
+			selectProposal(0, false);
 		}
 	}
 
