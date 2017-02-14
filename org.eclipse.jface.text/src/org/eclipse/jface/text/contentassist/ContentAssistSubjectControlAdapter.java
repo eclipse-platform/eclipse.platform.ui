@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - [251156] Allow multiple contentAssitProviders internally & inheritance
+ *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -118,6 +119,14 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getLineDelimiter();
 		return fViewer.getTextWidget().getLineDelimiter();
+	}
+
+	public boolean isValidWidgetOffset(int widgetOffset) {
+		if (fContentAssistSubjectControl != null) {
+			IDocument document= fContentAssistSubjectControl.getDocument();
+			return (widgetOffset >= 0 && widgetOffset <= document.getLength());
+		}
+		return (widgetOffset >= 0 && widgetOffset <= fViewer.getTextWidget().getCharCount());
 	}
 
 	@Override

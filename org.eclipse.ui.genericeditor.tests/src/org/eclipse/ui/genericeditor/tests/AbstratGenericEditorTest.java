@@ -23,10 +23,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.text.tests.Accessor;
+
+import org.eclipse.jface.text.source.SourceViewer;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
+
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}; and clean up.
@@ -81,7 +87,12 @@ public class AbstratGenericEditorTest {
 			file = null;
 		}
 	}
-
+	
+	protected SourceViewer getSourceViewer() {
+		SourceViewer sourceViewer= (SourceViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
+		return sourceViewer;
+	}
+	
 	@After
 	public void tearDown() throws Exception {
 		cleanFileAndEditor();

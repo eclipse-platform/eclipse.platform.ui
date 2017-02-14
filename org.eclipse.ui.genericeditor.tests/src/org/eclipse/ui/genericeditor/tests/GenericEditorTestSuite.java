@@ -17,6 +17,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 		CompletionTest.class,
+		ContextInfoTest.class,
 		StylingTest.class,
 		HoverTest.class,
 		EditorTest.class,

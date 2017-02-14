@@ -7,12 +7,18 @@
  *
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
+ *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests.contributions;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -49,11 +55,6 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	@Override
-	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
-		return null;
-	}
-
-	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
@@ -63,13 +64,58 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 		return null;
 	}
 
+	/**
+	 * Creates context info "idx= <word index in #PROPOSAL>" at the end of a word.
+	 **/
 	@Override
-	public String getErrorMessage() {
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+		try {
+			IDocument document= viewer.getDocument();
+			int begin= offset;
+			while (begin > 0 && Character.isLetterOrDigit(document.getChar(begin - 1))) {
+				begin--;
+			}
+			if (begin < offset) {
+				String word= document.get(begin, offset - begin);
+				int idx= Arrays.asList(completeString.split("\\W")).indexOf(word);
+				if (idx >= 0) {
+					return new IContextInformation[] {
+							new ContextInformation(word, "idx= " + idx)
+					};
+				}
+			}
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
+		return new IContextInformationValidator() {
+			ITextViewer viewer;
+			int offset;
+			@Override
+			public void install(IContextInformation info, ITextViewer viewer, int offset) {
+				this.viewer= viewer;
+				this.offset= offset;
+			}
+			@Override
+			public boolean isContextInformationValid(int offset) {
+				try {
+					IDocument document= viewer.getDocument();
+					IRegion line= document.getLineInformationOfOffset(this.offset);
+					int end= line.getOffset() + line.getLength();
+					return (offset >= this.offset && offset < end);
+				} catch (BadLocationException e) {
+					return false;
+				}
+			}
+		};
+	}
+
+	@Override
+	public String getErrorMessage() {
 		return null;
 	}
 

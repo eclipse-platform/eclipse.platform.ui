@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -274,7 +275,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @since 3.0
 	 */
 	private void internalShowContextInfo(ContextFrame frame) {
-		if (frame != null) {
+		if (frame != null && canShowFrame(frame)) {
 			fContextFrameStack.push(frame);
 			if (fContextFrameStack.size() == 1)
 				fLastContext= null;
@@ -333,6 +334,19 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	private boolean isLastFrame(ContextFrame frame) {
 		return frame != null && frame.equals(fLastContext);
+	}
+
+	/**
+	 * Pre-checks if the given context frame can be (re)shown.
+	 *
+	 * The function checks if the frame has valid position data. It does not call the context
+	 * information validator.
+	 *
+	 * @param frame the frame to check
+	 * @return <code>true</code> if the context frame OK to use, otherwise <code>false</code>
+	 */
+	private boolean canShowFrame(ContextFrame frame) {
+		return fContentAssistSubjectControlAdapter.isValidWidgetOffset(frame.fVisibleOffset);
 	}
 
 	/**
@@ -457,16 +471,23 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (Helper.okToUse(fContextInfoPopup)) {
 
 			int size= fContextFrameStack.size();
-			if (size > 0) {
+			while (size > 0) {
 				fLastContext= fContextFrameStack.pop();
 				-- size;
+
+				if (size > 0) {
+					ContextFrame current= fContextFrameStack.peek();
+					if (canShowFrame(current)) {
+						internalShowContextFrame(current, false);
+						return;
+					}
+					// continue - try next
+				}
+				else {
+					break;
+				}
 			}
-
-			if (size > 0) {
-				ContextFrame current= fContextFrameStack.peek();
-				internalShowContextFrame(current, false);
-			} else {
-
+			{
 				fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
 
 				if (fContentAssistSubjectControlAdapter.getControl() != null)
