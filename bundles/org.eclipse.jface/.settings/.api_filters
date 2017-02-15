@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Announced API removal of ListenerList" id="923795461">
+            <message_arguments>
+                <message_argument value="3.13.0"/>
+                <message_argument value="3.12.1"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/viewers/TableTreeViewer.java" type="org.eclipse.jface.viewers.TableTreeViewer">
         <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
             <message_arguments>
