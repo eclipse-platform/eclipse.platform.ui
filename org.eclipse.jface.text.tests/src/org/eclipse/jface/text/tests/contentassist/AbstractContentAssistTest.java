@@ -26,8 +26,11 @@ import org.junit.After;
 import org.junit.Assert;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
@@ -48,6 +51,8 @@ public class AbstractContentAssistTest {
 	private SourceViewer viewer;
 	private ContentAssistant assistant;
 	private Document document;
+	
+	private Button button;
 
 
 	public AbstractContentAssistTest() {
@@ -64,10 +69,11 @@ public class AbstractContentAssistTest {
 
 	protected void setupSourceViewer(ContentAssistant contentAssistant, String initialText) {
 		shell= new Shell();
-		shell.setSize(500, 240);
-		shell.setLayout(new FillLayout());
+		shell.setSize(500, 280);
+		shell.setLayout(new GridLayout());
 		
 		viewer= new SourceViewer(shell, null, SWT.NONE);
+		viewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		assistant= contentAssistant;
 		viewer.configure(createSourceViewerConfiguration());
 		
@@ -76,6 +82,9 @@ public class AbstractContentAssistTest {
 			document.set(initialText);
 		}
 		viewer.setDocument(document);
+		
+		button= new Button(shell, SWT.PUSH);
+		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		
 		shell.open();
 		Assert.assertTrue(new DisplayHelper() {
@@ -130,6 +139,41 @@ public class AbstractContentAssistTest {
 		processEvents();
 	}
 
+	protected void postSourceViewerKeyEvent(char character, int stateMask, int type) {
+		processEvents();
+		Event event= new Event();
+		event.type= type;
+		event.widget= viewer.getTextWidget();
+		event.display= viewer.getTextWidget().getDisplay();
+		event.character= character;
+		event.stateMask= stateMask;
+		event.doit= true;
+		viewer.getTextWidget().notifyListeners(type, event);
+		processEvents();
+	}
+
+	protected void emulatePressArrowKey(int keyCode) {
+		switch (keyCode) {
+		case SWT.ARROW_LEFT:
+			viewer.getTextWidget().invokeAction(ST.COLUMN_PREVIOUS);
+			break;
+		case SWT.ARROW_RIGHT:
+			viewer.getTextWidget().invokeAction(ST.COLUMN_NEXT);
+			break;
+		case SWT.ARROW_UP:
+			viewer.getTextWidget().invokeAction(ST.LINE_UP);
+			break;
+		case SWT.ARROW_DOWN:
+			viewer.getTextWidget().invokeAction(ST.LINE_DOWN);
+			break;
+		}
+		postSourceViewerKeyEvent(keyCode, 0, ST.VerifyKey);
+	}
+
+	protected void emulatePressEscKey() {
+		postSourceViewerKeyEvent(SWT.ESC, 0, ST.VerifyKey);
+	}
+
 	protected void runTextOperation(int operation) {
 		ITextOperationTarget textOperationTarget= viewer.getTextOperationTarget();
 
@@ -139,6 +183,11 @@ public class AbstractContentAssistTest {
 
 	protected void triggerContextInformation() {
 		runTextOperation(ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);
+	}
+
+
+	public Button getButton() {
+		return button;
 	}
 
 

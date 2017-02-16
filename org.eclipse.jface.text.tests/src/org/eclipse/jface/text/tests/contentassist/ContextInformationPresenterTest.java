@@ -102,7 +102,7 @@ public class ContextInformationPresenterTest extends AbstractContentAssistTest {
 				new StyleRange(0, 3, null, null, SWT.BOLD)
 		}, getInfoStyleRanges(this.infoShell));
 		
-		postSourceViewerKeyEvent(SWT.ARROW_RIGHT, 0, SWT.KeyDown);
+		emulatePressArrowKey(SWT.ARROW_RIGHT);
 		
 		assertEquals("idx= 0", getInfoText(this.infoShell));
 		assertArrayEquals(new StyleRange[] {

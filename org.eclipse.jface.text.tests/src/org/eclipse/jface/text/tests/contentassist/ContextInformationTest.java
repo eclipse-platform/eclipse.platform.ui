@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -86,6 +87,92 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 		getDocument().set("");
 		
 		new Accessor(getContentAssistant(), ContentAssistant.class).invoke("hide", new Object[0]);
+	}
+
+	@Test
+	public void testContextInfo_hide_focusOut() throws Exception {
+		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
+		
+		final List<Shell> beforeShells = getCurrentShells();
+		
+		selectAndReveal(4, 0);
+		processEvents();
+		
+		triggerContextInformation();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 0", getInfoText(this.infoShell));
+		
+		selectAndReveal(8, 0);
+		processEvents();
+		
+		triggerContextInformation();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 1", getInfoText(this.infoShell));
+		
+		// Hide all
+		getButton().setFocus();
+		processEvents();
+		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());
+	}
+
+	@Test
+	public void testContextInfo_hide_keyEsc() throws Exception {
+		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
+		
+		final List<Shell> beforeShells = getCurrentShells();
+		
+		selectAndReveal(4, 0);
+		processEvents();
+		
+		triggerContextInformation();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 0", getInfoText(this.infoShell));
+		
+		selectAndReveal(8, 0);
+		processEvents();
+		
+		triggerContextInformation();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 1", getInfoText(this.infoShell));
+		
+		emulatePressEscKey();
+		processEvents();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 0", getInfoText(this.infoShell));
+		
+		emulatePressEscKey();
+		processEvents();
+		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());
+	}
+
+	@Test
+	public void testContextInfo_hide_validRange() throws Exception {
+		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL + '\n');
+		
+		final List<Shell> beforeShells = getCurrentShells();
+		
+		selectAndReveal(4, 0);
+		processEvents();
+		
+		triggerContextInformation();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 0", getInfoText(this.infoShell));
+		
+		selectAndReveal(8, 0);
+		processEvents();
+		
+		triggerContextInformation();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 1", getInfoText(this.infoShell));
+		
+		emulatePressArrowKey(SWT.ARROW_LEFT);
+		processEvents();
+		this.infoShell= findNewShell(beforeShells);
+		assertEquals("idx= 0", getInfoText(this.infoShell));
+		
+		emulatePressArrowKey(SWT.ARROW_DOWN);
+		processEvents();
+		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());
 	}
 
 

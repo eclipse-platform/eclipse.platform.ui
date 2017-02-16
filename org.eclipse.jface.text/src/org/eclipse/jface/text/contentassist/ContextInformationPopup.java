@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
+ *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 94106 - Fix hide/cleanup of content information popup stack
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -460,8 +461,11 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	/**
 	 * Hides the context information popup.
+	 *
+	 * @param all <code>true</code> to hide popups at all,
+	 *     <code>false</code> to restore previous context frame if possible
 	 */
-	private void hideContextInfoPopup() {
+	private void hideContextInfoPopup(boolean all) {
 
 		if (Helper.okToUse(fContextInfoPopup)) {
 
@@ -470,16 +474,13 @@ class ContextInformationPopup implements IContentAssistListener {
 				fLastContext= fContextFrameStack.pop();
 				-- size;
 
-				if (size > 0) {
+				if (size > 0 && !all) {
 					ContextFrame current= fContextFrameStack.peek();
 					if (canShowFrame(current)) {
 						internalShowContextFrame(current, false);
 						return;
 					}
 					// continue - try next
-				}
-				else {
-					break;
 				}
 			}
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
@@ -702,7 +703,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	public void hide() {
 		hideContextSelector();
-		hideContextInfoPopup();
+		hideContextInfoPopup(true);
 	}
 
 	/**
@@ -815,13 +816,13 @@ class ContextInformationPopup implements IContentAssistListener {
 					break;
 				default:
 					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
-						hideContextInfoPopup();
+						hideContextInfoPopup(true);
 					break;
 			}
 
 		} else if (key == SWT.ESC) {
 			e.doit= false;
-			hideContextInfoPopup();
+			hideContextInfoPopup(false);
 		} else {
 			validateContextInformation();
 		}
@@ -888,7 +889,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					while (Helper.okToUse(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
 						ContextFrame top= fContextFrameStack.peek();
 						if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
-							hideContextInfoPopup(); // loop variant: reduces the number of contexts on the stack
+							hideContextInfoPopup(false); // loop variant: reduces the number of contexts on the stack
 						} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {
 							int widgetOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x;
 							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
