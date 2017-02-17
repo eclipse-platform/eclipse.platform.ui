@@ -33,8 +33,7 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		ChangeRegionTest.class,
 		RulerTestSuite.class,
 		HunkComputerTest.class,
-		ScreenshotTest.class,
-		StatusEditorTest.class
+		ScreenshotTest.class
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SuiteClasses
