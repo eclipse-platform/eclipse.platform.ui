@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -39,6 +40,11 @@ public class StatusTextEditor extends AbstractTextEditor {
 	private Composite fDefaultComposite;
 	/** The status page */
 	private Control fStatusControl;
+	/** {@link #setFocus()} is still running */
+	private boolean setFocusIsRunning;
+
+	// No .options for plugin yet
+	private static final boolean DEBUG = false;
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
@@ -64,6 +70,13 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 * @param input the input whose status is checked
 	 */
 	public void updatePartControl(IEditorInput input) {
+		final String where = "updatePartControl"; //$NON-NLS-1$
+		if (setFocusIsRunning) {
+			trace(where, "ERROR: trying to call update while processing focus", fStatusControl); //$NON-NLS-1$
+		} else {
+			trace(where, "START", fStatusControl); //$NON-NLS-1$
+		}
+
 		boolean restoreFocus= false;
 
 		if (fStatusControl != null) {
@@ -71,6 +84,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 				restoreFocus= containsFocus(fStatusControl);
 			}
 			fStatusControl.dispose();
+			trace(where, "status control disposed", fStatusControl); //$NON-NLS-1$
 			fStatusControl= null;
 		}
 
@@ -83,6 +97,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 					front= fDefaultComposite;
 				} else {
 					fStatusControl= createStatusControl(fParent, status);
+					trace(where, "status control created", fStatusControl); //$NON-NLS-1$
 					front= fStatusControl;
 				}
 			}
@@ -97,6 +112,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (restoreFocus && fStatusControl != null && !containsFocus(fStatusControl)) {
 			fParent.setFocus();
 		}
+		trace(where, "END", fStatusControl); //$NON-NLS-1$
 	}
 
 	private boolean containsFocus(Control control) {
@@ -112,6 +128,14 @@ public class StatusTextEditor extends AbstractTextEditor {
 
 	@Override
 	public void setFocus() {
+		final String where = "setFocus"; //$NON-NLS-1$
+		if (setFocusIsRunning) {
+			trace(where, "ERROR: trying to call setFocus while processing focus", fStatusControl); //$NON-NLS-1$
+		} else {
+			trace(where, "START", fStatusControl); //$NON-NLS-1$
+		}
+		setFocusIsRunning = true;
+
 		if (fStatusControl != null && !fStatusControl.isDisposed()) {
 			/* even if the control does not really take focus, we still have to set it
 			 * to fulfill the contract and to make e.g. Ctrl+PageUp/Down work. */
@@ -119,6 +143,10 @@ public class StatusTextEditor extends AbstractTextEditor {
 		} else {
 			super.setFocus();
 		}
+
+		setFocusIsRunning = false;
+
+		trace(where, "END", fStatusControl); //$NON-NLS-1$
 	}
 
 	@Override
@@ -227,37 +255,59 @@ public class StatusTextEditor extends AbstractTextEditor {
 	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		if (fParent != null && !fParent.isDisposed())
-			updatePartControl(getEditorInput());
+		updatePartControl();
 	}
 
 	@Override
 	public void doRevertToSaved() {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
 		super.doRevertToSaved();
-		if (fParent != null && !fParent.isDisposed())
-			updatePartControl(getEditorInput());
+		updatePartControl();
 	}
 
 	@Override
 	protected void sanityCheckState(IEditorInput input) {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
 		super.sanityCheckState(input);
-		if (fParent != null && !fParent.isDisposed())
-			updatePartControl(getEditorInput());
+		if (!setFocusIsRunning) {
+			updatePartControl();
+		} else {
+			trace("sanityCheck", "delaying update", fStatusControl); //$NON-NLS-1$ //$NON-NLS-2$
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+				trace("sanityCheck", "incoming update", fStatusControl); //$NON-NLS-1$ //$NON-NLS-2$
+				updatePartControl();
+			});
+		}
 	}
 
 	@Override
 	protected void handleEditorInputChanged() {
 		super.handleEditorInputChanged();
-		if (fParent != null && !fParent.isDisposed())
-			updatePartControl(getEditorInput());
+		updatePartControl();
 	}
 
 	@Override
 	protected void handleElementContentReplaced() {
 		super.handleElementContentReplaced();
-		if (fParent != null && !fParent.isDisposed())
+		updatePartControl();
+	}
+
+	private void updatePartControl() {
+		if (fParent != null && !fParent.isDisposed()) {
 			updatePartControl(getEditorInput());
+		}
+	}
+
+	private static void trace(String where, String what, Control o) {
+		if (!DEBUG) {
+			return;
+		}
+		String id;
+		if (o == null) {
+			id = "null"; //$NON-NLS-1$
+		} else {
+			id = System.identityHashCode(o) + (o.isDisposed() ? "<disposed!>" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		System.out.println(where + " |" + id + "| " + what); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

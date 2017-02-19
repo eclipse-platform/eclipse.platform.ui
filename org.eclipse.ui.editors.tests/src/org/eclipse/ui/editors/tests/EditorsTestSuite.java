@@ -28,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		SegmentedModeTest.class,
 		MarkerAnnotationOrderTest.class,
 		ZoomTest.class,
-		FileDocumentProviderTest.class
+		FileDocumentProviderTest.class,
+		StatusEditorTest.class
 })
 public class EditorsTestSuite {
 	// see @SuiteClasses
