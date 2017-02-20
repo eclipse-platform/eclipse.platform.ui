@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497591, 501250
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497591, 501250, 512385
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
@@ -90,7 +90,6 @@ CTabFolder Canvas {
 	background-color: #FFFFFF;
 }
 
-
 Form, FormHeading {
 	background-color: #ffffff;
 	background: #ffffff;
@@ -117,4 +116,13 @@ Section {
   	background-color-titlebar: #eaeaea;
   	background-color-gradient-titlebar: #eaeaea;
   	border-color-titlebar: #ffffff;
+}
+
+CTabFolder {
+  swt-selected-tabs-background: #CCE0F6 #3F97F9 100%;
+}
+
+CTabFolder CTabItem:selected {
+  background-color: #E9E8E9;
+  color: white;
 }
