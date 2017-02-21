@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088, 504089, 504090, 504091, 509232
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 368977, 504088, 504089, 504090, 504091, 509232, 506019
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -190,7 +190,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		table.setBackground(getBackground());
 
 		tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		tableViewerColumn.setLabelProvider(getColumnLabelProvider());
+		setLabelProvider(tableViewerColumn);
 		tc = tableViewerColumn.getColumn();
 		tc.setResizable(false);
 
@@ -752,6 +752,18 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		return ref.getTitle();
 	}
 
+	/**
+	 * Sets the label provider for the only column visible in the table.
+	 * Subclasses can override this method to style the table, using a
+	 * StyledCellLabelProvider.
+	 *
+	 * @param tableViewerColumn
+	 * @return
+	 */
+	protected void setLabelProvider(TableViewerColumn tableViewerColumn) {
+		tableViewerColumn.setLabelProvider(getColumnLabelProvider());
+	}
+
 	/** Default ColumnLabelProvider. The table has only one column */
 	protected ColumnLabelProvider getColumnLabelProvider() {
 		return new ColumnLabelProvider() {
@@ -811,7 +823,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	protected String getTableHeader(IWorkbenchPart activePart) {
 		return EMPTY_STRING;
 	}
-
 
 	public Object getSelection() {
 		return selection;
