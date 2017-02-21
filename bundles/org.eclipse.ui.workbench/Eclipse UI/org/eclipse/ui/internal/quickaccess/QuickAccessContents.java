@@ -723,7 +723,7 @@ public abstract class QuickAccessContents {
 		textLayout = new TextLayout(table.getDisplay());
 		textLayout.setOrientation(defaultOrientation);
 		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(
-				JFaceResources.getDialogFont()).setStyle(SWT.BOLD));
+				table.getFont()).setStyle(SWT.BOLD));
 		textLayout.setFont(table.getFont());
 		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
 		int maxProviderWidth = (textLayout.getBounds().width);
