@@ -329,13 +329,13 @@ public class SearchIndex implements IHelpSearchIndex {
 	 */
 	public synchronized boolean beginDeleteBatch() {
 		try {
-			if (ir != null) {
-				ir.close();
+			if (iw != null) {
+				iw.close();
 			}
 			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			ir = DirectoryReader.open(luceneDirectory);
+			iw = new IndexWriter(luceneDirectory, new IndexWriterConfig(analyzerDescriptor.getAnalyzer()));
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
@@ -422,10 +422,10 @@ public class SearchIndex implements IHelpSearchIndex {
 	 */
 	public synchronized boolean endDeleteBatch() {
 		try {
-			if (ir == null)
+			if (iw == null)
 				return false;
-			ir.close();
-			ir = null;
+			iw.close();
+			iw = null;
 			// save the update info:
 			// - all the docs
 			// - plugins (and their version) that were indexed
