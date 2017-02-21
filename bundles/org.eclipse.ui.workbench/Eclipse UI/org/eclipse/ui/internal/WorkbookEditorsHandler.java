@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -139,8 +140,18 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				}
 			}
 
+			@Override
+			public String getToolTipText(Object element) {
+				if (element instanceof WorkbenchPartReference) {
+					WorkbenchPartReference ref = (WorkbenchPartReference) element;
+					return ref.getTitleToolTip();
+				}
+				return super.getToolTipText(element);
+			}
+
 		});
 
+		ColumnViewerToolTipSupport.enableFor(tableViewerColumn.getViewer());
 	}
 
 	/** True if the given model represents the active editor */
