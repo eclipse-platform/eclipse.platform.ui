@@ -40,8 +40,7 @@ public class WorkbenchObservables {
 	 *         if the current value of the given observable does not adapt to
 	 *         the target type
 	 */
-	public static IObservableValue observeDetailAdaptedValue(
-			IObservableValue master, Class adapter) {
+	public static <T> IObservableValue<T> observeDetailAdaptedValue(IObservableValue<?> master, Class<T> adapter) {
 		return observeDetailAdaptedValue(master, adapter, Platform
 				.getAdapterManager());
 	}
@@ -62,8 +61,7 @@ public class WorkbenchObservables {
 	 *         if the current value of the given observable does not adapt to
 	 *         the target type
 	 */
-	static IObservableValue observeDetailAdaptedValue(
-			IObservableValue master, Class adapter,
+	static <T> IObservableValue<T> observeDetailAdaptedValue(IObservableValue<?> master, Class<T> adapter,
 			IAdapterManager adapterManager) {
 		return WorkbenchProperties.adaptedValue(adapter, adapterManager)
 				.observeDetail(master);
@@ -78,8 +76,8 @@ public class WorkbenchObservables {
 	 * selection service, for example as follows:
 	 *
 	 * <pre>
-	 * IObservableValue selection = WorkbenchObservables
-	 * 		.observeAdaptedSingleSelection(getSite(), IResource.class);
+	 * IObservableValue&lt;IResource&gt; selection = WorkbenchObservables.observeAdaptedSingleSelection(getSite(),
+	 * 		IResource.class);
 	 * </pre>
 	 *
 	 * </p>
@@ -90,10 +88,8 @@ public class WorkbenchObservables {
 	 *            the target type
 	 * @return an observable value whose value type is the given target type
 	 */
-	public static IObservableValue observeAdaptedSingleSelection(
-			IServiceLocator locator, Class targetType) {
-		ISelectionService selectionService = locator
-				.getService(ISelectionService.class);
+	public static <T> IObservableValue<T> observeAdaptedSingleSelection(IServiceLocator locator, Class<T> targetType) {
+		ISelectionService selectionService = locator.getService(ISelectionService.class);
 		Assert.isNotNull(selectionService);
 		return WorkbenchProperties.singleSelection(null, true).value(
 				WorkbenchProperties.adaptedValue(targetType)).observe(
