@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyleRange;
@@ -22,42 +18,10 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
-
-import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-public class StylingTest {
-
-	private AbstractTextEditor editor;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		GenericEditorTestUtils.setUpBeforeClass();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		GenericEditorTestUtils.tearDownAfterClass();
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		GenericEditorTestUtils.closeIntro();
-
-		editor = (AbstractTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().openEditor(new FileEditorInput(GenericEditorTestUtils.getFile()), "org.eclipse.ui.genericeditor.GenericEditor");
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		editor.getSite().getPage().closeEditor(editor, false);
-		editor= null;
-	}
+public class StylingTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testStyle() throws Exception {
-
 		editor.selectAndReveal(4, 8);
 		StyledText widget = (StyledText) editor.getAdapter(Control.class);
 		StyleRange style= widget.getStyleRangeAtOffset(4);//get the style of first token

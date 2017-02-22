@@ -18,10 +18,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -46,61 +42,33 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.genericeditor.tests.contributions.MagicHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
-import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
- * @since 3.11
- *
+ * @since 1.0
  */
-public class HoverTest {
+public class HoverTest extends AbstratGenericEditorTest {
 
 	@Rule
 	public TestName testName = new TestName();
-
-	private AbstractTextEditor editor;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		GenericEditorTestUtils.setUpBeforeClass();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		GenericEditorTestUtils.tearDownAfterClass();
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		GenericEditorTestUtils.closeIntro();
-		editor = (AbstractTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().openEditor(new FileEditorInput(GenericEditorTestUtils.getFile()), "org.eclipse.ui.genericeditor.GenericEditor");
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		editor.getSite().getPage().closeEditor(editor, false);
-		editor= null;
-	}
 
 	@Test
 	public void testHover() throws Exception {
 		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
 		assertNotNull(findControl(shell, StyledText.class, MagicHoverProvider.LABEL));
 	}
-	
+
 	@Test
 	public void testProblemHover() throws Exception {
 		String problemMessage = "Huston...";
 		IMarker marker = null;
 		try {
-			marker = GenericEditorTestUtils.getFile().createMarker(IMarker.PROBLEM);
+			marker = this.file.createMarker(IMarker.PROBLEM);
 			marker.setAttribute(IMarker.LINE_NUMBER, 1);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			marker.setAttribute(IMarker.CHAR_START, 0);

@@ -470,6 +470,21 @@
 			commandId="org.eclipse.ui.edit.text.zoomOut"
 			icon="$nl$/icons/full/etool16/zoomOut.png">
 		</image>
+  <image
+        commandId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
+        disabledIcon="$nl$/icons/full/dtool16/show_whitespace_chars.png"
+        icon="$nl$/icons/full/etool16/show_whitespace_chars.png">
+  </image>
+  <image
+        commandId="org.eclipse.ui.edit.text.toggleWordWrap"
+        disabledIcon="$nl$/icons/full/dtool16/wordwrap.png"
+        icon="$nl$/icons/full/etool16/wordwrap.png">
+  </image>
+  <image
+        commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+        disabledIcon="$nl$/icons/full/dtool16/block_selection_mode.png"
+        icon="$nl$/icons/full/etool16/block_selection_mode.png">
+  </image>
 	</extension>
    
 	<extension
@@ -1298,5 +1313,19 @@
             class="org.eclipse.ui.texteditor.TextZoomOutHandler"
             commandId="org.eclipse.ui.edit.text.zoomOut">
       </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:edit?after=selectAll">
+         <command
+               commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
 </plugin>

@@ -17,10 +17,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.eclipse.swt.widgets.Composite;
@@ -32,45 +28,16 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor;
 import org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor;
-import org.eclipse.ui.part.FileEditorInput;
 
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
- * @since 3.11
- *
+ * @since 1.0
  */
-public class CompletionTest {
-
-	private AbstractTextEditor editor;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		GenericEditorTestUtils.setUpBeforeClass();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		GenericEditorTestUtils.tearDownAfterClass();
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		GenericEditorTestUtils.closeIntro();
-		editor = (AbstractTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().openEditor(new FileEditorInput(GenericEditorTestUtils.getFile()), "org.eclipse.ui.genericeditor.GenericEditor");
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		editor.getSite().getPage().closeEditor(editor, false);
-		editor= null;
-	}
+public class CompletionTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testCompletion() throws Exception {
@@ -79,7 +46,7 @@ public class CompletionTest {
 		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
 		action.update();
 		action.run();
-		GenericEditorTestUtils.waitAndDispatch(100);
+		waitAndDispatch(100);
 		Set<Shell> afterShell = new HashSet<>(Arrays.asList(Display.getDefault().getShells()));
 		afterShell.removeAll(beforeShell);
 		assertEquals("No completion", 1, afterShell.size());
@@ -93,7 +60,7 @@ public class CompletionTest {
 		ICompletionProposal completionProposal = (ICompletionProposal)completionProposalItem.getData();
 		assertEquals(BarContentAssistProcessor.PROPOSAL, completionProposal .getDisplayString());
 		completionProposalList.setSelection(completionProposalItem);
-		GenericEditorTestUtils.waitAndDispatch(LongRunningBarContentAssistProcessor.DELAY + 100);
+		waitAndDispatch(LongRunningBarContentAssistProcessor.DELAY + 100);
 		// asynchronous
 		assertEquals(2, completionProposalList.getItemCount());
 		completionProposalItem = completionProposalList.getItem(0);
