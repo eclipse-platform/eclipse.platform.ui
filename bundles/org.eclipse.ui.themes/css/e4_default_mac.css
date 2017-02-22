@@ -124,5 +124,4 @@ CTabFolder {
 
 CTabFolder CTabItem:selected {
   background-color: #E9E8E9;
-  color: white;
 }
