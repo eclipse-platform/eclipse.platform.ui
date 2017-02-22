@@ -17,13 +17,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-
 import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -38,15 +34,13 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
-
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistProcessor;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite
@@ -55,6 +49,7 @@ import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistP
  * 
  * @since 1.0
  */
+@SuppressWarnings("restriction")
 public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration implements IDocumentPartitioningListener {
 
 	private ITextEditor editor;

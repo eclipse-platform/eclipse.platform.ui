@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor.markers;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -53,7 +54,7 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 		create();
 	}
 
-	private List<IMarker> markers;
+	private Collection<IMarker> markers;
 	private Composite parent;
 
 	@Override
@@ -80,6 +81,7 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setInput(Object input) {
 		this.markers = (List<IMarker>)input;
