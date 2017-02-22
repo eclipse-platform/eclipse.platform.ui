@@ -117,6 +117,34 @@
                   mnemonic="%command.clone.mnemonic"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.toggleWordWrap"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.zoomIn"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.zoomOut"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
          </menu>
       </menuContribution>
    </extension>
