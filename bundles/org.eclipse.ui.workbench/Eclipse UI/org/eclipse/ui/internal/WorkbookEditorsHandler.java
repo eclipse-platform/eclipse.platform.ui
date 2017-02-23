@@ -76,6 +76,10 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 	@Override
 	protected Object getInput(WorkbenchPage page) {
+		return getParts(page);
+	}
+
+	private List<EditorReference> getParts(WorkbenchPage page) {
 		List<EditorReference> refs;
 		if (isMruEnabled()) {
 			// sorted, MRU order
@@ -215,6 +219,43 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		final Command command = commandService.getCommand(ORG_ECLIPSE_UI_WINDOW_OPEN_EDITOR_DROP_DOWN);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
+	}
+
+	@Override
+	protected int getCurrentItemIndex() {
+		if (isMruEnabled()) {
+			return 0;
+		}
+		// We need to find previously selected part and return the index of the
+		// part before this part in our list, which ordered not by use but by
+		// position
+
+		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
+		List<EditorReference> sortedByUse = page.getSortedEditorReferences();
+		if (sortedByUse.size() < 2) {
+			return 0;
+		}
+
+		// this is the previously used editor
+		EditorReference next = sortedByUse.get(1);
+
+		// now let's find it position in our list
+		List<EditorReference> sortedByPosition = getParts(page);
+		for (int i = 0; i < sortedByPosition.size(); i++) {
+			EditorReference ref = sortedByPosition.get(i);
+			if (ref == next) {
+				if (i > 0) {
+					// return the position of the previous part in our list
+					gotoDirection = true;
+					return i - 1;
+				}
+				// if the previous part is the *first* one in our list,
+				// we should invert the traversal direction to "back".
+				gotoDirection = false;
+				return 1;
+			}
+		}
+		return super.getCurrentItemIndex();
 	}
 
 }
