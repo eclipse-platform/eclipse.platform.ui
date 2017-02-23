@@ -191,13 +191,6 @@ class ThreadJob extends Job {
 		InternalJob blockingJob = manager.findBlockingJob(threadJob);
 		Thread blocker = blockingJob == null ? null : blockingJob.getThread();
 		ThreadJob result;
-		// The reactToInterruption flag allows this method to react correctly
-		// to Thread.interrupt(). However, there are unit tests that currently
-		// rely on the fact that the interrupt flag is ignored. If this flag
-		// is disabled, we don't react if the thread was already interrupted
-		// prior to the start of this method call -- we'll just restore the
-		// interrupted flag to its initial state at the end.
-		boolean setInterruptFlagAtEnd = !JobManager.reactToInterruption && Thread.interrupted();
 		boolean interruptedDuringWaitForRun;
 		try {
 			// just return if lock listener decided to grant immediate access
@@ -212,16 +205,6 @@ class ThreadJob extends Job {
 			// throwing some other exception here.
 			interruptedDuringWaitForRun = Thread.interrupted();
 			manager.getLockManager().aboutToRelease();
-			// If the thread was interrupted prior to the call to joinRun, the
-			// interruption was not caused by the jobs framework. Although the
-			// correct behavior here is to still terminate cleanly and throw
-			// an OperationCanceledException, there are some existing unit tests
-			// that are interrupting threads and are relying on the fact that
-			// nobody reacts to the interruption. To keep these tests working,
-			// we restore the interrupted flag back to the state it had
-			if (setInterruptFlagAtEnd) {
-				Thread.currentThread().interrupt();
-			}
 		}
 
 		// During the call to waitForRun, we use the thread's interrupt flag to

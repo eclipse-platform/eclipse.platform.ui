@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
@@ -861,89 +860,83 @@ public class YieldTest extends AbstractJobManagerTest {
 	}
 
 	public void testYieldIsInterruptable() throws Exception {
-		boolean oldReactToInterruption = JobManager.reactToInterruption;
-		try {
-			JobManager.reactToInterruption = true;
-			Semaphore semaphoreA = new Semaphore(0);
-			Semaphore semaphoreB = new Semaphore(0);
-			Semaphore mainThreadSemaphore = new Semaphore(0);
-			final PathRule rule = new PathRule(getName());
-			String[] failureMessage = new String[1];
-			boolean[] operationWasCanceled = new boolean[1];
-			final Job yieldB = new Job(getName() + " YieldingB") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					// Step 2
-					semaphoreA.release();
-					try {
-						// Block until thread yieldA reaches step 3
-						semaphoreB.acquire();
-					} catch (InterruptedException e) {
-						failureMessage[0] = "yieldB was interrupted too early";
-						return Status.OK_STATUS;
-					}
-					// Step 5
-					mainThreadSemaphore.release();
+		Semaphore semaphoreA = new Semaphore(0);
+		Semaphore semaphoreB = new Semaphore(0);
+		Semaphore mainThreadSemaphore = new Semaphore(0);
+		final PathRule rule = new PathRule(getName());
+		String[] failureMessage = new String[1];
+		boolean[] operationWasCanceled = new boolean[1];
+		final Job yieldB = new Job(getName() + " YieldingB") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				// Step 2
+				semaphoreA.release();
+				try {
+					// Block until thread yieldA reaches step 3
+					semaphoreB.acquire();
+				} catch (InterruptedException e) {
+					failureMessage[0] = "yieldB was interrupted too early";
 					return Status.OK_STATUS;
 				}
-			};
-			Job yieldA = new Job(getName() + " YieldingA") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						// Block until the main thread reaches step 1
-						semaphoreA.acquire();
-					} catch (InterruptedException e) {
-						failureMessage[0] = "yieldA was interrupted too early";
-						return Status.OK_STATUS;
-					}
-					// If this fails to interrupt the following yieldRule call,
-					// this thread will deadlock.
-					Thread.currentThread().interrupt();
-					try {
-						// Allow yieldB to start execution
-						while (yieldRule(null) != yieldB) {
-						}
-
-					} catch (OperationCanceledException e) {
-						operationWasCanceled[0] = true;
-					}
-					if (Thread.interrupted()) {
-						failureMessage[0] = "The thread was interrupted after yieldRule returned";
-					}
-					try {
-						// Block until yieldB reaches step 2
-						semaphoreA.acquire();
-					} catch (InterruptedException e) {
-						failureMessage[0] = "yieldA was interrupted too early";
-						return Status.OK_STATUS;
-					}
-					// Step 3
-					semaphoreB.release();
-					// Step 4
-					mainThreadSemaphore.release();
-					return Status.OK_STATUS;
-				}
-			};
-			yieldA.setRule(rule);
-			yieldA.schedule();
-
-			yieldB.setRule(rule);
-			yieldB.schedule();
-
-			// Step 1
-			semaphoreA.release();
-
-			// Block until step 4 and step 5 have occurred
-			mainThreadSemaphore.acquire(2);
-			if (failureMessage[0] != null) {
-				assertNull(failureMessage[0], failureMessage[0]);
+				// Step 5
+				mainThreadSemaphore.release();
+				return Status.OK_STATUS;
 			}
+		};
+		Job yieldA = new Job(getName() + " YieldingA") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					// Block until the main thread reaches step 1
+					semaphoreA.acquire();
+				} catch (InterruptedException e) {
+					failureMessage[0] = "yieldA was interrupted too early";
+					return Status.OK_STATUS;
+				}
+				// If this fails to interrupt the following yieldRule call,
+				// this thread will deadlock.
+				Thread.currentThread().interrupt();
+				try {
+					// Allow yieldB to start execution
+					while (yieldRule(null) != yieldB) {
+					}
 
-			assertTrue("yieldRule should have thrown OperationCanceledException", operationWasCanceled[0]);
-		} finally {
-			JobManager.reactToInterruption = oldReactToInterruption;
+				} catch (OperationCanceledException e) {
+					operationWasCanceled[0] = true;
+				}
+				if (Thread.interrupted()) {
+					failureMessage[0] = "The thread was interrupted after yieldRule returned";
+				}
+				try {
+					// Block until yieldB reaches step 2
+					semaphoreA.acquire();
+				} catch (InterruptedException e) {
+					failureMessage[0] = "yieldA was interrupted too early";
+					return Status.OK_STATUS;
+				}
+				// Step 3
+				semaphoreB.release();
+				// Step 4
+				mainThreadSemaphore.release();
+				return Status.OK_STATUS;
+			}
+		};
+		yieldA.setRule(rule);
+		yieldA.schedule();
+
+		yieldB.setRule(rule);
+		yieldB.schedule();
+
+		// Step 1
+		semaphoreA.release();
+
+		// Block until step 4 and step 5 have occurred
+		mainThreadSemaphore.acquire(2);
+		if (failureMessage[0] != null) {
+			assertNull(failureMessage[0], failureMessage[0]);
 		}
+
+		assertTrue("yieldRule should have thrown OperationCanceledException", operationWasCanceled[0]);
 	}
 
 	public void testYieldJobToJobsInterleaved() {

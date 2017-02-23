@@ -92,22 +92,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	private static JobManager instance;
 
 	/**
-	 * Set this to true if the Job framework should react to interruption by
-	 * throwing OperationCanceledException. Set this to false if it should
-	 * ignore thread interruption that was definitely not triggered by the Jobs
-	 * framework itself.
-	 * <p>
-	 * Although setting this to true is the correct behavior, there are
-	 * currently some unit tests that rely on the fact that thread interruption
-	 * is being ignored. Set this to true to help locate and fix these tests.
-	 * Set it to false in production until this is done.
-	 * <p>
-	 * TODO: remove this flag and set it permanently to true once bug 506294 is
-	 * fixed.
-	 */
-	public static boolean reactToInterruption;
-
-	/**
 	 * Scheduling rule used for validation of client-defined rules.
 	 */
 	private static final ISchedulingRule nullRule = new ISchedulingRule() {
