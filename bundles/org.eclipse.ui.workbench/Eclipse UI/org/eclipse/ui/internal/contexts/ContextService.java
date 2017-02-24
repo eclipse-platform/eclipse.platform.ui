@@ -194,11 +194,15 @@ public final class ContextService implements IContextService {
 
 	@Override
 	public final void deactivateContexts(final Collection activations) {
-		final Iterator activationItr = activations.iterator();
-		while (activationItr.hasNext()) {
-			final IContextActivation activation = (IContextActivation) activationItr
-					.next();
-			deactivateContext(activation);
+		try {
+			deferUpdates(true);
+			final Iterator<?> activationItr = activations.iterator();
+			while (activationItr.hasNext()) {
+				final IContextActivation activation = (IContextActivation) activationItr.next();
+				deactivateContext(activation);
+			}
+		} finally {
+			deferUpdates(false);
 		}
 	}
 
