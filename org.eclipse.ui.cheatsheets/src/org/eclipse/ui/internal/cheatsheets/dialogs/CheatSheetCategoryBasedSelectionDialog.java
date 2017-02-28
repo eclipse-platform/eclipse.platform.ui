@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2015 IBM Corporation and others.
+ *  Copyright (c) 2002, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,9 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -284,18 +282,14 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			createShowAllButton(outerContainer);
 
 		// Add double-click listener
-		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-				Object obj = selection.getFirstElement();
-				if (obj instanceof CheatSheetCollectionElement) {
-					boolean state = treeViewer.getExpandedState(obj);
-					treeViewer.setExpandedState(obj, !state);
-				}
-				else {
-					okPressed();
-				}
+		treeViewer.addDoubleClickListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			Object obj = selection.getFirstElement();
+			if (obj instanceof CheatSheetCollectionElement) {
+				boolean state = treeViewer.getExpandedState(obj);
+				treeViewer.setExpandedState(obj, !state);
+			} else {
+				okPressed();
 			}
 		});
 

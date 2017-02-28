@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,13 @@ package org.eclipse.ui.internal.cheatsheets.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
+
 public class Item extends Intro implements IExecutableItem, IPerformWhenItem, ISubItemItem {
 	private String title;
 	private boolean skip;
 	private boolean dialog;
-	private ArrayList itemExtensions;
+	private ArrayList<AbstractItemExtensionElement[]> itemExtensions;
 
 	private AbstractExecutable executable;
 	private PerformWhen performWhen;
@@ -105,7 +107,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	 * Sets the item extensions for this item.
 	 * @param exts the extensions to set
 	 */
-	public void setItemExtensions(ArrayList exts) {
+	public void setItemExtensions(ArrayList<AbstractItemExtensionElement[]> exts) {
 		this.itemExtensions = exts;
 	}
 
@@ -113,7 +115,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	 * Returns the item extensions, if any, for this item,.
 	 * @return list of the extensions or <code>null</code>
 	 */
-	public ArrayList getItemExtensions() {
+	public ArrayList<AbstractItemExtensionElement[]> getItemExtensions() {
 		return itemExtensions;
 	}
 

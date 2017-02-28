@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -184,12 +184,12 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		super.dispose();
 	}
 
-	private void setInputModel(CompositeCheatSheetModel model, Map layout) {
+	private void setInputModel(CompositeCheatSheetModel model, Map<String, String> layout) {
 		this.model = model;
 		mform.getForm().setText(ViewUtilities.escapeForLabel(model.getName()));
 		String explorerId = model.getTaskExplorerId();
 		setCurrentExplorerFromId(explorerId);
-		String selectedTaskId = (String) layout.get(ICompositeCheatsheetTags.SELECTED_TASK);
+		String selectedTaskId = layout.get(ICompositeCheatsheetTags.SELECTED_TASK);
 		ICompositeCheatSheetTask selectedTask= null;
 		if (selectedTaskId != null) {
 			selectedTask = model.getDependencies().getTask(selectedTaskId);

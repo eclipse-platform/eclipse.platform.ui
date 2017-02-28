@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -360,8 +360,8 @@ public class CoreItem extends ViewItem {
 		//loop throught the number of sub items, make a new composite for each sub item.
 		//Add the spacer, the label, then the buttons that are applicable for each sub item.
 		int i=0;
-		for (Iterator iter = item.getSubItems().iterator(); iter.hasNext(); i++) {
-			AbstractSubItem subItem = (AbstractSubItem)iter.next();
+		for (Iterator<AbstractSubItem> iter = item.getSubItems().iterator(); iter.hasNext(); i++) {
+			AbstractSubItem subItem = iter.next();
 			if( subItem instanceof RepeatedSubItem ) {
 
 				//Get the sub item to add.
@@ -451,7 +451,7 @@ public class CoreItem extends ViewItem {
 		//Instantiate the list to store the sub item composites.
 		listOfSubItemCompositeHolders = new ArrayList<>(20);
 
-		ArrayList sublist = item.getSubItems();
+		ArrayList<AbstractSubItem> sublist = item.getSubItems();
 
 		createSubItemButtonComposite();
 
@@ -556,10 +556,10 @@ public class CoreItem extends ViewItem {
 		super.setIncomplete();
 
 		//check for sub items and reset their icons.
-		ArrayList l = getListOfSubItemCompositeHolders();
+		ArrayList<SubItemCompositeHolder> l = getListOfSubItemCompositeHolders();
 		if(l != null){
 			for(int j=0; j<l.size(); j++){
-				SubItemCompositeHolder s = (SubItemCompositeHolder)l.get(j);
+				SubItemCompositeHolder s = l.get(j);
 				if(s.isCompleted() || s.isSkipped())
 					s.getCheckDoneLabel().setVisible(false); //setImage(null);
 				if(s.getStartButton() != null) {
@@ -672,12 +672,12 @@ public class CoreItem extends ViewItem {
 
 	@Override
 	protected void setFocus() {
-		ArrayList list = getListOfSubItemCompositeHolders();
+		ArrayList<SubItemCompositeHolder> list = getListOfSubItemCompositeHolders();
 		Control subitemLabel = null;
 		SubItemCompositeHolder holder = null;
         if (list != null) {
-        	for (Iterator iter = list.iterator(); iter.hasNext() && subitemLabel == null ;) {
-        		holder = (SubItemCompositeHolder)iter.next();
+			for (Iterator<SubItemCompositeHolder> iter = list.iterator(); iter.hasNext() && subitemLabel == null;) {
+				holder = iter.next();
         		if (!holder.isCompleted() && !holder.isSkipped()) {
         			subitemLabel = holder.getSubitemLabel();
         		}

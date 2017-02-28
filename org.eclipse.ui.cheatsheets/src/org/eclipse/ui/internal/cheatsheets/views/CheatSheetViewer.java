@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2015 IBM Corporation and others.
+ *  Copyright (c) 2002, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,15 +36,12 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -102,7 +99,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private ViewItem currentItem;
 
 	//Lists
-	private ArrayList<String> expandRestoreList = new ArrayList<String>();
+	private ArrayList<String> expandRestoreList = new ArrayList<>();
 	private ArrayList<ViewItem> viewItemList = new ArrayList<>();
 
 	//Composites
@@ -636,12 +633,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		layout.numColumns = 1;
 		control.setLayout(layout);
 
-		control.addDisposeListener(new DisposeListener(){
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
+		control.addDisposeListener(e -> dispose());
 
 		showStartPage();
 
@@ -687,18 +679,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			control.setVisible(false);
 			Display.getCurrent().removeFilter(SWT.Show, listener);
 
-			helpPart.getControl().addListener(SWT.Dispose, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					control.setVisible(true);
-					Display.getCurrent().addFilter(SWT.Show, listener);
-					if (preTrayManager != null) {
-						loadState();   // Load from the tray manager
-						stateManager = preTrayManager;
-						preTrayManager = null;
-					}
-					dialogReturnCode = dialog.getReturnCode();
+			helpPart.getControl().addListener(SWT.Dispose, event -> {
+				control.setVisible(true);
+				Display.getCurrent().addFilter(SWT.Show, listener);
+				if (preTrayManager != null) {
+					loadState(); // Load from the tray manager
+					stateManager = preTrayManager;
+					preTrayManager = null;
 				}
+				dialogReturnCode = dialog.getReturnCode();
 			});
 		}
 	}
@@ -798,12 +787,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		 * step is this plugin is present.
 		 */
 		if (!inDialog && isInDialogItem() && (Platform.getBundle("org.eclipse.help.ui") != null)) { //$NON-NLS-1$
-			listener = new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					if (isTrayDialog(event.widget)) {
-						dialogOpened((TrayDialog)((Shell)event.widget).getData());
-					}
+			listener = event -> {
+				if (isTrayDialog(event.widget)) {
+					dialogOpened((TrayDialog) ((Shell) event.widget).getData());
 				}
 			};
 			Display.getCurrent().addFilter(SWT.Show, listener);

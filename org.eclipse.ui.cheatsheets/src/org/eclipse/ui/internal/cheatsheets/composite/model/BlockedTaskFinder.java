@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class BlockedTaskFinder {
      * <li> Add the successor and its children to the list if not started
 	 */
 
-	public Set findBlockedTaskChanges(Set<ICompositeCheatSheetTask> stateChangedTasks) {
+	public Set<ICompositeCheatSheetTask> findBlockedTaskChanges(Set<ICompositeCheatSheetTask> stateChangedTasks) {
 		this.stateChangedTasks = stateChangedTasks;
 		impactedTasks = new HashSet<>();
 		visitChangedTasks();

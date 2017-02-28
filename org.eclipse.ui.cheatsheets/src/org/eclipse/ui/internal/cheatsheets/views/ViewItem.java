@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public abstract class ViewItem {
 		// handle item extensions here
 		// check number of extensions for this item and adjust layout accordingly
 		int number = 0;
-		ArrayList itemExts = item.getItemExtensions();
+		ArrayList<AbstractItemExtensionElement[]> itemExts = item.getItemExtensions();
 
 		if((itemExts != null && itemExts.size() > 0) || item.getContextId() != null || item.getHref() != null) {
 			// Set up the title composite for the item.
@@ -140,7 +140,7 @@ public abstract class ViewItem {
 
 		if(itemExts != null) {
 			for (int g = 0; g < itemExts.size(); g++) {
-				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
+				AbstractItemExtensionElement[] eea = itemExts.get(g);
 				number += eea.length;
 				for (int x = 0; x < eea.length; x++) {
 					eea[x].createControl(titleComposite);
@@ -290,10 +290,10 @@ public abstract class ViewItem {
 		if (regularFont != null)
 			regularFont.dispose();
 
-		ArrayList itemExts = item.getItemExtensions();
+		ArrayList<AbstractItemExtensionElement[]> itemExts = item.getItemExtensions();
 		if (itemExts != null) {
 			for (int g = 0; g < itemExts.size(); g++) {
-				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
+				AbstractItemExtensionElement[] eea = itemExts.get(g);
 				for (int x = 0; x < eea.length; x++) {
 					eea[x].dispose();
 				}
@@ -470,8 +470,9 @@ public abstract class ViewItem {
 	void setButtonsVisible(boolean isVisible) {
 		if (buttonExpanded != isVisible) {
 			if (listOfSubItemCompositeHolders != null) {
-				for (Iterator iter = listOfSubItemCompositeHolders.iterator(); iter.hasNext(); ){
-					((SubItemCompositeHolder)iter.next()).setButtonsVisible(isVisible);
+				for (Iterator<SubItemCompositeHolder> iter = listOfSubItemCompositeHolders.iterator(); iter
+						.hasNext();) {
+					iter.next().setButtonsVisible(isVisible);
 				}
 			} else if (buttonComposite != null) {
 				buttonComposite.setVisible(isVisible);

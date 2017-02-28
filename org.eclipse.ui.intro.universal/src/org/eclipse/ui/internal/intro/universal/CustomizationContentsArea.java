@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,23 +27,18 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -57,8 +52,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -728,12 +721,7 @@ public class CustomizationContentsArea {
 
 	public boolean performOk() {
 		saveData();
-		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				restartIntro();
-			}
-		});
+		BusyIndicator.showWhile(shell.getDisplay(), () -> restartIntro());
 		return true;
 	}
 
@@ -874,14 +862,11 @@ public class CustomizationContentsArea {
 		themes.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		themes.setContentProvider(contentProvider);
 		themes.setLabelProvider(labelProvider);
-		themes.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				Object sel = ((StructuredSelection) e.getSelection()).getFirstElement();
-				introTheme = (IntroTheme) sel;
-				themePreview.redraw();
-				enableFontsButton();
-			}
+		themes.addSelectionChangedListener(e -> {
+			Object sel = ((StructuredSelection) e.getSelection()).getFirstElement();
+			introTheme = (IntroTheme) sel;
+			themePreview.redraw();
+			enableFontsButton();
 		});
 		loadThemes();
 		Label previewLabel = new Label(rightColumn, SWT.NULL);
@@ -891,19 +876,15 @@ public class CustomizationContentsArea {
 		gd.widthHint = 160+20;
 		gd.heightHint = 120+20;
 		themePreview.setLayoutData(gd);
-		themePreview.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (introTheme == null)
-					return;
-				Image bgImage = introTheme.getPreviewImage();
-				if (bgImage == null)
-					return;
-				//Rectangle carea = themePreview.getClientArea();
-				Rectangle ibounds = bgImage.getBounds();
-				e.gc.drawImage(bgImage, 0, 0, ibounds.width, ibounds.height, 10, 10, 160, 120);
-			}
+		themePreview.addPaintListener(e -> {
+			if (introTheme == null)
+				return;
+			Image bgImage = introTheme.getPreviewImage();
+			if (bgImage == null)
+				return;
+			//Rectangle carea = themePreview.getClientArea();
+			Rectangle ibounds = bgImage.getBounds();
+			e.gc.drawImage(bgImage, 0, 0, ibounds.width, ibounds.height, 10, 10, 160, 120);
 		});
 		Label label = new Label(container, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_rootpages);
@@ -932,14 +913,10 @@ public class CustomizationContentsArea {
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 2;
 		rootPages.getControl().setLayoutData(gd);
-		rootPages.addCheckStateListener(new ICheckStateListener() {
-
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				RootPage page = (RootPage) event.getElement();
-				boolean checked = event.getChecked();
-				onPageChecked(page.id, checked);
-			}
+		rootPages.addCheckStateListener(event -> {
+			RootPage page = (RootPage) event.getElement();
+			boolean checked = event.getChecked();
+			onPageChecked(page.id, checked);
 		});
 		item.setControl(container);
 	}
@@ -1013,13 +990,7 @@ public class CustomizationContentsArea {
 		manager.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(manager.getMenu());
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillPopupMenu(manager, viewer);
-			}
-		});
+		manager.addMenuListener(manager1 -> fillPopupMenu(manager1, viewer));
 	}
 
 	private void addDNDSupport(TableViewer viewer) {

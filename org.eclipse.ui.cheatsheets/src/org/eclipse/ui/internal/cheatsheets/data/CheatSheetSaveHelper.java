@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,13 +279,13 @@ public class CheatSheetSaveHelper {
 	}
 
 	private void addListOfStringsToMemento(IMemento memento, Properties properties, String key) {
-		List list = (List)properties.get(key);
+		List<String> list = (List<String>) properties.get(key);
 		if (list == null) {
 			return;
 		}
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
+		for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
 			IMemento childMemento = memento.createChild(key);
-			childMemento.putString(IParserTags.ITEM,(String)iter.next());
+			childMemento.putString(IParserTags.ITEM, iter.next());
 		}
 	}
 

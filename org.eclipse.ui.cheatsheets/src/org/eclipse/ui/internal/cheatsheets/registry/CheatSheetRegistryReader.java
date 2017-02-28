@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -439,9 +439,9 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	private void finishCheatSheets() {
 		if (deferCheatSheets != null) {
-			Iterator iter = deferCheatSheets.iterator();
+			Iterator<CheatSheetElement> iter = deferCheatSheets.iterator();
 			while (iter.hasNext()) {
-				CheatSheetElement cheatsheet = (CheatSheetElement) iter.next();
+				CheatSheetElement cheatsheet = iter.next();
 				IConfigurationElement config = cheatsheet.getConfigurationElement();
 				finishCheatSheet(cheatsheet, config, cheatsheets);
 			}

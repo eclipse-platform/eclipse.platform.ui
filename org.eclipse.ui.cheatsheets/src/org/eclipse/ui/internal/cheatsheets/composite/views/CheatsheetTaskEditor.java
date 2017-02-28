@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -49,11 +49,11 @@ public class CheatsheetTaskEditor extends TaskEditor {
 	@Override
 	public void setInput(IEditableTask task, IMemento memento) {
 		this.task = task;
-		Dictionary params = task.getParameters();
-		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
-		String path = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
+		Dictionary<String, String> params = task.getParameters();
+		String id = params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
+		String path = params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
 		boolean showIntro = true;
-		String showIntroParam = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_SHOW_INTRO);
+		String showIntroParam = params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_SHOW_INTRO);
 		if (showIntroParam != null) {
 			showIntro = showIntroParam.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}

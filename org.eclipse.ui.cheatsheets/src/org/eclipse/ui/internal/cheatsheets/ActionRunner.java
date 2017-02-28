@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.data.Action;
@@ -38,7 +37,7 @@ public class ActionRunner {
 			String message = NLS.bind(Messages.ERROR_FINDING_PLUGIN_FOR_ACTION, (new Object[] {pluginId}));
 			return new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 		}
-		Class actionClass;
+		Class<?> actionClass;
 		IAction action;
 		try {
 			actionClass = bundle.loadClass(className);
@@ -55,13 +54,10 @@ public class ActionRunner {
 
 		final boolean[] listenerFired = { false };
 		final boolean[] listenerResult = { false };
-		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if(event.getProperty().equals(IAction.RESULT) && event.getNewValue() instanceof Boolean) {
-					listenerFired[0] = true;
-					listenerResult[0] = ((Boolean)event.getNewValue()).booleanValue();
-				}
+		IPropertyChangeListener propertyChangeListener = event -> {
+			if (event.getProperty().equals(IAction.RESULT) && event.getNewValue() instanceof Boolean) {
+				listenerFired[0] = true;
+				listenerResult[0] = ((Boolean) event.getNewValue()).booleanValue();
 			}
 		};
 

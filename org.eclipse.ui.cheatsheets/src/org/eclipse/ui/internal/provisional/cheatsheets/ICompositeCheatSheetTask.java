@@ -58,7 +58,7 @@ public interface ICompositeCheatSheetTask {
 	 * @return the parameter names and values as specified in the
 	 * composite cheatsheet content file.
 	 */
-	public Dictionary getParameters();
+	public Dictionary<String, String> getParameters();
 	/**
 	 * Returns the description of the task.
 	 * @return a plain String, or XML markup that can
