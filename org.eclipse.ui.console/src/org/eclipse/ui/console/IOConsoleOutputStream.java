@@ -13,10 +13,11 @@ package org.eclipse.ui.console;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
+import org.eclipse.ui.internal.console.StreamDecoder;
 
 /**
  * OutputStream used to write to an IOConsole.
@@ -66,10 +67,7 @@ public class IOConsoleOutputStream extends OutputStream {
      */
     private int fontStyle;
 
-    private String fEncoding;
-    private String fDefaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
-
-    private boolean fNeedsEncoding = false;
+	private StreamDecoder decoder;
 
     private boolean prependCR;
 
@@ -78,8 +76,9 @@ public class IOConsoleOutputStream extends OutputStream {
      *
      * @param console I/O console
      */
-    IOConsoleOutputStream(IOConsole console) {
-        this.console = console;
+	IOConsoleOutputStream(IOConsole console, Charset charset) {
+		this.decoder = new StreamDecoder(charset);
+		this.console = console;
         this.partitioner = (IOConsolePartitioner) console.getPartitioner();
     }
 
@@ -195,11 +194,9 @@ public class IOConsoleOutputStream extends OutputStream {
      */
     @Override
 	public void write(byte[] b, int off, int len) throws IOException {
-        if (fNeedsEncoding) {
-            encodedWrite(new String(b, off, len, fEncoding));
-        } else {
-            encodedWrite(new String(b, off, len));
-        }
+		StringBuilder builder = new StringBuilder();
+		this.decoder.decode(builder, b, off, len);
+		encodedWrite(builder.toString());
     }
     /*
      *  (non-Javadoc)
@@ -218,12 +215,51 @@ public class IOConsoleOutputStream extends OutputStream {
         write(new byte[] {(byte)b}, 0, 1);
     }
 
+	/**
+	 * Writes a character array to the attached console.
+	 *
+	 * @param buffer the char array to write to the attached console
+	 * @throws IOException if the stream is closed
+	 * @since 3.7
+	 */
+	public void write(char[] buffer) throws IOException {
+		String str = new String(buffer);
+		this.encodedWrite(str);
+	}
+
+	/**
+	 * Writes a character array using specified offset and length to the
+	 * attached console.
+	 *
+	 * @param buffer the char array to write to the attached console.
+	 * @param off the initial offset
+	 * @param len the length
+	 * @throws IOException if the stream is closed
+	 * @since 3.7
+	 */
+	public void write(char[] buffer, int off, int len) throws IOException {
+		String str = new String(buffer, off, len);
+		this.encodedWrite(str);
+	}
+
     /**
-     * Writes a string to the attached console.
-     *
-     * @param str the string to write to the attached console.
-     * @throws IOException if the stream is closed.
-     */
+	 * Writes a character sequence to the attached console.
+	 *
+	 * @param chars the string/characters to write to the attached console.
+	 * @throws IOException if the stream is closed.
+	 * @since 3.7
+	 */
+	public void write(CharSequence chars) throws IOException {
+		String str = chars.toString();
+		encodedWrite(str);
+    }
+
+    /**
+	 * Writes a string to the attached console.
+	 *
+	 * @param str the string to write to the attached console
+	 * @throws IOException if the stream is closed
+	 */
     public void write(String str) throws IOException {
         encodedWrite(str);
     }
@@ -267,7 +303,25 @@ public class IOConsoleOutputStream extends OutputStream {
      * @param encoding encoding identifier
      */
     public void setEncoding(String encoding) {
-        fEncoding = encoding;
-        fNeedsEncoding = (fEncoding!=null) && (!fEncoding.equals(fDefaultEncoding));
+		Charset charset = Charset.forName(encoding);
+		try {
+			this.setCharset(charset);
+		} catch (IOException ioe) {
+			// ignore exception while writing final characters
+			// to avoid API break
+		}
+	}
+
+	/**
+	 * @param charset set the Charset for the attached console
+	 * @throws IOException if the stream is closed
+	 * @since 3.7
+	 */
+	public void setCharset(Charset charset) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		this.decoder.finish(builder);
+		this.encodedWrite(builder.toString());
+		this.decoder = new StreamDecoder(charset);
     }
+
 }

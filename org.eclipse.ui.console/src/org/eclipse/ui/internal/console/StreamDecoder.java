@@ -1,0 +1,96 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Andreas Loth and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Andreas Loth - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.ui.internal.console;
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
+
+
+/**
+ * @since 3.7
+ */
+public class StreamDecoder {
+
+	static private final int BUFFER_SIZE = 4096;
+
+	private final CharsetDecoder decoder;
+	private final ByteBuffer inputBuffer;
+	private final CharBuffer outputBuffer;
+
+	public StreamDecoder(Charset charset) {
+		this.decoder = charset.newDecoder();
+		this.decoder.onMalformedInput(CodingErrorAction.REPLACE);
+		this.decoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
+		this.inputBuffer = ByteBuffer.allocate(StreamDecoder.BUFFER_SIZE);
+		this.inputBuffer.flip();
+		this.outputBuffer = CharBuffer.allocate(StreamDecoder.BUFFER_SIZE);
+	}
+
+	private void consume(StringBuilder consumer) {
+		this.outputBuffer.flip();
+		consumer.append(this.outputBuffer);
+		this.outputBuffer.clear();
+	}
+
+	private void internalDecode(StringBuilder consumer, byte[] buffer, int offset, int length, boolean last) {
+		assert (offset >= 0);
+		assert (length >= 0);
+		int position = offset;
+		int end = offset + length;
+		assert (end <= buffer.length);
+		boolean finished = false;
+		do {
+			CoderResult result = this.decoder.decode(this.inputBuffer, this.outputBuffer, last);
+			if (result.isOverflow()) {
+				this.consume(consumer);
+			} else if (result.isUnderflow()) {
+				this.inputBuffer.compact();
+				int remaining = this.inputBuffer.remaining();
+				assert (remaining > 0);
+				int read = Math.min(remaining, end - position);
+				if (read > 0) {
+					this.inputBuffer.put(buffer, position, read);
+					position += read;
+				} else {
+					finished = true;
+				}
+				this.inputBuffer.flip();
+			} else {
+				assert false;
+			}
+		} while (!finished);
+	}
+
+	public void decode(StringBuilder consumer, byte[] buffer, int offset, int length) {
+		this.internalDecode(consumer, buffer, offset, length, false);
+		this.consume(consumer);
+	}
+
+	public void finish(StringBuilder consumer) {
+		this.internalDecode(consumer, new byte[0], 0, 0, true);
+		CoderResult result;
+		do {
+			result = this.decoder.flush(this.outputBuffer);
+			if (result.isOverflow()) {
+				this.consume(consumer);
+			} else {
+				assert result.isUnderflow();
+			}
+		} while (!result.isUnderflow());
+		this.consume(consumer);
+	}
+
+}

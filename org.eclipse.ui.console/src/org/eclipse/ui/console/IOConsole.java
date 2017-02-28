@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,12 @@ package org.eclipse.ui.console;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
@@ -54,7 +54,7 @@ public class IOConsole extends TextConsole {
     /**
      * The encoding used to for displaying console output.
      */
-    private String fEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+	private Charset charset;
 
 
     /**
@@ -68,7 +68,7 @@ public class IOConsole extends TextConsole {
      *  when this console is added/removed from the console manager
      */
     public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
-        this(name, consoleType, imageDescriptor, null, autoLifecycle);
+		this(name, consoleType, imageDescriptor, (String)null, autoLifecycle);
     }
 
     /**
@@ -83,10 +83,31 @@ public class IOConsole extends TextConsole {
      *  when this console is added/removed from the console manager
      */
     public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
+		this(name, consoleType, imageDescriptor,
+				encoding == null
+						? Charset.forName(WorkbenchEncoding.getWorkbenchDefaultEncoding())
+						: Charset.forName(encoding),
+				autoLifecycle);
+    }
+
+    /**
+	 * Constructs a console with the given name, type, image, encoding and
+	 * lifecycle.
+	 *
+	 * @param name name to display for this console
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor image to display for this console or
+	 *            <code>null</code>
+	 * @param charset the encoding that should be used to render the text, must
+	 *            not be <code>null</code>
+	 * @param autoLifecycle whether lifecycle methods should be called
+	 *            automatically when this console is added/removed from the
+	 *            console manager
+	 * @since 3.7
+	 */
+	public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, Charset charset, boolean autoLifecycle) {
         super(name, consoleType, imageDescriptor, autoLifecycle);
-        if (encoding != null) {
-            fEncoding = encoding;
-        }
+		this.charset = charset;
         synchronized (openStreams) {
 			inputStream = new IOConsoleInputStream(this);
         	openStreams.add(inputStream);
@@ -144,8 +165,7 @@ public class IOConsole extends TextConsole {
      * @return a new output stream connected to this console
      */
     public IOConsoleOutputStream newOutputStream() {
-        IOConsoleOutputStream outputStream = new IOConsoleOutputStream(this);
-        outputStream.setEncoding(fEncoding);
+		IOConsoleOutputStream outputStream = new IOConsoleOutputStream(this, this.charset);
         synchronized(openStreams) {
             openStreams.add(outputStream);
         }
@@ -301,6 +321,19 @@ public class IOConsole extends TextConsole {
      * @since 3.3
      */
 	public String getEncoding() {
-		return fEncoding;
+		return this.charset.name();
 	}
+
+	/**
+	 * Returns the Charset for this console, or <code>null</code> to indicate
+	 * default encoding.
+	 *
+	 * @return the Charset for this console, or <code>null</code> to indicate
+	 *         default encoding
+	 * @since 3.7
+	 */
+	public Charset getCharset() {
+		return this.charset;
+	}
+
 }

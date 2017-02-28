@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
 import org.eclipse.debug.tests.console.ConsoleManagerTests;
+import org.eclipse.debug.tests.console.ConsoleTests;
 import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.debug.tests.launching.ArgumentParsingTests;
 import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
@@ -40,6 +38,9 @@ import org.eclipse.debug.tests.viewer.model.VirtualViewerLazyModeTests;
 import org.eclipse.debug.tests.viewer.model.VirtualViewerSelectionTests;
 import org.eclipse.debug.tests.viewer.model.VirtualViewerStateTests;
 import org.eclipse.debug.tests.viewer.model.VirtualViewerUpdateTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
   * Tests for integration and nightly builds.
@@ -104,6 +105,7 @@ public class AutomatedSuite extends TestSuite {
 
 		// Console view
 		addTest(new TestSuite(ConsoleManagerTests.class));
+		addTest(new TestSuite(ConsoleTests.class));
 
 		// Launch Groups
 		addTest(new TestSuite(LaunchGroupTests.class));

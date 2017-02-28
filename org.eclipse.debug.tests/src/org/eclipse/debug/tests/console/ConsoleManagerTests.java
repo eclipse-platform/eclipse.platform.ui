@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Andrey Loskutov and others.
+ * Copyright (c) 2016, 2017 Andrey Loskutov and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
@@ -61,7 +60,7 @@ public class ConsoleManagerTests extends TestCase {
 		manager = ConsolePlugin.getDefault().getConsoleManager();
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		hideWelcomePage(activePage);
-		processUIEvents(100);
+		TestHelper.processUIEvents(100);
 		consoles = new ConsoleMock[count];
 		for (int i = 0; i < count; i++) {
 			final ConsoleMock console = new ConsoleMock(i + 1);
@@ -72,7 +71,7 @@ public class ConsoleManagerTests extends TestCase {
 
 		IViewPart consoleView = activePage.showView("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
 		activePage.activate(consoleView);
-		processUIEvents(100);
+		TestHelper.processUIEvents(100);
 
 		// The test is unstable ("show" event on the the first console seem to
 		// be not always sent), so make sure console view has shown at least
@@ -80,8 +79,8 @@ public class ConsoleManagerTests extends TestCase {
 		firstConsole = new ConsoleMock(0);
 		manager.addConsoles(new ConsoleMock[] { firstConsole });
 		manager.showConsoleView(firstConsole);
-		waitForJobs();
-		processUIEvents(100);
+		TestHelper.waitForJobs();
+		TestHelper.processUIEvents(100);
 		ConsoleMock.allShownConsoles.set(0);
 	}
 
@@ -90,7 +89,7 @@ public class ConsoleManagerTests extends TestCase {
 		executorService.shutdownNow();
 		manager.removeConsoles(consoles);
 		manager.removeConsoles(new ConsoleMock[] { firstConsole });
-		processUIEvents(100);
+		TestHelper.processUIEvents(100);
 		super.tearDown();
 	}
 
@@ -104,7 +103,7 @@ public class ConsoleManagerTests extends TestCase {
 		}
 		if (intro != null) {
 			activePage.hideView(intro);
-			processUIEvents(100);
+			TestHelper.processUIEvents(100);
 		}
 	}
 
@@ -124,15 +123,15 @@ public class ConsoleManagerTests extends TestCase {
 			showConsole(console);
 		}
 		System.out.println("All tasks scheduled, processing UI events now..."); //$NON-NLS-1$
-		processUIEvents(1000);
+		TestHelper.processUIEvents(1000);
 
 		// Console manager starts a job with delay, let wait for him a bit
 		System.out.println("Waiting on jobs now..."); //$NON-NLS-1$
-		waitForJobs();
+		TestHelper.waitForJobs();
 
 		// Give UI a chance to proceed pending console manager jobs
 		System.out.println("Done with jobs, processing UI events again..."); //$NON-NLS-1$
-		processUIEvents(3000);
+		TestHelper.processUIEvents(3000);
 
 		executorService.shutdown();
 
@@ -140,7 +139,7 @@ public class ConsoleManagerTests extends TestCase {
 		boolean OK = waitForExecutorService();
 		if (!OK) {
 			System.out.println("Timed out..."); //$NON-NLS-1$
-			processUIEvents(10000);
+			TestHelper.processUIEvents(10000);
 
 			// timeout?
 			assertTrue("Timeout occurred while waiting on console to be shown", //$NON-NLS-1$
@@ -157,33 +156,9 @@ public class ConsoleManagerTests extends TestCase {
 			if (executorService.awaitTermination(1, TimeUnit.SECONDS)) {
 				return true;
 			}
-			processUIEvents(100);
+			TestHelper.processUIEvents(100);
 		}
 		return false;
-	}
-
-	private void processUIEvents(final long millis) {
-		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < millis) {
-			while (PlatformUI.getWorkbench().getDisplay().readAndDispatch()) {
-				// loop untile the queue is empty
-			}
-		}
-	}
-
-	private void waitForJobs() throws InterruptedException {
-		if (Display.getCurrent() == null) {
-			Thread.sleep(200);
-		} else {
-			processUIEvents(200);
-		}
-		while (!Job.getJobManager().isIdle()) {
-			if (Display.getCurrent() == null) {
-				Thread.sleep(200);
-			} else {
-				processUIEvents(200);
-			}
-		}
 	}
 
 	private void showConsole(final ConsoleMock console) {
@@ -197,7 +172,7 @@ public class ConsoleManagerTests extends TestCase {
 					latch.await(1, TimeUnit.MINUTES);
 					System.out.println("Requesting to show: " + console); //$NON-NLS-1$
 					manager.showConsoleView(console);
-					waitForJobs();
+					TestHelper.waitForJobs();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					Thread.interrupted();
@@ -277,4 +252,5 @@ public class ConsoleManagerTests extends TestCase {
 			return "mock #" + number; //$NON-NLS-1$
 		}
 	}
+
 }

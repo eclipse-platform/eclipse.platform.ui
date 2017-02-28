@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 20017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 package org.eclipse.ui.console;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+
+import org.eclipse.ui.WorkbenchEncoding;
 
 /**
  * Used to write messages to a message console. A message console may have more
@@ -33,22 +36,32 @@ import java.io.IOException;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MessageConsoleStream extends IOConsoleOutputStream {
-    
+
     private MessageConsole fMessageConsole;
-    
+
 	/**
 	 * Constructs a new stream connected to the given console.
-	 * 
+	 *
 	 * @param console the console to write messages to
 	 */
 	public MessageConsoleStream(MessageConsole console) {
-	    super(console);
+		this(console, Charset.forName(WorkbenchEncoding.getWorkbenchDefaultEncoding()));
+	}
+
+	/**
+	 * Constructs a new stream connected to the given console.
+	 *
+	 * @param console the console to write messages to
+	 * @since 3.7
+	 */
+	public MessageConsoleStream(MessageConsole console, Charset charset) {
+		super(console, charset);
         fMessageConsole = console;
 	}
-	
+
 	/**
 	 * Appends the specified message to this stream.
-	 * 
+	 *
 	 * @param message message to append
 	 */
 	public void print(String message) {
@@ -58,8 +71,8 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
             ConsolePlugin.log(e);
         }
 	}
-	
-	
+
+
 	/**
 	 * Appends a line separator string to this stream.
 	 */
@@ -69,24 +82,24 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
         } catch (IOException e) {
             ConsolePlugin.log(e);
         }
-	}	
-	
+	}
+
 	/**
 	 * Appends the specified message to this stream, followed by a line
 	 * separator string.
-	 * 
+	 *
 	 * @param message message to print
 	 */
 	public void println(String message) {
 		print(message + "\n"); //$NON-NLS-1$
-	}	
-    
+	}
+
     /**
      * Returns the console this stream is connected to.
-     * 
+     *
      * @return the console this stream is connected to
      */
     public MessageConsole getConsole() {
         return fMessageConsole;
-    }    
+    }
 }
