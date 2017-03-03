@@ -55,9 +55,6 @@ public class ConsoleTests extends TestCase {
 			TestHelper.waitForJobs();
 			TestCase.assertEquals("whole test string should be written", testString, document.get()); //$NON-NLS-1$
 		}
-		// after closing the stream, the document content should still be the
-		// same
-		TestCase.assertEquals("closing the stream should not alter the document", testString, document.get()); //$NON-NLS-1$
 	}
 
 }

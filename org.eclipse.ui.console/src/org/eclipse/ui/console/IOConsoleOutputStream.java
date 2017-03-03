@@ -14,7 +14,6 @@ package org.eclipse.ui.console;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
@@ -159,20 +158,6 @@ public class IOConsoleOutputStream extends OutputStream {
         return closed;
     }
 
-	/**
-	 * Writes remaining characters stored in the decoder state.
-	 *
-	 * Must only be called from synchronized methods.
-	 *
-	 * @see CharsetDecoder#flush(java.nio.CharBuffer)
-	 * @throws IOException
-	 */
-	private void finishDecoder() throws IOException {
-		StringBuilder builder = new StringBuilder();
-		this.decoder.finish(builder);
-		this.encodedWrite(builder.toString());
-	}
-
 	/*
 	 *  (non-Javadoc)
 	 * @see java.io.OutputStream#close()
@@ -183,7 +168,6 @@ public class IOConsoleOutputStream extends OutputStream {
 			// Closeable#close() has no effect if already closed
 			return;
         }
-		this.finishDecoder();
         if (prependCR) { // force writing of last /r
             prependCR = false;
             notifyParitioner("\r"); //$NON-NLS-1$
@@ -209,7 +193,7 @@ public class IOConsoleOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     @Override
-	public synchronized void write(byte[] b, int off, int len) throws IOException {
+	public void write(byte[] b, int off, int len) throws IOException {
 		StringBuilder builder = new StringBuilder();
 		this.decoder.decode(builder, b, off, len);
 		encodedWrite(builder.toString());
@@ -333,8 +317,10 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * @throws IOException if the stream is closed
 	 * @since 3.7
 	 */
-	public synchronized void setCharset(Charset charset) throws IOException {
-		this.finishDecoder();
+	public void setCharset(Charset charset) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		this.decoder.finish(builder);
+		this.encodedWrite(builder.toString());
 		this.decoder = new StreamDecoder(charset);
     }
 
