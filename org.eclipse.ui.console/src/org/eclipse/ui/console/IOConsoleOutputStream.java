@@ -168,10 +168,15 @@ public class IOConsoleOutputStream extends OutputStream {
 			// Closeable#close() has no effect if already closed
 			return;
         }
+		StringBuilder builder = new StringBuilder();
         if (prependCR) { // force writing of last /r
             prependCR = false;
-            notifyParitioner("\r"); //$NON-NLS-1$
+			builder.append('\r');
         }
+		this.decoder.finish(builder);
+		if (builder.length() > 0) {
+			notifyParitioner(builder.toString());
+		}
         console.streamClosed(this);
         closed = true;
         partitioner = null;
@@ -193,7 +198,7 @@ public class IOConsoleOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     @Override
-	public void write(byte[] b, int off, int len) throws IOException {
+	public synchronized void write(byte[] b, int off, int len) throws IOException {
 		StringBuilder builder = new StringBuilder();
 		this.decoder.decode(builder, b, off, len);
 		encodedWrite(builder.toString());
@@ -317,10 +322,12 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * @throws IOException if the stream is closed
 	 * @since 3.7
 	 */
-	public void setCharset(Charset charset) throws IOException {
+	public synchronized void setCharset(Charset charset) throws IOException {
 		StringBuilder builder = new StringBuilder();
 		this.decoder.finish(builder);
-		this.encodedWrite(builder.toString());
+		if (builder.length() > 0) {
+			this.encodedWrite(builder.toString());
+		}
 		this.decoder = new StreamDecoder(charset);
     }
 

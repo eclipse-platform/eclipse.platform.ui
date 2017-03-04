@@ -29,6 +29,7 @@ public class StreamDecoder {
 	private final CharsetDecoder decoder;
 	private final ByteBuffer inputBuffer;
 	private final CharBuffer outputBuffer;
+	private boolean finished;
 
 	public StreamDecoder(Charset charset) {
 		this.decoder = charset.newDecoder();
@@ -37,6 +38,7 @@ public class StreamDecoder {
 		this.inputBuffer = ByteBuffer.allocate(StreamDecoder.BUFFER_SIZE);
 		this.inputBuffer.flip();
 		this.outputBuffer = CharBuffer.allocate(StreamDecoder.BUFFER_SIZE);
+		this.finished = false;
 	}
 
 	private void consume(StringBuilder consumer) {
@@ -45,15 +47,15 @@ public class StreamDecoder {
 		this.outputBuffer.clear();
 	}
 
-	private void internalDecode(StringBuilder consumer, byte[] buffer, int offset, int length, boolean last) {
+	private void internalDecode(StringBuilder consumer, byte[] buffer, int offset, int length) {
 		assert (offset >= 0);
 		assert (length >= 0);
 		int position = offset;
 		int end = offset + length;
 		assert (end <= buffer.length);
-		boolean finished = false;
+		boolean finishedReading = false;
 		do {
-			CoderResult result = this.decoder.decode(this.inputBuffer, this.outputBuffer, last);
+			CoderResult result = this.decoder.decode(this.inputBuffer, this.outputBuffer, false);
 			if (result.isOverflow()) {
 				this.consume(consumer);
 			} else if (result.isUnderflow()) {
@@ -65,23 +67,28 @@ public class StreamDecoder {
 					this.inputBuffer.put(buffer, position, read);
 					position += read;
 				} else {
-					finished = true;
+					finishedReading = true;
 				}
 				this.inputBuffer.flip();
 			} else {
 				assert false;
 			}
-		} while (!finished);
+		} while (!finishedReading);
 	}
 
 	public void decode(StringBuilder consumer, byte[] buffer, int offset, int length) {
-		this.internalDecode(consumer, buffer, offset, length, false);
+		this.internalDecode(consumer, buffer, offset, length);
 		this.consume(consumer);
 	}
 
 	public void finish(StringBuilder consumer) {
-		this.internalDecode(consumer, new byte[0], 0, 0, true);
+		if (this.finished) {
+			return;
+		}
+		this.finished = true;
 		CoderResult result;
+		result = this.decoder.decode(this.inputBuffer, this.outputBuffer, true);
+		assert (result.isOverflow() || result.isUnderflow());
 		do {
 			result = this.decoder.flush(this.outputBuffer);
 			if (result.isOverflow()) {

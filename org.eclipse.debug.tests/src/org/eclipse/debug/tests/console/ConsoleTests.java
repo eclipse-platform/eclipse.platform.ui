@@ -55,6 +55,31 @@ public class ConsoleTests extends TestCase {
 			TestHelper.waitForJobs();
 			TestCase.assertEquals("whole test string should be written", testString, document.get()); //$NON-NLS-1$
 		}
+		TestHelper.waitForJobs();
+		// after closing the stream, the document content should still be the
+		// same
+		TestCase.assertEquals("closing the stream should not alter the document", testString, document.get()); //$NON-NLS-1$
+	}
+
+	public void testConsoleOutputStreamLastR() throws IOException, InterruptedException {
+		String testString = "a\r"; //$NON-NLS-1$
+		byte[] testStringBuffer = testString.getBytes(StandardCharsets.UTF_8);
+		TestCase.assertEquals("Test string \"" + testString + "\" should consist of 2 UTF-8 bytes", 2, testStringBuffer.length); //$NON-NLS-1$ //$NON-NLS-2$
+		MessageConsole console = new MessageConsole("Test Console", //$NON-NLS-1$
+				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
+		IDocument document = console.getDocument();
+		TestHelper.waitForJobs();
+		TestCase.assertEquals("Document should be empty", "", document.get()); //$NON-NLS-1$ //$NON-NLS-2$
+		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
+			outStream.write(testStringBuffer);
+			// everything but pending \r should be written
+			TestHelper.waitForJobs();
+			TestCase.assertEquals("First char should be written", testString.substring(0, 1), document.get()); //$NON-NLS-1$
+		}
+		TestHelper.waitForJobs();
+		// after closing the stream, the document content should still be the
+		// same
+		TestCase.assertEquals("closing the stream should write the pending \\r", testString, document.get()); //$NON-NLS-1$
 	}
 
 }
