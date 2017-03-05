@@ -177,11 +177,12 @@ public class HelpView extends ViewPart implements IPartListener2,
 
 	private void installSelectionListener(IWorkbenchPart part) {
 		ISelectionProvider provider = part.getSite().getSelectionProvider();
-		if (provider instanceof IPostSelectionProvider)
+		if (provider instanceof IPostSelectionProvider) {
 			((IPostSelectionProvider) provider)
 				.addPostSelectionChangedListener(this);
-		else
+		} else if (provider != null) {
 			provider.addSelectionChangedListener(this);
+		}
 		monitoredPart = part;
 	}
 
