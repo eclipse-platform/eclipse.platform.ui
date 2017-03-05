@@ -92,7 +92,23 @@ public class LocalFile extends FileStore {
 	private void checkTargetIsNotWritable(File target, Throwable exception) throws CoreException {
 		if (!target.canWrite()) {
 			String message = NLS.bind(Messages.couldNotWrite, target.getAbsolutePath());
-			Policy.error(EFS.ERROR_WRITE, message);
+			Policy.error(EFS.ERROR_WRITE, message, exception);
+		}
+	}
+
+	/**
+	 * This method is called after a failure to modify a directory.
+	 * Check to see if the target does not exist (e.g. device doesn't not exist) and if so then
+	 * throw an exception with a more specific message and error code.
+	 *
+	 * @param target The directory that we failed to modify
+	 * @param exception The low level exception that occurred, or <code>null</code>
+	 * @throws CoreException A more specific exception if the target does not exist
+	 */
+	private void checkTargetDoesNotExist(File target, Throwable exception) throws CoreException {
+		if (!target.exists()) {
+			String message = NLS.bind(Messages.fileNotFound, target.getAbsolutePath());
+			Policy.error(EFS.ERROR_WRITE, message, exception);
 		}
 	}
 
@@ -300,15 +316,18 @@ public class LocalFile extends FileStore {
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
 		boolean shallow = (options & EFS.SHALLOW) != 0;
 		//must be a directory
-		if (shallow)
-			file.mkdir();
-		else
-			file.mkdirs();
-		if (!file.isDirectory()) {
-			checkReadOnlyParent(file, null);
-			checkTargetIsNotWritable(file, null);
+		try {
+			if (shallow) {
+				Files.createDirectory(file.toPath());
+			} else {
+				Files.createDirectories(file.toPath());
+			}
+		} catch (IOException e) {
+			checkReadOnlyParent(file, e);
+			checkTargetDoesNotExist(file, e);
+			checkTargetIsNotWritable(file, e);
 			String message = NLS.bind(Messages.failedCreateWrongType, filePath);
-			Policy.error(EFS.ERROR_WRONG_TYPE, message);
+			Policy.error(EFS.ERROR_WRONG_TYPE, message, e);
 		}
 		return this;
 	}
