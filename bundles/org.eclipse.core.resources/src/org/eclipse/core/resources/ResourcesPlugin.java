@@ -481,9 +481,12 @@ public final class ResourcesPlugin extends Plugin {
 		debugRegistration.unregister();
 		debugRegistration = null;
 
-		if (workspace == null)
+		if (workspace == null) {
 			return;
-		workspaceRegistration.unregister();
+		}
+		if (workspaceRegistration != null) {
+			workspaceRegistration.unregister();
+		}
 		// save the preferences for this plug-in
 		getPlugin().savePluginPreferences();
 		workspace.close(null);
