@@ -128,9 +128,8 @@ public class ActivityEnabler {
 		private void handleDuplicateActivities(boolean checkedState,
 				Object element) {
 			// Retrieve duplicate activities from the other categories
-			CategorizedActivity[] duplicateActivities = (CategorizedActivity[]) provider
-					.getDuplicateCategoryActivities((CategorizedActivity) element);
-			for (CategorizedActivity activity : duplicateActivities) {
+			Object[] duplicateActivities = provider.getDuplicateCategoryActivities((CategorizedActivity) element);
+			for (Object activity : duplicateActivities) {
 				// Update the duplicate activity with the same state as the
 				// original
 				dualViewer.setChecked(activity, checkedState);
