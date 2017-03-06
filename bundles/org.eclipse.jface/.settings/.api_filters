@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Announced API removal of ListenerList" id="923795461">
+        <filter id="923795461">
             <message_arguments>
                 <message_argument value="3.13.0"/>
                 <message_argument value="3.12.1"/>
@@ -9,7 +9,7 @@
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.util.ListenerList">
-        <filter comment="Bug 436448 - Adds API filter as our standard for the scheduled API removals" id="305324134">
+        <filter comment="ug 436448 - Adds API filter as our standard for the scheduled API removals" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.util.ListenerList"/>
                 <message_argument value="org.eclipse.jface_3.13.0"/>
