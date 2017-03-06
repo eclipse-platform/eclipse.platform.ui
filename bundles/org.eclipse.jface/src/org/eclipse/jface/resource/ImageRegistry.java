@@ -103,8 +103,8 @@ public class ImageRegistry {
         }
 
         @Override
-		public ImageData getImageData() {
-            return original.getImageData();
+		public ImageData getImageData(int zoom) {
+			return getDataProvider(original).getImageData(zoom);
         }
     }
 
