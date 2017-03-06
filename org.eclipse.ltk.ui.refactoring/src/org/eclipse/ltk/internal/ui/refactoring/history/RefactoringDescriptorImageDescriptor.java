@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 /**
  * Image descriptor for decorated refactoring descriptors.
@@ -62,15 +60,15 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 		int x= size.x;
 
 		if ((fFlags & WORKSPACE) != 0) {
-			ImageData data= getImageData(RefactoringPluginImages.DESC_OVR_WORKSPACE);
-			x-= data.width;
-			drawImage(data, x, size.y - data.height);
+			CachedImageDataProvider dp= createCachedImageDataProvider(RefactoringPluginImages.DESC_OVR_WORKSPACE);
+			x-= dp.getWidth();
+			drawImage(dp, x, size.y - dp.getHeight());
 		}
 	}
 
 	@Override
 	protected void drawCompositeImage(final int width, final int height) {
-		drawImage(getImageData(fImage), 0, 0);
+		drawImage(createCachedImageDataProvider(fImage), 0, 0);
 		drawBottomRight();
 	}
 
@@ -80,22 +78,6 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 			return false;
 		final RefactoringDescriptorImageDescriptor other= (RefactoringDescriptorImageDescriptor) object;
 		return (fImage.equals(other.fImage) && fFlags == other.fFlags && fSize.equals(other.fSize));
-	}
-
-	/**
-	 * Returns the image data for the specified descriptor.
-	 *
-	 * @param descriptor
-	 *            the image descriptor
-	 * @return the image data
-	 */
-	private ImageData getImageData(final ImageDescriptor descriptor) {
-		ImageData data= descriptor.getImageData();
-		if (data == null) {
-			data= DEFAULT_IMAGE_DATA;
-			RefactoringUIPlugin.logErrorMessage("Image data not available: " + descriptor.toString()); //$NON-NLS-1$
-		}
-		return data;
 	}
 
 	@Override
