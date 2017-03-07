@@ -37,7 +37,7 @@ class ResourceToItemsMapper {
 
 	private static final int NUMBER_LIST_REUSE= 10;
 
-	// map from IResource to Item | List<Item>
+	/** map from IResource to {@code Item | List<Item>} **/
 	private HashMap<IResource, Object> fResourceToItem;
 	private Stack<List<Item>> fReuseLists;
 
@@ -122,6 +122,7 @@ class ResourceToItemsMapper {
 	 * @param element element to remove
 	 * @param item The item used for the element
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public void removeFromMap(Object element, Item item) {
 		IResource resource= ((ISearchResultViewEntry)element).getResource();
 		if (resource != null) {

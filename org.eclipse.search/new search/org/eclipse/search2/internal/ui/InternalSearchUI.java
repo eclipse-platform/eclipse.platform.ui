@@ -114,7 +114,7 @@ public class InternalSearchUI {
 
 	private void searchJobFinished(SearchJobRecord record) {
 		record.isRunning= false;
-		fSearchJobs.remove(record);
+		fSearchJobs.remove(record.query);
 		getSearchManager().queryFinished(record.query);
 	}
 
