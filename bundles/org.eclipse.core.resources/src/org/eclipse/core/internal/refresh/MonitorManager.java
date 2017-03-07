@@ -345,11 +345,15 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		} catch (CoreException e) {
 			Policy.log(IStatus.WARNING, Messages.refresh_refreshErr, e);
 		}
-		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, children.length);
-		if (children != null && children.length > 0)
-			for (int i = 0; i < children.length; i++)
-				if (children[i].isLinked())
+
+		if (children != null && children.length > 0) {
+			SubMonitor subMonitor = SubMonitor.convert(progressMonitor, children.length);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].isLinked()) {
 					unmonitor(children[i], subMonitor.split(1));
+				}
+			}
+		}
 	}
 
 	@Override
