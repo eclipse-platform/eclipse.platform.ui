@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Angelo Zerr and others.
+ * Copyright (c) 2009, 2017 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 513300
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
@@ -110,19 +111,19 @@ public class ControlElement extends WidgetElement {
 
 	@Override
 	public boolean isPseudoInstanceOf(String s) {
-		if ("focus".equals(s)) {
+		if ("focus".equalsIgnoreCase(s)) {
 			return this.hasFocus;
 		}
-		if ("hover".equals(s)) {
+		if ("hover".equalsIgnoreCase(s)) {
 			return this.hasMouseHover;
 		}
-		if ("enabled".equals(s)) {
+		if ("enabled".equalsIgnoreCase(s)) {
 			return getControl().getEnabled();
 		}
-		if ("disabled".equals(s)) {
+		if ("disabled".equalsIgnoreCase(s)) {
 			return !getControl().getEnabled();
 		}
-		if ("visible".equals(s)) {
+		if ("visible".equalsIgnoreCase(s)) {
 			return getControl().getVisible();
 		}
 		return super.isPseudoInstanceOf(s);
