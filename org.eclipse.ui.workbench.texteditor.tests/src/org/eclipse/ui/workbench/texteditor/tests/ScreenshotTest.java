@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2012, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,15 @@ public class ScreenshotTest {
 	/**
 	 * Takes a screenshot and dumps other debugging information to the given stream.
 	 * 
+     * <p>
+     * Workaround for missing {@link junit.framework.TestCase#getName()} in JUnit 4:
+     * </p>
+     * 
+     * <pre>
+     * &#64;Rule
+     * public TestName testName = new TestName();
+     * </pre>
+	 * 
 	 * @param testClass test class that takes the screenshot
 	 * @param name screenshot identifier (e.g. test name)
 	 * @param out print stream to use for diagnostics.
@@ -104,40 +113,8 @@ public class ScreenshotTest {
 		
 		Display display= PlatformUI.getWorkbench().getDisplay();
 		
-		// Wiggle the mouse:
-		Event mouseMove= new Event();
-		mouseMove.x= 10;
-		mouseMove.y= 10;
-		display.post(mouseMove);
-		runEventQueue();
-		mouseMove.x= 20;
-		mouseMove.y= 20;
-		display.post(mouseMove);
-		runEventQueue();
-		
 		// Dump focus control, parents, and shells:
-		Control focusControl = display.getFocusControl();
-		out.println("FocusControl: ");
-		if (focusControl == null) {
-			System.out.println("  null!");
-		} else {
-			StringBuffer indent = new StringBuffer("  ");
-			do {
-				out.println(indent.toString() + focusControl);
-				focusControl = focusControl.getParent();
-				indent.append("  ");
-			} while (focusControl != null);
-		}
-		Shell[] shells = display.getShells();
-		if (shells.length > 0) {
-			out.println("Shells: ");
-			for (int i = 0; i < shells.length; i++) {
-				Shell shell = shells[i];
-				out.print(display.getActiveShell() == shell ? "  active, " : "  inactive, ");
-				out.print((shell.isVisible() ? "visible: " : "invisible: ") + shell);
-				out.println(" @ " + shell.getBounds().toString());
-			}
-		}
+		dumpDisplayState(display, System.out);
 		
 		// Take a screenshot:
 		GC gc = new GC(display);
@@ -159,6 +136,42 @@ public class ScreenshotTest {
 		return filename;
 	}
 
+	private static void dumpDisplayState(Display display, PrintStream out) {
+		Control focusControl= display.getFocusControl();
+		dumpControlParentHierarchy(out, "FocusControl", focusControl);
+		Shell[] shells= display.getShells();
+		if (shells.length > 0) {
+			out.println("Shells: ");
+			for (int i= 0; i < shells.length; i++) {
+				Shell shell= shells[i];
+				out.print(display.getActiveShell() == shell ? "  active, " : "  inactive, ");
+				out.print((shell.isVisible() ? "visible: " : "invisible: ") + shell);
+				out.println(" @ " + shell.getBounds().toString());
+			}
+		}
+		out.println("Client area: " + display.getClientArea());
+		out.println("Cursor location: " + display.getCursorLocation());
+		Control cursorControl= display.getCursorControl();
+		if (focusControl != cursorControl) {
+			dumpControlParentHierarchy(out, "CursorControl", cursorControl);
+		}
+	}
+
+	private static void dumpControlParentHierarchy(PrintStream out, String label, Control control) {
+		out.print(label + ": ");
+		if (control == null) {
+			out.println("<none>");
+		} else {
+			out.println();
+			StringBuilder indent= new StringBuilder("  ");
+			do {
+				out.println(indent.toString() + control);
+				control= control.getParent();
+				indent.append("  ");
+			} while (control != null);
+		}
+	}
+	
 	private static File getJunitReportOutput() {
 		String[] args= Platform.getCommandLineArgs();
 		for (int i= 0; i < args.length - 1; i++) {

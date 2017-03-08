@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collections;
 
@@ -21,7 +22,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -41,12 +44,14 @@ import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.genericeditor.tests.contributions.MagicHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
+
+import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -55,6 +60,9 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  *
  */
 public class HoverTest {
+
+	@Rule
+	public TestName testName = new TestName();
 
 	private AbstractTextEditor editor;
 
@@ -121,12 +129,19 @@ public class HoverTest {
 	}
 
 	private Shell getHoverShell(AbstractInformationControlManager manager) {
-		AbstractInformationControl control = null;
-		do {
-			DisplayHelper.runEventLoop(this.editor.getSite().getShell().getDisplay(), 100);
-			control = (AbstractInformationControl)new Accessor(manager, AbstractInformationControlManager.class).get("fInformationControl");
-		} while (control == null);
-		Shell shell = (Shell)new Accessor(control, AbstractInformationControl.class).get("fShell");
+		AbstractInformationControl[] control = { null };
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				control[0] = (AbstractInformationControl)new Accessor(manager, AbstractInformationControlManager.class).get("fInformationControl");
+				return control[0] != null;
+			}
+		}.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000);
+		if (control[0] == null) {
+			ScreenshotTest.takeScreenshot(getClass(), testName.getMethodName(), System.out);
+			fail();
+		}
+		Shell shell = (Shell)new Accessor(control[0], AbstractInformationControl.class).get("fShell");
 		assertTrue(shell.isVisible());
 		return shell;
 	}
@@ -190,7 +205,7 @@ public class HoverTest {
 		editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
 		// Events need to be processed for hover listener to work correctly
-		DisplayHelper.runEventLoop(editorTextWidget.getDisplay(), 1000);
+		DisplayHelper.sleep(editorTextWidget.getDisplay(), 1000);
 		// retrieving hover content
 		ITextViewer viewer = (ITextViewer)new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
 		AbstractInformationControlManager textHoverManager = (AbstractInformationControlManager)new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
