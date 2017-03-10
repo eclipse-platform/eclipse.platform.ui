@@ -16,6 +16,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.CoreException;
@@ -137,7 +138,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		LaunchHistory runHistory = getRunLaunchHistory();
 		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 
-		assertTrue("delay was not awaited", (System.currentTimeMillis() - start) > 2000); //$NON-NLS-1$
+		assertTrue("delay was not awaited", (System.currentTimeMillis() - start) >= 2000); //$NON-NLS-1$
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
 		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
@@ -180,7 +181,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		LaunchHistory runHistory = getRunLaunchHistory();
 		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 
-		assertTrue("returned before termination of Test1", (System.currentTimeMillis() - start) > 2000); //$NON-NLS-1$
+		assertTrue("returned before termination of Test1", (System.currentTimeMillis() - start) >= 2000); //$NON-NLS-1$
 
 		// is there a way to assert that the group waited for test1 to
 		// terminate? don't think so - at least run the code path to have it
@@ -249,6 +250,8 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		final DummyAttachListener attachListener = new DummyAttachListener(t1);
 		getLaunchManager().addLaunchListener(attachListener);
 
+		final AtomicBoolean finished = new AtomicBoolean();
+		long start = System.currentTimeMillis();
 		// start a thread that will produce output on the dummy process after
 		// some time
 		new Thread("Output Producer") { //$NON-NLS-1$
@@ -258,22 +261,22 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 					// wait some time before causing the group to continue
 					Thread.sleep(2000);
 					attachListener.getStream().write("TestOutput"); //$NON-NLS-1$
+					finished.set(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}.start();
 
-		long start = System.currentTimeMillis();
-
 		// attention: need to do this before launching!
 		LaunchHistory runHistory = getRunLaunchHistory();
 
-		// launching the group should block until the output is produced
+		// launching the group must block until the output is produced
 		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 		getLaunchManager().removeLaunchListener(attachListener);
 
-		assertTrue("output was not awaited", (System.currentTimeMillis() - start) > 2000); //$NON-NLS-1$
+		assertTrue("thread did not finish", finished.get()); //$NON-NLS-1$
+		assertTrue("output was not awaited", (System.currentTimeMillis() - start) >= 2000); //$NON-NLS-1$
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
 		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
