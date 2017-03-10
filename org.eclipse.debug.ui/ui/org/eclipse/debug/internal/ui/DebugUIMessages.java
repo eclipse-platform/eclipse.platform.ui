@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *  IBM - Initial API and implementation
  *  Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *  Remy Chi Jian Suen - Make WorkingDirectoryBlock from JDT a Debug API class (Bug 221973)
+ *  Obeo - Axel Richard - Launch configurations prototypes (Bug 41353)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -244,6 +245,7 @@ public class DebugUIMessages extends NLS {
 	public static String GroupLaunch_Error;
 	public static String GroupLaunchConfigurationSelectionDialog_0;
 	public static String GroupLaunchConfigurationSelectionDialog_1;
+	public static String GroupLaunchConfigurationSelectionDialog_2;
 	public static String GroupLaunchConfigurationSelectionDialog_10;
 	public static String GroupLaunchConfigurationSelectionDialog_11;
 	public static String GroupLaunchConfigurationSelectionDialog_12;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -16,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +93,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy's attributes based on the original configuration
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original) throws CoreException {
-		super(original.getName(), original.getContainer());
+		super(original.getName(), original.getContainer(), original.isPrototype());
 		copyFrom(original);
 		setOriginal(original);
 		fSuppressChange = false;
@@ -117,7 +119,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy's attributes based on the original configuration
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfigurationWorkingCopy parent) throws CoreException {
-		super(parent.getName(), parent.getContainer());
+		super(parent.getName(), parent.getContainer(), parent.isPrototype());
 		copyFrom(parent);
 		setOriginal((LaunchConfiguration) parent.getOriginal());
 		fParent = parent;
@@ -136,7 +138,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy's attributes based on the original configuration
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original, String name) throws CoreException {
-		super(name, original.getContainer());
+		super(name, original.getContainer(), original.isPrototype());
 		copyFrom(original);
 		fSuppressChange = false;
 	}
@@ -151,9 +153,26 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @param type the type of this working copy
 	 */
 	protected LaunchConfigurationWorkingCopy(IContainer container, String name, ILaunchConfigurationType type) {
-		super(name, container);
+		this(container, name, type, false);
+	}
+
+	/**
+	 * Constructs a new working copy to be created in the specified
+	 * location.
+	 *
+	 * @param container the container that the configuration will be created in
+	 *  or <code>null</code> if to be local
+	 * @param name the name of the new launch configuration
+	 * @param type the type of this working copy
+	 * @param prototype if this copy is a prototype or not
+	 *
+	 * @since 3.12
+	 */
+	protected LaunchConfigurationWorkingCopy(IContainer container, String name, ILaunchConfigurationType type, boolean prototype) {
+		super(name, container, prototype);
 		setInfo(new LaunchConfigurationInfo());
 		getInfo().setType(type);
+		getInfo().setIsPrototype(prototype);
 		fSuppressChange = false;
 	}
 
@@ -227,7 +246,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				lmonitor.done();
 			}
 		}
-		return new LaunchConfiguration(getName(), getContainer());
+		return new LaunchConfiguration(getName(), getContainer(), isPrototype());
 	}
 
 	/**
@@ -241,7 +260,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			// set up from/to information if this is a move
 			boolean moved = (!isNew() && isMoved());
 			if (moved) {
-				ILaunchConfiguration to = new LaunchConfiguration(getName(), getContainer());
+				ILaunchConfiguration to = new LaunchConfiguration(getName(), getContainer(), isPrototype());
 				ILaunchConfiguration from = getOriginal();
 				getLaunchManager().setMovedFromTo(from, to);
 			}
@@ -379,9 +398,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			}
 			// notify of add/change for both local and shared configurations - see bug 288368
 			if (added) {
-				getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getName(), getContainer()));
+				getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getName(), getContainer(), isPrototype()));
 			} else {
-				getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getName(), getContainer()));
+				getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getName(), getContainer(), isPrototype()));
 			}
 		}
 		finally {
@@ -457,6 +476,15 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	@Override
 	public void setAttribute(String attributeName, Set<String> value) {
+		getInfo().setAttribute(attributeName, value);
+		setDirty();
+	}
+
+	/**
+	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, Object)
+	 */
+	@Override
+	public void setAttribute(String attributeName, Object value) {
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
@@ -755,5 +783,81 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	public Object removeAttribute(String attributeName) {
 		return getInfo().removeAttribute(attributeName);
 	}
-}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#copyAttributes(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	@Override
+	public void copyAttributes(ILaunchConfiguration prototype) throws CoreException {
+		Map<String, Object> map = prototype.getAttributes();
+		LaunchConfigurationInfo info = getInfo();
+		info.setPrototype(prototype);
+		Set<String> prototypeVisibleAttributes = prototype.getPrototypeVisibleAttributes();
+		if (prototypeVisibleAttributes != null) {
+			prototypeVisibleAttributes.forEach(key -> {
+				Object value = map.get(key);
+				if (value != null) {
+					info.setAttribute(key, value);
+				}
+			});
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, boolean)
+	 */
+	@Override
+	public void setPrototype(ILaunchConfiguration prototype, boolean copy) throws CoreException {
+		if (prototype != null && !prototype.isPrototype()) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_6));
+		}
+		if (prototype != null && prototype.isWorkingCopy()) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
+		}
+		if (prototype == null) {
+			getInfo().setPrototype(null);
+			removeAttribute(ATTR_PROTOTYPE);
+		} else {
+			if (isPrototype()) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_8));
+			}
+			getInfo().setPrototype(prototype);
+			if (copy) {
+				copyAttributes(prototype);
+			}
+			setAttribute(ATTR_PROTOTYPE, prototype.getMemento());
+			setAttribute(IS_PROTOTYPE, false);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#doSave(int)
+	 */
+	@Override
+	public ILaunchConfiguration doSave(int flag) throws CoreException {
+		Collection<ILaunchConfiguration> children = null;
+		if (UPDATE_PROTOTYPE_CHILDREN == flag) {
+			if (!isNew() && isMoved() && getParent() == null) {
+				children = getOriginal().getPrototypeChildren();
+			}
+		}
+		ILaunchConfiguration saved = doSave();
+		if (children != null) {
+			for (ILaunchConfiguration child : children) {
+				ILaunchConfigurationWorkingCopy wc = child.getWorkingCopy();
+				wc.setPrototype(saved, false);
+				wc.doSave();
+			}
+		}
+		return saved;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#setAttributeVisibility(String, boolean)
+	 */
+	@Override
+	public void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException {
+		super.setPrototypeAttributeVisibility(attribute, visible);
+		setDirty();
+	}
+}

@@ -9,6 +9,7 @@
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
  *      SSI Schaefer
+ *      Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.groups;
 
@@ -104,10 +105,10 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 						if (type.equals(groupType)) {
 							// we're hiding ourselves. if we're the only group,
 							// don't show the type.
-							return getLaunchManager().getLaunchConfigurations(type).length > 1;
+							return getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION).length > 1;
 						}
 
-						return getLaunchManager().getLaunchConfigurations(type).length > 0;
+						return getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION).length > 0;
 					} else if (element instanceof ILaunchConfiguration) {
 						ILaunchConfiguration c = (ILaunchConfiguration) element;
 						if (c.getName().equals(self.getName()) && c.getType().equals(groupType)) {
@@ -388,7 +389,10 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 					}
 					setErrorMessage(isValid ? null : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_1);
 				}
-
+				if (isValid && sel.isPrototype()) {
+					isValid = false;
+					setErrorMessage(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_2);
+				}
 				if (!isValid) {
 					break;
 				}

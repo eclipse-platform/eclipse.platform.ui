@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
  *     Lucas Bullen <lbullen@redhat.com> & Ian Pun <ipun@redhat.com> - Bug 518652
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
@@ -87,7 +88,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {
 				try {
-					return lm.getLaunchConfigurations((ILaunchConfigurationType) parentElement);
+					return lm.getLaunchConfigurations((ILaunchConfigurationType) parentElement, ILaunchConfiguration.CONFIGURATION | ILaunchConfiguration.PROTOTYPE);
 				}
 				catch (Exception e) {
 					DebugUIPlugin.logErrorMessage(e.getMessage());

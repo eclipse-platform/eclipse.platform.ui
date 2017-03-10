@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.core;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +71,14 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = "launch"; //$NON-NLS-1$
 
 	/**
+	 * The file extension for launch configuration prototype files (value
+	 * <code>"prototype"</code>).
+	 *
+	 * @since 3.12
+	 */
+	public static final String LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION = "prototype"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute storing an identifier of
 	 * a persistable source locator extension. When this attribute is
 	 * specified, a new source locator will be created automatically and
@@ -89,6 +99,38 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator
 	 */
 	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
+
+	/**
+	 * Flag indicating that only this configuration is to be modified by an operation.
+	 * Any prototype children referring to this configuration will not be modified.
+	 *
+	 * @since 3.12
+	 */
+	public static final int UPDATE_NONE = 0;
+
+	/**
+	 * Flag indicating that this prototype and any effected prototype children of this prototype
+	 * should be updated when this prototype is modified.
+	 *
+	 * @since 3.12
+	 */
+	public static final int UPDATE_PROTOTYPE_CHILDREN = 1;
+
+	/**
+	 * Type constant (bit mask value 1) which identifies a launch configuration.
+	 *
+	 * @see #getKind()
+	 * @since 3.12
+	 */
+	public static final int CONFIGURATION = 0x1;
+
+	/**
+	 * Type constant (bit mask value 2) which identifies a launch configuration prototype.
+	 *
+	 * @see #getKind()
+	 * @since 3.12
+	 */
+	public static final int PROTOTYPE = 0x2;
 
 	/**
 	 * Returns whether the contents of this launch configuration are
@@ -122,16 +164,37 @@ public interface ILaunchConfiguration extends IAdaptable {
 
 	/**
 	 * Deletes this launch configuration. This configuration's underlying
-	 * storage is deleted. Has no effect if this configuration
-	 * does not exist.
+	 * storage is deleted. Has no effect if this configuration does not exist.
+	 * <p>
+	 * Equivalent to #delete(UPDATE_NONE)
+	 * </p>
 	 *
 	 * @exception CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li>An exception occurs while deleting this configuration's
-	 *  underlying storage.</li>
-	 * </ul>
+	 *                <ul>
+	 *                <li>An exception occurs while deleting this
+	 *                configuration's underlying storage.</li>
+	 *                </ul>
 	 */
 	public void delete() throws CoreException;
+
+	/**
+	 * Deletes this launch configuration. This configuration's underlying
+	 * storage is deleted. Has no effect if this configuration does not exist.
+	 * <p>
+	 * When UPDATE_PROTOTYPE_CHILDREN is specified, back pointers to this
+	 * prototype are cleared in any prototype children.
+	 * </p>
+	 *
+	 * @param flag one of UPDATE_NONE or UPDATE_PROTOTYPE_CHILDREN
+	 * @exception CoreException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>An exception occurs while deleting this
+	 *                configuration's underlying storage or updating any
+	 *                prototype children.</li>
+	 *                </ul>
+	 * @since 3.12
+	 */
+	public void delete(int flag) throws CoreException;
 
 	/**
 	 * Returns whether this launch configuration's underlying
@@ -597,4 +660,79 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.3
 	 */
 	public boolean isReadOnly();
+
+	/**
+	 * Returns the prototype this launch configuration was created from or
+	 * <code>null</code> if none.
+	 *
+	 * @return the prototype this launch configuration was created from or
+	 *         <code>null</code> if none
+	 * @throws CoreException if the prototype could not be retrieved or no
+	 *             longer exists
+	 * @since 3.12
+	 */
+	public ILaunchConfiguration getPrototype() throws CoreException;
+
+	/**
+	 * Check if the given attribute has the same value than the one from its prototype.
+	 * @param attribute the attribute to check
+	 * @return <code>true</code> if the attribute is modified, <code>false</code> otherwise.
+	 * @throws CoreException if an exception occurs while checking
+	 * @since 3.12
+	 */
+	public boolean isAttributeModified(String attribute) throws CoreException;
+
+	/**
+	 * Returns whether this configuration is a prototype.
+	 *
+	 * @return whether this configuration is a prototype
+	 * @since 3.12
+	 */
+	public boolean isPrototype();
+
+	/**
+	 * Returns all configurations made from this prototype, possibly an empty
+	 * collection.
+	 *
+	 * @return all configurations made from this prototype
+	 * @throws CoreException if unable to retrieve this prototype's children
+	 * @since 3.12
+	 */
+	public Collection<ILaunchConfiguration> getPrototypeChildren() throws CoreException;
+
+	/**
+	 * Returns this configuration's kind. One of CONFIGURATION or PROTOTYPE.
+	 *
+	 * @see #CONFIGURATION
+	 * @see #PROTOTYPE
+	 *
+	 * @return this configuration's kind
+	 * @throws CoreException if unable to retrieve this configuration's kind
+	 * @since 3.12
+	 */
+	public int getKind() throws CoreException;
+
+	/**
+	 * Get the visible attributes of this prototype (return <code>null</code> if
+	 * the launch configuration is not a prototype).
+	 *
+	 * @return the visible attributes of this prototype (return
+	 *         <code>null</code> if the launch configuration is not a
+	 *         prototype).
+	 * @throws CoreException if unable to retrieve this prototype's visible
+	 *             attribute set.
+	 * @since 3.12
+	 */
+	public Set<String> getPrototypeVisibleAttributes() throws CoreException;
+
+	/**
+	 * Set the visibility of the given prototype's attribute.
+	 *
+	 * @param attribute the attribute to set
+	 * @param visible the visibility
+	 * @throws CoreException if unable to set this prototype's attribute
+	 *             visibility
+	 * @since 3.12
+	 */
+	public void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException;
 }

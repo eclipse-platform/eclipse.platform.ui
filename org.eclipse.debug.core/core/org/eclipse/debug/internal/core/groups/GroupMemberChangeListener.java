@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *      SSI Schaefer IT Solutions GmbH
+ *      Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core.groups;
 
@@ -40,7 +41,7 @@ public class GroupMemberChangeListener implements ILaunchConfigurationListener {
 				return;
 			}
 			try {
-				for (ILaunchConfiguration c : DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type)) {
+				for (ILaunchConfiguration c : DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION | ILaunchConfiguration.PROTOTYPE)) {
 					List<GroupLaunchElement> elements = GroupLaunchConfigurationDelegate.createLaunchElements(c);
 					boolean updated = false;
 					for (GroupLaunchElement e : elements) {

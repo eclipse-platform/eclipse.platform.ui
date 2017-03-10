@@ -12,6 +12,7 @@
  *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
  *     Lars.Vogel <Lars.Vogel@gmail.com> - Bug 430620
  *     Lucas Bullen <lbullen@redhat.com> - Bug 518652
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -117,6 +118,10 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_NEW_CONFIG, DLCL + "new_con.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DELETE_CONFIG, DLCL + "rem_co.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_FILTER_CONFIGS, DLCL + "filter_ps.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_NEW_PROTO, DLCL + "new_proto.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_LINK_PROTO, DLCL + "link_proto.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_UNLINK_PROTO, DLCL + "unlink_proto.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESET_PROTO, DLCL + "reset_proto.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT, DLCL + "disconnect_co.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_SUSPEND, DLCL + "suspend_co.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESUME, DLCL + "resume_co.png"); //$NON-NLS-1$
@@ -156,6 +161,10 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG, ELCL + "copy_edit_co.png");  //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG, ELCL + "new_con.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG, ELCL + "delete_config.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEW_PROTO, ELCL + "new_proto.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_LINK_PROTO, ELCL + "link_proto.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_UNLINK_PROTO, ELCL + "unlink_proto.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESET_PROTO, ELCL + "reset_proto.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_SUSPEND, ELCL + "suspend_co.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESUME, ELCL + "resume_co.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEP_RETURN, ELCL + "stepreturn_co.png"); //$NON-NLS-1$
@@ -209,12 +218,15 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY, OBJECT + "memory_obj.png");  //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_BREAKPOINT_TYPE, OBJECT + "brkp_type.png");  //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_LAUNCH_GROUP, OBJECT + "lgroup_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_CHECK, OBJECT + "check.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_UNCHECK, OBJECT + "uncheck.png"); //$NON-NLS-1$
 
 		// tabs
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB, OBJECT + "common_tab.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_REFRESH_TAB, OBJECT + "refresh_tab.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_PERSPECTIVE_TAB, OBJECT + "persp_tab.png"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT, OBJECT + "environment_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_OBJS_PROTO_TAB, OBJECT + "proto_tab.png"); //$NON-NLS-1$
 
 		// Views
 		declareRegistryImage(IDebugUIConstants.IMG_VIEW_BREAKPOINTS, VIEW + "breakpoint_view.png"); //$NON-NLS-1$
@@ -240,6 +252,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.png"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_SKIP_BREAKPOINT, OVR + "skip_breakpoint_ov.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_SHOW_LOGICAL_STRUCTURE, OVR + "var_cntnt_prvdr_ov.png"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OVR_PROTOTYPE, OVR + "prototype.png"); //$NON-NLS-1$
 
 		//source location
 		declareRegistryImage(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU, ELCL + "edtsrclkup_co.png"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 471829
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -160,6 +161,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * Constructs a new tab with default context help.
 	 */
 	public CommonTab() {
+		super();
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 	}
 
@@ -1100,6 +1102,24 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	 * @since 3.13
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(DebugPlugin.ATTR_CONSOLE_ENCODING, LaunchConfigurationsMessages.CommonTab_AttributeLabel_ConsoleEncoding);
+		getAttributesLabelsForPrototype().put(DebugPlugin.ATTR_CAPTURE_OUTPUT, LaunchConfigurationsMessages.CommonTab_AttributeLabel_CaptureOutput);
+		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, LaunchConfigurationsMessages.CommonTab_AttributeLabel_CaptureInConsole);
+		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, LaunchConfigurationsMessages.CommonTab_AttributeLabel_CaptureStdInFile);
+		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, LaunchConfigurationsMessages.CommonTab_AttributeLabel_CaptureInFile);
+		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_APPEND_TO_FILE, LaunchConfigurationsMessages.CommonTab_AttributeLabel_AppendToFile);
+		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, LaunchConfigurationsMessages.CommonTab_AttributeLabel_LaunchInBackground);
+		getAttributesLabelsForPrototype().put(IDebugUIConstants.ATTR_FAVORITE_GROUPS, LaunchConfigurationsMessages.CommonTab_AttributeLabel_FavoriteGroups);
+	}
 
 	/**
 	 * Content provider for the favorites table

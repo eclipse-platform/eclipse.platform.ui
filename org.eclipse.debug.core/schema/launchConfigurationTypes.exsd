@@ -156,6 +156,13 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="allowPrototypes" type="boolean">
+            <annotation>
+               <documentation>
+                  specifies whether this launch configuration type allows prototypes or not.  Defaults to &lt;code&gt;false&lt;/code&gt; if not specified. This attribute was added in 4.7 release.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

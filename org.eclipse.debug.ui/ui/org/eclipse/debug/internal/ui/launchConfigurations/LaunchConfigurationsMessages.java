@@ -8,6 +8,7 @@
  *  Contributors:
  *  IBM - Initial API and implementation
  *  Ian Pun & Lucas Bullen (Red Hat Inc.) - Bug 518652
+ *  Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -48,6 +49,15 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CommonTab_7;
 	public static String CommonTab_8;
 	public static String CommonTab_9;
+
+	public static String CommonTab_AttributeLabel_ConsoleEncoding;
+	public static String CommonTab_AttributeLabel_CaptureOutput;
+	public static String CommonTab_AttributeLabel_CaptureInConsole;
+	public static String CommonTab_AttributeLabel_CaptureStdInFile;
+	public static String CommonTab_AttributeLabel_CaptureInFile;
+	public static String CommonTab_AttributeLabel_AppendToFile;
+	public static String CommonTab_AttributeLabel_LaunchInBackground;
+	public static String CommonTab_AttributeLabel_FavoriteGroups;
 
 	public static String CompileErrorProjectPromptStatusHandler_0;
 	public static String CompileErrorProjectPromptStatusHandler_1;
@@ -140,6 +150,11 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CreateLaunchConfigurationAction_Ne_w_1;
 	public static String ExportLaunchConfigurationAction_Export_1;
 	public static String CreateLaunchConfigurationAction_New_configuration_2;
+	public static String CreateLaunchConfigurationPrototypeAction_Ne_w_1;
+	public static String CreateLaunchConfigurationPrototypeAction_New_prototype_2;
+	public static String LinkPrototypeAction_Link_prototype_1;
+	public static String UnlinkPrototypeAction_Unlink_prototype_1;
+	public static String ResetWithPrototypeValuesAction_Reset_with_prototype_values_1;
 
 	public static String EnvironmentTab_Variable_1;
 	public static String EnvironmentTab_Value_2;
@@ -158,6 +173,21 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String EnvironmentTab_18;
 	public static String EnvironmentTab_19;
 	public static String EnvironmentTab_20;
+	public static String EnvironmentTab_AttributeLabel_AppendEnvironmentVariables;
+	public static String EnvironmentTab_AttributeLabel_EnvironmentVariables;
+
+	public static String PrototypeTab_Prototype_1;
+	public static String PrototypeTab_Label_2;
+	public static String PrototypeTab_Link_Button_Label_3;
+	public static String PrototypeTab_Unlink_Button_Label_4;
+	public static String PrototypeTab_Select_Message_5;
+	public static String PrototypeTab_Select_Empty_Message_6;
+	public static String PrototypeTab_Select_Prototype_Error_7;
+	public static String PrototypeTab_Reset_Button_Label_8;
+	public static String PrototypeTab_Reset_Menu_Action_9;
+	public static String PrototypeTab_Explanation_Label_10;
+	public static String PrototypeTab_Explanation_Label_11;
+	public static String PrototypeTab_Explanation_Label_12;
 
 	public static String FavoritesDialog_1;
 	public static String FavoritesDialog_2;
@@ -189,7 +219,11 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationTabGroupViewer_3;
 	public static String LaunchConfigurationTabGroupViewer_4;
 	public static String LaunchConfigurationTabGroupViewer_5;
-    public static String LaunchConfigurationTabGroupViewer_6;
+	public static String LaunchConfigurationTabGroupViewer_6;
+	public static String LaunchConfigurationTabGroupViewer_9;
+	public static String LaunchConfigurationTabGroupViewer_10;
+	public static String LaunchConfigurationTabGroupViewer_11;
+	public static String LaunchConfigurationTabGroupViewer_12;
 	public static String LaunchConfigurationTabGroupViewer_7;
 
 	public static String SaveScopeResourcesHandler_1;
@@ -200,9 +234,13 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationsDialog_0;
 	public static String LaunchConfigurationsDialog_1;
+	public static String LaunchConfigurationsDialog_2;
 	public static String LaunchConfigurationsDialog_4;
 	public static String LaunchConfigurationsDialog_5;
 	public static String LaunchConfigurationsDialog_6;
+	public static String LaunchConfigurationsDialog_7;
+	public static String LaunchConfigurationsDialog_8;
+	public static String LaunchConfigurationsDialog_9;
 	public static String FilterLaunchConfigurationAction_0;
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.core;
 
@@ -64,11 +65,39 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * saved to the parent working copy and the parent working copy is returned without
 	 * effecting the original launch configuration.
 	 * </p>
+	 * <p>
+	 * Equivalent to #doSave(UPDATE_NONE).
+	 * </p>
 	 * @return handle to saved launch configuration
 	 * @exception CoreException if an exception occurs while
 	 *  writing this configuration to its underlying file.
+	 *  @see #doSave(int)
 	 */
 	public ILaunchConfiguration doSave() throws CoreException;
+
+	/**
+	 * Saves this working copy to its underlying file and returns a handle to
+	 * the resulting launch configuration. Has no effect if this configuration
+	 * does not need saving. Creates the underlying file if not yet created.
+	 * <p>
+	 * Since 3.3, if this is a nested working copy, the contents of this working
+	 * copy are saved to the parent working copy and the parent working copy is
+	 * returned without effecting the original launch configuration.
+	 * </p>
+	 * <p>
+	 * Updates any affected prototype children based on the given flag. When a
+	 * working copy is renamed or moved to a new location, prototype children's
+	 * back pointers will be updated to refer the proper configuration.
+	 * </p>
+	 * @param flag one of {@link ILaunchConfiguration#UPDATE_NONE} or
+	 *            {@link ILaunchConfiguration#UPDATE_PROTOTYPE_CHILDREN}
+	 * @return handle to saved launch configuration
+	 * @exception CoreException if an exception occurs while writing this
+	 *                configuration or any of its affected prototype children to
+	 *                underlying storage
+	 * @since 3.12
+	 */
+	public ILaunchConfiguration doSave(int flag) throws CoreException;
 
 	/**
 	 * Sets the integer-valued attribute with the given name.
@@ -129,6 +158,15 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param value the value
 	 */
 	public void setAttribute(String attributeName, boolean value);
+
+	/**
+	 * Sets the valued attribute with the given name.
+	 *
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
+	 * @param value the value
+	 * @since 3.12
+	 */
+	public void setAttribute(String attributeName, Object value);
 
 	/**
 	 * Returns the original launch configuration this working copy
@@ -277,4 +315,35 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 3.3
 	 */
 	public ILaunchConfigurationWorkingCopy getParent();
+
+	/**
+	 * Copies all attributes from the given prototype to this working.
+	 * Overwrites any existing attributes with the same key.
+	 * 
+	 * @param prototype configuration prototype
+	 * @exception CoreException if unable to retrieve attributes from the prototype
+	 * @since 3.12
+	 */
+	public void copyAttributes(ILaunchConfiguration prototype) throws CoreException;
+	
+	/**
+	 * Sets the prototype that this configuration is based on, possibly <code>null</code>,
+	 * and optionally copies attributes from the prototype to this working copy.
+	 * <p>
+	 * When the specified prototype is <code>null</code>, this working copy is no longer
+	 * associated with any prototype.
+	 * </p>
+	 * @param prototype prototype or <code>null</code>
+	 * @param copy whether to copy attributes from the prototype to this working copy. Has
+	 *  no effect when prototype is <code>null</code>
+	 * @exception CoreException if
+	 * 	<ul>
+	 *  <li>unable to generate a memento for the given configuration
+	 * 	 or copy its attributes</li>
+	 *  <li>if attempting to set a prototype attribute on an existing prototype - prototypes
+	 *   cannot be nested</li>
+	 *  </ul>
+	 * @since 3.12
+	 */
+	public void setPrototype(ILaunchConfiguration prototype, boolean copy) throws CoreException;
 }

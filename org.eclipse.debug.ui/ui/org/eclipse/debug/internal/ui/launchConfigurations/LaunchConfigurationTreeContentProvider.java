@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -74,17 +75,30 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof ILaunchConfiguration) {
-			return EMPTY_ARRAY;
-		} else if (parentElement instanceof ILaunchConfigurationType) {
-			try {
-				ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
-				return getLaunchManager().getLaunchConfigurations(type);
-			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //
+		try {
+			if (parentElement instanceof ILaunchConfiguration) {
+				if (((ILaunchConfiguration) parentElement).isPrototype()) {
+					return ((ILaunchConfiguration) parentElement).getPrototypeChildren().toArray();
+				}
+			} else if (parentElement instanceof ILaunchConfigurationType) {
+				List<ILaunchConfiguration> configs = new ArrayList<>();
+				ILaunchConfigurationType type = (ILaunchConfigurationType) parentElement;
+				ILaunchConfiguration[] launchConfigurations = getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION);
+				for (ILaunchConfiguration launchConfig : launchConfigurations) {
+					if (launchConfig.getPrototype() == null) {
+						configs.add(launchConfig);
+					}
+				}
+				ILaunchConfiguration[] prototypes = getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.PROTOTYPE);
+				for (ILaunchConfiguration prototype : prototypes) {
+					configs.add(prototype);
+				}
+				return configs.toArray(new ILaunchConfiguration[0]);
+			} else {
+				return getLaunchManager().getLaunchConfigurationTypes();
 			}
-		} else {
-			return getLaunchManager().getLaunchConfigurationTypes();
+		} catch (CoreException e) {
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //
 		}
 		return EMPTY_ARRAY;
 	}
@@ -99,7 +113,12 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 				return null;
 			}
 			try {
-				return ((ILaunchConfiguration)element).getType();
+				ILaunchConfiguration prototype = ((ILaunchConfiguration) element).getPrototype();
+				if (prototype != null) {
+					return prototype;
+				} else {
+					return ((ILaunchConfiguration) element).getType();
+				}
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //
 			}
@@ -115,6 +134,13 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ILaunchConfiguration) {
+			if (((ILaunchConfiguration) element).isPrototype()) {
+				try {
+					return ((ILaunchConfiguration) element).getPrototypeChildren().size() > 0;
+				} catch (CoreException e) {
+					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Error_19, LaunchConfigurationsMessages.LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20, e); //
+				}
+			}
 			return false;
 		}
 		return getChildren(element).length > 0;

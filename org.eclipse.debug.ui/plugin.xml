@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2016 IBM Corporation and others.
+     Copyright (c) 2005, 2017 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -10,7 +10,8 @@
      Contributors:
          IBM Corporation - initial API and implementation
          Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
-         Patrick Chuong (Texas Instruments) - Move debug toolbar actions to main window (Bug 332784) 
+         Patrick Chuong (Texas Instruments) - Move debug toolbar actions to main window (Bug 332784)
+         Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  -->
 
 <plugin>
@@ -3283,5 +3284,21 @@ M4 = Platform-specific fourth key
             class="org.eclipse.debug.internal.ui.hover.DebugTextHover"
             contentType="org.eclipse.core.runtime.text">
       </hoverProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="org.eclipse.debug.ui.PrototypeDecorator"
+            id="org.eclipse.debug.ui.prototype.decorator"
+            label="%prototype.decorator.label"
+            lightweight="true"
+            location="TOP_RIGHT"
+            state="true">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.debug.internal.core.LaunchConfiguration">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
 </plugin>

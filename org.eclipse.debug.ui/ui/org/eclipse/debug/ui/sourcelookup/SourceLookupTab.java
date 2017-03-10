@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.ui.sourcelookup;
 
@@ -50,6 +51,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	 * Constructs a new tab with default context help.
 	 */
 	public SourceLookupTab() {
+		super();
 		setHelpContextId(IDebugHelpContextIds.SOURCELOOKUP_TAB);
 	}
 
@@ -168,5 +170,17 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 			return fSourceLookupPanel.getMessage();
 		}
 		return super.getMessage();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	 * @since 3.13
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, SourceLookupUIMessages.sourceTab_AttributeLabel_SourceLocatorMemento);
+		getAttributesLabelsForPrototype().put(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, SourceLookupUIMessages.sourceTab_AttributeLabel_SourceLocatorID);
 	}
 }

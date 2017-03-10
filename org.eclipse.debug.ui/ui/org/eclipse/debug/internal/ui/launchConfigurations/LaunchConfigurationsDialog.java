@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - Bug 137923
  *     Mohamed Hussein (Mentor Graphics) - Added s/getWarningMessage (Bug 386673)
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -516,6 +517,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void createToolbarActions(ToolBarManager tmanager) {
 		tmanager.add(getNewAction());
+		tmanager.add(getNewPrototypeAction());
 		tmanager.add(getExportAction());
 		tmanager.add(getDuplicateAction());
 		tmanager.add(getDeleteAction());
@@ -617,14 +619,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getDuplicateAction().setConfirmationRequestor(requestor);
 		getExportAction().setConfirmationRequestor(requestor);
 		getNewAction().setConfirmationRequestor(requestor);
+		getNewPrototypeAction().setConfirmationRequestor(requestor);
+		getLinkPrototypeAction().setConfirmationRequestor(requestor);
+		getUnlinkPrototypeAction().setConfirmationRequestor(requestor);
+		getResetWithPrototypeValuesAction().setConfirmationRequestor(requestor);
 		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleLaunchConfigurationSelectionChanged(event);
 				getNewAction().setEnabled(getNewAction().isEnabled());
+				getNewPrototypeAction().setEnabled(getNewPrototypeAction().isEnabled());
 				getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 				getExportAction().setEnabled(getExportAction().isEnabled());
 				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
+				getLinkPrototypeAction().setEnabled(getLinkPrototypeAction().isEnabled());
+				getUnlinkPrototypeAction().setEnabled(getUnlinkPrototypeAction().isEnabled());
+				getResetWithPrototypeValuesAction().setEnabled(getResetWithPrototypeValuesAction().isEnabled());
 			}
 		});
 		return comp;
@@ -872,6 +882,50 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected AbstractLaunchConfigurationAction getNewAction() {
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION);
+	}
+
+	/**
+	 * Gets the new prototype menu action
+	 *
+	 * @return the new prototype menu action
+	 *
+	 * @since 3.13
+	 */
+	protected AbstractLaunchConfigurationAction getNewPrototypeAction() {
+		return (AbstractLaunchConfigurationAction) fLaunchConfigurationView.getAction(CreateLaunchConfigurationPrototypeAction.ID_CREATE_PROTOTYPE_ACTION);
+	}
+
+	/**
+	 * Gets the link prototype menu action
+	 *
+	 * @return the link prototype menu action
+	 *
+	 * @since 3.13
+	 */
+	protected AbstractLaunchConfigurationAction getLinkPrototypeAction() {
+		return (AbstractLaunchConfigurationAction) fLaunchConfigurationView.getAction(LinkPrototypeAction.ID_LINK_PROTOTYPE_ACTION);
+	}
+
+	/**
+	 * Gets the unlink prototype menu action
+	 *
+	 * @return the unlink prototype menu action
+	 *
+	 * @since 3.13
+	 */
+	protected AbstractLaunchConfigurationAction getUnlinkPrototypeAction() {
+		return (AbstractLaunchConfigurationAction) fLaunchConfigurationView.getAction(UnlinkPrototypeAction.ID_UNLINK_PROTOTYPE_ACTION);
+	}
+
+	/**
+	 * Gets the reset with prototype values menu action
+	 *
+	 * @return the reset with prototype values menu action
+	 *
+	 * @since 3.13
+	 */
+	protected AbstractLaunchConfigurationAction getResetWithPrototypeValuesAction() {
+		return (AbstractLaunchConfigurationAction) fLaunchConfigurationView.getAction(ResetWithPrototypeValuesAction.ID_RESET_WITH_PROTOTYPE_VALUES_ACTION);
 	}
 
 	/**
@@ -1312,6 +1366,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	/**
+	 * Refresh the launch configurations' tree viewer
+	 *
+	 * @since 3.13
+	 */
+	protected void refreshLaunchConfigurationView() {
+		fLaunchConfigurationView.getTreeViewer().refresh();
+	}
+
+	/**
 	 * resize the dialog to show all relevant content
 	 */
 	protected void resize() {
@@ -1604,6 +1667,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			getExportAction().setEnabled(getExportAction().isEnabled());
 			getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 			getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
+			getLinkPrototypeAction().setEnabled(getLinkPrototypeAction().isEnabled());
+			getUnlinkPrototypeAction().setEnabled(getUnlinkPrototypeAction().isEnabled());
+			getResetWithPrototypeValuesAction().setEnabled(getResetWithPrototypeValuesAction().isEnabled());
 			fTabViewer.refresh();
 			getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates());
 		} else {

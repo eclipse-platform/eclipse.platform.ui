@@ -8,6 +8,7 @@
  * Contributors:
  *  IBM - Initial API and implementation
  *  Anton Kosyakov (Itemis AG) - Bug 438621 - [step filtering] Provide an extension point to enhance methods step filtering.
+ *  Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -68,6 +69,9 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchConfigurationWorkingCopy_1;
 	public static String LaunchConfigurationWorkingCopy_2;
 	public static String LaunchConfigurationWorkingCopy_3;
+	public static String LaunchConfigurationWorkingCopy_6;
+	public static String LaunchConfigurationWorkingCopy_7;
+	public static String LaunchConfigurationWorkingCopy_8;
 	public static String LaunchDelegate_0;
 	public static String LaunchDelegate_1;
 	public static String LaunchDelegate_2;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 Keith Seitz and others.
+ * Copyright (c) 2000, 2017 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
  *     Jan Opacki (jan.opacki@gmail.com) bug 307139
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -191,6 +192,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Constructs a new tab with default context help.
 	 */
 	public EnvironmentTab() {
+		super();
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
 	}
 
@@ -601,6 +603,18 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	 * @since 3.13
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, LaunchConfigurationsMessages.EnvironmentTab_AttributeLabel_AppendEnvironmentVariables);
+		getAttributesLabelsForPrototype().put(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, LaunchConfigurationsMessages.EnvironmentTab_AttributeLabel_EnvironmentVariables);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.core;
 
@@ -208,7 +209,10 @@ public interface ILaunchManager {
 	 * in the specified file. This method does not check if the specified <code>IFile</code> is
 	 * a launch configuration file or that it exists in the local or
 	 * remote file system.
-	 *
+	 * <p>
+	 * Since 3.12, the returned configuration may be a launch configuration template.
+	 * </p>
+	 * 
 	 * @param file launch configuration file
 	 * @return a handle to the launch configuration contained
 	 *  in the specified file
@@ -218,7 +222,10 @@ public interface ILaunchManager {
 	/**
 	 * Returns a handle to the launch configuration specified by
 	 * the given memento. The configuration may not exist.
-	 *
+	 * <p>
+	 * Since 3.12, the returned configuration may be a launch configuration template.
+	 * </p>
+	 * 
 	 * @param memento launch configuration memento
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
@@ -234,18 +241,54 @@ public interface ILaunchManager {
 	 * @return all launch configurations defined in the workspace
 	 * @exception CoreException if an exception occurs retrieving configurations
 	 * @since 2.0
+	 * @see ILaunchConfigurationType#getPrototypes()
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;
 	/**
 	 * Returns all launch configurations of the specified type defined in the workspace
-	 *
+	 * <p>
+	 * Does not include launch configuration templates.
+	 * </p>
 	 * @param type a launch configuration type
 	 * @return all launch configurations of the specified type defined in the workspace
 	 * @exception CoreException if an error occurs while retrieving
 	 *  a launch configuration
 	 * @since 2.0
+	 * @see ILaunchConfigurationType#getPrototypes()
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
+
+	/**
+	 * Returns all launch configurations defined in the workspace of the specified
+	 * kind(s) (configurations and/or prototypes).
+	 * 
+	 * @param kinds bit mask of kinds of configurations to consider
+	 * @return all launch configurations defined in the workspace
+	 * @exception CoreException if an exception occurs retrieving configurations
+	 * @since 3.12
+	 * @see ILaunchConfiguration#CONFIGURATION
+	 * @see ILaunchConfiguration#PROTOTYPE
+	 * @see ILaunchConfiguration#getKind()
+	 * @see ILaunchConfigurationType#getPrototypes()
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(int kinds) throws CoreException;
+
+	/**
+	 * Returns all launch configurations of the specified type defined in the workspace
+	 * of the specified kind(s) (configurations and/or prototypes).
+	 * 
+	 * @param type a launch configuration type
+	 * @param kinds bit mask of kinds of configurations to consider
+	 * @return all launch configurations of the specified type defined in the workspace
+	 * @exception CoreException if an error occurs while retrieving
+	 *  a launch configuration
+	 * @since 3.12
+	 * @see ILaunchConfiguration#CONFIGURATION
+	 * @see ILaunchConfiguration#PROTOTYPE
+	 * @see ILaunchConfiguration#getKind()
+	 * @see ILaunchConfigurationType#getPrototypes()
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException;
 
 	/**
 	 * Returns the launch configuration type extension with the specified

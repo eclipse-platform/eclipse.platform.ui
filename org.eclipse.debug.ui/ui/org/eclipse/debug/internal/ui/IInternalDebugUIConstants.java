@@ -10,6 +10,7 @@
  *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
  *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
  *     Lucas Bullen (Red Hat Inc.) - Bug 518652
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -70,6 +71,10 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_DUPLICATE_CONFIG = "IMG_DLCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_DLCL_DELETE_CONFIG = "IMG_DLCL_DELETE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_DLCL_FILTER_CONFIGS = "IMG_DLCL_FILTER_CONFIGS"; //$NON-NLS-1$
+    public static final String IMG_DLCL_NEW_PROTO = "IMG_DLCL_NEW_PROTO"; //$NON-NLS-1$
+    public static final String IMG_DLCL_LINK_PROTO = "IMG_DLCL_LINK_PROTO"; //$NON-NLS-1$
+    public static final String IMG_DLCL_UNLINK_PROTO = "IMG_DLCL_UNLINK_PROTO"; //$NON-NLS-1$
+    public static final String IMG_DLCL_RESET_PROTO = "IMG_DLCL_RESET_PROTO"; //$NON-NLS-1$
     public static final String IMG_DLCL_SUSPEND = "IMG_DLCL_SUSPEND"; //$NON-NLS-1$
     public static final String IMG_DLCL_RESUME = "IMG_DLCL_RESUME"; //$NON-NLS-1$
     public static final String IMG_DLCL_STEP_RETURN = "IMG_DLCL_STEP_RETURN"; //$NON-NLS-1$
@@ -114,6 +119,10 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_DELETE_CONFIG = "IMG_ELCL_DELETE_CONFIG"; //$NON-NLS-1$
     public static final String IMG_ELCL_FILTER_CONFIGS = "IMG_ELCL_FILTER_CONFIGS"; //$NON-NLS-1$
     public static final String IMG_ELCL_DUPLICATE_CONFIG = "IMG_ELCL_DUPLICATE_CONFIG"; //$NON-NLS-1$
+    public static final String IMG_ELCL_NEW_PROTO = "IMG_ELCL_NEW_PROTO"; //$NON-NLS-1$
+    public static final String IMG_ELCL_LINK_PROTO = "IMG_ELCL_LINK_PROTO"; //$NON-NLS-1$
+    public static final String IMG_ELCL_UNLINK_PROTO = "IMG_ELCL_UNLINK_PROTO"; //$NON-NLS-1$
+    public static final String IMG_ELCL_RESET_PROTO = "IMG_ELCL_RESET_PROTO"; //$NON-NLS-1$
     public static final String IMG_ELCL_SUSPEND = "IMG_ELCL_SUSPEND"; //$NON-NLS-1$
     public static final String IMG_ELCL_RESUME = "IMG_ELCL_RESUME"; //$NON-NLS-1$
     public static final String IMG_ELCL_STEP_RETURN = "IMG_ELCL_STEP_RETURN"; //$NON-NLS-1$
@@ -140,7 +149,10 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_OBJECT_MEMORY_CHANGED="IMG_OBJECT_MEMORY_CHANGED";  //$NON-NLS-1$
     public static final String IMG_OBJECT_MEMORY="IMG_OBJECT_MEMORY";  //$NON-NLS-1$
     public static final String IMG_OBJS_BREAKPOINT_TYPE="IMG_OBJ_BREAKPOINT_TYPE"; //$NON-NLS-1$
-	public static final String IMG_OBJS_LAUNCH_GROUP = "IMG_OBJ_LAUNCH_GROUP"; //$NON-NLS-1$
+    public static final String IMG_OBJS_LAUNCH_GROUP = "IMG_OBJ_LAUNCH_GROUP"; //$NON-NLS-1$
+    public static final String IMG_OBJS_CHECK = "IMG_OBJS_CHECK"; //$NON-NLS-1$
+    public static final String IMG_OBJS_UNCHECK = "IMG_OBJS_UNCHECK"; //$NON-NLS-1$
+    public static final String IMG_OBJS_PROTO_TAB = "IMG_OBJS_PROTO_TAB"; //$NON-NLS-1$
 
     // wizard images
     public static final String IMG_WIZBAN_IMPORT_BREAKPOINTS = "IMG_WIZBAN_IMPORT_BREAKPOINTS"; //$NON-NLS-1$

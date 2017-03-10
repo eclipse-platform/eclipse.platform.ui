@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -517,6 +518,38 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	void resetPreferredDelegates() {
 		fPreferredDelegates = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPrototypes()
+	 */
+	@Override
+	public ILaunchConfiguration[] getPrototypes() throws CoreException {
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(this, ILaunchConfiguration.PROTOTYPE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newPrototypeInstance(org.eclipse.core.resources.IContainer, java.lang.String)
+	 */
+	@Override
+	public ILaunchConfigurationWorkingCopy newPrototypeInstance(IContainer container, String name) throws CoreException {
+		LaunchConfigurationWorkingCopy wc = new LaunchConfigurationWorkingCopy(container, name, this, true);
+		return wc;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsPrototypes()
+	 */
+	@Override
+	public boolean supportsPrototypes() {
+		String allowPrototypesString = fElement.getAttribute(IConfigurationElementConstants.ALLOW_PROTOTYPES);
+		if (allowPrototypesString != null) {
+			if (allowPrototypesString.equalsIgnoreCase("true")) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -617,6 +618,13 @@ public interface IDebugUIConstants {
      * @since 3.1
      */
     public static final String IMG_OVR_SKIP_BREAKPOINT = "IMG_OVR_SKIP_BREAKPOINT"; //$NON-NLS-1$
+
+	/**
+	 * Prototype image overlay identifier.
+	 *
+	 * @since 3.13
+	 */
+	public static final String IMG_OVR_PROTOTYPE = "IMG_OVR_PROTOTYPE";  //$NON-NLS-1$
 
 	/**
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).

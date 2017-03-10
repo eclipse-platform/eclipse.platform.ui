@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.core;
 
@@ -315,4 +316,45 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 */
 	public String getContributorName();
 
+	/**
+	 * Returns all launch configuration prototypes of the this type, possibly
+	 * an empty collection.
+	 *
+	 * @return all launch configuration prototypes of the this type
+	 * @throws CoreException if unable to retrieve the prototypes
+	 * @since 3.12
+	 */
+	public ILaunchConfiguration[] getPrototypes() throws CoreException;
+
+	/**
+	 * Returns a new launch configuration working copy of this type, that
+	 * resides in the specified container, with the given name. When
+	 * <code>container</code> is </code>null</code>, the configuration will
+	 * reside locally in the metadata area. Note: a launch configuration is not
+	 * actually created until the working copy is saved.
+	 * <p>
+	 * The configuration <code>name</code> parameter cannot contain file
+	 * separator characters (sub directories) when the <code>container</code> is
+	 * <code>null</code> (i.e. when the configuration is to be stored in the
+	 * local metadata area.
+	 * </p>
+	 *
+	 * @param container the container in which the new configuration will
+	 *            reside, or <code>null</code> if the configuration should
+	 *            reside locally with the metadata.
+	 * @param name name for the launch configuration
+	 * @return a new launch configuration working copy instance of this type
+	 * @exception CoreException if an instance of this type of launch
+	 *                configuration could not be created for any reason
+	 * @since 3.12
+	 */
+	public ILaunchConfigurationWorkingCopy newPrototypeInstance(IContainer container, String name) throws CoreException;
+
+	/**
+	 * Returns whether this type of launch configuration supports prototypes.
+	 *
+	 * @return whether this kind of launch configuration supports the prototypes
+	 * @since 3.12
+	 */
+	public boolean supportsPrototypes();
 }

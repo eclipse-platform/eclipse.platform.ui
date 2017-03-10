@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
@@ -262,6 +263,38 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
 		 ILaunchConfigurationWorkingCopy wc = type.newInstance(container, name);
 		assertEquals("Should have no attributes", 0, wc.getAttributes().size()); //$NON-NLS-1$
+		 return wc;
+	}
+
+	/**
+	 * Creates and returns a new launch config prototype with the given name, local
+	 * or shared, with 4 attributes:
+	 *  - String1 = "String1"
+	 *  - Int1 = 1
+	 *  - Boolean1 = true
+	 *  - Boolean2 = false
+	 */
+	protected ILaunchConfigurationWorkingCopy newPrototype(IContainer container, String name) throws CoreException {
+		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
+		 assertTrue("Should support debug mode", type.supportsMode(ILaunchManager.DEBUG_MODE)); //$NON-NLS-1$
+		 assertTrue("Should support run mode", type.supportsMode(ILaunchManager.RUN_MODE)); //$NON-NLS-1$
+		 ILaunchConfigurationWorkingCopy wc = type.newPrototypeInstance(container, name);
+		 wc.setAttribute("String1", "String1"); //$NON-NLS-1$ //$NON-NLS-2$
+		 wc.setAttribute("Int1", 1); //$NON-NLS-1$
+		 wc.setAttribute("Boolean1", true); //$NON-NLS-1$
+		 wc.setAttribute("Boolean2", false); //$NON-NLS-1$
+		 assertTrue("Should need saving", wc.isDirty()); //$NON-NLS-1$
+		 return wc;
+	}
+
+	/**
+	 * Creates and returns a new launch configuration prototype with the given name, local
+	 * or shared, with no attributes
+	 */
+	protected ILaunchConfigurationWorkingCopy newEmptyPrototype(IContainer container, String name) throws CoreException {
+		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
+		 ILaunchConfigurationWorkingCopy wc = type.newPrototypeInstance(container, name);
+		 assertEquals("Should have no attributes", 0, wc.getAttributes().size()); //$NON-NLS-1$
 		 return wc;
 	}
 
@@ -1560,4 +1593,177 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		config.setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_PATHS, paths);
 		config.setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_TYPES, types);
 	}
+
+	/**
+	 * Test copying attributes from one configuration to another.
+	 *
+	 * @throws CoreException
+	 */
+	public void testCopyAttributes() throws CoreException {
+		ILaunchConfigurationWorkingCopy source = newPrototype(null, "test-copy-attributes-source"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy dest = newEmptyConfiguration(null, "test-copy-attributes-dest"); //$NON-NLS-1$
+		dest.copyAttributes(source);
+		assertTrue("String1 should be String1", dest.getAttribute("String1", "Missing").equals("String1"));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("Int1 should be 1", dest.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Boolean1 should be true", dest.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Boolean2 should be false", !dest.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Tests that creation from a prototype works.
+	 *
+	 * @throws CoreException
+	 */
+	public void testCreationFromPrototype() throws CoreException {
+		ILaunchConfigurationWorkingCopy temp = newPrototype(null, "test-creation-from-prototype"); //$NON-NLS-1$
+		temp.setAttribute("TEMPLATE", "TEMPLATE"); //$NON-NLS-1$ //$NON-NLS-2$
+		ILaunchConfiguration prototype = temp.doSave();
+		ILaunchConfigurationType type = temp.getType();
+
+		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes"); //$NON-NLS-1$
+		config.setPrototype(prototype, true);
+		assertNotNull("Made from wrong prototype", config.getAttribute("TEMPLATE", (String)null)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Should refer to creation prototype", prototype, config.getPrototype()); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests setting the 'isPrototype' attribute.
+	 *
+	 * @throws CoreException
+	 */
+	public void testIsPrototype() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newPrototype(null, "test-is-prototype"); //$NON-NLS-1$
+		ILaunchConfiguration prototype = wc.doSave();
+		assertTrue("Should be a prototype", prototype.isPrototype()); //$NON-NLS-1$
+		ILaunchConfiguration[] prototypes = wc.getType().getPrototypes();
+		List<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+		for (int i = 0; i < prototypes.length; i++) {
+			list.add(prototypes[i]);
+		}
+		assertFalse("Expecting at least prototype", list.isEmpty()); //$NON-NLS-1$
+		assertTrue("Missing created prototype", list.contains(prototype)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests finding references to a prototype.
+	 *
+	 * @throws CoreException
+	 */
+	public void testPrototypeChildren() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newPrototype(null, "test-references"); //$NON-NLS-1$
+		ILaunchConfiguration prototype = wc.doSave();
+
+		ILaunchConfigurationWorkingCopy r1 = newConfiguration(null, "referee-1"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy r2 = newConfiguration(null, "referee-2"); //$NON-NLS-1$
+
+		r1.setPrototype(prototype, false);
+		r2.setPrototype(prototype, false);
+
+		ILaunchConfiguration s1 = r1.doSave();
+		ILaunchConfiguration s2 = r2.doSave();
+
+		Iterable<ILaunchConfiguration> children = prototype.getPrototypeChildren();
+		List<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+		for (ILaunchConfiguration child : children) {
+			list.add(child);
+		}
+		assertEquals("Wrong number of prototype children", 2, list.size()); //$NON-NLS-1$
+		assertTrue("Missing reference", list.contains(s1)); //$NON-NLS-1$
+		assertTrue("Missing reference", list.contains(s2)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests that when an attribute is removed from a working copy, it does not
+	 * get inherited from its prototype.
+	 *
+	 * @throws CoreException
+	 */
+	public void testPrototypeRemoveBehavior() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-remove"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy t1 = newEmptyPrototype(null, "prototype-1"); //$NON-NLS-1$
+		t1.setAttribute("COMMON", "TEMPLATE-1"); //$NON-NLS-1$ //$NON-NLS-2$
+		t1.setAttribute("T1", "T1"); //$NON-NLS-1$ //$NON-NLS-2$
+		t1.setAttribute("String1", "String2"); //$NON-NLS-1$ //$NON-NLS-2$
+		ILaunchConfiguration prototype = t1.doSave();
+
+		assertEquals("String1", wc.getAttribute("String1", "wrong")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		wc.setPrototype(prototype, true);
+		wc.removeAttribute("String1"); //$NON-NLS-1$
+		assertEquals("TEMPLATE-1", wc.getAttribute("COMMON", (String)null)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("T1", wc.getAttribute("T1", (String)null)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(wc.getAttribute("String1", (String)null)); //$NON-NLS-1$
+
+	}
+
+	/**
+	 * Tests that setting a configuration's prototype to null cleans its prototype
+	 * association.
+	 *
+	 * @throws CoreException
+	 */
+	public void testUnPrototype() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-un-prototype"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy t1 = newEmptyPrototype(null, "prototype-un"); //$NON-NLS-1$
+		t1.setAttribute("COMMON", "PROTOTYPE-1"); //$NON-NLS-1$ //$NON-NLS-2$
+		t1.setAttribute("T1", "T1"); //$NON-NLS-1$ //$NON-NLS-2$
+		t1.setAttribute("String1", "String2"); //$NON-NLS-1$ //$NON-NLS-2$
+		ILaunchConfiguration prototype = t1.doSave();
+		wc.setPrototype(prototype, true);
+		ILaunchConfiguration configuration = wc.doSave();
+		assertEquals(prototype, configuration.getPrototype());
+		wc = configuration.getWorkingCopy();
+		wc.setPrototype(null, false);
+		configuration = wc.doSave();
+		assertNull(configuration.getPrototype());
+		Iterable<ILaunchConfiguration> children = t1.getPrototypeChildren();
+		assertFalse(children.iterator().hasNext());
+	}
+
+	/**
+	 * Tests that nested prototypes are not allowed.
+	 *
+	 * @throws CoreException
+	 */
+	public void testNestedPrototypes() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newPrototype(null, "test-nest-root"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy t2 = newPrototype(null, "prototype-nested"); //$NON-NLS-1$
+		ILaunchConfiguration prototype = t1.doSave();
+		try {
+			t2.setPrototype(prototype, true);
+		} catch (CoreException e) {
+			return;
+		}
+		assertTrue("Shoud not be able to nest prototypes", false); //$NON-NLS-1$
+	}
+
+	/**
+	 * Test that you cannot set a config's prototype to be a non-prototype.
+	 *
+	 * @throws CoreException
+	 */
+	public void testIllegalPrototype() throws CoreException {
+		ILaunchConfigurationWorkingCopy c1 = newConfiguration(null, "test-config"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-not-a-prototype"); //$NON-NLS-1$
+		ILaunchConfiguration config = t1.doSave();
+		try {
+			c1.setPrototype(config, true);
+		} catch (CoreException e) {
+			// expected
+			return;
+		}
+		assertTrue("Should not be able to set configration as prototype", false); //$NON-NLS-1$
+	}
+
+	/**
+	 * Test that a prototype can be duplicated (and results in a prototype).
+	 *
+	 * @throws CoreException
+	 */
+	public void testCopyPrototype() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newEmptyPrototype(null, "prototype-to-duplicate"); //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy t2 = t1.copy("duplicate-prototype"); //$NON-NLS-1$
+		assertTrue(t2.isPrototype());
+	}
+
 }

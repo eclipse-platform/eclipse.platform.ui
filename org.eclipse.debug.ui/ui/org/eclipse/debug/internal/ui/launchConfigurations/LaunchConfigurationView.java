@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ian Pun (Red Hat Inc.) - Bug 518652
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -76,10 +77,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * Actions
 	 */
 	private CreateLaunchConfigurationAction fCreateAction;
+	private CreateLaunchConfigurationPrototypeAction fCreatePrototypeAction;
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
 	private ExportLaunchConfigurationAction fExportAction;
 	private CollapseAllLaunchConfigurationAction fCollapseAllAction;
+	private LinkPrototypeAction fLinkPrototypeAction;
+	private UnlinkPrototypeAction fUnlinkPrototypeAction;
+	private ResetWithPrototypeValuesAction fResetWithPrototypeValuesAction;
 
 	/**
 	 * Action for providing filtering to the Launch Configuration Dialog
@@ -196,6 +201,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fCreateAction = new CreateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION, fCreateAction);
 
+		fCreatePrototypeAction = new CreateLaunchConfigurationPrototypeAction(getViewer(), getLaunchGroup().getMode());
+		setAction(CreateLaunchConfigurationPrototypeAction.ID_CREATE_PROTOTYPE_ACTION, fCreatePrototypeAction);
+
 		fDeleteAction = new DeleteLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DeleteLaunchConfigurationAction.ID_DELETE_ACTION, fDeleteAction);
 		setAction(IDebugView.REMOVE_ACTION, fDeleteAction);
@@ -212,6 +220,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fFilterAction = new FilterLaunchConfigurationAction();
 		setAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION, fFilterAction);
 
+		fLinkPrototypeAction = new LinkPrototypeAction(getViewer(), getLaunchGroup().getMode());
+		setAction(LinkPrototypeAction.ID_LINK_PROTOTYPE_ACTION, fLinkPrototypeAction);
+
+		fUnlinkPrototypeAction = new UnlinkPrototypeAction(getViewer(), getLaunchGroup().getMode());
+		setAction(UnlinkPrototypeAction.ID_UNLINK_PROTOTYPE_ACTION, fUnlinkPrototypeAction);
+
+		fResetWithPrototypeValuesAction = new ResetWithPrototypeValuesAction(getViewer(), getLaunchGroup().getMode());
+		setAction(ResetWithPrototypeValuesAction.ID_RESET_WITH_PROTOTYPE_VALUES_ACTION, fResetWithPrototypeValuesAction);
 	}
 
 	/**
@@ -228,10 +244,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	@Override
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(fCreateAction);
+		menu.add(fCreatePrototypeAction);
 		menu.add(fExportAction);
 		menu.add(fDuplicateAction);
 		menu.add(fDeleteAction);
 		menu.add(new Separator());
+		menu.add(fLinkPrototypeAction);
+		menu.add(fUnlinkPrototypeAction);
+		menu.add(fResetWithPrototypeValuesAction);
 	}
 
 	/**
@@ -255,11 +275,15 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	@Override
 	public void dispose() {
 		fCreateAction.dispose();
+		fCreatePrototypeAction.dispose();
 		fDeleteAction.dispose();
 		fDuplicateAction.dispose();
 		fExportAction.dispose();
 		fFilterAction = null;
 		fCollapseAllAction = null;
+		fLinkPrototypeAction.dispose();
+		fUnlinkPrototypeAction.dispose();
+		fResetWithPrototypeValuesAction.dispose();
 		getLaunchManager().removeLaunchConfigurationListener(this);
 	}
 
@@ -295,7 +319,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
         if (viewer != null) {
 			try {
 				viewer.getControl().setRedraw(false);
-                viewer.add(configuration.getType(), configuration);
+				if (configuration.getPrototype() != null) {
+					viewer.add(configuration.getPrototype(), configuration);
+				} else {
+					viewer.add(configuration.getType(), configuration);
+				}
                 // if moved, remove original now
                 if (from != null) {
                     viewer.remove(from);

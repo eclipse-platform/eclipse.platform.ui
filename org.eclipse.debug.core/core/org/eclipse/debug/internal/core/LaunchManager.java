@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     attempt to disconnect debug targets before terminating them
  *     Alena Laskavaia - Bug 259281
  *     Marc Khouzam - Bug 313143: Preferred Launch Delegate not recovered from preferences
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -34,6 +35,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -378,7 +380,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			IResource resource = delta.getResource();
 			if (resource instanceof IFile) {
 				IFile file = (IFile)resource;
-				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
+				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension()) || ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION.equals(file.getFileExtension())) {
 					ILaunchConfiguration handle = new LaunchConfiguration(file);
 					switch (delta.getKind()) {
 						case IResourceDelta.ADDED :
@@ -476,7 +478,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
-				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension())) {
+				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension()) | ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension())) {
 					fList.add(proxy.requestResource());
 				}
 				return false;
@@ -947,12 +949,33 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 																			 ParserConfigurationException,
 																			 IOException,
 																			 SAXException {
+		return createInfoFromXML(stream, false);
+	}
+
+	/**
+	 * Return a LaunchConfigurationInfo object initialized from XML contained in
+	 * the specified stream. Simply pass out any exceptions encountered so that
+	 * caller can deal with them. This is important since caller may need access
+	 * to the actual exception.
+	 *
+	 * @param stream the {@link InputStream} to read from
+	 * @param isPrototype if the XML corresponds to a prototype
+	 * @return the new {@link LaunchConfigurationInfo}
+	 * @throws CoreException if a problem is encountered
+	 * @throws ParserConfigurationException if the stream fails to parse
+	 * @throws IOException if there is a problem handling the given stream or
+	 *             writing the new info file
+	 * @throws SAXException if there is a SAX parse exception
+	 *
+	 * @since 3.12
+	 */
+	protected LaunchConfigurationInfo createInfoFromXML(InputStream stream, boolean isPrototype) throws CoreException, ParserConfigurationException, IOException, SAXException {
 		Element root = null;
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
 		LaunchConfigurationInfo info = new LaunchConfigurationInfo();
-		info.initializeFromXML(root);
+		info.initializeFromXML(root, isPrototype);
 		return info;
 	}
 
@@ -1011,23 +1034,37 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		IPath containerPath = LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
 		final File directory = containerPath.toFile();
 		if (directory.isDirectory()) {
-			FilenameFilter filter = new FilenameFilter() {
+			List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+			FilenameFilter configFilter = new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
 					return dir.equals(directory) &&
 							name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
 				}
 			};
-			File[] files = directory.listFiles(filter);
-			if (files.length > 0) {
-				List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>(10);
+			File[] configFiles = directory.listFiles(configFilter);
+			if (configFiles.length > 0) {
 				LaunchConfiguration config = null;
-				for (int i = 0; i < files.length; i++) {
-					config = new LaunchConfiguration(LaunchConfiguration.getSimpleName(files[i].getName()), null);
+				for (int i = 0; i < configFiles.length; i++) {
+					config = new LaunchConfiguration(LaunchConfiguration.getSimpleName(configFiles[i].getName()), null, false);
 					configs.add(config);
 				}
-				return configs;
 			}
+			FilenameFilter prototypeFilter = new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return dir.equals(directory) && name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION);
+				}
+			};
+			File[] prototypeFiles = directory.listFiles(prototypeFilter);
+			if (prototypeFiles.length > 0) {
+				LaunchConfiguration config = null;
+				for (int i = 0; i < prototypeFiles.length; i++) {
+					config = new LaunchConfiguration(LaunchConfiguration.getSimpleName(prototypeFiles[i].getName()), null, true);
+					configs.add(config);
+				}
+			}
+			return configs;
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -1160,7 +1197,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	protected synchronized String[] getAllSortedConfigNames() {
 		if (fSortedConfigNames == null) {
-			ILaunchConfiguration[] configs = getLaunchConfigurations();
+			List<ILaunchConfiguration> collection = getAllLaunchConfigurations();
+			ILaunchConfiguration[] configs = collection.toArray(new ILaunchConfiguration[collection.size()]);
 			fSortedConfigNames = new String[configs.length];
 			for (int i = 0; i < configs.length; i++) {
 				fSortedConfigNames[i] = configs[i].getName();
@@ -1368,7 +1406,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				BufferedInputStream stream = null;
 				try {
 					stream = new BufferedInputStream(store.openInputStream(EFS.NONE, null));
-					info = createInfoFromXML(stream);
+					info = createInfoFromXML(stream, isPrototype(store));
 					synchronized (this) {
 						fLaunchConfigurations.put(config, info);
 					}
@@ -1403,6 +1441,38 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 
 	/**
+	 * Check if the given {@link IFileStore} is a prototype.
+	 *
+	 * @param store the given {@link IFileStore}
+	 * @return <code>true</code> if the given {@link IFileStore} is a prototype,
+	 *         <code>false</code> otherwise.
+	 *
+	 * @since 3.12
+	 */
+	private boolean isPrototype(IFileStore store) {
+		if (store.getName().endsWith("." + ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION)) { //$NON-NLS-1$
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Check if the given {@link File} is a prototype.
+	 *
+	 * @param file the given {@link File}
+	 * @return <code>true</code> if the given {@link File} is a prototype,
+	 *         <code>false</code> otherwise.
+	 *
+	 * @since 3.12
+	 */
+	private boolean isPrototype(File file) {
+		if (file.getName().endsWith("." + ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION)) { //$NON-NLS-1$
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * @see ILaunchManager#getLaunchConfiguration(IFile)
 	 */
 	@Override
@@ -1425,8 +1495,33 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	@Override
 	public synchronized ILaunchConfiguration[] getLaunchConfigurations() {
+		return getLaunchConfigurations(ILaunchConfiguration.CONFIGURATION);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchConfigurations(int)
+	 */
+	@Override
+	public ILaunchConfiguration[] getLaunchConfigurations(int kinds) {
 		List<ILaunchConfiguration> allConfigs = getAllLaunchConfigurations();
-		return allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
+		if (((kinds & ILaunchConfiguration.CONFIGURATION) > 0) && ((kinds & ILaunchConfiguration.PROTOTYPE) > 0)) {
+			// all kinds
+			return allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
+		} else {
+			List<ILaunchConfiguration> select = new ArrayList<ILaunchConfiguration>(allConfigs.size());
+			Iterator<ILaunchConfiguration> iterator = allConfigs.iterator();
+			while (iterator.hasNext()) {
+				ILaunchConfiguration config = iterator.next();
+				try {
+					if ((config.getKind() & kinds) > 0) {
+						select.add(config);
+					}
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+			}
+			return select.toArray(new ILaunchConfiguration[select.size()]);
+		}
 	}
 
 	/**
@@ -1434,9 +1529,17 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	@Override
 	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
+		return getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchConfigurations(org.eclipse.debug.core.ILaunchConfigurationType, int)
+	 */
+	@Override
+	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException {
 		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
-			if (config.getType().equals(type)) {
+			if (config.getType().equals(type) && ((config.getKind() & kinds) > 0)) {
 				configs.add(config);
 			}
 		}
@@ -2571,7 +2674,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if (!config.isLocal()) {
 				StringBuffer buf = new StringBuffer(config.getName());
 				buf.append('.');
-				buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+				if (config.isPrototype()) {
+					buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION);
+				} else {
+					buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+				}
 				sharedConfigs.put(buf.toString(), config);
 			}
 		}
@@ -2592,7 +2699,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			boolean added = !target.exists();
 			try {
 				copyFile(source, target);
-				ILaunchConfiguration configuration = new LaunchConfiguration(LaunchConfiguration.getSimpleName(source.getName()), null);
+				ILaunchConfiguration configuration = new LaunchConfiguration(LaunchConfiguration.getSimpleName(source.getName()), null, isPrototype(source));
 				ILaunchConfiguration shared = sharedConfigs.get(target.getName());
 				if (shared != null) {
 					setMovedFromTo(shared, configuration);

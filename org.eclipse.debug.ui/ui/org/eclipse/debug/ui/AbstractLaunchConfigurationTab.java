@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mohamed Hussein (Mentor Graphics) - Added s/getWarningMessage (Bug 386673)
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,6 +25,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IPrototypeAttributesLabelProvider;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -40,7 +45,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @see ILaunchConfigurationTab
  * @since 2.0
  */
-public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab2 {
+public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab2, IPrototypeAttributesLabelProvider {
 
 	/**
 	 * The control for this page, or <code>null</code>
@@ -92,8 +97,46 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	private String fHelpContextId = null;
 
 	/**
-	 * Returns the dialog this tab is contained in, or
-	 * <code>null</code> if not yet set.
+	 * Attributes labels for prototype tab.
+	 *
+	 * @since 3.13
+	 */
+	private Map<String, String> fAttributesLabelsForPrototype;
+
+	/**
+	 * Default constructor.
+	 *
+	 * @since 3.13
+	 */
+	public AbstractLaunchConfigurationTab() {
+		fAttributesLabelsForPrototype = new HashMap<>();
+		initializeAttributes();
+	}
+
+	/**
+	 * Initialize attributes labels.
+	 *
+	 * @since 3.13
+	 */
+	protected void initializeAttributes() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.core.IPrototypeAttributesLabelProvider#getLabel(java.lang.String)
+	 */
+	@Override
+	public String getAttributeLabel(String attribute) {
+		String label = fAttributesLabelsForPrototype.get(attribute);
+		if (label != null) {
+			return label;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the dialog this tab is contained in, or <code>null</code> if not
+	 * yet set.
 	 *
 	 * @return launch configuration dialog, or <code>null</code>
 	 */
@@ -512,6 +555,16 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	public String getHelpContextId() {
 		return fHelpContextId;
+	}
+
+	/**
+	 * Get the attributes labels for prototype tab.
+	 *
+	 * @return the attributes labels for prototype tab.
+	 * @since 3.13
+	 */
+	protected Map<String, String> getAttributesLabelsForPrototype() {
+		return fAttributesLabelsForPrototype;
 	}
 }
 

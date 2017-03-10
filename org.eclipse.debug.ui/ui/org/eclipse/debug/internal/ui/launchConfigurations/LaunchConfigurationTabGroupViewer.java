@@ -10,6 +10,7 @@
  *     Mohamed Hussein (Mentor Graphics) - Added getWarningMessage (Bug 386673)
  *     Robert Roth - Used consistent apply button location (Bug 432832)
  *     Lucas Bullen (Red Hat Inc.) - Added export configuration message (Bug 518652)
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -347,11 +348,15 @@ public class LaunchConfigurationTabGroupViewer {
 		int width = parent.getBounds().width - 30;
 		SWTFactory.createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1, 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_9, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_NEW_PROTO), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_7, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_EXPORT_CONFIG), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG), 1, width);
 		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG), 1, width);
-        SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS), 1, width);
-        SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_10, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_LINK_PROTO), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_11, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_UNLINK_PROTO), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_12, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_RESET_PROTO), 1, width);
 
 		SWTFactory.createHorizontalSpacer(parent, 2);
 		Link link = new Link(parent, SWT.LEFT | SWT.WRAP);
@@ -1511,7 +1516,7 @@ public class LaunchConfigurationTabGroupViewer {
 					getLaunchConfigurationDialog().run(true, false, runnable);
 				}
 				else {
-					saved[0] = fWorkingCopy.doSave();
+					saved[0] = fWorkingCopy.doSave(ILaunchConfiguration.UPDATE_PROTOTYPE_CHILDREN);
 				}
 			}
 			updateButtons();

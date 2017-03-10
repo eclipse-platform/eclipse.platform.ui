@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sascha Radike - bug 56642
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +111,22 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute storing a memento identifying the prototype
+	 * this configuration was made from, possibly <code>null</code>.
+	 *
+	 *  @since 3.12
+	 */
+	public static final String ATTR_PROTOTYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROTOTYPE"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute storing if this configuration is a
+	 * prototype or not.
+	 *
+	 * @since 3.12
+	 */
+	public static final String IS_PROTOTYPE = DebugPlugin.getUniqueIdentifier() + ".IS_PROTOTYPE"; //$NON-NLS-1$
+
+	/**
 	 * Status handler to prompt in the UI thread
 	 *
 	 * @since 3.3
@@ -142,6 +160,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	private IContainer fContainer;
 
 	/**
+	 * If this configuration is a prototype.
+	 * @since 3.12
+	 */
+	private boolean fIsPrototype;
+
+	/**
 	 * Constructs a launch configuration with the given name. The configuration
 	 * is stored in the given container or locally with workspace metadata if
 	 * the specified container is <code>null</code>.
@@ -151,9 +175,24 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.5
 	 */
 	protected LaunchConfiguration(String name, IContainer container) {
+		this(name, container, false);
+	}
+
+	/**
+	 * Constructs a launch configuration with the given name. The configuration
+	 * is stored in the given container or locally with workspace metadata if
+	 * the specified container is <code>null</code>.
+	 *
+	 * @param name launch configuration name
+	 * @param container parent container or <code>null</code>
+	 * @param prototype if the configuration is a prototype or not
+	 * @since 3.12
+	 */
+	protected LaunchConfiguration(String name, IContainer container, boolean prototype) {
 		initialize();
 		setName(name);
 		setContainer(container);
+		fIsPrototype = prototype;
 	}
 
 	/**
@@ -170,11 +209,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.5
 	 */
 	protected LaunchConfiguration(IFile file) {
-		this(getSimpleName(file.getName()), file.getParent());
+		this(getSimpleName(file.getName()), file.getParent(), isPrototype(file));
 	}
 
 	/**
-	 * Given a name that ends with .launch, return the simple name of the configuration.
+	 * Given a name that ends with .launch or .prototype, return the simple name of the configuration.
 	 *
 	 * @param fileName the name to parse
 	 * @return simple name
@@ -183,6 +222,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	protected static String getSimpleName(String fileName) {
 		IPath path = new Path(fileName);
 		if(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(path.getFileExtension())) {
+			return path.removeFileExtension().toString();
+		} else if (ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION.equals(path.getFileExtension())) {
 			return path.removeFileExtension().toString();
 		}
 		return fileName;
@@ -302,6 +343,23 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			// update the launch manager cache synchronously
 			getLaunchManager().launchConfigurationDeleted(this);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete(int)
+	 */
+	@Override
+	public void delete(int flag) throws CoreException {
+		if (flag == UPDATE_PROTOTYPE_CHILDREN && isPrototype()) {
+			// clear back pointers to this configuration
+			Collection<ILaunchConfiguration> children = getPrototypeChildren();
+			for (ILaunchConfiguration child : children) {
+				ILaunchConfigurationWorkingCopy childWC = child.getWorkingCopy();
+				childWC.setPrototype(null, false);
+				childWC.doSave();
+			}
+		}
+		delete();
 	}
 
 	/**
@@ -449,12 +507,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * Returns the simple file name of this launch configuration.
 	 *
 	 * @return the simple file name of this launch configuration - for example
-	 *  	"Abc.launch"
+	 *  	"Abc.launch" or "Abc.prototype"
 	 */
 	protected String getFileName() {
 		StringBuffer buf = new StringBuffer(getName());
 		buf.append('.');
-		buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+		if (isPrototype()) {
+			buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION);
+		} else {
+			buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+		}
 		return buf.toString();
 	}
 
@@ -994,5 +1056,116 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPrototype()
+	 */
+	@Override
+	public ILaunchConfiguration getPrototype() throws CoreException {
+		String memento = getAttribute(ATTR_PROTOTYPE, (String)null);
+		if (memento != null) {
+			LaunchConfiguration prototype = new LaunchConfiguration(memento);
+			prototype.setIsPrototype(true);
+			return prototype;
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPrototypeChildren()
+	 */
+	@Override
+	public Collection<ILaunchConfiguration> getPrototypeChildren() throws CoreException {
+		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getType());
+		List<ILaunchConfiguration> proteges = new ArrayList<ILaunchConfiguration>();
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration config = configurations[i];
+			if (this.equals(config.getPrototype())) {
+				proteges.add(config);
+			}
+		}
+		return proteges;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isPrototype()
+	 */
+	@Override
+	public boolean isPrototype() {
+		return fIsPrototype;
+	}
+
+	/**
+	 * Set the prototype state of this configuration.
+	 *
+	 * @param isPrototype the prototype state.
+	 *
+	 * @since 3.12
+	 */
+	protected void setIsPrototype(boolean isPrototype) {
+		fIsPrototype = isPrototype;
+	}
+
+	/**
+	 * Check if the given file is a launch configuration prototype or not.
+	 *
+	 * @param file the given {@link IFile}.
+	 * @return <code>true</code> if the given file is a launch configuration
+	 *         prototype, false otherwise.
+	 *
+	 * @since 3.12
+	 */
+	protected static boolean isPrototype(IFile file) {
+		if (ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION.equals(file.getFileExtension())) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getKind()
+	 */
+	@Override
+	public int getKind() throws CoreException {
+		if (fIsPrototype) {
+			return PROTOTYPE;
+		}
+		return CONFIGURATION;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isAttributeModified(java.lang.String)
+	 */
+	@Override
+	public boolean isAttributeModified(String attribute) throws CoreException {
+		ILaunchConfiguration prototype = getPrototype();
+		if (prototype != null) {
+			Object prototypeValue = prototype.getAttributes().get(attribute);
+			Object attributeValue = getAttributes().get(attribute);
+			return !LaunchConfigurationInfo.compareAttribute(attribute, prototypeValue, attributeValue);
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.core.ILaunchConfiguration#getPrototypeVisibleAttributes
+	 * ()
+	 */
+	@Override
+	public Set<String> getPrototypeVisibleAttributes() throws CoreException {
+		return getInfo().getVisibleAttributes();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#
+	 * setPrototypeAttributeVisibility(java.lang.String, boolean)
+	 */
+	@Override
+	public void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException {
+		getInfo().setAttributeVisibility(attribute, visible);
+	}
 }
 

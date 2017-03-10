@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * QNX Software Systems - Mikhail Khodjaiants - Bug 114664
+ * Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
@@ -36,6 +37,9 @@ public class SourceLookupUIMessages extends NLS {
 	public static String sourceTab_addButton;
 	public static String sourceTab_tabTitle;
 	public static String sourceTab_defaultButton;
+
+	public static String sourceTab_AttributeLabel_SourceLocatorMemento;
+	public static String sourceTab_AttributeLabel_SourceLocatorID;
 
 	public static String addSourceLocation_title;
 	public static String addSourceLocation_description;

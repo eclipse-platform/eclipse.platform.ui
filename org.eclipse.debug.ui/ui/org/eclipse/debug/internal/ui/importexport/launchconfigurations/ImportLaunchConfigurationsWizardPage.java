@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
@@ -110,7 +111,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 				if(child.isFile()) {
 					Path childpath = new Path(child.getAbsolutePath());
 					String extension = childpath.getFileExtension();
-					if(extension != null && extension.equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+					if (extension != null && (extension.equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION) || extension.equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION))) {
 						newelement = new DebugFileSystemElement(provider.getLabel(child), this, provider.isFolder(child));
 						newelement.setFileSystemObject(child);
 					}

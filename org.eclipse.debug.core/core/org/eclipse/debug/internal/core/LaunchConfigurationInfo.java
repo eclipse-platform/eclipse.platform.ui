@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -31,6 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,6 +64,8 @@ public class LaunchConfigurationInfo {
 	private static final String INT_ATTRIBUTE = "intAttribute"; //$NON-NLS-1$
 	private static final String STRING_ATTRIBUTE = "stringAttribute"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
+	private static final String PROTOTYPE = "prototype"; //$NON-NLS-1$
+	private static final String VISIBLE_ATTRIBUTES = "visibleAttributes"; //$NON-NLS-1$
 
 	/**
 	 * This configurations attribute table. Keys are <code>String</code>s and
@@ -74,6 +80,26 @@ public class LaunchConfigurationInfo {
 	 * This launch configuration's type
 	 */
 	private ILaunchConfigurationType fType;
+
+	/**
+	 * Whether this configuration is a prototype
+	 */
+	private boolean fIsPrototype = false;
+
+	/**
+	 * This launch configuration's prototype (can be <code>null</code> if this launch configuration is already a prototype).
+	 */
+	private ILaunchConfiguration fPrototype;
+
+	/**
+	 * This prototype's visible attributes (can be <code>null</code> if launch configuration is not a prototype).
+	 */
+	private Set<String> fVisibleAttributes;
+
+	/**
+	 * Static access to the launch manager.
+	 */
+	private static LaunchManager fgLaunchManager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 
 	/**
 	 * Whether running on Sun 1.4 VM - see bug 110215
@@ -270,6 +296,18 @@ public class LaunchConfigurationInfo {
 	}
 
 	/**
+	 * Returns the raw object from the attribute table or <code>null</code> if none.
+	 *
+	 * @param key attribute key
+	 * @return raw attribute value
+	 *
+	 * @since 3.12
+	 */
+	protected Object getObjectAttribute(String key) {
+		return getAttributeTable().get(key);
+	}
+
+	/**
 	 * Returns the <code>java.util.Map</code> attribute with the given key or
 	 * the given default value if undefined.
 	 * @param key the name of the attribute
@@ -316,6 +354,28 @@ public class LaunchConfigurationInfo {
 		return fType;
 	}
 
+	/**
+	 * Sets this configuration's prototype.
+	 *
+	 * @param prototype
+	 *            launch configuration prototype
+	 *
+	 * @since 3.12
+	 */
+	protected void setPrototype(ILaunchConfiguration prototype) {
+		fPrototype = prototype;
+	}
+
+	/**
+	 * Returns this configuration's prototype, if it exists.
+	 *
+	 * @return launch configuration prototype (can be <code>null</code>)
+	 *
+	 * @since 3.12
+	 */
+	protected ILaunchConfiguration getPrototype() {
+		return fPrototype;
+	}
 
 	/**
 	 * Returns a copy of this info object
@@ -326,6 +386,9 @@ public class LaunchConfigurationInfo {
 		LaunchConfigurationInfo copy = new LaunchConfigurationInfo();
 		copy.setType(getType());
 		copy.setAttributeTable(getAttributes());
+		copy.setIsPrototype(isPrototype());
+		copy.setPrototype(getPrototype());
+		copy.setVisibleAttributes(getVisibleAttributes());
 		return copy;
 	}
 
@@ -350,8 +413,14 @@ public class LaunchConfigurationInfo {
 	protected void setAttribute(String key, Object value) {
 		if (value == null) {
 			getAttributeTable().remove(key);
+			setAttributeVisibility(key, false);
 		} else {
-			getAttributeTable().put(key, value);
+			Object attribute = getAttributeTable().put(key, value);
+			// If attribute is new in the table and the configuration is a
+			// prototype, then add it to the visible attributes
+			if (attribute == null && fIsPrototype) {
+				setAttributeVisibility(key, true);
+			}
 		}
 	}
 
@@ -375,6 +444,13 @@ public class LaunchConfigurationInfo {
 		doc.appendChild(configRootElement);
 
 		configRootElement.setAttribute(TYPE, getType().getIdentifier());
+
+		ILaunchConfiguration prototype = getPrototype();
+		if (prototype != null) {
+			configRootElement.setAttribute(PROTOTYPE, prototype.getName());
+		} else if (isPrototype()) {
+			configRootElement.setAttribute(VISIBLE_ATTRIBUTES, getVisibleAttributes().stream().collect(Collectors.joining(", "))); //$NON-NLS-1$
+		}
 
 		for (String key : getAttributeTable().keySet()) {
 			if (key == null) {
@@ -509,6 +585,19 @@ public class LaunchConfigurationInfo {
 	 * @throws CoreException if a problem is encountered
 	 */
 	protected void initializeFromXML(Element root) throws CoreException {
+		initializeFromXML(root, false);
+	}
+
+	/**
+	 * Initializes the mapping of attributes from the XML file
+	 *
+	 * @param root the root node from the XML document
+	 * @param isPrototype if the XML file corresponds to a prototype
+	 * @throws CoreException if a problem is encountered
+	 *
+	 * @since 3.12
+	 */
+	protected void initializeFromXML(Element root, boolean isPrototype) throws CoreException {
 		if (!root.getNodeName().equalsIgnoreCase(LAUNCH_CONFIGURATION)) {
 			throw getInvalidFormatDebugException();
 		}
@@ -552,6 +641,27 @@ public class LaunchConfigurationInfo {
 					setMapAttribute(element);
 				} else if(nodeName.equalsIgnoreCase(SET_ATTRIBUTE)) {
 					setSetAttribute(element);
+				}
+			}
+		}
+
+		if (isPrototype) {
+			setIsPrototype(true);
+			String visibleAttributes = root.getAttribute(VISIBLE_ATTRIBUTES);
+			if (visibleAttributes != null && visibleAttributes.length() > 0) {
+				String[] split = visibleAttributes.split(", "); //$NON-NLS-1$
+				setVisibleAttributes(new HashSet<>(Arrays.asList(split)));
+			}
+		} else {
+			setIsPrototype(false);
+			String prototype = root.getAttribute(PROTOTYPE);
+			if (prototype != null && prototype.length() > 0) {
+				ILaunchConfiguration[] launchConfigurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(ILaunchConfiguration.PROTOTYPE);
+				for (ILaunchConfiguration iLaunchConfiguration : launchConfigurations) {
+					if (prototype.equals(iLaunchConfiguration.getName())) {
+						setPrototype(iLaunchConfiguration);
+						break;
+					}
 				}
 			}
 		}
@@ -730,6 +840,13 @@ public class LaunchConfigurationInfo {
 			return false;
 		}
 
+		// In case of a prototype, make sure the visible attributes are the same
+		if (isPrototype() != other.isPrototype()) {
+			return false;
+		} else if (isPrototype() && !getVisibleAttributes().equals(other.getVisibleAttributes())) {
+			return false;
+		}
+
 		// Make sure the attributes are the same
 		return compareAttributes(fAttributes, other.getAttributeTable());
 	}
@@ -743,42 +860,63 @@ public class LaunchConfigurationInfo {
 	 * @return whether the two attribute maps are equal
 	 */
 	protected boolean compareAttributes(TreeMap<String, Object> map1, TreeMap<String, Object> map2) {
-		LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 		if (map1.size() == map2.size()) {
 			Iterator<String> attributes = map1.keySet().iterator();
 			while (attributes.hasNext()) {
 				String key = attributes.next();
 				Object attr1 = map1.get(key);
 				Object attr2 = map2.get(key);
-				if (attr2 == null) {
+				if (!compareAttribute(key, attr1, attr2)) {
 					return false;
-				}
-				Comparator<Object> comp = manager.getComparator(key);
-				if (comp == null) {
-					if (fgIsSun14x) {
-						if(attr2 instanceof String & attr1 instanceof String) {
-							// this is a hack for bug 110215, on SUN 1.4.x, \r
-							// is stripped off when the stream is written to the
-							// DOM
-							// this is not the case for 1.5.x, so to be safe we
-							// are stripping \r off all strings before we
-							// compare for equality
-							attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-							attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					}
-					if (!attr1.equals(attr2)) {
-						return false;
-					}
-				} else {
-					if (comp.compare(attr1, attr2) != 0) {
-						return false;
-					}
 				}
 			}
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns whether the two attributes are equal, considering comparator extensions.
+	 *
+	 * @param key attribute key
+	 * @param attr1 attribute value
+	 * @param attr2 attribute value to compare to, possibly <code>null</code>
+	 * @return whether equivalent
+	 *
+	 * @since 3.12
+	 */
+	protected static boolean compareAttribute(String key, Object attr1, Object attr2) {
+		if (attr2 == null) {
+			return false;
+		}
+		Comparator<Object> comp = fgLaunchManager.getComparator(key);
+		if (comp == null) {
+			String strAttr1 = null;
+			String strAttr2 = null;
+			if (fgIsSun14x) {
+				if(attr2 instanceof String & attr1 instanceof String) {
+					// this is a hack for bug 110215, on SUN 1.4.x, \r
+					// is stripped off when the stream is written to the
+					// DOM
+					// this is not the case for 1.5.x, so to be safe we
+					// are stripping \r off all strings before we
+					// compare for equality
+					strAttr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					strAttr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					if (!strAttr1.equals(strAttr2)) {
+						return false;
+					}
+				}
+			}
+			if (strAttr1 == null && strAttr2 == null && !attr1.equals(attr2)) {
+				return false;
+			}
+		} else {
+			if (comp.compare(attr1, attr2) != 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -814,6 +952,90 @@ public class LaunchConfigurationInfo {
 			return fAttributes.remove(attributeName);
 		}
 		return null;
+	}
+
+	/**
+	 * Sets whether this info is a prototype.
+	 *
+	 * @param isPrototype
+	 *
+	 * @since 3.12
+	 */
+	protected void setIsPrototype(boolean isPrototype) {
+		fIsPrototype = isPrototype;
+	}
+
+	/**
+	 * Returns whether this info is a prototype.
+	 *
+	 * @return whether a prototype
+	 *
+	 * @since 3.12
+	 */
+	protected boolean isPrototype() {
+		return fIsPrototype;
+	}
+
+	/**
+	 * Get the visible attributes of this prototype (return <code>null</code> if
+	 * the launch configuration is not a prototype).
+	 *
+	 * @return the visible attributes of this prototype (return
+	 *         <code>null</code> if the launch configuration is not a
+	 *         prototype).
+	 *
+	 * @since 3.12
+	 */
+	protected Set<String> getVisibleAttributes() {
+		if (!isPrototype()) {
+			return null;
+		} else if (fVisibleAttributes == null) {
+			initializeVisibleAttributes();
+		}
+		return fVisibleAttributes;
+	}
+
+	/**
+	 * Initialize the visible attributes of this launch configuration. All
+	 * attributes are visible by default.
+	 *
+	 * @since 3.12
+	 */
+	private void initializeVisibleAttributes() {
+		fVisibleAttributes = new HashSet<>(getAttributeTable().keySet());
+	}
+
+	/**
+	 * Set the visible attributes of this prototype. Do not call this method on
+	 * a launch configuration that is not a prototype.
+	 *
+	 * @param visibleAttributes the visible attributes
+	 *
+	 * @since 3.12
+	 */
+	protected void setVisibleAttributes(Set<String> visibleAttributes) {
+		if (visibleAttributes != null) {
+			fVisibleAttributes = new HashSet<>(visibleAttributes);
+		}
+	}
+
+	/**
+	 * Set visibility of the given attribute. Do not call this method on a
+	 * launch configuration that is not a prototype.
+	 *
+	 * @param attribute the given attribute
+	 * @param visible the visibility
+	 *
+	 * @since 3.12
+	 */
+	protected void setAttributeVisibility(String attribute, boolean visible) {
+		if (fVisibleAttributes != null) {
+			if (visible) {
+				fVisibleAttributes.add(attribute);
+			} else {
+				fVisibleAttributes.remove(attribute);
+			}
+		}
 	}
 }
 
