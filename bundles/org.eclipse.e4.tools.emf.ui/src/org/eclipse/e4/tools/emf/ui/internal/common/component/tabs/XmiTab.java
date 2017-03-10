@@ -82,7 +82,6 @@ public class XmiTab extends Composite {
 
 	@PostConstruct
 	protected void postConstruct() {
-
 		text = new Text(this, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		text.setMessage(Messages.XmiTab_TypeTextToSearch);
@@ -108,14 +107,13 @@ public class XmiTab extends Composite {
 
 		final IDocument document = emfDocumentProvider.getDocument();
 		final IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] {
-			XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
+				XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
 		sourceViewer.setDocument(document);
 		verticalRuler.setModel(model);
 
 		emfDocumentProvider.setValidationChangedCallback(new Runnable() {
-
 			@Override
 			public void run() {
 				model.removeAllAnnotations();
@@ -135,7 +133,7 @@ public class XmiTab extends Composite {
 		});
 
 		final String property = System
-			.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
+				.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null || preferences.getBoolean("tab-form-search-show", false)) { //$NON-NLS-1$
 			sourceViewer.setEditable(false);
 			sourceViewer.getTextWidget().setEnabled(false);
@@ -183,14 +181,31 @@ public class XmiTab extends Composite {
 	}
 
 	public void paste() {
-		sourceViewer.getTextWidget().paste();
+		if (isFilterTextFocused()) {
+			text.paste();
+		} else {
+			sourceViewer.getTextWidget().paste();
+		}
 	}
 
 	public void copy() {
-		sourceViewer.getTextWidget().copy();
+		if (isFilterTextFocused()) {
+			text.copy();
+		} else {
+			sourceViewer.getTextWidget().copy();
+		}
 	}
 
 	public void cut() {
-		sourceViewer.getTextWidget().cut();
+		if (isFilterTextFocused()) {
+			text.cut();
+		} else {
+			sourceViewer.getTextWidget().cut();
+		}
 	}
+
+	private boolean isFilterTextFocused() {
+		return text.isFocusControl();
+	}
+
 }
