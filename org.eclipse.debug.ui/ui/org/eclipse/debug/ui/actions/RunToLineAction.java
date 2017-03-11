@@ -142,8 +142,7 @@ public class RunToLineAction extends Action implements IUpdate {
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.RunToLineAction_0, ActionMessages.RunToLineAction_1, e.getStatus()); //
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// ignore
 			}
 		}
 	}
