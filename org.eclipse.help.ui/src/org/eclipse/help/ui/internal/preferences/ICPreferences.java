@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 
 
@@ -92,8 +93,7 @@ public class ICPreferences {
 						"true".equalsIgnoreCase(states[i])); //$NON-NLS-1$
 					ics.add(ic);
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					HelpUIPlugin.logError(e.getMessage(), e);
 				}
 			}
 		}

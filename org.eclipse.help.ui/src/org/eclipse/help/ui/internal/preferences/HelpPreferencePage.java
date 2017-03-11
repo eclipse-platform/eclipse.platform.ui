@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
@@ -284,7 +285,7 @@ public class HelpPreferencePage extends PreferencePage implements
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {
-			e.printStackTrace();
+			HelpUIPlugin.logError("Failed to save preferences", e); //$NON-NLS-1$
 		}
 
 		return true;
