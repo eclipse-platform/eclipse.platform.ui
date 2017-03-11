@@ -492,7 +492,6 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 			if (lastLine < bottomLine || bottomLine == -1)
 				bottomLine= lastLine;
 		} catch (BadLocationException x) {
-			x.printStackTrace();
 			return null;
 		}
 

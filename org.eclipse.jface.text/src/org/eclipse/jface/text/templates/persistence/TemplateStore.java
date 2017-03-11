@@ -292,7 +292,7 @@ public class TemplateStore {
 			load();
 		} catch (IOException x) {
 			// can't log from jface-text
-			x.printStackTrace();
+			handleException(x);
 		}
 
 		if (oldValue != null) {

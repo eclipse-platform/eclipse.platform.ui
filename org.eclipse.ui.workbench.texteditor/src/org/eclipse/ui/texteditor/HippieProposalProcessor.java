@@ -107,8 +107,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 				String replacement= fString.substring(offset - fOffset);
 				document.replace(offset, 0, replacement);
 			} catch (BadLocationException x) {
-				// TODO Auto-generated catch block
-				x.printStackTrace();
+				// ignore
 			}
 		}
 

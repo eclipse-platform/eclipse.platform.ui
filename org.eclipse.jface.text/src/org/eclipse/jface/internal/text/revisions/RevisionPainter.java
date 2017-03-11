@@ -1029,7 +1029,6 @@ public final class RevisionPainter {
 				widgetStartLine= Math.max(0, range.getStartLine() - visibleStartLine);
 				widgetEndLine= Math.min(visibleEndLine, end(range) - 1);
 			} catch (BadLocationException x) {
-				x.printStackTrace();
 				// ignore and return null
 			}
 		}

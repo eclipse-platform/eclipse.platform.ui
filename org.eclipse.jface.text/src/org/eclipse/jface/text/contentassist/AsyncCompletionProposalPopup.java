@@ -228,8 +228,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		try {
 			processors= fContentAssistant.getContentAssistProcessors(getTokenContentType(invocationOffset));
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// ignore
 		}
 		if (processors == null) {
 			return Collections.emptyList();
