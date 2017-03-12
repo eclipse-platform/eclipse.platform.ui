@@ -25,7 +25,6 @@ import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.ICommandHelpService;
@@ -53,6 +52,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
+import org.osgi.service.log.LogService;
 
 public class HandledContributionItem extends AbstractContributionItem {
 	/**
@@ -134,7 +134,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 		if (getModel().getCommand() != null && getModel().getWbCommand() == null) {
 			String cmdId = getModel().getCommand().getElementId();
 			if (cmdId == null) {
-				Activator.log(IStatus.ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
+				Activator.log(LogService.LOG_ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
 						+ ". ElementId is not allowed to be null."); //$NON-NLS-1$
 				return;
 			}
@@ -148,7 +148,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 				WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "command: " + parmCmd, null); //$NON-NLS-1$
 			}
 			if (parmCmd == null) {
-				Activator.log(IStatus.ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
+				Activator.log(LogService.LOG_ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
 								+ " with " + parameters); //$NON-NLS-1$
 				return;
 			}
@@ -246,7 +246,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 				try {
 					text = parmCmd.getName(getModel().getCommand().getLocalizedCommandName());
 				} catch (NotDefinedException e) {
-					e.printStackTrace();
+					Activator.log(LogService.LOG_DEBUG, e.getMessage(), e);
 				}
 			}
 			if (bindingService != null) {

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * An operation which delegates its work to a runnable that modifies the
@@ -75,7 +76,7 @@ public class WorkspaceModifyDelegatingOperation extends
             if (e.getTargetException() instanceof Error) {
 				throw (Error) e.getTargetException();
 			}
-            e.getTargetException().printStackTrace();
+			IDEWorkbenchPlugin.log(e.getTargetException().getMessage(), e.getTargetException());
         }
     }
 }

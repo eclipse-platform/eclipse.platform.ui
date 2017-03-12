@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.keys.model;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.4
@@ -37,8 +38,7 @@ public class SchemeElement extends ModelElement {
 			setName(scheme.getName());
 			setDescription(scheme.getDescription());
 		} catch (NotDefinedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			WorkbenchPlugin.log(e);
 		}
 	}
 }

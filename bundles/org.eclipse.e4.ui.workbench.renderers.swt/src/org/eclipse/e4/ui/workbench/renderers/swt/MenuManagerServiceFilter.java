@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.service.log.LogService;
 
 public class MenuManagerServiceFilter implements Listener {
 	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
@@ -47,12 +49,8 @@ public class MenuManagerServiceFilter implements Listener {
 				aboutToShow = MenuManager.class
 						.getDeclaredMethod("handleAboutToShow"); //$NON-NLS-1$
 				aboutToShow.setAccessible(true);
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (SecurityException | NoSuchMethodException e) {
+				Activator.log(LogService.LOG_ERROR, e.getMessage(), e);
 			}
 		}
 		return aboutToShow;

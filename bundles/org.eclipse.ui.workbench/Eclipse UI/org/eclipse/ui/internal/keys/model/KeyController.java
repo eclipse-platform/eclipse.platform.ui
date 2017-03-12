@@ -296,8 +296,7 @@ public class KeyController {
 			bindingModel.refresh(contextModel);
 			bindingModel.setSelectedElement(null);
 		} catch (NotDefinedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			WorkbenchPlugin.log(e);
 		}
 
 	}

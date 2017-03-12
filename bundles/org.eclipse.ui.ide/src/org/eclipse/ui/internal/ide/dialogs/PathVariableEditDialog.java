@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
@@ -99,7 +100,7 @@ public class PathVariableEditDialog extends SelectionDialog {
 			}
 			super.okPressed();
 		} catch (Throwable t) {
-			t.printStackTrace();
+			IDEWorkbenchPlugin.log(t.getMessage(), t);
 		}
 	}
 

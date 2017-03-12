@@ -921,7 +921,7 @@ public class ActionExpression {
 		try {
 			root = new SingleExpression(element);
 		} catch (IllegalStateException e) {
-			e.printStackTrace();
+			WorkbenchPlugin.log(e);
 			root = null;
 		}
 	}

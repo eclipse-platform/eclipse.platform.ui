@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -27,6 +26,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.osgi.service.log.LogService;
 
 /**
  * Transforms E4 MPart events into 3.x legacy events.
@@ -143,7 +143,7 @@ public class UIEventPublisher extends EContentAdapter {
 				newValue = notification.getNewValue();
 				break;
 			default:
-				Activator.log(IStatus.ERROR, getClass().getName()
+				Activator.log(LogService.LOG_ERROR, getClass().getName()
 						+ ": unhandled EMF Notification code: " //$NON-NLS-1$
 						+ notification.getEventType());
 			}

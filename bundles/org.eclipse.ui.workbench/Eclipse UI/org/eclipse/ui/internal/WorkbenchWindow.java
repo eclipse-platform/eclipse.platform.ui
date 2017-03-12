@@ -2880,7 +2880,7 @@ STATUS_LINE_ID, model);
 	}
 
 	public CoolBarManager getCoolBarManager() {
-		new Exception("Bad call to getCoolBarManager()").printStackTrace(); //$NON-NLS-1$
+		WorkbenchPlugin.log(new Exception("Bad call to getCoolBarManager()")); //$NON-NLS-1$
 		return oldCBM;
 	}
 

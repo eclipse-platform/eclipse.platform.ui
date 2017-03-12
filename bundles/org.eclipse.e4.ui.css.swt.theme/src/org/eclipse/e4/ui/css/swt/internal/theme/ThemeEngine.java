@@ -19,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -168,8 +167,7 @@ public class ThemeEngine implements IThemeEngine {
 							}
 						}
 					} catch (IllegalArgumentException e1) {
-						//TODO Can we somehow use logging?
-						e1.printStackTrace();
+						ThemeEngineManager.logError(e1.getMessage(), e1);
 					}
 				}
 			}
@@ -427,25 +425,19 @@ public class ThemeEngine implements IThemeEngine {
 							source.setURI(url.toString());
 							engine.parseStyleSheet(source);
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							ThemeEngineManager.logError(e.getMessage(), e);
 						} finally {
 							if (stream != null) {
 								try {
 									stream.close();
 								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									ThemeEngineManager.logError(e.getMessage(), e);
 								}
 							}
 						}
 					}
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					ThemeEngineManager.logError(e.getMessage(), e);
 				}
 			}
 		}
@@ -459,8 +451,7 @@ public class ThemeEngine implements IThemeEngine {
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ThemeEngineManager.logError(e.getMessage(), e);
 			}
 		}
 		sendThemeChangeEvent(restore);
@@ -525,7 +516,7 @@ public class ThemeEngine implements IThemeEngine {
 	private IEclipsePreferences getPreferences() {
 		return InstanceScope.INSTANCE.getNode(
 				FrameworkUtil.getBundle(
-				ThemeEngine.class).getSymbolicName());
+						ThemeEngine.class).getSymbolicName());
 	}
 
 	void copyFile(String from, String to) throws IOException {

@@ -15,9 +15,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * This class can be used to transfer an instance of <code>PluginTransferData</code>
@@ -95,7 +95,7 @@ public class PluginTransfer extends ByteArrayTransfer {
             dataOut.close();
             super.javaToNative(out.toByteArray(), transferData);
         } catch (IOException e) {
-            e.printStackTrace();
+			WorkbenchPlugin.log(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class PluginTransfer extends ByteArrayTransfer {
             dataIn.readFully(pluginData);
             return new PluginTransferData(extensionName, pluginData);
         } catch (IOException e) {
-            e.printStackTrace();
+			WorkbenchPlugin.log(e);
         }
         //can't get here
         return null;

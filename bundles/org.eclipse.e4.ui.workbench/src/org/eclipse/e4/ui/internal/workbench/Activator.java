@@ -192,16 +192,37 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 		return logService;
 	}
 
+	/**
+	 * @param level
+	 *            one from {@code LogService} constants
+	 * @param message
+	 * @see LogService#LOG_ERROR
+	 * @see LogService#LOG_WARNING
+	 * @see LogService#LOG_INFO
+	 * @see LogService#LOG_DEBUG
+	 */
 	public static void log(int level, String message) {
 		LogService logService = activator.getLogService();
-		if (logService != null)
+		if (logService != null) {
 			logService.log(level, message);
+		}
 	}
 
+	/**
+	 * @param level
+	 *            one from {@code LogService} constants
+	 * @param message
+	 * @param exception
+	 * @see LogService#LOG_ERROR
+	 * @see LogService#LOG_WARNING
+	 * @see LogService#LOG_INFO
+	 * @see LogService#LOG_DEBUG
+	 */
 	public static void log(int level, String message, Throwable exception) {
 		LogService logService = activator.getLogService();
-		if (logService != null)
+		if (logService != null) {
 			logService.log(level, message, exception);
+		}
 	}
 
 }

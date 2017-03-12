@@ -88,7 +88,7 @@ public class CommandToModelProcessor {
 				application.getCommands().add(command);
 				commands.put(command.getElementId(), command);
 			} catch (NotDefinedException e) {
-				e.printStackTrace();
+				WorkbenchPlugin.log(e);
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public class CommandToModelProcessor {
 			} catch (NotDefinedException e) {
 				// Since we asked for defined commands, this shouldn't be an
 				// issue
-				e.printStackTrace();
+				WorkbenchPlugin.log(e);
 			}
 		}
 	}

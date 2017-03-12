@@ -53,8 +53,7 @@ public class ContextSet {
 					parentId = context.getParentId();
 				}
 			} catch (NotDefinedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// ignore
 			}
 			return l;
 		}
