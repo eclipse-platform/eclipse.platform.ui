@@ -1,5 +1,10 @@
 package org.eclipse.e4.core.internal.tests.di.extensions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -9,12 +14,13 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Service;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
 public class ServiceSupplierTestCase {
@@ -56,6 +62,17 @@ public class ServiceSupplierTestCase {
 		}
 	}
 
+	public static class TestDisabledBean {
+		@Inject
+		@Optional
+		@Service(filterExpression = "(component=disabled)")
+		TestService disabledService;
+
+		@Inject
+		@Service(filterExpression = "(component=disabled)")
+		List<TestService> services;
+	}
+
 	private List<ServiceRegistration<?>> registrations = new ArrayList<>();
 
 	@After
@@ -67,15 +84,15 @@ public class ServiceSupplierTestCase {
 	public void testInitialInject() {
 		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext());
 		TestBean bean = ContextInjectionFactory.make(TestBean.class, serviceContext);
-		Assert.assertNotNull(bean.service);
-		Assert.assertNotNull(bean.serviceList);
-		Assert.assertSame(SampleServiceA.class,bean.service.getClass());
-		Assert.assertEquals(1, bean.serviceInjectionCount);
+		assertNotNull(bean.service);
+		assertNotNull(bean.serviceList);
+		assertSame(SampleServiceA.class, bean.service.getClass());
+		assertEquals(1, bean.serviceInjectionCount);
 
-		Assert.assertEquals(4, bean.serviceList.size());
-		Assert.assertEquals(1, bean.serviceListInjectionCount);
-		Assert.assertSame(SampleServiceA.class,bean.serviceList.get(0).getClass());
-		Assert.assertSame(SampleServiceB.class,bean.serviceList.get(1).getClass());
+		assertEquals(4, bean.serviceList.size());
+		assertEquals(1, bean.serviceListInjectionCount);
+		assertSame(SampleServiceA.class, bean.serviceList.get(0).getClass());
+		assertSame(SampleServiceB.class, bean.serviceList.get(1).getClass());
 
 	}
 
@@ -84,16 +101,16 @@ public class ServiceSupplierTestCase {
 		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext());
 		TestStaticFilterBean bean = ContextInjectionFactory.make(TestStaticFilterBean.class, serviceContext);
 
-		Assert.assertNotNull(bean.service);
-		Assert.assertNotNull(bean.serviceList);
+		assertNotNull(bean.service);
+		assertNotNull(bean.serviceList);
 
-		Assert.assertSame(FilterServiceA.class,bean.service.getClass());
-		Assert.assertEquals(1, bean.serviceInjectionCount);
+		assertSame(FilterServiceA.class, bean.service.getClass());
+		assertEquals(1, bean.serviceInjectionCount);
 
-		Assert.assertEquals(2, bean.serviceList.size());
-		Assert.assertEquals(1, bean.serviceListInjectionCount);
-		Assert.assertSame(FilterServiceA.class,bean.serviceList.get(0).getClass());
-		Assert.assertSame(FilterServiceB.class,bean.serviceList.get(1).getClass());
+		assertEquals(2, bean.serviceList.size());
+		assertEquals(1, bean.serviceListInjectionCount);
+		assertSame(FilterServiceA.class, bean.serviceList.get(0).getClass());
+		assertSame(FilterServiceB.class, bean.serviceList.get(1).getClass());
 	}
 
 	@Test
@@ -102,8 +119,8 @@ public class ServiceSupplierTestCase {
 		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(context);
 		TestBean bean = ContextInjectionFactory.make(TestBean.class, serviceContext);
 
-		Assert.assertEquals(1, bean.serviceInjectionCount);
-		Assert.assertEquals(1, bean.serviceListInjectionCount);
+		assertEquals(1, bean.serviceInjectionCount);
+		assertEquals(1, bean.serviceListInjectionCount);
 
 		TestService t = new TestService() {
 			// nothing todo
@@ -113,12 +130,12 @@ public class ServiceSupplierTestCase {
 		properties.put("service.ranking", 100); //$NON-NLS-1$
 		this.registrations.add(context.registerService(TestService.class, t, properties));
 
-		Assert.assertSame(t,bean.service);
-		Assert.assertEquals(2, bean.serviceInjectionCount);
+		assertSame(t, bean.service);
+		assertEquals(2, bean.serviceInjectionCount);
 
-		Assert.assertEquals(2, bean.serviceListInjectionCount);
-		Assert.assertEquals(5, bean.serviceList.size());
-		Assert.assertSame(t,bean.serviceList.get(0));
+		assertEquals(2, bean.serviceListInjectionCount);
+		assertEquals(5, bean.serviceList.size());
+		assertSame(t, bean.serviceList.get(0));
 
 		TestService t2 = new TestService() {
 			// nothing todo
@@ -128,13 +145,13 @@ public class ServiceSupplierTestCase {
 		properties.put("service.ranking", Integer.valueOf(-1)); //$NON-NLS-1$
 		this.registrations.add(context.registerService(TestService.class, t2, properties));
 
-		Assert.assertSame(t,bean.service);
-		Assert.assertEquals(3, bean.serviceInjectionCount);
+		assertSame(t, bean.service);
+		assertEquals(3, bean.serviceInjectionCount);
 
-		Assert.assertEquals(3, bean.serviceListInjectionCount);
+		assertEquals(3, bean.serviceListInjectionCount);
 
-		Assert.assertEquals(6, bean.serviceList.size());
-		Assert.assertSame(t,bean.serviceList.get(0));
+		assertEquals(6, bean.serviceList.size());
+		assertSame(t, bean.serviceList.get(0));
 	}
 
 	@Test
@@ -143,8 +160,8 @@ public class ServiceSupplierTestCase {
 		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(context);
 		TestBean bean = ContextInjectionFactory.make(TestBean.class, serviceContext);
 
-		Assert.assertEquals(1, bean.serviceInjectionCount);
-		Assert.assertEquals(1, bean.serviceListInjectionCount);
+		assertEquals(1, bean.serviceInjectionCount);
+		assertEquals(1, bean.serviceListInjectionCount);
 
 		TestService t = new TestService() {
 			// nothing todo
@@ -154,24 +171,24 @@ public class ServiceSupplierTestCase {
 		properties.put("service.ranking", 52); //$NON-NLS-1$
 		this.registrations.add(context.registerService(TestService.class, t, properties));
 
-		Assert.assertSame(t,bean.service);
-		Assert.assertEquals(2, bean.serviceInjectionCount);
+		assertSame(t, bean.service);
+		assertEquals(2, bean.serviceInjectionCount);
 
-		Assert.assertEquals(2, bean.serviceListInjectionCount);
-		Assert.assertEquals(5, bean.serviceList.size());
-		Assert.assertSame(t,bean.serviceList.get(0));
+		assertEquals(2, bean.serviceListInjectionCount);
+		assertEquals(5, bean.serviceList.size());
+		assertSame(t, bean.serviceList.get(0));
 
 		ServiceRegistration<?> registration = this.registrations.get(0);
 		registration.unregister();
 		this.registrations.remove(registration);
 
-		Assert.assertEquals(3, bean.serviceInjectionCount);
-		Assert.assertEquals(3, bean.serviceListInjectionCount);
+		assertEquals(3, bean.serviceInjectionCount);
+		assertEquals(3, bean.serviceListInjectionCount);
 
-		Assert.assertSame(SampleServiceA.class,bean.service.getClass());
-		Assert.assertEquals(4, bean.serviceList.size());
-		Assert.assertSame(SampleServiceA.class,bean.serviceList.get(0).getClass());
-		Assert.assertSame(SampleServiceB.class,bean.serviceList.get(1).getClass());
+		assertSame(SampleServiceA.class, bean.service.getClass());
+		assertEquals(4, bean.serviceList.size());
+		assertSame(SampleServiceA.class, bean.serviceList.get(0).getClass());
+		assertSame(SampleServiceB.class, bean.serviceList.get(1).getClass());
 	}
 
 	@Test
@@ -189,6 +206,53 @@ public class ServiceSupplierTestCase {
 		properties.put("service.ranking", 2); //$NON-NLS-1$
 		this.registrations.add(context.registerService(TestService.class, t, properties));
 
-		Assert.assertSame(SampleServiceA.class,bean.service.getClass());
+		assertSame(SampleServiceA.class, bean.service.getClass());
+	}
+
+	@Test
+	public void testOptionalReferences() throws InterruptedException {
+		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(context);
+		TestDisabledBean bean = ContextInjectionFactory.make(TestDisabledBean.class, serviceContext);
+
+		assertNull(bean.disabledService);
+		assertEquals(0, bean.services.size());
+
+		ServiceReference<ComponentEnabler> ref = context.getServiceReference(ComponentEnabler.class);
+		ComponentEnabler enabler = context.getService(ref);
+		try {
+			enabler.enableDisabledServiceA();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.disabledService);
+			assertEquals(1, bean.services.size());
+			assertSame(DisabledServiceA.class, bean.disabledService.getClass());
+
+			enabler.enableDisabledServiceB();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.disabledService);
+			assertEquals(2, bean.services.size());
+			assertSame(DisabledServiceB.class, bean.disabledService.getClass());
+
+			enabler.disableDisabledServiceB();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.disabledService);
+			assertEquals(1, bean.services.size());
+			assertSame(DisabledServiceA.class, bean.disabledService.getClass());
+
+			enabler.disableDisabledServiceA();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNull(bean.disabledService);
+			assertEquals(0, bean.services.size());
+		} finally {
+			enabler.disableDisabledServiceA();
+			enabler.disableDisabledServiceB();
+			// give the service registry and the injection some time to ensure
+			// clear state after this test
+			Thread.sleep(100);
+		}
 	}
 }

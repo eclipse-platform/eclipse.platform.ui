@@ -19,7 +19,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
- org.osgi.service.component.annotations;version="1.2.0";resolution:=optional,
+ org.osgi.service.component;version="1.3.0",
+ org.osgi.service.component.annotations;version="1.3.0";resolution:=optional,
  org.osgi.service.event;version="1.3.0"
 Export-Package: org.eclipse.e4.core.internal.tests;x-internal:=true,
  org.eclipse.e4.core.internal.tests.contexts;x-internal:=true,
@@ -34,10 +35,13 @@ Service-Component: OSGI-INF/adder.xml,
  OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.FilterServiceA.xml,
  OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.FilterServiceB.xml,
  OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.SampleServiceA.xml,
- OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.SampleServiceB.xml
+ OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.SampleServiceB.xml,
+ OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.ComponentEnabler.xml,
+ OSGI-INF/DisabledServiceA.xml,
+ OSGI-INF/DisabledServiceB.xml
 Eclipse-BundleShape: dir
 Require-Capability: osgi.extender;
-  filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))",
+  filter:="(&(osgi.extender=osgi.component)(version>=1.3)(!(version>=2.0)))",
  osgi.service;
   filter:="(objectClass=org.osgi.service.event.EventAdmin)";
   effective:="active"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 BestSolution.at and others.
+ * Copyright (c) 2014, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 513563
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.extensions.Service;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
@@ -35,12 +37,18 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.log.LogService;
 
 /**
  * Supplier for {@link Service}
  */
 @Component(service = ExtendedObjectSupplier.class, property = "dependency.injection.annotation:String=org.eclipse.e4.core.di.extensions.Service")
 public class ServiceSupplier extends ExtendedObjectSupplier {
+
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+	volatile LogService logService;
 
 	static class ServiceHandler implements ServiceListener {
 		private final ServiceSupplier supplier;
@@ -81,8 +89,8 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 							try {
 								r.resolveArguments(false);
 								r.execute();
-							} catch(Throwable t) {
-								t.printStackTrace();
+							} catch (InjectionException e) {
+								this.supplier.logError("Injection failed", e); //$NON-NLS-1$
 							}
 						});
 						break;
@@ -119,28 +127,29 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 
 		@SuppressWarnings("unchecked")
 		Class<Object> cl = t instanceof ParameterizedType ? (Class<Object>) ((ParameterizedType) t).getRawType() : (Class<Object>) t;
+		Object result = IInjector.NOT_A_VALUE;
 		try {
-			{
-				String filter = qualifier.filterExpression() != null && ! qualifier.filterExpression().isEmpty() ? qualifier.filterExpression() : null;
+			String filter = qualifier.filterExpression() != null && !qualifier.filterExpression().isEmpty()
+					? qualifier.filterExpression()
+					: null;
 
-				ServiceReference<?>[] serviceReferences = context.getServiceReferences(cl.getName(), filter);
-				if( serviceReferences != null ) {
-					Arrays.sort(serviceReferences);
+			ServiceReference<?>[] serviceReferences = context.getServiceReferences(cl.getName(), filter);
+			if (serviceReferences != null) {
+				Arrays.sort(serviceReferences);
 
-					if( serviceReferences.length > 0 ) {
-						if( track ) {
-							trackService(context, cl, requestor);
-						}
-						return context.getService(serviceReferences[serviceReferences.length-1]);
-					}
+				if (serviceReferences.length > 0) {
+					result = context.getService(serviceReferences[serviceReferences.length - 1]);
 				}
 			}
 		} catch (InvalidSyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logError("Invalid filter expression", e); //$NON-NLS-1$
 		}
 
-		return IInjector.NOT_A_VALUE;
+		if (track) {
+			trackService(context, cl, requestor);
+		}
+
+		return result;
 	}
 
 	private List<Object> handleCollection(Bundle bundle, Type t, IRequestor requestor, boolean track, Service qualifier) {
@@ -168,12 +177,11 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 			// We are in the wrong order
 			Collections.reverse(rv);
 
-			if( track ) {
+			if (track) {
 				trackService(context, cl, requestor);
 			}
 		} catch (InvalidSyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logError("Invalid filter expression", e); //$NON-NLS-1$
 		}
 
 		return rv;
@@ -188,4 +196,22 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 		});
 		handler.requestors.add(requestor);
 	}
+
+	/**
+	 * Method to log an exception.
+	 * 
+	 * @param message
+	 *            The log message.
+	 * @param e
+	 *            The exception that should be logged.
+	 */
+	void logError(String message, Throwable e) {
+		if (this.logService != null) {
+			this.logService.log(LogService.LOG_ERROR, message, e);
+		} else {
+			// fallback if no LogService is available
+			e.printStackTrace();
+		}
+	}
+
 }
