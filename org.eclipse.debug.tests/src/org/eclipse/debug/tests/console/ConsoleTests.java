@@ -65,7 +65,7 @@ public class ConsoleTests extends TestCase {
 		String testString = "a\r"; //$NON-NLS-1$
 		byte[] testStringBuffer = testString.getBytes(StandardCharsets.UTF_8);
 		TestCase.assertEquals("Test string \"" + testString + "\" should consist of 2 UTF-8 bytes", 2, testStringBuffer.length); //$NON-NLS-1$ //$NON-NLS-2$
-		MessageConsole console = new MessageConsole("Test Console", //$NON-NLS-1$
+		MessageConsole console = new MessageConsole("Test Console 2", //$NON-NLS-1$
 				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
 		IDocument document = console.getDocument();
 		TestHelper.waitForJobs();
@@ -80,6 +80,59 @@ public class ConsoleTests extends TestCase {
 		// after closing the stream, the document content should still be the
 		// same
 		TestCase.assertEquals("closing the stream should write the pending \\r", testString, document.get()); //$NON-NLS-1$
+	}
+
+	public void testConsoleOutputStreamDocumentClosed() throws IOException {
+		MessageConsole console = new MessageConsole("Test Console 3", //$NON-NLS-1$
+				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
+		IDocument document = console.getDocument();
+		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
+			outStream.write("write1"); //$NON-NLS-1$
+			document.getDocumentPartitioner().disconnect();
+			try {
+				outStream.write("write2"); //$NON-NLS-1$
+				TestCase.fail("IOException with message \"Document is closed\" expected"); //$NON-NLS-1$
+			} catch (IOException ioe) {
+				TestCase.assertEquals("Document is closed", ioe.getMessage()); //$NON-NLS-1$
+			}
+		}
+	}
+
+	public void testConsoleOutputStreamClosed() throws IOException {
+		MessageConsole console = new MessageConsole("Test Console 4", //$NON-NLS-1$
+				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
+		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
+			outStream.write("test1".getBytes(StandardCharsets.UTF_8)); //$NON-NLS-1$
+			outStream.close();
+			try {
+				outStream.write("test2".getBytes(StandardCharsets.UTF_8)); //$NON-NLS-1$
+				TestCase.fail("IOException with message \"Output Stream is closed\" expected"); //$NON-NLS-1$
+			} catch (IOException ioe) {
+				TestCase.assertEquals("Output Stream is closed", ioe.getMessage()); //$NON-NLS-1$
+			}
+		}
+	}
+
+	public void testConsoleOutputStreamDocumentStreamClosed() throws IOException {
+		MessageConsole console = new MessageConsole("Test Console 5", //$NON-NLS-1$
+				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
+		IDocument document = console.getDocument();
+		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
+			outStream.write("write1"); //$NON-NLS-1$
+			document.getDocumentPartitioner().disconnect();
+			try {
+				outStream.write("write2"); //$NON-NLS-1$
+				TestCase.fail("IOException with message \"Document is closed\" expected"); //$NON-NLS-1$
+			} catch (IOException ioe) {
+				TestCase.assertEquals("Document is closed", ioe.getMessage()); //$NON-NLS-1$
+			}
+			try {
+				outStream.write("write3"); //$NON-NLS-1$
+				TestCase.fail("IOException with message \"Output Stream is closed\" expected"); //$NON-NLS-1$
+			} catch (IOException ioe) {
+				TestCase.assertEquals("Output Stream is closed", ioe.getMessage()); //$NON-NLS-1$
+			}
+		}
 	}
 
 }

@@ -199,6 +199,9 @@ public class IOConsoleOutputStream extends OutputStream {
      */
     @Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
+		if (closed) {
+			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
+		}
 		StringBuilder builder = new StringBuilder();
 		this.decoder.decode(builder, b, off, len);
 		encodedWrite(builder.toString());
@@ -323,6 +326,9 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * @since 3.7
 	 */
 	public synchronized void setCharset(Charset charset) throws IOException {
+		if (closed) {
+			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
+		}
 		StringBuilder builder = new StringBuilder();
 		this.decoder.finish(builder);
 		if (builder.length() > 0) {
