@@ -38,7 +38,10 @@ Service-Component: OSGI-INF/adder.xml,
  OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.SampleServiceB.xml,
  OSGI-INF/org.eclipse.e4.core.internal.tests.di.extensions.ComponentEnabler.xml,
  OSGI-INF/DisabledServiceA.xml,
- OSGI-INF/DisabledServiceB.xml
+ OSGI-INF/DisabledServiceB.xml,
+ OSGI-INF/org.eclipse.e4.core.internal.tests.contexts.inject.TestServiceController.xml,
+ OSGI-INF/org.eclipse.e4.core.internal.tests.contexts.inject.TestServiceA.xml,
+ OSGI-INF/org.eclipse.e4.core.internal.tests.contexts.inject.TestServiceB.xml
 Eclipse-BundleShape: dir
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.3)(!(version>=2.0)))",

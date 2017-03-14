@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.e4.core.internal.tests.contexts.inject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
@@ -86,6 +88,16 @@ public class ServiceContextTest {
 				printer.print(message);
 			}
 		}
+	}
+
+	static class TestBean {
+		@Inject
+		@Optional
+		TestService testService;
+
+		@Inject
+		@Optional
+		TestOtherService testOtherService;
 	}
 
 	private IEclipseContext context;
@@ -277,4 +289,103 @@ public class ServiceContextTest {
 		crayon.draw();
 	}
 
+	@Test
+	public void testOptionalReferences() throws InterruptedException {
+		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(context);
+		TestBean bean = ContextInjectionFactory.make(TestBean.class, serviceContext);
+
+		assertNull(bean.testService);
+
+		ServiceReference<TestServiceController> ref = context.getServiceReference(TestServiceController.class);
+		TestServiceController controller = context.getService(ref);
+		try {
+			controller.enableTestServiceA();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.testService);
+			assertSame(TestServiceA.class, bean.testService.getClass());
+			assertNotNull(bean.testOtherService);
+			assertSame(TestServiceA.class, bean.testOtherService.getClass());
+
+			controller.enableTestServiceB();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.testService);
+			assertSame(TestServiceB.class, bean.testService.getClass());
+			assertNotNull(bean.testOtherService);
+			assertSame(TestServiceB.class, bean.testOtherService.getClass());
+
+			controller.disableTestServiceB();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.testService);
+			assertSame(TestServiceA.class, bean.testService.getClass());
+			assertNotNull(bean.testOtherService);
+			assertSame(TestServiceA.class, bean.testOtherService.getClass());
+
+			controller.disableTestServiceA();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNull(bean.testService);
+			assertNull(bean.testOtherService);
+		} finally {
+			controller.disableTestServiceA();
+			controller.disableTestServiceB();
+			// give the service registry and the injection some time to ensure
+			// clear state after this test
+			Thread.sleep(100);
+		}
+	}
+
+	@Test
+	public void testServiceRanking() throws InterruptedException {
+		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(context);
+		TestBean bean = ContextInjectionFactory.make(TestBean.class, serviceContext);
+
+		assertNull(bean.testService);
+
+		ServiceReference<TestServiceController> ref = context.getServiceReference(TestServiceController.class);
+		TestServiceController controller = context.getService(ref);
+		try {
+			controller.enableTestServiceB();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.testService);
+			assertSame(TestServiceB.class, bean.testService.getClass());
+			assertNotNull(bean.testOtherService);
+			assertSame(TestServiceB.class, bean.testOtherService.getClass());
+
+			// enable a service with a lower ranking
+			controller.enableTestServiceA();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.testService);
+			// we expect that still the highest ranked service is injected
+			assertSame(TestServiceB.class, bean.testService.getClass());
+			assertNotNull(bean.testOtherService);
+			assertSame(TestServiceB.class, bean.testOtherService.getClass());
+
+			controller.disableTestServiceB();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNotNull(bean.testService);
+			assertSame(TestServiceA.class, bean.testService.getClass());
+			assertNotNull(bean.testOtherService);
+			assertSame(TestServiceA.class, bean.testOtherService.getClass());
+
+			controller.disableTestServiceA();
+			// give the service registry and the injection some time
+			Thread.sleep(100);
+			assertNull(bean.testService);
+			assertNull(bean.testOtherService);
+		} finally {
+			controller.disableTestServiceA();
+			controller.disableTestServiceB();
+			// give the service registry and the injection some time to ensure
+			// clear state after this test
+			Thread.sleep(100);
+		}
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,13 +87,6 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		return service;
 	}
 
-	/**
-	 * Returns the service name for a service reference
-	 */
-	private String serviceName(ServiceReference<?> reference) {
-		return ((String[]) reference.getProperty(Constants.OBJECTCLASS))[0];
-	}
-
 	@Override
 	public void dispose() {
 		for (ServiceReference<?> ref : refs.values()) {
@@ -109,21 +102,29 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 	@Override
 	public void serviceChanged(ServiceEvent event) {
 		ServiceReference<?> ref = event.getServiceReference();
-		String name = serviceName(ref);
-		if (IContextFunction.SERVICE_NAME.equals(name)) // those keep associated names
-			name = (String) ref.getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
+		String[] names = ((String[]) ref.getProperty(Constants.OBJECTCLASS));
+		for (String name : names) {
+			if (IContextFunction.SERVICE_NAME.equals(name)) {
+				name = (String) ref.getProperty(IContextFunction.SERVICE_CONTEXT_KEY);
+			}
 
-		if (refs.containsKey(name)) {
-			ServiceReference<?> oldRef = refs.get(name);
-			if (oldRef != null)
-				bundleContext.ungetService(oldRef);
-			if (event.getType() == ServiceEvent.UNREGISTERING) {
-				refs.put(name, null);
-				remove(name);
-			} else {
-				Object service = bundleContext.getService(ref);
-				refs.put(name, ref);
-				set(name, service);
+			if (refs.containsKey(name)) {
+				// retrieve the highest ranked service of the same type
+				ref = bundleContext.getServiceReference(name);
+
+				ServiceReference<?> oldRef = refs.get(name);
+				if (oldRef != null && oldRef != ref) {
+					bundleContext.ungetService(oldRef);
+				}
+
+				if (ref != null) {
+					Object service = bundleContext.getService(ref);
+					refs.put(name, ref);
+					set(name, service);
+				} else {
+					refs.put(name, null);
+					remove(name);
+				}
 			}
 		}
 	}
@@ -131,8 +132,9 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 	@Override
 	public void bundleChanged(BundleEvent event) {
 		// In case OSGi context has not being properly disposed by the application,
-		// OSGi framework shutdown will trigged uninjection of all consumed OSGi
-		// service. To avoid this, we detect framework shutdown and release services.
+		// OSGi framework shutdown will triggered uninjection of all consumed
+		// OSGi service. To avoid this, we detect framework shutdown and release
+		// services.
 		if (event.getType() != BundleEvent.STOPPING)
 			return;
 		if (event.getBundle().getBundleId() == 0)
