@@ -33,6 +33,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
+import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -46,7 +47,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite
  * for hover, completion, syntax highlighting, and then those proxy take care of resolving to
  * the right extensions on-demand.
- * 
+ *
  * @since 1.0
  */
 @SuppressWarnings("restriction")
@@ -60,7 +61,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private List<IContentAssistProcessor> processors;
 
 	/**
-	 * 
+	 *
 	 * @param editor the editor we're creating.
 	 * @param preferenceStore the preference store.
 	 */
@@ -173,5 +174,10 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 			}
 		});
 		return quickAssistAssistant;
+	}
+
+	@Override
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		return null; // to disable spell-checker
 	}
 }
