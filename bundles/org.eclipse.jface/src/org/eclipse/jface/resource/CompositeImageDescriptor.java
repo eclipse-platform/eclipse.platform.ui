@@ -106,26 +106,22 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 				return cached;
 			}
 			// Workaround for the missing API Image#getImageData(int zoom) (bug 496409).
-			// Can't use zoom == getZoomLevel() because SWT on Cocoa asks for 100% image even on Retina screen!
+			// Can't use zoom == getZoomLevel() because SWT on Cocoa asks for
+			// 100% image even on Retina screen (and vice-versa)!
 			if (zoom == 100) {
 				cached = baseImage.getImageData();
-			} else if (isAtCurrentZoom(baseImage, zoom)) {
-				cached = baseImage.getImageDataAtCurrentZoom();
 			} else {
-				// strange zoom value, should not happen
-				zoom = 0;
-				cached = null;
+				cached = baseImage.getImageDataAtCurrentZoom();
+				Rectangle bounds = baseImage.getBounds();
+				// TODO: Probably has off-by-one problems at fractional zoom levels:
+				if (bounds.width != scaleDown(cached.width, zoom) && bounds.height == scaleDown(cached.height, zoom)) {
+					// strange zoom value, should not happen
+					zoom = 0;
+					cached = null;
+				}
 			}
 			cachedZoom = zoom;
 			return cached;
-		}
-
-		private /*static*/ boolean isAtCurrentZoom(Image image, int zoom) {
-			Rectangle bounds= image.getBounds();
-			Rectangle boundsInPixels= image.getBoundsInPixels();
-			//TODO: Probably has off-by-one problems at fractional zoom levels:
-			return bounds.width == scaleDown(boundsInPixels.width, zoom)
-					|| bounds.height == scaleDown(boundsInPixels.height, zoom);
 		}
 
 		private /*static*/ int scaleDown(int value, int zoom) {
