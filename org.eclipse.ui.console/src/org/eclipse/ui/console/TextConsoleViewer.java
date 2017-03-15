@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentAdapter;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IPositionUpdater;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
@@ -42,29 +61,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentAdapter;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IPositionUpdater;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.JFaceTextUtil;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.SourceViewer;
-
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -167,6 +163,14 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		return false;
 	}
 
+	private boolean isEmptyDocument() {
+		StyledText textWidget = getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			return (textWidget.getLineCount() <= 1);
+		}
+		return false;
+	}
+
     private IPositionUpdater positionUpdater = new IPositionUpdater() {
         @Override
 		public void update(DocumentEvent event) {
@@ -232,9 +236,16 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			public void widgetSelected(SelectionEvent e) {
 				// scroll lock if vertical scroll bar dragged, OR selection on
 				// vertical bar used
-				if (e.detail == SWT.TOP || e.detail == SWT.HOME || e.detail == SWT.ARROW_UP || e.detail == SWT.PAGE_UP) {
+				if (e.detail == SWT.TOP || e.detail == SWT.HOME) {
 					// selecting TOP or HOME should lock
 					setScrollLock(true);
+				}
+				if (e.detail == SWT.ARROW_UP || e.detail == SWT.PAGE_UP) {
+					if (isEmptyDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
 				} else if (e.detail == SWT.END || e.detail == SWT.BOTTOM) {
 					// selecting BOTTOM or END from vertical scroll makes it
 					// reveal the end
@@ -255,8 +266,15 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// lock the scroll if PAGE_UP ,HOME or TOP selected
-				if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.HOME || e.keyCode == SWT.TOP || e.keyCode == SWT.ARROW_UP) {
+				if (e.keyCode == SWT.HOME || e.keyCode == SWT.TOP) {
 					setScrollLock(true);
+				} else if ((e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.ARROW_UP)) {
+					if (isEmptyDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
+
 				} else if (e.keyCode == SWT.END || e.keyCode == SWT.BOTTOM) {
 					setScrollLock(false);// selecting END makes it reveal the
 											// end
@@ -274,7 +292,11 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 						setScrollLock(false);
 					}
 				} else if (!userHoldsScrollLock.get()) {
-					setScrollLock(true);
+					if (isEmptyDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
 				}
 			}
 		});
