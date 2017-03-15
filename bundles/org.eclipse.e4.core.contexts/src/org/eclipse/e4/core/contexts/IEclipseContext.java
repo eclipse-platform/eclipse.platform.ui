@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,10 +45,21 @@ package org.eclipse.e4.core.contexts;
 public interface IEclipseContext {
 
 	/**
-	 * Returns whether this context or a parent has a value stored for the given name.
-	 * @param name the name being queried
-	 * @return <code>true</code> if this context has a value for the given name, and
-	 *         <code>false</code> otherwise.
+	 * Topic for sending an event via EventAdmin to inform about the disposal of
+	 * an IEclipseContext.
+	 *
+	 * @since 1.6
+	 */
+	public static final String TOPIC_DISPOSE = "org/eclipse/e4/core/contexts/IEclipseContext/DISPOSE"; //$NON-NLS-1$
+
+	/**
+	 * Returns whether this context or a parent has a value stored for the given
+	 * name.
+	 *
+	 * @param name
+	 *            the name being queried
+	 * @return <code>true</code> if this context has a value for the given name,
+	 *         and <code>false</code> otherwise.
 	 */
 	public boolean containsKey(String name);
 

@@ -30,6 +30,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.osgi.ContextDebugHelper;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 
 /**
  * This implementation assumes that all contexts are of the class EclipseContext. The external
@@ -202,8 +204,18 @@ public class EclipseContext implements IEclipseContext {
 
 		if (parent != null) {
 			parent.removeChild(this);
-			if (rootContext != null)
+			if (rootContext != null) {
 				rootContext.cleanup();
+			}
+
+			// inform the OSGi layer via EventAdmin about the context disposal
+			// used for example to be able to cleanup cached requestors in
+			// ExtendedObjectSupplier implementations
+			EventAdmin admin = parent.get(EventAdmin.class);
+			if (admin != null) {
+				Event osgiEvent = new Event(IEclipseContext.TOPIC_DISPOSE, (Map<String, ?>) null);
+				admin.postEvent(osgiEvent);
+			}
 		}
 
 		if (debugAddOn != null)
