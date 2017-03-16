@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * Abstract base class for image descriptors that synthesize an image from other
@@ -41,6 +40,9 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	 * An {@link ImageDataProvider} that caches the most recently returned
 	 * {@link ImageData} object. I.e. consecutive calls to
 	 * {@link #getImageData(int)} with the same zoom level are cheap.
+	 *
+	 * @see #createCachedImageDataProvider(Image)
+	 * @see #createCachedImageDataProvider(ImageDescriptor)
 	 *
 	 * @since 3.13
 	 * @noextend This class is not intended to be subclassed by clients.
@@ -105,29 +107,9 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 			if (zoom == cachedZoom) {
 				return cached;
 			}
-			// Workaround for the missing API Image#getImageData(int zoom) (bug 496409).
-			// Can't use zoom == getZoomLevel() because SWT on Cocoa asks for
-			// 100% image even on Retina screen (and vice-versa)!
-			if (zoom == 100) {
-				cached = baseImage.getImageData();
-			} else {
-				cached = baseImage.getImageDataAtCurrentZoom();
-				Rectangle bounds = baseImage.getBounds();
-				// TODO: Probably has off-by-one problems at fractional zoom levels:
-				if (bounds.width != scaleDown(cached.width, zoom) && bounds.height == scaleDown(cached.height, zoom)) {
-					// strange zoom value, should not happen
-					zoom = 0;
-					cached = null;
-				}
-			}
+			cached = baseImage.getImageData(zoom);
 			cachedZoom = zoom;
 			return cached;
-		}
-
-		private /*static*/ int scaleDown(int value, int zoom) {
-			// @see SWT's internal DPIUtil#autoScaleDown(int)
-			float scaleFactor = zoom / 100f;
-			return Math.round(value / scaleFactor);
 		}
 	}
 
@@ -257,6 +239,15 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	 * Subclasses call this framework method to superimpose another image atop
 	 * this composite image. This method must only be called within the dynamic
 	 * scope of a call to {@link #drawCompositeImage(int, int)}.
+	 * </p>
+	 * <p>
+	 * Hint: Use {@link #createCachedImageDataProvider(Image)} or
+	 * {@link #createCachedImageDataProvider(ImageDescriptor)} to create an
+	 * {@link ImageDataProvider}. To calculate the width and height of the image
+	 * that is about to be drawn, you can use
+	 * {@link CachedImageDataProvider#getWidth()}/getHeight(). These methods
+	 * already return values in SWT points, so that your code doesn't have to
+	 * deal with device-dependent pixel coordinates.
 	 * </p>
 	 *
 	 * @param srcProvider

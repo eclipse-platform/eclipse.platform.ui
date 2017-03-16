@@ -19,7 +19,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -372,34 +371,4 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     public static ImageDescriptor getMissingImageDescriptor() {
         return MissingImageDescriptor.getInstance();
     }
-
-	/**
-	 * Returns an image data provider that is backed by the given image.
-	 * <p>
-	 * This is a workaround for the missing API Image#getImageData(int zoom) (bug 496409).
-	 *
-	 * @param image an image
-	 * @return an image data provider
-	 */
-	static ImageDataProvider getDataProvider(Image image) {
-		return zoom -> {
-			if (zoom == 100) {
-				return image.getImageData();
-			}
-			ImageData zoomedImageData = image.getImageDataAtCurrentZoom();
-			Rectangle bounds = image.getBounds();
-			//TODO: Probably has off-by-one problems at fractional zoom levels:
-			if (bounds.width == scaleDown(zoomedImageData.width, zoom)
-					&& bounds.height == scaleDown(zoomedImageData.height, zoom)) {
-				return zoomedImageData;
-			}
-			return null;
-		};
-	}
-
-	private static int scaleDown(int value, int zoom) {
-		// @see SWT's internal DPIUtil#autoScaleDown(int)
-		float scaleFactor = zoom / 100f;
-		return Math.round(value / scaleFactor);
-	}
 }

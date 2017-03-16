@@ -34,7 +34,7 @@ class ImageDataImageDescriptor extends ImageDescriptor {
      * @param originalImage
      */
     ImageDataImageDescriptor(Image originalImage) {
-        this(getDataProvider(originalImage));
+		this(originalImage::getImageData);
         this.originalImage = originalImage;
     }
 
