@@ -140,7 +140,7 @@ public class Project extends Container implements IProject {
 	public void checkAccessible(int flags) throws CoreException {
 		super.checkAccessible(flags);
 		if (!isOpen(flags)) {
-			String message = NLS.bind(Messages.resources_mustBeOpen, getFullPath());
+			String message = NLS.bind(Messages.resources_mustBeOpen, getName());
 			throw new ResourceException(IResourceStatus.PROJECT_NOT_OPEN, getFullPath(), message, null);
 		}
 	}
