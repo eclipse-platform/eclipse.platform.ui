@@ -343,6 +343,12 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 				if (name.equals("terminate")) { //$NON-NLS-1$
 					terminated = true;
 				}
+				if (name.equals("getAdapter")) { //$NON-NLS-1$
+					return null;
+				}
+				if (name.equals("hashCode")) { //$NON-NLS-1$
+					return Integer.valueOf(0);
+				}
 				return Boolean.TRUE;
 			}
 		};
