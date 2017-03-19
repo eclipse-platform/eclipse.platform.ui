@@ -15,7 +15,9 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.annotation.PreDestroy;
 import org.eclipse.e4.core.internal.services.ResourceBundleHelper;
 import org.osgi.service.log.LogService;
@@ -188,79 +190,19 @@ public class BaseMessageRegistry<M> {
 	 * @param control
 	 *            The control on which the created consumer should operate
 	 * @param method
-	 *            The method the created consumer should call to set the new value
-	 * @return A MessageConsumer that sets a value to the property of the given control
+	 *            The method the created consumer should call to set the new
+	 *            value
+	 * @return A MessageConsumer that sets a value to the property of the given
+	 *         control, or {@code null} in case of any exception
 	 */
 	protected MessageConsumer createConsumer(final Object control, final String method) {
-		MessageConsumer consumer = null;
 
 		final LogService logService = ResourceBundleHelper.getLogService();
 
 		try {
 			final Method m = control.getClass().getMethod(method, String.class);
 			if (m != null) {
-
-				consumer = new MessageConsumer() {
-
-					@SuppressWarnings({"unchecked", "rawtypes"})
-					@Override
-					public void accept(final String value) {
-						try {
-							// ensure the method is accessible so the registry
-							// also works well with protected or package
-							// protected classes
-							if (System.getSecurityManager() == null) {
-								m.setAccessible(true);
-								m.invoke(control, value);
-							} else {
-								AccessController
-										.doPrivileged(new PrivilegedAction() {
-
-											@Override
-											public Object run() {
-												m.setAccessible(true);
-												try {
-													m.invoke(control, value);
-												} catch (Exception e) {
-													// if anything fails on
-													// invoke we unregister the
-													// binding to avoid further
-													// issues e.g. this can
-													// happen in case of
-													// disposed SWT controls
-													bindings.remove(this);
-													if (logService != null)
-														logService
-																.log(LogService.LOG_INFO,
-																		"Error on invoke '"
-																				+ m.getName()
-																				+ "' on '"
-																				+ control
-																						.getClass()
-																				+ "' with error message '"
-																				+ e.getMessage()
-																				+ "'. Binding is removed.");
-												}
-												return null;
-											}
-
-										});
-							}
-						} catch (Exception e) {
-							//if anything fails on invoke we unregister the binding
-							//to avoid further issues
-							//e.g. this can happen in case of disposed SWT controls
-							bindings.remove(this);
-							if (logService != null)
-								logService.log(LogService.LOG_INFO,
-										"Error on invoke '" + m.getName() + "' on '"
-												+ control.getClass()
-												+ "' with error message '" + e.getMessage()
-												+ "'. Binding is removed.");
-						}
-					}
-				};
-
+				return new MessageConsumerImplementation(logService, m, control);
 			}
 		} catch (NoSuchMethodException e) {
 			if (logService != null)
@@ -276,7 +218,64 @@ public class BaseMessageRegistry<M> {
 								+ "'. Binding is not created!");
 		}
 
-		return consumer;
+		return null;
+	}
+
+	private final class MessageConsumerImplementation implements MessageConsumer {
+		private final LogService logService;
+		private final Method m;
+		private final Object control;
+
+		private MessageConsumerImplementation(LogService logService, Method m, Object control) {
+			this.logService = logService;
+			this.m = m;
+			this.control = control;
+		}
+
+		@Override
+		public void accept(final String value) {
+			try {
+				// ensure the method is accessible so the registry
+				// also works well with protected or package
+				// protected classes
+				if (System.getSecurityManager() == null) {
+					m.setAccessible(true);
+					m.invoke(control, value);
+				} else {
+					AccessController.doPrivileged(new PrivilegedAction<Object>() {
+
+						@Override
+						public Object run() {
+							m.setAccessible(true);
+							try {
+								m.invoke(control, value);
+							} catch (Exception e) {
+								// if anything fails on invoke we unregister the
+								// binding to avoid further issues e.g. this can
+								// happen in case of disposed SWT controls
+								bindings.remove(MessageConsumerImplementation.this);
+								if (logService != null)
+									logService.log(LogService.LOG_INFO,
+											"Error on invoke '" + m.getName() + "' on '" + control.getClass()
+													+ "' with error message '" + e.getMessage()
+													+ "'. Binding is removed.");
+							}
+							return null;
+						}
+
+					});
+				}
+			} catch (Exception e) {
+				// if anything fails on invoke we unregister the binding to
+				// avoid further issues
+				// e.g. this can happen in case of disposed SWT controls
+				bindings.remove(this);
+				if (logService != null)
+					logService.log(LogService.LOG_INFO,
+							"Error on invoke '" + m.getName() + "' on '" + control.getClass() + "' with error message '"
+									+ e.getMessage() + "'. Binding is removed.");
+			}
+		}
 	}
 
 	/**
@@ -286,53 +285,56 @@ public class BaseMessageRegistry<M> {
 	 * @return A MessageSupplier that returns the message value for the given message key
 	 */
 	protected MessageSupplier createSupplier(final String messageKey) {
-		MessageSupplier supplier = null;
-
 		final LogService logService = ResourceBundleHelper.getLogService();
-
 		try {
 			final Field f = messages.getClass().getField(messageKey);
 			if (f != null) {
-				supplier = new MessageSupplier() {
-
-					@Override
-					public String get() {
-						String message = null;
-						try {
-							message = (String) f.get(messages);
-						} catch (Exception e) {
-							// if anything fails on invoke we unregister the binding
-							// to avoid further issues
-							// e.g. this can happen in case of disposed SWT controls
-							bindings.remove(this);
-							if (logService != null)
-								logService.log(
-										LogService.LOG_INFO,
-										"Error on invoke '" + f.getName() + "' on '"
-												+ messages.getClass() + "' with error message '"
-												+ e.getMessage() + "'. Binding is removed.");
-						}
-
-						return message;
-					}
-				};
+				return new MessageSupplierImplementation(logService, f);
 			}
 		} catch (NoSuchFieldException e) {
 			if (logService != null)
-				logService.log(LogService.LOG_WARNING, "The class '"
-						+ this.messages.getClass().getName()
-						+ "' does not contain a field with name '" + e.getMessage()
-					+ "'. Binding is not created!");
+				logService.log(LogService.LOG_WARNING, "The class '" + this.messages.getClass().getName()
+						+ "' does not contain a field with name '" + e.getMessage() + "'. Binding is not created!");
 		} catch (SecurityException e) {
 			if (logService != null)
-				logService.log(
-						LogService.LOG_WARNING,
-						"Error on accessing field '" + messageKey + "' on class '"
-								+ messages.getClass() + "' with error message '" + e.getMessage()
-								+ "'. Binding is not created!");
+				logService.log(LogService.LOG_WARNING,
+						"Error on accessing field '" + messageKey + "' on class '" + messages.getClass()
+								+ "' with error message '" + e.getMessage() + "'. Binding is not created!");
+		}
+		return null;
+	}
+
+	private final class MessageSupplierImplementation implements MessageSupplier {
+		private final LogService logService;
+		private final Field f;
+
+		private MessageSupplierImplementation(LogService logService, Field f) {
+			this.logService = logService;
+			this.f = f;
 		}
 
-		return supplier;
+		@Override
+		public String get() {
+			String message = null;
+			try {
+				message = (String) f.get(messages);
+			} catch (Exception e) {
+				// if anything fails on invoke we unregister the binding to
+				// avoid further issues
+				// e.g. this can happen in case of disposed SWT controls
+				Iterator<Entry<MessageConsumer, MessageSupplier>> iterator = bindings.entrySet().iterator();
+				iterator.forEachRemaining(entry -> {
+					if (entry.getValue() == MessageSupplierImplementation.this) {
+						iterator.remove();
+					}
+				});
+				if (logService != null)
+					logService.log(LogService.LOG_INFO,
+							"Error on invoke '" + f.getName() + "' on '" + messages.getClass()
+									+ "' with error message '" + e.getMessage() + "'. Binding is removed.");
+			}
+			return message;
+		}
 	}
 
 	@PreDestroy
