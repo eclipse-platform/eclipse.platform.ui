@@ -722,19 +722,18 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @since 3.3
 	 */
 	public String[] getApplicableConfigurationTypes(IResource resource) {
-		List<String> types = new ArrayList<String>();
 		List<LaunchShortcutExtension> exts = getLaunchShortcuts();
 		List<IResource> list = new ArrayList<IResource>();
 		list.add(resource);
 		IEvaluationContext context = DebugUIPlugin.createEvaluationContext(list);
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", list); //$NON-NLS-1$
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> contributedTypeIds = new HashSet<String>();
 		for (Iterator<LaunchShortcutExtension> iter = exts.listIterator(); iter.hasNext();) {
 			LaunchShortcutExtension ext = iter.next();
 			try {
 				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression())) {
-					set.addAll(ext.getAssociatedConfigurationTypes());
+					contributedTypeIds.addAll(ext.getAssociatedConfigurationTypes());
 				}
 			}
 			catch(CoreException ce) {
@@ -743,17 +742,18 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				iter.remove();
 			}
 		}
+		List<String> typeIds = new ArrayList<String>();
 		LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = null;
-		for (String id : set) {
-			type = lm.getLaunchConfigurationType(id);
+		for (String id : contributedTypeIds) {
+			ILaunchConfigurationType type = lm.getLaunchConfigurationType(id);
 			if(type != null) {
-				if(!types.contains(type) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
-					types.add(type.getIdentifier());
+				String identifier = type.getIdentifier();
+				if (!typeIds.contains(identifier) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
+					typeIds.add(identifier);
 				}
 			}
 		}
-		return types.toArray(new String[types.size()]);
+		return typeIds.toArray(new String[typeIds.size()]);
 	}
 
 	/**

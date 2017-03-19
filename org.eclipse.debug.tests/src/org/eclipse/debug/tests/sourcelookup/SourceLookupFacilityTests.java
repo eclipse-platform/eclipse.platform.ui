@@ -310,7 +310,7 @@ public class SourceLookupFacilityTests extends TestCase {
 				String artifact = "" + i; //$NON-NLS-1$
 				ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(artifact, fTestLocator, false);
 				assertNotNull("There should be a result", result); //$NON-NLS-1$
-				assertFalse(cached.containsKey(result));
+				assertFalse(cached.containsValue(result));
 				cached.put(artifact, result);
 
 				result = SourceLookupFacility.getDefault().lookup(artifact, fTestLocator, false);
