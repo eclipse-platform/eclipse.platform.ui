@@ -47,7 +47,7 @@ public class CallHistory {
      * @param target the call history target.
      */
     public CallHistory(Object target) {
-        methodList = new ArrayList<String>();
+        methodList = new ArrayList<>();
         classType = target.getClass();
     }
 
@@ -126,7 +126,7 @@ public class CallHistory {
     public boolean contains(String[] methodNames) {
 		for (String methodName : methodNames) {
 			testMethodName(methodName);
-			if (!methodList.contains(methodNames))
+			if (!methodList.contains(methodName))
                 return false;
         }
         return true;
