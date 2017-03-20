@@ -988,6 +988,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CleanDialog_buildCleanAuto;
 	public static String CleanDialog_buildCleanManual;
 	public static String CleanDialog_title;
+	public static String CleanDialog_clean_button_label;
 	public static String CleanDialog_cleanAllButton;
 	public static String CleanDialog_cleanSelectedButton;
 	public static String CleanDialog_buildNowButton;
