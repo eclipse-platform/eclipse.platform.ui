@@ -148,7 +148,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(parent, IDialogConstants.OK_ID, JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY),
+		okButton = createButton(parent, IDialogConstants.OK_ID, WorkbenchMessages.ShowView_open_button_label,
 				true);
 		createButton(parent, IDialogConstants.CANCEL_ID, JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY),
 				false);

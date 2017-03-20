@@ -179,6 +179,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ShowView_shellTitle;
 	public static String ShowView_selectViewHelp;
 	public static String ShowView_noDesc;
+	public static String ShowView_open_button_label;
 
 	public static String ToggleEditor_hideEditors;
 	public static String ToggleEditor_showEditors;
