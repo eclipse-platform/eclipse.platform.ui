@@ -91,6 +91,10 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IDEInternalPreferences.SHOW_LOCATION_NAME, true);
 		node.putBoolean(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE, false);
 		node.putBoolean(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE, true);
+
+		// by default, don't start hidden problems view to show decoration on
+		// it's icon. See bug 513901
+		node.putBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP, false);
 	}
 
 	/**

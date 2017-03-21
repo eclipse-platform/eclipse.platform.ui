@@ -21,8 +21,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -342,11 +345,15 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * up-to-date.
 	 */
 	private void createProblemsViews() {
+		if (!getDefault().getPreferenceStore()
+				.getBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP)) {
+			return;
+		}
 		final Runnable r= new Runnable() {
 			@Override
 			public void run() {
 				IWorkbench workbench = PlatformUI.isWorkbenchRunning() ? PlatformUI.getWorkbench() : null;
-				if (workbench != null && (workbench.getDisplay().isDisposed() || PlatformUI.getWorkbench().isClosing()))
+				if (workbench != null && (workbench.getDisplay().isDisposed() || workbench.isClosing()))
 					return;
 
 				if (workbench == null || workbench.isStarting()) {
@@ -370,9 +377,29 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 			}
 		};
 		Display display = Display.getCurrent();
-		if (display != null)
+		if (display != null) {
 			display.timerExec(PROBLEMS_VIEW_CREATION_DELAY, r);
-		else
-			Display.getDefault().asyncExec(r);
+		} else {
+			Job job = new Job("Initializing Problems view") { //$NON-NLS-1$
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					IWorkbench workbench = PlatformUI.getWorkbench();
+					if (workbench == null) {
+						// Workbench not created yet, so avoid using display to
+						// avoid crash like in bug 513901
+						schedule(PROBLEMS_VIEW_CREATION_DELAY);
+						return Status.OK_STATUS;
+					}
+					if (workbench != null && workbench.isClosing()) {
+						return Status.CANCEL_STATUS;
+					}
+					PlatformUI.getWorkbench().getDisplay().asyncExec(r);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.setUser(false);
+			job.schedule(PROBLEMS_VIEW_CREATION_DELAY);
+		}
 	}
 }

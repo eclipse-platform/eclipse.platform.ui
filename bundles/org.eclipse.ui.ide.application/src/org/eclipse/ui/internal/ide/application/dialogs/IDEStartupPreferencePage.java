@@ -38,6 +38,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
     private Button refreshButton;
 
+	private Button showProblemsButton;
+
     private Button exitPromptButton;
 
     @Override
@@ -49,6 +51,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         Composite composite = createComposite(parent);
 
         createRefreshWorkspaceOnStartupPref(composite);
+		createProblemsViewOnStartupPref(composite);
         createExitPromptPref(composite);
 
         Label space = new Label(composite,SWT.NONE);
@@ -69,6 +72,10 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         refreshButton
                 .setSelection(store
                         .getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+
+		showProblemsButton.setSelection(
+				store.getDefaultBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP));
+
         exitPromptButton
                 .setSelection(store
                         .getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
@@ -87,6 +94,9 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP,
                 refreshButton.getSelection());
 
+		store.setValue(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP,
+				showProblemsButton.getSelection());
+
         // store the exit prompt on last window close setting
         store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
                 exitPromptButton.getSelection());
@@ -103,6 +113,15 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         refreshButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
     }
+
+	protected void createProblemsViewOnStartupPref(Composite composite) {
+		showProblemsButton = new Button(composite, SWT.CHECK);
+		showProblemsButton.setText(IDEWorkbenchMessages.StartupPreferencePage_showProblemsButton);
+		showProblemsButton.setFont(composite.getFont());
+		showProblemsButton
+				.setSelection(getIDEPreferenceStore()
+						.getBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP));
+	}
 
     protected void createExitPromptPref(Composite composite) {
         exitPromptButton = new Button(composite, SWT.CHECK);

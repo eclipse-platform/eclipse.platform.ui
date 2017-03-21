@@ -141,4 +141,9 @@ public interface IDEInternalPreferences {
      */
     public static final String WARN_ABOUT_WORKSPACE_INCOMPATIBILITY = "WARN_ABOUT_WORKSPACE_INCOMPATIBILITY"; //$NON-NLS-1$
 
+    /**
+     * Show Problems view decorations on startup
+     */
+	public static final String SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP = "SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP"; //$NON-NLS-1$
+
 }
