@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,8 +38,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -45,7 +45,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -85,17 +87,21 @@ public class CleanDialog extends MessageDialog {
     private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
     private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
     private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
-    private static final String TOGGLE_SELECTED = "TOGGLE_SELECTED"; //$NON-NLS-1$
+	private static final String TOGGLE_SELECTED = "TOGGLE_SELECTED"; //$NON-NLS-1$
     private static final String BUILD_NOW = "BUILD_NOW"; //$NON-NLS-1$
     private static final String BUILD_ALL = "BUILD_ALL"; //$NON-NLS-1$
 
-    private Button allButton, selectedButton, buildNowButton, globalBuildButton, projectBuildButton;
+	private Button selectAllButton, deselectAllButton, alwaysCleanButton, buildNowButton, globalBuildButton,
+			projectBuildButton;
 
     private CheckboxTableViewer projectNames;
 
     private Object[] selection;
 
     private IWorkbenchWindow window;
+
+	private Text filterText;
+	private String filterRegexPattern = ".*"; //$NON-NLS-1$
 
     /**
      * Gets the text of the clean dialog, depending on whether the
@@ -128,7 +134,7 @@ public class CleanDialog extends MessageDialog {
 
     @Override
 	protected void buttonPressed(int buttonId) {
-        final boolean cleanAll = allButton.getSelection();
+		final boolean cleanAll = alwaysCleanButton.getSelection();
 		final boolean buildAll = buildNowButton != null && buildNowButton.getSelection();
 		final boolean globalBuild = globalBuildButton != null && globalBuildButton.getSelection();
         super.buttonPressed(buttonId);
@@ -186,34 +192,58 @@ public class CleanDialog extends MessageDialog {
         GridLayout layout = new GridLayout();
         layout.marginWidth = layout.marginHeight = 0;
         layout.numColumns = 2;
-        layout.makeColumnsEqualWidth = true;
+		layout.makeColumnsEqualWidth = false;
         area.setLayout(layout);
         area.setLayoutData(new GridData(GridData.FILL_BOTH));
-        SelectionListener updateEnablement = new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e) {
-                updateEnablement();
-            }
-        };
 
-        IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
-        boolean selectSelectedButton= settings.getBoolean(TOGGLE_SELECTED);
+		IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
+
         //first row
-        allButton = new Button(area, SWT.RADIO);
-        allButton.setText(IDEWorkbenchMessages.CleanDialog_cleanAllButton);
-        allButton.setSelection(!selectSelectedButton);
-        allButton.addSelectionListener(updateEnablement);
-        selectedButton = new Button(area, SWT.RADIO);
-        selectedButton.setText(IDEWorkbenchMessages.CleanDialog_cleanSelectedButton);
-        selectedButton.setSelection(selectSelectedButton);
-        selectedButton.addSelectionListener(updateEnablement);
+		filterText = new Text(area, SWT.SEARCH | SWT.ICON_CANCEL);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		filterText.setLayoutData(gd);
+		filterText.setFocus();
+		filterText.addModifyListener(e -> {
+			filterRegexPattern = ".*" + filterText.getText() + ".*"; //$NON-NLS-1$ //$NON-NLS-2$
+			projectNames.refresh();
+		});
 
-        //second row
-        createProjectSelectionTable(area);
+		selectAllButton = new Button(area, SWT.PUSH);
+		gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		selectAllButton.setLayoutData(gd);
+		selectAllButton.setText(IDEWorkbenchMessages.CleanDialog_selectAllButton);
+		selectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			projectNames.setAllChecked(true);
+			selection = projectNames.getCheckedElements();
+			updateEnablement();
+		}));
 
-        //third row
+		// third row
+		createProjectSelectionTable(area);
+
+		deselectAllButton = new Button(area, SWT.PUSH);
+		gd = new GridData(SWT.FILL, SWT.TOP, false, false);
+		deselectAllButton.setLayoutData(gd);
+		deselectAllButton.setText(IDEWorkbenchMessages.CleanDialog_deselectedAllButton);
+		deselectAllButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			projectNames.setAllChecked(false);
+			selection = projectNames.getCheckedElements();
+			updateEnablement();
+		}));
+
+		// fourth row
+		alwaysCleanButton = new Button(area, SWT.CHECK);
+		alwaysCleanButton.setText(IDEWorkbenchMessages.CleanDialog_alwaysCleanAllButton);
+		alwaysCleanButton.setSelection(settings.getBoolean(TOGGLE_SELECTED));
+		alwaysCleanButton.addSelectionListener(widgetSelectedAdapter(e -> updateEnablement()));
+
+		new Label(area, SWT.NONE);
+
+		// fifth row
         //only prompt for immediate build if autobuild is off
         if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			SelectionListener updateEnablement = widgetSelectedAdapter(e -> updateEnablement());
+
             buildNowButton = new Button(parent, SWT.CHECK);
             buildNowButton.setText(IDEWorkbenchMessages.CleanDialog_buildNowButton);
             String buildNow = settings.get(BUILD_NOW);
@@ -238,13 +268,8 @@ public class CleanDialog extends MessageDialog {
             projectBuildButton.setLayoutData(data);
             projectBuildButton.setEnabled(buildNowButton.getSelection());
 
+			SelectionListener buildRadioSelected = widgetSelectedAdapter(e -> updateBuildRadioEnablement());
 
-            SelectionListener buildRadioSelected = new SelectionAdapter() {
-                @Override
-				public void widgetSelected(SelectionEvent e) {
-                    updateBuildRadioEnablement();
-                }
-            };
             globalBuildButton.addSelectionListener(buildRadioSelected);
             projectBuildButton.addSelectionListener(buildRadioSelected);
         }
@@ -272,7 +297,8 @@ public class CleanDialog extends MessageDialog {
                     return false;
                 }
                 IProject project = (IProject) element;
-                if (!project.isAccessible()) {
+				boolean isProjectNameMatchingPattern = project.getName().matches(filterRegexPattern);
+				if (!project.isAccessible() || !isProjectNameMatchingPattern) {
                     return false;
                 }
                 projectHolder[0] = project;
@@ -281,18 +307,16 @@ public class CleanDialog extends MessageDialog {
         });
         projectNames.setInput(ResourcesPlugin.getWorkspace().getRoot());
         GridData data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan = 2;
+		data.horizontalSpan = 1;
         data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
         data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
         projectNames.getTable().setLayoutData(data);
         projectNames.setCheckedElements(selection);
         Object[] checked = projectNames.getCheckedElements();
-        // reveal first checked project unless in "all projects" mode
-        if (checked.length > 0 && !allButton.getSelection()) {
+		// reveal first checked project
+		if (checked.length > 0) {
             projectNames.reveal(checked[0]);
         }
-        //table is disabled to start because all button is selected
-        projectNames.getTable().setEnabled(selectedButton.getSelection());
         projectNames.addCheckStateListener(event -> {
 		    selection = projectNames.getCheckedElements();
 		    updateEnablement();
@@ -320,12 +344,16 @@ public class CleanDialog extends MessageDialog {
     }
 
     /**
-     * Updates the enablement of the dialog's ok button based
-     * on the current choices in the dialog.
-     */
+	 * Updates the enablement of the dialog elements based on the current
+	 * choices in the dialog.
+	 */
     protected void updateEnablement() {
-        projectNames.getTable().setEnabled(selectedButton.getSelection());
-        boolean enabled = allButton.getSelection() || selection.length > 0;
+		projectNames.getTable().setEnabled(!alwaysCleanButton.getSelection());
+		selectAllButton.setEnabled(!alwaysCleanButton.getSelection());
+		deselectAllButton.setEnabled(!alwaysCleanButton.getSelection());
+		filterText.setEnabled(!alwaysCleanButton.getSelection());
+
+		boolean enabled = selection.length > 0 || alwaysCleanButton.getSelection();
         getButton(OK).setEnabled(enabled);
         if (globalBuildButton != null) {
             globalBuildButton.setEnabled(buildNowButton.getSelection());
@@ -411,7 +439,8 @@ public class CleanDialog extends MessageDialog {
         if (globalBuildButton != null) {
             settings.put(BUILD_ALL, globalBuildButton.getSelection());
         }
-        settings.put(TOGGLE_SELECTED, selectedButton.getSelection());
+
+		settings.put(TOGGLE_SELECTED, alwaysCleanButton.getSelection());
     }
 
     /**
