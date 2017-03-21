@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,17 +14,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
@@ -52,6 +50,8 @@ import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+
+import junit.framework.TestSuite;
 
 /**
  * Test MultiEditor behaviour to highlight some of the broken functionality.
@@ -548,7 +548,7 @@ public class MultiEditorTest extends UITestCase {
 	private IFile createFile(IProject testProject, String simpleFile) throws CoreException, IOException {
 		IFile file = testProject.getFile(simpleFile);
 		if (!file.exists()) {
-			URL url = Platform.asLocalURL(TestPlugin.getDefault()
+			URL url = FileLocator.toFileURL(TestPlugin.getDefault()
 					.getBundle().getEntry(DATA_FILES_DIR + simpleFile));
 			file.create(url.openStream(), true, null);
 		}

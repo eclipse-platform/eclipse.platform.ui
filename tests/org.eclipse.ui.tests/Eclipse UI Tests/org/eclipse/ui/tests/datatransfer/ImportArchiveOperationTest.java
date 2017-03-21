@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
@@ -102,10 +102,10 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		String zipFileName = properties.getProperty(propertyName);
 		localDirectory = zipFileName;
 
-		zipFileURL = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX).append(zipFileName+ ".zip")));
-		tarFileURL = Platform.asLocalURL(Platform.find(TestPlugin.getDefault().getBundle(),
-				new Path(DATA_PATH_PREFIX).append(zipFileName+ ".tar")));
+		zipFileURL = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
+				new Path(DATA_PATH_PREFIX).append(zipFileName + ".zip"), null));
+		tarFileURL = FileLocator.toFileURL(FileLocator.find(TestPlugin.getDefault().getBundle(),
+				new Path(DATA_PATH_PREFIX).append(zipFileName + ".tar"), null));
     }
 
     public void testZipGetStatus() throws Exception {

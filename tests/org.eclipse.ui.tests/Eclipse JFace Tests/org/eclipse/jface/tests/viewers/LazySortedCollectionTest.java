@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import junit.framework.Assert;
+import org.eclipse.jface.viewers.deferred.LazySortedCollection;
+import org.junit.Assert;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.eclipse.jface.viewers.deferred.LazySortedCollection;
 
 /**
  * @since 3.1
