@@ -42,6 +42,7 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistProcessor;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 
 /**
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite
@@ -165,7 +166,11 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
-		quickAssistAssistant.setQuickAssistProcessor(new MarkerResoltionQuickAssistProcessor());
+		CompositeQuickAssistProcessor processor = new CompositeQuickAssistProcessor(Arrays.asList(
+				new MarkerResoltionQuickAssistProcessor(),
+				new SpellingCorrectionProcessor()
+				));
+		quickAssistAssistant.setQuickAssistProcessor(processor);
 		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
 		quickAssistAssistant.setInformationControlCreator(new IInformationControlCreator() {
 			@Override

@@ -50,5 +50,12 @@
             editorId="org.eclipse.ui.genericeditor.GenericEditor">
       </editorContentTypeBinding>
    </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.ui.genericeditor.examples.dotproject.ProjectDocumentParticipant"
+            contentTypeId="org.eclipse.ui.genericeditor.examples.dotproject">
+      </participant>
+   </extension>
 
 </plugin>
