@@ -757,7 +757,7 @@ public class ResourceTreeAndListGroup extends EventManager {
      */
     private void initialize() {
         treeViewer.setInput(root);
-        this.expandedTreeNodes = new ArrayList();
+        this.expandedTreeNodes = new HashSet<>();
         this.expandedTreeNodes.add(root);
 
     }
