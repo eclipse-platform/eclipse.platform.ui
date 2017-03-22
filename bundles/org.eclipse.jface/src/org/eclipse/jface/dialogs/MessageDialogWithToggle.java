@@ -16,7 +16,7 @@ package org.eclipse.jface.dialogs;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
@@ -124,12 +124,11 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * Convenience method to open a simple dialog as specified by the
 	 * <code>kind</code> flag, with a "don't show again' toggle.
 	 *
-	 * This method accepts a Map<String, Integer> to set custom button labels
-	 * (String) and custom button ids (Integer) as return codes for that
+	 * This method accepts a LinkedHashMap<String, Integer> to set custom button
+	 * labels (String) and custom button IDs (Integer) as return codes for those
 	 * buttons.
 	 *
-	 * Use this method if you need to override the default labels and otherwise
-	 * this dialog uses a text based mapping of labels to IDs.
+	 * Use this method if you need to override the default labels and IDs.
 	 *
 	 * @param kind
 	 *            the kind of dialog to open, one of {@link #ERROR},
@@ -166,7 +165,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 */
 	public static MessageDialogWithToggle open(int kind, Shell parent, String title, String message,
 			String toggleMessage, boolean toggleState, IPreferenceStore store, String key, int style,
-			Map<String, Integer> buttonLabelToIdMap) {
+			LinkedHashMap<String, Integer> buttonLabelToIdMap) {
 		// use null as image to accept the default window icon
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent, title, null, message, kind,
 				buttonLabelToIdMap, 0, toggleMessage, toggleState);
@@ -408,7 +407,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * Allows clients to override the default label and id mapping
 	 *
 	 */
-	private Map<String, Integer> buttonLabelToIdMap;
+	private LinkedHashMap<String, Integer> buttonLabelToIdMap;
 
     /**
      * Creates a message dialog with a toggle. See the superclass constructor
@@ -461,12 +460,11 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * Creates a message dialog with a toggle. See the superclass constructor
 	 * for info on the other parameters.
 	 *
-	 * This constructor accepts a Map<String, Integer> to set custom button
-	 * labels (String) and custom button ids (Integer) as return codes for that
-	 * buttons.
+	 * This constructor accepts a LinkedHashMap<String, Integer> to set custom
+	 * button labels (String) and custom button IDs (Integer) as return codes
+	 * for those buttons.
 	 *
-	 * Use this constructor if you need to override the default labels and
-	 * otherwise this dialog uses a text based mapping of labels to IDs.
+	 * Use this constructor if you need to override the default labels and IDs.
 	 *
 	 * @param parentShell
 	 *            the parent shell
@@ -491,10 +489,11 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 *            warning image</li>
 	 *            </ul>
 	 * @param buttonLabelToIdMap
-	 *            map with button labels and ids to define custom labels and
-	 *            their corresponding ids
+	 *            map with button labels and IDs to define custom labels and
+	 *            their corresponding IDs
 	 * @param defaultIndex
-	 *            the index in the button label array of the default button
+	 *            the index of the default button in the button label and ID map
+	 *            related to the insertion order of the elements
 	 * @param toggleMessage
 	 *            the message for the toggle control, or <code>null</code> for
 	 *            the default message
@@ -503,7 +502,8 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * @since 3.13
 	 */
 	public MessageDialogWithToggle(Shell parentShell, String dialogTitle, Image image, String message,
-			int dialogImageType, Map<String, Integer> buttonLabelToIdMap, int defaultIndex, String toggleMessage,
+			int dialogImageType, LinkedHashMap<String, Integer> buttonLabelToIdMap, int defaultIndex,
+			String toggleMessage,
 			boolean toggleState) {
 		super(parentShell, dialogTitle, image, message, dialogImageType, defaultIndex,
 				buttonLabelToIdMap.keySet().toArray(new String[buttonLabelToIdMap.size()]));
@@ -731,10 +731,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 
     /**
 	 * Attempt to find a standard JFace button id that matches the specified
-	 * button label. If a Map<String, Integer> with custom button labels and
-	 * custom button ids was set, this method first searches the Map to find the
-	 * button id that matches the specific button label. If no match can be
-	 * found at all, use the default id provided.
+	 * button label. If a LinkedHashMap<String, Integer> with custom button
+	 * labels and custom button ids was set, this method first searches the Map
+	 * to find the button id that matches the specific button label. If no match
+	 * can be found at all, use the default id provided.
 	 *
 	 * @param buttonLabel
 	 *            the button label whose id is sought
@@ -743,13 +743,13 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 *            id
 	 * @return the id for the specified button label
 	 */
-
-	@SuppressWarnings("boxing")
 	private int mapButtonLabelToButtonID(String buttonLabel, int defaultId) {
 
 
 		if (buttonLabelToIdMap != null && buttonLabelToIdMap.containsKey(buttonLabel)) {
-			return buttonLabelToIdMap.get(buttonLabel);
+			@SuppressWarnings("boxing")
+			int id = buttonLabelToIdMap.get(buttonLabel);
+			return id;
 		}
 
 		// The following hard-coded mapping of labels to ID is unfortunately
