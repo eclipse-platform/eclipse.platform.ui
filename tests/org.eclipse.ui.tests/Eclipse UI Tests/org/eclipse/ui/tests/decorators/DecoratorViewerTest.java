@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.decorators;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -71,7 +72,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 				.getDecoratorManager();
 		manager.setEnabled(BackgroundColorDecorator.ID, true);
 
-		Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
+		Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 
 		dispatchDuringUpdates((DecoratorTestPart) view);
 		backgroundCheck(view);
@@ -110,7 +111,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 				.getDecoratorManager();
 		manager.setEnabled(ForegroundColorDecorator.ID, true);
 
-		Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
+		Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 		dispatchDuringUpdates((DecoratorTestPart) view);
 
 		foregroundCheck(view);

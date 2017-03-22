@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.swt.widgets.Display;
@@ -66,7 +66,7 @@ public class TestBug105491 extends TestCase {
 
 		@Override
 		public void threadChange(Thread thread) {
-			Platform.getJobManager().transferRule(workspace.getRoot(), thread);
+			Job.getJobManager().transferRule(workspace.getRoot(), thread);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,12 @@ package org.eclipse.ui.tests.internal;
 
 import java.io.ByteArrayInputStream;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
@@ -34,6 +31,9 @@ import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * bug 99858 [IDE] Error upon deleting a project. Tests that our delete code no
@@ -121,9 +121,7 @@ public class Bug99858Test extends TestCase {
 		boolean joined = false;
 		while (!joined) {
 			try {
-				Platform.getJobManager()
-						.join(IDEWorkbenchMessages.DeleteResourceAction_jobName,
-								null);
+				Job.getJobManager().join(IDEWorkbenchMessages.DeleteResourceAction_jobName, null);
 				joined = true;
 			} catch (InterruptedException ex) {
 				// we might be blocking some other thread, spin the event loop
@@ -136,9 +134,7 @@ public class Bug99858Test extends TestCase {
 		joined = false;
 		while (!joined) {
 			try {
-				Platform.getJobManager()
-						.join(IDEWorkbenchMessages.DeleteResourceAction_jobName,
-								null);
+				Job.getJobManager().join(IDEWorkbenchMessages.DeleteResourceAction_jobName, null);
 				joined = true;
 			} catch (InterruptedException ex) {
 				// we might be blocking some other thread, spin the event loop

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 package org.eclipse.ui.tests.concurrency;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
@@ -59,9 +61,9 @@ public class TransferRuleTest extends UITestCase {
 			try {
 				try {
 					//acquire the rule that was transferred (will hang if the rule transfer failed)
-					Platform.getJobManager().beginRule(rule, monitor);
+					Job.getJobManager().beginRule(rule, monitor);
 				} finally {
-					Platform.getJobManager().endRule(rule);
+					Job.getJobManager().endRule(rule);
 				}
 			} catch (Throwable t) {
 				//remember any error so we can fail the test
