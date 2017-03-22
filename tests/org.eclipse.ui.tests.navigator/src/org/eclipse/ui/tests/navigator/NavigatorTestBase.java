@@ -104,6 +104,7 @@ public class NavigatorTestBase {
 	public static final String TEST_CONTENT_LABEL1 = "org.eclipse.ui.tests.navigator.testContentLabel1";
 	public static final String TEST_CONTENT_LABEL2 = "org.eclipse.ui.tests.navigator.testContentLabel2";
 
+	public static final String TEST_CONTENT_COMPARATOR_MODEL = "org.eclipse.ui.tests.navigator.testContentComparatorModel";
 	public static final String TEST_CONTENT_SORTER_MODEL = "org.eclipse.ui.tests.navigator.testContentSorterModel";
 	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterModel.override";
 	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE_NOSORT = "org.eclipse.ui.tests.navigator.testContentSorterModel.override.nosort";
@@ -139,7 +140,7 @@ public class NavigatorTestBase {
 
 	protected String _navigatorInstanceId;
 
-	protected Set<IResource> _expectedChildren = new HashSet<IResource>();
+	protected Set<IResource> _expectedChildren = new HashSet<>();
 
 	protected IProject _project;
 	protected IProject _p1;
@@ -252,7 +253,7 @@ public class NavigatorTestBase {
 
 		_commonNavigator = (CommonNavigator) activePage.findView(_navigatorInstanceId);
 		_commonNavigator.setFocus();
-		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
+		_viewer = _commonNavigator.getAdapter(CommonViewer.class);
 	}
 
 	@After
