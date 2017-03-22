@@ -184,36 +184,48 @@ public class JobGroup extends InternalJobGroup {
 	/**
 	 * Waits until either all jobs belonging to this job group have finished or
 	 * the given timeout has expired. This method will block the calling thread
-	 * until all such jobs have finished executing, or the given timeout is expired,
-	 * or the given progress monitor is canceled by the user or the calling thread
-	 * is interrupted. If there are no jobs belonging to the group that are currently
-	 * waiting, running, or sleeping, this method returns immediately.  Feedback
-	 * on how the join is progressing is provided to the given progress monitor.
+	 * until all such jobs have finished executing, or the given timeout is
+	 * expired, or the given progress monitor is canceled by the user or the
+	 * calling thread is interrupted. If there are no jobs belonging to the
+	 * group that are currently waiting, running, or sleeping, this method
+	 * returns immediately. Feedback on how the join is progressing is provided
+	 * to the given progress monitor.
 	 * <p>
 	 * If this method is called while the job manager is suspended, only jobs
-	 * that are currently running will be joined. Once there are no jobs
-	 * belongs to the group in the {@link Job#RUNNING} state, the method returns.
+	 * that are currently running will be joined. Once there are no jobs belongs
+	 * to the group in the {@link Job#RUNNING} state, the method returns.
 	 * </p>
 	 * <p>
-	 * Jobs may be added to this job group after the initial set of jobs are scheduled,
-	 * and this method will wait for all newly added jobs to complete (or the given timeout
-	 * has expired), even if they are added to the group after this method is invoked.
+	 * Jobs may be added to this job group after the initial set of jobs are
+	 * scheduled, and this method will wait for all newly added jobs to complete
+	 * (or the given timeout has expired), even if they are added to the group
+	 * after this method is invoked.
 	 * </p>
 	 * <p>
-	 * Throws an <code>OperationCanceledException</code> when the given progress monitor
-	 * is canceled. Canceling the monitor does not cancel the jobs belonging to the group and,
-	 * if required, the group may be canceled explicitly using the {@link #cancel()} method.
+	 * Throws an <code>OperationCanceledException</code> when the given progress
+	 * monitor is canceled. Canceling the monitor does not cancel the jobs
+	 * belonging to the group and, if required, the group may be canceled
+	 * explicitly using the {@link #cancel()} method.
+	 * </p>
+	 * <p>
+	 * <b>NOTE:</b> If the job manager is suspended, the result of the job group
+	 * run may not be set when this method returns.
 	 * </p>
 	 *
-	 * @param timeoutMillis the maximum amount of time to wait for the join to complete,
-	 * or <code>zero</code> for no timeout.
-	 * @param monitor the progress monitor for reporting progress on how the wait is
-	 * progressing and to be able to cancel the join operation, or <code>null</code>
-	 * if no progress monitoring is required.
-	 * @return <code>true</code> when all the jobs in the group complete,
-	 * or <code>false</code> when the operation is not completed within the given time.
-	 * @exception InterruptedException if the calling thread is interrupted while waiting
-	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
+	 * @param timeoutMillis
+	 *            the maximum amount of time to wait for the join to complete,
+	 *            or <code>zero</code> for no timeout.
+	 * @param monitor
+	 *            the progress monitor for reporting progress on how the wait is
+	 *            progressing and to be able to cancel the join operation, or
+	 *            <code>null</code> if no progress monitoring is required.
+	 * @return <code>true</code> when all the jobs in the group complete, or
+	 *         <code>false</code> when the operation is not completed within the
+	 *         given time.
+	 * @exception InterruptedException
+	 *                if the calling thread is interrupted while waiting
+	 * @exception OperationCanceledException
+	 *                if the progress monitor is canceled while waiting
 	 * @see Job#setJobGroup(JobGroup)
 	 * @see #cancel()
 	 */
