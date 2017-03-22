@@ -8,11 +8,12 @@
  * Contributors:
  *     Mickael Istria (Red Hat Inc.) - extracted from IDE.getEditorDescription
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.ide.registry;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ide.IUnassociatedEditorStrategy;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * @since 3.12

@@ -74,12 +74,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.EditorAssociationOverrideDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.SystemEditorOrTextEditorStrategy;
-import org.eclipse.ui.internal.ide.UnassociatedEditorStrategyRegistry;
 import org.eclipse.ui.internal.ide.model.StandardPropertiesAdapterFactory;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterFactory;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
+import org.eclipse.ui.internal.ide.registry.SystemEditorOrTextEditorStrategy;
+import org.eclipse.ui.internal.ide.registry.UnassociatedEditorStrategyRegistry;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.FileEditorInput;
 

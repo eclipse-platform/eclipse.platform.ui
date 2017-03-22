@@ -38,6 +38,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
+import org.eclipse.ui.internal.ide.registry.UnassociatedEditorStrategyRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

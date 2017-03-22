@@ -8,7 +8,7 @@
  * Contributors:
  *     Mickael Istria (Red Hat Inc.) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.ide.registry;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.ide.IUnassociatedEditorStrategy;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * @since 3.12

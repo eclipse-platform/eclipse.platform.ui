@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage;
+import org.eclipse.ui.internal.ide.registry.UnassociatedEditorStrategyRegistry;
 
 /**
  * @since 3.12
