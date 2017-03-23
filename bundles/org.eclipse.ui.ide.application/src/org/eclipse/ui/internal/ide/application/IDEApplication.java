@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -108,6 +109,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
     @Override
 	public Object start(IApplicationContext appContext) throws Exception {
+		// Suspend the job manager to prevent background jobs from running. This
+		// is done to reduce resource contention during startup.
+		// The job manager will be resumed by the
+		// IDEWorkbenchAdvisor.postStartup method.
+		Job.getJobManager().suspend();
+
         Display display = createDisplay();
         // processor must be created before we start event loop
         DelayedEventsProcessor processor = new DelayedEventsProcessor(display);
