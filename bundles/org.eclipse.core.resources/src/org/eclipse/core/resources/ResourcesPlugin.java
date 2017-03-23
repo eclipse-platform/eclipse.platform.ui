@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import java.lang.management.*;
 import java.util.*;
 import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.resources.*;
@@ -442,14 +441,13 @@ public final class ResourcesPlugin extends Plugin {
 		return workspace;
 	}
 
-	private static class SeverityMultiStatus extends MultiStatus {
-		SeverityMultiStatus(int severity, String pluginId, String message, Throwable exception) {
-			super(pluginId, OK, message, exception);
-			setSeverity(severity);
-		}
-	}
-
 	private static void logLongWorkspaceInitWarning(Job job) {
+		class SeverityMultiStatus extends MultiStatus {
+			public SeverityMultiStatus(int severity, String pluginId, String message, Throwable exception) {
+				super(pluginId, OK, message, exception);
+				setSeverity(severity);
+			}
+		}
 		MultiStatus status = new SeverityMultiStatus(IStatus.WARNING, PI_RESOURCES, String.format("Workspace initialization takes longer than usual. Thread ''%s'' is blocked until the initialization finishes.", Thread.currentThread()), null); //$NON-NLS-1$
 		Exception exception = new Exception();
 		status.add(new Status(IStatus.INFO, PI_RESOURCES, "Sample stacktrace of the blocked thread.", exception)); //$NON-NLS-1$
@@ -527,63 +525,12 @@ public final class ResourcesPlugin extends Plugin {
 					if (!result.isOK())
 						getLog().log(result);
 					workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
-				} catch (Exception e) {
-					List<ThreadInfo> threadInfos = captureAllThreads(initWorkspaceJob.getThread().getId(), ManagementFactory.getThreadMXBean());
-					MultiStatus status = new SeverityMultiStatus(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, e.getMessage(), e);
-					for (ThreadInfo threadInfo : threadInfos) {
-						status.add(createThreadStatus(threadInfo));
-					}
-					getLog().log(status);
 				} finally {
 					initWorkspaceJob = null;
 				}
 			}
 		});
 		initWorkspaceJob.schedule();
-	}
-
-	static List<ThreadInfo> captureAllThreads(long jobThreadId, ThreadMXBean threadMXBean) {
-		ThreadInfo[] threadStacks = threadMXBean.dumpAllThreads(threadMXBean.isObjectMonitorUsageSupported(), threadMXBean.isSynchronizerUsageSupported());
-		List<ThreadInfo> threadInfos = new ArrayList<>();
-		for (ThreadInfo thread : threadStacks) {
-			// Skip the stack trace of the job thread.
-			if (thread.getThreadId() != jobThreadId) {
-				threadInfos.add(thread);
-			}
-		}
-		return threadInfos;
-	}
-
-	static IStatus createThreadStatus(ThreadInfo thread) {
-		Exception stackTrace = new Exception("Stack Trace"); //$NON-NLS-1$
-		stackTrace.setStackTrace(thread.getStackTrace());
-
-		StringBuilder threadText = createThreadMessage(thread);
-		String lockName = thread.getLockName();
-		if (lockName != null && !lockName.isEmpty()) {
-			LockInfo lock = thread.getLockInfo();
-			String lockOwnerName = thread.getLockOwnerName();
-			if (lockOwnerName == null) {
-				threadText.append(String.format("\\nWaiting for: %s", getClassAndHashCode(lock))); //$NON-NLS-1$
-			} else {
-				threadText.append(String.format("\\nWaiting for: %s lock owner=''%s'' tid=%d", getClassAndHashCode(lock), lockOwnerName, thread.getLockOwnerId())); //$NON-NLS-1$
-			}
-		}
-
-		for (LockInfo lockInfo : thread.getLockedSynchronizers()) {
-			threadText.append(String.format("\\nHolding: %s", getClassAndHashCode(lockInfo))); //$NON-NLS-1$
-		}
-
-		return new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, threadText.toString(), stackTrace);
-	}
-
-	private static StringBuilder createThreadMessage(ThreadInfo thread) {
-		return new StringBuilder(String.format("Thread ''%s'' tid=%d (%s)", //$NON-NLS-1$
-				thread.getThreadName(), thread.getThreadId(), thread.getThreadState()));
-	}
-
-	private static String getClassAndHashCode(LockInfo info) {
-		return String.format("%s@%08x", info.getClassName(), info.getIdentityHashCode()); //$NON-NLS-1$
 	}
 
 	/*
