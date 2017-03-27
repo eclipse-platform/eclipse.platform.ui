@@ -332,7 +332,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
-		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		okButton = createButton(parent, IDialogConstants.OK_ID,
+				JFaceResources.getString("PreferencesDialog.okButtonLabel"), true); //$NON-NLS-1$
 		getShell().setDefaultButton(okButton);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -1480,5 +1481,4 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	protected boolean isResizable() {
     	return true;
     }
-
 }
