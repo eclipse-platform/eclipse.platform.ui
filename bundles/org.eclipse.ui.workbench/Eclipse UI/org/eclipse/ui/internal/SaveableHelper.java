@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 511198
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -121,8 +120,8 @@ public class SaveableHelper {
 							WorkbenchMessages.Save_Resource, null, message,
 							MessageDialog.QUESTION,
 							0,
-							WorkbenchMessages.Save, 
-							WorkbenchMessages.Dont_Save,
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
 							IDialogConstants.CANCEL_LABEL) {
 						@Override
 						protected int getShellStyle() {
