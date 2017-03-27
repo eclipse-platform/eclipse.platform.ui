@@ -496,10 +496,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				MessageDialog dialog;
 				if (stillOpenElsewhere) {
 					LinkedHashMap<String, Integer> buttonLabelToIdMap = new LinkedHashMap<>();
-					buttonLabelToIdMap.put(WorkbenchMessages.Save, IDialogConstants.OK_ID);
-					buttonLabelToIdMap.put(WorkbenchMessages.Dont_Save, IDialogConstants.NO_ID);
+					buttonLabelToIdMap.put(WorkbenchMessages.SaveableHelper_Save, IDialogConstants.OK_ID);
+					buttonLabelToIdMap.put(WorkbenchMessages.SaveableHelper_Dont_Save, IDialogConstants.NO_ID);
 					if (canCancel) {
-						buttonLabelToIdMap.put(IDialogConstants.CANCEL_LABEL, IDialogConstants.CANCEL_ID);
+						buttonLabelToIdMap.put(WorkbenchMessages.SaveableHelper_Cancel, IDialogConstants.CANCEL_ID);
 					}
 					String message = NLS
 							.bind(
@@ -521,10 +521,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				} else {
 					String[] buttons;
 					if (canCancel) {
-						buttons = new String[] { WorkbenchMessages.Save, WorkbenchMessages.Dont_Save,
-								IDialogConstants.CANCEL_LABEL };
+						buttons = new String[] { WorkbenchMessages.SaveableHelper_Save,
+								WorkbenchMessages.SaveableHelper_Dont_Save, WorkbenchMessages.SaveableHelper_Cancel };
 					} else {
-						buttons = new String[] { WorkbenchMessages.Save, WorkbenchMessages.Dont_Save };
+						buttons = new String[] { WorkbenchMessages.SaveableHelper_Save,
+								WorkbenchMessages.SaveableHelper_Dont_Save };
 					}
 
 					String message = NLS
@@ -793,10 +794,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			createButton(parent, IDialogConstants.OK_ID,
-					WorkbenchMessages.Save, true);
+					WorkbenchMessages.SaveableHelper_Save, true);
 			if (canCancel) {
 				createButton(parent, IDialogConstants.CANCEL_ID,
-						IDialogConstants.CANCEL_LABEL, false);
+						WorkbenchMessages.SaveableHelper_Cancel, false);
 			}
 		}
 

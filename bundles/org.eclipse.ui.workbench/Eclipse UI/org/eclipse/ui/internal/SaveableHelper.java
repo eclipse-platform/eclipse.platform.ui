@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -121,9 +120,8 @@ public class SaveableHelper {
 							WorkbenchMessages.Save_Resource, null, message,
 							MessageDialog.QUESTION,
 							0,
-							WorkbenchMessages.Save, 
-							WorkbenchMessages.Dont_Save,
-							IDialogConstants.CANCEL_LABEL) {
+							WorkbenchMessages.SaveableHelper_Save, WorkbenchMessages.SaveableHelper_Dont_Save,
+							WorkbenchMessages.SaveableHelper_Cancel) {
 						@Override
 						protected int getShellStyle() {
 							return super.getShellStyle() | SWT.SHEET;
