@@ -172,8 +172,7 @@ public class AboutDialog extends TrayDialog {
         layout.numColumns++;
         layout.makeColumnsEqualWidth = false;
 
-        Button b = createButton(parent, IDialogConstants.OK_ID,
-                IDialogConstants.OK_LABEL, true);
+		Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.CLOSE_LABEL, true);
         b.setFocus();
     }
 
