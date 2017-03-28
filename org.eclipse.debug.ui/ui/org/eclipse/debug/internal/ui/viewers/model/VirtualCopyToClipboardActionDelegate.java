@@ -144,13 +144,28 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		String[] labels = (String[]) item.getData(VirtualItem.LABEL_KEY);
 		if(labels != null && labels.length > 0) {
 			for (int i = 0; i < labels.length; i++) {
-				String text = labels[i];
-				if(text != null && !text.trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
+				String text = trimLabel(labels[i]);
+				if (text != null && !text.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 					buffer.append(text+TAB);
 				}
 			}
 			buffer.append(System.getProperty(SEPARATOR));
 		}
+	}
+
+	/**
+	 * Trims the given String. Subclasses might want to cut off additional
+	 * things from the given label retrieved by the label provider by overriding
+	 * this method.
+	 *
+	 * @param label the label that should be trimmed (might be null)
+	 * @return the trimmed label or null if label is null
+	 */
+	protected String trimLabel(String label) {
+		if (label == null) {
+			return null;
+		}
+		return label.trim();
 	}
 
 	private class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {

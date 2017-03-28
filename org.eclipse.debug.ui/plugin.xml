@@ -1582,7 +1582,7 @@
                icon="$nl$/icons/full/elcl16/copy_edit_co.png"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
-               class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.expressions.CopyExpressionsToClipboardActionDelegate"
                menubarPath="expressionGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard">
             <selection
