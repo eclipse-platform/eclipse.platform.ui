@@ -542,6 +542,8 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
       <annotation>
          <documentation>
             A &lt;b&gt;commonSorter&lt;/b&gt; declares an subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerComparator&lt;/code&gt; which is used to sort children in the tree. The nested &lt;b&gt;parentExpression&lt;/b&gt; describes when the &lt;b&gt;commonSorter&lt;/b&gt; should be used. If an element matches the &lt;b&gt;parentExpression&lt;/b&gt;, then its children will be sorted by this &lt;b&gt;commonSorter&lt;/b&gt;.
+&lt;br&gt;&lt;br&gt;
+Since Eclipse 4.7.0 &lt;code&gt;org.eclipse.jface.viewers.ViewerComparator&lt;/code&gt; is allowed to be used as &lt;b&gt;commonSorter&lt;/b&gt; contributions. Before 4.7.0, only instances of  &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt; were allowed as &lt;b&gt;commonSorter&lt;/b&gt;.
          </documentation>
       </annotation>
       <complexType>
