@@ -11,6 +11,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422954
  *     Christian Georgi (SAP) - Bug 423882 - Warn user if workspace is newer than IDE
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 427393, 455162
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 514355
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -82,6 +83,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
     private static final String WORKSPACE_CHECK_LEGACY_VERSION_INCREMENTED = "2"; //$NON-NLS-1$   legacy version=1
 
     private static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
+
+	/**
+	 * Return value when the user wants to retry loading the current workspace
+	 */
+    private static final int RETRY_LOAD = 0;
 
     /**
      * A special return code that will be recognized by the launcher and used to
@@ -264,8 +270,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				shell.setVisible(false);
 			}
 		}
+
+		int returnValue = -1;
+		URL workspaceUrl = null;
         while (true) {
-            URL workspaceUrl = promptForWorkspace(shell, launchData, force);
+			if (returnValue != RETRY_LOAD) {
+				workspaceUrl = promptForWorkspace(shell, launchData, force);
+			}
             if (workspaceUrl == null) {
 				return EXIT_OK;
 			}
@@ -306,8 +317,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
             // by this point it has been determined that the workspace is
             // already in use -- force the user to choose again
-            MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
-                    NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()));
+			MessageDialog dialog = new MessageDialog(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
+					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
+					MessageDialog.ERROR, 1, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
+					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Ok);
+			// the return value influences the next loop's iteration
+			returnValue = dialog.open();
         }
     }
 
