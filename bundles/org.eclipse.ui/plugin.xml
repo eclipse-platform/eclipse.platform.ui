@@ -2031,6 +2031,12 @@
             id="org.eclipse.ui.workingSets"
             name="%SettingsTransfer.WorkingSets">
       </settingsTransfer>
+      <settingsTransfer
+            class="org.eclipse.ui.internal.preferences.PreferencesSettingsTransfer"
+            helpContext="org.eclipse.ui.switch_workspace_dialog_context"
+            id="org.eclipse.ui.preferences"
+            name="%SettingsTransfer.Preferences">
+      </settingsTransfer>
    </extension>
    
    <extension
