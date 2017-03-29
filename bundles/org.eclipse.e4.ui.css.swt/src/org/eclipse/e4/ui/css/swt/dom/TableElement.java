@@ -108,4 +108,16 @@ public class TableElement extends ControlElement implements ISelectionBackground
 		this.fControlSelectedColorCustomization.setSelectionForegroundColor(color);
 	}
 
+	public void setTableHeaderColor(Color color) {
+		getTable().setHeaderForeground(color);
+	}
+
+	public void setTableHeaderBackgroundColor(Color color) {
+		getTable().setHeaderBackground(color);
+	}
+
+	public Table getTable() {
+		return (Table) getNativeWidget();
+	}
+
 }
