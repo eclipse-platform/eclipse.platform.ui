@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -36,12 +37,14 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -561,12 +564,12 @@ try {
 					ResourceMessages.NewProject_perspSwitchMessageWithDesc,
 					new String[] { finalPersp.getLabel(), desc });
 
-		MessageDialogWithToggle dialog = MessageDialogWithToggle
-				.openYesNoQuestion(window.getShell(),
-						ResourceMessages.NewProject_perspSwitchTitle, message,
-						null /* use the default message for the toggle */,
-						false /* toggle is initially unchecked */, store,
-						IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
+		LinkedHashMap<String, Integer> buttonLabelToId = new LinkedHashMap<>();
+		buttonLabelToId.put(ResourceMessages.NewProject_perspSwitchButtonLabel, IDialogConstants.YES_ID);
+		buttonLabelToId.put(IDialogConstants.NO_LABEL, IDialogConstants.NO_ID);
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.QUESTION, window.getShell(),
+				ResourceMessages.NewProject_perspSwitchTitle, message, null, false, store,
+				IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, SWT.NONE, buttonLabelToId);
 		int result = dialog.getReturnCode();
 
 		// If we are not going to prompt anymore propogate the choice.
