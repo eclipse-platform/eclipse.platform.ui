@@ -14,7 +14,7 @@
 /* ############################## Eclipse UI properties ############################## */
 
 
-IEclipsePreferences#org-eclipse-ui-editors {
+IEclipsePreferences#org-eclipse-ui-editors:org-eclipse-ui-themes { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
 	preferences:
 		'AbstractTextEditor.Color.Background.SystemDefault=false'
 		'AbstractTextEditor.Color.SelectionForeground.SystemDefault=false'
@@ -49,7 +49,7 @@ IEclipsePreferences#org-eclipse-ui-editors {
 		'writeOccurrenceIndicationColor=27,98,145'
 }
 
-IEclipsePreferences#org-eclipse-ui-workbench {
+IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
 	preferences:
 		'ACTIVE_HYPERLINK_COLOR=138,201,242'
 		'CONFLICTING_COLOR=240,15,66'
