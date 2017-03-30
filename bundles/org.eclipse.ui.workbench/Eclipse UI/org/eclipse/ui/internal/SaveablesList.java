@@ -793,11 +793,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
-			createButton(parent, IDialogConstants.OK_ID,
-					WorkbenchMessages.SaveableHelper_Save, true);
+			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 			if (canCancel) {
-				createButton(parent, IDialogConstants.CANCEL_ID,
-						WorkbenchMessages.SaveableHelper_Cancel, false);
+				createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 			}
 		}
 
