@@ -397,9 +397,10 @@ HeapStatus {
  	color: black;
 }
 
-Table {
-	swt-table-header-foreground-color: #CCC;
-	swt-table-header-background-color: #383D3F;
+Table,
+Tree {
+	swt-header-color: #CCC;
+	swt-header-background-color: #383D3F;
 }
 
 Twistie {
