@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -263,6 +264,11 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 			throw new IllegalArgumentException("Job must be an instance of " + SmartImportJob.class.getSimpleName()); //$NON-NLS-1$
 		}
 		super.show(job, shell);
+	}
+
+	@Override
+	public Image getImage() {
+		return null;
 	}
 
 }
