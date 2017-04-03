@@ -98,7 +98,7 @@
       </category>
       <view
             name="Eclipse Form"
-            icon="icons/sample.gif"
+            icon="icons/sample.png"
             category="org.eclipse.ui.forms.examples"
             class="org.eclipse.ui.forms.examples.views.FormView"
             id="org.eclipse.ui.forms.examples.views.FormView">
