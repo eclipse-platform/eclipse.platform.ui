@@ -34,6 +34,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -152,7 +153,6 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		});
 
 		Composite sectionClient = toolkit.createComposite(expandable);
-		sectionClient.setLayout(new GridLayout());
 		sectionClient.setBackground(workArea.getBackground());
 
 		if (createButtons(toolkit, sectionClient))
@@ -175,6 +175,11 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		String[] enabledSettings = getEnabledSettings(IDEWorkbenchPlugin
 				.getDefault().getDialogSettings()
 				.getSection(WORKBENCH_SETTINGS));
+
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.marginLeft = 14;
+		layout.spacing = 6;
+		sectionClient.setLayout(layout);
 
 		for (final IConfigurationElement settingsTransfer : SettingsTransfer.getSettingsTransfers()) {
 			final Button button = toolkit.createButton(sectionClient,
