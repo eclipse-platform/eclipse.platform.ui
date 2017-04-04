@@ -155,7 +155,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 			long requestBeginningTimestamp = System.currentTimeMillis();
 			long stillRemainingThreeshold = MAX_WAIT_IN_MS;
-			for (CompletableFuture<List<ICompletionProposal>> future : fFutures) {
+			for (CompletableFuture<?> future : populateFutures) {
 				try {
 					future.get(stillRemainingThreeshold, TimeUnit.MILLISECONDS);
 				} catch (TimeoutException | ExecutionException | InterruptedException ex) {
