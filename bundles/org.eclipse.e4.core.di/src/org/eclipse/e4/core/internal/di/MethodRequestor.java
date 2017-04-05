@@ -75,6 +75,9 @@ public class MethodRequestor extends Requestor<Method> {
 	protected IObjectDescriptor[] calcDependentObjects() {
 		Type[] parameterTypes = location.getGenericParameterTypes();
 		Annotation[][] annotations = getParameterAnnotations();
+		if (parameterTypes.length == 0) {
+			return EMPTY_DESCRIPTORS;
+		}
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
 			descriptors[i] = new ObjectDescriptor(parameterTypes[i], annotations[i]);

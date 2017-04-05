@@ -71,7 +71,9 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 			System.arraycopy(logicalParams, 0, tmp, compilerParams.length - logicalParams.length, logicalParams.length);
 			logicalParams = tmp;
 		}
-
+		if (logicalParams.length == 0) {
+			return EMPTY_DESCRIPTORS;
+		}
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[logicalParams.length];
 		for (int i = 0; i < logicalParams.length; i++) {
 			descriptors[i] = new ObjectDescriptor(logicalParams[i], annotations[i]);

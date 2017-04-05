@@ -30,6 +30,7 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 
 	private static final Map<AnnotatedElement, IObjectDescriptor[]> descriptorCache = Collections
 			.synchronizedMap(new WeakHashMap<>());
+	protected static final IObjectDescriptor[] EMPTY_DESCRIPTORS = new IObjectDescriptor[0];
 
 	/** The request location; may be null */
 	final protected L location;
@@ -48,6 +49,7 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 
 	private IObjectDescriptor[] objectDescriptors;
 
+	/* @NonNull */
 	protected abstract IObjectDescriptor[] calcDependentObjects();
 
 	public Requestor(L location, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
