@@ -110,6 +110,9 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		contentAssistant.enableColoredLabels(true);
 		contentAssistant.enableAutoActivation(true);
 		this.processors = registry.getContentAssistProcessors(sourceViewer, getContentTypes());
+		if (this.processors.isEmpty()) {
+			this.processors.add(new DefaultContentAssistProcessor());
+		}
 		for (IContentAssistProcessor processor : this.processors) {
 			contentAssistant.addContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		}
