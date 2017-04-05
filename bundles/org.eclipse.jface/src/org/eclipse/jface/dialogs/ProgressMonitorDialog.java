@@ -276,8 +276,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	protected void updateForClearBlocked() {
 		progressIndicator.showNormal();
 		setMessage(task, true);
-		imageLabel.setImage(getImage());
-
+		if (imageLabel != null) {
+			imageLabel.setImage(getImage());
+		}
 	}
 
 	/**
@@ -289,8 +290,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	protected void updateForSetBlocked(IStatus reason) {
 		progressIndicator.showPaused();
 		setMessage(reason.getMessage(), true);
-		imageLabel.setImage(getImage());
-
+		if (imageLabel != null) {
+			imageLabel.setImage(getImage());
+		}
 	}
 
 	/**
