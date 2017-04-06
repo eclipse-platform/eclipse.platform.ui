@@ -1302,6 +1302,15 @@
                value="Monaco-regular-11">
          </fontValue>
       </fontDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.editors.rangeIndicatorColor"
+            label="%Color.rangeIndicator"
+            value="COLOR_LIST_SELECTION">
+         <description>
+            %Color.rangeIndicatorDesc
+         </description>
+      </colorDefinition>
    </extension>
    
    <extension

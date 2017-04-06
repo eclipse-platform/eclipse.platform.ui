@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
 
@@ -41,10 +43,11 @@ import org.eclipse.jface.text.source.IAnnotationPresentation;
  */
 public class DefaultRangeIndicator extends Annotation implements IAnnotationPresentation {
 
-	 /** The color palette data of this range indicator */
-	private static PaletteData fgPaletteData;
+	private static final String RANGE_INDICATOR_COLOR= "org.eclipse.ui.editors.rangeIndicatorColor"; //$NON-NLS-1$
 	/** The image of this range indicator */
 	private Image fImage;
+	/** The color used to draw the range indicator during the last paint action. */
+	private Color fLastRangeIndicatorColor;
 
 	/**
 	 * Creates a new range indicator.
@@ -54,7 +57,6 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 	@Override
 	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
-
 		Point canvasSize= canvas.getSize();
 
 		int x= 0;
@@ -74,12 +76,15 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		if (h <= 0)
 			return;
 
-		Image image = getImage(canvas);
+		Color currentRangeIndicatorColor= JFaceResources.getColorRegistry().get(RANGE_INDICATOR_COLOR);
+		Image image= getImage(canvas, currentRangeIndicatorColor);
 		gc.drawImage(image, 0, 0, w, h, x, y, w, h);
 
-		gc.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		gc.setBackground(currentRangeIndicatorColor);
 		gc.fillRectangle(x, bounds.y, w, b);
 		gc.fillRectangle(x, bounds.y + bounds.height - b, w, b);
+
+		fLastRangeIndicatorColor= currentRangeIndicatorColor;
 	}
 
 	@Override
@@ -91,28 +96,30 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 * Returns the image of this range indicator.
 	 *
 	 * @param control the control
+	 * @param rangeIndicatorColor the color to be used to paint the range indicator
 	 * @return an image
 	 */
-	private Image getImage(Control control) {
+	private Image getImage(Control control, Color rangeIndicatorColor) {
 		if (fImage == null) {
-				fImage= createImage(control.getDisplay(), control.getSize());
+			fImage= createImage(control.getDisplay(), control.getSize(), rangeIndicatorColor);
 
-				control.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						if (fImage != null && !fImage.isDisposed()) {
-							fImage.dispose();
-							fImage= null;
-						}
+			control.addDisposeListener(new DisposeListener() {
+				@Override
+				public void widgetDisposed(DisposeEvent e) {
+					if (fImage != null && !fImage.isDisposed()) {
+						fImage.dispose();
+						fImage = null;
 					}
-				});
+				}
+			});
 		} else {
 			Rectangle imageRectangle= fImage.getBounds();
 			Point controlSize= control.getSize();
 
-			if (imageRectangle.width < controlSize.x || imageRectangle.height < controlSize.y) {
+			if (imageRectangle.width < controlSize.x || imageRectangle.height < controlSize.y
+					|| !rangeIndicatorColor.equals(fLastRangeIndicatorColor)) {
 				fImage.dispose();
-				fImage= createImage(control.getDisplay(), controlSize);
+				fImage= createImage(control.getDisplay(), controlSize, rangeIndicatorColor);
 			}
 		}
 
@@ -125,21 +132,23 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 *
 	 * @param display the display on which to create the image
 	 * @param size the image size
+	 * @param rangeIndicatorColor the color to be used to paint the range indicator
 	 * @return a new image
- 	 */
-	private static Image createImage(Display display, Point size) {
+	 */
+	private static Image createImage(Display display, Point size, Color rangeIndicatorColor) {
 
 		int width= size.x;
 		int height= size.y;
 
-		if (fgPaletteData == null)
-			fgPaletteData= createPalette(display);
 
-		ImageData imageData= new ImageData(width, height, 1, fgPaletteData);
+		ImageData imageData= new ImageData(width, height, 1, createPalette(display, rangeIndicatorColor));
 
 		for (int y= 0; y < height; y++)
 			for (int x= 0; x < width; x++)
 				imageData.setPixel(x, y, (x + y) % 2);
+
+		imageData.transparentPixel= imageData.palette.getPixel(imageData.getRGBs()[1]);
+
 
 		return new Image(display, imageData);
 	}
@@ -148,19 +157,11 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 * Creates and returns a new color palette data.
 	 *
 	 * @param display the display
+	 * @param rangeIndicatorColor the color to be used to paint the range indicator
 	 * @return the new color palette data
 	 */
-	private static PaletteData createPalette(Display display) {
-		Color c1;
-		Color c2;
-
-		c1= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
-		c2= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-
-		RGB rgbs[]= new RGB[] {
-			new RGB(c1.getRed(), c1.getGreen(), c1.getBlue()),
-			new RGB(c2.getRed(), c2.getGreen(), c2.getBlue())};
-
-		return new PaletteData(rgbs);
+	private static PaletteData createPalette(Display display, Color rangeIndicatorColor) {
+		return new PaletteData(new RGB[] { rangeIndicatorColor.getRGB(),
+				display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB() });
 	}
 }
