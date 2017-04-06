@@ -368,13 +368,16 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 		if (!supportsZoomLevel(zoom)) {
 			return null;
 		}
+		/* Assign before calling getSize(), just in case an implementer of
+		 * getSize() already uses a CachedImageDataProvider. */
+		compositeZoom = zoom;
+
 		Point size = getSize();
 
 		/* Create a 24 bit image data with alpha channel */
 		imageData = new ImageData(scaleUp(size.x, zoom), scaleUp(size.y, zoom), 24,
 				new PaletteData(0xFF, 0xFF00, 0xFF0000));
 		imageData.alphaData = new byte[imageData.width * imageData.height];
-		compositeZoom = zoom;
 
 		drawCompositeImage(size.x, size.y);
 
