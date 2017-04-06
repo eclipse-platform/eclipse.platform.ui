@@ -12,6 +12,8 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -120,5 +122,24 @@ public class IFolderTest extends ResourceTest {
 		assertTrue("4.2", folder.isLocal(IResource.DEPTH_ZERO));
 		assertTrue("4.3", file.isLocal(IResource.DEPTH_ZERO));
 
+	}
+
+	/**
+	 * Bug 514831: "shallow" mkdir fails if the directory already exists
+	 */
+	public void testBug514831() throws CoreException {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("TestProject");
+		IFolder folder = project.getFolder("folder");
+
+		ensureExistsInWorkspace(project, true);
+		ensureExistsInWorkspace(new IResource[] {folder}, true);
+
+		IFileStore dir = EFS.getLocalFileSystem().fromLocalFile(folder.getLocation().toFile());
+		assertTrue(dir.fetchInfo().exists());
+
+		dir.mkdir(EFS.NONE, null);
+		dir.mkdir(EFS.SHALLOW, null);
+		// should not throw an exception
 	}
 }

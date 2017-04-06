@@ -322,6 +322,11 @@ public class LocalFile extends FileStore {
 			} else {
 				Files.createDirectories(file.toPath());
 			}
+		} catch (FileAlreadyExistsException e) {
+			if (!file.isDirectory()) {
+				String message = NLS.bind(Messages.failedCreateWrongType, filePath);
+				Policy.error(EFS.ERROR_WRONG_TYPE, message, e);
+			}
 		} catch (IOException e) {
 			checkReadOnlyParent(file, e);
 			checkTargetDoesNotExist(file, e);
