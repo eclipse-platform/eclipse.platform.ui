@@ -58,7 +58,7 @@ public class DefaultContentAssistProcessor implements IContentAssistProcessor {
 
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 		for (String token : tokenSet) {
-			if ((token==null)||(token.isEmpty())) {
+			if ((token==null)||(token.length()<2)) {
 				continue;
 			}
 			if (token.equals(prefix)) {
