@@ -129,7 +129,7 @@ public class CreateDirectoryTest extends FileSystemTest {
 			fail("1.99");
 		} catch (CoreException e) {
 			assertNotNull("1.1", e.getStatus());
-			assertEquals("1.2", EFS.ERROR_WRITE, e.getStatus().getCode());
+			assertEquals("1.2", EFS.ERROR_NOT_EXISTS, e.getStatus().getCode());
 		}
 	}
 

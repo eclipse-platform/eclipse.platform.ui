@@ -96,22 +96,6 @@ public class LocalFile extends FileStore {
 		}
 	}
 
-	/**
-	 * This method is called after a failure to modify a directory.
-	 * Check to see if the target does not exist (e.g. device doesn't not exist) and if so then
-	 * throw an exception with a more specific message and error code.
-	 *
-	 * @param target The directory that we failed to modify
-	 * @param exception The low level exception that occurred, or <code>null</code>
-	 * @throws CoreException A more specific exception if the target does not exist
-	 */
-	private void checkTargetDoesNotExist(File target, Throwable exception) throws CoreException {
-		if (!target.exists()) {
-			String message = NLS.bind(Messages.fileNotFound, target.getAbsolutePath());
-			Policy.error(EFS.ERROR_WRITE, message, exception);
-		}
-	}
-
 	@Override
 	public String[] childNames(int options, IProgressMonitor monitor) {
 		String[] names = file.list();
@@ -327,12 +311,25 @@ public class LocalFile extends FileStore {
 				String message = NLS.bind(Messages.failedCreateWrongType, filePath);
 				Policy.error(EFS.ERROR_WRONG_TYPE, message, e);
 			}
+		} catch (AccessDeniedException e) {
+			if (!file.isDirectory()) {
+				checkReadOnlyParent(file, e);
+				String message = NLS.bind(Messages.failedCreateAccessDenied, filePath);
+				Policy.error(EFS.ERROR_AUTH_FAILED, message, e);
+			}
+		} catch (NoSuchFileException e) {
+			if (!file.isDirectory()) {
+				String parentPath = file.getParent();
+				String message = NLS.bind(Messages.fileNotFound, parentPath != null ? parentPath : filePath);
+				Policy.error(EFS.ERROR_NOT_EXISTS, message, e);
+			}
 		} catch (IOException e) {
-			checkReadOnlyParent(file, e);
-			checkTargetDoesNotExist(file, e);
-			checkTargetIsNotWritable(file, e);
-			String message = NLS.bind(Messages.failedCreateWrongType, filePath);
-			Policy.error(EFS.ERROR_WRONG_TYPE, message, e);
+			if (!file.isDirectory()) {
+				checkReadOnlyParent(file, e);
+				checkTargetIsNotWritable(file, e);
+				String message = NLS.bind(Messages.couldNotWrite, filePath);
+				Policy.error(EFS.ERROR_WRITE, message, e);
+			}
 		}
 		return this;
 	}
