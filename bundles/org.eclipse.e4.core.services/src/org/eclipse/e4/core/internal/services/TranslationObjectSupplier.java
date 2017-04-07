@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 BestSolution.at and others.
+ * Copyright (c) 2011, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,17 @@ package org.eclipse.e4.core.internal.services;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
@@ -33,9 +35,13 @@ import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
-@Component(service = ExtendedObjectSupplier.class, property = "dependency.injection.annotation:String=org.eclipse.e4.core.services.nls.Translation")
-public class TranslationObjectSupplier extends ExtendedObjectSupplier {
+@Component(service = { ExtendedObjectSupplier.class, EventHandler.class }, property = {
+		"dependency.injection.annotation=org.eclipse.e4.core.services.nls.Translation",
+		"event.topics=" + IEclipseContext.TOPIC_DISPOSE })
+public class TranslationObjectSupplier extends ExtendedObjectSupplier implements EventHandler {
 
 	/**
 	 * The current active locale that gets injected for updating the message instances.
@@ -59,11 +65,10 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * Map that contains all {@link IRequestor} that requested an instance of a messages class. Used
 	 * to inform all requestor if the instances have changed due to a locale change.
 	 */
-	private Map<Class<?>, Set<IRequestor>> listeners = new HashMap<>();
+	private Map<Class<?>, Set<IRequestor>> listeners = new ConcurrentHashMap<>();
 
 	@Override
-	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track,
-			boolean group) {
+	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
 
 		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
 
@@ -123,11 +128,9 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 *            The {@link IRequestor} that requested the instance.
 	 */
 	private void addListener(Class<?> descriptorsClass, IRequestor requestor) {
-		Set<IRequestor> registered = this.listeners.get(descriptorsClass);
-		if (registered == null) {
-			registered = new HashSet<>();
-			this.listeners.put(descriptorsClass, registered);
-		}
+		Set<IRequestor> registered = this.listeners.computeIfAbsent(descriptorsClass, (dc) -> {
+			return ConcurrentHashMap.newKeySet();
+		});
 		registered.add(requestor);
 	}
 
@@ -161,5 +164,20 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 				return (Class<?>) rawType;
 		}
 		return null;
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		for (Iterator<Entry<Class<?>, Set<IRequestor>>> it = this.listeners.entrySet().iterator(); it.hasNext();) {
+			Map.Entry<Class<?>, Set<IRequestor>> entry = it.next();
+			Set<IRequestor> requestors = entry.getValue();
+			if (requestors != null) {
+				Predicate<IRequestor> predicate = IRequestor::isValid;
+				requestors.removeIf(predicate.negate());
+				if (requestors.isEmpty()) {
+					it.remove();
+				}
+			}
+		}
 	}
 }

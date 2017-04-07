@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.PreDestroy;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.extensions.EventTopic;
@@ -42,9 +43,11 @@ import org.osgi.service.event.EventHandler;
 /**
  * This class is instantiated and wired by declarative services.
  */
-@Component(service = ExtendedObjectSupplier.class, immediate = true, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.EventTopic")
-public class EventObjectSupplier extends ExtendedObjectSupplier {
-	
+@Component(service = { ExtendedObjectSupplier.class, EventHandler.class }, property = {
+		"dependency.injection.annotation=org.eclipse.e4.core.di.extensions.EventTopic",
+		"event.topics=" + IEclipseContext.TOPIC_DISPOSE }, immediate = true)
+public class EventObjectSupplier extends ExtendedObjectSupplier implements EventHandler {
+
 	// Same as IEventBroker.DATA
 	public static final String DATA = "org.eclipse.e4.data"; //$NON-NLS-1$
 
@@ -168,6 +171,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
 		if (descriptorsClass.equals(Event.class))
 			return currentEvents.get(topic);
+
 		return currentEvents.get(topic).getProperty(DATA);
 	}
 
@@ -246,6 +250,22 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 				return (Class<?>) rawType;
 		}
 		return null;
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		synchronized (registrations) {
+			Iterator<Entry<Subscriber, ServiceRegistration<EventHandler>>> i = registrations.entrySet().iterator();
+			while (i.hasNext()) {
+				Entry<Subscriber, ServiceRegistration<EventHandler>> entry = i.next();
+				Subscriber key = entry.getKey();
+				if (!key.getRequestor().isValid()) {
+					ServiceRegistration<EventHandler> registration = entry.getValue();
+					registration.unregister();
+					i.remove();
+				}
+			}
+		}
 	}
 
 }

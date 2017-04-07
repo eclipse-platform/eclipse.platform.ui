@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 Markus Alexander Kuppe and others. All rights reserved.
+ * Copyright (c) 2013, 2017 Markus Alexander Kuppe and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,7 +12,10 @@ package org.eclipse.e4.core.di.internal.extensions;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
@@ -26,9 +29,13 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
-@Component(service = ExtendedObjectSupplier.class, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.OSGiBundle")
-public class OSGiObjectSupplier extends ExtendedObjectSupplier {
+@Component(service = { ExtendedObjectSupplier.class, EventHandler.class }, property = {
+		"dependency.injection.annotation=org.eclipse.e4.core.di.extensions.OSGiBundle",
+		"event.topics=" + IEclipseContext.TOPIC_DISPOSE })
+public class OSGiObjectSupplier extends ExtendedObjectSupplier implements EventHandler {
 
 	/**
 	 * A Map of Requestor to BundleListener. Each Requestor will only ever request its own bundle and thus there is a 1:1 relationship between R and BL.
@@ -105,6 +112,17 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 		synchronized (requestor2listener) {
 			localBundleContext.addBundleListener(listener);
 			requestor2listener.put(requestor, listener);
+		}
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		for (Iterator<Entry<IRequestor, BundleListener>> it = requestor2listener.entrySet().iterator(); it.hasNext();) {
+			Entry<IRequestor, BundleListener> entry = it.next();
+			if (!entry.getKey().isValid()) {
+				localBundleContext.removeBundleListener(entry.getValue());
+				it.remove();
+			}
 		}
 	}
 }

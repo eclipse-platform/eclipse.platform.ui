@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
@@ -33,13 +35,17 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Note: we do not support byte arrays in preferences at this time. This class
  * is instantiated and wired by declarative services.
  */
-@Component(service = ExtendedObjectSupplier.class, immediate = true, property = "dependency.injection.annotation=org.eclipse.e4.core.di.extensions.Preference")
-public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
+@Component(service = { ExtendedObjectSupplier.class, EventHandler.class }, property = {
+		"dependency.injection.annotation=org.eclipse.e4.core.di.extensions.Preference",
+		"event.topics=" + IEclipseContext.TOPIC_DISPOSE }, immediate = true)
+public class PreferencesObjectSupplier extends ExtendedObjectSupplier implements EventHandler {
 
 	private IPreferencesService preferencesService;
 
@@ -215,6 +221,38 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 				}
 			}
 			listenerCache.clear();
+		}
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		synchronized (listenerCache) {
+			for (Iterator<Map.Entry<String, HashMap<String, List<PrefInjectionListener>>>> nodesIterator = listenerCache
+					.entrySet().iterator(); nodesIterator.hasNext();) {
+				HashMap<String, List<PrefInjectionListener>> map = nodesIterator.next().getValue();
+				for (Iterator<HashMap.Entry<String, List<PrefInjectionListener>>> valuesIterator = map.entrySet()
+						.iterator(); valuesIterator.hasNext();) {
+					List<PrefInjectionListener> listeners = valuesIterator.next().getValue();
+					if (listeners != null) {
+						for (Iterator<PrefInjectionListener> listenerIterator = listeners.iterator(); listenerIterator
+								.hasNext();) {
+							PrefInjectionListener listener = listenerIterator.next();
+							if (!listener.getRequestor().isValid()) {
+								listener.stopListening();
+								listenerIterator.remove();
+							}
+						}
+
+						if (listeners.isEmpty()) {
+							valuesIterator.remove();
+						}
+					}
+				}
+
+				if (map.isEmpty()) {
+					nodesIterator.remove();
+				}
+			}
 		}
 	}
 

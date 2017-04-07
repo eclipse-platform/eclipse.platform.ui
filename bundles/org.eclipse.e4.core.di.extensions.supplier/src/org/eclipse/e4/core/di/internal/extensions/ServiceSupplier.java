@@ -16,12 +16,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.extensions.Service;
@@ -39,13 +40,17 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 import org.osgi.service.log.LogService;
 
 /**
  * Supplier for {@link Service}
  */
-@Component(service = ExtendedObjectSupplier.class, property = "dependency.injection.annotation:String=org.eclipse.e4.core.di.extensions.Service")
-public class ServiceSupplier extends ExtendedObjectSupplier {
+@Component(service = { ExtendedObjectSupplier.class, EventHandler.class }, property = {
+		"dependency.injection.annotation=org.eclipse.e4.core.di.extensions.Service",
+		"event.topics=" + IEclipseContext.TOPIC_DISPOSE })
+public class ServiceSupplier extends ExtendedObjectSupplier implements EventHandler {
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
 	volatile LogService logService;
@@ -64,24 +69,9 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 
 		@Override
 		public void serviceChanged(ServiceEvent event) {
+			cleanup();
+
 			synchronized (this.supplier) {
-				Predicate<IRequestor> pr = IRequestor::isValid;
-				this.requestors.removeIf(pr.negate());
-
-				if( this.requestors.isEmpty() ) {
-					Map<Class<?>, ServiceHandler> map = this.supplier.handlerList.get(this.bundleContext);
-					if( map != null ) {
-						map.remove(this.serviceType);
-
-						if( map.isEmpty() ) {
-							this.supplier.handlerList.remove(this.bundleContext);
-						}
-					}
-
-					this.bundleContext.removeServiceListener(this);
-					return;
-				}
-
 				String[] data = (String[]) event.getServiceReference().getProperty(Constants.OBJECTCLASS);
 				for (String d : data) {
 					if (this.serviceType.getName().equals(d)) {
@@ -98,9 +88,30 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 				}
 			}
 		}
+
+		public void cleanup() {
+			synchronized (this.supplier) {
+				Predicate<IRequestor> pr = IRequestor::isValid;
+				this.requestors.removeIf(pr.negate());
+
+				if (this.requestors.isEmpty()) {
+					Map<Class<?>, ServiceHandler> map = this.supplier.handlerList.get(this.bundleContext);
+					if (map != null) {
+						map.remove(this.serviceType);
+
+						if (map.isEmpty()) {
+							this.supplier.handlerList.remove(this.bundleContext);
+						}
+					}
+
+					this.bundleContext.removeServiceListener(this);
+					return;
+				}
+			}
+		}
 	}
 
-	Map<BundleContext,Map<Class<?>,ServiceHandler>> handlerList = new HashMap<>();
+	Map<BundleContext, Map<Class<?>, ServiceHandler>> handlerList = new ConcurrentHashMap<>();
 
 	@Override
 	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
@@ -188,7 +199,7 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 	}
 
 	private synchronized void trackService(BundleContext context, Class<?> serviceClass, IRequestor requestor) {
-		Map<Class<?>, ServiceHandler> map = this.handlerList.computeIfAbsent(context, (k) -> new HashMap<>());
+		Map<Class<?>, ServiceHandler> map = this.handlerList.computeIfAbsent(context, (k) -> new ConcurrentHashMap<>());
 		ServiceHandler handler = map.computeIfAbsent(serviceClass, (cl) -> {
 			ServiceHandler h = new ServiceHandler(this,context, serviceClass);
 			context.addServiceListener(h);
@@ -214,4 +225,12 @@ public class ServiceSupplier extends ExtendedObjectSupplier {
 		}
 	}
 
+	@Override
+	public void handleEvent(Event event) {
+		this.handlerList.forEach((bc, map) -> {
+			map.forEach((cl, sh) -> {
+				sh.cleanup();
+			});
+		});
+	}
 }
