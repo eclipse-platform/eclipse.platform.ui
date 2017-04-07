@@ -542,23 +542,8 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		return null;
 	}
 
-	private Runnable scheduledUpdate;
 
 	protected void updateItemEnablement() {
-		if (scheduledUpdate == null) {
-			Display current = Display.getCurrent();
-			scheduledUpdate = () -> {
-				try {
-					performUpdateItemEnablement();
-				} finally {
-					scheduledUpdate = null;
-				}
-			};
-			current.asyncExec(scheduledUpdate);
-		}
-	}
-
-	private void performUpdateItemEnablement() {
 		if (!(modelItem.getWidget() instanceof ToolItem))
 			return;
 
