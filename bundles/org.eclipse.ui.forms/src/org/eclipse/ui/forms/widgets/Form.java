@@ -273,7 +273,7 @@ public class Form extends Composite {
 	 * <p>
 	 * <strong>Note:</strong> Mnemonics are indicated by an '&amp;' that causes
 	 * the next character to be the mnemonic. Mnemonics are not applicable in
-	 * the case of the form title but need to be taken into acount due to the
+	 * the case of the form title but need to be taken into account due to the
 	 * usage of the underlying widget that renders mnemonics in the title area.
 	 * The mnemonic indicator character '&amp;' can be escaped by doubling it in
 	 * the string, causing a single '&amp;' to be displayed.
