@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class TreeElement extends ControlElement
-		implements ISelectionBackgroundCustomizationElement, IHeaderCustomizationElement {
+implements ISelectionBackgroundCustomizationElement, IHeaderCustomizationElement {
 
 	private static boolean showedUnsupportedWarning = false;
 
@@ -200,6 +200,8 @@ public class TreeElement extends ControlElement
 	@Override
 	public void reset() {
 		setTreeArrowsForegroundColor(null);
+		setHeaderColor(null);
+		setHeaderBackgroundColor(null);
 		super.reset();
 	}
 
