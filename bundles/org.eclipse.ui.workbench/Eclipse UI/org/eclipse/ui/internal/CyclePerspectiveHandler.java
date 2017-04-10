@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504090
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504090, 515060
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -18,6 +18,10 @@ import java.util.Collections;
 import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,6 +37,9 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  * @since 3.3
  */
 public class CyclePerspectiveHandler extends FilteredTableBaseHandler {
+
+	private SearchPattern searchPattern;
+
 	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
             false);
 
@@ -41,6 +48,47 @@ public class CyclePerspectiveHandler extends FilteredTableBaseHandler {
 		List<IPerspectiveDescriptor> refs = Arrays.asList(page.getSortedPerspectives());
 		Collections.reverse(refs);
 		return refs;
+	}
+
+	@Override
+	protected boolean isFiltered() {
+		return true;
+	}
+
+	SearchPattern getMatcher() {
+		return searchPattern;
+	}
+
+	@Override
+	protected void setMatcherString(String pattern) {
+		if (pattern.length() == 0) {
+			searchPattern = null;
+		} else {
+			SearchPattern patternMatcher = new SearchPattern();
+			patternMatcher.setPattern("*" + pattern); //$NON-NLS-1$
+			searchPattern = patternMatcher;
+		}
+	}
+
+	@Override
+	protected ViewerFilter getFilter() {
+		return new ViewerFilter() {
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				SearchPattern matcher = getMatcher();
+				if (matcher == null || !(viewer instanceof TableViewer)) {
+					return true;
+				}
+				String matchName = null;
+				if (element instanceof IPerspectiveDescriptor) {
+					matchName = ((IPerspectiveDescriptor) element).getLabel();
+				}
+				if (matchName == null) {
+					return false;
+				}
+				return matcher.matches(matchName);
+			}
+		};
 	}
 
 	@Override
