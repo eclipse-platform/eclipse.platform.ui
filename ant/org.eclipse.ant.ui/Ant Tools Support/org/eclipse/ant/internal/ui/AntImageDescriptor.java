@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -55,8 +54,8 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data = getBaseImage().getImageData();
-			setSize(new Point(data.width, data.height));
+			CachedImageDataProvider provider = createCachedImageDataProvider(getBaseImage());
+			setSize(new Point(provider.getWidth(), provider.getHeight()));
 		}
 		return fSize;
 	}
@@ -87,11 +86,7 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg = getBaseImage().getImageData();
-		if (bg == null) {
-			bg = DEFAULT_IMAGE_DATA;
-		}
-		drawImage(bg, 0, 0);
+		drawImage(createCachedImageDataProvider(getBaseImage()), 0, 0);
 		drawOverlays();
 	}
 
@@ -101,21 +96,21 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	protected void drawOverlays() {
 		int flags = getFlags();
 		int y = 0;
-		ImageData data = null;
+		CachedImageDataProvider provider;
 		if ((flags & IMPORTED) != 0) {
-			data = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_IMPORT).getImageData();
-			drawImage(data, 0, 0);
+			provider = createCachedImageDataProvider(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_IMPORT));
+			drawImage(provider, 0, 0);
 		}
 		if ((flags & HAS_ERRORS) != 0) {
 			y = getSize().y;
-			data = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR).getImageData();
-			y -= data.height;
-			drawImage(data, 0, y);
+			provider = createCachedImageDataProvider(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR));
+			y -= provider.getHeight();
+			drawImage(provider, 0, y);
 		} else if ((flags & HAS_WARNINGS) != 0) {
 			y = getSize().y;
-			data = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_WARNING).getImageData();
-			y -= data.height;
-			drawImage(data, 0, y);
+			provider = createCachedImageDataProvider(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_WARNING));
+			y -= provider.getHeight();
+			drawImage(provider, 0, y);
 		}
 	}
 
