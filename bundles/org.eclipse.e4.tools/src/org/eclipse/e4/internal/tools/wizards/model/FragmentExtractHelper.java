@@ -50,7 +50,10 @@ public class FragmentExtractHelper {
 		{
 			final EObject objectToBeImported = (EObject) featureIterator.next();
 			final EReference eReference = (EReference)featureIterator.feature();
-			MApplicationElement alreadyImportedElement = importedElements.get(objectToBeImported);
+			MApplicationElement alreadyImportedElement = null;
+			if (objectToBeImported instanceof MApplicationElement) {
+				alreadyImportedElement = importedElements.get((MApplicationElement) objectToBeImported);
+			}
 			if(alreadyImportedElement==null){
 				alreadyImportedElement = (MApplicationElement) EcoreUtil.copy(objectToBeImported);
 				importedElements.put((MApplicationElement) objectToBeImported, alreadyImportedElement);

@@ -804,7 +804,7 @@ public class ListTab implements IViewEObjects {
 	private EAttributeTableViewerColumn addColumn(String attName) {
 		EAttributeTableViewerColumn colName = defaultColumns.get(attName);
 		if (colName == null) {
-			colName = optionalColumns.get(colName);
+			colName = optionalColumns.get(attName);
 			if (colName == null) {
 				colName = new EAttributeTableViewerColumn_Markable(tvResults, attName, attName, context);
 				optionalColumns.put(attName, colName);
