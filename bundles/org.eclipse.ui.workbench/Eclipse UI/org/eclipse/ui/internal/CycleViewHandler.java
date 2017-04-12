@@ -25,10 +25,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -44,8 +40,6 @@ import org.eclipse.ui.commands.ICommandService;
  *
  */
 public class CycleViewHandler extends FilteredTableBaseHandler {
-
-	private SearchPattern searchPattern;
 
 	@Override
 	protected Object getInput(WorkbenchPage page) {
@@ -81,47 +75,6 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 		});
 		return refs;
 
-	}
-
-	@Override
-	protected boolean isFiltered() {
-		return true;
-	}
-
-	SearchPattern getMatcher() {
-		return searchPattern;
-	}
-
-	@Override
-	protected void setMatcherString(String pattern) {
-		if (pattern.length() == 0) {
-			searchPattern = null;
-		} else {
-			SearchPattern patternMatcher = new SearchPattern();
-			patternMatcher.setPattern("*" + pattern); //$NON-NLS-1$
-			searchPattern = patternMatcher;
-		}
-	}
-
-	@Override
-	protected ViewerFilter getFilter() {
-		return new ViewerFilter() {
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				SearchPattern matcher = getMatcher();
-				if (matcher == null || !(viewer instanceof TableViewer)) {
-					return true;
-				}
-				String matchName = null;
-				if (element instanceof ViewReference) {
-					matchName = ((ViewReference) element).getPartName();
-				}
-				if (matchName == null) {
-					return false;
-				}
-				return matcher.matches(matchName);
-			}
-		};
 	}
 
 	/*
