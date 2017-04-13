@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Erik Chou <ekchou@ymail.com> - Bug 425962
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445664, 442278, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 388476
+ *     Patrik Suzzi - <psuzzi@gmail.com> - Bug 515265
  *******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -193,7 +194,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private List<ITheme> getCSSThemes(boolean highContrastMode) {
-		List<ITheme> themes = new ArrayList<>();
+		ArrayList<ITheme> themes = new ArrayList<>();
 		for (ITheme theme : engine.getThemes()) {
 			/*
 			 * When we have Win32 OS - when the high contrast mode is enabled on
@@ -212,6 +213,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 			}
 			themes.add(theme);
 		}
+		themes.sort((ITheme t1, ITheme t2) -> t1.getLabel().compareTo(t2.getLabel()));
 		return themes;
 	}
 
