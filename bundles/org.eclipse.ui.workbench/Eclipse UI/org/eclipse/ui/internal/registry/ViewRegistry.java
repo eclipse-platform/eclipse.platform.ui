@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
@@ -194,8 +195,11 @@ public class ViewRegistry implements IViewRegistry {
 			tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
 			descriptor.setCategory(category.getLabel());
 		}
+		String restorable = element.getAttribute(IWorkbenchRegistryConstants.ATT_RESTORABLE);
+		if (!(restorable == null ? true : Boolean.parseBoolean(restorable))) {
+			descriptor.getTags().add(IPresentationEngine.NO_RESTORE);
+		}
 		// ==> End of update descriptor
-
 		ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor, element);
 		descriptors.put(descriptor.getElementId(), viewDescriptor);
 		if (category != null) {

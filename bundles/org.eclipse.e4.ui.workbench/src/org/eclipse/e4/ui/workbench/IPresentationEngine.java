@@ -235,6 +235,12 @@ public interface IPresentationEngine {
 	public static final String ACTIVE = "active"; //$NON-NLS-1$
 
 	/**
+	 * When applied as a tag to an MPartDescriptor marks the part as not
+	 * restorable.
+	 */
+	public static final String NO_RESTORE = "NoRestore"; //$NON-NLS-1$
+
+	/**
 	 * Creates and returns the UI element for the given model element.
 	 *
 	 * @param element

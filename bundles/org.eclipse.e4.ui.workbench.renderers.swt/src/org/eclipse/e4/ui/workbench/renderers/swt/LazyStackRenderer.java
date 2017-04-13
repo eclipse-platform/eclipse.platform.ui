@@ -122,6 +122,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// part is already there...see bug 378138 for details
 			if (element instanceof MPlaceholder) {
 				MPlaceholder ph = (MPlaceholder) element;
+				if (ph.getRef().getTags().contains(IPresentationEngine.NO_RESTORE))
+					continue;
 				if (ph.getRef() instanceof MPart && ph.getRef().getWidget() != null) {
 					lazy = false;
 				}
