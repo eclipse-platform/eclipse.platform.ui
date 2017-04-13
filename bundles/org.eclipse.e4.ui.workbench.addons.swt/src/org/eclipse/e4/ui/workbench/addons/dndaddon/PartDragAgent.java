@@ -14,7 +14,9 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
+import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
@@ -42,7 +44,13 @@ public class PartDragAgent extends DragAgent {
 		// Drag a part that is in a stack
 		if (info.itemElement instanceof MStackElement) {
 			// Prevent dragging 'No Move' parts
-			if (info.itemElement.getTags().contains(IPresentationEngine.NO_MOVE)) {
+			List<String> tags;
+			if (info.itemElement instanceof MPlaceholder) {
+				tags = ((MPlaceholder) info.itemElement).getRef().getTags();
+			} else {
+				tags = info.itemElement.getTags();
+			}
+			if (tags.contains(IPresentationEngine.NO_MOVE)) {
 				return null;
 			}
 
