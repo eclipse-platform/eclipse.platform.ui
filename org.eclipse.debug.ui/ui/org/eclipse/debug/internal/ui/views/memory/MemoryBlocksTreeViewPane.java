@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,7 +264,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				if (obj instanceof IAdaptable) {
 					IAdaptable context = (IAdaptable) obj;
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-					if (retrieval != null && retrieval != fRetrieval && fTreeViewer != null && fTreeViewer.getContentProvider() != null) {
+					if (retrieval != null && (retrieval != fRetrieval || retrieval != fTreeViewer.getInput()) && fTreeViewer != null && fTreeViewer.getContentProvider() != null) {
 						// set new setting
 						fRetrieval = retrieval;
 						fTreeViewer.setInput(fRetrieval);
