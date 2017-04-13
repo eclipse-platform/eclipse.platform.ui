@@ -497,7 +497,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	protected Color getForeground(){
-		return dialog.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+		return dialog.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 	protected Color getBackground() {
 		return dialog.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
