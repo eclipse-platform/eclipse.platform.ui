@@ -66,12 +66,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
-import org.eclipse.ui.themes.ITheme;
 
 /**
  * Base class to open a dialog to filter and select elements of a {@link Table}.
@@ -499,8 +497,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	protected Color getForeground(){
-		ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-		return theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
+		return dialog.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
 	}
 	protected Color getBackground() {
 		return dialog.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
