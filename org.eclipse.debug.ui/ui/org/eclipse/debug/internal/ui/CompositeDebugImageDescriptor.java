@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -49,8 +48,8 @@ public class CompositeDebugImageDescriptor extends CompositeImageDescriptor {
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data= getBaseImage().getImageData();
-			setSize(new Point(data.width, data.height));
+			CachedImageDataProvider provider = createCachedImageDataProvider(getBaseImage());
+			setSize(new Point(provider.getWidth(), provider.getHeight()));
 		}
 		return fSize;
 	}
@@ -80,11 +79,7 @@ public class CompositeDebugImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg= getBaseImage().getImageData();
-		if (bg == null) {
-			bg= DEFAULT_IMAGE_DATA;
-		}
-		drawImage(bg, 0, 0);
+		drawImage(createCachedImageDataProvider(getBaseImage()), 0, 0);
 		drawOverlays();
 	}
 
@@ -95,12 +90,12 @@ public class CompositeDebugImageDescriptor extends CompositeImageDescriptor {
 		int flags= getFlags();
 		int x= 0;
 		int y= 0;
-		ImageData data= null;
+		CachedImageDataProvider provider;
 		if ((flags & SKIP_BREAKPOINT) != 0) {
 			x= 0;
 			y= 0;
-			data= DebugUITools.getImage(IDebugUIConstants.IMG_OVR_SKIP_BREAKPOINT).getImageData();
-			drawImage(data, x, y);
+			provider = createCachedImageDataProvider(DebugUITools.getImage(IDebugUIConstants.IMG_OVR_SKIP_BREAKPOINT));
+			drawImage(provider, x, y);
 		}
 	}
 

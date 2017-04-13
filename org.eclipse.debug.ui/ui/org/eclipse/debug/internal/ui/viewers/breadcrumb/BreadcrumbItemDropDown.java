@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -67,13 +68,13 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 * mode. If <code>ltr</code> is true the arrow points to the right, otherwise it
 	 * points to the left.
 	 */
-	private final class AccessibelArrowImage extends CompositeImageDescriptor {
+	private final class AccessibleArrowImage extends CompositeImageDescriptor {
 
 		private final static int ARROW_SIZE= 5;
 
 		private final boolean fLTR;
 
-		public AccessibelArrowImage(boolean ltr) {
+		public AccessibleArrowImage(boolean ltr) {
 			fLTR= ltr;
 		}
 
@@ -83,52 +84,36 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		@Override
 		protected void drawCompositeImage(int width, int height) {
 			Display display= fParentComposite.getDisplay();
+			ImageDataProvider imageProvider = zoom -> {
+				Image image = new Image(display, ARROW_SIZE, ARROW_SIZE * 2);
 
-			Image image= new Image(display, ARROW_SIZE, ARROW_SIZE * 2);
+				GC gc = new GC(image, fLTR ? SWT.LEFT_TO_RIGHT : SWT.RIGHT_TO_LEFT);
+				gc.setAntialias(SWT.ON);
 
-			GC gc= new GC(image);
+				Color triangleColor = createColor(SWT.COLOR_LIST_FOREGROUND, SWT.COLOR_LIST_BACKGROUND, 20, display);
+				gc.setBackground(triangleColor);
+				gc.fillPolygon(new int[] {
+						0, 0, ARROW_SIZE, ARROW_SIZE, 0, ARROW_SIZE * 2 });
+				gc.dispose();
+				triangleColor.dispose();
 
-			Color triangle= createColor(SWT.COLOR_LIST_FOREGROUND, SWT.COLOR_LIST_BACKGROUND, 20, display);
-			Color aliasing= createColor(SWT.COLOR_LIST_FOREGROUND, SWT.COLOR_LIST_BACKGROUND, 30, display);
-			gc.setBackground(triangle);
-
-			if (fLTR) {
-				gc.fillPolygon(new int[] { mirror(0), 0, mirror(ARROW_SIZE), ARROW_SIZE, mirror(0), ARROW_SIZE * 2 });
-			} else {
-				gc.fillPolygon(new int[] { ARROW_SIZE, 0, 0, ARROW_SIZE, ARROW_SIZE, ARROW_SIZE * 2 });
-			}
-
-			gc.setForeground(aliasing);
-			gc.drawLine(mirror(0), 1, mirror(ARROW_SIZE - 1), ARROW_SIZE);
-			gc.drawLine(mirror(ARROW_SIZE - 1), ARROW_SIZE, mirror(0), ARROW_SIZE * 2 - 1);
-
-			gc.dispose();
-			triangle.dispose();
-			aliasing.dispose();
-
-			ImageData imageData= image.getImageData();
-			for (int y= 1; y < ARROW_SIZE; y++) {
-				for (int x= 0; x < y; x++) {
-					imageData.setAlpha(mirror(x), y, 255);
+				ImageData imageData = image.getImageData(zoom);
+				image.dispose();
+				int zoomedArrowSize = ARROW_SIZE * zoom / 100;
+				for (int y1 = 0; y1 < zoomedArrowSize; y1++) {
+					for (int x1 = 0; x1 <= y1; x1++) {
+						imageData.setAlpha(fLTR ? x1 : zoomedArrowSize - x1 - 1, y1, 255);
+					}
 				}
-			}
-			for (int y= 0; y < ARROW_SIZE; y++) {
-				for (int x= 0; x <= y; x++) {
-					imageData.setAlpha(mirror(x), ARROW_SIZE * 2 - y - 1, 255);
+				for (int y2 = 0; y2 < zoomedArrowSize; y2++) {
+					for (int x2 = 0; x2 <= y2; x2++) {
+						imageData.setAlpha(fLTR ? x2 : zoomedArrowSize - x2 - 1, zoomedArrowSize * 2 - y2 - 1, 255);
+					}
 				}
-			}
+				return imageData;
+			};
+			drawImage(imageProvider, (width / 2) - (ARROW_SIZE / 2), (height / 2) - ARROW_SIZE);
 
-			int offset= fLTR ? 0 : -1;
-			drawImage(imageData, (width / 2) - (ARROW_SIZE / 2) + offset, (height / 2) - ARROW_SIZE - 1);
-
-			image.dispose();
-		}
-
-		private int mirror(int x) {
-			if (fLTR)
-				return x;
-
-			return ARROW_SIZE - x - 1;
 		}
 
 		/*
@@ -193,12 +178,14 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			@Override
 			public void run() {
 				Shell shell= fParent.getDropDownShell();
-				if (shell != null)
+				if (shell != null) {
 					return;
+				}
 
 				shell= fParent.getViewer().getDropDownShell();
-				if (shell != null && !shell.isDisposed())
+				if (shell != null && !shell.isDisposed()) {
 					shell.close();
+				}
 
 				showMenu();
 
@@ -206,7 +193,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			}
 		};
 
-		showDropDownMenuAction.setImageDescriptor(new AccessibelArrowImage(isLeft()));
+		showDropDownMenuAction.setImageDescriptor(new AccessibleArrowImage(isLeft()));
 		showDropDownMenuAction.setToolTipText(BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip);
 		manager.add(showDropDownMenuAction);
 
@@ -257,8 +244,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 * @return the drop down shell or <code>null</code>
 	 */
 	public Shell getDropDownShell() {
-		if (!isMenuShown())
+		if (!isMenuShown()) {
 			return null;
+		}
 
 		return fShell;
 	}
@@ -271,8 +259,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()"); //$NON-NLS-1$
 		}
 
-		if (!fEnabled || fMenuIsShown)
+		if (!fEnabled || fMenuIsShown) {
 			return;
+		}
 
 		fMenuIsShown= true;
 
@@ -287,8 +276,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
              */
             @Override
 			public void controlResized(ControlEvent e) {
-                if (fIsResizingProgrammatically)
-                    return;
+                if (fIsResizingProgrammatically) {
+					return;
+				}
 
                 Point size= fShell.getSize();
                 fCurrentWidth = size.x;
@@ -412,8 +402,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 				if (DebugUIPlugin.DEBUG_BREADCRUMB) {
 					DebugUIPlugin.trace("==> shellClosed"); //$NON-NLS-1$
 				}
-				if (!fMenuIsShown)
+				if (!fMenuIsShown) {
 					return;
+				}
 
 				fMenuIsShown= false;
 			}
@@ -435,8 +426,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	private IDialogSettings getDialogSettings() {
 	    IDialogSettings javaSettings= DebugUIPlugin.getDefault().getDialogSettings();
 	    IDialogSettings settings= javaSettings.getSection(DIALOG_SETTINGS);
-	    if (settings == null)
-	        settings= javaSettings.addNewSection(DIALOG_SETTINGS);
+	    if (settings == null) {
+			settings= javaSettings.addNewSection(DIALOG_SETTINGS);
+		}
 	    return settings;
 	}
 
@@ -477,24 +469,28 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 		Rectangle trim= fShell.computeTrim(0, 0, width, height);
 		int x= toolbarBounds.x + toolbarBounds.width + 2 + trim.x - imageBoundsX;
-		if (!isLeft())
+		if (!isLeft()) {
 			x+= width;
+		}
 
 		int y = rect.y;
-		if (isTop())
-		    y+= rect.height;
-		else
-		    y-= height;
+		if (isTop()) {
+			y+= rect.height;
+		} else {
+			y-= height;
+		}
 
 		Point pt= new Point(x, y);
 		pt= fParentComposite.toDisplay(pt);
 
 		Rectangle monitor= getClosestMonitor(shell.getDisplay(), pt).getClientArea();
 		int overlap= (pt.x + width) - (monitor.x + monitor.width);
-		if (overlap > 0)
+		if (overlap > 0) {
 			pt.x-= overlap;
-		if (pt.x < monitor.x)
+		}
+		if (pt.x < monitor.x) {
 			pt.x= monitor.x;
+		}
 
 		shell.setLocation(pt);
         fIsResizingProgrammatically= true;
@@ -529,8 +525,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 			Rectangle clientArea= current.getClientArea();
 
-			if (clientArea.contains(point))
+			if (clientArea.contains(point)) {
 				return current;
+			}
 
 			int distance= Geometry.distanceSquared(Geometry.centerPoint(clientArea), point);
 			if (distance < closest) {
@@ -552,8 +549,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
         int maxHeight= getMaxHeight();
         int maxWidth = getMaxWidth();
 
-        if (fCurrentHeight >= maxHeight && fCurrentWidth >= maxWidth)
+        if (fCurrentHeight >= maxHeight && fCurrentWidth >= maxWidth) {
 			return;
+		}
 
 		Point preferedSize= shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
