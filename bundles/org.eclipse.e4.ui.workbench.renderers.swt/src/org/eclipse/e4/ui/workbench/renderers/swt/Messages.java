@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 vogella GmbH and others.
+ * Copyright (c) 2017 vogella GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
+ *     Patrk Suzzi <psuzzi@gmail.com> - Bug 515253
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -20,6 +21,10 @@ public class Messages extends NLS {
 
 	public static String ToolBarManagerRenderer_MenuCloseText;
 	public static String ToolBarManagerRenderer_MenuRestoreText;
+
+	public static String ToolBarManagerRenderer_LockToolbars;
+	public static String ToolBarManagerRenderer_UnlockToolbars;
+	public static String ToolBarManagerRenderer_ToggleLockToolbars;
 
 	private static final String BUNDLE_NAME = "org.eclipse.e4.ui.workbench.renderers.swt.messages";//$NON-NLS-1$
 

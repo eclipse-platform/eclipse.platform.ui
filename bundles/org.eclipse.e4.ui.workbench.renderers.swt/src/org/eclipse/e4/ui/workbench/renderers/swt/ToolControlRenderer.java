@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *     Sopot Cela <sopotcela@gmail.com> - Bug 431868, 472761
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431868
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 515253
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.State;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -56,6 +63,18 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	 * Will be published or removed in 4.5.
 	 */
 	private static final String SHOW_RESTORE_MENU = "SHOW_RESTORE_MENU"; //$NON-NLS-1$
+
+	/**
+	 * Id for the lock toolbar command
+	 */
+	private static final String LOCK_TOOLBAR_CMD_ID = "org.eclipse.ui.window.lockToolBar"; //$NON-NLS-1$
+
+	/**
+	 * The state ID for a toggle state understood by the system.
+	 *
+	 * @see RegistryToggleState.STATE_ID
+	 */
+	public final static String STATE_ID = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
 
 	@Inject
 	private MApplication application;
@@ -223,8 +242,32 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		restoreHiddenItems
 				.setText(Messages.ToolBarManagerRenderer_MenuRestoreText);
 		restoreHiddenItems.addListener(SWT.Selection, event -> removeHiddenTags(toolControl));
-		renderedCtrl.setMenu(toolControlMenu);
 
+		// lock the toolbars
+		MenuItem toggleLockToolbars = new MenuItem(toolControlMenu, SWT.NONE);
+		toggleLockToolbars.setText(getLockToolbarsText());
+		toggleLockToolbars.addListener(SWT.Selection, event -> {
+			// execute command
+			EHandlerService handlerService = context.get(EHandlerService.class);
+			ECommandService commandService = context.get(ECommandService.class);
+			ParameterizedCommand pCommand = commandService.createCommand(LOCK_TOOLBAR_CMD_ID, Collections.EMPTY_MAP);
+			handlerService.executeHandler(pCommand);
+			toggleLockToolbars.setText(getLockToolbarsText());
+		});
+		renderedCtrl.setMenu(toolControlMenu);
+	}
+
+	/* get the toggle toolbar text depending on the command state */
+	private String getLockToolbarsText() {
+		ECommandService commandService = context.get(ECommandService.class);
+		Command command = commandService.getCommand(LOCK_TOOLBAR_CMD_ID);
+		State state = command.getState(STATE_ID);
+		if ((state != null) && (state.getValue() instanceof Boolean)) {
+			boolean enabled = ((Boolean) state.getValue()).booleanValue();
+			return (enabled) ? Messages.ToolBarManagerRenderer_UnlockToolbars
+					: Messages.ToolBarManagerRenderer_LockToolbars;
+		}
+		return Messages.ToolBarManagerRenderer_ToggleLockToolbars;
 	}
 
 	/**
