@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf Petter <ralf.petter@gmail.com> - Bug 510232
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 import org.eclipse.swt.SWT;
@@ -93,7 +94,7 @@ public class WrappedPageBook extends Composite {
 		if (page != null) {
 			if (!page.isDisposed()) {
 				//page.setVisible(true);
-				layout(true);
+				requestLayout();
 				page.setVisible(true);
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ralf M Petter <ralf.petter@gmail.com> - Bug 509719
+ *     Ralf M Petter <ralf.petter@gmail.com> - Bug 509719, 510232
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -553,7 +553,7 @@ public class FormHeading extends Canvas {
 				}
 			}
 			updateForeground();
-			layout(true);
+			requestLayout();
 		}
 
 		private boolean needHyperlink() {
@@ -961,7 +961,7 @@ public class FormHeading extends Canvas {
 		titleRegion.updateImage(messageRegion.getMessageImage(), false);
 		if (messageToolTipManager != null)
 			messageToolTipManager.update();
-		layout();
+		requestLayout();
 		redraw();
 	}
 
@@ -985,7 +985,7 @@ public class FormHeading extends Canvas {
 
 	public void setBusy(boolean busy) {
 		if (titleRegion.setBusy(busy))
-			layout();
+			requestLayout();
 	}
 
 	public Control getHeadClient() {
@@ -996,7 +996,7 @@ public class FormHeading extends Canvas {
 		if (headClient != null)
 			Assert.isTrue(headClient.getParent() == this);
 		this.headClient = headClient;
-		layout();
+		requestLayout();
 	}
 
 	public void putColor(String key, Color color) {

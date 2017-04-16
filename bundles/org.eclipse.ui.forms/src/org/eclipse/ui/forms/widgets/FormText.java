@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Donnelly (m2a3@eircom.net) - patch (see Bugzilla #145997)
+ *     Ralf Petter <ralf.petter@gmail.com> - Bug 510232
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -666,7 +667,7 @@ public class FormText extends Canvas {
 		else
 			model.parseRegularText(text, expandURLs);
 		hookControlSegmentFocus();
-		layout();
+		requestLayout();
 		redraw();
 	}
 
@@ -686,7 +687,7 @@ public class FormText extends Canvas {
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
 		hookControlSegmentFocus();
-		layout();
+		requestLayout();
 		redraw();
 	}
 
