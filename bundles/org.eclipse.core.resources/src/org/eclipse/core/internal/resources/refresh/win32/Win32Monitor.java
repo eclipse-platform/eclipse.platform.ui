@@ -197,7 +197,10 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 
 		protected void openHandleOn(IResource resource) {
-			openHandleOn(resource.getLocation().toOSString(), true);
+			IPath location = resource.getLocation();
+			if (location != null) {
+				openHandleOn(location.toOSString(), true);
+			}
 		}
 
 		private void openHandleOn(String path, boolean subtree) {
