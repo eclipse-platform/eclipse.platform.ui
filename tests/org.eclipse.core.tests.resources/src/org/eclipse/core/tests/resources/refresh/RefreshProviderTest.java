@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.refresh;
 
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
@@ -17,6 +19,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.resources.ResourceTest;
+import org.eclipse.core.tests.resources.TestUtil;
 
 /**
  * Tests the IRefreshMonitor interface
@@ -64,10 +67,11 @@ public class RefreshProviderTest extends ResourceTest {
 	 * Test to ensure that a refresh provider is given the correct events when a linked
 	 * file is created and deleted.
 	 */
-	public void testLinkedFile() throws InterruptedException {
+	public void testLinkedFile() throws Exception {
 		IPath location = getRandomLocation();
+		String name = "testUnmonitorLinkedResource";
 		try {
-			IProject project = getWorkspace().getRoot().getProject("testUnmonitorLinkedResource");
+			IProject project = getWorkspace().getRoot().getProject(name);
 			ensureExistsInWorkspace(project, true);
 			joinAutoRefreshJobs();
 			IFile link = project.getFile("Link");
@@ -92,6 +96,7 @@ public class RefreshProviderTest extends ResourceTest {
 		} finally {
 			//cleanup
 			Workspace.clear(location.toFile());
+			deleteProject(name);
 		}
 	}
 
@@ -99,9 +104,10 @@ public class RefreshProviderTest extends ResourceTest {
 	 * Test to ensure that a refresh provider is given the correct events when a project
 	 * is closed or opened.
 	 */
-	public void testProjectCloseOpen() throws InterruptedException {
+	public void testProjectCloseOpen() throws Exception {
+		String name = "testProjectCloseOpen";
+		IProject project = getWorkspace().getRoot().getProject(name);
 		try {
-			IProject project = getWorkspace().getRoot().getProject("testProjectCloseOpen");
 			ensureExistsInWorkspace(project, true);
 			joinAutoRefreshJobs();
 			//ensure we currently have just the project being monitored
@@ -122,7 +128,64 @@ public class RefreshProviderTest extends ResourceTest {
 				fail("" + failures.length + " failures", failures[0]);
 		} catch (CoreException e) {
 			fail("1.99", e);
+		} finally {
+			deleteProject(name);
 		}
+	}
+
+	/**
+	 * Test to ensure that a refresh provider is given the correct events when a project
+	 * is closed or opened.
+	 */
+	public void testProjectCreateDelete() throws Exception {
+		String name = "testProjectCreateDelete";
+		final int maxRuns = 1000;
+		int i = 0;
+		Map<Integer, Throwable> fails = new HashMap<>();
+		try {
+			for (; i < maxRuns; i++) {
+				if (i % 50 == 0) {
+					TestUtil.waitForJobs(getName(), 5, 100);
+				}
+				try {
+					assertTrue(createProject(name).isAccessible());
+					assertFalse(deleteProject(name).exists());
+				} catch (CoreException e) {
+					fails.put(i, e);
+				}
+			}
+		} finally {
+			deleteProject(name);
+		}
+		if (!fails.isEmpty()) {
+			fail("Failed " + fails.size() + " times out of " + i, fails.values().iterator().next());
+		}
+	}
+
+	private IProject createProject(String name) throws Exception {
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		if (pro.exists()) {
+			pro.delete(true, true, null);
+		}
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(name);
+		if (!project.exists()) {
+			project.create(null);
+		} else {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+		return project;
+	}
+
+	private static IProject deleteProject(String name) throws Exception {
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		if (pro.exists()) {
+			pro.delete(true, true, null);
+		}
+		return pro;
 	}
 
 	private void joinAutoRefreshJobs() throws InterruptedException {

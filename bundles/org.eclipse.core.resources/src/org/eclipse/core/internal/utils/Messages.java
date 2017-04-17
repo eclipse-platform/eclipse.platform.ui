@@ -150,14 +150,12 @@ public class Messages extends NLS {
 
 	// auto-refresh
 	public static String refresh_installError;
-	public static String refresh_installMonitor;
 	public static String refresh_installMonitorsOnWorkspace;
 	public static String refresh_jobName;
 	public static String refresh_pollJob;
 	public static String refresh_refreshErr;
 	public static String refresh_restoreOnInvalid;
 	public static String refresh_task;
-	public static String refresh_uninstallMonitor;
 	public static String refresh_uninstallMonitorsOnWorkspace;
 
 	public static String resources_cannotModify;

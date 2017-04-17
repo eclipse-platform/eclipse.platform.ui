@@ -22,7 +22,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.RefreshProvider;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * Manages monitors by creating new monitors when projects are added and
@@ -123,7 +122,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			case LifecycleEvent.PRE_LINK_DELETE :
 			case LifecycleEvent.PRE_PROJECT_CLOSE :
 			case LifecycleEvent.PRE_PROJECT_DELETE :
-				unmonitorAsync(event.resource);
+				unmonitor(event.resource, new NullProgressMonitor());
 				break;
 		}
 	}
@@ -366,34 +365,14 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			IResource resource = delta.getResource();
 			if (resource.isLinked())
-				monitorAsync(resource);
+				monitor(resource, new NullProgressMonitor());
 		}
 		if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
 			IProject project = (IProject) delta.getResource();
 			if (project.isAccessible())
-				monitorAsync(project);
+				monitor(project, new NullProgressMonitor());
 		}
 		return true;
 	}
 
-	private void monitorAsync(final IResource resource) {
-		MonitorJob.createSystem(NLS.bind(Messages.refresh_installMonitor, resource), resource, new ICoreRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				monitor(resource, monitor);
-				// Because the monitor is installed asynchronously we
-				// may have missed some changes, we need to refresh it.
-				refreshManager.refresh(resource);
-			}
-		}).schedule();
-	}
-
-	private void unmonitorAsync(final IResource resource) {
-		MonitorJob.createSystem(NLS.bind(Messages.refresh_uninstallMonitor, resource), resource, new ICoreRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				unmonitor(resource, monitor);
-			}
-		}).schedule();
-	}
 }
