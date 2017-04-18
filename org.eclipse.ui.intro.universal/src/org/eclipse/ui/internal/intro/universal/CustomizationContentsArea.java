@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Removed unwanted items in the Customize functionality on the Intro - https://bugs.eclipse.org/420843
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 515362
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.universal;
 
@@ -47,6 +48,8 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -65,8 +68,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -94,7 +95,7 @@ public class CustomizationContentsArea {
 	private static final String INTRO_DATA = "INTRO_DATA"; //$NON-NLS-1$
 	private static final String INTRO_THEME = "INTRO_THEME"; //$NON-NLS-1$
 	private static final String NO_ROOT_PAGES = "no_root_pages"; //$NON-NLS-1$
-	private TabFolder tabFolder;
+	private CTabFolder tabFolder;
 	private String firstPageId;
 	private Composite pageContainer;
 	private TableViewer themes;
@@ -432,14 +433,14 @@ public class CustomizationContentsArea {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		container.setLayout(layout);
-		tabFolder = new TabFolder(container, SWT.TOP);
+		tabFolder = new CTabFolder(container, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TabItem[] selection = tabFolder.getSelection();
-				onTabChange(selection[0]);
+				CTabItem selection = tabFolder.getSelection();
+				onTabChange(selection);
 			}
 		});
 		useRelativeFonts = new Button(container, SWT.CHECK);
@@ -598,7 +599,7 @@ public class CustomizationContentsArea {
 			updateColumnSizes(viewer);
 	}
 
-	private void onTabChange(TabItem item) {
+	private void onTabChange(CTabItem item) {
 		String id = (String) item.getData();
 		if (item.getControl() == pageContainer)
 			updatePageContainer(id, (PageData) item.getData("pageData")); //$NON-NLS-1$
@@ -755,7 +756,7 @@ public class CustomizationContentsArea {
 	protected void performDefaults() {
 		loadData(true);
 		// Dispose all the root page tabs
-		TabItem[] items = tabFolder.getItems();
+		CTabItem[] items = tabFolder.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getData("pageData") != null) //$NON-NLS-1$
 				items[i].dispose();
@@ -837,7 +838,7 @@ public class CustomizationContentsArea {
 	}
 
 	private void addHomePage() {
-		TabItem item = new TabItem(tabFolder, SWT.NULL);
+		CTabItem item = new CTabItem(tabFolder, SWT.NULL);
 		item.setText(Messages.WelcomeCustomizationPreferencePage_home);
 		Composite container = new Composite(tabFolder, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -933,7 +934,7 @@ public class CustomizationContentsArea {
 	private void addPage(String id) {
 		if (!getRootPageSelected(id))
 			return;
-		TabItem item = new TabItem(tabFolder, SWT.NULL);
+		CTabItem item = new CTabItem(tabFolder, SWT.NULL);
 		item.setText(getRootPageName(id));
 		item.setControl(pageContainer);
 		item.setData(id);
@@ -942,10 +943,10 @@ public class CustomizationContentsArea {
 	}
 
 	private void onPageChecked(String id, boolean checked) {
-		TabItem[] items = tabFolder.getItems();
+		CTabItem[] items = tabFolder.getItems();
 		if (checked) {
 			for (int i = 0; i < items.length; i++) {
-				TabItem item = items[i];
+				CTabItem item = items[i];
 				if (item.getData() != null)
 					item.dispose();
 			}
@@ -953,7 +954,7 @@ public class CustomizationContentsArea {
 			addRootPages();
 		} else {
 			for (int i = 0; i < items.length; i++) {
-				TabItem item = items[i];
+				CTabItem item = items[i];
 				String itemId = (String) item.getData();
 				if (itemId != null && itemId.equals(id)) {
 					item.dispose();
@@ -1202,12 +1203,12 @@ public class CustomizationContentsArea {
 			targetGd = new GroupData(IUniversalIntroConstants.HIDDEN, false);
 		else
 			return null;
-		TabItem[] items = tabFolder.getSelection();
-		PageData pd = (PageData) items[0].getData("pageData"); //$NON-NLS-1$
+		CTabItem item = tabFolder.getSelection();
+		PageData pd = (PageData) item.getData("pageData"); //$NON-NLS-1$
 		if (pd == null) {
-			String pageId = (String)items[0].getData();
+			String pageId = (String)item.getData();
 			pd = new PageData(pageId);
-			items[0].setData("pageData", pd); //$NON-NLS-1$
+			item.setData("pageData", pd); //$NON-NLS-1$
 			introRootPages.add(pageId);
 		}
 		pd.add(targetGd);
@@ -1217,9 +1218,9 @@ public class CustomizationContentsArea {
 	private void selectFirstPage() {
 		if (firstPageId == null)
 			return;
-		TabItem[] items = tabFolder.getItems();
+		CTabItem[] items = tabFolder.getItems();
 		for (int i = 0; i < items.length; i++) {
-			TabItem item = items[i];
+			CTabItem item = items[i];
 			PageData pd = (PageData) item.getData("pageData"); //$NON-NLS-1$
 			if (pd != null && pd.getId().equals(firstPageId)) {
 				tabFolder.setSelection(i);
