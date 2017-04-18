@@ -229,8 +229,8 @@ Form > LayoutComposite > LayoutComposite > Button,
 .MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button {
     /* background-color is not applied to the whole button,
        but text color is changed, so it appear light on light */
-    background-color: #515658;
-    color: #222;
+    background-color: #2F2F2F;
+    color: #CCCCCC;
 }
 Button[style~='SWT.CHECK'],
 /* the following are required due to Bug 419482: */
@@ -253,6 +253,7 @@ Form > LayoutComposite > LayoutComposite > Button[style~='SWT.CHECK'],
 .MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button[style~='SWT.CHECK'] {
     /* currently, Button object isn't consistent (eg. also a checkbox is seen as Button) */
     /* so, css rules applied to Button have to be overridden for non-Button matches */
+    background-color: #515658;
     color: #ddd;
 }
 Button[style~='SWT.RADIO'],
@@ -276,6 +277,7 @@ Form > LayoutComposite > LayoutComposite > Button[style~='SWT.RADIO'],
 .MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button[style~='SWT.RADIO'] {
     /* currently, Button object isn't consistent (eg. also a checkbox is seen as Button) */
     /* so, css rules applied to Button have to be overridden for non-Button matches */
+    background-color: #515658;
     color: #ddd;
 }
 
