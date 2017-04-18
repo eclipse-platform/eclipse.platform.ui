@@ -58,9 +58,9 @@ public abstract class AbstractIntroPartImplementation {
         {
             setToolTipText(Messages.Browser_backwardButton_tooltip);
             setImageDescriptor(ImageUtil
-                .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/backward_nav.png")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/dlcl16/backward_nav.png")); //$NON-NLS-1$
         }
 
         @Override
@@ -74,9 +74,9 @@ public abstract class AbstractIntroPartImplementation {
         {
             setToolTipText(Messages.Browser_forwardButton_tooltip);
             setImageDescriptor(ImageUtil
-                .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/forward_nav.png")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/dlcl16/forward_nav.png")); //$NON-NLS-1$
         }
 
         @Override
@@ -90,9 +90,9 @@ public abstract class AbstractIntroPartImplementation {
         {
             setToolTipText(Messages.Browser_homeButton_tooltip);
             setImageDescriptor(ImageUtil
-                .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/home_nav.png")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/dlcl16/home_nav.png")); //$NON-NLS-1$
         }
 
         @Override
@@ -106,7 +106,7 @@ public abstract class AbstractIntroPartImplementation {
         {
             setToolTipText(Messages.IntroPart_showContentButton_tooltip);
             setImageDescriptor(ImageUtil
-                .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
+                .createImageDescriptor("contents_view.png")); //$NON-NLS-1$
         }
 
         @Override

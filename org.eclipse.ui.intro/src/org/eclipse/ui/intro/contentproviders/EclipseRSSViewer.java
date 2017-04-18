@@ -210,7 +210,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 					doNavigate((String) e.getHref());
 				}
 			});
-			bulletImage = createImage(new Path("icons/arrow.gif")); //$NON-NLS-1$
+			bulletImage = createImage(new Path("icons/arrow.png")); //$NON-NLS-1$
 			if (bulletImage != null)
 				formText.setImage(HREF_BULLET, bulletImage);
 			this.parent = parent;

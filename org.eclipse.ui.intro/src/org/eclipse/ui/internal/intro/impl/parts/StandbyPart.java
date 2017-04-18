@@ -141,7 +141,7 @@ public class StandbyPart implements IIntroConstants {
         container.setLayout(new StandbyLayout());
 
         // return hyper link.
-        ImageUtil.registerImage(ImageUtil.BACK, "full/elcl16/home_nav.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.BACK, "full/elcl16/home_nav.png"); //$NON-NLS-1$
         returnLink = toolkit.createImageHyperlink(container, SWT.WRAP
                 | SWT.CENTER);
         returnLink.setImage(ImageUtil.getImage(ImageUtil.BACK));

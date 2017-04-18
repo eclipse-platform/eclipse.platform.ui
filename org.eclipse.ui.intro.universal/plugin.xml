@@ -6,14 +6,14 @@
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
     http://www.eclipse.org/legal/epl-v10.html
-   
+
     Contributors:
          IBM Corporation - initial API and implementation
  -->
 
 <plugin>
 
-    
+
 <!-- ========== Extension Points ================= -->
 <!-- =============================================================================== -->
 <!-- Extension point: org.eclipse.ui.intro.config                                    -->
@@ -25,13 +25,13 @@
 <!-- Extension-point for contributing an extension to an existing intro configuration  -->
 <!--                                                                                   -->
 <!-- ================================================================================= -->
-   
+
    <extension
          point="org.eclipse.ui.intro">
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             contentDetector="org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetector"
-            icon="$nl$/icons/welcome16.gif"
+            icon="$nl$/icons/welcome16.png"
             id="org.eclipse.ui.intro.universal"/>
    </extension>
    <extension
@@ -52,7 +52,7 @@
                   kind="swt">
             </implementation>
             <launchBar
-               	location="fastview" 
+               	location="fastview"
             	bg="$launchbarBackground$"
             	computed="true">
             </launchBar>
@@ -101,10 +101,10 @@
             <property name="highContrast-webresources"
             		  value="$theme$graphics/icons/ctool/webresources.png"/>
             <property name="highContrast-migrate"
-            		  value="$theme$graphics/icons/ctool/migrate.png"/>    
+            		  value="$theme$graphics/icons/ctool/migrate.png"/>
             <property name="highContrast-workbench"
-            		  value="$theme$graphics/icons/ctool/workbench.png"/>    
-            		  
+            		  value="$theme$graphics/icons/ctool/workbench.png"/>
+
             <property name="highContrastNav-overview"
             		  value="$theme$graphics/icons/ctool/ov_nav.png"/>
             <property name="highContrastNav-firststeps"
@@ -118,7 +118,7 @@
             <property name="highContrastNav-webresources"
             		  value="$theme$graphics/icons/ctool/wr_nav.png"/>
             <property name="highContrastNav-migrate"
-            		  value="$theme$graphics/icons/ctool/mi_nav.png"/> 
+            		  value="$theme$graphics/icons/ctool/mi_nav.png"/>
             <property name="highContrastNav-workbench"
             		  value="$theme$graphics/icons/ctool/wb_nav.png"/>
       </theme>
@@ -146,7 +146,7 @@
             		  value="$theme$graphics/launchbar/migrate16.png"/>
             <property name="launchbarWebresourcesIcon"
             		  value="$theme$graphics/launchbar/webresources16.png"/>
-            		  
+
             <property name="highContrast-overview"
             		  value="$theme$graphics/icons/etool/overview72.gif"/>
             <property name="highContrast-firststeps"
@@ -162,8 +162,8 @@
             <property name="highContrast-migrate"
             		  value="$theme$graphics/icons/etool/migrate72.gif"/>
             <property name="highContrast-workbench"
-            		  value="$theme$graphics/icons/etool/wb48.gif"/> 
-            		     
+            		  value="$theme$graphics/icons/etool/wb48.gif"/>
+
             <property name="highContrastNav-overview"
             		  value="$theme$graphics/icons/etool/overview48.gif"/>
             <property name="highContrastNav-firststeps"
@@ -177,10 +177,10 @@
             <property name="highContrastNav-webresources"
             		  value="$theme$graphics/icons/etool/webrsrc48.gif"/>
             <property name="highContrastNav-migrate"
-            		  value="$theme$graphics/icons/etool/migrate48.gif"/> 
+            		  value="$theme$graphics/icons/etool/migrate48.gif"/>
             <property name="highContrastNav-workbench"
-            		  value="$theme$graphics/icons/etool/wb48.gif"/>       
-      </theme> 
+            		  value="$theme$graphics/icons/etool/wb48.gif"/>
+      </theme>
       <theme
             default="true"
             id="org.eclipse.ui.intro.universal.slate"
@@ -222,10 +222,10 @@
             <property name="highContrast-webresources"
             		  value="$theme$graphics/icons/ctool/webresources.png"/>
             <property name="highContrast-migrate"
-            		  value="$theme$graphics/icons/ctool/migrate.png"/>    
+            		  value="$theme$graphics/icons/ctool/migrate.png"/>
             <property name="highContrast-workbench"
-            		  value="$theme$graphics/icons/ctool/workbench.png"/>    
-            		  
+            		  value="$theme$graphics/icons/ctool/workbench.png"/>
+
             <property name="highContrastNav-overview"
             		  value="$theme$graphics/icons/ctool/ov_nav.png"/>
             <property name="highContrastNav-firststeps"
@@ -239,11 +239,11 @@
             <property name="highContrastNav-webresources"
             		  value="$theme$graphics/icons/ctool/wr_nav.png"/>
             <property name="highContrastNav-migrate"
-            		  value="$theme$graphics/icons/ctool/mi_nav.png"/> 
+            		  value="$theme$graphics/icons/ctool/mi_nav.png"/>
             <property name="highContrastNav-workbench"
             		  value="$theme$graphics/icons/ctool/wb_nav.png"/>
       </theme>
-      
+
       <theme
             id="org.eclipse.ui.intro.universal.solstice"
             name="%theme.name.solstice"
@@ -282,10 +282,10 @@
             <property name="highContrast-webresources"
             		  value="$theme$graphics/icons/ctool/webresources.png"/>
             <property name="highContrast-migrate"
-            		  value="$theme$graphics/icons/ctool/migrate.png"/>    
+            		  value="$theme$graphics/icons/ctool/migrate.png"/>
             <property name="highContrast-workbench"
-            		  value="$theme$graphics/icons/ctool/workbench.png"/>    
-            		  
+            		  value="$theme$graphics/icons/ctool/workbench.png"/>
+
             <property name="highContrastNav-overview"
             		  value="$theme$graphics/icons/ctool/ov_nav.png"/>
             <property name="highContrastNav-firststeps"
@@ -299,7 +299,7 @@
             <property name="highContrastNav-webresources"
             		  value="$theme$graphics/icons/ctool/wr_nav.png"/>
             <property name="highContrastNav-migrate"
-            		  value="$theme$graphics/icons/ctool/mi_nav.png"/> 
+            		  value="$theme$graphics/icons/ctool/mi_nav.png"/>
             <property name="highContrastNav-workbench"
             		  value="$theme$graphics/icons/ctool/wb_nav.png"/>
       </theme>

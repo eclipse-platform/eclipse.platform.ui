@@ -459,11 +459,11 @@ public class CustomizationContentsArea {
 				}
 			});
 		}
-		extensionImage = ImageUtil.createImage("full/obj16/extension_obj.gif"); //$NON-NLS-1$
-		ihighImage = ImageUtil.createImage("full/obj16/ihigh_obj.gif"); //$NON-NLS-1$
-		ilowImage = ImageUtil.createImage("full/obj16/ilow_obj.gif"); //$NON-NLS-1$
-		inewImage = ImageUtil.createImage("full/obj16/inew_obj.gif"); //$NON-NLS-1$
-		icalloutImage = ImageUtil.createImage("full/obj16/icallout_obj.gif"); //$NON-NLS-1$
+		extensionImage = ImageUtil.createImage("full/obj16/extension_obj.png"); //$NON-NLS-1$
+		ihighImage = ImageUtil.createImage("full/obj16/ihigh_obj.png"); //$NON-NLS-1$
+		ilowImage = ImageUtil.createImage("full/obj16/ilow_obj.png"); //$NON-NLS-1$
+		inewImage = ImageUtil.createImage("full/obj16/inew_obj.png"); //$NON-NLS-1$
+		icalloutImage = ImageUtil.createImage("full/obj16/icallout_obj.png"); //$NON-NLS-1$
 		themeImage = ImageUtil.createImage("full/obj16/image_obj.gif"); //$NON-NLS-1$
 		addPages();
 		org.eclipse.jface.dialogs.Dialog.applyDialogFont(container);
