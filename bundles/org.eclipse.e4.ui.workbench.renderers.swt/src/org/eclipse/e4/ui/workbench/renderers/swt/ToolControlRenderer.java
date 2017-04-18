@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,7 +250,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 			// execute command
 			EHandlerService handlerService = context.get(EHandlerService.class);
 			ECommandService commandService = context.get(ECommandService.class);
-			ParameterizedCommand pCommand = commandService.createCommand(LOCK_TOOLBAR_CMD_ID, Collections.EMPTY_MAP);
+			ParameterizedCommand pCommand = commandService.createCommand(LOCK_TOOLBAR_CMD_ID, Collections.emptyMap());
 			handlerService.executeHandler(pCommand);
 			toggleLockToolbars.setText(getLockToolbarsText());
 		});
