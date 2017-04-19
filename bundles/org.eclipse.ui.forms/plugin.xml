@@ -43,6 +43,14 @@
                name="tb-toggle-hover-color"> <!-- IFormColors.TB_TOGGLE_HOVER -->
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.ui.internal.forms.css.dom.ExpandableCompositeElement"
+            composite="true"
+            handler="org.eclipse.ui.internal.forms.css.properties.css2.CSSPropertyExpandableCompositeHandler">
+         <property-name
+               name="titlebar-color">
+         </property-name>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.e4.ui.css.core.elementProvider">
@@ -52,6 +60,15 @@
                class="org.eclipse.ui.forms.widgets.Section"></widget>
          <widget
                class="org.eclipse.ui.forms.widgets.Form"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.ui.internal.forms.css.dom.ExpandableCompositeElementProvider">
+         <widget
+               class="org.eclipse.ui.forms.widgets.ExpandableComposite">
+         </widget>
       </provider>
    </extension>
 </plugin>
