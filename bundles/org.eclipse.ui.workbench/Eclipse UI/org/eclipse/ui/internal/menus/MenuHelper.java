@@ -280,8 +280,13 @@ public class MenuHelper {
 		return (expectedType.isInstance(rawValue)) ? expectedType.cast(rawValue) : null;
 	}
 
-	/*
-	 * Support Utilities
+	/**
+	 * Returns id attribute of the element or unique string computed from the
+	 * element instance
+	 * 
+	 * @param element
+	 *            non null
+	 * @return non null id
 	 */
 	public static String getId(IConfigurationElement element) {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
@@ -293,10 +298,16 @@ public class MenuHelper {
 			id = getCommandId(element);
 		}
 		if (id == null || id.length() == 0) {
-			id = element.toString();
+			id = generateUniqueId(element);
 		}
-
 		return id;
+	}
+
+	private static String generateUniqueId(IConfigurationElement element) {
+		// See bug 515405. We can't rely on toString() or hashCode() method
+		// implementations of the element, we should return unique id's
+		return element.getClass().getName() + "@" + Integer.toHexString( //$NON-NLS-1$
+				System.identityHashCode(element));
 	}
 
 	static String getName(IConfigurationElement element) {
