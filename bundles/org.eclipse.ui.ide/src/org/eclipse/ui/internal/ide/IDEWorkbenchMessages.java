@@ -393,6 +393,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAVirtualFolder;
 	public static String CopyFilesAndFoldersOperation_copyTitle;
 	public static String CopyFilesAndFoldersOperation_moveTitle;
+	public static String CopyFilesAndFoldersOperation_overwriteButtonLabel;
+	public static String CopyFilesAndFoldersOperation_overwriteAllButtonLabel;
+	public static String CopyFilesAndFoldersOperation_dontOverwriteButtonLabel;
 
 	public static String MoveFilesAndFoldersOperation_sameSourceAndDest;
 	public static String MoveFilesAndFoldersOperation_moveFailedTitle;

@@ -1386,9 +1386,9 @@ public class CopyFilesAndFoldersOperation {
 						.bind(
 								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteQuestion,
 								pathString);
-				final String[] options = { IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
+				final String[] options = { IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteButtonLabel,
+						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteAllButtonLabel,
+						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_dontOverwriteButtonLabel,
 						IDialogConstants.CANCEL_LABEL };
 				messageShell.getDisplay().syncExec(new Runnable() {
 					@Override
