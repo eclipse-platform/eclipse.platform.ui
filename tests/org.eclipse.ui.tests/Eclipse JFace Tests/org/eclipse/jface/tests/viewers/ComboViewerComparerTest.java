@@ -17,6 +17,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IElementComparer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
@@ -70,7 +71,7 @@ public class ComboViewerComparerTest extends TestCase {
 		// Select equal element with different identity
 		TestElement aElement = new TestElement("a");
 		viewer.setSelection(new StructuredSelection(aElement));
-		StructuredSelection sel = ((StructuredSelection) viewer.getStructuredSelection());
+		IStructuredSelection sel = viewer.getStructuredSelection();
 		assertEquals(false, sel.isEmpty());
 		TestElement selectedElement = (TestElement) sel.getFirstElement();
 		assertEquals(aElement.getName(), selectedElement.getName());
