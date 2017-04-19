@@ -424,6 +424,40 @@ public class MessageDialog extends IconAndMessageDialog {
 		return dialog.open() == 0;
 	}
 
+	/**
+	 * Method to open a simple dialog as specified by the
+	 * <code>kind</code> flag.
+	 *
+	 * This method accepts varargs of String to set custom button labels.
+	 *
+	 * Use this method if you want to override the default labels.
+	 *
+	 * @param kind
+	 *            the kind of dialog to open, one of {@link #ERROR},
+	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
+	 *            {@link #CONFIRM}, or {@link #QUESTION_WITH_CANCEL}.
+	 * @param parent
+	 *            the parent shell of the dialog, or <code>null</code> if none
+	 * @param title
+	 *            the dialog's title, or <code>null</code> if none
+	 * @param message
+	 *            the message
+	 * @param style
+	 *            {@link SWT#NONE} for a default dialog, or {@link SWT#SHEET} for a
+	 *            dialog with sheet behavior
+	 * @param dialogButtonLabels
+	 *            varargs of Strings for the button labels in the button bar
+	 * @return the index of the button that was pressed.
+	 * @since 3.13
+	 */
+	public static int open(int kind, Shell parent, String title, String message, int style,
+			String... dialogButtonLabels) {
+		MessageDialog dialog = new MessageDialog(parent, title, null, message, kind, 0, dialogButtonLabels);
+		style &= SWT.SHEET;
+		dialog.setShellStyle(dialog.getShellStyle() | style);
+		return dialog.open();
+	}
+
 	static String[] getButtonLabels(int kind) {
 		String[] dialogButtonLabels;
 		switch (kind) {
