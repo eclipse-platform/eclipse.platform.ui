@@ -264,7 +264,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				if (obj instanceof IAdaptable) {
 					IAdaptable context = (IAdaptable) obj;
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-					if (retrieval != null && (retrieval != fRetrieval || retrieval != fTreeViewer.getInput()) && fTreeViewer != null && fTreeViewer.getContentProvider() != null) {
+					if (retrieval != null && fTreeViewer != null && (retrieval != fRetrieval || retrieval != fTreeViewer.getInput()) && fTreeViewer.getContentProvider() != null) {
 						// set new setting
 						fRetrieval = retrieval;
 						fTreeViewer.setInput(fRetrieval);
