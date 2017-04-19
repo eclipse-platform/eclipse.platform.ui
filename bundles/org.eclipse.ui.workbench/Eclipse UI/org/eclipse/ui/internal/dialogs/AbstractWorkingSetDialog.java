@@ -334,7 +334,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 	 */
 	protected void updateButtonAvailability() {
 		List<IWorkingSet> selection = getSelectedWorkingSets();
-		boolean hasSelection = selection != null && !selection.isEmpty();
+		boolean hasSelection = !selection.isEmpty();
 		boolean hasSingleSelection = hasSelection;
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 

@@ -976,7 +976,7 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private StatusAdapter getSingleSelection() {
 		IStructuredSelection selection = statusListViewer.getStructuredSelection();
-		if (selection != null && selection.size() == 1) {
+		if (selection.size() == 1) {
 			return (StatusAdapter) selection.getFirstElement();
 		}
 		return null;
