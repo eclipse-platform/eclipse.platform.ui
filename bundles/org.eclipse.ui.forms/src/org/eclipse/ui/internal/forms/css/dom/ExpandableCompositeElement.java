@@ -10,5 +10,14 @@ public class ExpandableCompositeElement extends CompositeElement {
 		super(composite, engine);
 	}
 
+	@Override
+	public void reset() {
+		super.reset();
+		getExpandableComposite().setTitleBarForeground(null);
+	}
+
+	private ExpandableComposite getExpandableComposite() {
+		return (ExpandableComposite) getNativeWidget();
+	}
 
 }

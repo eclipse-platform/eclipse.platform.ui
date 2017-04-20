@@ -11,6 +11,7 @@ package org.eclipse.e4.ui.tests.css.forms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
 import org.eclipse.swt.SWT;
@@ -54,6 +55,18 @@ public class ExpandableCompositeTest extends CSSSWTTestCase {
 				"ExpandableComposite { titlebar-color: #FF0000; }");
 		assertNotNull(compositeToTest.getTitleBarForeground());
 		assertEquals(RED, compositeToTest.getTitleBarForeground().getRGB());
+	}
+
+	@Test
+	public void testExpandableComposite_foregroundColorGetsReset_foregroundCollorIsNull() throws Exception {
+		ExpandableComposite compositeToTest = createTestExpandableComposite(
+				"ExpandableComposite { titlebar-color: #FF0000; }");
+		assertNotNull(compositeToTest.getTitleBarForeground());
+		assertEquals(RED, compositeToTest.getTitleBarForeground().getRGB());
+
+		engine.reset();
+
+		assertNull(compositeToTest.getTitleBarForeground());
 	}
 
 }
