@@ -86,6 +86,10 @@ public class WorkbenchIntroManager implements IIntroManager {
             //assumption is that there is only ever one intro per workbench
             //if we ever support one per window then this will need revisiting
             IWorkbenchPage page = introView.getSite().getPage();
+			if (page == null) {
+				introPart = null;
+				return true;
+			}
             IViewReference reference = page
                     .findViewReference(IIntroConstants.INTRO_VIEW_ID);
             page.hideView(introView);
