@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class to ensure that the functionality is equivalent when running in
@@ -1017,7 +1018,9 @@ public class InternalAntRunner {
 	 */
 	protected boolean isVersionCompatible(String comparison) {
 		String version = getAntVersionNumber();
-		return version.compareTo(comparison) >= 0;
+		Version osgiVersion = new Version(version);
+		Version osgiComparison = new Version(comparison);
+		return osgiVersion.compareTo(osgiComparison) >= 0;
 	}
 
 	/**
