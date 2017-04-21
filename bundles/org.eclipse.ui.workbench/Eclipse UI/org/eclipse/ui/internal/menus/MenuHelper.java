@@ -280,8 +280,13 @@ public class MenuHelper {
 		return (expectedType.isInstance(rawValue)) ? expectedType.cast(rawValue) : null;
 	}
 
-	/*
-	 * Support Utilities
+	/**
+	 * Returns id attribute of the element or unique string computed from the
+	 * element registry handle
+	 *
+	 * @param element
+	 *            non null
+	 * @return non null id
 	 */
 	public static String getId(IConfigurationElement element) {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
@@ -293,10 +298,24 @@ public class MenuHelper {
 			id = getCommandId(element);
 		}
 		if (id == null || id.length() == 0) {
-			id = element.toString();
+			id = getConfigurationHandleId(element);
 		}
-
 		return id;
+	}
+
+	/**
+	 * @return unique string computed from the element registry handle
+	 */
+	private static String getConfigurationHandleId(IConfigurationElement element) {
+		// Note: the line below depends on internal details of
+		// ConfigurationElementHandle implementation, see bug 515405 and 515587.
+
+		// ConfigurationElementHandle.hashCode() is implemented in the way that
+		// it returns same number for different element instances with the same
+		// registry handle id (see org.eclipse.core.internal.registry.Handle).
+
+		// Once the bug 515587 provides new API, we should use that
+		return element.toString();
 	}
 
 	static String getName(IConfigurationElement element) {
