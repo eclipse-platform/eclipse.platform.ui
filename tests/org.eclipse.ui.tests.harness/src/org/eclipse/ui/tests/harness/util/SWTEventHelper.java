@@ -19,8 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * @since 3.1
