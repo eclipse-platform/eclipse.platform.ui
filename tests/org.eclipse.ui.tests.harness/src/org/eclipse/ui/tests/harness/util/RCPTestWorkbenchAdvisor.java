@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,15 +130,11 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		super.preStartup();
 		final Display display = Display.getCurrent();
 		if (display != null) {
-			display.asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (isSTARTED())
-						asyncDuringStartup = Boolean.FALSE;
-					else
-						asyncDuringStartup = Boolean.TRUE;
-				}
+			display.asyncExec(() -> {
+				if (isSTARTED())
+					asyncDuringStartup = Boolean.FALSE;
+				else
+					asyncDuringStartup = Boolean.TRUE;
 			});
 		}
 
@@ -171,17 +167,12 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 				if (callDisplayAccess)
 					DisplayAccess.accessDisplayDuringStartup();
 				try {
-					display.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							synchronized (RCPTestWorkbenchAdvisor.class) {
-								if (callDisplayAccess)
-									syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE
-											: Boolean.FALSE;
-								else
-									syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE
-											: Boolean.FALSE;
-							}
+					display.syncExec(() -> {
+						synchronized (RCPTestWorkbenchAdvisor.class) {
+							if (callDisplayAccess)
+								syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+							else
+								syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
 						}
 					});
 				} catch (SWTException e) {
@@ -204,18 +195,14 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 			public void run() {
 				if (callDisplayAccess)
 					DisplayAccess.accessDisplayDuringStartup();
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						synchronized (RCPTestWorkbenchAdvisor.class) {
-							if (callDisplayAccess)
-								asyncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE
-										: Boolean.FALSE;
-							else
-								asyncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE
-										: Boolean.FALSE;
-						}
-					}});
+				display.asyncExec(() -> {
+					synchronized (RCPTestWorkbenchAdvisor.class) {
+						if (callDisplayAccess)
+							asyncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+						else
+							asyncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+					}
+				});
 			}
 		};
 		asyncThread.setDaemon(true);
