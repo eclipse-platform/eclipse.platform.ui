@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -362,7 +362,7 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 
 		verify(fontDefinition2, times(1)).isOverridden();
 		verify(fontDefinition2, times(1)).resetToDefaultValue();
-		verify(fontRegistry, times(2)).put(fontDefinition2.getId(), fontData);
+		verify(fontRegistry, times(1)).put(fontDefinition2.getId(), fontData);
 
 		verify(fontDefinition3, times(1)).isOverridden();
 		verify(fontDefinition3, never()).resetToDefaultValue();
