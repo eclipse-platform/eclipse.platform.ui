@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,7 +234,7 @@ public class EditorTestHelper {
 
 
 	public static IFile[] findFiles(IResource resource) throws CoreException {
-		List<IFile> files = new ArrayList<IFile>();
+		List<IFile> files = new ArrayList<>();
 		findFiles(resource, files);
 		return files.toArray(new IFile[files.size()]);
 	}

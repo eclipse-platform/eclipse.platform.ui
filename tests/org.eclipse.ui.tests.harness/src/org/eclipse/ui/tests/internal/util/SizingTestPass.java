@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ class SizingTestPass implements IDialogTestPass {
 
 	@Override
 	public List<String> checkListTexts() {
-		List<String> list = new ArrayList<String>(CHECKLIST_SIZE);
+		List<String> list = new ArrayList<>(CHECKLIST_SIZE);
         list.add("&1) the correct dialog displays.");
 		list.add("&2) the dialog is an appropriate size for the required resolution (1024x768).");
         list.add("&3) the texts are correct and not cut off.");

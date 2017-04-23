@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 
 	@Override
 	public List<String> checkListTexts() {
-		List<String> list = new ArrayList<String>(CHECKLIST_SIZE);
+		List<String> list = new ArrayList<>(CHECKLIST_SIZE);
 		list.add("&1) all widgets are accessible by tabbing.");
 		list.add("&2) forwards and backwards tabbing is in a logical order");
 		list.add("&3) all the widgets with labels have an appropriate mnemonic.");

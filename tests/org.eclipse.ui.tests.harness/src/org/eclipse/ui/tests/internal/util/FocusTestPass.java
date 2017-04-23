@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class FocusTestPass implements IDialogTestPass {
 
 	@Override
 	public ArrayList<String> checkListTexts() {
-		ArrayList<String> list = new ArrayList<String>(CHECKLIST_SIZE);
+		ArrayList<String> list = new ArrayList<>(CHECKLIST_SIZE);
         list.add("&1) the initial focus is appropriate.");
         return list;
     }
