@@ -1,18 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2008 Oakland Software and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2008, 2017 Oakland Software and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Oakland Software (francisu@ieee.org) - initial API and
- * implementation
+ * Contributors:
+ * 	   Oakland Software (francisu@ieee.org) - initial API and implementation
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.jface.util.SafeRunnable;
+
+import junit.framework.TestCase;
 
 /**
  * NOTE - these tests are not really very good, in order to really test this you
@@ -27,19 +28,15 @@ public class SafeRunnableErrorTest extends TestCase {
 	int count;
 
 	protected Thread runner() {
-		return new Thread(new Runnable() {
+		return new Thread(() -> {
+			ISafeRunnable runnable = new SafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					throw new RuntimeException("test exception " + ++count);
+				}
+			};
+			SafeRunnable.run(runnable);
 
-			@Override
-			public void run() {
-				ISafeRunnable runnable = new SafeRunnable() {
-					@Override
-					public void run() throws Exception {
-						throw new RuntimeException("test exception " + ++count);
-					}
-				};
-				SafeRunnable.run(runnable);
-
-			}
 		});
 	}
 

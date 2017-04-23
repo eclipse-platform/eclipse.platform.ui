@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,6 @@ package org.eclipse.ui.tests.concurrency;
 
 import java.lang.reflect.InvocationTargetException;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +23,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.progress.UIJob;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Regression test for bug 269121. The test verifies that deadlock described in
@@ -83,12 +83,7 @@ public class TestBug269121 extends TestCase {
 					// syncExecs are processed by
 					// UILockListener.aboutToWait(Thread) without running the
 					// event loop so we can cancel the dialog to stop the test
-					dialog.getShell().getDisplay().syncExec(new Runnable() {
-						@Override
-						public void run() {
-							dialog.getProgressMonitor().setCanceled(true);
-						}
-					});
+					dialog.getShell().getDisplay().syncExec(() -> dialog.getProgressMonitor().setCanceled(true));
 					return Status.CANCEL_STATUS;
 				}
 			}

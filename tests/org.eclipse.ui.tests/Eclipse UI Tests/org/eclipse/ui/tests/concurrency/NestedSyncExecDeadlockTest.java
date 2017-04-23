@@ -1,5 +1,6 @@
 /**********************************************************************
- * Copyright (c) 2004 Jeremiah Lott and others. All rights reserved.   This
+ * Copyright (c) 2004, 2017 Jeremiah Lott and others.
+ * All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -35,10 +36,7 @@ public class NestedSyncExecDeadlockTest extends TestCase {
 	private class ResourceListener implements IResourceChangeListener {
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-				}
+			Display.getDefault().syncExec(() -> {
 			});
 		}
 	}
@@ -61,31 +59,22 @@ public class NestedSyncExecDeadlockTest extends TestCase {
 		dialog.run(true, false, new WorkspaceModifyOperation() {
 			@Override
 			public void execute(final IProgressMonitor pm) {
-				Display.getDefault().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							workspace.run(new IWorkspaceRunnable() {
-								@Override
-								public void run(IProgressMonitor mon) throws CoreException {
-									project.touch(null);
-									try {
-										// wait long enough to be sure to trigger notification
-										Thread.sleep(timeToSleep);
-									} catch (InterruptedException ex) {
-										ex.printStackTrace();
-									}
-								}
-							}, workspace.getRoot(), IResource.NONE, pm);
-							workspace.run(new IWorkspaceRunnable() {
-								@Override
-								public void run(IProgressMonitor mon) {
-								}
-							}, pm);
+				Display.getDefault().syncExec(() -> {
+					try {
+						workspace.run((IWorkspaceRunnable) mon -> {
+							project.touch(null);
+							try {
+								// wait long enough to be sure to trigger notification
+								Thread.sleep(timeToSleep);
+							} catch (InterruptedException ex) {
+								ex.printStackTrace();
+							}
+						}, workspace.getRoot(), IResource.NONE, pm);
+						workspace.run((IWorkspaceRunnable) mon -> {
+						}, pm);
 
-						} catch (CoreException ex) {
-							ex.printStackTrace();
-						}
+					} catch (CoreException ex) {
+						ex.printStackTrace();
 					}
 				});
 			}

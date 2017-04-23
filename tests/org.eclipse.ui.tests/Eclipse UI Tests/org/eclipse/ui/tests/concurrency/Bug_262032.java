@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2017 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,6 +18,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.swt.widgets.Display;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Test for an issue where a lock, held by the UI thread
@@ -93,18 +93,17 @@ public class Bug_262032 extends TestCase {
 		tb1.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
 
 		// asyncExec job that wants the lock
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				lock.acquire();
-				concurrentAccess = true;
-				tb1.setStatus(TestBarrier.STATUS_RUNNING);
-				// Sleep to test for concurrent access
-				try {
-				Thread.sleep(1000); } catch (InterruptedException e) {/*don't care*/}
-				concurrentAccess = false;
-				lock.release();
-			}
+		Display.getDefault().asyncExec(() -> {
+			lock.acquire();
+			concurrentAccess = true;
+			tb1.setStatus(TestBarrier.STATUS_RUNNING);
+			// Sleep to test for concurrent access
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				/* don't care */}
+			concurrentAccess = false;
+			lock.release();
 		});
 
 		// This will block, but the UI will continue to service async requests...

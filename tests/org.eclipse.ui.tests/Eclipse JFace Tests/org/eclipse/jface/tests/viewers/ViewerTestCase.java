@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
@@ -110,20 +108,14 @@ public abstract class ViewerTestCase extends TestCase {
 		disableTestsBug493357 = System.getProperty("org.eclipse.swt.internal.gtk.version", "").startsWith("3."); // $NON-NLS-1//$NON-NLS-2//$NON-NLS-3
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
-		Policy.setLog(new ILogger(){
-			@Override
-			public void log(IStatus status) {
-				fail(status.getMessage());
-			}});
-		SafeRunnable.setRunner(new ISafeRunnableRunner(){
-			@Override
-			public void run(ISafeRunnable code) {
-				try {
-					code.run();
-				} catch(Throwable th) {
-					throw new RuntimeException(th);
-				}
-			}});
+		Policy.setLog(status -> fail(status.getMessage()));
+		SafeRunnable.setRunner(code -> {
+			try {
+				code.run();
+			} catch (Throwable th) {
+				throw new RuntimeException(th);
+			}
+		});
 	    setUpModel();
 	    openBrowser();
 	}

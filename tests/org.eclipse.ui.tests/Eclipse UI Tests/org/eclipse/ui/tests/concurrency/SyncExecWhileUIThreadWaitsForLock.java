@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,13 +39,7 @@ public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		reportedErrors = new ArrayList<>();
-		listener = new ILogListener() {
-
-			@Override
-			public void logging(IStatus status, String plugin) {
-				reportedErrors.add(status);
-			}
-		};
+		listener = (status, plugin) -> reportedErrors.add(status);
 		WorkbenchPlugin.getDefault().getLog().addLogListener(listener);
 	}
 
@@ -71,14 +65,11 @@ public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
 					//first make sure this background thread owns the lock
 					lock.acquire();
 					//spawn an asyncExec that will cause the UI thread to be blocked
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							blocked[0] = true;
-							lock.acquire();
-							lock.release();
-							blocked[0] = false;
-						}
+					Display.getDefault().asyncExec(() -> {
+						blocked[0] = true;
+						lock.acquire();
+						lock.release();
+						blocked[0] = false;
 					});
 					//wait until the UI thread is blocked waiting for the lock
 					while (!blocked[0]) {
@@ -89,18 +80,15 @@ public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
 					}
 					//now attempt to do a syncExec that also acquires the lock
 					//this should succeed even while the above asyncExec is blocked, thanks to UISynchronizer
-					Display.getDefault().syncExec(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								//use a timeout to avoid deadlock in case of regression
-								if (lock.acquire(60000)) {
-									//this flag is used to verify that we actually acquired the lock
-									lockAcquired[0] = true;
-									lock.release();
-								}
-							} catch (InterruptedException e) {
+					Display.getDefault().syncExec(() -> {
+						try {
+							// use a timeout to avoid deadlock in case of regression
+							if (lock.acquire(60000)) {
+								// this flag is used to verify that we actually acquired the lock
+								lockAcquired[0] = true;
+								lock.release();
 							}
+						} catch (InterruptedException e) {
 						}
 					});
 				} finally {

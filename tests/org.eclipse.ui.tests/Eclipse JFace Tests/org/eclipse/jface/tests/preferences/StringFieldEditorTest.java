@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,13 @@
 
 package org.eclipse.jface.tests.preferences;
 
-
-import junit.framework.TestCase;
-
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import junit.framework.TestCase;
 
 public class StringFieldEditorTest extends TestCase {
 
@@ -106,25 +104,16 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals("bar", store.getString("foo"));
 		store.setValue("foo", "???");
 		assertEquals("???", store.getString("foo"));
-		IPropertyChangeListener listener = new  IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				assertEquals("foo", event.getProperty());
-				assertEquals("???", event.getOldValue());
-				assertEquals("bar", event.getNewValue());
-			}
+		IPropertyChangeListener listener = event -> {
+			assertEquals("foo", event.getProperty());
+			assertEquals("???", event.getOldValue());
+			assertEquals("bar", event.getNewValue());
 		};
 		store.addPropertyChangeListener(listener);
 		store.setToDefault("foo");
 		store.removePropertyChangeListener(listener);
 		assertEquals("bar", store.getString("foo"));
-		IPropertyChangeListener failingListener = new  IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				// Make sure no event is fired to this listener
-				fail("1.0");
-			}
-		};
+		IPropertyChangeListener failingListener = event -> fail("1.0");
 		store.addPropertyChangeListener(failingListener);
 		// We already called setToDefault, nothing should happen this time
 		store.setToDefault("foo");

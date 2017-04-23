@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.window;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public class ApplicationWindowTest extends TestCase {
 
@@ -49,25 +47,22 @@ public class ApplicationWindowTest extends TestCase {
 			}
 		};
 		window.create();
-		window.run(fork, cancelable, new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				monitor.beginTask("beginTask", 10);
-				monitor.setTaskName("setTaskName");
-				monitor.subTask("subTask");
+		window.run(fork, cancelable, monitor -> {
+			monitor.beginTask("beginTask", 10);
+			monitor.setTaskName("setTaskName");
+			monitor.subTask("subTask");
 
-				if (monitor instanceof IProgressMonitorWithBlocking) {
-					IProgressMonitorWithBlocking blockingMonitor = (IProgressMonitorWithBlocking) monitor;
-					blockingMonitor.setBlocked(Status.CANCEL_STATUS);
-					blockingMonitor.clearBlocked();
-				}
-
-				monitor.worked(1);
-				monitor.setCanceled(true);
-				monitor.isCanceled();
-				monitor.setCanceled(false);
-				monitor.done();
+			if (monitor instanceof IProgressMonitorWithBlocking) {
+				IProgressMonitorWithBlocking blockingMonitor = (IProgressMonitorWithBlocking) monitor;
+				blockingMonitor.setBlocked(Status.CANCEL_STATUS);
+				blockingMonitor.clearBlocked();
 			}
+
+			monitor.worked(1);
+			monitor.setCanceled(true);
+			monitor.isCanceled();
+			monitor.setCanceled(false);
+			monitor.done();
 		});
 	}
 

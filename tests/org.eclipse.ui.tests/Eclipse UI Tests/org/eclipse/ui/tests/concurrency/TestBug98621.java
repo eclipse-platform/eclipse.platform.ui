@@ -47,19 +47,13 @@ public class TestBug98621 extends TestCase {
 	class TransferTestOperation extends WorkspaceModifyOperation implements IThreadListener {
 		@Override
 		public void execute(final IProgressMonitor pm) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						workspace.run(new IWorkspaceRunnable() {
-							@Override
-							public void run(IProgressMonitor mon) {
-								//
-							}
-						}, workspace.getRoot(), IResource.NONE, null);
-					} catch (CoreException ex) {
-						ex.printStackTrace();
-					}
+			Display.getDefault().asyncExec(() -> {
+				try {
+					workspace.run((IWorkspaceRunnable) mon -> {
+						//
+					}, workspace.getRoot(), IResource.NONE, null);
+				} catch (CoreException ex) {
+					ex.printStackTrace();
 				}
 			});
 			//wait until the asyncExec is blocking the UI thread
@@ -90,18 +84,15 @@ public class TestBug98621 extends TestCase {
 	 * Performs the test
 	 */
 	public void testBug() throws CoreException {
-		workspace.run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
-				try {
-					dialog.run(true, false, new TransferTestOperation());
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					fail(e.getMessage());
-				} catch (InterruptedException e) {
-					//ignore
-				}
+		workspace.run((IWorkspaceRunnable) monitor -> {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
+			try {
+				dialog.run(true, false, new TransferTestOperation());
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+				fail(e1.getMessage());
+			} catch (InterruptedException e2) {
+				// ignore
 			}
 		}, workspace.getRoot(), IResource.NONE, null);
 	}

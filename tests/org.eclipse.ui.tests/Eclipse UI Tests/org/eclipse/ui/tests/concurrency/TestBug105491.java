@@ -45,21 +45,19 @@ public class TestBug105491 extends TestCase {
 		@Override
 		public void execute(final IProgressMonitor pm) {
 			//clients assume this would not deadlock because it runs in an asyncExec
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
-					try {
-						dialog.run(true, false, new WorkspaceModifyOperation() {
-							@Override
-							protected void execute(IProgressMonitor monitor) {}
-						});
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-						fail(e.getMessage());
-					} catch (InterruptedException e) {
-						//ignore
-					}
+			Display.getDefault().asyncExec(() -> {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
+				try {
+					dialog.run(true, false, new WorkspaceModifyOperation() {
+						@Override
+						protected void execute(IProgressMonitor monitor) {
+						}
+					});
+				} catch (InvocationTargetException e1) {
+					e1.printStackTrace();
+					fail(e1.getMessage());
+				} catch (InterruptedException e2) {
+					// ignore
 				}
 			});
 		}
@@ -87,18 +85,15 @@ public class TestBug105491 extends TestCase {
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at start of test");
 		}
-		workspace.run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
-				try {
-					dialog.run(true, false, new TransferTestOperation());
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					fail(e.getMessage());
-				} catch (InterruptedException e) {
-					//ignore
-				}
+		workspace.run((IWorkspaceRunnable) monitor -> {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
+			try {
+				dialog.run(true, false, new TransferTestOperation());
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+				fail(e1.getMessage());
+			} catch (InterruptedException e2) {
+				// ignore
 			}
 		}, workspace.getRoot(), IResource.NONE, null);
 		if (Thread.interrupted()) {

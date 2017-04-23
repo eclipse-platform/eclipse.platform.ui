@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Alena Laskavaia
+ * Copyright (c) 2015, 2017 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.quickaccess;
 
-import junit.framework.TestCase;
-
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * @since 3.5
@@ -38,21 +38,18 @@ public class ShellClosingTest extends TestCase {
 	@Test
 	public void testClosingShellsBug433746() throws Throwable {
 		final Throwable result[] = new Throwable[1];
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Shell[] shells = Display.getDefault().getShells();
-					Shell active = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		Display.getDefault().syncExec(() -> {
+			try {
+				Shell[] shells = Display.getDefault().getShells();
+				Shell active = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
-					for (Shell shell : shells) {
-						if (!(active == shell) && !shell.isDisposed()) {
-							shell.close();
-						}
+				for (Shell shell : shells) {
+					if (!(active == shell) && !shell.isDisposed()) {
+						shell.close();
 					}
-				} catch (Throwable e) {
-					result[0] = e;
 				}
+			} catch (Throwable e) {
+				result[0] = e;
 			}
 		});
 		if (result[0] != null) {

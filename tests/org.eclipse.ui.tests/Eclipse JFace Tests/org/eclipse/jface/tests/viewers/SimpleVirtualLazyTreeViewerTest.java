@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -125,12 +124,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		Tree tree = new Tree(fShell, SWT.VIRTUAL | SWT.MULTI);
 		TreeViewer treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(new LazyTreeContentProvider());
-		tree.addListener(SWT.SetData, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				setDataCalled = true;
-			}
-		});
+		tree.addListener(SWT.SetData, event -> setDataCalled = true);
 		return treeViewer;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Ruediger Herrmann and others.
+ * Copyright (c) 2006, 2017 Ruediger Herrmann and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
@@ -82,20 +80,12 @@ public class ComboViewerComparerTest extends TestCase {
 	protected void setUp() {
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				fail(status.getMessage());
-			}
-		});
-		SafeRunnable.setRunner(new ISafeRunnableRunner() {
-			@Override
-			public void run(ISafeRunnable code) {
-				try {
-					code.run();
-				} catch (Throwable th) {
-					throw new RuntimeException(th);
-				}
+		Policy.setLog(status -> fail(status.getMessage()));
+		SafeRunnable.setRunner(code -> {
+			try {
+				code.run();
+			} catch (Throwable th) {
+				throw new RuntimeException(th);
 			}
 		});
 		Display display = Display.getCurrent();

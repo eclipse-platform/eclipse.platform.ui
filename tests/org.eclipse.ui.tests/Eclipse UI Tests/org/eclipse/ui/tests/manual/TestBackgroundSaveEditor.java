@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -103,36 +101,28 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 				setDirty(false);
 				return null;
 			}
-			IJobRunnable result = new IJobRunnable() {
-				@Override
-				public IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("Saving in the background",
-							data.backgroundSaveTime);
-					for (int i = 0; i < data.backgroundSaveTime; i++) {
-						if (monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
-						}
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						}
-						data.setOutput(data.getInput().substring(
-								0,
-								Math.min(i + data.foregroundSaveTime, data
-										.getInput().length())));
-						monitor.worked(1);
+			IJobRunnable result = monitor1 -> {
+				monitor1.beginTask("Saving in the background", data.backgroundSaveTime);
+				for (int i = 0; i < data.backgroundSaveTime; i++) {
+					if (monitor1.isCanceled()) {
+						return Status.CANCEL_STATUS;
 					}
-					if (data.throwExceptionInBackground) {
-						return new Status(IStatus.ERROR,
-								"org.eclipse.ui.tests",
-								"Saving in the background failed");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
 					}
-					data.setOutput(data.getInput());
-					setDirty(false);
-					monitor.done();
-					return Status.OK_STATUS;
+					data.setOutput(data.getInput().substring(0,
+							Math.min(i + data.foregroundSaveTime, data.getInput().length())));
+					monitor1.worked(1);
 				}
+				if (data.throwExceptionInBackground) {
+					return new Status(IStatus.ERROR, "org.eclipse.ui.tests", "Saving in the background failed");
+				}
+				data.setOutput(data.getInput());
+				setDirty(false);
+				monitor1.done();
+				return Status.OK_STATUS;
 			};
 			return result;
 		}
@@ -170,12 +160,8 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		public void setDirty(boolean dirty) {
 			firePropertyChange("dirty", Boolean.valueOf(this.dirty), Boolean.valueOf(
 					this.dirty = dirty));
-			getSite().getShell().getDisplay().syncExec(new Runnable(){
-				@Override
-				public void run() {
-					TestBackgroundSaveEditor.this
-					.firePropertyChange(ISaveablePart.PROP_DIRTY);
-				}});
+			getSite().getShell().getDisplay()
+					.syncExec(() -> TestBackgroundSaveEditor.this.firePropertyChange(ISaveablePart.PROP_DIRTY));
 		}
 
 		public void addPropertyChangeListener(String propertyName,
@@ -206,12 +192,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 	public void createPartControl(Composite parent) {
 		Realm realm = DisplayRealm.getRealm(parent.getDisplay());
 		final DataBindingContext dbc = new DataBindingContext(realm);
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				dbc.dispose();
-			}
-		});
+		parent.addDisposeListener(e -> dbc.dispose());
 
 		final IObservableValue inputObservable = BeansObservables.observeValue(
 				realm, data, "input");

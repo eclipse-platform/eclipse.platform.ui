@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,9 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.IPageChangingListener;
-import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.dialogs.PageChangingEvent;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.graphics.RGB;
@@ -186,21 +183,11 @@ public class WizardTest extends TestCase {
 		pageChanged = false;
 		pageChangingFired = false;
 
-		IPageChangedListener changedListener = new IPageChangedListener() {
-			@Override
-			public void pageChanged(PageChangedEvent event) {
-				pageChanged = true;
-			}
+		IPageChangedListener changedListener = event -> pageChanged = true;
 
-		};
-
-		IPageChangingListener changingListener = new IPageChangingListener() {
-			@Override
-			public void handlePageChanging(PageChangingEvent event) {
-				assertEquals("Page should not have changed yet", false, pageChanged);
-				pageChangingFired = true;
-			}
-
+		IPageChangingListener changingListener = event -> {
+			assertEquals("Page should not have changed yet", false, pageChanged);
+			pageChangingFired = true;
 		};
 
 		//test that listener notifies us of page change
@@ -232,12 +219,7 @@ public class WizardTest extends TestCase {
 		Shell shell;
 		ILogger oldLogger = Policy.getLog();
 		try {
-			Policy.setLog(new ILogger() {
-				@Override
-				public void log(IStatus status) {
-					logged[0] = true;
-				}
-			});
+			Policy.setLog(status -> logged[0] = true);
 			shell = dialog.getShell();
 			dialog.close();
 		} finally {
@@ -253,12 +235,7 @@ public class WizardTest extends TestCase {
         final boolean logged[] = new boolean[1];
 		ILogger oldLogger = Policy.getLog();
 		try {
-			Policy.setLog(new ILogger() {
-				@Override
-				public void log(IStatus status) {
-					logged[0] = true;
-				}
-			});
+			Policy.setLog(status -> logged[0] = true);
 			dialog.close();
 		} finally {
 			Policy.setLog(oldLogger);

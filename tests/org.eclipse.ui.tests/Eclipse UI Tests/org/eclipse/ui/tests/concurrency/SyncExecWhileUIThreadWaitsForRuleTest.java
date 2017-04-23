@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,17 +50,14 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 					//first make sure this background thread owns the lock
 					Job.getJobManager().beginRule(rule, null);
 					//spawn an asyncExec that will cause the UI thread to be blocked
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							blocked[0] = true;
-							try {
-								Job.getJobManager().beginRule(rule, beginRuleMonitor);
-							} finally {
-								Job.getJobManager().endRule(rule);
-							}
-							blocked[0] = false;
+					Display.getDefault().asyncExec(() -> {
+						blocked[0] = true;
+						try {
+							Job.getJobManager().beginRule(rule, beginRuleMonitor);
+						} finally {
+							Job.getJobManager().endRule(rule);
 						}
+						blocked[0] = false;
 					});
 					//wait until the UI thread is blocked waiting for the lock
 					while (!blocked[0]) {
@@ -71,14 +68,11 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 					}
 					//now attempt to do a syncExec that also acquires the lock
 					//this should succeed even while the above asyncExec is blocked, thanks to UISynchronizer
-					Display.getDefault().syncExec(new Runnable() {
-						@Override
-						public void run() {
-							//use a timeout to avoid deadlock in case of regression
-							Job.getJobManager().beginRule(rule, null);
-							lockAcquired[0] = true;
-							Job.getJobManager().endRule(rule);
-						}
+					Display.getDefault().syncExec(() -> {
+						// use a timeout to avoid deadlock in case of regression
+						Job.getJobManager().beginRule(rule, null);
+						lockAcquired[0] = true;
+						Job.getJobManager().endRule(rule);
 					});
 				} finally {
 					Job.getJobManager().endRule(rule);
