@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class Bug417762Test extends UITestCase {
 				.getService(IHandlerService.class);
 		Command showInCommand = commandService
 				.getCommand(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN);
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 		parameters.put(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET,
 				"my.view.id");
 		IEvaluationContext contextSnapshot = handlerService

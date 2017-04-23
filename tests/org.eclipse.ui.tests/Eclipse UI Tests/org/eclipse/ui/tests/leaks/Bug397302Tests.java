@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,8 +90,8 @@ public class Bug397302Tests {
 		TestListener a = new TestListener();
 		TestListener b = new TestListener();
 		// keep weak references so we can check on the GC status later on...
-		final WeakReference<TestListener> listenerARef = new WeakReference<TestListener>(a);
-		final WeakReference<TestListener> listenerBRef = new WeakReference<TestListener>(b);
+		final WeakReference<TestListener> listenerARef = new WeakReference<>(a);
+		final WeakReference<TestListener> listenerBRef = new WeakReference<>(b);
 
 		// add listeners, call out the them, and verify that they got called.
 		testSourceProvider.addSourceProviderListener(a);

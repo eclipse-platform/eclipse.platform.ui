@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Obeo and others.
+ * Copyright (c) 2014, 2017 Obeo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.equinox.log.ExtendedLogReaderService;
 import org.eclipse.equinox.log.LogFilter;
-import org.eclipse.equinox.log.SynchronousLogListener;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.ToolBar;
@@ -23,8 +22,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.osgi.framework.Bundle;
-import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogService;
 
@@ -93,24 +90,18 @@ public class Bug410426Test extends UITestCase {
         ToolBarManager manager = new ToolBarManager();
 
         //Add a log listener to detect the corrected ClassCastException in bug 410426.
-        final List<ClassCastException> cces = new ArrayList<ClassCastException>();
+		final List<ClassCastException> cces = new ArrayList<>();
 		ExtendedLogReaderService log = window
 				.getService(ExtendedLogReaderService.class);
-        LogListener logListener = new SynchronousLogListener() {
-            @Override
-			public void logged(LogEntry entry) {
-                if (entry.getLevel() == LogService.LOG_ERROR && entry.getException() instanceof ClassCastException
-                        && entry.getException().getMessage().contains("MenuManager cannot be cast to org.eclipse.jface.action.ContributionItem")) { //$NON-NLS-N$
-                    cces.add((ClassCastException) entry.getException());
-                }
-            }
-        };
-        LogFilter logFilter = new LogFilter() {
-            @Override
-			public boolean isLoggable(Bundle bundle, String loggerName, int logLevel) {
-                return logLevel == LogService.LOG_ERROR && loggerName == null && "org.eclipse.equinox.event".equals(bundle.getSymbolicName()); //$NON-NLS-N$
-            }
-        };
+		LogListener logListener = entry -> {
+			if (entry.getLevel() == LogService.LOG_ERROR && entry.getException() instanceof ClassCastException
+					&& entry.getException().getMessage()
+							.contains("MenuManager cannot be cast to org.eclipse.jface.action.ContributionItem")) { // $NON-NLS-N$
+				cces.add((ClassCastException) entry.getException());
+			}
+		};
+		LogFilter logFilter = (bundle, loggerName, logLevel) -> logLevel == LogService.LOG_ERROR && loggerName == null
+				&& "org.eclipse.equinox.event".equals(bundle.getSymbolicName());
         log.addLogListener(logListener, logFilter);
 
         try {

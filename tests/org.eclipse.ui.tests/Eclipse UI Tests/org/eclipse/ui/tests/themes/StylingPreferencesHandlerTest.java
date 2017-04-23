@@ -1,5 +1,13 @@
 package org.eclipse.ui.tests.themes;
 
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,7 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.osgi.service.event.Event;
 
 import junit.framework.TestCase;
-import static org.mockito.Mockito.*;
 
 public class StylingPreferencesHandlerTest extends TestCase {
 	public void testHandleEvent() throws Exception {
@@ -26,13 +33,13 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		IEclipsePreferences pref2 = mock(IEclipsePreferences.class);
 
 		StylingPreferencesHandlerTestable handler = spy(new StylingPreferencesHandlerTestable(mock(Display.class)));
-		doReturn(new HashSet<IEclipsePreferences>(Arrays.asList(pref1, pref2))).when(handler).getPreferences();
+		doReturn(new HashSet<>(Arrays.asList(pref1, pref2))).when(handler).getPreferences();
 		doReturn(Arrays.asList("pref1.prop1", "pref1.prop2")).when(handler).getOverriddenPropertyNames(pref1);
 		doReturn(Arrays.asList("pref2.prop1")).when(handler).getOverriddenPropertyNames(pref2);
 
 		IThemeEngine themeEngine = mock(IThemeEngine.class);
 
-		Map<String, Object> eventParams = new HashMap<String, Object>();
+		Map<String, Object> eventParams = new HashMap<>();
 		eventParams.put(IThemeEngine.Events.THEME_ENGINE, themeEngine);
 
 		//when
@@ -51,7 +58,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		IEclipsePreferences pref2 = mock(IEclipsePreferences.class);
 
 		StylingPreferencesHandlerTestable handler = spy(new StylingPreferencesHandlerTestable(mock(Display.class)));
-		doReturn(new HashSet<IEclipsePreferences>(Arrays.asList(pref1, pref2))).when(handler).getPreferences();
+		doReturn(new HashSet<>(Arrays.asList(pref1, pref2))).when(handler).getPreferences();
 		doReturn(Arrays.asList("pref1.prop1", "pref1.prop2")).when(handler).getOverriddenPropertyNames(pref1);
 		doReturn(Arrays.asList("pref2.prop1", "pref2.prop2")).when(handler).getOverriddenPropertyNames(pref2);
 

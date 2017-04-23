@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -317,7 +317,7 @@ public final class BindingPersistenceTest extends UITestCase {
 
 		EBindingService ebs = fWorkbench
 				.getService(EBindingService.class);
-		HashMap<String, String> attrs = new HashMap<String, String>();
+		HashMap<String, String> attrs = new HashMap<>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 		final Binding localAboutBinding = ebs.createBinding(keyF12, aboutCmd,
 				IContextService.CONTEXT_ID_WINDOW, attrs);
@@ -389,7 +389,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
 
 		EBindingService ebs = fWorkbench.getService(EBindingService.class);
-		HashMap<String, String> attrs = new HashMap<String, String>();
+		HashMap<String, String> attrs = new HashMap<>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 		final Binding localAboutBinding = ebs.createBinding(keyF12, aboutCmd,
 				IContextService.CONTEXT_ID_WINDOW, attrs);
@@ -442,7 +442,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(EMACS_SCHEME_ID, findAndReplaceBinding.getSchemeId());
 
 		EBindingService ebs = fWorkbench.getService(EBindingService.class);
-		HashMap<String, String> attrs = new HashMap<String, String>();
+		HashMap<String, String> attrs = new HashMap<>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 		attrs.put(EBindingService.SCHEME_ID_ATTR_TAG, EMACS_SCHEME_ID);
 		final Binding localAboutBinding = ebs.createBinding(keyAltR, aboutCmd,

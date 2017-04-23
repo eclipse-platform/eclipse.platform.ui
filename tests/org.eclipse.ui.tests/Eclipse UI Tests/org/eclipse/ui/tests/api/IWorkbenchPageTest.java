@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -91,12 +90,10 @@ public class IWorkbenchPageTest extends UITestCase {
 	String getMessage() {
 		return logStatus==null?"No message":logStatus.getMessage();
 	}
-	ILogListener openAndHideListener = new ILogListener() {
-		@Override
-		public void logging(IStatus status, String plugin) {
-			logStatus = status;
-			logCount++;
-		}
+
+	ILogListener openAndHideListener = (status, plugin) -> {
+		logStatus = status;
+		logCount++;
 	};
 
 
@@ -208,7 +205,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 			assertNotNull(sets);
 			assertEquals(2, sets.length);
-			Set<IWorkingSet> realSet = new HashSet<IWorkingSet>(Arrays.asList(sets));
+			Set<IWorkingSet> realSet = new HashSet<>(Arrays.asList(sets));
 			assertTrue(realSet.contains(set1));
 			assertTrue(realSet.contains(set2));
 
@@ -250,14 +247,10 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkingSet set1 = null;
 		final IWorkingSet[][] sets = new IWorkingSet[1][];
 		sets[0] = new IWorkingSet[0];
-		IPropertyChangeListener listener = new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				IWorkingSet[] oldSets = (IWorkingSet[]) event.getOldValue();
-				assertTrue(Arrays.equals(sets[0], oldSets));
-				sets[0] = (IWorkingSet[]) event.getNewValue();
-			}
+		IPropertyChangeListener listener = event -> {
+			IWorkingSet[] oldSets = (IWorkingSet[]) event.getOldValue();
+			assertTrue(Arrays.equals(sets[0], oldSets));
+			sets[0] = (IWorkingSet[]) event.getNewValue();
 		};
 		try {
 			set1 = manager.createWorkingSet("w1", new IAdaptable[0]);
@@ -1199,7 +1192,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 	private void showViewViaCommand(String viewId) throws Throwable {
 		waitForJobs(500, 3000);
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 		parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewId);
 
 		Command command = createCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
