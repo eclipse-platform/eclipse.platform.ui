@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,16 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class WizardTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ButtonAlignmentTest.class, WizardTest.class, WizardProgressMonitorTest.class })
+public class WizardTestSuite {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		JUnitCore.main(WizardTestSuite.class.getName());
+	}
 
-    public static Test suite() {
-        return new WizardTestSuite();
-    }
-
-    public WizardTestSuite() {
-    	addTestSuite(ButtonAlignmentTest.class);
-    	addTestSuite(WizardTest.class);
-    	addTestSuite(WizardProgressMonitorTest.class);
-    }
 }

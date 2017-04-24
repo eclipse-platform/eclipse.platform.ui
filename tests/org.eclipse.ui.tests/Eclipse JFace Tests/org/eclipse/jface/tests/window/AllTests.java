@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,21 +11,15 @@
 
 package org.eclipse.jface.tests.window;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ApplicationWindowTest.class })
+public class AllTests {
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
+		JUnitCore.main(AllTests.class.getName());
 	}
-
-	public static Test suite() {
-		return new AllTests();
-	}
-
-	public AllTests() {
-		addTestSuite(ApplicationWindowTest.class);
-	}
-
 }

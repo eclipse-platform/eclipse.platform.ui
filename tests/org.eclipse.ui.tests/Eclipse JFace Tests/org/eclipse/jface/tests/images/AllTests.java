@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,23 +11,16 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ImageRegistryTest.class, ResourceManagerTest.class, FileImageDescriptorTest.class,
+		DecorationOverlayIconTest.class })
+public class AllTests {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    public static Test suite() {
-        return new AllTests();
-    }
-
-    public AllTests() {
-        addTestSuite(ImageRegistryTest.class);
-        addTestSuite(ResourceManagerTest.class);
-        addTestSuite(FileImageDescriptorTest.class);
-		addTestSuite(DecorationOverlayIconTest.class);
-    }
+	public static void main(String[] args) {
+		JUnitCore.main(AllTests.class.getName());
+	}
 }

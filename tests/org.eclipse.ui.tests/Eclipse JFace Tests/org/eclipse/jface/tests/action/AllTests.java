@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ContributionItemTest.class, ToolBarManagerTest.class, CoolBarManagerTest.class,
+		MenuManagerTest.class })
+public class AllTests {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		JUnitCore.main(AllTests.class.getName());
+	}
 
-    public static Test suite() {
-        return new AllTests();
-    }
-
-    public AllTests() {
-        addTestSuite(ContributionItemTest.class);
-        addTestSuite(ToolBarManagerTest.class);
-        addTestSuite(CoolBarManagerTest.class);
-        addTestSuite(MenuManagerTest.class);
-    }
 }

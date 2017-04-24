@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,62 +10,29 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ TreeSelectionTest.class, MultipleEqualElementsTreeViewerTest.class,
+		LazySortedCollectionTest.class, TreeViewerTest.class, VirtualTreeViewerTest.class, SimpleTreeViewerTest.class,
+		SimpleTableViewerTest.class, SimpleVirtualLazyTreeViewerTest.class, VirtualLazyTreeViewerTest.class,
+		TableViewerTest.class, TreeViewerColumnTest.class, VirtualTableViewerTest.class,
+		VirtualLazyTableViewerTest.class, TableTreeViewerTest.class, TableColorProviderTest.class,
+		TableFontProviderTest.class, ListViewerTest.class, CheckboxTableViewerTest.class,
+		CheckboxTableViewerTest.DeprecatedConstructor.class, CheckboxTableViewerTest.FactoryMethod.class,
+		CheckboxTreeViewerTest.class, ComboViewerTest.class, CComboViewerTest.class, TreeViewerComparatorTest.class,
+		ListViewerComparatorTest.class, TableViewerComparatorTest.class, Bug138608Test.class,
+		ComboViewerComparerTest.class, ListViewerRefreshTest.class, Bug200558Test.class, Bug201002TableViewerTest.class,
+		Bug201002TreeViewerTest.class, Bug200337TableViewerTest.class, Bug203657TreeViewerTest.class,
+		Bug203657TableViewerTest.class, Bug205700TreeViewerTest.class, Bug180504TableViewerTest.class,
+		Bug180504TreeViewerTest.class, Bug256889TableViewerTest.class, Bug287765Test.class, Bug242231Test.class,
+		StyledStringBuilderTest.class, TreeManagerTest.class })
+public class AllTests {
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
+		JUnitCore.main(AllTests.class.getName());
 	}
 
-	public static Test suite() {
-		return new AllTests();
-	}
-
-	public AllTests() {
-		addTestSuite(TreeSelectionTest.class);
-		addTestSuite(MultipleEqualElementsTreeViewerTest.class);
-		addTestSuite(LazySortedCollectionTest.class);
-		addTestSuite(TreeViewerTest.class);
-		addTestSuite(VirtualTreeViewerTest.class);
-		addTestSuite(SimpleTreeViewerTest.class);
-		addTestSuite(SimpleTableViewerTest.class);
-		addTestSuite(SimpleVirtualLazyTreeViewerTest.class);
-		addTestSuite(VirtualLazyTreeViewerTest.class);
-		addTestSuite(TableViewerTest.class);
-		addTestSuite(TreeViewerColumnTest.class);
-		addTestSuite(VirtualTableViewerTest.class);
-		addTestSuite(VirtualLazyTableViewerTest.class);
-		addTestSuite(TableTreeViewerTest.class);
-		addTestSuite(TableColorProviderTest.class);
-		addTestSuite(TableFontProviderTest.class);
-		addTestSuite(ListViewerTest.class);
-		addTestSuite(CheckboxTableViewerTest.class);
-		addTestSuite(CheckboxTableViewerTest.DeprecatedConstructor.class);
-		addTestSuite(CheckboxTableViewerTest.FactoryMethod.class);
-		addTestSuite(CheckboxTreeViewerTest.class);
-		addTestSuite(ComboViewerTest.class);
-		addTestSuite(CComboViewerTest.class);
-		addTestSuite(TreeViewerComparatorTest.class);
-		addTestSuite(ListViewerComparatorTest.class);
-		addTestSuite(TableViewerComparatorTest.class);
-		addTestSuite(Bug138608Test.class);
-		addTestSuite(ComboViewerComparerTest.class);
-		addTestSuite(ListViewerRefreshTest.class);
-		addTestSuite(Bug200558Test.class);
-		addTestSuite(Bug201002TableViewerTest.class);
-		addTestSuite(Bug201002TreeViewerTest.class);
-		addTestSuite(Bug200337TableViewerTest.class);
-		addTestSuite(Bug203657TreeViewerTest.class);
-		addTestSuite(Bug203657TableViewerTest.class);
-		addTestSuite(Bug205700TreeViewerTest.class);
-		addTestSuite(Bug180504TableViewerTest.class);
-		addTestSuite(Bug180504TreeViewerTest.class);
-		addTestSuite(Bug256889TableViewerTest.class);
-		addTestSuite(Bug287765Test.class);
-		addTestSuite(Bug242231Test.class);
-		addTestSuite(StyledStringBuilderTest.class);
-		addTestSuite(TreeManagerTest.class);
-	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,29 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jface.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ org.eclipse.jface.tests.action.AllTests.class, org.eclipse.jface.tests.dialogs.AllTests.class,
+		org.eclipse.jface.tests.images.AllTests.class, org.eclipse.jface.tests.viewers.AllTests.class,
+		org.eclipse.jface.tests.layout.AllTests.class, org.eclipse.jface.tests.preferences.AllTests.class,
+		org.eclipse.jface.tests.wizards.WizardTestSuite.class,
+		org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests.class,
+		org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite.class, org.eclipse.jface.tests.window.AllTests.class })
+public class AllTests {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    public static Test suite() {
-        return new AllTests();
-    }
-
-    public AllTests() {
-        addTest(new org.eclipse.jface.tests.action.AllTests());
-        addTest(new org.eclipse.jface.tests.dialogs.AllTests());
-        addTest(new org.eclipse.jface.tests.images.AllTests());
-        addTest(new org.eclipse.jface.tests.viewers.AllTests());
-        addTest(new org.eclipse.jface.tests.layout.AllTests());
-        addTest(new org.eclipse.jface.tests.preferences.AllTests());
-        addTest(new org.eclipse.jface.tests.wizards.WizardTestSuite());
-        addTest(new org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests());
-        addTest(new org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite());
-        addTest(new org.eclipse.jface.tests.window.AllTests());
-    }
+	public static void main(String[] args) {
+		JUnitCore.main(AllTests.class.getName());
+	}
 }

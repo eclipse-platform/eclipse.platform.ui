@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,26 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.labelProviders;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class DecoratingLabelProviderTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ CompositeLabelProviderTableTest.class, DecoratingLabelProviderTreePathTest.class,
+		DecoratingLabelProviderTreeTest.class, ColorAndFontLabelProviderTest.class,
+		ColorAndFontViewerLabelProviderTest.class, DecoratingStyledCellLabelProviderTest.class,
+		IDecorationContextTest.class })
+public class DecoratingLabelProviderTests {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		JUnitCore.main(DecoratingLabelProviderTests.class.getName());
+	}
 
-    public static Test suite() {
-        return new DecoratingLabelProviderTests();
-    }
-
-    public DecoratingLabelProviderTests() {
-    	addTestSuite(CompositeLabelProviderTableTest.class);
-    	addTestSuite(DecoratingLabelProviderTreePathTest.class);
-        addTestSuite(DecoratingLabelProviderTreeTest.class);
-        addTestSuite(ColorAndFontLabelProviderTest.class);
-        addTestSuite(ColorAndFontViewerLabelProviderTest.class);
-        addTestSuite(DecoratingStyledCellLabelProviderTest.class);
-        addTestSuite(IDecorationContextTest.class);
-    }
 }
