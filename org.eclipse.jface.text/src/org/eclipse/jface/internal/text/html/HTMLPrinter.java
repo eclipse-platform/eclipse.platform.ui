@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -65,8 +66,8 @@ public class HTMLPrinter {
 	}
 
 	private static void cacheColors(Display display) {
-		BG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
-		FG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB();
+		BG_COLOR_RGB= JFaceColors.getInformationViewerBackgroundColor(display).getRGB();
+		FG_COLOR_RGB= JFaceColors.getInformationViewerForegroundColor(display).getRGB();
 	}
 
 	private static void installColorUpdater(final Display display) {
