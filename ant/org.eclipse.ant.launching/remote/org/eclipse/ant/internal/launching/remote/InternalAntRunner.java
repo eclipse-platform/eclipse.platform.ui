@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * Portions Copyright  2000-2005 The Apache Software Foundation
  * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
@@ -29,9 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.tools.ant.AntTypeDefinition;
@@ -693,93 +691,7 @@ public class InternalAntRunner {
 	 */
 	private boolean isVersionCompatible(String comparison) {
 		String version = getAntVersionNumber();
-		Version osgiVersion = new Version(version);
-		Version osgiComparison = new Version(comparison);
-		return osgiVersion.compareTo(osgiComparison) >= 0;
-	}
-
-	class Version {
-		private final int major;
-		private final int minor;
-		private final int micro;
-		private final String qualifier;
-		private static final String SEPARATOR = "."; //$NON-NLS-1$
-
-		public int compareTo(Version other) {
-			if (other == this) { // quick test
-				return 0;
-			}
-
-			int result = major - other.major;
-			if (result != 0) {
-				return result;
-			}
-
-			result = minor - other.minor;
-			if (result != 0) {
-				return result;
-			}
-
-			result = micro - other.micro;
-			if (result != 0) {
-				return result;
-			}
-
-			return qualifier.compareTo(other.qualifier);
-		}
-
-		public Version(String version) {
-			int maj = 0;
-			int min = 0;
-			int mic = 0;
-			String qual = ""; //$NON-NLS-1$
-
-			try {
-				StringTokenizer st = new StringTokenizer(version, SEPARATOR, true);
-				maj = parseInt(st.nextToken(), version);
-
-				if (st.hasMoreTokens()) { // minor
-					st.nextToken(); // consume delimiter
-					min = parseInt(st.nextToken(), version);
-
-					if (st.hasMoreTokens()) { // micro
-						st.nextToken(); // consume delimiter
-						mic = parseInt(st.nextToken(), version);
-
-						if (st.hasMoreTokens()) { // qualifier separator
-							st.nextToken(); // consume delimiter
-							qual = st.nextToken(""); // remaining string //$NON-NLS-1$
-
-							if (st.hasMoreTokens()) { // fail safe
-								throw new IllegalArgumentException("invalid version \"" + version + "\": invalid format"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						}
-					}
-				}
-			}
-			catch (NoSuchElementException e) {
-				IllegalArgumentException iae = new IllegalArgumentException("invalid version \"" + version + "\": invalid format");//$NON-NLS-1$ //$NON-NLS-2$
-				iae.initCause(e);
-				throw iae;
-			}
-
-			major = maj;
-			minor = min;
-			micro = mic;
-			qualifier = qual;
-			// validate();
-		}
-
-		private int parseInt(String value, String version) {
-			try {
-				return Integer.parseInt(value);
-			}
-			catch (NumberFormatException e) {
-				IllegalArgumentException iae = new IllegalArgumentException("invalid version \"" + version + "\": non-numeric \"" + value + "\""); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-				iae.initCause(e);
-				throw iae;
-			}
-		}
+		return version.compareTo(comparison) >= 0;
 	}
 
 	@SuppressWarnings("unused")
