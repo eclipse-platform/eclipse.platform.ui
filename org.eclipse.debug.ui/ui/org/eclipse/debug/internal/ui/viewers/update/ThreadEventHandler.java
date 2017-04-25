@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -99,8 +100,30 @@ public class ThreadEventHandler extends DebugEventHandler {
 				default:
 					break;
             }
+
+			// wait until initialization is completed before sending suspend
+			// event, see bug 491174 comment 1
+			waitForProxyInitialization();
+
         	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
         }
+	}
+
+	private void waitForProxyInitialization() {
+		AbstractModelProxy modelProxy = getModelProxy();
+		if (modelProxy == null) {
+			return;
+		}
+		Job[] proxyInitJobs = Job.getJobManager().find(modelProxy);
+		while (proxyInitJobs.length > 0) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// cancel waiting, something bad is happened
+				break;
+			}
+			proxyInitJobs = Job.getJobManager().find(modelProxy);
+		}
 	}
 
 	private boolean isEqual(Object o1, Object o2) {

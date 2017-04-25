@@ -160,12 +160,12 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
                     return Status.OK_STATUS;
                 }
 
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-                 */
                 @Override
+				public boolean belongsTo(Object family) {
+					return AbstractModelProxy.this == family;
+				}
+
+				@Override
 				public boolean shouldRun() {
                     return !isDisposed();
                 }
