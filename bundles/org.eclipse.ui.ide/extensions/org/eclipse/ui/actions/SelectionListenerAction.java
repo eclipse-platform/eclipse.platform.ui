@@ -174,11 +174,12 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 			selectionDirty = false;
 		}
 
-		if (nonResources == null) {
+		List<Object> list = nonResources;
+		if (list == null) {
 			return Collections.emptyList();
 		}
 
-		return nonResources;
+		return list;
 	}
 
 	/**
@@ -194,10 +195,11 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 			selectionDirty = false;
 		}
 
-		if (resources == null) {
+		List<IResource> list = resources;
+		if (list == null) {
 			return Collections.emptyList();
 		}
-		return resources;
+		return list;
 	}
 
 	/**
