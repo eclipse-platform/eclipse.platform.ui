@@ -716,7 +716,9 @@ public class BasicAliasTest extends ResourceTest {
 
 			//ensure aliases are gone (bug 144458)
 			final IResource[] aliases = aliasManager.computeAliases(folder, ((Folder) folder).getStore());
-			assertNull("4.0", aliases);
+			if (aliases != null) {
+				fail("Unexpected aliases: " + Arrays.toString(aliases));
+			}
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
