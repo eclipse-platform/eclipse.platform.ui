@@ -119,6 +119,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.edit.text.toggleWordWrap"
+                  mnemonic="%command.wordwrap.mnemonic"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
@@ -126,6 +127,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
+                  mnemonic="%command.whitespace.mnemonic"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
@@ -133,6 +135,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.edit.text.zoomIn"
+                  mnemonic="%command.zoomIn.mnemonic"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
@@ -140,6 +143,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.edit.text.zoomOut"
+                  mnemonic="%command.zoomOut.mnemonic"
                   style="push">
                <visibleWhen
                      checkEnabled="true">
