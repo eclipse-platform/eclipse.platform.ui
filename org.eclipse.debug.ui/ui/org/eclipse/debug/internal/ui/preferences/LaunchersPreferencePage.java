@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -145,7 +145,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	private Map<ILaunchConfigurationType, Set<DuplicateDelegate>> fDuplicates = null;
 	private Map<DuplicateDelegate, ILaunchDelegate> fDupeSelections = null;
 	private boolean fDirty = false;
-	private Text fDescription = null;
+	private Label fDescription = null;
 
 	/**
 	 * Constructor
@@ -154,18 +154,12 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		setTitle(DebugPreferencesMessages.LaunchDelegatesPreferencePage_0);
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_DELEGATES_PREFERENCE_PAGE);
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
@@ -262,15 +256,10 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});
 		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_4, 1, 2, GridData.FILL_BOTH);
-		fDescription = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
-		fDescription.setEnabled(enabled);
-		fDescription.setBackground(group.getBackground());
+		fDescription = SWTFactory.createWrapLabel(group, "", 1); //$NON-NLS-1$
 		return comp;
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		if(fDirty && fDupeSelections != null && fDupeSelections.size() > 0) {
@@ -289,9 +278,6 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		return super.performOk();
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		//init a listing of duplicate delegates arranged by type
