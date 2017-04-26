@@ -1308,10 +1308,24 @@
       <handler
             class="org.eclipse.ui.texteditor.TextZoomInHandler"
             commandId="org.eclipse.ui.edit.text.zoomIn">
+         <enabledWhen>
+            <with variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.texteditor.TextZoomOutHandler"
             commandId="org.eclipse.ui.edit.text.zoomOut">
+         <enabledWhen>
+            <with variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.texteditor.ITextEditor">
+               </instanceof>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
