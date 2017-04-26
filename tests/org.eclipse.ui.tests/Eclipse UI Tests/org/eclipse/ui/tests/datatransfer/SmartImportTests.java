@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016-2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.datatransfer;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
+import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
 
@@ -61,6 +63,7 @@ public class SmartImportTests extends UITestCase {
 
 	@Override
 	public void doTearDown() throws Exception {
+		ImportMeProjectConfigurator.configuredProjects.clear();
 		try {
 			clearAll();
 		} finally {
@@ -140,8 +143,11 @@ public class SmartImportTests extends UITestCase {
 				.toFileURL(getClass().getResource("/data/org.eclipse.datatransferArchives/project"));
 		File file = new File(url.getFile());
 		runSmartImport(file);
+
+		// Check expected projects are there
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		assertEquals(10, projects.length);
+
 		Set<String> implProjectNames = new HashSet<>();
 		for (IProject project : projects) {
 			if (project.getLocation().lastSegment().equals("impl")) {
@@ -152,6 +158,29 @@ public class SmartImportTests extends UITestCase {
 		assertTrue(implProjectNames.contains("impl"));
 		assertTrue(implProjectNames.contains("module2_impl"));
 		assertTrue(implProjectNames.contains("module3_impl"));
+	}
+
+	@Test
+	public void testConfigurationIgnoreNestedProjects()
+			throws IOException, OperationCanceledException, InterruptedException {
+		URL url = FileLocator
+				.toFileURL(getClass().getResource("/data/org.eclipse.datatransferArchives/projectSingleModule"));
+		File file = new File(url.getFile());
+		runSmartImport(file);
+
+		// Check expected projects are there
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		assertEquals(2, projects.length);
+
+		IProject rootProject = ResourcesPlugin.getWorkspace().getRoot().getProject("projectSingleModule");
+		assertTrue("Missing root project", rootProject.exists());
+		assertFalse("Root project shouldn't have been configured",
+				ImportMeProjectConfigurator.configuredProjects.contains(rootProject));
+		Set<IProject> modules = new HashSet<>(Arrays.asList(projects));
+		modules.remove(rootProject);
+		assertTrue("All modules should be configured",
+				modules.size() == ImportMeProjectConfigurator.configuredProjects.size()
+						&& ImportMeProjectConfigurator.configuredProjects.containsAll(modules));
 	}
 
 	@Test

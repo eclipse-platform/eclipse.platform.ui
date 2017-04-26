@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014-2016 Red Hat Inc., and others
+ * Copyright (c) 2014-2017 Red Hat Inc., and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -449,11 +449,17 @@ public class SmartImportJob extends Job {
 			excludedPaths.addAll(toPathSet(configurator.getFoldersToIgnore(project, subMonitor.split(20))));
 		}
 
-		Set<IProject> allNestedProjects = new HashSet<>();
 		if (deepChildrenDetection) {
-			allNestedProjects.addAll( searchAndImportChildrenProjectsRecursively(container, excludedPaths, progressMonitor) );
-			excludedPaths.addAll(toPathSet(allNestedProjects));
+			Set<IProject> allNestedProjects = searchAndImportChildrenProjectsRecursively(container, excludedPaths,
+					progressMonitor);
 			projectFromCurrentContainer.addAll(allNestedProjects);
+		}
+		// exclude all known children projects
+		for (IProject other : container.getWorkspace().getRoot().getProjects()) {
+			if (other.getLocation() != null && !container.getLocation().equals(other.getLocation())
+					&& container.getLocation().isPrefixOf(other.getLocation())) {
+				excludedPaths.add(other.getLocation());
+			}
 		}
 
 		if (mainProjectConfigurators.isEmpty() && (!isAlreadyAnEclipseProject || forceFullProjectCheck)) {
@@ -487,6 +493,10 @@ public class SmartImportJob extends Job {
 							.addAll(toPathSet(additionalConfigurator.getFoldersToIgnore(project, subMonitor.split(1))));
 				}
 			}
+		}
+		if (project != null) {
+			// make sure this folder isn't going to be processed again
+			excludedPaths.add(project.getLocation());
 		}
 		subMonitor.done();
 		return projectFromCurrentContainer;

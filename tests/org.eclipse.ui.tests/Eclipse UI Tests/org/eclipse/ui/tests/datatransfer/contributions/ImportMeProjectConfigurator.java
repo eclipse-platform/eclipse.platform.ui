@@ -21,6 +21,8 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -28,6 +30,7 @@ import org.eclipse.core.runtime.Path;
 public class ImportMeProjectConfigurator implements org.eclipse.ui.wizards.datatransfer.ProjectConfigurator {
 
 	private static final String IMPORTME_FILENAME = "importme";
+	public static final Set<IProject> configuredProjects = new HashSet<>();
 
 	@Override
 	public Set<File> findConfigurableLocations(File root, IProgressMonitor monitor) {
@@ -61,12 +64,31 @@ public class ImportMeProjectConfigurator implements org.eclipse.ui.wizards.datat
 
 	@Override
 	public boolean canConfigure(IProject project, Set<IPath> ignoredPaths, IProgressMonitor monitor) {
-		return shouldBeAnEclipseProject(project, monitor);
+		if (shouldBeAnEclipseProject(project, monitor)) {
+			return true;
+		}
+		try {
+			for (IResource child : project.members()) {
+				boolean ignore = false;
+				for (IPath ignoredPath : ignoredPaths) {
+					ignore |= ignoredPath.isPrefixOf(child.getLocation());
+					if (ignore) {
+						continue;
+					}
+				}
+				if (!ignore && child.getType() == IResource.FOLDER && ((IFolder) child).findMember(IMPORTME_FILENAME) != null) {
+					return true;
+				}
+			}
+		} catch (CoreException e) {
+			// Nothing
+		}
+		return false;
 	}
 
 	@Override
 	public void configure(IProject project, Set<IPath> ignoredPaths, IProgressMonitor monitor) {
-		// Do nothing
+		configuredProjects.add(project);
 	}
 
 }
