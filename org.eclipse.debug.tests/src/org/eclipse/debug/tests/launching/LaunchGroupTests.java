@@ -122,7 +122,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
-		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
+		assertEquals(3, history.length);
 		assertTrue("history[0] should be Test Group", history[0].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
@@ -141,7 +141,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("delay was not awaited", (System.currentTimeMillis() - start) >= 2000); //$NON-NLS-1$
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
-		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
+		assertEquals(3, history.length);
 		assertTrue("history[0] should be Test Group", history[0].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
@@ -187,7 +187,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		// terminate? don't think so - at least run the code path to have it
 		// covered.
 		ILaunchConfiguration[] history = runHistory.getHistory();
-		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
+		assertEquals(3, history.length);
 		assertTrue("history[0] should be Test Group", history[0].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
@@ -206,10 +206,10 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
-		assertTrue("history should be size 2", history.length == 2); //$NON-NLS-1$
+		assertEquals(2, history.length);
 		assertTrue("history[0] should be Test Group", history[0].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[1] should be Test1", history[1].contentsEqual(t1)); //$NON-NLS-1$
-		assertTrue("Test1 should be launched only once", launchCount.get() == 1); //$NON-NLS-1$
+		assertEquals("Test1 should be launched only once", 1, launchCount.get()); //$NON-NLS-1$
 	}
 
 	public void testAdoptComplex() throws Exception {
@@ -231,12 +231,12 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		grp3.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
-		assertTrue("history should be size 4", history.length == 4); //$NON-NLS-1$
+		assertEquals(4, history.length);
 		assertTrue("history[0] should be Group 3", history[0].contentsEqual(grp3)); //$NON-NLS-1$
 		assertTrue("history[1] should be Group 2", history[1].contentsEqual(grp2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Group 1", history[2].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[3] should be Test1", history[3].contentsEqual(t1)); //$NON-NLS-1$
-		assertTrue("Test1 should be launched only once", launchCount.get() == 1); //$NON-NLS-1$
+		assertEquals("Test1 should be launched only once", 1, launchCount.get()); //$NON-NLS-1$
 	}
 
 	public void testWaitForOutput() throws Exception {
@@ -279,7 +279,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("output was not awaited", (System.currentTimeMillis() - start) >= 2000); //$NON-NLS-1$
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
-		assertTrue("history should be size 3", history.length == 3); //$NON-NLS-1$
+		assertEquals(3, history.length);
 		assertTrue("history[0] should be Test Group", history[0].contentsEqual(grp)); //$NON-NLS-1$
 		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
