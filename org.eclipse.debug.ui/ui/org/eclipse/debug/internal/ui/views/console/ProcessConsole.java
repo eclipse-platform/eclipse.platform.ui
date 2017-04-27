@@ -718,12 +718,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             this.streamsProxy = streamsProxy;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
         @Override
+		public boolean belongsTo(Object family) {
+			return ProcessConsole.class == family;
+		}
+
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
             String encoding = getEncoding();
             try {
