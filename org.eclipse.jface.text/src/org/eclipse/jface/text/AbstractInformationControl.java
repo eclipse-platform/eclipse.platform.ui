@@ -244,8 +244,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fStatusLabelFont= new Font(fStatusLabel.getDisplay(), fontDatas);
 		fStatusLabel.setFont(fStatusLabelFont);
 
-		fStatusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
-		setColor(fStatusLabel, fStatusLabelForeground, background);
+		setStatusLabelColors(foreground, background);
 		setColor(fStatusComposite, foreground, background);
 	}
 
@@ -632,11 +631,30 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	@Override
 	public void setForegroundColor(Color foreground) {
 		fContentComposite.setForeground(foreground);
+		if (fStatusLabel != null) {
+			setStatusLabelColors(foreground, fStatusLabel.getBackground());
+		}
 	}
 
 	@Override
 	public void setBackgroundColor(Color background) {
 		fContentComposite.setBackground(background);
+		if (fStatusComposite != null){
+			fStatusComposite.setBackground(background);
+		}
+		if (fStatusLabel != null) {
+			setStatusLabelColors(fStatusLabel.getForeground(), background);
+		}
+	}
+	
+	private void setStatusLabelColors(Color foreground, Color background) {
+		if (foreground == null || background == null) return;
+		if (fStatusLabelForeground != null) {
+			fStatusLabelForeground.dispose();
+		}
+		fStatusLabelForeground = new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
+		fStatusLabel.setForeground(fStatusLabelForeground);
+		fStatusLabel.setBackground(background);
 	}
 
 	/**
