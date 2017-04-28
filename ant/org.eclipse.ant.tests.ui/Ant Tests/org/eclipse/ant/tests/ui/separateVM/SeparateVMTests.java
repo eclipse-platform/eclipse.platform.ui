@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2015 IBM Corporation and others.
+ *  Copyright (c) 2004, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,9 +16,6 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -38,9 +35,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.IHyperlink;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 public class SeparateVMTests extends AbstractAntUIBuildTest {
 
-	protected static final String PLUGIN_VERSION = "org.apache.ant_1.9.6"; //$NON-NLS-1$
+	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.1"; //$NON-NLS-1$
 
 	public SeparateVMTests(String name) {
 		super(name);
@@ -75,7 +75,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testBuild() throws CoreException {
 		launch("echoingSepVM"); //$NON-NLS-1$
 		assertLines(6);
-		assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect last message. Should start with Total time:. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:")); //$NON-NLS-1$
 	}
 
 	/**
@@ -84,7 +85,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testExtraClasspathEntries() throws CoreException {
 		launch("extensionPointSepVM"); //$NON-NLS-1$
 		assertLines(8);
-		assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(6), ConsoleLineTracker.getMessage(6).startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect last message. Should start with Total time:. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(6), ConsoleLineTracker.getMessage(6).startsWith("Total time:")); //$NON-NLS-1$
 	}
 
 	/**
@@ -93,8 +95,10 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testProperties() throws CoreException {
 		launch("extensionPointSepVM"); //$NON-NLS-1$
 		assertLines(8);
-		assertTrue("Incorrect last message. Should start with [echo] ${property.ui.testing. Message: " + ConsoleLineTracker.getMessage(3), ConsoleLineTracker.getMessage(3).trim().startsWith("[echo] ${property.ui.testing")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Incorrect last message. Should start with [echo] hey. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).trim().startsWith("[echo] hey")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect last message. Should start with [echo] ${property.ui.testing. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(3), ConsoleLineTracker.getMessage(3).trim().startsWith("[echo] ${property.ui.testing")); //$NON-NLS-1$
+		assertTrue("Incorrect last message. Should start with [echo] hey. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).trim().startsWith("[echo] hey")); //$NON-NLS-1$
 	}
 
 	/**
@@ -103,8 +107,10 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testExtensionPointTask() throws CoreException {
 		launch("extensionPointTaskSepVM"); //$NON-NLS-1$
 		assertLines(7);
-		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " + ConsoleLineTracker.getMessage(3), ConsoleLineTracker.getMessage(3).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$
+		assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(3), ConsoleLineTracker.getMessage(3).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2")); //$NON-NLS-1$
 	}
 
 	/**
@@ -113,7 +119,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testExtensionPointType() throws CoreException {
 		launch("extensionPointTypeSepVM"); //$NON-NLS-1$
 		assertLines(6);
-		assertTrue("Incorrect message. Should start with [echo] Ensure that an extension point defined type. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] Ensure that an extension point defined type")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect message. Should start with [echo] Ensure that an extension point defined type. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] Ensure that an extension point defined type")); //$NON-NLS-1$
 	}
 
 	/**
@@ -183,7 +190,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		launchAndTerminate(copy, 20000);
 		ConsoleLineTracker.waitForConsole();
 		assertLines(6);
-		assertTrue("Incorrect last message. Should end with " + ProjectHelper.PROJECT_NAME + ". Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith(ProjectHelper.PROJECT_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect last message. Should end with " + ProjectHelper.PROJECT_NAME + ". Message: " //$NON-NLS-1$ //$NON-NLS-2$
+				+ ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith(ProjectHelper.PROJECT_NAME));
 	}
 
 	/**
@@ -208,7 +216,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testProjectHelp() throws CoreException {
 		launch("echoingSepVM", "-p"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertLines(14);
-		assertTrue("Incorrect last message. Should start with echo2:. Message: " + ConsoleLineTracker.getMessage(12), ConsoleLineTracker.getMessage(12).trim().startsWith("echo2")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect last message. Should start with echo2:. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(12), ConsoleLineTracker.getMessage(12).trim().startsWith("echo2")); //$NON-NLS-1$
 	}
 
 	/**
@@ -219,7 +228,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testXmlLoggerListener() throws CoreException, FileNotFoundException {
 		launch("echoingSepVM", "-listener org.apache.tools.ant.XmlLogger"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertLines(6);
-		assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect last message. Should start with Total time:. Message: " //$NON-NLS-1$
+				+ ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:")); //$NON-NLS-1$
 
 		// find the log file generated by the XML logger
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -237,7 +247,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testAntHome() throws CoreException {
 		launch("environmentVar"); //$NON-NLS-1$
 		assertLines(6);
-		String message = ConsoleLineTracker.getMessage(1);
+		String message = ConsoleLineTracker.getMessage(2);
 		assertTrue("Incorrect message. Should end with org.apache.ant [" + message + "]", checkAntHomeMessage(message)); //$NON-NLS-1$ //$NON-NLS-2$
 		message = ConsoleLineTracker.getMessage(2);
 		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message)); //$NON-NLS-1$
