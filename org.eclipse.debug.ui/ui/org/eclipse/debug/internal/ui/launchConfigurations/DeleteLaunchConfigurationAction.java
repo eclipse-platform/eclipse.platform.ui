@@ -18,10 +18,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 
 /**
  * Deletes the selected launch configuration(s).
@@ -49,7 +52,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 		IStructuredSelection selection = getStructuredSelection();
 		// Make the user confirm the deletion
 		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; //
-		return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage);
+		return MessageDialog.open(MessageDialog.QUESTION, getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage, SWT.NONE, LaunchConfigurationsMessages.LaunchConfigurationSelectionDialog_deleteButtonLabel, IDialogConstants.CANCEL_LABEL) == Window.OK;
 	}
 
 	/**

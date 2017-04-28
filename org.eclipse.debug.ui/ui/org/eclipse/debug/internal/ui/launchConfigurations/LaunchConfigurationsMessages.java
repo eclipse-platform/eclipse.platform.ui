@@ -93,6 +93,7 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_Information_3;
 	public static String LaunchConfigurationSelectionDialog_0;
 	public static String LaunchConfigurationSelectionDialog_1;
+	public static String LaunchConfigurationSelectionDialog_deleteButtonLabel;
 
 	public static String LaunchConfigurationTabGroupViewer_14;
 
