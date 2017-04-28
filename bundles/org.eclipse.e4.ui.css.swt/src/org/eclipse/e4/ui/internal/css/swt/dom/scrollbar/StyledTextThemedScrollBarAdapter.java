@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Fabio Zadrozny and others.
+ * Copyright (c) 2017 Fabio Zadrozny and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.css.swt.dom.scrollbar;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -37,6 +38,8 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 	private final int fInitialRightMargin;
 
 	private final int fInitialBottomMargin;
+
+	private final static boolean isWindowsOS = Platform.OS_WIN32.equals(Platform.getOS());
 
 	public StyledTextThemedScrollBarAdapter(StyledText styledText) {
 		this(styledText, new ScrollBarSettings());
@@ -193,6 +196,24 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 	}
 
 	/**
+	 * See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=514068
+	 *
+	 * This function will force a synchronous drawing on the styled text on
+	 * platforms where just calling a redraw may take some time to actually take
+	 * effect (i.e.: windows). See: https://bugs.eclipse.org/511596#c26 for
+	 * another similar issue, which makes the drawing of the contents of the
+	 * editor appear unsynchronized with the ruler.
+	 *
+	 * @param styledText
+	 *            the control where the sync is needed.
+	 */
+	private static void syncStyledTextDrawing(StyledText styledText) {
+		if (isWindowsOS) {
+			styledText.update();
+		}
+	}
+
+	/**
 	 * Handles the scroll vertically.
 	 */
 	static class StyledTextVerticalScrollHandler extends AbstractStyledTextScrollHandler {
@@ -283,6 +304,18 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 						fHandleDrawnRect.height, borderRadius, borderRadius);
 				gc.setBackground(background);
 			}
+		}
+
+		/**
+		 * This function is overridden to force an instantaneous redraw in the
+		 * StyledText whenever we change the selection on the vertical
+		 * scrollbar.
+		 */
+		@Override
+		protected void notifyScrollbarSelectionChanged(Scrollable scrollable, int detail) {
+			super.notifyScrollbarSelectionChanged(scrollable, detail);
+			StyledText styledText = (StyledText) scrollable;
+			syncStyledTextDrawing(styledText);
 		}
 	}
 
@@ -379,6 +412,18 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 						fHandleDrawnRect.height, borderRadius, borderRadius);
 				gc.setBackground(background);
 			}
+		}
+
+		/**
+		 * This function is overridden to force an instantaneous redraw in the
+		 * StyledText whenever we change the selection on the horizontal
+		 * scrollbar.
+		 */
+		@Override
+		protected void notifyScrollbarSelectionChanged(Scrollable scrollable, int detail) {
+			super.notifyScrollbarSelectionChanged(scrollable, detail);
+			StyledText styledText = (StyledText) scrollable;
+			syncStyledTextDrawing(styledText);
 		}
 	}
 
