@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class PR_1GHOM0N_Test extends ResourceTest {
@@ -78,13 +77,10 @@ public class PR_1GHOM0N_Test extends ResourceTest {
 
 		// try and reproduce the error (there are problems when calling an incremental
 		// build from within an operation...it leaves the tree immutable)
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-				IFile file = project.getFile("test.txt");
-				file.create(getRandomContents(), true, getMonitor());
-			}
+		IWorkspaceRunnable body = monitor -> {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			IFile file = project.getFile("test.txt");
+			file.create(getRandomContents(), true, getMonitor());
 		};
 		try {
 			getWorkspace().run(body, getMonitor());

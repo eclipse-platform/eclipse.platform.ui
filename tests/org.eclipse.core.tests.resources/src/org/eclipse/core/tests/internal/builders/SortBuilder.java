@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -397,12 +397,9 @@ public class SortBuilder extends TestBuilder {
 		changedResources.clear();
 		if (delta == null)
 			return;
-		delta.accept(new IResourceDeltaVisitor() {
-			@Override
-			public boolean visit(IResourceDelta delta) {
-				changedResources.add(delta.getResource());
-				return true;
-			}
+		delta.accept(delta1 -> {
+			changedResources.add(delta1.getResource());
+			return true;
 		});
 	}
 

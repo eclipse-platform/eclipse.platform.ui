@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -253,27 +253,24 @@ public class WorkspaceTest extends ResourceTest {
 	public void testMultiCreation() throws Throwable {
 		final IProject project = getWorkspace().getRoot().getProject("bar");
 		final IResource[] resources = buildResources(project, new String[] {"a/", "a/b"});
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				if (!project.exists())
-					project.create(null);
-				if (!project.isOpen())
-					project.open(null);
-				// define an operation which will create a bunch of resources including a project.
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					switch (resource.getType()) {
-						case IResource.FILE :
-							((IFile) resource).create(null, false, getMonitor());
-							break;
-						case IResource.FOLDER :
-							((IFolder) resource).create(false, true, getMonitor());
-							break;
-						case IResource.PROJECT :
-							((IProject) resource).create(getMonitor());
-							break;
-					}
+		IWorkspaceRunnable body = monitor -> {
+			if (!project.exists())
+				project.create(null);
+			if (!project.isOpen())
+				project.open(null);
+			// define an operation which will create a bunch of resources including a project.
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				switch (resource.getType()) {
+					case IResource.FILE :
+						((IFile) resource).create(null, false, getMonitor());
+						break;
+					case IResource.FOLDER :
+						((IFolder) resource).create(false, true, getMonitor());
+						break;
+					case IResource.PROJECT :
+						((IProject) resource).create(getMonitor());
+						break;
 				}
 			}
 		};

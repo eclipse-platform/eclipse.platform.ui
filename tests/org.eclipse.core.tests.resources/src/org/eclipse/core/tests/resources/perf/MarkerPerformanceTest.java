@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ package org.eclipse.core.tests.resources.perf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -48,14 +49,11 @@ public class MarkerPerformanceTest extends ResourceTest {
 
 	public void testSetAttributes1() {
 		//benchmark setting many attributes in a single operation
-		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				//set all attributes for each marker
-				for (int i = 0; i < NUM_MARKERS; i++) {
-					for (int j = 0; j < REPEAT; j++) {
-						markers[i].setAttribute("attrib", "hello");
-					}
+		final IWorkspaceRunnable runnable = monitor -> {
+			//set all attributes for each marker
+			for (int i = 0; i < NUM_MARKERS; i++) {
+				for (int j = 0; j < REPEAT; j++) {
+					markers[i].setAttribute("attrib", "hello");
 				}
 			}
 		};
@@ -75,14 +73,11 @@ public class MarkerPerformanceTest extends ResourceTest {
 
 	public void testSetAttributes2() {
 		//benchmark setting many attributes in a single operation
-		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				//set one attribute per marker, repeat for all attributes
-				for (int j = 0; j < REPEAT; j++) {
-					for (int i = 0; i < NUM_MARKERS; i++) {
-						markers[i].setAttribute("attrib", "hello");
-					}
+		final IWorkspaceRunnable runnable = monitor -> {
+			//set one attribute per marker, repeat for all attributes
+			for (int j = 0; j < REPEAT; j++) {
+				for (int i = 0; i < NUM_MARKERS; i++) {
+					markers[i].setAttribute("attrib", "hello");
 				}
 			}
 		};
@@ -106,19 +101,16 @@ public class MarkerPerformanceTest extends ResourceTest {
 		super.setUp();
 
 		final IMarker[] createdMarkers = new IMarker[NUM_MARKERS];
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				//create resources
-				project = getWorkspace().getRoot().getProject("TestProject");
-				project.create(null);
-				project.open(null);
-				file = project.getFile(Path.ROOT.append("file.txt"));
-				file.create(getRandomContents(), true, null);
-				//create markers
-				for (int i = 0; i < NUM_MARKERS; i++) {
-					createdMarkers[i] = file.createMarker(IMarker.BOOKMARK);
-				}
+		IWorkspaceRunnable runnable = monitor -> {
+			//create resources
+			project = getWorkspace().getRoot().getProject("TestProject");
+			project.create(null);
+			project.open(null);
+			file = project.getFile(Path.ROOT.append("file.txt"));
+			file.create(getRandomContents(), true, null);
+			//create markers
+			for (int i = 0; i < NUM_MARKERS; i++) {
+				createdMarkers[i] = file.createMarker(IMarker.BOOKMARK);
 			}
 		};
 

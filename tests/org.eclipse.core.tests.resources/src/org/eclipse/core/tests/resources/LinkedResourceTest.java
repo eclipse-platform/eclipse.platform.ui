@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -728,12 +728,7 @@ public class LinkedResourceTest extends ResourceTest {
 		final byte[] finalContents = oldContents;
 		try {
 			//recreate the link in a workspace runnable with create scheduling rule
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					dotProject.setContents(new ByteArrayInputStream(finalContents), IResource.NONE, getMonitor());
-				}
-			}, getWorkspace().getRuleFactory().modifyRule(dotProject), IResource.NONE, getMonitor());
+			getWorkspace().run((IWorkspaceRunnable) monitor -> dotProject.setContents(new ByteArrayInputStream(finalContents), IResource.NONE, getMonitor()), getWorkspace().getRuleFactory().modifyRule(dotProject), IResource.NONE, getMonitor());
 		} catch (CoreException e1) {
 			fail("2.99", e1);
 		}

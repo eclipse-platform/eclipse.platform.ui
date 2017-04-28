@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -542,12 +542,7 @@ public class MoveTest extends LocalStoreTest {
 		file = projects[0].getFile("ghost");
 		final IFile hackFile = file;
 		final Workspace workspace = (Workspace) getWorkspace();
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				workspace.createResource(hackFile, false);
-			}
-		};
+		IWorkspaceRunnable operation = monitor -> workspace.createResource(hackFile, false);
 		workspace.run(operation, null);
 		destination = projects[0].getFile("destination");
 		ok = false;
@@ -560,12 +555,7 @@ public class MoveTest extends LocalStoreTest {
 
 		/* move file over a phantom */
 		assertTrue("6.1", file.exists());
-		operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				((Resource) hackFile).convertToPhantom();
-			}
-		};
+		operation = monitor -> ((Resource) hackFile).convertToPhantom();
 		workspace.run(operation, null);
 		assertTrue("6.2", !file.exists());
 		ResourceInfo info = ((File) file).getResourceInfo(true, false);

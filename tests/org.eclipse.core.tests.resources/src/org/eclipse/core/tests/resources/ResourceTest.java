@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,14 +374,11 @@ public abstract class ResourceTest extends CoreTest {
 	protected void cleanup() throws CoreException {
 		final IFileStore[] toDelete = storesToDelete.toArray(new IFileStore[0]);
 		storesToDelete.clear();
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
-				//clear stores in workspace runnable to avoid interaction with resource jobs
-				for (int i = 0; i < toDelete.length; i++)
-					clear(toDelete[i]);
-			}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+			//clear stores in workspace runnable to avoid interaction with resource jobs
+			for (int i = 0; i < toDelete.length; i++)
+				clear(toDelete[i]);
 		}, null);
 		getWorkspace().save(true, null);
 		//don't leak builder jobs, since they may affect subsequent tests
@@ -548,12 +545,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * resource info tree.
 	 */
 	public void ensureDoesNotExistInWorkspace(final IResource[] resources) {
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				for (int i = 0; i < resources.length; i++)
-					ensureDoesNotExistInWorkspace(resources[i]);
-			}
+		IWorkspaceRunnable body = monitor -> {
+			for (int i = 0; i < resources.length; i++)
+				ensureDoesNotExistInWorkspace(resources[i]);
 		};
 		try {
 			getWorkspace().run(body, null);
@@ -600,15 +594,12 @@ public abstract class ResourceTest extends CoreTest {
 	public void ensureExistsInWorkspace(final IFile resource, final InputStream contents) {
 		if (resource == null)
 			return;
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				if (resource.exists()) {
-					resource.setContents(contents, true, false, null);
-				} else {
-					ensureExistsInWorkspace(resource.getParent(), true);
-					resource.create(contents, true, null);
-				}
+		IWorkspaceRunnable body = monitor -> {
+			if (resource.exists()) {
+				resource.setContents(contents, true, false, null);
+			} else {
+				ensureExistsInWorkspace(resource.getParent(), true);
+				resource.create(contents, true, null);
 			}
 		};
 		try {
@@ -629,12 +620,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * Create the given resource in the workspace resource info tree.
 	 */
 	public void ensureExistsInWorkspace(final IResource resource, final boolean local) {
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				create(resource, local);
-			}
-		};
+		IWorkspaceRunnable body = monitor -> create(resource, local);
 		try {
 			getWorkspace().run(body, null);
 		} catch (CoreException e) {
@@ -647,12 +633,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * info tree.
 	 */
 	public void ensureExistsInWorkspace(final IResource[] resources, final boolean local) {
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < resources.length; i++)
-					create(resources[i], local);
-			}
+		IWorkspaceRunnable body = monitor -> {
+			for (int i = 0; i < resources.length; i++)
+				create(resources[i], local);
 		};
 		try {
 			getWorkspace().run(body, null);

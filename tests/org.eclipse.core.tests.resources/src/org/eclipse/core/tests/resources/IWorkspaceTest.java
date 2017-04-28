@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -73,11 +73,8 @@ public class IWorkspaceTest extends ResourceTest {
 	public void testCancelRunnable() {
 		boolean cancelled = false;
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					throw new OperationCanceledException();
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				throw new OperationCanceledException();
 			}, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
@@ -738,25 +735,22 @@ public class IWorkspaceTest extends ResourceTest {
 	public void testMultiCreation() throws Throwable {
 		final IProject project = getWorkspace().getRoot().getProject("bar");
 		final IResource[] resources = buildResources(project, new String[] {"a/", "a/b"});
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				project.create(null);
-				project.open(null);
-				// define an operation which will create a bunch of resources including a project.
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					switch (resource.getType()) {
-						case IResource.FILE :
-							((IFile) resource).create(null, false, getMonitor());
-							break;
-						case IResource.FOLDER :
-							((IFolder) resource).create(false, true, getMonitor());
-							break;
-						case IResource.PROJECT :
-							((IProject) resource).create(getMonitor());
-							break;
-					}
+		IWorkspaceRunnable body = monitor -> {
+			project.create(null);
+			project.open(null);
+			// define an operation which will create a bunch of resources including a project.
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				switch (resource.getType()) {
+					case IResource.FILE :
+						((IFile) resource).create(null, false, getMonitor());
+						break;
+					case IResource.FOLDER :
+						((IFolder) resource).create(false, true, getMonitor());
+						break;
+					case IResource.PROJECT :
+						((IProject) resource).create(getMonitor());
+						break;
 				}
 			}
 		};
@@ -783,26 +777,23 @@ public class IWorkspaceTest extends ResourceTest {
 		final CoreException[] errorPointer = new CoreException[1];
 		Thread[] threads = new Thread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			threads[i] = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					IWorkspaceDescription description = workspace.getDescription();
-					for (int j = 0; j < 100; j++) {
-						description.setAutoBuilding(false);
-						try {
-							workspace.setDescription(description);
-						} catch (CoreException e) {
-							errorPointer[0] = e;
-							return;
-						}
-						description.setAutoBuilding(true);
-						try {
-							workspace.setDescription(description);
-						} catch (CoreException e) {
-							errorPointer[0] = e;
-							return;
-						}
+			threads[i] = new Thread((Runnable) () -> {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				for (int j = 0; j < 100; j++) {
+					description.setAutoBuilding(false);
+					try {
+						workspace.setDescription(description);
+					} catch (CoreException e1) {
+						errorPointer[0] = e1;
+						return;
+					}
+					description.setAutoBuilding(true);
+					try {
+						workspace.setDescription(description);
+					} catch (CoreException e2) {
+						errorPointer[0] = e2;
+						return;
 					}
 				}
 			}, "Autobuild " + i);

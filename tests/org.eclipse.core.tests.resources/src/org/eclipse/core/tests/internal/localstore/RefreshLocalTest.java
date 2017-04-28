@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 //
 public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
@@ -216,12 +215,9 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		IFile file = project.getFile("file");
 		final IFile hackFile = file;
 		final Workspace workspace = (Workspace) getWorkspace();
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				workspace.createResource(hackFile, false);
-				((Resource) hackFile).getResourceInfo(false, true).set(M_LOCAL_EXISTS);
-			}
+		IWorkspaceRunnable operation = monitor -> {
+			workspace.createResource(hackFile, false);
+			((Resource) hackFile).getResourceInfo(false, true).set(M_LOCAL_EXISTS);
 		};
 		workspace.run(operation, null);
 		assertTrue("1.0", file.exists());

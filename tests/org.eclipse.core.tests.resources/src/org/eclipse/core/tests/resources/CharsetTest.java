@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2015 IBM Corporation and others.
+ *  Copyright (c) 2004, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -118,17 +118,14 @@ public class CharsetTest extends ResourceTest {
 			final IFile file = project.getFile("file.txt");
 			ensureExistsInWorkspace(file, true);
 			project.setDefaultCharset("FOO", getMonitor());
-			workspace.run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					assertEquals("0.9", "FOO", file.getCharset());
-					file.setCharset("BAR", getMonitor());
-					assertEquals("1.0", "BAR", file.getCharset());
-					file.move(project.getFullPath().append("file2.txt"), IResource.NONE, monitor);
-					IFile file2 = project.getFile("file2.txt");
-					assertExistsInWorkspace(file2, false);
-					assertEquals("2.0", "BAR", file.getCharset());
-				}
+			workspace.run((IWorkspaceRunnable) monitor -> {
+				assertEquals("0.9", "FOO", file.getCharset());
+				file.setCharset("BAR", getMonitor());
+				assertEquals("1.0", "BAR", file.getCharset());
+				file.move(project.getFullPath().append("file2.txt"), IResource.NONE, monitor);
+				IFile file2 = project.getFile("file2.txt");
+				assertExistsInWorkspace(file2, false);
+				assertEquals("2.0", "BAR", file.getCharset());
 			}, null);
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
@@ -182,23 +179,20 @@ public class CharsetTest extends ResourceTest {
 	private void clearAllEncodings(IResource root) throws CoreException {
 		if (root == null || !root.exists())
 			return;
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) throws CoreException {
-				if (!resource.exists())
-					return false;
-				switch (resource.getType()) {
-					case IResource.FILE :
-						((IFile) resource).setCharset(null, getMonitor());
-						break;
-					case IResource.ROOT :
-						// do nothing
-						break;
-					default :
-						((IContainer) resource).setDefaultCharset(null, getMonitor());
-				}
-				return true;
+		IResourceVisitor visitor = resource -> {
+			if (!resource.exists())
+				return false;
+			switch (resource.getType()) {
+				case IResource.FILE :
+					((IFile) resource).setCharset(null, getMonitor());
+					break;
+				case IResource.ROOT :
+					// do nothing
+					break;
+				default :
+					((IContainer) resource).setDefaultCharset(null, getMonitor());
 			}
+			return true;
 		};
 		root.accept(visitor);
 	}
@@ -1330,12 +1324,9 @@ public class CharsetTest extends ResourceTest {
 			verifier.addExpectedChange(prefs.getParent(), IResourceDelta.CHANGED, 0);
 			verifier.addExpectedChange(prefs, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 			try {
-				workspace.run(new IWorkspaceRunnable() {
-					@Override
-					public void run(IProgressMonitor monitor) throws CoreException {
-						file1.setCharset("FOO", getMonitor());
-						file2.setCharset("FOO", getMonitor());
-					}
+				workspace.run((IWorkspaceRunnable) monitor -> {
+					file1.setCharset("FOO", getMonitor());
+					file2.setCharset("FOO", getMonitor());
 				}, getMonitor());
 			} catch (CoreException e) {
 				fail("1.4.0", e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2012, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,13 +61,10 @@ public class Bug_192631 extends ResourceTest {
 
 		final Set<URI> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				toVisit.remove(resource.getLocationURI());
-				toVisitCount[0]--;
-				return true;
-			}
+		IResourceVisitor visitor = resource -> {
+			toVisit.remove(resource.getLocationURI());
+			toVisitCount[0]--;
+			return true;
 		};
 
 		EFS.getStore(folderA).mkdir(EFS.NONE, null);
@@ -109,13 +106,10 @@ public class Bug_192631 extends ResourceTest {
 
 		final Set<URI> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				toVisit.remove(resource.getLocationURI());
-				toVisitCount[0]--;
-				return true;
-			}
+		IResourceVisitor visitor = resource -> {
+			toVisit.remove(resource.getLocationURI());
+			toVisitCount[0]--;
+			return true;
 		};
 
 		EFS.getStore(folderA).mkdir(EFS.NONE, null);
@@ -157,13 +151,10 @@ public class Bug_192631 extends ResourceTest {
 
 		final Set<URI> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				toVisit.remove(resource.getLocationURI());
-				toVisitCount[0]--;
-				return true;
-			}
+		IResourceVisitor visitor = resource -> {
+			toVisit.remove(resource.getLocationURI());
+			toVisitCount[0]--;
+			return true;
 		};
 
 		EFS.getStore(folderA).mkdir(EFS.NONE, null);

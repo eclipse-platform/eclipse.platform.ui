@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
@@ -45,15 +44,12 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 	 */
 	void createAndPopulateProject(final IProject project, final IFolder folder, final int totalResources) {
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
-					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Builder1"), createCommand(desc, "Builder2"), createCommand(desc, "Builder3"), createCommand(desc, "Builder4"), createCommand(desc, "Builder5")});
-					project.create(desc, getMonitor());
-					project.open(getMonitor());
-					createFolder(folder, totalResources);
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
+				desc.setBuildSpec(new ICommand[] {createCommand(desc, "Builder1"), createCommand(desc, "Builder2"), createCommand(desc, "Builder3"), createCommand(desc, "Builder4"), createCommand(desc, "Builder5")});
+				project.create(desc, getMonitor());
+				project.open(getMonitor());
+				createFolder(folder, totalResources);
 			}, getMonitor());
 		} catch (CoreException e) {
 			fail("Failed to create project in performance test", e);

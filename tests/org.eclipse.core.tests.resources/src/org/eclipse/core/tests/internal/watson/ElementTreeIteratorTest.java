@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -72,29 +72,20 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		final ElementTree tree = baseTree.newEmptyDelta();
 		modifyTree(tree);
 		final ArrayList<Object> elts = new ArrayList<>();
-		final IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
-				elts.add(info);
-				return true;
-			}
+		final IElementContentVisitor visitor = (tree1, requestor, info) -> {
+			elts.add(info);
+			return true;
 		};
-		Thread reader = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < 80000; i++) {
-					new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
-				}
+		Thread reader = new Thread((Runnable) () -> {
+			for (int i = 0; i < 80000; i++) {
+				new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
 			}
 		}, "Holmes (reader)");
-		Thread writer = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < 1000; i++) {
-					modifyTree(tree);
-					recursiveDelete(tree, Path.ROOT);
-					setupElementTree(tree, 3);
-				}
+		Thread writer = new Thread((Runnable) () -> {
+			for (int i = 0; i < 1000; i++) {
+				modifyTree(tree);
+				recursiveDelete(tree, Path.ROOT);
+				setupElementTree(tree, 3);
 			}
 		}, "Doyle (writer)");
 
@@ -123,12 +114,9 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		int n = 3;
 		setupElementTree(tree, n);
 		final ArrayList<IPath> elts = new ArrayList<>();
-		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
-				elts.add(requestor.requestPath());
-				return true;
-			}
+		IElementContentVisitor elementVisitor = (tree1, requestor, info) -> {
+			elts.add(requestor.requestPath());
+			return true;
 		};
 		new ElementTreeIterator(tree, Path.ROOT).iterate(elementVisitor);
 		assertEquals("1", 2 + n + n * n + n * n * n, elts.size());

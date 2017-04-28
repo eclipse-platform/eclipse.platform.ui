@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -46,10 +45,7 @@ public class BenchMiscWorkspace extends ResourceTest {
 	 */
 	public void testNoOp() throws Exception {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
-		final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-			}
+		final IWorkspaceRunnable noop = monitor -> {
 		};
 		//run a first operation to make sure no other jobs are running before starting timer
 		ws.run(noop, null);

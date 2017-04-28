@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,29 +176,26 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		//test late addition of content type 
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		BundleTestingHelper.runWithBundles("2", new Runnable() {
-			@Override
-			public void run() {
-				IContentType alias = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".alias");
-				assertNull("2.1.1", alias);
-				IContentType derived = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".derived-from-alias");
-				assertNotNull("2.1.2", derived);
-				IContentType target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
-				assertNotNull("2.1.3", target);
-				// checks associations
-				IContentType[] selected = contentTypeManager.findContentTypesFor("foo.missing-target");
-				assertEquals("2.2.1", 2, selected.length);
-				assertEquals("2.2.2", target, selected[0]);
-				assertEquals("2.2.3", derived, selected[1]);
-				try {
-					selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
-				} catch (IOException e) {
-					fail("2.2.4", e);
-				}
-				assertEquals("2.2.5", 2, selected.length);
-				assertEquals("2.2.6", target, selected[0]);
-				assertEquals("2.2.7", derived, selected[1]);
+		BundleTestingHelper.runWithBundles("2", () -> {
+			IContentType alias1 = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".alias");
+			assertNull("2.1.1", alias1);
+			IContentType derived1 = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".derived-from-alias");
+			assertNotNull("2.1.2", derived1);
+			IContentType target1 = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
+			assertNotNull("2.1.3", target1);
+			// checks associations
+			IContentType[] selected1 = contentTypeManager.findContentTypesFor("foo.missing-target");
+			assertEquals("2.2.1", 2, selected1.length);
+			assertEquals("2.2.2", target1, selected1[0]);
+			assertEquals("2.2.3", derived1, selected1[1]);
+			try {
+				selected1 = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
+			} catch (IOException e) {
+				fail("2.2.4", e);
 			}
+			assertEquals("2.2.5", 2, selected1.length);
+			assertEquals("2.2.6", target1, selected1[0]);
+			assertEquals("2.2.7", derived1, selected1[1]);
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle02"}, listener);
 	}
 
@@ -684,18 +681,15 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertTrue("2.1", text[0] == text[1]);
 		//	make arbitrary dynamic changes to the contentTypes extension point
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		BundleTestingHelper.runWithBundles("3", new Runnable() {
-			@Override
-			public void run() {
-				IContentType missing = manager.getContentType("org.eclipse.bundle01.missing");
-				assertNotNull("3.1", missing);
-				// ensure the content type instances are different
-				text[2] = manager.getContentType(IContentTypeManager.CT_TEXT);
-				assertNotNull("3.2", text[2]);
-				text[2] = ((ContentTypeHandler) text[2]).getTarget();
-				assertEquals("3.3", text[0], text[2]);
-				assertTrue("3.4", text[0] != text[2]);
-			}
+		BundleTestingHelper.runWithBundles("3", () -> {
+			IContentType missing = manager.getContentType("org.eclipse.bundle01.missing");
+			assertNotNull("3.1", missing);
+			// ensure the content type instances are different
+			text[2] = manager.getContentType(IContentTypeManager.CT_TEXT);
+			assertNotNull("3.2", text[2]);
+			text[2] = ((ContentTypeHandler) text[2]).getTarget();
+			assertEquals("3.3", text[0], text[2]);
+			assertTrue("3.4", text[0] != text[2]);
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle01"}, listener);
 		assertNull("4.0", manager.getContentType("org.eclipse.bundle01.missing"));
 		// ensure the content type instances are all different
@@ -724,20 +718,17 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertTrue("2.1", text[0] == text[1]);
 		//	make arbitrary dynamic changes to the contentTypes extension point
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(IContentConstants.CONTENT_NAME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		BundleTestingHelper.runWithBundles("3", new Runnable() {
-			@Override
-			public void run() {
-				IContentType contentType = manager.getContentType("org.eclipse.bug485227.bug485227_contentType");
-				assertNotNull("3.1 Contributed content type not found", contentType);
-				// ensure the content type instances are different
-				text[2] = manager.getContentType(IContentTypeManager.CT_TEXT);
-				assertNotNull("3.2 Text content type not modified", text[2]);
-				text[2] = ((ContentTypeHandler) text[2]).getTarget();
-				assertEquals("3.3", text[0], text[2]);
-				assertTrue("3.4", text[0] != text[2]);
-				assertEquals("3.5 default extension not associated", contentType, manager.findContentTypeFor("file.bug485227"));
-				assertEquals("3.6 additional extension not associated", contentType, manager.findContentTypeFor("file.bug485227_2"));
-			}
+		BundleTestingHelper.runWithBundles("3", () -> {
+			IContentType contentType = manager.getContentType("org.eclipse.bug485227.bug485227_contentType");
+			assertNotNull("3.1 Contributed content type not found", contentType);
+			// ensure the content type instances are different
+			text[2] = manager.getContentType(IContentTypeManager.CT_TEXT);
+			assertNotNull("3.2 Text content type not modified", text[2]);
+			text[2] = ((ContentTypeHandler) text[2]).getTarget();
+			assertEquals("3.3", text[0], text[2]);
+			assertTrue("3.4", text[0] != text[2]);
+			assertEquals("3.5 default extension not associated", contentType, manager.findContentTypeFor("file.bug485227"));
+			assertEquals("3.6 additional extension not associated", contentType, manager.findContentTypeFor("file.bug485227_2"));
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bug485227"}, listener);
 		assertNull("4.0 Content type not cleared after bundle uninstall", manager.getContentType("org.eclipse.bug485227.bug485227_contentType"));
 		// ensure the content type instances are all different
@@ -905,24 +896,21 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("2.0", 0, finder.findContentTypesFor("invalid.missing.name").length);
 		assertNull("3.0", contentTypeManager.getContentType(PI_RESOURCES_TESTS + '.' + "invalid-missing-name"));
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		BundleTestingHelper.runWithBundles("1", new Runnable() {
-			@Override
-			public void run() {
-				// ensure the invalid content types are not available
-				assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
-				assertEquals("1.3", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
-				assertNull("1.4", contentTypeManager.getContentType("org.eclipse.bundle03.invalid-missing-name"));
-				// this content type has good markup, but invalid describer class
-				IContentType invalidDescriber = contentTypeManager.getContentType("org.eclipse.bundle03.invalid-describer");
-				assertNotNull("1.5", invalidDescriber);
-				// name based matching should work fine
-				assertEquals("1.6", invalidDescriber, contentTypeManager.findContentTypeFor("invalid.describer"));
-				try {
-					// the describer class is invalid, content matchong should fail
-					assertNull("1.7", contentTypeManager.findContentTypeFor(getRandomContents(), "invalid.describer"));
-				} catch (IOException e) {
-					fail("1.8", e);
-				}
+		BundleTestingHelper.runWithBundles("1", () -> {
+			// ensure the invalid content types are not available
+			assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
+			assertEquals("1.3", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
+			assertNull("1.4", contentTypeManager.getContentType("org.eclipse.bundle03.invalid-missing-name"));
+			// this content type has good markup, but invalid describer class
+			IContentType invalidDescriber = contentTypeManager.getContentType("org.eclipse.bundle03.invalid-describer");
+			assertNotNull("1.5", invalidDescriber);
+			// name based matching should work fine
+			assertEquals("1.6", invalidDescriber, contentTypeManager.findContentTypeFor("invalid.describer"));
+			try {
+				// the describer class is invalid, content matchong should fail
+				assertNull("1.7", contentTypeManager.findContentTypeFor(getRandomContents(), "invalid.describer"));
+			} catch (IOException e) {
+				fail("1.8", e);
 			}
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle03"}, listener);
 	}
@@ -1081,54 +1069,51 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("0.1", 0, selected.length);
 
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		BundleTestingHelper.runWithBundles("1", new Runnable() {
-			@Override
-			public void run() {
-				final String namespace = "org.eclipse.bundle04";
+		BundleTestingHelper.runWithBundles("1", () -> {
+			final String namespace = "org.eclipse.bundle04";
 
-				IContentType empty1 = manager.getContentType(namespace + ".empty_extension1");
-				IContentType empty2 = manager.getContentType(namespace + ".empty_extension2");
-				IContentType empty3 = manager.getContentType(namespace + ".empty_extension3");
-				IContentType empty4 = manager.getContentType(namespace + ".empty_extension4");
-				IContentType nonEmpty = manager.getContentType(namespace + ".non_empty_extension");
+			IContentType empty1 = manager.getContentType(namespace + ".empty_extension1");
+			IContentType empty2 = manager.getContentType(namespace + ".empty_extension2");
+			IContentType empty3 = manager.getContentType(namespace + ".empty_extension3");
+			IContentType empty4 = manager.getContentType(namespace + ".empty_extension4");
+			IContentType nonEmpty = manager.getContentType(namespace + ".non_empty_extension");
 
-				assertNotNull("1.1.1", empty1);
-				assertNotNull("1.1.2", empty2);
-				assertNotNull("1.1.3", empty3);
-				assertNotNull("1.1.4", empty4);
-				assertNotNull("1.1.5", nonEmpty);
+			assertNotNull("1.1.1", empty1);
+			assertNotNull("1.1.2", empty2);
+			assertNotNull("1.1.3", empty3);
+			assertNotNull("1.1.4", empty4);
+			assertNotNull("1.1.5", nonEmpty);
 
-				IContentType[] selected = manager.findContentTypesFor("file_with_no_extension");
-				assertEquals("1.2.0", 4, selected.length);
-				assertTrue("1.2.1", contains(selected, empty1));
-				assertTrue("1.2.2", contains(selected, empty2));
-				assertTrue("1.2.3", contains(selected, empty3));
-				assertTrue("1.2.4", contains(selected, empty4));
+			IContentType[] selected1 = manager.findContentTypesFor("file_with_no_extension");
+			assertEquals("1.2.0", 4, selected1.length);
+			assertTrue("1.2.1", contains(selected1, empty1));
+			assertTrue("1.2.2", contains(selected1, empty2));
+			assertTrue("1.2.3", contains(selected1, empty3));
+			assertTrue("1.2.4", contains(selected1, empty4));
 
-				selected = manager.findContentTypesFor("file_with_extension.non-empty");
-				assertEquals("1.2.5", 1, selected.length);
-				assertTrue("1.2.6", contains(selected, nonEmpty));
+			selected1 = manager.findContentTypesFor("file_with_extension.non-empty");
+			assertEquals("1.2.5", 1, selected1.length);
+			assertTrue("1.2.6", contains(selected1, nonEmpty));
 
-				try {
-					nonEmpty.addFileSpec("", IContentType.FILE_EXTENSION_SPEC);
-				} catch (CoreException e) {
-					fail("1.3.0", e);
-				}
-				try {
-					selected = manager.findContentTypesFor("file_with_no_extension");
-					assertEquals("1.3.1", 5, selected.length);
-					assertTrue("1.3.2", contains(selected, nonEmpty));
-				} finally {
-					try {
-						nonEmpty.removeFileSpec("", IContentType.FILE_EXTENSION_SPEC);
-					} catch (CoreException e) {
-						fail("1.3.3", e);
-					}
-				}
-				selected = manager.findContentTypesFor("file_with_no_extension");
-				assertEquals("1.4.0", 4, selected.length);
-				assertTrue("1.4.1", !contains(selected, nonEmpty));
+			try {
+				nonEmpty.addFileSpec("", IContentType.FILE_EXTENSION_SPEC);
+			} catch (CoreException e1) {
+				fail("1.3.0", e1);
 			}
+			try {
+				selected1 = manager.findContentTypesFor("file_with_no_extension");
+				assertEquals("1.3.1", 5, selected1.length);
+				assertTrue("1.3.2", contains(selected1, nonEmpty));
+			} finally {
+				try {
+					nonEmpty.removeFileSpec("", IContentType.FILE_EXTENSION_SPEC);
+				} catch (CoreException e2) {
+					fail("1.3.3", e2);
+				}
+			}
+			selected1 = manager.findContentTypesFor("file_with_no_extension");
+			assertEquals("1.4.0", 4, selected1.length);
+			assertTrue("1.4.1", !contains(selected1, nonEmpty));
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle04"}, listener);
 	}
 
@@ -1163,22 +1148,19 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		//test late addition of content type - orphan2 should become visible
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 
-		BundleTestingHelper.runWithBundles("2", new Runnable() {
-			@Override
-			public void run() {
-				IContentType orphan = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".orphan");
-				assertNotNull("2.1", orphan);
-				IContentType missing = contentTypeManager.getContentType("org.eclipse.bundle01.missing");
-				assertNotNull("2.2", missing);
-				// checks orphan's associations
-				assertEquals("2.3", 1, contentTypeManager.findContentTypesFor("foo.orphan").length);
-				assertEquals("2.4", orphan, contentTypeManager.findContentTypesFor("foo.orphan")[0]);
-				assertEquals("2.5", 1, contentTypeManager.findContentTypesFor("orphan.orphan").length);
-				assertEquals("2.6", orphan, contentTypeManager.findContentTypesFor("foo.orphan")[0]);
-				// check whether an orphan association was added to the dynamically added bundle
-				assertEquals("2.7", 1, contentTypeManager.findContentTypesFor("foo.orphan2").length);
-				assertEquals("2.8", missing, contentTypeManager.findContentTypesFor("foo.orphan2")[0]);
-			}
+		BundleTestingHelper.runWithBundles("2", () -> {
+			IContentType orphan1 = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".orphan");
+			assertNotNull("2.1", orphan1);
+			IContentType missing1 = contentTypeManager.getContentType("org.eclipse.bundle01.missing");
+			assertNotNull("2.2", missing1);
+			// checks orphan's associations
+			assertEquals("2.3", 1, contentTypeManager.findContentTypesFor("foo.orphan").length);
+			assertEquals("2.4", orphan1, contentTypeManager.findContentTypesFor("foo.orphan")[0]);
+			assertEquals("2.5", 1, contentTypeManager.findContentTypesFor("orphan.orphan").length);
+			assertEquals("2.6", orphan1, contentTypeManager.findContentTypesFor("foo.orphan")[0]);
+			// check whether an orphan association was added to the dynamically added bundle
+			assertEquals("2.7", 1, contentTypeManager.findContentTypesFor("foo.orphan2").length);
+			assertEquals("2.8", missing1, contentTypeManager.findContentTypesFor("foo.orphan2")[0]);
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle01"}, listener);
 	}
 

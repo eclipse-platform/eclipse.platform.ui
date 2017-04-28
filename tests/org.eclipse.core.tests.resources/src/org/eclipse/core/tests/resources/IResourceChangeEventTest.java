@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class tests the public API of IResourceChangeEvent.
@@ -63,13 +62,10 @@ public class IResourceChangeEventTest extends ResourceTest {
 		allResources = new IResource[] {project1, project2, folder1, folder2, folder3, file1, file2, file3};
 
 		// Create and open the resources
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ensureExistsInWorkspace(allResources, true);
-				marker2 = file2.createMarker(IMarker.BOOKMARK);
-				marker3 = file3.createMarker(IMarker.BOOKMARK);
-			}
+		IWorkspaceRunnable body = monitor -> {
+			ensureExistsInWorkspace(allResources, true);
+			marker2 = file2.createMarker(IMarker.BOOKMARK);
+			marker3 = file3.createMarker(IMarker.BOOKMARK);
 		};
 		try {
 			getWorkspace().run(body, getMonitor());
@@ -102,50 +98,44 @@ public class IResourceChangeEventTest extends ResourceTest {
 		 * - remove marker2
 		 * - change marker3
 		 */
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				//bookmark type, no subtypes
-				IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.BOOKMARK, false);
-				verifyDeltas(deltas);
+		IResourceChangeListener listener = event -> {
+			//bookmark type, no subtypes
+			IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.BOOKMARK, false);
+			verifyDeltas(deltas);
 
-				//bookmark type, with subtypes
-				deltas = event.findMarkerDeltas(IMarker.BOOKMARK, true);
-				verifyDeltas(deltas);
+			//bookmark type, with subtypes
+			deltas = event.findMarkerDeltas(IMarker.BOOKMARK, true);
+			verifyDeltas(deltas);
 
-				//marker type, no subtypes
-				deltas = event.findMarkerDeltas(IMarker.MARKER, false);
-				assertNotNull("10.0", deltas);
-				assertTrue("10.1", deltas.length == 0);
+			//marker type, no subtypes
+			deltas = event.findMarkerDeltas(IMarker.MARKER, false);
+			assertNotNull("10.0", deltas);
+			assertTrue("10.1", deltas.length == 0);
 
-				//marker type, with subtypes
-				deltas = event.findMarkerDeltas(IMarker.MARKER, true);
-				verifyDeltas(deltas);
+			//marker type, with subtypes
+			deltas = event.findMarkerDeltas(IMarker.MARKER, true);
+			verifyDeltas(deltas);
 
-				//problem type, with subtypes
-				deltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
-				assertNotNull("12.0", deltas);
-				assertTrue("12.1", deltas.length == 0);
+			//problem type, with subtypes
+			deltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+			assertNotNull("12.0", deltas);
+			assertTrue("12.1", deltas.length == 0);
 
-				//all types, include subtypes
-				deltas = event.findMarkerDeltas(null, true);
-				verifyDeltas(deltas);
+			//all types, include subtypes
+			deltas = event.findMarkerDeltas(null, true);
+			verifyDeltas(deltas);
 
-				//all types, no subtypes
-				deltas = event.findMarkerDeltas(null, false);
-				verifyDeltas(deltas);
-			}
+			//all types, no subtypes
+			deltas = event.findMarkerDeltas(null, false);
+			verifyDeltas(deltas);
 		};
 		getWorkspace().addResourceChangeListener(listener);
 
 		//do the work	
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				marker1 = file1.createMarker(IMarker.BOOKMARK);
-				marker2.delete();
-				marker3.setAttribute("Foo", true);
-			}
+		IWorkspaceRunnable body = monitor -> {
+			marker1 = file1.createMarker(IMarker.BOOKMARK);
+			marker2.delete();
+			marker3.setAttribute("Foo", true);
 		};
 		try {
 			getWorkspace().run(body, getMonitor());
@@ -161,44 +151,41 @@ public class IResourceChangeEventTest extends ResourceTest {
 		 * The following changes will occur:
 		 * - change file1
 		 */
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				//bookmark type, no subtypes
-				IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.BOOKMARK, false);
-				assertNotNull("1.0", deltas);
-				assertTrue("1.1", deltas.length == 0);
+		IResourceChangeListener listener = event -> {
+			//bookmark type, no subtypes
+			IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.BOOKMARK, false);
+			assertNotNull("1.0", deltas);
+			assertTrue("1.1", deltas.length == 0);
 
-				//bookmark type, with subtypes
-				deltas = event.findMarkerDeltas(IMarker.BOOKMARK, true);
-				assertNotNull("2.0", deltas);
-				assertTrue("2.1", deltas.length == 0);
+			//bookmark type, with subtypes
+			deltas = event.findMarkerDeltas(IMarker.BOOKMARK, true);
+			assertNotNull("2.0", deltas);
+			assertTrue("2.1", deltas.length == 0);
 
-				//marker type, no subtypes
-				deltas = event.findMarkerDeltas(IMarker.MARKER, false);
-				assertNotNull("3.0", deltas);
-				assertTrue("3.1", deltas.length == 0);
+			//marker type, no subtypes
+			deltas = event.findMarkerDeltas(IMarker.MARKER, false);
+			assertNotNull("3.0", deltas);
+			assertTrue("3.1", deltas.length == 0);
 
-				//marker type, with subtypes
-				deltas = event.findMarkerDeltas(IMarker.MARKER, true);
-				assertNotNull("4.0", deltas);
-				assertTrue("4.1", deltas.length == 0);
+			//marker type, with subtypes
+			deltas = event.findMarkerDeltas(IMarker.MARKER, true);
+			assertNotNull("4.0", deltas);
+			assertTrue("4.1", deltas.length == 0);
 
-				//problem type, with subtypes
-				deltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
-				assertNotNull("5.0", deltas);
-				assertTrue("5.1", deltas.length == 0);
+			//problem type, with subtypes
+			deltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+			assertNotNull("5.0", deltas);
+			assertTrue("5.1", deltas.length == 0);
 
-				//all types, include subtypes
-				deltas = event.findMarkerDeltas(null, true);
-				assertNotNull("6.0", deltas);
-				assertTrue("6.1", deltas.length == 0);
+			//all types, include subtypes
+			deltas = event.findMarkerDeltas(null, true);
+			assertNotNull("6.0", deltas);
+			assertTrue("6.1", deltas.length == 0);
 
-				//all types, no subtypes
-				deltas = event.findMarkerDeltas(null, false);
-				assertNotNull("7.0", deltas);
-				assertTrue("7.1", deltas.length == 0);
-			}
+			//all types, no subtypes
+			deltas = event.findMarkerDeltas(null, false);
+			assertNotNull("7.0", deltas);
+			assertTrue("7.1", deltas.length == 0);
 		};
 		getWorkspace().addResourceChangeListener(listener);
 

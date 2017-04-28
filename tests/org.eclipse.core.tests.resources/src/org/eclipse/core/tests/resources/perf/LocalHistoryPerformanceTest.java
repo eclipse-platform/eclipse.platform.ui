@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2015 IBM Corporation and others.
+ *  Copyright (c) 2004, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -58,22 +58,19 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		folders[4] = folders[3].getFolder("folder5");
 		final IWorkspace workspace = getWorkspace();
 		try {
-			workspace.run(new IWorkspaceRunnable() {
-				@Override
-				public void run(org.eclipse.core.runtime.IProgressMonitor monitor) {
-					ensureExistsInWorkspace(folders, true);
-					for (IFolder folder : folders)
-						for (int j = 0; j < filesPerFolder; j++) {
-							IFile file = folder.getFile("file" + j);
-							ensureExistsInWorkspace(file, getRandomContents());
-							try {
-								for (int k = 0; k < statesPerFile; k++)
-									file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
-							} catch (CoreException ce) {
-								fail("0.5", ce);
-							}
+			workspace.run((IWorkspaceRunnable) monitor -> {
+				ensureExistsInWorkspace(folders, true);
+				for (IFolder folder : folders)
+					for (int j = 0; j < filesPerFolder; j++) {
+						IFile file = folder.getFile("file" + j);
+						ensureExistsInWorkspace(file, getRandomContents());
+						try {
+							for (int k = 0; k < statesPerFile; k++)
+								file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+						} catch (CoreException ce) {
+							fail("0.5", ce);
 						}
-				}
+					}
 			}, workspace.getRuleFactory().modifyRule(workspace.getRoot()), IWorkspace.AVOID_UPDATE, getMonitor());
 		} catch (CoreException e) {
 			fail("#createTree at : " + base.getFullPath(), e);

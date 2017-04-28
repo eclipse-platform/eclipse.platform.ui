@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,12 +48,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 	public void testEndRuleInWorkspaceOperation() {
 		try {
 			final IProject project = getWorkspace().getRoot().getProject("testEndRuleInWorkspaceOperation");
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					Job.getJobManager().endRule(project);
-				}
-			}, project, IResource.NONE, getMonitor());
+			getWorkspace().run((IWorkspaceRunnable) monitor -> Job.getJobManager().endRule(project), project, IResource.NONE, getMonitor());
 			//should have failed
 			fail("1.0");
 		} catch (CoreException e) {
@@ -74,16 +69,13 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		//simulating a scenario where workspace lock is held indefinitely
 		final int[] barrier = new int[1];
 		final Throwable[] error = new Throwable[1];
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				//block until we are told to do otherwise
-				barrier[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(barrier, TestBarrier.STATUS_DONE);
-				} catch (Throwable e) {
-					error[0] = e;
-				}
+		IResourceChangeListener listener = event -> {
+			//block until we are told to do otherwise
+			barrier[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(barrier, TestBarrier.STATUS_DONE);
+			} catch (Throwable e) {
+				error[0] = e;
 			}
 		};
 		getWorkspace().addResourceChangeListener(listener);
@@ -101,21 +93,15 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			//create a second thread that attempts to modify the workspace, but immediately
 			//cancels itself. This thread should terminate immediately with a cancelation exception
 			final boolean[] canceled = new boolean[] {false};
-			Thread t2 = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						getWorkspace().run(new IWorkspaceRunnable() {
-							@Override
-							public void run(IProgressMonitor monitor) {
-								//no-op
-							}
-						}, new CancelingProgressMonitor());
-					} catch (CoreException e) {
-						fail("1.99", e);
-					} catch (OperationCanceledException e) {
-						canceled[0] = true;
-					}
+			Thread t2 = new Thread(() -> {
+				try {
+					getWorkspace().run((IWorkspaceRunnable) monitor -> {
+						//no-op
+					}, new CancelingProgressMonitor());
+				} catch (CoreException e1) {
+					fail("1.99", e1);
+				} catch (OperationCanceledException e2) {
+					canceled[0] = true;
 				}
 			});
 			t2.start();
@@ -158,11 +144,8 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			}
 		};
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					//noop
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				//noop
 			}, rule, IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
@@ -190,16 +173,13 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		ensureExistsInWorkspace(touch, true);
 		ensureExistsInWorkspace(ruleFile, true);
 		final Throwable[] failure = new Throwable[1];
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					touch.touch(null);
-				} catch (CoreException e) {
-					failure[0] = e;
-				} catch (RuntimeException e) {
-					failure[0] = e;
-				}
+		IResourceChangeListener listener = event -> {
+			try {
+				touch.touch(null);
+			} catch (CoreException e1) {
+				failure[0] = e1;
+			} catch (RuntimeException e2) {
+				failure[0] = e2;
 			}
 		};
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
@@ -210,16 +190,13 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						workspace.run(new IWorkspaceRunnable() {
-							@Override
-							public void run(IProgressMonitor monitor) throws CoreException {
-								//do a build
-								workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
-								//signal that the job has done the build
-								status[0] = TestBarrier.STATUS_RUNNING;
-								//wait for job two to start
-								TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_DONE);
-							}
+						workspace.run((IWorkspaceRunnable) monitor1 -> {
+							//do a build
+							workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor1);
+							//signal that the job has done the build
+							status[0] = TestBarrier.STATUS_RUNNING;
+							//wait for job two to start
+							TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_DONE);
 						}, null);
 					} catch (CoreException e) {
 						return e.getStatus();
@@ -236,16 +213,13 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						workspace.run(new IWorkspaceRunnable() {
-							@Override
-							public void run(IProgressMonitor monitor) {
-								//signal that this job has started
-								status[1] = TestBarrier.STATUS_RUNNING;
-								//let job one finish
-								status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
-								//wait for job three to start
-								TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_DONE);
-							}
+						workspace.run((IWorkspaceRunnable) monitor1 -> {
+							//signal that this job has started
+							status[1] = TestBarrier.STATUS_RUNNING;
+							//let job one finish
+							status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
+							//wait for job three to start
+							TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_DONE);
 						}, null, IResource.NONE, null);
 					} catch (CoreException e) {
 						return e.getStatus();
@@ -259,18 +233,15 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						workspace.run(new IWorkspaceRunnable() {
-							@Override
-							public void run(IProgressMonitor monitor) throws CoreException {
-								//signal that this job has started
-								status[2] = TestBarrier.STATUS_RUNNING;
-								//let job two finish
-								status[1] = TestBarrier.STATUS_WAIT_FOR_DONE;
-								//ensure this job does something so the build listener runs
-								ruleFile.touch(null);
-								//wait for the ok to complete
-								TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_DONE);
-							}
+						workspace.run((IWorkspaceRunnable) monitor1 -> {
+							//signal that this job has started
+							status[2] = TestBarrier.STATUS_RUNNING;
+							//let job two finish
+							status[1] = TestBarrier.STATUS_WAIT_FOR_DONE;
+							//ensure this job does something so the build listener runs
+							ruleFile.touch(null);
+							//wait for the ok to complete
+							TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_DONE);
 						}, workspace.getRuleFactory().modifyRule(ruleFile), IResource.NONE, null);
 					} catch (CoreException e) {
 						return e.getStatus();

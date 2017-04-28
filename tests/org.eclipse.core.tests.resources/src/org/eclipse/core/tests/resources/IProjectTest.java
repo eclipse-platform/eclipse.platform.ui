@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,12 +46,9 @@ public class IProjectTest extends ResourceTest {
 	public void ensureExistsInWorkspace(final IProject project, final IProjectDescription description) {
 		if (project == null)
 			return;
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				project.create(description, monitor);
-				project.open(monitor);
-			}
+		IWorkspaceRunnable body = monitor -> {
+			project.create(description, monitor);
+			project.open(monitor);
 		};
 		try {
 			getWorkspace().run(body, null);
@@ -2469,12 +2466,9 @@ public class IProjectTest extends ResourceTest {
 			assertTrue("2.0", !oldPath.equals(newPath));
 
 			// make sure all the resources still exist.	
-			IResourceVisitor visitor = new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) {
-					assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
-					return true;
-				}
+			IResourceVisitor visitor = resource -> {
+				assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
+				return true;
 			};
 			try {
 				getWorkspace().getRoot().accept(visitor);
@@ -2831,15 +2825,12 @@ public class IProjectTest extends ResourceTest {
 
 	public void testWorkspaceNotificationClose() {
 		final int[] count = new int[1];
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				assertEquals("1.0", IResourceChangeEvent.PRE_CLOSE, event.getType());
-				count[0]++;
-				assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
-				assertTrue("1.2", event.getResource().exists());
-				assertTrue("1.3", ((IProject) event.getResource()).isOpen());
-			}
+		IResourceChangeListener listener = event -> {
+			assertEquals("1.0", IResourceChangeEvent.PRE_CLOSE, event.getType());
+			count[0]++;
+			assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
+			assertTrue("1.2", event.getResource().exists());
+			assertTrue("1.3", ((IProject) event.getResource()).isOpen());
 		};
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_CLOSE);
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
@@ -2864,14 +2855,11 @@ public class IProjectTest extends ResourceTest {
 
 	public void testWorkspaceNotificationDelete() {
 		final int[] count = new int[1];
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
-				count[0]++;
-				assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
-				assertTrue("1.2", event.getResource().exists());
-			}
+		IResourceChangeListener listener = event -> {
+			assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
+			count[0]++;
+			assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
+			assertTrue("1.2", event.getResource().exists());
 		};
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE);
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
@@ -2894,14 +2882,11 @@ public class IProjectTest extends ResourceTest {
 
 	public void testWorkspaceNotificationMove() {
 		final int[] count = new int[1];
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
-				count[0]++;
-				assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
-				assertTrue("1.2", event.getResource().exists());
-			}
+		IResourceChangeListener listener = event -> {
+			assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
+			count[0]++;
+			assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
+			assertTrue("1.2", event.getResource().exists());
 		};
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE);
 		IProject project = getWorkspace().getRoot().getProject("MyProject");

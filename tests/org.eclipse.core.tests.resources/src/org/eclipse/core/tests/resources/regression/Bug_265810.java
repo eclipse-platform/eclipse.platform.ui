@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,24 +180,18 @@ public class Bug_265810 extends ResourceTest {
 		}
 	}
 
-	IResourceChangeListener ll = new IResourceChangeListener() {
-		@Override
-		public void resourceChanged(IResourceChangeEvent event) {
-			try {
-				event.getDelta().accept(new IResourceDeltaVisitor() {
-					@Override
-					public boolean visit(IResourceDelta delta) {
-						IResource resource = delta.getResource();
-						if (resource instanceof IFile && !resource.getName().equals(".project"))
-							addToResourceDelta(delta);
-						if (delta.getAffectedChildren().length > 0)
-							return true;
-						return false;
-					}
-				});
-			} catch (CoreException e) {
-				fail("listener failed", e);
-			}
+	IResourceChangeListener ll = event -> {
+		try {
+			event.getDelta().accept(delta -> {
+				IResource resource = delta.getResource();
+				if (resource instanceof IFile && !resource.getName().equals(".project"))
+					addToResourceDelta(delta);
+				if (delta.getAffectedChildren().length > 0)
+					return true;
+				return false;
+			});
+		} catch (CoreException e) {
+			fail("listener failed", e);
 		}
 	};
 

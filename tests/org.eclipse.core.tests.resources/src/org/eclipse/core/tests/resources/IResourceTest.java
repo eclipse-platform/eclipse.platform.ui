@@ -791,13 +791,10 @@ public class IResourceTest extends ResourceTest {
 	public void testCopy() {
 		//add markers to all resources ... markers should not be copied
 		try {
-			getWorkspace().getRoot().accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) throws CoreException {
-					if (resource.isAccessible())
-						resource.createMarker(IMarker.TASK);
-					return true;
-				}
+			getWorkspace().getRoot().accept(resource -> {
+				if (resource.isAccessible())
+					resource.createMarker(IMarker.TASK);
+				return true;
 			});
 		} catch (CoreException e) {
 			fail("1.0", e);
@@ -1565,17 +1562,14 @@ public class IResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("7.1", e);
 		}
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				//projects and root are always local
-				if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
-					assertTrue("7.2" + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
-				} else {
-					assertEquals("7.3." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
-				}
-				return true;
+		IResourceVisitor visitor = resource -> {
+			//projects and root are always local
+			if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
+				assertTrue("7.2" + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
+			} else {
+				assertEquals("7.3." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
 			}
+			return true;
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
@@ -1661,13 +1655,10 @@ public class IResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("12.0", e);
 		}
-		visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				if (resource.getType() != IResource.ROOT)
-					assertTrue("12.1." + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
-				return true;
-			}
+		visitor = resource -> {
+			if (resource.getType() != IResource.ROOT)
+				assertTrue("12.1." + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
+			return true;
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
@@ -1688,12 +1679,9 @@ public class IResourceTest extends ResourceTest {
 		assertTrue("1.1", modificationStamp != IResource.NULL_STAMP);
 
 		// Remove and re-create the file in a workspace operation
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				file.delete(false, getMonitor());
-				create(file, true);
-			}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			file.delete(false, getMonitor());
+			create(file, true);
 		}, getMonitor());
 
 		assertTrue("1.0", modificationStamp != file.getModificationStamp());
@@ -2288,22 +2276,19 @@ public class IResourceTest extends ResourceTest {
 	public void testRevertModificationStamp() {
 		//revert all existing resources
 		try {
-			getWorkspace().getRoot().accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) throws CoreException {
-					if (!resource.isAccessible())
-						return false;
-					long oldStamp = resource.getModificationStamp();
-					resource.touch(null);
-					long newStamp = resource.getModificationStamp();
-					if (resource.getType() == IResource.ROOT)
-						assertTrue("1.0." + resource.getFullPath(), oldStamp == newStamp);
-					else
-						assertTrue("1.0." + resource.getFullPath(), oldStamp != newStamp);
-					resource.revertModificationStamp(oldStamp);
-					assertEquals("1.1." + resource.getFullPath(), oldStamp, resource.getModificationStamp());
-					return true;
-				}
+			getWorkspace().getRoot().accept(resource -> {
+				if (!resource.isAccessible())
+					return false;
+				long oldStamp = resource.getModificationStamp();
+				resource.touch(null);
+				long newStamp = resource.getModificationStamp();
+				if (resource.getType() == IResource.ROOT)
+					assertTrue("1.0." + resource.getFullPath(), oldStamp == newStamp);
+				else
+					assertTrue("1.0." + resource.getFullPath(), oldStamp != newStamp);
+				resource.revertModificationStamp(oldStamp);
+				assertEquals("1.1." + resource.getFullPath(), oldStamp, resource.getModificationStamp());
+				return true;
 			});
 		} catch (CoreException e) {
 			fail("1.99", e);
@@ -2519,12 +2504,9 @@ public class IResourceTest extends ResourceTest {
 		ensureExistsInWorkspace(new IResource[] {project, a, a1, a2, b, b1, b2}, true);
 
 		final List<IResource> actualOrder = new ArrayList<>();
-		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
-			@Override
-			public boolean visit(IResourceProxy proxy) {
-				actualOrder.add(proxy.requestResource());
-				return true;
-			}
+		IResourceProxyVisitor visitor = proxy -> {
+			actualOrder.add(proxy.requestResource());
+			return true;
 		};
 
 		project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);

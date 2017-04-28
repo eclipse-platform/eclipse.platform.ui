@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,13 +188,10 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 		// test the depth parameter
 		final IFolder folder = project.getFolder("Folder1");
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource[] members = folder.members();
-				for (int i = 0; i < members.length; i++)
-					((Resource) members[i]).getResourceInfo(false, true).clear(M_LOCAL_EXISTS);
-			}
+		IWorkspaceRunnable operation = monitor -> {
+			IResource[] members = folder.members();
+			for (int i = 0; i < members.length; i++)
+				((Resource) members[i]).getResourceInfo(false, true).clear(M_LOCAL_EXISTS);
 		};
 		getWorkspace().run(operation, null);
 		assertTrue("2.0", project.isLocal(IResource.DEPTH_ONE));
@@ -450,14 +447,11 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		final IFileStore fileStore = ((Resource) project).getStore();
 		// create project and then delete from file system
 		// wrap in runnable to prevent snapshot from occurring in the middle.
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ensureDoesNotExistInFileSystem(project);
-				assertTrue("2.1", !fileStore.fetchInfo().isDirectory());
-				//write project in a runnable, otherwise tree will be locked
-				((Project) project).writeDescription(IResource.FORCE);
-			}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			ensureDoesNotExistInFileSystem(project);
+			assertTrue("2.1", !fileStore.fetchInfo().isDirectory());
+			//write project in a runnable, otherwise tree will be locked
+			((Project) project).writeDescription(IResource.FORCE);
 		}, null);
 		assertTrue("2.2", fileStore.fetchInfo().isDirectory());
 		long lastModified = ((Resource) dotProject).getStore().fetchInfo().getLastModified();
@@ -465,24 +459,16 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 	}
 
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor pm) throws CoreException {
-				int flags = force ? IResource.FORCE : IResource.NONE;
-				IFileInfo info = ((Resource) file).getStore().fetchInfo();
-				getLocalManager().write(file, contents, info, flags, false, null);
-			}
+		IWorkspaceRunnable operation = pm -> {
+			int flags = force ? IResource.FORCE : IResource.NONE;
+			IFileInfo info = ((Resource) file).getStore().fetchInfo();
+			getLocalManager().write(file, contents, info, flags, false, null);
 		};
 		getWorkspace().run(operation, null);
 	}
 
 	protected void write(final IFolder folder, final boolean force, IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor pm) throws CoreException {
-				getLocalManager().write(folder, force, null);
-			}
-		};
+		IWorkspaceRunnable operation = pm -> getLocalManager().write(folder, force, null);
 		getWorkspace().run(operation, null);
 	}
 }

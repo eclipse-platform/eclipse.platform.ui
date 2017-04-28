@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.localstore.IUnifiedTreeVisitor;
+import org.eclipse.core.internal.localstore.UnifiedTree;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * 
@@ -59,15 +61,12 @@ public class UnifiedTreeTest extends LocalStoreTest {
 
 	protected void createFiles(final IContainer target, final Hashtable<String, String> set) throws CoreException {
 		final Workspace workspace = (Workspace) getWorkspace();
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < limit; i++) {
-					IFile child = target.getFile(new Path("wbFile" + i));
-					workspace.createResource(child, false);
-					String location = child.getLocation().toOSString();
-					set.put(location, "");
-				}
+		IWorkspaceRunnable operation = monitor -> {
+			for (int i = 0; i < limit; i++) {
+				IFile child = target.getFile(new Path("wbFile" + i));
+				workspace.createResource(child, false);
+				String location = child.getLocation().toOSString();
+				set.put(location, "");
 			}
 		};
 		workspace.run(operation, null);
@@ -125,20 +124,17 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createResourcesInFileSystem(((Resource) folder).getStore(), set);
 
 		/* create a visitor */
-		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-			@Override
-			public boolean visit(UnifiedTreeNode node) {
-				/* test the node.getLocalName() method */
-				final IResource resource = node.getResource();
-				final IFileStore store = ((Resource) resource).getStore();
-				if (node.existsInFileSystem())
-					assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
-				assertEquals("1.1", store, node.getStore());
+		IUnifiedTreeVisitor visitor = node -> {
+			/* test the node.getLocalName() method */
+			final IResource resource = node.getResource();
+			final IFileStore store = ((Resource) resource).getStore();
+			if (node.existsInFileSystem())
+				assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
+			assertEquals("1.1", store, node.getStore());
 
-				/* remove from the hash table the resource we're visiting */
-				set.remove(resource.getLocation().toOSString());
-				return true;
-			}
+			/* remove from the hash table the resource we're visiting */
+			set.remove(resource.getLocation().toOSString());
+			return true;
 		};
 
 		/* instantiate a unified tree and use the visitor */
@@ -171,29 +167,26 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createResourcesInFileSystem(((Resource) folder).getStore(), set);
 
 		/* create a visitor */
-		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-			@Override
-			public boolean visit(UnifiedTreeNode node) {
+		IUnifiedTreeVisitor visitor = node -> {
 
-				/* test the node.getLocalName() method */
-				final IResource resource = node.getResource();
-				IFileStore store = ((Resource) resource).getStore();
-				String key = store.fetchInfo().getName();
-				if (node.existsInFileSystem())
-					assertEquals("1.0", key, node.getLocalName());
-				assertEquals("1.1", store, node.getStore());
+			/* test the node.getLocalName() method */
+			final IResource resource = node.getResource();
+			IFileStore store = ((Resource) resource).getStore();
+			String key = store.fetchInfo().getName();
+			if (node.existsInFileSystem())
+				assertEquals("1.0", key, node.getLocalName());
+			assertEquals("1.1", store, node.getStore());
 
-				/* force children to be added to the queue */
-				node.getChildren();
+			/* force children to be added to the queue */
+			node.getChildren();
 
-				/* skip some resources */
-				if (resource.getName().startsWith("fsFolder"))
-					return false;
+			/* skip some resources */
+			if (resource.getName().startsWith("fsFolder"))
+				return false;
 
-				/* remove from the hash table the resource we're visiting */
-				set.remove(resource.getLocation().toOSString());
-				return true;
-			}
+			/* remove from the hash table the resource we're visiting */
+			set.remove(resource.getLocation().toOSString());
+			return true;
 		};
 
 		/**/
@@ -228,19 +221,16 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createResourcesInFileSystem(((Resource) project).getStore(), set);
 
 		/* create a visitor */
-		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-			@Override
-			public boolean visit(UnifiedTreeNode node) {
-				/* test the node.getLocalName() method */
-				final IResource resource = node.getResource();
-				IFileStore store = ((Resource) resource).getStore();
-				if (node.existsInFileSystem())
-					assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
-				assertEquals("1.1", store, node.getStore());
-				/* remove from the hash table the resource we're visiting */
-				set.remove(resource.getLocation().toOSString());
-				return true;
-			}
+		IUnifiedTreeVisitor visitor = node -> {
+			/* test the node.getLocalName() method */
+			final IResource resource = node.getResource();
+			IFileStore store = ((Resource) resource).getStore();
+			if (node.existsInFileSystem())
+				assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
+			assertEquals("1.1", store, node.getStore());
+			/* remove from the hash table the resource we're visiting */
+			set.remove(resource.getLocation().toOSString());
+			return true;
 		};
 
 		/* instantiate a unified tree and use the visitor */

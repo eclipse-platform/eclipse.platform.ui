@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,7 @@ public class TestModelProvider extends ModelProvider {
 			return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, ID, Status.OK_STATUS.getMessage());
 		final ChangeDescription description = new ChangeDescription();
 		try {
-			rootDelta.accept(new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(IResourceDelta delta) {
-					return description.recordChange(delta);
-				}
-			});
+			rootDelta.accept(delta -> description.recordChange(delta));
 		} catch (CoreException e) {
 			description.addError(e);
 		}

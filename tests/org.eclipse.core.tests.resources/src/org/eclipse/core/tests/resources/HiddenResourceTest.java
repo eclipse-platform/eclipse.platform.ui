@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class HiddenResourceTest extends ResourceTest {
 	public HiddenResourceTest() {
@@ -585,12 +584,7 @@ public class HiddenResourceTest extends ResourceTest {
 		final ResourceDeltaVerifier listener = new ResourceDeltaVerifier();
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					ensureExistsInWorkspace(resources, true);
-				}
-			};
+			IWorkspaceRunnable body = monitor -> ensureExistsInWorkspace(resources, true);
 			try {
 				listener.addExpectedChange(resources, IResourceDelta.ADDED, IResource.NONE);
 				listener.addExpectedChange(project, IResourceDelta.ADDED, IResourceDelta.OPEN);
@@ -609,12 +603,9 @@ public class HiddenResourceTest extends ResourceTest {
 		// set the folder to be hidden and do the same test
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					ensureExistsInWorkspace(resources, true);
-					setHidden("2.0", folder, true, IResource.DEPTH_ZERO);
-				}
+			IWorkspaceRunnable body = monitor -> {
+				ensureExistsInWorkspace(resources, true);
+				setHidden("2.0", folder, true, IResource.DEPTH_ZERO);
 			};
 			try {
 				listener.reset();
@@ -634,12 +625,9 @@ public class HiddenResourceTest extends ResourceTest {
 		// set all resources to be hidden and do the same test
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					ensureExistsInWorkspace(resources, true);
-					setHidden("3.0", project, true, IResource.DEPTH_INFINITE);
-				}
+			IWorkspaceRunnable body = monitor -> {
+				ensureExistsInWorkspace(resources, true);
+				setHidden("3.0", project, true, IResource.DEPTH_INFINITE);
 			};
 			try {
 				listener.reset();
@@ -791,15 +779,12 @@ public class HiddenResourceTest extends ResourceTest {
 	}
 
 	protected void assertHidden(final String message, IResource root, final boolean value, int depth) {
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				boolean expected = false;
-				if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
-					expected = value;
-				assertEquals(message + resource.getFullPath(), expected, resource.isHidden());
-				return true;
-			}
+		IResourceVisitor visitor = resource -> {
+			boolean expected = false;
+			if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
+				expected = value;
+			assertEquals(message + resource.getFullPath(), expected, resource.isHidden());
+			return true;
 		};
 		try {
 			root.accept(visitor, depth, IContainer.INCLUDE_HIDDEN);
@@ -809,16 +794,13 @@ public class HiddenResourceTest extends ResourceTest {
 	}
 
 	protected void setHidden(final String message, IResource root, final boolean value, int depth) {
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				try {
-					resource.setHidden(value);
-				} catch (CoreException e) {
-					fail(message + resource.getFullPath(), e);
-				}
-				return true;
+		IResourceVisitor visitor = resource -> {
+			try {
+				resource.setHidden(value);
+			} catch (CoreException e) {
+				fail(message + resource.getFullPath(), e);
 			}
+			return true;
 		};
 		try {
 			root.accept(visitor, depth, IContainer.INCLUDE_HIDDEN);

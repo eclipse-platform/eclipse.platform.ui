@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -130,19 +130,13 @@ public class MarkerTest extends ResourceTest {
 		display("Total Number of Markers: " + numMarkers);
 
 		// Create an array with a bunch of markers.
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResourceVisitor visitor = new IResourceVisitor() {
-					@Override
-					public boolean visit(IResource resource) throws CoreException {
-						for (int i = 0; i < markersPerResource; i++)
-							resource.createMarker(IMarker.PROBLEM);
-						return true;
-					}
-				};
-				getWorkspace().getRoot().accept(visitor);
-			}
+		IWorkspaceRunnable body = monitor -> {
+			IResourceVisitor visitor = resource -> {
+				for (int i = 0; i < markersPerResource; i++)
+					resource.createMarker(IMarker.PROBLEM);
+				return true;
+			};
+			getWorkspace().getRoot().accept(visitor);
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -166,12 +160,9 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		// create attributes on each marker
-		body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < markers.length; i++)
-					markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
-			}
+		body = monitor -> {
+			for (int i = 0; i < markers.length; i++)
+				markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -184,12 +175,9 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		// get the attribute from each marker
-		body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < markers.length; i++)
-					markers[i].getAttribute(IMarker.MESSAGE);
-			}
+		body = monitor -> {
+			for (int i = 0; i < markers.length; i++)
+				markers[i].getAttribute(IMarker.MESSAGE);
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -214,13 +202,10 @@ public class MarkerTest extends ResourceTest {
 
 		// Create an array with a bunch of markers.
 		final IMarker markers[] = new IMarker[numMarkers];
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource = getWorkspace().getRoot();
-				for (int i = 0; i < markers.length; i++) {
-					markers[i] = resource.createMarker(IMarker.PROBLEM);
-				}
+		IWorkspaceRunnable body = monitor -> {
+			IResource resource = getWorkspace().getRoot();
+			for (int i = 0; i < markers.length; i++) {
+				markers[i] = resource.createMarker(IMarker.PROBLEM);
 			}
 		};
 		try {
@@ -234,12 +219,9 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		// create attributes on each marker
-		body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < markers.length; i++)
-					markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
-			}
+		body = monitor -> {
+			for (int i = 0; i < markers.length; i++)
+				markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -251,24 +233,21 @@ public class MarkerTest extends ResourceTest {
 			fail("1.0", e);
 		}
 
-		java.util.Comparator<IMarker> c = new java.util.Comparator<IMarker>() {
-			@Override
-			public int compare(IMarker o1, IMarker o2) {
-				try {
-					String name1 = (String) o1.getAttribute(IMarker.MESSAGE);
-					String name2 = (String) o2.getAttribute(IMarker.MESSAGE);
-					if (name1 == null)
-						name1 = "";
-					if (name2 == null)
-						name2 = "";
-					int result = name1.compareToIgnoreCase(name2);
-					return result;
-				} catch (CoreException e) {
-					fail("2.0", e);
-				}
-				// avoid compiler error
-				return -1;
+		java.util.Comparator<IMarker> c = (o1, o2) -> {
+			try {
+				String name1 = (String) o1.getAttribute(IMarker.MESSAGE);
+				String name2 = (String) o2.getAttribute(IMarker.MESSAGE);
+				if (name1 == null)
+					name1 = "";
+				if (name2 == null)
+					name2 = "";
+				int result = name1.compareToIgnoreCase(name2);
+				return result;
+			} catch (CoreException e) {
+				fail("2.0", e);
 			}
+			// avoid compiler error
+			return -1;
 		};
 		start = System.currentTimeMillis();
 		Arrays.sort(markers, c);
@@ -364,12 +343,9 @@ public class MarkerTest extends ResourceTest {
 
 	protected IMarker[] createMarkers(final IResource[] hosts, final String type) throws CoreException {
 		final IMarker[] result = new IMarker[hosts.length];
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < hosts.length; i++) {
-					result[i] = hosts[i].createMarker(type);
-				}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			for (int i = 0; i < hosts.length; i++) {
+				result[i] = hosts[i].createMarker(type);
 			}
 		}, getMonitor());
 		return result;
@@ -994,17 +970,14 @@ public class MarkerTest extends ResourceTest {
 
 		// create markers on various resources
 		final IMarker[] markers = new IMarker[3];
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				markers[0] = resources[0].createMarker(IMarker.BOOKMARK);
-				markers[1] = resources[1].createMarker(IMarker.BOOKMARK);
-				markers[1].setAttribute(IMarker.CHAR_START, 5);
-				markers[2] = resources[2].createMarker(IMarker.PROBLEM);
-				markers[2].setAttribute(IMarker.DONE, true);
-				markers[2].setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-				markers[2].setAttribute(IMarker.MESSAGE, "Hello");
-			}
+		IWorkspaceRunnable body = monitor -> {
+			markers[0] = resources[0].createMarker(IMarker.BOOKMARK);
+			markers[1] = resources[1].createMarker(IMarker.BOOKMARK);
+			markers[1].setAttribute(IMarker.CHAR_START, 5);
+			markers[2] = resources[2].createMarker(IMarker.PROBLEM);
+			markers[2].setAttribute(IMarker.DONE, true);
+			markers[2].setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+			markers[2].setAttribute(IMarker.MESSAGE, "Hello");
 		};
 		try {
 			getWorkspace().run(body, getMonitor());
@@ -1038,35 +1011,26 @@ public class MarkerTest extends ResourceTest {
 
 			//add+change
 			listener.expectChanges(markers[1]);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					markers[1].setAttribute(IMarker.CHAR_START, 5);
-					markers[1].setAttribute(IMarker.CHAR_END, 10);
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				markers[1].setAttribute(IMarker.CHAR_START, 5);
+				markers[1].setAttribute(IMarker.CHAR_END, 10);
 			}, getMonitor());
 			listener.verifyChanges();
 
 			//change+remove same marker
 			listener.expectChanges(markers[1]);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					markers[1].setAttribute(IMarker.CHAR_START, 5);
-					markers[1].setAttribute(IMarker.CHAR_START, null);
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				markers[1].setAttribute(IMarker.CHAR_START, 5);
+				markers[1].setAttribute(IMarker.CHAR_START, null);
 			}, getMonitor());
 			listener.verifyChanges();
 
 			//change multiple markers
 			listener.expectChanges(markers);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					markers[0].setAttribute(IMarker.CHAR_START, 5);
-					markers[1].setAttribute(IMarker.CHAR_START, 10);
-					markers[2].setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_LOW);
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				markers[0].setAttribute(IMarker.CHAR_START, 5);
+				markers[1].setAttribute(IMarker.CHAR_START, 10);
+				markers[2].setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_LOW);
 			}, getMonitor());
 			listener.verifyChanges();
 		} catch (CoreException e) {
@@ -1091,22 +1055,16 @@ public class MarkerTest extends ResourceTest {
 			final Hashtable<IResource, IMarker> table = new Hashtable<>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IResourceVisitor visitor = new IResourceVisitor() {
-						@Override
-						public boolean visit(IResource resource) throws CoreException {
-							if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
-								return true;
-							IMarker marker = resource.createMarker(IMarker.BOOKMARK);
-							table.put(resource, marker);
-							count[0]++;
-							return true;
-						}
-					};
-					getWorkspace().getRoot().accept(visitor);
-				}
+			IWorkspaceRunnable body = monitor -> {
+				IResourceVisitor visitor = resource -> {
+					if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
+						return true;
+					IMarker marker = resource.createMarker(IMarker.BOOKMARK);
+					table.put(resource, marker);
+					count[0]++;
+					return true;
+				};
+				getWorkspace().getRoot().accept(visitor);
 			};
 			try {
 				getWorkspace().run(body, getMonitor());
@@ -1179,15 +1137,12 @@ public class MarkerTest extends ResourceTest {
 
 				// ADD + REMOVE = nothing
 				try {
-					IWorkspaceRunnable body = new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) throws CoreException {
-							listener.reset();
-							IMarker marker = resource.createMarker(IMarker.PROBLEM);
-							assertExists("1.0." + resource.getFullPath(), marker);
-							marker.delete();
-							assertDoesNotExist("1.1." + resource.getFullPath(), marker);
-						}
+					IWorkspaceRunnable body = monitor -> {
+						listener.reset();
+						IMarker marker = resource.createMarker(IMarker.PROBLEM);
+						assertExists("1.0." + resource.getFullPath(), marker);
+						marker.delete();
+						assertDoesNotExist("1.1." + resource.getFullPath(), marker);
 					};
 					getWorkspace().run(body, getMonitor());
 					assertEquals("1.2." + resource.getFullPath(), 0, listener.numAffectedResources());
@@ -1201,15 +1156,12 @@ public class MarkerTest extends ResourceTest {
 					// cannot re-assign variable value within the code below, so must
 					// put our marker value inside an array and set the element.
 					final IMarker[] markers = new IMarker[1];
-					IWorkspaceRunnable body = new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) throws CoreException {
-							listener.reset();
-							markers[0] = resource.createMarker(IMarker.PROBLEM);
-							assertExists("2.0." + resource.getFullPath(), markers[0]);
-							markers[0].setAttribute(IMarker.MESSAGE, "my message text");
-							assertEquals("2.1." + resource.getFullPath(), "my message text", markers[0].getAttribute(IMarker.MESSAGE));
-						}
+					IWorkspaceRunnable body = monitor -> {
+						listener.reset();
+						markers[0] = resource.createMarker(IMarker.PROBLEM);
+						assertExists("2.0." + resource.getFullPath(), markers[0]);
+						markers[0].setAttribute(IMarker.MESSAGE, "my message text");
+						assertEquals("2.1." + resource.getFullPath(), "my message text", markers[0].getAttribute(IMarker.MESSAGE));
 					};
 					getWorkspace().run(body, getMonitor());
 					assertEquals("2.2." + resource.getFullPath(), 1, listener.numAffectedResources());
@@ -1245,15 +1197,12 @@ public class MarkerTest extends ResourceTest {
 					final IMarker[] markers = new IMarker[1];
 					markers[0] = resource.createMarker(IMarker.PROBLEM);
 					assertExists("4.0." + resource.getFullPath(), markers[0]);
-					IWorkspaceRunnable body = new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) throws CoreException {
-							listener.reset();
-							markers[0].setAttribute(IMarker.MESSAGE, "my message text");
-							assertEquals("4.1." + resource.getFullPath(), "my message text", markers[0].getAttribute(IMarker.MESSAGE));
-							markers[0].setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-							assertEquals("4.2." + resource.getFullPath(), IMarker.PRIORITY_HIGH, ((Integer) markers[0].getAttribute(IMarker.PRIORITY)).intValue());
-						}
+					IWorkspaceRunnable body = monitor -> {
+						listener.reset();
+						markers[0].setAttribute(IMarker.MESSAGE, "my message text");
+						assertEquals("4.1." + resource.getFullPath(), "my message text", markers[0].getAttribute(IMarker.MESSAGE));
+						markers[0].setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+						assertEquals("4.2." + resource.getFullPath(), IMarker.PRIORITY_HIGH, ((Integer) markers[0].getAttribute(IMarker.PRIORITY)).intValue());
 					};
 					getWorkspace().run(body, getMonitor());
 					assertEquals("4.3." + resource.getFullPath(), 1, listener.numAffectedResources());
@@ -1267,15 +1216,12 @@ public class MarkerTest extends ResourceTest {
 					final IMarker[] markers = new IMarker[1];
 					markers[0] = resource.createMarker(IMarker.PROBLEM);
 					assertExists("5.0." + resource.getFullPath(), markers[0]);
-					IWorkspaceRunnable body = new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) throws CoreException {
-							listener.reset();
-							markers[0].setAttribute(IMarker.MESSAGE, "my message text");
-							assertEquals("5.1." + resource.getFullPath(), "my message text", markers[0].getAttribute(IMarker.MESSAGE));
-							markers[0].delete();
-							assertDoesNotExist("5.2." + resource.getFullPath(), markers[0]);
-						}
+					IWorkspaceRunnable body = monitor -> {
+						listener.reset();
+						markers[0].setAttribute(IMarker.MESSAGE, "my message text");
+						assertEquals("5.1." + resource.getFullPath(), "my message text", markers[0].getAttribute(IMarker.MESSAGE));
+						markers[0].delete();
+						assertDoesNotExist("5.2." + resource.getFullPath(), markers[0]);
 					};
 					getWorkspace().run(body, getMonitor());
 					assertEquals("5.3." + resource.getFullPath(), 1, listener.numAffectedResources());
@@ -1449,22 +1395,16 @@ public class MarkerTest extends ResourceTest {
 			final Hashtable<IResource, IMarker> table = new Hashtable<>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IResourceVisitor visitor = new IResourceVisitor() {
-						@Override
-						public boolean visit(IResource resource) throws CoreException {
-							if (resource.getType() == IResource.ROOT)
-								return true;
-							IMarker marker = resource.createMarker(IMarker.BOOKMARK);
-							table.put(resource, marker);
-							count[0]++;
-							return true;
-						}
-					};
-					getWorkspace().getRoot().accept(visitor);
-				}
+			IWorkspaceRunnable body = monitor -> {
+				IResourceVisitor visitor = resource -> {
+					if (resource.getType() == IResource.ROOT)
+						return true;
+					IMarker marker = resource.createMarker(IMarker.BOOKMARK);
+					table.put(resource, marker);
+					count[0]++;
+					return true;
+				};
+				getWorkspace().getRoot().accept(visitor);
 			};
 			try {
 				getWorkspace().run(body, getMonitor());
@@ -1485,24 +1425,21 @@ public class MarkerTest extends ResourceTest {
 			}
 
 			// verify marker deltas
-			IResourceVisitor visitor = new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) throws CoreException {
-					if (resource.getType() == IResource.ROOT)
-						return true;
-					String name = resource.getFullPath().segment(0);
-					IPath path = new Path(name.substring(0, name.length() - 4)).makeAbsolute();
-					path = path.append(resource.getFullPath().removeFirstSegments(1));
-					IResource oldResource = ((Workspace) getWorkspace()).newResource(path, resource.getType());
-					IMarker marker = table.get(oldResource);
-					assertNotNull("2.1." + oldResource.getFullPath(), marker);
-					assertTrue("2.2." + oldResource.getFullPath(), listener.checkChanges(oldResource, null, new IMarker[] {marker}, null));
-					IMarker[] markers = resource.findMarkers(null, true, IResource.DEPTH_ZERO);
-					assertEquals("2.3." + resource.getFullPath(), 1, markers.length);
-					assertEquals("2.4." + resource.getFullPath(), marker.getId(), markers[0].getId());
-					assertTrue("2.5." + resource.getFullPath(), listener.checkChanges(resource, new IMarker[] {markers[0]}, null, null));
+			IResourceVisitor visitor = resource -> {
+				if (resource.getType() == IResource.ROOT)
 					return true;
-				}
+				String name = resource.getFullPath().segment(0);
+				IPath path = new Path(name.substring(0, name.length() - 4)).makeAbsolute();
+				path = path.append(resource.getFullPath().removeFirstSegments(1));
+				IResource oldResource = ((Workspace) getWorkspace()).newResource(path, resource.getType());
+				IMarker marker = table.get(oldResource);
+				assertNotNull("2.1." + oldResource.getFullPath(), marker);
+				assertTrue("2.2." + oldResource.getFullPath(), listener.checkChanges(oldResource, null, new IMarker[] {marker}, null));
+				IMarker[] markers = resource.findMarkers(null, true, IResource.DEPTH_ZERO);
+				assertEquals("2.3." + resource.getFullPath(), 1, markers.length);
+				assertEquals("2.4." + resource.getFullPath(), marker.getId(), markers[0].getId());
+				assertTrue("2.5." + resource.getFullPath(), listener.checkChanges(resource, new IMarker[] {markers[0]}, null, null));
+				return true;
 			};
 			assertEquals("2.6", count[0] * 2, listener.numAffectedResources());
 			try {
@@ -1549,30 +1486,27 @@ public class MarkerTest extends ResourceTest {
 		}
 		final DataOutputStream output = o1;
 		final List<String> list = new ArrayList<>(5);
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(final IResource resource) {
-				try {
-					ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-					if (info == null)
-						return true;
-					IPathRequestor requestor = new IPathRequestor() {
-						@Override
-						public IPath requestPath() {
-							return resource.getFullPath();
-						}
+		IResourceVisitor visitor = resource -> {
+			try {
+				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
+				if (info == null)
+					return true;
+				IPathRequestor requestor = new IPathRequestor() {
+					@Override
+					public IPath requestPath() {
+						return resource.getFullPath();
+					}
 
-						@Override
-						public String requestName() {
-							return resource.getName();
-						}
-					};
-					manager.save(info, requestor, output, list);
-				} catch (IOException e) {
-					fail("2.1", e);
-				}
-				return true;
+					@Override
+					public String requestName() {
+						return resource.getName();
+					}
+				};
+				manager.save(info, requestor, output, list);
+			} catch (IOException e) {
+				fail("2.1", e);
 			}
+			return true;
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor);
@@ -1598,15 +1532,12 @@ public class MarkerTest extends ResourceTest {
 		try {
 			InputStream fileInput = new FileInputStream(file);
 			final DataInputStream input = new DataInputStream(fileInput);
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
-					try {
-						reader.read(input, true);
-					} catch (IOException e) {
-						fail("4.0", e);
-					}
+			IWorkspaceRunnable body = monitor -> {
+				MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
+				try {
+					reader.read(input, true);
+				} catch (IOException e) {
+					fail("4.0", e);
 				}
 			};
 			try {
@@ -1644,26 +1575,23 @@ public class MarkerTest extends ResourceTest {
 		// create the markers on the resources. create both transient
 		// and persistent markers.
 		final ArrayList<IMarker> persistentMarkers = new ArrayList<>();
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) throws CoreException {
-				IMarker marker = resource.createMarker(IMarker.PROBLEM);
-				persistentMarkers.add(marker);
-				marker = resource.createMarker(IMarker.BOOKMARK);
-				persistentMarkers.add(marker);
-				marker = resource.createMarker(TRANSIENT_MARKER);
-				// create a transient marker of a persistent type
-				marker = resource.createMarker(IMarker.BOOKMARK);
-				marker.setAttribute(IMarker.TRANSIENT, Boolean.TRUE);
-				// create a marker of a persistent type and set TRANSIENT as false (should be persisted)
-				marker = resource.createMarker(IMarker.BOOKMARK);
-				marker.setAttribute(IMarker.TRANSIENT, Boolean.FALSE);
-				persistentMarkers.add(marker);
-				// create a marker of a transient type and set TRANSIENT to false (should NOT be persisted)
-				marker = resource.createMarker(TRANSIENT_MARKER);
-				marker.setAttribute(IMarker.TRANSIENT, Boolean.FALSE);
-				return true;
-			}
+		IResourceVisitor visitor = resource -> {
+			IMarker marker = resource.createMarker(IMarker.PROBLEM);
+			persistentMarkers.add(marker);
+			marker = resource.createMarker(IMarker.BOOKMARK);
+			persistentMarkers.add(marker);
+			marker = resource.createMarker(TRANSIENT_MARKER);
+			// create a transient marker of a persistent type
+			marker = resource.createMarker(IMarker.BOOKMARK);
+			marker.setAttribute(IMarker.TRANSIENT, Boolean.TRUE);
+			// create a marker of a persistent type and set TRANSIENT as false (should be persisted)
+			marker = resource.createMarker(IMarker.BOOKMARK);
+			marker.setAttribute(IMarker.TRANSIENT, Boolean.FALSE);
+			persistentMarkers.add(marker);
+			// create a marker of a transient type and set TRANSIENT to false (should NOT be persisted)
+			marker = resource.createMarker(TRANSIENT_MARKER);
+			marker.setAttribute(IMarker.TRANSIENT, Boolean.FALSE);
+			return true;
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor);
@@ -1686,30 +1614,27 @@ public class MarkerTest extends ResourceTest {
 		}
 		final DataOutputStream output = o1;
 		final List<String> list = new ArrayList<>(5);
-		visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(final IResource resource) {
-				try {
-					ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-					if (info == null)
-						return true;
-					IPathRequestor requestor = new IPathRequestor() {
-						@Override
-						public IPath requestPath() {
-							return resource.getFullPath();
-						}
+		visitor = resource -> {
+			try {
+				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
+				if (info == null)
+					return true;
+				IPathRequestor requestor = new IPathRequestor() {
+					@Override
+					public IPath requestPath() {
+						return resource.getFullPath();
+					}
 
-						@Override
-						public String requestName() {
-							return resource.getName();
-						}
-					};
-					manager.save(info, requestor, output, list);
-				} catch (IOException e) {
-					fail("2.1", e);
-				}
-				return true;
+					@Override
+					public String requestName() {
+						return resource.getName();
+					}
+				};
+				manager.save(info, requestor, output, list);
+			} catch (IOException e) {
+				fail("2.1", e);
 			}
+			return true;
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor);
@@ -1735,15 +1660,12 @@ public class MarkerTest extends ResourceTest {
 		try {
 			InputStream fileInput = new FileInputStream(file);
 			final DataInputStream input = new DataInputStream(fileInput);
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
-					try {
-						reader.read(input, true);
-					} catch (IOException e) {
-						fail("4.0", e);
-					}
+			IWorkspaceRunnable body = monitor -> {
+				MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
+				try {
+					reader.read(input, true);
+				} catch (IOException e) {
+					fail("4.0", e);
 				}
 			};
 			try {

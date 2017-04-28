@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.resources.TestPerformer;
 
 /**
@@ -62,19 +61,16 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	 * Modifies any files in the given projects, all in a single operation
 	 */
 	protected void dirty(final IProject[] projects) throws CoreException {
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < projects.length; i++) {
-					IResource[] members = projects[i].members();
-					for (int j = 0; j < members.length; j++) {
-						if (members[j].getType() == IResource.FILE && !members[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-							((IFile) members[j]).setContents(getRandomContents(), true, true, null);
-						}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			for (int i = 0; i < projects.length; i++) {
+				IResource[] members = projects[i].members();
+				for (int j = 0; j < members.length; j++) {
+					if (members[j].getType() == IResource.FILE && !members[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
+						((IFile) members[j]).setContents(getRandomContents(), true, true, null);
 					}
 				}
-				getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 			}
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 		}, getMonitor());
 	}
 

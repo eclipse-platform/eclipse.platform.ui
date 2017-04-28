@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;
@@ -394,12 +395,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Create some resource handles
 		final boolean[] notified = new boolean[] {false};
 		IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
-		final IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				notified[0] = true;
-			}
-		};
+		final IResourceChangeListener listener = event -> notified[0] = true;
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
 		try {
 			// Turn auto-building off
@@ -533,15 +529,12 @@ public class BuilderTest extends AbstractBuilderTest {
 			wsDescription.setBuildOrder(null);
 			getWorkspace().setDescription(wsDescription);
 			// Create and set a build spec for project two
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					proj2.create(getMonitor());
-					proj2.open(getMonitor());
-					IProjectDescription desc = proj2.getDescription();
-					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1")});
-					proj2.setDescription(desc, getMonitor());
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				proj2.create(getMonitor());
+				proj2.open(getMonitor());
+				IProjectDescription desc = proj2.getDescription();
+				desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1")});
+				proj2.setDescription(desc, getMonitor());
 			}, getMonitor());
 			waitForBuild();
 		} catch (CoreException e) {
@@ -553,21 +546,18 @@ public class BuilderTest extends AbstractBuilderTest {
 		//create project two and establish a build order by adding a dynamic 
 		//reference from proj2->proj1 in the same operation
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					// Create and set a build specs for project one
-					proj1.create(getMonitor());
-					proj1.open(getMonitor());
-					IProjectDescription desc = proj1.getDescription();
-					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
-					proj1.setDescription(desc, getMonitor());
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				// Create and set a build specs for project one
+				proj1.create(getMonitor());
+				proj1.open(getMonitor());
+				IProjectDescription desc = proj1.getDescription();
+				desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+				proj1.setDescription(desc, getMonitor());
 
-					//add the dynamic reference to project two
-					IProjectDescription description = proj2.getDescription();
-					description.setDynamicReferences(new IProject[] {proj1});
-					proj2.setDescription(description, IResource.NONE, null);
-				}
+				//add the dynamic reference to project two
+				IProjectDescription description = proj2.getDescription();
+				description.setDynamicReferences(new IProject[] {proj1});
+				proj2.setDescription(description, IResource.NONE, null);
 			}, getMonitor());
 		} catch (CoreException e1) {
 			fail("2.99", e1);
@@ -609,25 +599,22 @@ public class BuilderTest extends AbstractBuilderTest {
 		workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 
 		// Add pre-build listener that swap around the dependencies
-		IResourceChangeListener buildListener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					IProjectDescription desc1 = proj1.getDescription();
-					IProjectDescription desc2 = proj2.getDescription();
-					// Swap around the references
-					if (desc1.getDynamicReferences().length == 0) {
-						desc1.setDynamicReferences(new IProject[] {proj2});
-						desc2.setDynamicReferences(new IProject[0]);
-					} else {
-						desc1.setDynamicReferences(new IProject[0]);
-						desc2.setDynamicReferences(new IProject[] {proj1});
-					}
-					proj1.setDescription(desc1, getMonitor());
-					proj2.setDescription(desc2, getMonitor());
-				} catch (CoreException e) {
-					fail();
+		IResourceChangeListener buildListener = event -> {
+			try {
+				IProjectDescription desc1 = proj1.getDescription();
+				IProjectDescription desc2 = proj2.getDescription();
+				// Swap around the references
+				if (desc1.getDynamicReferences().length == 0) {
+					desc1.setDynamicReferences(new IProject[] {proj2});
+					desc2.setDynamicReferences(new IProject[0]);
+				} else {
+					desc1.setDynamicReferences(new IProject[0]);
+					desc2.setDynamicReferences(new IProject[] {proj1});
 				}
+				proj1.setDescription(desc1, getMonitor());
+				proj2.setDescription(desc2, getMonitor());
+			} catch (CoreException e) {
+				fail();
 			}
 		};
 		try {
@@ -912,12 +899,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("2.0", e);
 		}
 		final boolean[] listenerCalled = new boolean[] {false};
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				listenerCalled[0] = true;
-			}
-		};
+		IResourceChangeListener listener = event -> listenerCalled[0] = true;
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
 		//do an incremental build -- build should fail, but POST_BUILD should still occur
 		try {
@@ -1036,13 +1018,10 @@ public class BuilderTest extends AbstractBuilderTest {
 		//change the file and then immediately perform build
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
-					project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-					transferStreams(output.getContents(), out, null, null);
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
+				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+				transferStreams(output.getContents(), out, null, null);
 			}, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
@@ -1087,21 +1066,18 @@ public class BuilderTest extends AbstractBuilderTest {
 		final TestBarrier barrier = new TestBarrier();
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		//install a listener that will cause autobuild to be interrupted
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				blockedJob.schedule();
-				//wait for autobuild to become blocking
-				while (!Job.getJobManager().currentJob().isBlocking()) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						//ignore
-					}
+		IResourceChangeListener listener = event -> {
+			blockedJob.schedule();
+			//wait for autobuild to become blocking
+			while (!Job.getJobManager().currentJob().isBlocking()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					//ignore
 				}
-				//allow the test main method to continue
-				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			}
+			//allow the test main method to continue
+			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 		};
 		try {
 			getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
@@ -1295,14 +1271,11 @@ public class BuilderTest extends AbstractBuilderTest {
 		}
 		// Now make a change and then turn autobuild on. Turning it on should
 		// cause a build.
-		IWorkspaceRunnable r = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				file.setContents(getRandomContents(), IResource.NONE, getMonitor());
-				IWorkspaceDescription desc = getWorkspace().getDescription();
-				desc.setAutoBuilding(true);
-				getWorkspace().setDescription(desc);
-			}
+		IWorkspaceRunnable r = monitor -> {
+			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
+			IWorkspaceDescription desc = getWorkspace().getDescription();
+			desc.setAutoBuilding(true);
+			getWorkspace().setDescription(desc);
 		};
 		waitForBuild();
 		getWorkspace().run(r, getMonitor());

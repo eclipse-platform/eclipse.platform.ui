@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,24 +344,14 @@ public class IWorkspaceRootTest extends ResourceTest {
 		final String value = "this is a test property value";
 		final QualifiedName name = new QualifiedName("test", "testProperty");
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					root.setPersistentProperty(name, value);
-				}
-			}, getMonitor());
+			getWorkspace().run((IWorkspaceRunnable) monitor -> root.setPersistentProperty(name, value), getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
 
 		try {
 			final String[] storedValue = new String[1];
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					storedValue[0] = root.getPersistentProperty(name);
-				}
-			}, getMonitor());
+			getWorkspace().run((IWorkspaceRunnable) monitor -> storedValue[0] = root.getPersistentProperty(name), getMonitor());
 			assertEquals("2.0", value, storedValue[0]);
 		} catch (CoreException e) {
 			fail("2.1", e);
@@ -370,12 +360,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		try {
 			final QualifiedName name2 = new QualifiedName("test", "testNonProperty");
 			final String[] storedValue = new String[1];
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					storedValue[0] = root.getPersistentProperty(name2);
-				}
-			}, getMonitor());
+			getWorkspace().run((IWorkspaceRunnable) monitor -> storedValue[0] = root.getPersistentProperty(name2), getMonitor());
 			assertEquals("3.0", null, storedValue[0]);
 		} catch (CoreException e) {
 			fail("3.1", e);

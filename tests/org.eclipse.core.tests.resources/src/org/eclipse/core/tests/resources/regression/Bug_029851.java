@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2015 IBM Corporation and others.
+ *  Copyright (c) 2004, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -68,12 +67,9 @@ public class Bug_029851 extends ResourceTest {
 		createHierarchy();
 		final QualifiedName key = new QualifiedName("local", getUniqueString());
 		final String value = getUniqueString();
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) throws CoreException {
-				resource.setPersistentProperty(key, value);
-				return true;
-			}
+		IResourceVisitor visitor = resource -> {
+			resource.setPersistentProperty(key, value);
+			return true;
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ package org.eclipse.core.tests.resources.regression;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -79,16 +80,13 @@ public class PR_1GEAB3C_Test extends ResourceTest {
 		final IProject project = getWorkspace().getRoot().getProject("MyAddedAndOpenedProject");
 		verifier.addExpectedChange(project, IResourceDelta.ADDED, IResourceDelta.OPEN);
 		verifier.addExpectedChange(project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME), IResourceDelta.ADDED, 0);
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("Creating and deleting", 100);
-				try {
-					project.create(new SubProgressMonitor(monitor, 50));
-					project.open(new SubProgressMonitor(monitor, 50));
-				} finally {
-					monitor.done();
-				}
+		IWorkspaceRunnable body = monitor -> {
+			monitor.beginTask("Creating and deleting", 100);
+			try {
+				project.create(SubMonitor.convert(monitor, 50));
+				project.open(SubMonitor.convert(monitor, 50));
+			} finally {
+				monitor.done();
 			}
 		};
 		try {

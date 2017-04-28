@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,8 @@ import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * 
@@ -86,16 +87,13 @@ public class SymlinkResourceTest extends LocalStoreTest {
 			return;
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				/* delete open project because we must re-open with BACKGROUND_REFRESH */
-				project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
-				project.create(null);
-				createBug232426Structure(EFS.getStore(project.getLocationURI()));
-				//Bug only happens with BACKGROUND_REFRESH.
-				project.open(IResource.BACKGROUND_REFRESH, getMonitor());
-			}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			/* delete open project because we must re-open with BACKGROUND_REFRESH */
+			project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+			project.create(null);
+			createBug232426Structure(EFS.getStore(project.getLocationURI()));
+			//Bug only happens with BACKGROUND_REFRESH.
+			project.open(IResource.BACKGROUND_REFRESH, getMonitor());
 		}, null);
 
 		//wait for BACKGROUND_REFRESH to complete.
@@ -119,26 +117,20 @@ public class SymlinkResourceTest extends LocalStoreTest {
 			return;
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				/* delete open project because we must re-open with BACKGROUND_REFRESH */
-				project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
-				project.create(null);
-				createBug358830Structure(EFS.getStore(project.getLocationURI()));
-				project.open(IResource.BACKGROUND_REFRESH, getMonitor());
-			}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			/* delete open project because we must re-open with BACKGROUND_REFRESH */
+			project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+			project.create(null);
+			createBug358830Structure(EFS.getStore(project.getLocationURI()));
+			project.open(IResource.BACKGROUND_REFRESH, getMonitor());
 		}, null);
 
 		//wait for BACKGROUND_REFRESH to complete.
 		waitForRefresh();
 		final int resourceCount[] = new int[] {0};
-		project.accept(new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				resourceCount[0]++;
-				return true;
-			}
+		project.accept(resource -> {
+			resourceCount[0]++;
+			return true;
 		});
 		//We have 1 root + 1 folder + 1 file (.project) --> 3 elements to visit
 		assertEquals(3, resourceCount[0]);

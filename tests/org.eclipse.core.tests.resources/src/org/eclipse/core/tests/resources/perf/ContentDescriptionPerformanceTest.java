@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -80,13 +80,10 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 			@Override
 			protected void test() {
 				try {
-					project.accept(new IResourceVisitor() {
-						@Override
-						public boolean visit(IResource resource) throws CoreException {
-							if (resource.getType() == IResource.FILE && !resource.getName().equals(".project"))
-								assertHasExpectedDescription(resource.getName(), ((IFile) resource).getContentDescription());
-							return true;
-						}
+					project.accept(resource -> {
+						if (resource.getType() == IResource.FILE && !resource.getName().equals(".project"))
+							assertHasExpectedDescription(resource.getName(), ((IFile) resource).getContentDescription());
+						return true;
 					});
 				} catch (CoreException e) {
 					CoreTest.fail("Failed visiting resources", e);

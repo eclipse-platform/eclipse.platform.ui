@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -65,13 +65,10 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	 */
 	void createAndPopulateProject(final int totalResources) {
 		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					testProject.create(getMonitor());
-					testProject.open(getMonitor());
-					createFolder(testFolder, totalResources);
-				}
+			getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				testProject.create(getMonitor());
+				testProject.open(getMonitor());
+				createFolder(testFolder, totalResources);
 			}, getMonitor());
 		} catch (CoreException e) {
 			fail("Failed to create project in performance test", e);

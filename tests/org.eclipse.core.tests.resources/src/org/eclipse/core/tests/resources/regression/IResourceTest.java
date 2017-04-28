@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,11 +129,8 @@ public class IResourceTest extends ResourceTest {
 	 * not handled correctly if it occurs within a proxy visitor.
 	 */
 	public void testBug31750() {
-		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
-			@Override
-			public boolean visit(IResourceProxy proxy) {
-				throw new OperationCanceledException();
-			}
+		IResourceProxyVisitor visitor = proxy -> {
+			throw new OperationCanceledException();
 		};
 		try {
 			getWorkspace().getRoot().accept(visitor, IResource.NONE);
@@ -178,18 +175,15 @@ public class IResourceTest extends ResourceTest {
 				return true;
 			}
 		}
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				IResourceDelta delta = event.getDelta();
-				if (delta == null)
-					return;
-				try {
-					delta.accept(new DeltaVisitor(seen));
-					delta.accept(new DeltaVisitor(phantomSeen), true);
-				} catch (CoreException e) {
-					fail("1.99", e);
-				}
+		IResourceChangeListener listener = event -> {
+			IResourceDelta delta = event.getDelta();
+			if (delta == null)
+				return;
+			try {
+				delta.accept(new DeltaVisitor(seen));
+				delta.accept(new DeltaVisitor(phantomSeen), true);
+			} catch (CoreException e) {
+				fail("1.99", e);
 			}
 		};
 		try {
@@ -197,13 +191,10 @@ public class IResourceTest extends ResourceTest {
 
 			try {
 				//removing and adding sync info causes phantom to be deleted and recreated
-				getWorkspace().run(new IWorkspaceRunnable() {
-					@Override
-					public void run(IProgressMonitor monitor) throws CoreException {
-						ISynchronizer synchronizer = getWorkspace().getSynchronizer();
-						synchronizer.flushSyncInfo(name, file, IResource.DEPTH_INFINITE);
-						synchronizer.setSyncInfo(name, file, new byte[] {1});
-					}
+				getWorkspace().run((IWorkspaceRunnable) monitor -> {
+					ISynchronizer synchronizer = getWorkspace().getSynchronizer();
+					synchronizer.flushSyncInfo(name, file, IResource.DEPTH_INFINITE);
+					synchronizer.setSyncInfo(name, file, new byte[] {1});
 				}, null, IWorkspace.AVOID_UPDATE, getMonitor());
 				//ensure file was only seen by phantom listener
 				assertTrue("1.0", !seen[0]);
@@ -615,17 +606,14 @@ public class IResourceTest extends ResourceTest {
 		createFileInFileSystem(target.getLocation(), getContents(newContents));
 
 		final boolean[] failed = new boolean[1];
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					failed[0] = true;
-					InputStream is = target.getContents(true);
-					assertTrue("4.0", compareContent(getContents(newContents), is));
-					failed[0] = false;
-				} catch (CoreException e) {
-					fail("4.1", e);
-				}
+		IResourceChangeListener listener = event -> {
+			try {
+				failed[0] = true;
+				InputStream is = target.getContents(true);
+				assertTrue("4.0", compareContent(getContents(newContents), is));
+				failed[0] = false;
+			} catch (CoreException e) {
+				fail("4.1", e);
 			}
 		};
 		getWorkspace().addResourceChangeListener(listener);

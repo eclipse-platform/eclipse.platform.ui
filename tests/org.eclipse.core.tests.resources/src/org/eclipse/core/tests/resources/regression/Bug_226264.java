@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,19 +55,16 @@ public class Bug_226264 extends ResourceTest {
 		};
 
 		// the listener will schedule another project delete
-		workspace.addResourceChangeListener(new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				if (event.getResource() == project1) {
-					// because notification is run in a protected block,
-					// this job will start after the notification
-					job.schedule();
-					//give the job a chance to start before continuing
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						//ignore
-					}
+		workspace.addResourceChangeListener(event -> {
+			if (event.getResource() == project1) {
+				// because notification is run in a protected block,
+				// this job will start after the notification
+				job.schedule();
+				//give the job a chance to start before continuing
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					//ignore
 				}
 			}
 		}, IResourceChangeEvent.PRE_DELETE);
