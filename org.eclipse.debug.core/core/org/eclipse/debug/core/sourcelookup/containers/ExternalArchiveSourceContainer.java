@@ -42,10 +42,11 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 
-	private boolean fDetectRoots = false;
-	private Set<String> fPotentialRoots = null;
+	private boolean fDisposed;
+	private boolean fDetectRoots;
+	private Set<String> fPotentialRoots;
 	private List<String> fRoots = new ArrayList<String>();
-	private String fArchivePath = null;
+	private String fArchivePath;
 	/**
 	 * Unique identifier for the external archive source container type
 	 * (value <code>org.eclipse.debug.core.containerType.externalArchive</code>).
@@ -79,6 +80,9 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	public Object[] findSourceElements(String name) throws CoreException {
 		String newname = name.replace('\\', '/');
 		ZipFile file = getArchive();
+		if (file == null) {
+			return EMPTY;
+		}
 		// NOTE: archive can be closed between get (above) and synchronized block (below)
 		synchronized (file) {
 			boolean isQualfied = newname.indexOf('/') > 0;
@@ -138,7 +142,10 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * @return the {@link ZipEntry} with the given name or <code>null</code>
 	 * @exception CoreException if an exception occurs while detecting the root
 	 */
-	private ZipEntry searchRoots(ZipFile file, String name) throws CoreException {
+	private synchronized ZipEntry searchRoots(ZipFile file, String name) throws CoreException {
+		if (fDisposed) {
+			return null;
+		}
 		if (fPotentialRoots == null) {
 			fPotentialRoots = new HashSet<String>();
 			fPotentialRoots.add(""); //$NON-NLS-1$
@@ -208,7 +215,10 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 *
 	 * @throws CoreException if unable to access the archive
 	 */
-	private ZipFile getArchive() throws CoreException {
+	private synchronized ZipFile getArchive() throws CoreException {
+		if (fDisposed) {
+			return null;
+		}
 		try {
 			return SourceLookupUtils.getZipFile(fArchivePath);
 		} catch (IOException e) {
@@ -255,11 +265,12 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	}
 
 	@Override
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 		if (fPotentialRoots != null) {
 			fPotentialRoots.clear();
 		}
 		fRoots.clear();
+		fDisposed = true;
 	}
 }
