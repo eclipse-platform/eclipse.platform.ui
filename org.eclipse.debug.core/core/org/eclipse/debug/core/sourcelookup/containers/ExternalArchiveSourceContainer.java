@@ -74,9 +74,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		fDetectRoots = detectRootPaths;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
-	 */
+	@SuppressWarnings("resource")
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		String newname = name.replace('\\', '/');
@@ -224,16 +222,11 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return fArchivePath;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
+
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
@@ -249,26 +242,18 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	public boolean isDetectRoot() {
 		return fDetectRoots;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ExternalArchiveSourceContainer &&
 			((ExternalArchiveSourceContainer)obj).getName().equals(getName());
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
