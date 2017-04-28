@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class PR_1GH2B0N_Test extends ResourceTest {
 
 			IProject project2 = getWorkspace().getRoot().getProject("MyProject2");
 			IStatus status = getWorkspace().validateProjectLocation(project2, project.getLocation().append(project2.getName()));
-			//Note this is not the original error case - 
+			//Note this is not the original error case -
 			//since Eclipse 3.2 a project is allowed to be nested in another project
 			assertTrue("2.0", status.isOK());
 		} finally {

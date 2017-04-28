@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -41,14 +41,14 @@ public class IFileTest extends ResourceTest {
 
 	/**
 	 * Bug states that the error code in the CoreException which is thrown when
-	 * you try to create a file in a read-only folder on Linux should be 
+	 * you try to create a file in a read-only folder on Linux should be
 	 * ERROR_WRITE.
 	 */
 	public void testBug25658() {
 
-		// This test is no longer valid since the error code is dependent on whether 
+		// This test is no longer valid since the error code is dependent on whether
 		// or not the parent folder is marked as read-only. We need to write a different
-		// test to make the file.create fail.	
+		// test to make the file.create fail.
 		if (DISABLED )
 			return;
 

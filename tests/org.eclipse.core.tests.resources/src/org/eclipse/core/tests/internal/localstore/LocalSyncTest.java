@@ -50,7 +50,7 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 		/* initialize common objects */
 		Project project = (Project) projects[0];
 
-		//snapshot will recreate the deleted .project file	
+		//snapshot will recreate the deleted .project file
 		TestingSupport.waitForSnapshot();
 
 		// create resources

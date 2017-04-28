@@ -116,7 +116,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 	public InputStream getInputStream(byte[][] contents) {
 		int size = 0;
-		// computes final array size 
+		// computes final array size
 		for (int i = 0; i < contents.length; i++)
 			size += contents[i].length;
 		byte[] full = new byte[size];
@@ -148,7 +148,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 
+		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast)
 		// ensure none is left running after we finish
 		Job.getJobManager().join(FAMILY_CHARSET_DELTA, getMonitor());
 	}
@@ -174,7 +174,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("1.5", alias, selected[0]);
 		assertEquals("1.6", derived, selected[1]);
 
-		//test late addition of content type 
+		//test late addition of content type
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("2", () -> {
 			IContentType alias1 = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".alias");
@@ -339,12 +339,12 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		description = text.getDescriptionFor(new ByteArrayInputStream((UTF8_BOM + MINIMAL_XML).getBytes("ISO-8859-1")), options);
 		assertNotNull("1.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 		assertEquals("1.1", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
-		// tests with UTF-16 Little Endian BOM			
+		// tests with UTF-16 Little Endian BOM
 		String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, "ISO-8859-1");
 		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_LE_BOM + MINIMAL_XML).getBytes("ISO-8859-1")), options);
 		assertNotNull("2.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 		assertEquals("2.1", IContentDescription.BOM_UTF_16LE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
-		// tests with UTF-16 Big Endian BOM			
+		// tests with UTF-16 Big Endian BOM
 		String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, "ISO-8859-1");
 		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_BE_BOM + MINIMAL_XML).getBytes("ISO-8859-1")), options);
 		assertNotNull("3.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
@@ -400,9 +400,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		// base matches *.mybinary files starting with 0x0a 0x0b
 		IContentType base = manager.getContentType(PI_RESOURCES_TESTS + ".binary_base");
-		// derived1 matches *.mybinary and specifically foo.mybinary files starting with 0x0a 0x0b 0xc		
+		// derived1 matches *.mybinary and specifically foo.mybinary files starting with 0x0a 0x0b 0xc
 		IContentType derived1 = manager.getContentType(PI_RESOURCES_TESTS + ".binary_derived1");
-		// derived2 matches *.mybinary (inherits filespec from base) files starting with 0x0a 0x0b 0xd		
+		// derived2 matches *.mybinary (inherits filespec from base) files starting with 0x0a 0x0b 0xd
 		IContentType derived2 = manager.getContentType(PI_RESOURCES_TESTS + ".binary_derived2");
 
 		IContentType[] selected;
@@ -413,13 +413,13 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("1.1", base, selected[0]);
 
 		selected = manager.findContentTypesFor(getInputStream(contents0), "foo.mybinary");
-		// we know also that the second one will be derived1, because it has a full name matching		
+		// we know also that the second one will be derived1, because it has a full name matching
 		assertEquals("2.0", 3, selected.length);
 		assertEquals("2.1", base, selected[0]);
 		assertEquals("2.2", derived1, selected[1]);
 
 		selected = manager.findContentTypesFor(getInputStream(contents1), "foo.mybinary");
-		// derived1 will be first because both base and derived1 have a strong content matching, so more specific wins 
+		// derived1 will be first because both base and derived1 have a strong content matching, so more specific wins
 		assertEquals("3.0", 3, selected.length);
 		assertEquals("3.1", derived1, selected[0]);
 		assertEquals("3.2", base, selected[1]);
@@ -569,7 +569,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate}), null);
 		assertEquals("2.0", appropriate, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 
-		// if inappropriate, appropriate and a more specific appropriate type are provided, the specific type will be selected		
+		// if inappropriate, appropriate and a more specific appropriate type are provided, the specific type will be selected
 		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific1}), null);
 		assertEquals("3.0", appropriateSpecific1, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific2}), null);
@@ -641,9 +641,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	}
 
 	/**
-	 * The fooBar content type is associated with the "foo.bar" file name and 
-	 * the "bar" file extension (what is bogus, anyway). This test ensures it 
-	 * does not appear twice in the list of content types associated with the 
+	 * The fooBar content type is associated with the "foo.bar" file name and
+	 * the "bar" file extension (what is bogus, anyway). This test ensures it
+	 * does not appear twice in the list of content types associated with the
 	 * "foo.bar" file name.
 	 */
 	public void testDoubleAssociation() {
@@ -665,7 +665,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	 * Obtains a reference to a known content type, then installs a bundle that contributes a content type,
 	 * and makes sure a new obtained reference to the same content type is not identical (shows
 	 * that the content type catalog has been discarded and rebuilt). Then uninstalls that bundle
-	 * and checks again the same thing (because the content type catalog should be rebuilt whenever 
+	 * and checks again the same thing (because the content type catalog should be rebuilt whenever
 	 * content types are dynamicaly added/removed).
 	 */
 	public void testDynamicChanges() {
@@ -844,7 +844,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertNotNull("3.0.2", conflict3sub);
 		assertNotNull("3.0.3", conflict3unrelated);
 
-		// Two unrelated types (sub_conflict3 and unrelated conflict3) are in conflict. 
+		// Two unrelated types (sub_conflict3 and unrelated conflict3) are in conflict.
 		// Order will be based on depth (more general first since they don't have describers)
 
 		IContentType[] selectedConflict3;
@@ -916,7 +916,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	}
 
 	/**
-	 * Bugs 67841 and 62443 
+	 * Bugs 67841 and 62443
 	 */
 	public void testIOException() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
@@ -949,7 +949,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 				@Override
 				public int available() {
-					// trick the client into reading the file 
+					// trick the client into reading the file
 					return Integer.MAX_VALUE;
 				}
 
@@ -1062,7 +1062,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	}
 
 	public void testNoExtensionAssociation() {
-		//TODO use a IContentTypeMatcher instead		
+		//TODO use a IContentTypeMatcher instead
 		final IContentTypeManager manager = Platform.getContentTypeManager();
 
 		IContentType[] selected = manager.findContentTypesFor("file_with_no_extension");
@@ -1165,7 +1165,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	}
 
 	/**
-	 * Regression test for bug 68894  
+	 * Regression test for bug 68894
 	 */
 	public void testPreferences() throws CoreException, BackingStoreException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
@@ -1295,7 +1295,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
 
-		// bugs 64053 and 63298 
+		// bugs 64053 and 63298
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
 		assertTrue("2.0", contentTypes.length > 0);
 		assertEquals("2.1", rootElement, contentTypes[0]);
@@ -1366,7 +1366,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	 */
 	public void testSignatureBeyondBufferLimit() throws IOException {
 		int bufferLimit = ContentTypeManager.BLOCK_SIZE * 4;
-		// create a long XML comment as prefix 
+		// create a long XML comment as prefix
 		StringBuffer comment = new StringBuffer("<!--");
 		for (int i = 0; i < bufferLimit; i++)
 			comment.append('*');

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     James Blackburn - Test fix for bug 266712
@@ -415,7 +415,7 @@ public class VirtualFolderTest extends ResourceTest {
 	}
 
 	//	We should decide what is the proper value returned for Virtual Folders
-	//	
+	//
 	//	public void testIsLocal() {
 	//		// create a virtual folder
 	//		IFolder virtualFolder = existingProject.getFolder(getUniqueString());

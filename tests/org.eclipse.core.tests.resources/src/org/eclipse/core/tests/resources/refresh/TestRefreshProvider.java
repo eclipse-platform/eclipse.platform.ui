@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.refresh.*;
 
 /**
- * 
+ *
  */
 public class TestRefreshProvider extends RefreshProvider implements IRefreshMonitor {
 	private final List<AssertionFailedError> failures = new CopyOnWriteArrayList<>();

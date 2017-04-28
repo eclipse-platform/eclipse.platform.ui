@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -31,7 +31,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 import org.xml.sax.InputSource;
 
 /**
- * 
+ *
  */
 public class ModelObjectReaderWriterTest extends ResourceTest {
 	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(isWindows() ? "D:" : null);
@@ -301,7 +301,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 
 	/**
 	 * Verifies that project description file is written in a consistent way.
-	 * (bug 177148) 
+	 * (bug 177148)
 	 */
 	public void testConsistentWrite() throws Throwable {
 		String locationA = getTempDir().append("testPath1").toPortableString();

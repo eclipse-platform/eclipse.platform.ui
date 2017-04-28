@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -131,7 +131,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 		};
 		getWorkspace().addResourceChangeListener(listener);
 
-		//do the work	
+		//do the work
 		IWorkspaceRunnable body = monitor -> {
 			marker1 = file1.createMarker(IMarker.BOOKMARK);
 			marker2.delete();
@@ -189,7 +189,7 @@ public class IResourceChangeEventTest extends ResourceTest {
 		};
 		getWorkspace().addResourceChangeListener(listener);
 
-		//do the work	
+		//do the work
 		try {
 			file1.setContents(getRandomContents(), true, true, getMonitor());
 		} catch (CoreException e) {

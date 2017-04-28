@@ -54,10 +54,10 @@ public class WorkspaceTest extends ResourceTest {
 	}
 
 	/**
-	 * Returns a collection of string paths describing the standard 
+	 * Returns a collection of string paths describing the standard
 	 * resource hierarchy for this test.  In the string forms, folders are
 	 * represented as having trailing separators ('/').  All other resources
-	 * are files.  It is generally assumed that this hierarchy will be 
+	 * are files.  It is generally assumed that this hierarchy will be
 	 * inserted under some solution and project structure.
 	 */
 	@Override
@@ -97,7 +97,7 @@ public class WorkspaceTest extends ResourceTest {
 		suite.addTest(new WorkspaceTest("testProjectCreateOpenCloseDelete"));
 		suite.addTest(new WorkspaceTest("testProjectReferences"));
 
-		// test closing and reopening 
+		// test closing and reopening
 		suite.addTest(new WorkspaceTest("testProjectCloseOpen"));
 
 		// test persistent properties on all the different resource types.

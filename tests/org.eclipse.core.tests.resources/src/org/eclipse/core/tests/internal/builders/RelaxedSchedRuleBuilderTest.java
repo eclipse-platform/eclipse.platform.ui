@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     James Blackburn (Broadcom Corp.) - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -24,7 +24,7 @@ import org.eclipse.core.tests.internal.builders.TestBuilder.BuilderRuleCallback;
 /**
  * This class tests extended functionality (since 3.6) which allows
  * builders to be run with reduced (non-Workspace) scheduling rules.
- * 
+ *
  * When one of these builders runs, other threads may modify the workspace
  * depending on the builder's scheduling rule
  */
@@ -231,7 +231,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 	 * As the builder is run with a relaxed scheduling rule, we ensure that any changes made before
 	 * the build is actually run are present in the delta.
 	 * Acquiring the scheduling rule must be done outside of the WS lock, so this tests that
-	 * a change which sneaks in during the window or the build thread acquiring its scheduling 
+	 * a change which sneaks in during the window or the build thread acquiring its scheduling
 	 * rule, is correctly present in the builder's delta.
 	 * @throws Exception
 	 */
@@ -262,7 +262,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 			@Override
 			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				// Remove once Bug 331187 is fixed.
-				// Currently #getRule is called twice when building a specific build configuration (so as to minimized change in 
+				// Currently #getRule is called twice when building a specific build configuration (so as to minimized change in
 				// 3.7 end-game.  As this test is trying to provoke a bug in the window between fetching a rule and applying it
 				// to the build, we don't want to run the first time #getRule is called (in Workspace#build)
 				if (!called) {
@@ -390,7 +390,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 		Job j;
 
-		// Enable for Bug 331187 
+		// Enable for Bug 331187
 		//		// IProject.build()
 		//		j = new Job("IProject.build()") {
 		//			protected IStatus run(IProgressMonitor monitor) {

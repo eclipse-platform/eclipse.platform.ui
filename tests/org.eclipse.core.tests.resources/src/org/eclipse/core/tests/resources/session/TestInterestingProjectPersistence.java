@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -105,7 +105,7 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 			description.setBuildSpec(new ICommand[] {command});
 			project1.setDescription(description, getMonitor());
 
-			//initial build requesting no projects		
+			//initial build requesting no projects
 			project1.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 
 			getWorkspace().save(true, getMonitor());

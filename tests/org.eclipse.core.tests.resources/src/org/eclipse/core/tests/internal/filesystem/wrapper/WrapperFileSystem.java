@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -24,7 +24,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * A simple file system implementation that acts as a wrapper around the
  * local file system.
  * <p>
- * Also allows tests to inject a custom FileStore template class (derived from 
+ * Also allows tests to inject a custom FileStore template class (derived from
  * {@link WrapperFileStore}). Tests can use {@link #setCustomFileStore(Class)}
  * to override default {@link WrapperFileStore} behaviour.
  * </p>
@@ -55,7 +55,7 @@ public class WrapperFileSystem extends FileSystem {
 	 * Allows tests to easily override existing IFileStore behaviour.
 	 * By extending {@link WrapperFileStore} conditions difficult to simulate
 	 * on the LocalFileSystem can be provoked.
-	 * 
+	 *
 	 * @param fs filestore, or null to use default {@link WrapperFileStore}
 	 *        based implementation.
 	 */

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
- * When moving a resource "x" from parent "a" to parent "b", if "x" or any of 
+ * When moving a resource "x" from parent "a" to parent "b", if "x" or any of
  * its children can't be deleted, both "a" and "b" become out-of-sync and resource info is lost.
  */
 public class Bug_032076 extends ResourceTest {
@@ -69,7 +69,7 @@ public class Bug_032076 extends ResourceTest {
 				fail("0.1", e);
 			}
 
-			// opens the file so it cannot be removed on Windows			
+			// opens the file so it cannot be removed on Windows
 			try {
 				input = sourceFile.getContents();
 			} catch (CoreException ce) {
@@ -80,7 +80,7 @@ public class Bug_032076 extends ResourceTest {
 				sourceFile.move(destinationFile.getFullPath(), IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
-				// success							
+				// success
 			}
 
 			// the source parent is in sync
@@ -104,7 +104,7 @@ public class Bug_032076 extends ResourceTest {
 			assertTrue("4.1", sourceFile.exists());
 			assertTrue("4.2", sourceFile.isSynchronized(IResource.DEPTH_ZERO));
 
-			// refresh the source parent 
+			// refresh the source parent
 			try {
 				sourceParent.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			} catch (CoreException e) {
@@ -160,7 +160,7 @@ public class Bug_032076 extends ResourceTest {
 				fail("0.1", e);
 			}
 
-			// opens a file so it (and its parent) cannot be removed on Windows			
+			// opens a file so it (and its parent) cannot be removed on Windows
 			try {
 				input = file1.getContents();
 			} catch (CoreException ce) {
@@ -171,7 +171,7 @@ public class Bug_032076 extends ResourceTest {
 				folder.move(destinationFolder.getFullPath(), IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
-				// success										
+				// success
 			}
 
 			// the source parent is in sync
@@ -199,7 +199,7 @@ public class Bug_032076 extends ResourceTest {
 			//this file should be successfully moved
 			assertTrue("4.3", !file2.exists());
 
-			// refresh the source parent 
+			// refresh the source parent
 			try {
 				sourceParent.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			} catch (CoreException e) {
@@ -255,7 +255,7 @@ public class Bug_032076 extends ResourceTest {
 				fail("0.1", e);
 			}
 
-			// opens a file so it (and its parent) cannot be removed on Windows			
+			// opens a file so it (and its parent) cannot be removed on Windows
 			try {
 				input = file1.getContents();
 			} catch (CoreException ce) {
@@ -266,7 +266,7 @@ public class Bug_032076 extends ResourceTest {
 				sourceProject.move(destinationProject.getFullPath(), IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
-				// success					
+				// success
 			}
 
 			// the source does not exist
@@ -348,7 +348,7 @@ public class Bug_032076 extends ResourceTest {
 				sourceFile.move(destinationFile.getFullPath(), IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
-				// success							
+				// success
 			}
 
 			// the source parent is out-of-sync
@@ -371,7 +371,7 @@ public class Bug_032076 extends ResourceTest {
 			// non-removable file has been moved (but not in file system - they are out-of-sync)
 			assertTrue("4.1", !sourceFile.exists());
 
-			// refresh the source parent 
+			// refresh the source parent
 			try {
 				sourceParent.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			} catch (CoreException e) {
@@ -434,7 +434,7 @@ public class Bug_032076 extends ResourceTest {
 				roFolder.move(destinationParent.getFullPath().append(roFolder.getName()), IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
-				// success		
+				// success
 			}
 
 			// the source parent is out-of-sync
@@ -442,7 +442,7 @@ public class Bug_032076 extends ResourceTest {
 			// the target parent is in-sync
 			assertTrue("3.1", destinationParent.isSynchronized(IResource.DEPTH_INFINITE));
 
-			// resources have been copied to destination			
+			// resources have been copied to destination
 			IFolder destinationFolder = destinationROFolder.getFolder(folder.getName());
 			IFile destinationFile1 = destinationROFolder.getFile(file1.getName());
 			IFile destinationFile2 = destinationFolder.getFile(file2.getName());
@@ -466,7 +466,7 @@ public class Bug_032076 extends ResourceTest {
 			assertTrue("4.2", !file1.exists());
 			assertTrue("4.3", !file2.exists());
 
-			// refresh the source parent 
+			// refresh the source parent
 			try {
 				sourceParent.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			} catch (CoreException e) {
@@ -544,7 +544,7 @@ public class Bug_032076 extends ResourceTest {
 				sourceProject.move(destinationDescription, IResource.FORCE, getMonitor());
 				fail("2.0");
 			} catch (CoreException ce) {
-				// success				
+				// success
 			}
 
 			// the source does not exist

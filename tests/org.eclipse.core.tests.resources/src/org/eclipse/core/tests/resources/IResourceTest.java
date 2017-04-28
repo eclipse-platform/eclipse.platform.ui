@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -76,7 +76,7 @@ public class IResourceTest extends ResourceTest {
 
 	/**
 	 * @return Set
-	 * @param dir 
+	 * @param dir
 	 */
 	static protected Set<File> getAllFilesForDirectory(File dir) {
 		Set<File> result = new HashSet<>(50);

@@ -47,8 +47,8 @@ public class AllTests extends TestCase {
 		// comment this out until we have a better solution for running these tests
 		// (keeping their contents inside this plugin as subdirs and dynamically installing
 		// seems to be a promising approach)
-		//suite.addTest(SaveParticipantTest.suite());		
-		//session tests from other packages  
+		//suite.addTest(SaveParticipantTest.suite());
+		//session tests from other packages
 		suite.addTest(org.eclipse.core.tests.resources.regression.TestMultipleBuildersOfSameType.suite());
 		suite.addTest(org.eclipse.core.tests.resources.usecase.SnapshotTest.suite());
 		suite.addTest(ProjectDescriptionDynamicTest.suite());

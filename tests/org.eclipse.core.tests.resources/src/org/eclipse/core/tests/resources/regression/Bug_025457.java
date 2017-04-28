@@ -22,7 +22,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests regression of bug 25457.  In this case, attempting to move a project
  * that is only a case change, where the move fails due to another handle being
  * open on a file in the hierarchy, would cause deletion of the source.
- * 
+ *
  * Note: this is similar to Bug_32076, which deals with failure to move in
  * the non case-change scenario.
  */

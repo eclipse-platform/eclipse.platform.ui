@@ -108,7 +108,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	}
 
 	/**
-	 * Run all tests 
+	 * Run all tests
 	 */
 
 	public static Test suite() {
@@ -421,7 +421,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 
 	/**
 	 * Initialize the receiver so that it is a complete, empty tree.  It does
-	 * not represent a delta on another tree.  An empty tree is defined to 
+	 * not represent a delta on another tree.  An empty tree is defined to
 	 * have a root node with nil data and no children.
 	 */
 	@Override
@@ -594,7 +594,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Answer  the number of children of the specified node.
 	 *
-	 * @exception ObjectNotFoundException 
+	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
 	 */
 	@Override

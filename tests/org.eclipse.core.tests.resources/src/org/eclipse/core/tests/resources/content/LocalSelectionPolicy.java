@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
 
 /**
  * Selection policy that filters out any content types that do not
- * belong to the runtime plug-in or this test plug-in. 
+ * belong to the runtime plug-in or this test plug-in.
  */
 public class LocalSelectionPolicy implements ISelectionPolicy {
 	@Override

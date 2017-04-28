@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -98,7 +98,7 @@ public class HistoryStoreTest extends ResourceTest {
 	public static Test suite() {
 		//		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
 		//		suite.addTest(new HistoryStoreTest("testMoveProject"));
-		//		suite.addTest(new HistoryStoreTest("testFindDeleted"));		
+		//		suite.addTest(new HistoryStoreTest("testFindDeleted"));
 		//		return suite;
 		return new TestSuite(HistoryStoreTest.class);
 	}
@@ -165,14 +165,14 @@ public class HistoryStoreTest extends ResourceTest {
 	}
 
 	/**
-	 * Test the various policies in place to ensure that the history store 
+	 * Test the various policies in place to ensure that the history store
 	 * does not grow to unmanageable size.  The policies currently in place
 	 * include:
 	 * - store only a maximum number of states for each file
 	 * - do not store files greater than some stated size
 	 * - consider history store information stale after some specified period
 	 *   of time and discard stale data
-	 * 
+	 *
 	 * History store states are always stored in order from the newest state to
 	 * the oldest state.  This will be tested as well
 	 *
@@ -192,7 +192,7 @@ public class HistoryStoreTest extends ResourceTest {
 	 *  10. Check each of the states for this file and ensure they are not
 	 *      greater than 7 bytes.
 	 *  11. Revert to policy in #3
-	 *  12. Make sure we still have 5 states for file.txt (the first file we 
+	 *  12. Make sure we still have 5 states for file.txt (the first file we
 	 *      worked with)
 	 *  13. Change the policy so that data older than 10 seconds is stale.
 	 *  14. Wait 12 seconds (make it longer than 10 seconds to ensure we don't
@@ -451,7 +451,7 @@ public class HistoryStoreTest extends ResourceTest {
 	 * - do not store files greater than some stated size
 	 * - consider history store information stale after some specified period
 	 *   of time and discard stale data
-	 * 
+	 *
 	 */
 	public void testClean() {
 		/* Create common objects. */
@@ -588,7 +588,7 @@ public class HistoryStoreTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("5.0", e);
 		}
-		// Ensure we have no state information left.  It should have been 
+		// Ensure we have no state information left.  It should have been
 		// considered stale.
 		try {
 			IFileState[] states = file.getHistory(getMonitor());
@@ -1278,7 +1278,7 @@ public class HistoryStoreTest extends ResourceTest {
 			fail("3.5", e);
 		}
 
-		// once the project is gone, so is all the history for that project	
+		// once the project is gone, so is all the history for that project
 		try {
 			// under root
 			IFile[] df = root.findDeletedMembersWithHistory(IResource.DEPTH_ZERO, getMonitor());
@@ -1474,7 +1474,7 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 		// one state in the history
 		assertEquals("2.2", 1, history.length);
-		// the timestamp in the state should match the previous file's timestamp 
+		// the timestamp in the state should match the previous file's timestamp
 		assertEquals("3.0", fileTimeStamp, history[0].getModificationTime());
 	}
 
@@ -1895,7 +1895,7 @@ public class HistoryStoreTest extends ResourceTest {
 			fail("2.0", e);
 		}
 
-		/* Move source file to second location. 
+		/* Move source file to second location.
 		 * Moved files should have the history of the original file.
 		 */
 		try {
@@ -1947,8 +1947,8 @@ public class HistoryStoreTest extends ResourceTest {
 	 * Simple use case for History Store.
 	 *
 	 * Scenario:									   # Editions
-	 *   1. Create file					"content 1"			0		
-	 *   2. Set new content				"content 2"			1	
+	 *   1. Create file					"content 1"			0
+	 *   2. Set new content				"content 2"			1
 	 *   3. Set new content				"content 3"			2
 	 *   4. Delete file										3
 	 *   5. Roll back to first version  "content 1"			3
@@ -2014,7 +2014,7 @@ public class HistoryStoreTest extends ResourceTest {
 		/* Roll file back to first version, and ensure that content matches. */
 		try {
 			IFileState[] states = file.getHistory(getMonitor());
-			// Create the file with the contents from one of the states. 
+			// Create the file with the contents from one of the states.
 			// Won't add another entry to the store.
 			file.create(states[0].getContents(), false, getMonitor());
 

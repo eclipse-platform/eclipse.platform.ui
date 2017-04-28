@@ -177,8 +177,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 
 	static ElementTree createTestElementTree() {
 		/**
-		 * This is a sample element tree on which tests are performed. 
-		 * The Paths in this tree are found in IPathConstants.  The tree's 
+		 * This is a sample element tree on which tests are performed.
+		 * The Paths in this tree are found in IPathConstants.  The tree's
 		 * basic structure is as follows:
 		 *	solution
 		 *		project1

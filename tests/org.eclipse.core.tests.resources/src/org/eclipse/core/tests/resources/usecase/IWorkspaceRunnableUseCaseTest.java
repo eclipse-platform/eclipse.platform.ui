@@ -92,7 +92,7 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 		} catch (OperationCanceledException e) {
 			// expected
 		}
-		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented. 
+		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented.
 		assertTrue("2.2", !builder.wasExecuted());
 
 		/* should not trigger a build */
@@ -106,7 +106,7 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 		} catch (CoreException e) {
 			assertEquals(Status.CANCEL_STATUS, e.getStatus());
 		}
-		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented. 
+		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented.
 		assertTrue("3.1", !builder.wasExecuted());
 
 		/* should not trigger a build */
@@ -119,7 +119,7 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
-		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented. 
+		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented.
 		assertTrue("4.1", !builder.wasExecuted());
 
 		/* remove trash */

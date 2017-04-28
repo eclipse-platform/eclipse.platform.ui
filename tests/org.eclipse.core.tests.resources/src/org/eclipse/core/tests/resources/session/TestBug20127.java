@@ -48,7 +48,7 @@ public class TestBug20127 extends WorkspaceSerializationTest {
 			description.setBuildSpec(new ICommand[] {command});
 			project.setDescription(description, getMonitor());
 
-			//initial build 
+			//initial build
 			workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 
 			getWorkspace().save(true, getMonitor());

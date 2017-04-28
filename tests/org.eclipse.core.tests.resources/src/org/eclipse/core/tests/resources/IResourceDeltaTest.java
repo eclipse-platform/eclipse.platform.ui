@@ -124,7 +124,7 @@ public class IResourceDeltaTest extends ResourceTest {
 		};
 		getWorkspace().addResourceChangeListener(listener);
 
-		//do the work	
+		//do the work
 		IWorkspaceRunnable body = monitor -> {
 			file1.setContents(getRandomContents(), true, true, getMonitor());
 			folder2.delete(true, getMonitor());

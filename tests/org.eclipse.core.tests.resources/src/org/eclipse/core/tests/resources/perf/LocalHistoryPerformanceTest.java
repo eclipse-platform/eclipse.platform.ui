@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Contains a set of use case-oriented performance tests for the local history.
- *  
+ *
  * @since 3.1
  */
 public class LocalHistoryPerformanceTest extends ResourceTest {
@@ -32,7 +32,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 
 	public static Test suite() {
 		//				TestSuite suite = new TestSuite(LocalHistoryPerformanceTest.class.getName());
-		//				suite.addTest(new LocalHistoryPerformanceTest("testHistoryCleanUp100x4"));			
+		//				suite.addTest(new LocalHistoryPerformanceTest("testHistoryCleanUp100x4"));
 		//				suite.addTest(new LocalHistoryPerformanceTest("testHistoryCleanUp4x100"));
 		//				return suite;
 		return new TestSuite(LocalHistoryPerformanceTest.class);
@@ -47,7 +47,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 	}
 
 	/**
-	 * Creates a tree of resources containing history. 
+	 * Creates a tree of resources containing history.
 	 */
 	void createTree(IFolder base, final int filesPerFolder, final int statesPerFile) {
 		final IFolder[] folders = new IFolder[5];
@@ -194,7 +194,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				original = setMaxFileStates("0.1", 1);
 				// make sure we start with no garbage
 				cleanHistory();
-				// create our own garbage				
+				// create our own garbage
 				createTree(base, filesPerFolder, statesPerFile);
 				ensureDoesNotExistInWorkspace(base);
 			}

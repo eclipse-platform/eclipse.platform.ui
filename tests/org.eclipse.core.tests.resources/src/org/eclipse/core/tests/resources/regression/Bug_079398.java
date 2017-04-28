@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
-//NOTE: Should not hook this test up until the corresponding bug is fixed. 
+//NOTE: Should not hook this test up until the corresponding bug is fixed.
 public class Bug_079398 extends ResourceTest {
 
 	public Bug_079398(String name) {
@@ -62,7 +62,7 @@ public class Bug_079398 extends ResourceTest {
 			// just make sure our assumptions are valid
 			assertEquals("0.4", 10, sourceStates.length);
 
-			// copy the file - the history should be shared, but the destination 
+			// copy the file - the history should be shared, but the destination
 			// will conform to the policy
 			try {
 				file1.copy(file2.getFullPath(), true, getMonitor());
@@ -87,7 +87,7 @@ public class Bug_079398 extends ResourceTest {
 			// but the destination conforms to the policy
 			assertEquals("1.4", description.getMaxFileStates(), destinationStates.length);
 
-			// now cause the destination to have many more states			
+			// now cause the destination to have many more states
 			try {
 				for (int i = 0; i <= description.getMaxFileStates(); i++)
 					file2.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());

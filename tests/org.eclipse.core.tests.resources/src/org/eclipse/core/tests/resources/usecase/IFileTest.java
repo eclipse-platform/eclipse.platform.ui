@@ -82,7 +82,7 @@ public class IFileTest extends IResourceTest {
 		IProgressMonitor monitor = null;
 		IWorkspace workspace = getWorkspace();
 
-		// Create & open a project 
+		// Create & open a project
 		IProject proj = workspace.getRoot().getProject(PROJECT);
 		try {
 			proj.create(monitor);
@@ -95,13 +95,13 @@ public class IFileTest extends IResourceTest {
 			fail("2.2", e);
 		}
 
-		// Construct a folder handle without creating the folder. 
+		// Construct a folder handle without creating the folder.
 		IFolder folder = proj.getFolder(new Path(FOLDER));
 
-		// Construct a file handle 
+		// Construct a file handle
 		IFile file = folder.getFile(new Path(FILE));
 
-		// Inspection methods with meaninful results invoked on a handle for a nonexistent folder. 
+		// Inspection methods with meaninful results invoked on a handle for a nonexistent folder.
 		assertTrue("3.1", !file.exists());
 		assertTrue("3.2", file.getWorkspace().equals(workspace));
 		assertTrue("3.4", file.getProject().equals(proj));
@@ -119,20 +119,20 @@ public class IFileTest extends IResourceTest {
 		assertTrue("3.14", file.getLocation().equals(absolutePath));
 		assertTrue("3.15", file.getProjectRelativePath().equals(new Path(FOLDER + "/" + FILE)));
 
-		// Create a folder. 
+		// Create a folder.
 		try {
 			folder.create(false, true, monitor);
 		} catch (CoreException e) {
 			fail("4", e);
 		}
 
-		// Parent folder must exist for this. 
+		// Parent folder must exist for this.
 		assertTrue("5", workspace.getRoot().findMember(file.getFullPath()) == null);
 
-		// These tests produce failure because the file does not exist yet. 
+		// These tests produce failure because the file does not exist yet.
 		nonexistentFileFailureTests(file, folder, workspace);
 
-		// Create the file 
+		// Create the file
 		try {
 			file.create(getContents("0123456789"), false, monitor);
 		} catch (CoreException e) {
@@ -175,18 +175,18 @@ public class IFileTest extends IResourceTest {
 			assertTrue("8.6", false);
 		}
 
-		// IResource.isLocal(int) 
-		// There is no server (yet) so everything should be local. 
+		// IResource.isLocal(int)
+		// There is no server (yet) so everything should be local.
 		assertTrue("9.0", file.isLocal(IResource.DEPTH_ZERO));
-		// No kids, but it should still answer yes. 
+		// No kids, but it should still answer yes.
 		assertTrue("9.1", file.isLocal(IResource.DEPTH_ONE));
 		assertTrue("9.2", file.isLocal(IResource.DEPTH_INFINITE));
-		// These guys have kids. 
+		// These guys have kids.
 		assertTrue("9.3", proj.isLocal(IResource.DEPTH_INFINITE));
 		assertTrue("9.5", folder.isLocal(IResource.DEPTH_ONE));
 		assertTrue("9.6", folder.isLocal(IResource.DEPTH_INFINITE));
 
-		// Delete the file 
+		// Delete the file
 		try {
 			file.delete(false, monitor);
 		} catch (CoreException e) {
@@ -202,7 +202,7 @@ public class IFileTest extends IResourceTest {
 		assertTrue("11.5", !workspace.getRoot().exists(file.getFullPath()));
 		assertTrue("11.6", file.getLocation().equals(absolutePath));
 
-		// These tests produce failure because the file no longer exists. 
+		// These tests produce failure because the file no longer exists.
 		nonexistentFileFailureTests(file, folder, workspace);
 
 		/* remove garbage */

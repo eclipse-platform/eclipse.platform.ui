@@ -70,9 +70,9 @@ public class IFolderTest extends IResourceTest {
 	 *
 	 * TBD:
 	 *
-	 * Test deleting a folder that doesn't exist. 
+	 * Test deleting a folder that doesn't exist.
 	 * Test that deleting a folder recursively deletes all children.
-	 * Test deleting a folder the is in a closed project. 
+	 * Test deleting a folder the is in a closed project.
 	 * Test IResource API
 	 * Test IFolder API
 	 */
@@ -80,13 +80,13 @@ public class IFolderTest extends IResourceTest {
 		IProgressMonitor monitor = null;
 		IWorkspace workspace = getWorkspace();
 
-		// Construct a project handle. 
+		// Construct a project handle.
 		IProject proj = workspace.getRoot().getProject(PROJECT);
-		// Construct a folder handle 
+		// Construct a folder handle
 		IPath path = new Path(FOLDER);
 
 		// Inspection methods with meaninful results invoked on a handle for a nonexistent folder
-		// in a nonexistent project. 
+		// in a nonexistent project.
 		IFolder folder = proj.getFolder(path);
 		assertTrue("2.1", !folder.exists());
 		assertTrue("2.2", folder.getWorkspace().equals(workspace));
@@ -99,43 +99,43 @@ public class IFolderTest extends IResourceTest {
 		assertTrue("2.11", folder.getParent().equals(proj));
 		assertTrue("2.13", folder.getProjectRelativePath().equals(new Path(FOLDER)));
 
-		// Create a project without opening it. 
+		// Create a project without opening it.
 		try {
 			proj.create(monitor);
 		} catch (CoreException e) {
 			fail("3", e);
 		}
 
-		// These tests produce failure because the project is not open yet. 
+		// These tests produce failure because the project is not open yet.
 		unopenedProjectFailureTests(folder, proj, workspace);
 
-		// Open project. 
+		// Open project.
 		try {
 			proj.open(monitor);
 		} catch (CoreException e) {
 			fail("4", e);
 		}
 
-		// These tests produce failure because the folder does not exist yet. 
+		// These tests produce failure because the folder does not exist yet.
 		nonexistentFolderFailureTests(folder, proj, workspace);
 		Path absolutePath = new Path(proj.getLocation().toOSString() + "/" + FOLDER);
 		assertTrue("5", folder.getLocation().equals(absolutePath));
 
-		// Now create folder. 
+		// Now create folder.
 		try {
 			folder.create(false, true, monitor);
 		} catch (CoreException e) {
 			fail("6", e);
 		}
 
-		// The tests that failed above (becaues the folder must exist) now pass. 
+		// The tests that failed above (becaues the folder must exist) now pass.
 		assertTrue("7.0", folder.exists());
 		assertTrue("7.1", workspace.getRoot().findMember(folder.getFullPath()).exists());
 		assertTrue("7.3", workspace.getRoot().findMember(folder.getFullPath()).equals(folder));
 		assertTrue("7.4", workspace.getRoot().exists(folder.getFullPath()));
 		assertTrue("7.5", folder.getLocation().equals(absolutePath));
 
-		// Session Property 
+		// Session Property
 		try {
 			assertTrue("8.0", folder.getSessionProperty(Q_NAME_SESSION) == null);
 		} catch (CoreException e) {
@@ -162,20 +162,20 @@ public class IFolderTest extends IResourceTest {
 			fail("8.7");
 		}
 
-		// IResource.isLocal(int) 
-		// There is no server (yet) so everything should be local. 
+		// IResource.isLocal(int)
+		// There is no server (yet) so everything should be local.
 		assertTrue("9.1", folder.isLocal(IResource.DEPTH_ZERO));
-		// No kids, but it should still answer yes. 
+		// No kids, but it should still answer yes.
 		assertTrue("9.2", folder.isLocal(IResource.DEPTH_ONE));
 		assertTrue("9.3", folder.isLocal(IResource.DEPTH_INFINITE));
-		// These guys have kids. 
+		// These guys have kids.
 		assertTrue("9.4", proj.isLocal(IResource.DEPTH_ONE));
 		assertTrue("9.5", proj.isLocal(IResource.DEPTH_INFINITE));
 
-		// Construct a nested folder handle. 
+		// Construct a nested folder handle.
 		IFolder nestedFolder = getWorkspace().getRoot().getFolder(folder.getFullPath().append(FOLDER));
 
-		// Inspection methods with meaninful results invoked on a handle for a nonexistent folder. 
+		// Inspection methods with meaninful results invoked on a handle for a nonexistent folder.
 		assertTrue("10.0", !nestedFolder.exists());
 		assertTrue("10.1", nestedFolder.getWorkspace().equals(workspace));
 		assertTrue("10.3", nestedFolder.getProject().equals(proj));
@@ -187,21 +187,21 @@ public class IFolderTest extends IResourceTest {
 		assertTrue("10.9", proj.getFolder(projRelativePath).equals(nestedFolder));
 		assertTrue("10.10", nestedFolder.getParent().equals(folder));
 		assertTrue("10.11", nestedFolder.getProjectRelativePath().equals(new Path(FOLDER + "/" + FOLDER)));
-		// Now the parent folder has a kid. 
+		// Now the parent folder has a kid.
 		assertTrue("10.12", folder.isLocal(IResource.DEPTH_ONE));
 		assertTrue("10.13", folder.isLocal(IResource.DEPTH_INFINITE));
 
-		// These tests produce failure because the nested folder does not exist yet. 
+		// These tests produce failure because the nested folder does not exist yet.
 		nonexistentFolderFailureTests(nestedFolder, folder, workspace);
 
-		// Create the nested folder. 
+		// Create the nested folder.
 		try {
 			nestedFolder.create(false, true, monitor);
 		} catch (CoreException e) {
 			fail("11", e);
 		}
 
-		// The tests that failed above (becaues the folder must exist) now pass. 
+		// The tests that failed above (becaues the folder must exist) now pass.
 		assertTrue("12.0", workspace.getRoot().exists(nestedFolder.getFullPath()));
 		assertTrue("12.1", nestedFolder.exists());
 		assertTrue("12.2", folder.findMember(nestedFolder.getName()).exists());
@@ -209,7 +209,7 @@ public class IFolderTest extends IResourceTest {
 		assertTrue("12.5", workspace.getRoot().exists(nestedFolder.getFullPath()));
 		assertTrue("12.6", nestedFolder.getLocation().equals(absolutePath.append(FOLDER)));
 
-		// Delete the nested folder 
+		// Delete the nested folder
 		try {
 			nestedFolder.delete(false, monitor);
 		} catch (CoreException e) {
@@ -225,17 +225,17 @@ public class IFolderTest extends IResourceTest {
 		assertTrue("13.5", !workspace.getRoot().exists(nestedFolder.getFullPath()));
 		assertTrue("13.6", nestedFolder.getLocation().equals(absolutePath.append(FOLDER)));
 
-		// These tests produce failure because the nested folder no longer exists. 
+		// These tests produce failure because the nested folder no longer exists.
 		nonexistentFolderFailureTests(nestedFolder, folder, workspace);
 
-		// Parent is still there. 
+		// Parent is still there.
 		assertTrue("14.0", folder.exists());
 		assertTrue("14.1", workspace.getRoot().findMember(folder.getFullPath()).exists());
 		assertTrue("14.3", workspace.getRoot().findMember(folder.getFullPath()).equals(folder));
 		assertTrue("14.4", workspace.getRoot().exists(folder.getFullPath()));
 		assertTrue("14.5", folder.getLocation().equals(absolutePath));
 
-		// Delete the parent folder 
+		// Delete the parent folder
 		try {
 			folder.delete(false, monitor);
 		} catch (CoreException e) {
@@ -246,7 +246,7 @@ public class IFolderTest extends IResourceTest {
 		assertTrue("15.5", !workspace.getRoot().exists(folder.getFullPath()));
 		assertTrue("15.6", folder.getLocation().equals(absolutePath));
 
-		// These tests produce failure because the parent folder no longer exists. 
+		// These tests produce failure because the parent folder no longer exists.
 		nonexistentFolderFailureTests(folder, proj, workspace);
 
 		try {

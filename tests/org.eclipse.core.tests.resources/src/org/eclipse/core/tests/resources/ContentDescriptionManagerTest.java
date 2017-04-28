@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -218,7 +218,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		ensureExistsInWorkspace(file, "it really does not matter");
 		IContentDescription description = null;
 
-		// originally, project description has no natures		
+		// originally, project description has no natures
 		try {
 			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[0]), IResource.FORCE, getMonitor());
 		} catch (CoreException e) {
@@ -229,7 +229,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		assertNotNull("1.2", description);
 		assertSame("1.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
 
-		// change project description to include one of the natures		
+		// change project description to include one of the natures
 		try {
 			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE1}), IResource.FORCE, getMonitor());
 		} catch (CoreException e) {
@@ -240,7 +240,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		assertNotNull("2.2", description);
 		assertSame("2.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
 
-		// change project description to include the other nature		
+		// change project description to include the other nature
 		try {
 			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE2}), IResource.FORCE, getMonitor());
 		} catch (CoreException e) {
@@ -360,7 +360,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		} catch (BackingStoreException e) {
 			fail("0.99", e);
 		}
-		// there are no local settings yet, everything should be the same 
+		// there are no local settings yet, everything should be the same
 		description = getDescription("1.0a", txtFile);
 		assertNotNull("1.0b", description);
 		assertEquals("1.0c", text, description.getContentType());

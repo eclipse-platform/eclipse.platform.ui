@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,16 +19,16 @@ package org.eclipse.core.tests.resources;
  *  - run the test method
  *  - run tearDown
  *  - shutdown the platform
- * 
+ *
  * Tests are run according to the natural order of their method names.  This is the
  * partial ordering defined by the String.compareTo() operation.  Each test method
  * must begin with the prefix "test", and have no parameters (thus overloading is
  * not supported).
- * 
+ *
  * After all test methods in the class have been run, the platform location is deleted.
  * This way, each test class plays like a series of related operations on the same
  * workspace, with each operation running in a separate platform instance.
- * 
+ *
  * @see org.eclipse.core.tests.session.WorkspaceSessionTestSuite
  */
 public class WorkspaceSessionTest extends ResourceTest {

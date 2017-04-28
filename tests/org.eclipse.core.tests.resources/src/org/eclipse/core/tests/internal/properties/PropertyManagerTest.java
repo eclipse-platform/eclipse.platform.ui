@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -215,8 +215,8 @@ public class PropertyManagerTest extends LocalStoreTest {
 
 		ensureExistsInWorkspace(new IResource[] {source, sourceFolder, sourceFile}, true);
 
-		/* 
-		 * persistent properties 
+		/*
+		 * persistent properties
 		 */
 		manager.setProperty(source, propName, propValue);
 		manager.setProperty(sourceFolder, propName, propValue);
@@ -286,7 +286,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		manager.deleteProperties(target, IResource.DEPTH_INFINITE);
 		assertTrue("1.3", manager.getProperty(target, propName) == null);
 
-		//test deep deletion of project properties	
+		//test deep deletion of project properties
 		IProject source = projects[0];
 		IFolder sourceFolder = source.getFolder("myfolder");
 		IResource sourceFile = sourceFolder.getFile("myfile.txt");
@@ -294,8 +294,8 @@ public class PropertyManagerTest extends LocalStoreTest {
 		propValue = "this is the property value";
 		ensureExistsInWorkspace(new IResource[] {source, sourceFolder, sourceFile}, true);
 
-		/* 
-		 * persistent properties 
+		/*
+		 * persistent properties
 		 */
 		manager.setProperty(source, propName, propValue);
 		manager.setProperty(sourceFolder, propName, propValue);

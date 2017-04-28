@@ -581,7 +581,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		assertDoesNotExistInWorkspace("2.5", new IResource[] {folder, subFile});
 		assertExistsInWorkspace("2.6", new IResource[] {project, file});
 
-		// set all resources to be team private	
+		// set all resources to be team private
 		ensureExistsInWorkspace(resources, true);
 		setTeamPrivateMember("3.0", project, true, IResource.DEPTH_INFINITE);
 		// delete the project

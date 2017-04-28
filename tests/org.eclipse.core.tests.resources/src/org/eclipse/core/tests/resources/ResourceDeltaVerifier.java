@@ -19,7 +19,7 @@ import org.junit.Assert;
 /**
  * Verifies the state of an <code>IResourceDelta</code> by comparing
  * it with a client's expectations.  The delta is considered valid
- * if it contains exactly the set of changes expected by the client, 
+ * if it contains exactly the set of changes expected by the client,
  * and parents of those changes.
  *
  * <p>Example usage:
@@ -106,7 +106,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * verifications.  When a getMessage() or isDeltaValid() method is
 	 * called, the verification completes, and the state becomes
 	 * VERIFICATION_COMPLETE.  While in this state, any number of
-	 * getMessage() and isDeltaValid() methods can be called.  
+	 * getMessage() and isDeltaValid() methods can be called.
 	 * While in the third state, any call to addExpectedChange()
 	 * resets the verifier and puts it back in its RECEIVING_INPUTS state.
 	 */

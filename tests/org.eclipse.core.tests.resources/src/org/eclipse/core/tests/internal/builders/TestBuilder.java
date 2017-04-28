@@ -99,7 +99,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Implements the inherited abstract method in
 	 * <code>InternalBuilder</code>.
-	 * 
+	 *
 	 * @see InternalBuilder#build(IResourceDelta,int,IProgressMonitor)
 	 */
 	@Override
@@ -143,7 +143,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Return the configuration element that created this builder.
-	 * 
+	 *
 	 * @see setInitializationData(IConfigurationElement, String, Object)
 	 */
 	public IConfigurationElement getConfigurationElement() {
@@ -153,7 +153,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Return the data, always a <code>Hashtable</code> or <code>String</code>,
 	 * that was set when this builder was initialized.
-	 * 
+	 *
 	 * @see setInitializationData(IConfigurationElement, String, Object)
 	 */
 	public Object getData() {
@@ -163,7 +163,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Return the name of the child configuration element that named this
 	 * builder in its class attribute.
-	 * 
+	 *
 	 * @see setInitializationData(IConfigurationElement, String, Object)
 	 */
 	public String getName() {
@@ -188,7 +188,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Part of <code>IExecutableExtensionAdaptor</code> interface.
-	 * 
+	 *
 	 * @see IExecutableExtensionAdaptor
 	 * @see IConfigurationElement#createExecutableExtension(String)
 	 */
@@ -202,7 +202,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Implemented inherited method from <code>BaseBuilder</code>.
-	 * 
+	 *
 	 * @see BaseBuilder#startupOnInitialize
 	 */
 	@Override

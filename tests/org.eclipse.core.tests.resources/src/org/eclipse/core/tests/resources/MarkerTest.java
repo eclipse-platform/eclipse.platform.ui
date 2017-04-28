@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -84,7 +84,7 @@ public class MarkerTest extends ResourceTest {
 				fail("1.99", e);
 			}
 
-			// COPY the resource and look at the deltas - 
+			// COPY the resource and look at the deltas -
 			// there should be no changes since markers are not copied
 			try {
 				resource = getWorkspace().getRoot().findMember("2");
@@ -534,7 +534,7 @@ public class MarkerTest extends ResourceTest {
 				fail("2.7." + resource.getFullPath(), e);
 			}
 
-			// Check that a non-existant marker can be removed 
+			// Check that a non-existant marker can be removed
 			try {
 				marker.delete();
 			} catch (CoreException e) {
@@ -711,7 +711,7 @@ public class MarkerTest extends ResourceTest {
 	}
 
 	/*
-	 * Bug 289811 - ArrayIndexOutOfBoundsException in MarkerAttributeMap 
+	 * Bug 289811 - ArrayIndexOutOfBoundsException in MarkerAttributeMap
 	 */
 	public void test_289811() {
 		debug("test_289811");
@@ -962,7 +962,7 @@ public class MarkerTest extends ResourceTest {
 
 	/**
 	 * Tests the appearance of marker changes in the resource delta.
-	 * Particularly, checks that the MarkerDelta attributes reflect the 
+	 * Particularly, checks that the MarkerDelta attributes reflect the
 	 * state of the marker before the change occurred.
 	 */
 	public void testMarkerDeltaAttributes() {
@@ -1051,7 +1051,7 @@ public class MarkerTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 
 		try {
-			// create markers on all the non-project resources 
+			// create markers on all the non-project resources
 			final Hashtable<IResource, IMarker> table = new Hashtable<>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
@@ -1705,7 +1705,7 @@ public class MarkerTest extends ResourceTest {
 	}
 
 	/*
-	 * Test for PR: "1FWT3V5: ITPCORE:WINNT - Task view shows entries for closed projects" 
+	 * Test for PR: "1FWT3V5: ITPCORE:WINNT - Task view shows entries for closed projects"
 	 */
 	public void testProjectCloseOpen() {
 		debug("testProjectCloseOpen");

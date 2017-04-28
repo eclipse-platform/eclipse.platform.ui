@@ -19,7 +19,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Tests how changes in the underlying preference store may affect the path
- * variable manager. 
+ * variable manager.
  */
 
 public class Bug_027271 extends ResourceTest {

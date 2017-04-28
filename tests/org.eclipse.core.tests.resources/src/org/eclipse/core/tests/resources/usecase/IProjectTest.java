@@ -41,10 +41,10 @@ public class IProjectTest extends IResourceTest {
 	 * Set methods throw an exception.
 	 */
 	protected void commonFailureTests(IProject proj, boolean created) {
-		// Prefix to assertion messages. 
+		// Prefix to assertion messages.
 		String method = "commonFailureTests(IProject," + (created ? "CREATED" : "NONEXISTENT") + "): ";
 
-		// Tests for failure in get/set methods in IResource. 
+		// Tests for failure in get/set methods in IResource.
 		commonFailureTestsForResource(proj, created);
 
 		// Description
@@ -68,7 +68,7 @@ public class IProjectTest extends IResourceTest {
 
 		IWorkspace wb = getWorkspace();
 
-		// Try to open a non-created project. 
+		// Try to open a non-created project.
 		try {
 			proj.open(monitor);
 			fail(method + "0.0");
@@ -77,7 +77,7 @@ public class IProjectTest extends IResourceTest {
 		}
 		assertTrue(method + "0.1", !proj.isOpen());
 
-		// addMapping 
+		// addMapping
 		try {
 			// Project must exist.
 			proj.getDescription().setLocation(new Path(LOCAL_LOCATION_PATH_STRING_0));
@@ -110,10 +110,10 @@ public class IProjectTest extends IResourceTest {
 	 * Test that deletion of open project works.
 	 * Test that session properties are lost when wb is closed or containing soln is closed or deleted or the
 	 * receiving project is closed/deleted.
-	 * Test deleting a project that doesn't exist. 
-	 * Test deleting a project the is in a closed solution. 
+	 * Test deleting a project that doesn't exist.
+	 * Test deleting a project the is in a closed solution.
 	 * Test that deleting a project recursively deletes all children.
-	 * Test closing a project that doesn't exist. 
+	 * Test closing a project that doesn't exist.
 	 * Test closing a project the is in a closed solution.
 	 * Test getDataLocation(Plugin)
 	 * Test ensureLocal(...)
@@ -124,7 +124,7 @@ public class IProjectTest extends IResourceTest {
 		IWorkspace wb = getWorkspace();
 		IProgressMonitor monitor = null;
 
-		// Create a project handle. 
+		// Create a project handle.
 		IProject proj = wb.getRoot().getProject(PROJECT);
 
 		// Inspection methods with meaningful results invoked on a handle for a nonexistent project
@@ -136,11 +136,11 @@ public class IProjectTest extends IResourceTest {
 		assertTrue("1.9", !wb.getRoot().exists(proj.getFullPath()));
 		assertTrue("1.11", wb.getRoot().findMember(proj.getFullPath()) == null);
 		assertTrue("1.12", proj.getParent().equals(wb.getRoot()));
-		// Legal question inherited from IResource: returns the receiver. 
+		// Legal question inherited from IResource: returns the receiver.
 		assertTrue("1.13", proj.getProject().equals(proj));
 		assertTrue("1.14", proj.getProjectRelativePath().equals(new Path("")));
 
-		// Check that there are no projects. 
+		// Check that there are no projects.
 		assertTrue("6.1", wb.getRoot().getProjects().length == 0);
 
 		// These tests produce failure because the project does not exist yet.
@@ -153,18 +153,18 @@ public class IProjectTest extends IResourceTest {
 			fail("8");
 		}
 
-		// Check that the project is get-able from the containers. 
+		// Check that the project is get-able from the containers.
 		assertTrue("9.0", proj.exists());
 		assertTrue("9.1", wb.getRoot().findMember(proj.getName()).exists());
 		assertTrue("9.3", wb.getRoot().exists(proj.getFullPath()));
-		// But it is still not open. 
+		// But it is still not open.
 		assertTrue("9.4", !proj.isOpen());
 		assertTrue("9.5", wb.getRoot().findMember(proj.getFullPath()).equals(proj));
 
 		// These tests produce failure because the project has not been opened yet.
 		unopenedProjectFailureTests(proj);
 
-		// Open project 
+		// Open project
 		try {
 			proj.open(monitor);
 		} catch (CoreException e) {
@@ -175,7 +175,7 @@ public class IProjectTest extends IResourceTest {
 
 		/* Properties */
 
-		// Session Property 
+		// Session Property
 		try {
 			assertTrue("12.0", proj.getSessionProperty(Q_NAME_SESSION) == null);
 		} catch (CoreException e) {
@@ -217,34 +217,34 @@ public class IProjectTest extends IResourceTest {
 		Hashtable<String, String> arguments = new Hashtable<>(2);
 		arguments.put("param0", "arg0");
 		command.setArguments(arguments);
-		// Add buildspec to project 
+		// Add buildspec to project
 		desc.setBuildSpec(commands);
 
-		// Compare project buildspecs 
+		// Compare project buildspecs
 		assertTrue("15.5", Comparator.equals(desc.getBuildSpec(), commands));
 
-		// IResource.isLocal(int) 
+		// IResource.isLocal(int)
 		assertTrue("18.0", proj.isLocal(IResource.DEPTH_ZERO));
 		assertTrue("18.1", proj.isLocal(IResource.DEPTH_ONE));
 		assertTrue("18.2", proj.isLocal(IResource.DEPTH_INFINITE));
 
-		// Close project 
+		// Close project
 		try {
 			proj.close(monitor);
 		} catch (CoreException e) {
 			fail("19.0", e);
 		}
-		// The project is no longer open 
+		// The project is no longer open
 		assertTrue("19.1", !proj.isOpen());
-		// But it still exists. 
+		// But it still exists.
 		assertTrue("19.2", proj.exists());
 		assertTrue("19.5", wb.getRoot().findMember(proj.getFullPath()).equals(proj));
 		assertTrue("19.6", wb.getRoot().exists(proj.getFullPath()));
 
-		// These tests produce failure because the project is now closed. 
+		// These tests produce failure because the project is now closed.
 		unopenedProjectFailureTests(proj);
 
-		// Delete the project 
+		// Delete the project
 		try {
 			proj.delete(false, monitor);
 		} catch (CoreException e) {
@@ -255,7 +255,7 @@ public class IProjectTest extends IResourceTest {
 		assertTrue("20.1", !proj.exists());
 		assertTrue("20.2", wb.getRoot().getProjects().length == 0);
 		assertTrue("20.4", wb.getRoot().findMember(proj.getFullPath()) == null);
-		// These tests produce failure because the project no longer exists. 
+		// These tests produce failure because the project no longer exists.
 		nonexistentProjectFailureTests(proj);
 		assertTrue("20.5", !wb.getRoot().exists(proj.getFullPath()));
 	}
@@ -273,7 +273,7 @@ public class IProjectTest extends IResourceTest {
 		String method = "unopenedSolutionFailureTests(IProject,IWorkspace): ";
 		IProgressMonitor monitor = null;
 
-		// Try to create the project without the solution being open. 
+		// Try to create the project without the solution being open.
 		try {
 			proj.create(monitor);
 			fail(method + "1");

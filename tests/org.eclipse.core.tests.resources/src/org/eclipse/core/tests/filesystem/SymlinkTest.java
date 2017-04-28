@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * John Arthorne (IBM) - [172346] disable tests with problematic Platform encoding
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * 
+ *
  */
 public class SymlinkTest extends FileSystemTest {
 	/**

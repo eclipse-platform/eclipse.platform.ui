@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 	}
 
 	public void test2() throws CoreException {
-		// projects should exist immediately due to snapshot - files may or 
+		// projects should exist immediately due to snapshot - files may or
 		// may not exist due to snapshot timing. All resources should exist after refresh.
 		IResource[] members = workspace.getRoot().members();
 		assertEquals("1.0", 1, members.length);
@@ -57,7 +57,7 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 		IFolder folder = project.getFolder(FOLDER);
 		IFile file = folder.getFile(FILE);
 
-		//opening the project does an automatic local refresh	
+		//opening the project does an automatic local refresh
 		if (!project.isOpen())
 			project.open(null);
 

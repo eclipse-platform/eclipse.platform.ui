@@ -65,7 +65,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 	public void testCancelOnBlocked() {
 		//create a dummy project
 		ensureExistsInWorkspace(getWorkspace().getRoot().getProject("P1"), true);
-		//add a resource change listener that blocks forever, thus 
+		//add a resource change listener that blocks forever, thus
 		//simulating a scenario where workspace lock is held indefinitely
 		final int[] barrier = new int[1];
 		final Throwable[] error = new Throwable[1];
@@ -80,7 +80,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		};
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			//create a thread that modifies the workspace. This should 
+			//create a thread that modifies the workspace. This should
 			//hang indefinitely due to the misbehaving listener
 			TestWorkspaceJob testJob = new TestWorkspaceJob(10);
 			testJob.setTouch(true);
@@ -156,8 +156,8 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 	 * Tests three overlapping jobs
 	 *  - Job 1 (root rule) does a build.
 	 *  - Job 2 (null rule) overlaps Job 1 and has null scheduling rule
-	 *  - Job 3 (project rule) overlaps Job 2 
-	 * 
+	 *  - Job 3 (project rule) overlaps Job 2
+	 *
 	 * The POST_BUILD event should occur at the end of Job 1. If it
 	 * is delayed until the end of Job 3, an appropriate scheduling rule
 	 * will not be available and it will fail.

@@ -95,7 +95,7 @@ public class NatureTest extends ResourceTest {
 		ensureExistsInWorkspace(project, true);
 		setNatures("1.0", project, new String[] {NATURE_SIMPLE}, false);
 
-		//Adding a nature that is not available. 
+		//Adding a nature that is not available.
 		setNatures("2.0", project, new String[] {NATURE_SIMPLE, NATURE_MISSING}, true);
 		try {
 			assertTrue("2.1", project.hasNature(NATURE_SIMPLE));
@@ -105,7 +105,7 @@ public class NatureTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
-		//Adding a nature that has a missing prerequisite. 
+		//Adding a nature that has a missing prerequisite.
 		setNatures("3.0", project, new String[] {NATURE_SIMPLE, NATURE_SNOW}, true);
 		try {
 			assertTrue("3.1", project.hasNature(NATURE_SIMPLE));
@@ -115,7 +115,7 @@ public class NatureTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("3.99", e);
 		}
-		//Adding a nature that creates a duplicated set member. 
+		//Adding a nature that creates a duplicated set member.
 		setNatures("4.0", project, new String[] {NATURE_EARTH}, false);
 		setNatures("4.1", project, new String[] {NATURE_EARTH, NATURE_WATER}, true);
 		try {
@@ -208,7 +208,7 @@ public class NatureTest extends ResourceTest {
 		String[] currentSet = new String[] {NATURE_SIMPLE};
 		setNatures("1.0", project, currentSet, false);
 
-		//now do invalid tests and ensure simple nature is still configured	
+		//now do invalid tests and ensure simple nature is still configured
 		String[][] invalid = getInvalidNatureSets();
 		for (int i = 0; i < invalid.length; i++) {
 			setNatures("invalid: " + i, project, invalid[i], true);
@@ -303,7 +303,7 @@ public class NatureTest extends ResourceTest {
 
 		try {
 			// Make sure enough time has past to bump file's
-			// timestamp during the copy  
+			// timestamp during the copy
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			fail("5.0", e);
@@ -350,7 +350,7 @@ public class NatureTest extends ResourceTest {
 	/**
 	 * Changes project description and parallel checks {@link IProject#isNatureEnabled(String)},
 	 * to check if natures value is cached properly.
-	 * 
+	 *
 	 * See Bug 338055.
 	 * @throws Exception
 	 */
@@ -378,7 +378,7 @@ public class NatureTest extends ResourceTest {
 
 		try {
 			// Make sure enough time has past to bump file's
-			// timestamp during the copy  
+			// timestamp during the copy
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			fail("2.0", e);

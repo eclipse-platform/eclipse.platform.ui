@@ -42,7 +42,7 @@ public class ProjectOrderTest extends ResourceTest {
 	 * be accessible, to the given target project, which need not be accessible.
 	 * Does nothing if the source project already has a project reference
 	 * to the target project.
-	 * 
+	 *
 	 * @param source the source project; must be accessible
 	 * @param target the target project; need not be accessible
 	 */

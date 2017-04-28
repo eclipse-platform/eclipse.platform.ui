@@ -17,9 +17,9 @@ import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
- * This class is a simple example of how session tests operate.  Each method 
- * starting with "test" will be invoked, in the order they are declared, in a separate 
- * runtime instance of the workspace.  Contents on disk are automatically 
+ * This class is a simple example of how session tests operate.  Each method
+ * starting with "test" will be invoked, in the order they are declared, in a separate
+ * runtime instance of the workspace.  Contents on disk are automatically
  * cleaned up after the last test method is run.
  */
 public class SampleSessionTest extends WorkspaceSessionTest {

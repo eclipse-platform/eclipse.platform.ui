@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - adapted from FileSystemResourceManagerTest
@@ -302,7 +302,7 @@ public class ProjectSnapshotTest extends ResourceTest {
 	 * Create project and populate with resources. Specify
 	 * snapshot location in project description.
 	 * Import the project from a different location, with different name.
-	 * All resources must be marked as "exists" in the resource tree for 
+	 * All resources must be marked as "exists" in the resource tree for
 	 * the new, renamed project.
 	 */
 	public void testAutoLoadWithRename() throws Throwable {
@@ -364,7 +364,7 @@ public class ProjectSnapshotTest extends ResourceTest {
 		project.setDescription(desc, null);
 		assertEquals("1.0", stamp, projectFile.getModificationStamp());
 
-		// set or reset a snapshot -> .project file changed, unless setting to same existing URI 
+		// set or reset a snapshot -> .project file changed, unless setting to same existing URI
 		project.saveSnapshot(Project.SNAPSHOT_SET_AUTOLOAD, tempURI, null);
 		assertEquals("2.0", tempURI, ((ProjectDescription) project.getDescription()).getSnapshotLocationURI());
 		long stamp2 = projectFile.getModificationStamp();

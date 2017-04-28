@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -95,7 +95,7 @@ public class CharsetTest extends ResourceTest {
 
 		return new TestSuite(CharsetTest.class);
 
-		//    // cause the same test to run several times to catch a timing problem		
+		//    // cause the same test to run several times to catch a timing problem
 		//		TestSuite suite = new TestSuite();
 		//		for (int i = 0; i < 1000; i++)
 		//			suite.addTest(new CharsetTest("testDeltasFile"));
@@ -108,7 +108,7 @@ public class CharsetTest extends ResourceTest {
 
 	/**
 	 * See bug 67606.
-	 * 
+	 *
 	 * TODO enable when bug is fixed
 	 */
 	public void _testBug67606() throws CoreException {
@@ -250,7 +250,7 @@ public class CharsetTest extends ResourceTest {
 
 	@Override
 	protected void tearDown() throws Exception {
-		// restore the workspace charset 
+		// restore the workspace charset
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, savedWorkspaceCharset);
 		// Reset the PREF_LIGHTWEIGHT_AUTO_REFRESH preference to its default value.
 		getResourcesPreferences().remove(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
@@ -522,7 +522,7 @@ public class CharsetTest extends ResourceTest {
 			assertDoesNotExistInWorkspace("2.4", derivedPrefs);
 
 			//3 - setting derived == 'true' for file
-			// TODO update the test when bug 345271 is fixed 
+			// TODO update the test when bug 345271 is fixed
 			try {
 				a.setDerived(true, getMonitor());
 			} catch (CoreException e) {
@@ -867,7 +867,7 @@ public class CharsetTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests Content Manager-based charset setting.  
+	 * Tests Content Manager-based charset setting.
 	 */
 	public void testContentBasedCharset() throws CoreException, UnsupportedEncodingException {
 		IWorkspace workspace = getWorkspace();
@@ -877,25 +877,25 @@ public class CharsetTest extends ResourceTest {
 			project.setDefaultCharset("FOO", getMonitor());
 			IFile file = project.getFile("file.xml");
 			assertEquals("0.9", "FOO", project.getDefaultCharset());
-			// content-based encoding is BAR			
+			// content-based encoding is BAR
 			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_US_ASCII_ENCODING.getBytes("UTF-8")));
 			assertEquals("1.0", "US-ASCII", file.getCharset());
-			// content-based encoding is FRED			
+			// content-based encoding is FRED
 			file.setContents(new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes("ISO-8859-1")), false, false, null);
 			assertEquals("2.0", "ISO-8859-1", file.getCharset());
 			// content-based encoding is UTF-8 (default for XML)
 			file.setContents(new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")), false, false, null);
 			assertEquals("3.0", "UTF-8", file.getCharset());
-			// tests with BOM -BOMs are strings for convenience, encoded itno bytes using ISO-8859-1 (which handles 128-255 bytes better) 
+			// tests with BOM -BOMs are strings for convenience, encoded itno bytes using ISO-8859-1 (which handles 128-255 bytes better)
 			// tests with UTF-8 BOM
 			String UTF8_BOM = new String(IContentDescription.BOM_UTF_8, "ISO-8859-1");
 			file.setContents(new ByteArrayInputStream((UTF8_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
 			assertEquals("4.0", "UTF-8", file.getCharset());
-			// tests with UTF-16 Little Endian BOM			
+			// tests with UTF-16 Little Endian BOM
 			String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, "ISO-8859-1");
 			file.setContents(new ByteArrayInputStream((UTF16_LE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
 			assertEquals("5.0", "UTF-16", file.getCharset());
-			// tests with UTF-16 Big Endian BOM			
+			// tests with UTF-16 Big Endian BOM
 			String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, "ISO-8859-1");
 			file.setContents(new ByteArrayInputStream((UTF16_BE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
 			assertEquals("6.0", "UTF-16", file.getCharset());
@@ -977,7 +977,7 @@ public class CharsetTest extends ResourceTest {
 		final String USER_SETTING = "USER_CHARSET";
 		final String PROVIDER_SETTING = "PROVIDER_CHARSET";
 
-		// install a verifier		
+		// install a verifier
 		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
 		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
@@ -1083,7 +1083,7 @@ public class CharsetTest extends ResourceTest {
 
 			backgroundVerifier.reset();
 			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2, resourcesPrefs, resourcesPrefs.getParent()}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			// cause a resource change event without actually changing contents			
+			// cause a resource change event without actually changing contents
 			try {
 				resourcesPrefs.setContents(resourcesPrefs.getContents(), 0, getMonitor());
 			} catch (CoreException e) {
@@ -1259,10 +1259,10 @@ public class CharsetTest extends ResourceTest {
 		try {
 			IFile prefs = getResourcesPreferenceFile(project, false);
 			// File:
-			// single file		
+			// single file
 			final IFile file1 = project.getFile("file1.txt");
 			ensureExistsInWorkspace(file1, getRandomContents());
-			// change from default		
+			// change from default
 			verifier.reset();
 			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
 			verifier.addExpectedChange(new IResource[] {prefs, prefs.getParent()}, IResourceDelta.ADDED, 0);
@@ -1392,7 +1392,7 @@ public class CharsetTest extends ResourceTest {
 			// sets project default charset
 			project.setDefaultCharset("BAR", getMonitor());
 			oldFile.setCharset("FOO", getMonitor());
-			// project and non-existing file share the same encoding 
+			// project and non-existing file share the same encoding
 			assertCharsetIs("0.1", "BAR", new IResource[] {project, newXMLFile, newTXTFile, newRandomFile}, true);
 			// existing file has encoding determined by user
 			assertCharsetIs("0.2", "FOO", new IResource[] {oldFile}, true);
@@ -1466,7 +1466,7 @@ public class CharsetTest extends ResourceTest {
 	/**
 	 * Two things to test here:
 	 * 	- non-existing resources default to the parent's default charset;
-	 * 	- cannot set the charset for a non-existing resource (exception is thrown). 
+	 * 	- cannot set the charset for a non-existing resource (exception is thrown).
 	 */
 	public void testNonExistingResource() throws CoreException {
 		IWorkspace workspace = getWorkspace();
@@ -1476,7 +1476,7 @@ public class CharsetTest extends ResourceTest {
 				project.setDefaultCharset("FOO", getMonitor());
 				fail("1.0");
 			} catch (CoreException e) {
-				// expected, project does not exist yet 
+				// expected, project does not exist yet
 				assertEquals("1.1", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 			}
 			ensureExistsInWorkspace(project, true);

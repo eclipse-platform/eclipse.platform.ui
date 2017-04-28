@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ public abstract class FileSystemTest extends CoreTest {
 
 	/**
 	 * Asserts that a file store exists.
-	 * 
+	 *
 	 * @param message The failure message if the assertion fails
 	 * @param store The store to check for existence
 	 */
@@ -112,10 +112,10 @@ public abstract class FileSystemTest extends CoreTest {
 	}
 
 	/**
-	 * The base file system to be tested is setup here. 
+	 * The base file system to be tested is setup here.
 	 * The default implementation sets up in-memory file system (@see MemoryFileSystem).
-	 * <p> 
-	 * Subclasses should override to test a different file system 
+	 * <p>
+	 * Subclasses should override to test a different file system
 	 * implementation and set up its base directory.
 	 * </p>
 	 */
@@ -126,10 +126,10 @@ public abstract class FileSystemTest extends CoreTest {
 	}
 
 	/**
-	 * Tear down the tested base file system and base directory here. 
+	 * Tear down the tested base file system and base directory here.
 	 * The default implementation tears down in memory file system (@see MemoryFileSystem).
-	 * <p> 
-	 * Subclasses should override to tear down a different file system 
+	 * <p>
+	 * Subclasses should override to tear down a different file system
 	 * implementation and its base directory.
 	 * </p>
 	 */

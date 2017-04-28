@@ -82,7 +82,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * Signals to the comparer that the given resource is expected to change in
 	 * the specified way. The change flags should be set to zero if no change is
 	 * expected.
-	 * 
+	 *
 	 * @param resource
 	 *                  the resource that is expected to change
 	 * @param topLevelParent
@@ -103,7 +103,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * Signals to the comparer that the given resource is expected to change in
 	 * the specified way. The change flags should be set to zero if no change is
 	 * expected.
-	 * 
+	 *
 	 * @param resource
 	 *                  the resource that is expected to change
 	 * @param topLevelParent

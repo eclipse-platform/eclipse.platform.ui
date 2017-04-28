@@ -3,7 +3,7 @@
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
@@ -39,7 +39,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests that a builder that responds only to the "full" trigger will be called
-	 * on the first build after a clean. 
+	 * on the first build after a clean.
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=182781.
 	 */
 	public void testBuildAfterClean_builderRespondingToFull() throws CoreException {
@@ -51,7 +51,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		// Create some resources
 		project.create(getMonitor());
 		project.open(getMonitor());
-		// Create and set a build specs for project 
+		// Create and set a build specs for project
 		IProjectDescription desc = project.getDescription();
 		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
@@ -104,7 +104,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		// Create some resources
 		project.create(getMonitor());
 		project.open(getMonitor());
-		// Create and set a build specs for project 
+		// Create and set a build specs for project
 		IProjectDescription desc = project.getDescription();
 		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
@@ -164,7 +164,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		// Create some resources
 		project.create(getMonitor());
 		project.open(getMonitor());
-		// Create and set a build specs for project 
+		// Create and set a build specs for project
 		IProjectDescription desc = project.getDescription();
 		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
@@ -220,7 +220,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			// Create some resources
 			project.create(getMonitor());
 			project.open(getMonitor());
-			// Create and set a build specs for project 
+			// Create and set a build specs for project
 			IProjectDescription desc = project.getDescription();
 			desc.setBuildSpec(new ICommand[] {createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0")});
 			project.setDescription(desc, getMonitor());
@@ -343,7 +343,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			// Create some resources
 			project.create(getMonitor());
 			project.open(getMonitor());
-			// Create and set a build specs for project 
+			// Create and set a build specs for project
 			IProjectDescription desc = project.getDescription();
 			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
 			project.setDescription(desc, getMonitor());
@@ -407,7 +407,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			// Create some resources
 			project.create(getMonitor());
 			project.open(getMonitor());
-			// Create and set a build specs for project 
+			// Create and set a build specs for project
 			IProjectDescription desc = project.getDescription();
 			command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
 			command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
@@ -459,7 +459,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests that a builder that responds only to the "full" trigger will be called
-	 * on the first and only first build after a clean. 
+	 * on the first and only first build after a clean.
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=206540.
 	 */
 	public void testCleanBuild_AfterCleanBuilder() throws CoreException {
@@ -471,7 +471,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		project.create(getMonitor());
 		project.open(getMonitor());
 
-		// Create and set a build specs for project 
+		// Create and set a build specs for project
 		IProjectDescription desc = project.getDescription();
 		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
@@ -530,7 +530,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests that a builder that responds only to the "full" trigger will be called
-	 * on the first and only first (non-auto) build after a clean. 
+	 * on the first and only first (non-auto) build after a clean.
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=206540.
 	 */
 	public void testCleanAutoBuild_AfterCleanBuilder() throws CoreException {
@@ -542,7 +542,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		project.create(getMonitor());
 		project.open(getMonitor());
 
-		// Create and set a build specs for project 
+		// Create and set a build specs for project
 		IProjectDescription desc = project.getDescription();
 		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);

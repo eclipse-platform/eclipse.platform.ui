@@ -59,8 +59,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals("1.0", description, preferences);
 
 		// ensures that all properties in the default workspace description
-		// appear as non-default-default properties in the property store  
-		// Don't include the default build order here as it is equivalent to the 
+		// appear as non-default-default properties in the property store
+		// Don't include the default build order here as it is equivalent to the
 		// String default-default (ResourcesPlugin.PREF_BUILD_ORDER).
 		String[] descriptionProperties = {ResourcesPlugin.PREF_AUTO_BUILDING, ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, ResourcesPlugin.PREF_MAX_FILE_STATES, ResourcesPlugin.PREF_SNAPSHOT_INTERVAL};
 		List<String> defaultPropertiesList = Arrays.asList(preferences.defaultPropertyNames());
@@ -149,7 +149,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("2.0", e);
 			}
-			// the right number of events should have been fired			
+			// the right number of events should have been fired
 			assertEquals("2.1 - wrong number of properties changed ", 9, changedProperties.size());
 		} finally {
 			preferences.removePropertyChangeListener(listener);
@@ -157,7 +157,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 	}
 
 	/**
-	 * Ensures preferences with both default/non-default values are properly exported/imported. 
+	 * Ensures preferences with both default/non-default values are properly exported/imported.
 	 */
 	public void testImportExport() {
 		IPath originalPreferencesFile = getRandomLocation().append("original.epf");
@@ -166,7 +166,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 			// saves the current preferences (should be the default ones)
 			IWorkspaceDescription original = workspace.getDescription();
 
-			// sets a non-used preference to a non-default value so a  
+			// sets a non-used preference to a non-default value so a
 			// preferences file can be generated
 			preferences.setValue("foo.bar", getRandomString());
 
@@ -188,7 +188,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 			modified.setMaxFileStateSize((original.getMaxFileStateSize() + 1) * 2);
 			modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
 
-			// sets modified description						
+			// sets modified description
 			try {
 				workspace.setDescription(modified);
 			} catch (CoreException ce) {
@@ -256,9 +256,9 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		} catch (CoreException ce) {
 			fail("3.0", ce);
 		}
-		// try to make a change 
+		// try to make a change
 		description.setFileStateLongevity(100000);
-		// the original value should remain set		
+		// the original value should remain set
 		assertEquals("3.1", 90000, workspace.getDescription().getFileStateLongevity());
 		assertEquals("3.2", 90000, preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
 	}
@@ -289,8 +289,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 	}
 
 	/**
-	 * Compares the values in a workspace description with the corresponding 
-	 * properties in a preferences object. 
+	 * Compares the values in a workspace description with the corresponding
+	 * properties in a preferences object.
 	 */
 	public void assertEquals(String message, IWorkspaceDescription description, Preferences preferences) throws ComparisonFailure {
 		assertEquals(message + " - 1", description.isAutoBuilding(), preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
@@ -305,7 +305,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 	}
 
 	/**
-	 * Compares two workspace description objects.. 
+	 * Compares two workspace description objects..
 	 */
 	public void assertEquals(String message, IWorkspaceDescription description1, IWorkspaceDescription description2) throws ComparisonFailure {
 		assertEquals(message + " - 1", description1.isAutoBuilding(), description2.isAutoBuilding());

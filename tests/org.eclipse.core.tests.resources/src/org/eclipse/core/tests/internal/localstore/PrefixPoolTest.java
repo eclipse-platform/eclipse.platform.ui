@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation for [105554]
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
@@ -24,7 +24,7 @@ public class PrefixPoolTest extends CoreTest {
 	public PrefixPoolTest(String name) {
 		super(name);
 	}
-	
+
 	public void testIllegalCapacity() {
 		boolean exceptionOK=true;
 		try {
@@ -42,7 +42,7 @@ public class PrefixPoolTest extends CoreTest {
 		}
 		assertTrue(exceptionOK);
 	}
-	
+
 	public void testPrefixPool() {
 		PrefixPool p = new PrefixPool(1);
 		assertFalse(p.containsAsPrefix(""));
@@ -65,7 +65,7 @@ public class PrefixPoolTest extends CoreTest {
 		p.insertShorter("/a/B/"); //overrides
 		assertEquals(3, p.size());
 		//we now have: /a/b/, /A/, /a/B/
-		assertTrue(p.hasPrefixOf("/a/B/")); 
+		assertTrue(p.hasPrefixOf("/a/B/"));
 		assertTrue(p.hasPrefixOf("/a/b/c/d/"));
 		assertFalse(p.hasPrefixOf("/"));
 		assertTrue(p.containsAsPrefix("/a/B"));

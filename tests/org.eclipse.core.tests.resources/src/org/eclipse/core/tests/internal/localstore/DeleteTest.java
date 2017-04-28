@@ -301,7 +301,7 @@ public class DeleteTest extends LocalStoreTest {
 
 	public void testDeleteResource() throws Throwable {
 		/* test's hierarchy
-		 
+
 		 P0
 		 |
 		 |-- folder
@@ -323,7 +323,7 @@ public class DeleteTest extends LocalStoreTest {
 		 |		|-- susubfileSync
 		 |		|
 		 |		|-- susubfileUnsync
-		 
+
 		 */
 
 		/* =================== */

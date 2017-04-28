@@ -85,7 +85,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		//
 		//	//should exist in workspace
 		//	assertTrue("1.3", link.exists());
-		//	
+		//
 		//	//refreshing shouldn't get rid of the link
 		//	try {
 		//		link.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
@@ -93,14 +93,14 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		//		fail("1.99", e);
 		//	}
 		//	assertTrue("1.4", link.exists());
-		//	
+		//
 		//	//create the contents in the file system
 		//	try {
 		//		createFileInFileSystem(location);
 		//	} catch (CoreException e) {
 		//		fail("2.99", e);
 		//	}
-		//	
+		//
 		//	//should now be synchronized
 		//	assertTrue("2.1", project.isSynchronized(IResource.DEPTH_INFINITE));
 		//	assertTrue("2.2", link.isSynchronized(IResource.DEPTH_ZERO));
@@ -111,7 +111,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		//	} catch (CoreException e) {
 		//		fail("3.99", e);
 		//	}
-		//	
+		//
 		//	//assert should exist in workspace
 		//	assertTrue("2.3", link.exists());
 	}

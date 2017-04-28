@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
@@ -29,16 +29,16 @@ import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
  * Tests the following API methods:
- *  IFile#createLink  			
+ *  IFile#createLink
  * 	IFolder#createLink
- * 
+ *
  * This test supports both variable-based and non-variable-based locations.
  * Although the method used for creating random locations
  * <code>ResourceTest#getRandomLocation()</code> never returns variable-
  * based paths, this method is overwritten in the derived class
  * <code>LinkedResourceWithPathVariable</code> to always return variable-based
  * paths.
- * 
+ *
  * To support variable-based paths wherever a file system location is used, it
  * is mandatory first to resolve it and only then using it, except in calls to
  * <code>IFile#createLink</code> and <code>IFolder#createLink</code> and when
@@ -757,7 +757,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests whether {@link IFile#createLink} and {@link IFolder#createLink} 
+	 * Tests whether {@link IFile#createLink} and {@link IFolder#createLink}
 	 * handle {@link IResource#HIDDEN} flag properly.
 	 */
 	public void testCreateHiddenLinkedResources() {
@@ -1064,7 +1064,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests swapping the link location. 
+	 * Tests swapping the link location.
 	 * This is a regression test for bug 268507
 	 */
 	public void testSetLinkLocationSwapLinkedResource() {

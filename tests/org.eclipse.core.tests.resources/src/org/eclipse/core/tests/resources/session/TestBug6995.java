@@ -23,7 +23,7 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests the fix for bug 6995.  In this bug, a snapshot immediately after startup and
- * before doing any builds was losing the old built tree.  A subsequent build would 
+ * before doing any builds was losing the old built tree.  A subsequent build would
  * revert to a full build.
  */
 public class TestBug6995 extends WorkspaceSessionTest {

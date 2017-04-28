@@ -454,7 +454,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		java.io.File dir = herringRouge.getLocation().toFile();
 		dir.mkdir();
 
-		// do a refresh, which should cause a problem	
+		// do a refresh, which should cause a problem
 		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
@@ -485,7 +485,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		ensureDoesNotExistInFileSystem(file);
 		ensureExistsInFileSystem(herringRouge);
 
-		// do a refresh, which should cause a problem	
+		// do a refresh, which should cause a problem
 		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
@@ -516,7 +516,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		ensureDoesNotExistInFileSystem(folder);
 		ensureExistsInFileSystem(herringRouge);
 
-		// do a refresh, which should cause a problem	
+		// do a refresh, which should cause a problem
 		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
@@ -551,7 +551,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		dir.mkdir();
 		assertTrue("2.1", dir.exists());
 
-		// do a refresh, which should cause a problem	
+		// do a refresh, which should cause a problem
 		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {

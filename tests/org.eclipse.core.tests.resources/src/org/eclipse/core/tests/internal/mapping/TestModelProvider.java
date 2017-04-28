@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.*;
  */
 public class TestModelProvider extends ModelProvider {
 	/**
-	 * Validation enablement flag to prevent validation when the 
+	 * Validation enablement flag to prevent validation when the
 	 * tests are not running.
 	 */
 	public static boolean enabled = false;

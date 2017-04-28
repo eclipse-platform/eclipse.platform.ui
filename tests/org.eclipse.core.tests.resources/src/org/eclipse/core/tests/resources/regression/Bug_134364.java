@@ -22,7 +22,7 @@ import org.eclipse.core.tests.harness.CoreTest;
  * Tests an error that occurs when a thread tries to read the workspace
  * during snapshot.  Since snapshot collapses unused trees, it is a destructive
  * operation on the tree's parent chain.  Any reader traversing the tree parent
- * chain during that destructive operation risks encountering the tree in a 
+ * chain during that destructive operation risks encountering the tree in a
  * malformed state.  The fix was to synchronize the routine that collapses
  * unused trees in ElementTree.
  */

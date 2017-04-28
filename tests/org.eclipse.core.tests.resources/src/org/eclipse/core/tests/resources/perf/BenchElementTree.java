@@ -159,7 +159,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	}
 
 	/**
-	 * Does several routine operations on the given tree.  
+	 * Does several routine operations on the given tree.
 	 * Returns an array of all the intermediary element trees.
 	 */
 	private ElementTree[] buildDeltaChain(ElementTree tree) {
@@ -302,7 +302,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	protected void tearDown() throws Exception {

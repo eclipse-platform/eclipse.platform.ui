@@ -23,7 +23,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests regression of bug 44106. In this case deleting a file which was a
  * symbolic link on Linux actually deleted the files that it pointed too rather
  * than just the link itself.
- * 
+ *
  * Also tests bug 174492, which is a similar bug except the KEEP_HISTORY
  * flag is used when the resource is deleted from the workspace.
  */

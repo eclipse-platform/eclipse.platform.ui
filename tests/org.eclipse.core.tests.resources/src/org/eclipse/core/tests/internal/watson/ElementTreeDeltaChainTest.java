@@ -42,7 +42,7 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	protected void tearDown() throws Exception {

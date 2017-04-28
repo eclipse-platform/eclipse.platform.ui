@@ -151,14 +151,14 @@ public class IPathVariableTest extends ResourceTest {
 	}
 
 	/**
-	 * Default constructor for this class. 
+	 * Default constructor for this class.
 	 */
 	public IPathVariableTest() {
 		super();
 	}
 
 	/**
-	 * Constructor for the class. 
+	 * Constructor for the class.
 	 */
 	public IPathVariableTest(String name) {
 		super(name);
@@ -166,7 +166,7 @@ public class IPathVariableTest extends ResourceTest {
 
 	/**
 	 * Return the tests to run.
-	 *  
+	 *
 	 * @see org.eclipse.core.tests.harness.ResourceTest#suite()
 	 */
 	public static Test suite() {
@@ -211,7 +211,7 @@ public class IPathVariableTest extends ResourceTest {
 		assertTrue("3.2", list.contains("two"));
 		assertTrue("3.3", !list.contains("one"));
 
-		// remove the last one	
+		// remove the last one
 		try {
 			manager.setValue("two", (IPath) null);
 		} catch (CoreException e) {
@@ -234,7 +234,7 @@ public class IPathVariableTest extends ResourceTest {
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 		IPath pathOneEdit = WINDOWS ? new Path("D:/foobar") : new Path("/foobar");
 
-		// nothing to begin with	
+		// nothing to begin with
 		assertNull("0.0", manager.getValue("one"));
 
 		// add a value to the table
@@ -275,7 +275,7 @@ public class IPathVariableTest extends ResourceTest {
 		}
 		assertNull("4.1", manager.getValue("one"));
 
-		// set values with bogus names 
+		// set values with bogus names
 		try {
 			manager.setValue("ECLIPSE$HOME", Path.ROOT);
 			fail("5.0 Accepted invalid variable name in setValue()");
@@ -432,7 +432,7 @@ public class IPathVariableTest extends ResourceTest {
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 
 		try {
-			// for WINDOWS - the device id for windows will be changed to upper case 
+			// for WINDOWS - the device id for windows will be changed to upper case
 			// in the variable stored in the manager
 			manager.setValue("one", pathOne);
 		} catch (CoreException e) {
@@ -621,7 +621,7 @@ public class IPathVariableTest extends ResourceTest {
 	 */
 	public void testValidateName() {
 
-		// valid names 	
+		// valid names
 		assertTrue("0.0", manager.validateName("ECLIPSEHOME").isOK());
 		assertTrue("0.1", manager.validateName("ECLIPSE_HOME").isOK());
 		assertTrue("0.2", manager.validateName("ECLIPSE_HOME_1").isOK());
@@ -794,7 +794,7 @@ public class IPathVariableTest extends ResourceTest {
 
 	/**
 	 * Regression test for Bug 328045 where a class cast exception is thrown when
-	 * attempting to get the location of a resource that would live under an 
+	 * attempting to get the location of a resource that would live under an
 	 * existing IFile.
 	 */
 	public void testDiscoverLocationOfInvalidFile() {

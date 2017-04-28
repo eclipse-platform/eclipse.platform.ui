@@ -353,7 +353,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 	/**
 	 * Regression test for Bug 60925 - project preferences do not show up in workspace.
-	 * 
+	 *
 	 * Initially we were using java.io.File APIs and writing the preferences files
 	 * directly to disk. We need to convert to use Resource APIs so changes
 	 * show up in the workspace immediately.
@@ -509,7 +509,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	 *
 	 * Investigate what happens with project preferences when the
 	 * project is moved.
-	 * 
+	 *
 	 * Problems with a key which is the empty string.
 	 */
 	public void test_61277c() {
@@ -547,9 +547,9 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 	/*
 	 * Bug 61843 - Saving project preferences failed
-	 * 
-	 * The project preferences are being accessing (for the first time) from 
-	 * within a resource change listener reacting to a change in the workspace. 
+	 *
+	 * The project preferences are being accessing (for the first time) from
+	 * within a resource change listener reacting to a change in the workspace.
 	 */
 	public void test_61843() {
 		// create the project and manually give it a settings file
@@ -615,7 +615,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	}
 
 	/*
-	 * Bug 65068 - When the preferences file is deleted, the corresponding preferences 
+	 * Bug 65068 - When the preferences file is deleted, the corresponding preferences
 	 * should be forgotten.
 	 */
 	public void test_65068() {
@@ -678,7 +678,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertEquals("2.2", "value3", properties.get("key3"));
 		// add a new property
 		properties.put("key0", "value0");
-		// change an existing property		
+		// change an existing property
 		properties.put("key2", "value2".toUpperCase());
 		// removes a property
 		properties.remove("key3");
@@ -686,7 +686,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		try {
 			properties.store(tempOutput, null);
 		} catch (IOException e) {
-			// should never happen, we are not doing I/O			
+			// should never happen, we are not doing I/O
 			fail("2.4", e);
 		}
 		ByteArrayInputStream tempInput = new ByteArrayInputStream(tempOutput.toByteArray());
@@ -696,20 +696,20 @@ public class ProjectPreferencesTest extends ResourceTest {
 			fail("2.5", e);
 		}
 
-		// here, project preferences should have caught up with the changes		
+		// here, project preferences should have caught up with the changes
 		node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
 		// property was added
 		assertEquals("3.0", "value0", node.get("key0", null));
-		// property value was not changed		
+		// property value was not changed
 		assertEquals("3.1", "value1", node.get("key1", null));
-		// property value was changed to upper case		
+		// property value was changed to upper case
 		assertEquals("3.2", "value2".toUpperCase(), node.get("key2", null));
 		// property was deleted
 		assertNull("3.3", node.get("key3", null));
 	}
 
 	/*
-	 * Bug 256900 - When the preferences file is copied between projects, the corresponding preferences 
+	 * Bug 256900 - When the preferences file is copied between projects, the corresponding preferences
 	 * should be updated.
 	 */
 	public void test_256900() {
@@ -751,7 +751,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 	/**
 	 * Bug 325000 Project properties not sorted on IBM VMs
-	 * Creates property file with various characters on front and verifies that they are written in alphabetical order. 
+	 * Creates property file with various characters on front and verifies that they are written in alphabetical order.
 	 */
 	public void test_325000() {
 		IProject project1 = getProject(getUniqueString());
@@ -1135,7 +1135,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	}
 
 	/*
-	 * Test to ensure that discovering a new pref file (e.g. loading from a repo) 
+	 * Test to ensure that discovering a new pref file (e.g. loading from a repo)
 	 * is the same as doing an import. (ensure the modify listeners are called)
 	 */
 	public void testLoadIsImport() {

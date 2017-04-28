@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -136,7 +136,7 @@ public class ObjectMapTest extends ResourceTest {
 	}
 
 	/**
-	 * The given set is a set of Map.Entry objects. 
+	 * The given set is a set of Map.Entry objects.
 	 */
 	private boolean contains(Set<Map.Entry<Integer, Object>> set, Object value) {
 		for (Map.Entry<Integer, Object> entry : set) {

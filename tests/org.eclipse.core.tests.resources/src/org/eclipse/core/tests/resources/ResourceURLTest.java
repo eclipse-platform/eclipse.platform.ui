@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -61,10 +61,10 @@ public class ResourceURLTest extends ResourceTest {
 	}
 
 	/**
-	 * Returns a collection of string paths describing the standard 
+	 * Returns a collection of string paths describing the standard
 	 * resource hierarchy for this test.  In the string forms, folders are
 	 * represented as having trailing separators ('/').  All other resources
-	 * are files.  It is generally assumed that this hierarchy will be 
+	 * are files.  It is generally assumed that this hierarchy will be
 	 * inserted under some solution and project structure.
 	 */
 	@Override

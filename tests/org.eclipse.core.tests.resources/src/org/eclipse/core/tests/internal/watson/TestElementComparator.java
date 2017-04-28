@@ -17,8 +17,8 @@ import org.eclipse.core.internal.watson.IElementComparator;
  * This is what you would expect for an element tree comparator.
  * Clients of the element tree that want specific comparison behaviour
  * must define their own element comparator (without subclassing or
- * otherwise extending this comparator).  Internal element tree operations 
- * rely on the behaviour of this type, and the ElementTree maintainer 
+ * otherwise extending this comparator).  Internal element tree operations
+ * rely on the behaviour of this type, and the ElementTree maintainer
  * reserves the right to change its behaviour as necessary.
  */
 public class TestElementComparator implements IElementComparator {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google) - [462440] IFile#getContents methods should specify the status codes for its exceptions
@@ -407,7 +407,7 @@ public class IResourceTest extends ResourceTest {
 
 	/**
 	 * 1GD7CSU: ITPCORE:ALL - IFile.create bug?
-	 * 
+	 *
 	 * Ensure that creating a file with force==true doesn't throw
 	 * a CoreException if the resource already exists on disk.
 	 */

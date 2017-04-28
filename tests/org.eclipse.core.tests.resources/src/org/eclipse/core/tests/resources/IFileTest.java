@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -294,7 +294,7 @@ public class IFileTest extends ResourceTest {
 
 		// If force=true, IFile is non-local, file exists in local file system:
 		// make IFile local, append contents (the thinking being that this file,
-		// though marked non-local, was in fact local awaiting discovery; so 
+		// though marked non-local, was in fact local awaiting discovery; so
 		// force=true says we it is ok to make file local and proceed as per normal)
 		try {
 			// setup

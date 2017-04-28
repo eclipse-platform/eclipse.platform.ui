@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -27,7 +27,7 @@ import org.eclipse.core.tests.harness.TestJob;
 /**
  * This class tests public API related to building and to build specifications.
  * Specifically, the following methods are tested:
- * 
+ *
  * IWorkspace#build IProject#build IProjectDescription#getBuildSpec
  * IProjectDescription#setBuildSpec
  */
@@ -45,7 +45,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 	/**
 	 * BuilderTest constructor comment.
-	 * 
+	 *
 	 * @param name
 	 *                  java.lang.String
 	 */
@@ -81,7 +81,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests the lifecycle of a builder.
-	 * 
+	 *
 	 * @see SortBuilder
 	 */
 	public void testAutoBuildPR() {
@@ -229,7 +229,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests the lifecycle of a builder.
-	 * 
+	 *
 	 * @see SortBuilder
 	 */
 	public void testBuildCommands() {
@@ -422,7 +422,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests the lifecycle of a builder.
-	 * 
+	 *
 	 * @see SortBuilder
 	 */
 	public void testBuildOrder() {
@@ -543,7 +543,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Set up a plug-in lifecycle verifier for testing purposes
 		TestBuilder verifier = SortBuilder.getInstance();
 		verifier.reset();
-		//create project two and establish a build order by adding a dynamic 
+		//create project two and establish a build order by adding a dynamic
 		//reference from proj2->proj1 in the same operation
 		try {
 			getWorkspace().run((IWorkspaceRunnable) monitor -> {
@@ -1179,7 +1179,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests the lifecycle of a builder.
-	 * 
+	 *
 	 * @see SortBuilder
 	 */
 	public void testMoveProject() {

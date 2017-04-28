@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -166,7 +166,7 @@ public class HistoryBucketTest extends ResourceTest {
 		assertEquals("3.3", timestamp2, entry.getTimestamp(0));
 		assertEquals("3.4", uuid1, entry.getUUID(1));
 		assertEquals("3.5", timestamp1, entry.getTimestamp(1));
-		// adds a 3rd state, with the same timestamp as the 1st 
+		// adds a 3rd state, with the same timestamp as the 1st
 		UniversalUniqueIdentifier uuid3 = new UniversalUniqueIdentifier();
 		long timestamp3 = timestamp1;
 		index.addBlob(path, uuid3, timestamp3);

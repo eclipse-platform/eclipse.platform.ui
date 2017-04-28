@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Path;
 interface IPathConstants {
 
 	/**
-	 * The following paths are used in the tree created by 
+	 * The following paths are used in the tree created by
 	 * ElementTreeTestUtilities.createTestElementTree()
 	 */
 	IPath root = Path.ROOT;

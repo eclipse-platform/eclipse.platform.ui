@@ -60,9 +60,9 @@ public abstract class ResourceTest extends CoreTest {
 	protected static final String NATURE_SNOW = "org.eclipse.core.tests.resources.snowNature";
 	//waterNature, one-of: stateSet
 	protected static final String NATURE_WATER = "org.eclipse.core.tests.resources.waterNature";
-	public static final String PI_RESOURCES_TESTS = "org.eclipse.core.tests.resources"; //$NON-NLS-1$	
+	public static final String PI_RESOURCES_TESTS = "org.eclipse.core.tests.resources"; //$NON-NLS-1$
 	protected static final String SET_OTHER = "org.eclipse.core.tests.resources.otherSet";
-	//constants for nature sets	
+	//constants for nature sets
 	protected static final String SET_STATE = "org.eclipse.core.tests.resources.stateSet";
 
 	/**
@@ -98,7 +98,7 @@ public abstract class ResourceTest extends CoreTest {
 
 	/**
 	 * Returns whether the current platform is windows.
-	 * @return <code>true</code> if this platform is windows, and 
+	 * @return <code>true</code> if this platform is windows, and
 	 * <code>false</code> otherwise.
 	 */
 	protected static boolean isWindows() {
@@ -169,7 +169,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array does not exist in the 
+	 * Assert that each element of the resource array does not exist in the
 	 * local store.
 	 */
 	public void assertDoesNotExistInFileSystem(IResource[] resources) {
@@ -187,7 +187,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array does not exist in the 
+	 * Assert that each element of the resource array does not exist in the
 	 * local store.
 	 */
 	public void assertDoesNotExistInFileSystem(String message, IResource[] resources) {
@@ -196,7 +196,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that the given resource does not exist in the workspace 
+	 * Assert that the given resource does not exist in the workspace
 	 * resource info tree.
 	 */
 	public void assertDoesNotExistInWorkspace(IResource resource) {
@@ -204,7 +204,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array does not exist 
+	 * Assert that each element of the resource array does not exist
 	 * in the workspace resource info tree.
 	 */
 	public void assertDoesNotExistInWorkspace(IResource[] resources) {
@@ -212,7 +212,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that the given resource does not exist in the workspace 
+	 * Assert that the given resource does not exist in the workspace
 	 * resource info tree.
 	 */
 	public void assertDoesNotExistInWorkspace(String message, IResource resource) {
@@ -223,7 +223,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array does not exist 
+	 * Assert that each element of the resource array does not exist
 	 * in the workspace resource info tree.
 	 */
 	public void assertDoesNotExistInWorkspace(String message, IResource[] resources) {
@@ -233,8 +233,8 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert whether or not the given resource exists in the local 
-	 * store. Use the resource manager to ensure that we have a 
+	 * Assert whether or not the given resource exists in the local
+	 * store. Use the resource manager to ensure that we have a
 	 * correct Path -> File mapping.
 	 */
 	public void assertExistsInFileSystem(IResource resource) {
@@ -249,8 +249,8 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert whether or not the given resource exists in the local 
-	 * store. Use the resource manager to ensure that we have a 
+	 * Assert whether or not the given resource exists in the local
+	 * store. Use the resource manager to ensure that we have a
 	 * correct Path -> File mapping.
 	 */
 	public void assertExistsInFileSystem(String message, IResource resource) {
@@ -269,7 +269,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert whether or not the given resource exists in the workspace 
+	 * Assert whether or not the given resource exists in the workspace
 	 * resource info tree.
 	 */
 	public void assertExistsInWorkspace(IResource resource) {
@@ -277,7 +277,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert whether or not the given resource exists in the workspace 
+	 * Assert whether or not the given resource exists in the workspace
 	 * resource info tree.
 	 */
 	public void assertExistsInWorkspace(IResource resource, boolean phantom) {
@@ -285,7 +285,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array exists in the 
+	 * Assert that each element of the resource array exists in the
 	 * workspace resource info tree.
 	 */
 	public void assertExistsInWorkspace(IResource[] resources) {
@@ -293,7 +293,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array exists in the 
+	 * Assert that each element of the resource array exists in the
 	 * workspace resource info tree.
 	 */
 	public void assertExistsInWorkspace(IResource[] resources, boolean phantom) {
@@ -301,7 +301,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert whether or not the given resource exists in the workspace 
+	 * Assert whether or not the given resource exists in the workspace
 	 * resource info tree.
 	 */
 	public void assertExistsInWorkspace(String message, IResource resource) {
@@ -309,7 +309,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert whether or not the given resource exists in the workspace 
+	 * Assert whether or not the given resource exists in the workspace
 	 * resource info tree.
 	 */
 	public void assertExistsInWorkspace(String message, IResource resource, boolean phantom) {
@@ -320,7 +320,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array exists in the 
+	 * Assert that each element of the resource array exists in the
 	 * workspace resource info tree.
 	 */
 	public void assertExistsInWorkspace(String message, IResource[] resources) {
@@ -329,7 +329,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Assert that each element of the resource array exists in the 
+	 * Assert that each element of the resource array exists in the
 	 * workspace resource info tree.
 	 */
 	public void assertExistsInWorkspace(String message, IResource[] resources, boolean phantom) {
@@ -345,7 +345,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Return a collection of resources for the given hierarchy at 
+	 * Return a collection of resources for the given hierarchy at
 	 * the given root.
 	 */
 	public IResource[] buildResources(IContainer root, String[] hierarchy) {
@@ -449,14 +449,14 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Create the given file in the local store. 
+	 * Create the given file in the local store.
 	 */
 	public void createFileInFileSystem(IFileStore file) {
 		createFileInFileSystem(file, getRandomContents());
 	}
 
 	/**
-	 * Create the given file in the local store. 
+	 * Create the given file in the local store.
 	 */
 	public void createFileInFileSystem(IFileStore file, InputStream contents) {
 		OutputStream output = null;
@@ -472,14 +472,14 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Create the given file in the file system. 
+	 * Create the given file in the file system.
 	 */
 	public void createFileInFileSystem(IPath path) {
 		createFileInFileSystem(path, getRandomContents());
 	}
 
 	/**
-	 * Create the given file in the file system. 
+	 * Create the given file in the file system.
 	 */
 	public void createFileInFileSystem(IPath path, InputStream contents) {
 		try {
@@ -496,12 +496,12 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Returns a collection of string paths describing the standard 
+	 * Returns a collection of string paths describing the standard
 	 * resource hierarchy for this test.  In the string forms, folders are
 	 * represented as having trailing separators ('/').  All other resources
-	 * are files.  It is generally assumed that this hierarchy will be 
+	 * are files.  It is generally assumed that this hierarchy will be
 	 * inserted under some project structure.
-	 * For example, 	
+	 * For example,
 	 * <pre>
 	 *    return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"};
 	 * </pre>
@@ -541,7 +541,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Delete each element of the resource array from the workspace 
+	 * Delete each element of the resource array from the workspace
 	 * resource info tree.
 	 */
 	public void ensureDoesNotExistInWorkspace(final IResource[] resources) {
@@ -629,7 +629,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Create each element of the resource array in the workspace resource 
+	 * Create each element of the resource array in the workspace resource
 	 * info tree.
 	 */
 	public void ensureExistsInWorkspace(final IResource[] resources, final boolean local) {
@@ -655,8 +655,8 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Touch (but don't modify) the resource in the filesystem so that it's modification stamp is newer than 
-	 * the cached value in the Workspace. 
+	 * Touch (but don't modify) the resource in the filesystem so that it's modification stamp is newer than
+	 * the cached value in the Workspace.
 	 */
 	public void touchInFilesystem(IResource resource) {
 		// Ensure the resource exists in the filesystem
@@ -699,7 +699,7 @@ public abstract class ResourceTest extends CoreTest {
 		return target != null && target.getType() == resource.getType();
 	}
 
-	/** 
+	/**
 	 * Returns the unqualified class name of the receiver (i.e. without the package prefix).
 	 */
 	protected String getClassName() {
@@ -964,7 +964,7 @@ public abstract class ResourceTest extends CoreTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// Ensure everything is in a clean state for next one.
-		// Session tests should overwrite it.		
+		// Session tests should overwrite it.
 		cleanup();
 	}
 

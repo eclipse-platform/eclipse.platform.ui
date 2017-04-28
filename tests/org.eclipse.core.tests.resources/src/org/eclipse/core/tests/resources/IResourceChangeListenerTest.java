@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  * 		tammo.freese@offis.de - tests for swapping files and folders
@@ -135,7 +135,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 
 	/**
 	 * Tests that the builder is receiving an appropriate delta
-	 * 
+	 *
 	 * @see SortBuilderPlugin
 	 * @see SortBuilder
 	 */

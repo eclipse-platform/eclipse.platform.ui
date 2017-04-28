@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -604,7 +604,7 @@ public class ISynchronizerTest extends ResourceTest {
 		 final Hashtable table = new Hashtable(10);
 		 final QualifiedName qname = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
 		 final Synchronizer synchronizer = (Synchronizer) ResourcesPlugin.getWorkspace().getSynchronizer();
-		
+
 		 // register the sync partner and set the sync info on the resources
 		 synchronizer.add(qname);
 		 IResourceVisitor visitor = new IResourceVisitor() {
@@ -626,7 +626,7 @@ public class ISynchronizerTest extends ResourceTest {
 		 } catch (CoreException e) {
 		 fail("0.1", e);
 		 }
-		
+
 		 // write out the data
 		 File file = Platform.getLocation().append(".testsyncinfo.snap").toFile();
 		 SafeChunkyOutputStream safeOutput = null;
@@ -667,14 +667,14 @@ public class ISynchronizerTest extends ResourceTest {
 		 fail("1.4", e);
 		 }
 		 }
-		
+
 		 // flush the sync info in memory
 		 try {
 		 flushAllSyncInfo(getWorkspace().getRoot());
 		 } catch (CoreException e) {
 		 fail("2.0", e);
 		 }
-		
+
 		 // read in the data
 		 try {
 		 InputStream safeInput = new SafeChunkyInputStream(file);
@@ -705,7 +705,7 @@ public class ISynchronizerTest extends ResourceTest {
 		 } catch (CoreException e) {
 		 fail("3.4", e);
 		 }
-		
+
 		 // confirm the sync bytes are the same
 		 visitor = new IResourceVisitor() {
 		 public boolean visit(IResource resource) throws CoreException {
@@ -904,7 +904,7 @@ public class ISynchronizerTest extends ResourceTest {
 		final IWorkspace workspace = getWorkspace();
 		final ISynchronizer synchronizer = workspace.getSynchronizer();
 
-		// set up 
+		// set up
 		synchronizer.add(partner);
 		IProject project = workspace.getRoot().getProject("MyProject");
 		IFolder folder = project.getFolder("foo");
@@ -912,7 +912,7 @@ public class ISynchronizerTest extends ResourceTest {
 		IFile file2 = folder.getFile("file2.txt");
 		ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
 
-		// sets sync info for the folder and its children	
+		// sets sync info for the folder and its children
 		try {
 			synchronizer.setSyncInfo(partner, folder, getRandomString().getBytes());
 			synchronizer.setSyncInfo(partner, file1, getRandomString().getBytes());
@@ -921,7 +921,7 @@ public class ISynchronizerTest extends ResourceTest {
 			fail("1.0", ce);
 		}
 
-		// 1) tests with one child first	
+		// 1) tests with one child first
 		assertTrue("1.1", file1.exists());
 		assertTrue("1.2", !file1.isPhantom());
 		// deletes file
@@ -930,7 +930,7 @@ public class ISynchronizerTest extends ResourceTest {
 		} catch (CoreException ce) {
 			fail("2.0", ce);
 		}
-		// file is now a phantom resource		
+		// file is now a phantom resource
 		assertTrue("2.1", !file1.exists());
 		assertTrue("2.2", file1.isPhantom());
 		// removes sync info

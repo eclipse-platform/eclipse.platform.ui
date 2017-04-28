@@ -111,7 +111,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 		}
 	}
 
-	/** 
+	/**
 	 * Write a flattened element tree to a file and read it back.
 	 */
 	public Object doFileTest() {
@@ -277,7 +277,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	protected void tearDown() throws Exception {

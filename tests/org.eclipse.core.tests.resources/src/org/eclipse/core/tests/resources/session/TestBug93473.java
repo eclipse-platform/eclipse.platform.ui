@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests that the content description cache is preserved across sessions.
- * 
+ *
  * Note that this test is sensitive to the platform state stamp.  If the test
  * starts failing, it might mean bundles are being re-installed unnecessarily
  * in the second session.  For details, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=94859.
@@ -54,7 +54,7 @@ public class TestBug93473 extends WorkspaceSessionTest {
 		assertDoesNotExistInWorkspace("0.2", file);
 		ensureExistsInWorkspace(file, getRandomContents());
 		try {
-			// this will also cause the cache flush job to be scheduled 
+			// this will also cause the cache flush job to be scheduled
 			file.getContentDescription();
 		} catch (CoreException e) {
 			fail("1.0", e);

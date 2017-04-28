@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.test.OrderedTestSuite;
  */
 public class SpecificContextTest extends ContentTypeTest {
 	/**
-	 * A minimal scope implementation. 
+	 * A minimal scope implementation.
 	 */
 	private class SingleNodeScope implements IScopeContext {
 		private IEclipsePreferences node;
@@ -70,7 +70,7 @@ public class SpecificContextTest extends ContentTypeTest {
 			fail("0.1", e);
 		}
 		try {
-			// added "<test case name>.local" to the text content type as a local (scope-specific) file spec			
+			// added "<test case name>.local" to the text content type as a local (scope-specific) file spec
 			textContentType.getSettings(scope).addFileSpec(getName() + ".local", IContentType.FILE_NAME_SPEC);
 		} catch (CoreException e) {
 			fail("0.2", e);
@@ -103,7 +103,7 @@ public class SpecificContextTest extends ContentTypeTest {
 		assertTrue("1.0", !textContentType.isAssociatedWith("hello.foo", scope));
 		assertTrue("1.1", !textContentType.isAssociatedWith("hello.foo"));
 		try {
-			// associate at the scope level 
+			// associate at the scope level
 			localSettings.addFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
 		} catch (CoreException e) {
 			fail("1.5", e);

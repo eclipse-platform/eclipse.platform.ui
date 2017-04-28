@@ -334,7 +334,7 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 	}
 
 	public void test7() {
-		// once the project is gone, so is all the history for that project	
+		// once the project is gone, so is all the history for that project
 		try {
 			// under root
 			IFile[] df = root.findDeletedMembersWithHistory(IResource.DEPTH_ZERO, getMonitor());

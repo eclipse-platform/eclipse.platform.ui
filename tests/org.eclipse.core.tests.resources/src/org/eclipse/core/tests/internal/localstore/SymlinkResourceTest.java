@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
- * 
+ *
  */
 public class SymlinkResourceTest extends LocalStoreTest {
 
@@ -79,7 +79,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	 * fashion while walking down the tree. A correct implementation should
 	 * stop following symbolic links as soon as a node is reached that has
 	 * been visited before.
-	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232426">bug 232426</a> 
+	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232426">bug 232426</a>
 	 */
 	public void testBug232426() throws Exception {
 		// Only activate this test if testing of symbolic links is possible.

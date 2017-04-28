@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [335864] ResourceAttributeTest fails on Win7
@@ -21,7 +21,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
+ *
  */
 public class ResourceAttributeTest extends ResourceTest {
 
@@ -143,7 +143,7 @@ public class ResourceAttributeTest extends ResourceTest {
 		ensureExistsInWorkspace(file, getRandomContents());
 
 		try {
-			// file 
+			// file
 			assertTrue("1.0", !file.getResourceAttributes().isHidden());
 			setHidden(file, true);
 			assertTrue("1.2", file.getResourceAttributes().isHidden());
@@ -237,8 +237,8 @@ public class ResourceAttributeTest extends ResourceTest {
 	 * workspace because the folder contents can no longer be listed.
 	 * A refresh should happen automatically when the executable
 	 * bit on a folder is changed. See bug 109979 for details.
-	 * 
-	 * Test commented out because current failing on Hudson. 
+	 *
+	 * Test commented out because current failing on Hudson.
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=397353
 	 */
 	public void _testRefreshExecutableOnFolder() {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -319,14 +319,14 @@ public class FileStoreTest extends LocalStoreTest {
 	}
 
 	public void testGetLength() throws Exception {
-		// evaluate test environment 
+		// evaluate test environment
 		IPath root = getWorkspace().getRoot().getLocation().append("" + new Date().getTime());
 		IFileStore temp = createDir(root.toString(), true);
 		try {
 			// create common objects
 			IFileStore target = temp.getChild("target");
 
-			// test non-existent file 
+			// test non-existent file
 			assertEquals("1.0", EFS.NONE, target.fetchInfo().getLength());
 
 			// create empty file

@@ -193,7 +193,7 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	}
 
 	/**
-	 * This method is used to trick the java compiler to avoid reporting 
+	 * This method is used to trick the java compiler to avoid reporting
 	 * a warning that the stream was not closed. In this test we are intentionally
 	 * not closing the stream to test recovery from failure.
 	 */

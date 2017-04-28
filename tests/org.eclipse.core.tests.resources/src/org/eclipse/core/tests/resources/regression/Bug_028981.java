@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -98,7 +98,7 @@ public class Bug_028981 extends ResourceTest {
 		assertTrue("3.1 - " + verifier.getMessage(), verifier.isValid());
 
 		verifier.reset();
-		// no resources should be visited		
+		// no resources should be visited
 		try {
 			teamPrivateFile.accept(verifier);
 		} catch (CoreException e) {

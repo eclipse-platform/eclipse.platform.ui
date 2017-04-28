@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -17,7 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * This builder is for investigating a PR.  It creates java files on disk, then 
+ * This builder is for investigating a PR.  It creates java files on disk, then
  * does refresh local to bring them into the workspace.  It creates the same file
  * regardless of full vs. incremental build, or what the delta is.
  */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *******************************************************************************/
@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.IPath;
  *  {@link IContainer#addFilter(String, int, String, int, IProgressMonitor)}
  * 	{@link IContainer#removeFilter(String, int, String, int, IProgressMonitor)}
  *  {@link IContainer#getFilters()}
- * 
- * This test tests resource filters with projects, folders, linked resource folders, 
+ *
+ * This test tests resource filters with projects, folders, linked resource folders,
  * and moving those resources to different parents.
  */
 public class FilteredResourceTest extends ResourceTest {
@@ -608,7 +608,7 @@ public class FilteredResourceTest extends ResourceTest {
 		// Check that foo.h has appeared in 'folder'
 		try {
 			//			// Refreshing restores sanity (hides the .cpp files)...
-			//			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());		
+			//			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			members = folder.members();
 		} catch (CoreException e) {
 			fail("4.2", e);
@@ -652,9 +652,9 @@ public class FilteredResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests that filtering a child directory which is linked from 
+	 * Tests that filtering a child directory which is linked from
 	 * else where works
-	 * 
+	 *
 	 * Main tree:
 	 * existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
 	 * Links:
@@ -677,7 +677,7 @@ public class FilteredResourceTest extends ResourceTest {
 		IResourceFilterDescription filterDescription1 = null;
 
 		try {
-			// Filter out all children from existingFolderInExistingProject 
+			// Filter out all children from existingFolderInExistingProject
 			filterDescription1 = folder1.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
 		} catch (CoreException e) {
 			fail("0.5", e);
@@ -704,7 +704,7 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("12.20", e);
 		}
 
-		// Need to unset M_USED on the project's resource info, or 
+		// Need to unset M_USED on the project's resource info, or
 		// reconcileLinks will never be called...
 		Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
 		try {
@@ -750,7 +750,7 @@ public class FilteredResourceTest extends ResourceTest {
 			folder2.createLink(parentLoc, IResource.REPLACE, getMonitor());
 			folder1.createLink(childLoc, IResource.REPLACE | IResource.FORCE, getMonitor());
 
-			// Filter out all children from existingFolderInExistingProject 
+			// Filter out all children from existingFolderInExistingProject
 			folder2.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
 			filterDescription1.delete(0, getMonitor());
 			assertTrue(folder1.getFilters().length == 0);
@@ -758,7 +758,7 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("3.0", e);
 		}
 
-		// Need to unset M_USED on the project's resource info, or 
+		// Need to unset M_USED on the project's resource info, or
 		// reconcileLinks will never be called...
 		try {
 			try {
@@ -797,9 +797,9 @@ public class FilteredResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Tests that filtering a child directory which is linked from 
+	 * Tests that filtering a child directory which is linked from
 	 * else where works
-	 * 
+	 *
 	 * Main tree:
 	 * existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
 	 * Links:
@@ -822,7 +822,7 @@ public class FilteredResourceTest extends ResourceTest {
 		IResourceFilterDescription filterDescription1 = null;
 
 		try {
-			// Filter out all children from existingFolderInExistingProject 
+			// Filter out all children from existingFolderInExistingProject
 			filterDescription1 = folder1.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
 		} catch (CoreException e) {
 			fail("0.5", e);
@@ -849,7 +849,7 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("12.20", e);
 		}
 
-		// Need to unset M_USED on the project's resource info, or 
+		// Need to unset M_USED on the project's resource info, or
 		// reconcileLinks will never be called...
 		Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
 		try {
@@ -891,7 +891,7 @@ public class FilteredResourceTest extends ResourceTest {
 			folder2.createLink(parentLoc, IResource.REPLACE | IResource.NONE, getMonitor());
 			folder1.createLink(childLoc, IResource.REPLACE | IResource.FORCE, getMonitor());
 
-			// Filter out all children from existingFolderInExistingProject 
+			// Filter out all children from existingFolderInExistingProject
 			folder2.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
 			filterDescription1.delete(0, getMonitor());
 			assertTrue(folder1.getFilters().length == 0);
@@ -1695,8 +1695,8 @@ public class FilteredResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Regression for  Bug 317783 -  Resource filters do not work at all in "Project Explorer" 
-	 * The problem is that a client calls explicitly refreshLocal on a folder that is filtered out by 
+	 * Regression for  Bug 317783 -  Resource filters do not work at all in "Project Explorer"
+	 * The problem is that a client calls explicitly refreshLocal on a folder that is filtered out by
 	 * resource filters and that doesn't exist in the workspace.  This used to cause the resource to
 	 * appear in the workspace, along with all its children, in spite of active resource filters to the
 	 * contrary.
@@ -1758,8 +1758,8 @@ public class FilteredResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Regression for  Bug 317824 -  Renaming a project that contains resource filters fails, 
-	 * and copying a project that contains resource filters removes the resource filters. 
+	 * Regression for  Bug 317824 -  Renaming a project that contains resource filters fails,
+	 * and copying a project that contains resource filters removes the resource filters.
 	 */
 	public void test317824() {
 		IFolder folder = existingProject.getFolder("foo");

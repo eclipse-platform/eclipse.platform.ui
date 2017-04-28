@@ -14,7 +14,7 @@ package org.eclipse.core.tests.internal.resources;
 import junit.framework.*;
 
 /**
- * The suite method for this class contains test suites for all automated tests in 
+ * The suite method for this class contains test suites for all automated tests in
  * this test package.
  */
 public class AllTests extends TestCase {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -57,7 +57,7 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 	}
 
 	/**
-	 * Creates and returns a new command with the SortBuilder, and the TestBuilder.BUILD_ID 
+	 * Creates and returns a new command with the SortBuilder, and the TestBuilder.BUILD_ID
 	 * parameter set to the given value.
 	 */
 	protected ICommand createCommand(IProjectDescription description, String buildID) {
@@ -65,7 +65,7 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 	}
 
 	/**
-	 * Creates and returns a new command with the given builder name, and the TestBuilder.BUILD_ID 
+	 * Creates and returns a new command with the given builder name, and the TestBuilder.BUILD_ID
 	 * parameter set to the given value.
 	 */
 	protected ICommand createCommand(IProjectDescription description, String builderName, String buildID) {

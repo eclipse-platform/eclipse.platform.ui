@@ -808,7 +808,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	 * Platform.
 	 * The .project file must not be modified on import, especially if it
 	 * is marked read-only.
-	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=210664">Bug 210664</a>. 
+	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=210664">Bug 210664</a>.
 	 */
 	public void testImportWrongLineEndings_Bug210664() throws IOException {
 		// Choose a project to work on
@@ -1090,7 +1090,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 		IFile file = nonExistingFileInExistingProject;
 
-		// creates a variable-based location 
+		// creates a variable-based location
 		IPath variableBasedLocation = getRandomLocation();
 
 		// the file should not exist yet
@@ -1120,7 +1120,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			fail("2.2", e);
 		}
 
-		// try to change resource's contents				 
+		// try to change resource's contents
 		try {
 			file.setContents(getContents("new contents"), IResource.NONE, getMonitor());
 			// Resource was out of sync - should not be able to change
@@ -1304,7 +1304,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	//		assertEquals("4.2", null, variable.getVariableHints());
 	//	}
 
-	/** 
+	/**
 	 * Test Bug 288880 - Redundant path variables generated when converting some linked resources to path variable-relative
 	 */
 	public void testNonRedundentPathVariablesGenerated() {

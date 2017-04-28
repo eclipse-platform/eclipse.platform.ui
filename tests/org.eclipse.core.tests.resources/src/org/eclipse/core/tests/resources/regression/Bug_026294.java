@@ -78,7 +78,7 @@ public class Bug_026294 extends ResourceTest {
 				// success - a file couldn't be removed
 			}
 
-			// Delete is best-case so check all the files. 
+			// Delete is best-case so check all the files.
 			// Do a check on disk and in the workspace in case something is out of sync.
 			assertExistsInWorkspace("2.1.1", project);
 			assertExistsInFileSystem("2.1.2", project);
@@ -274,7 +274,7 @@ public class Bug_026294 extends ResourceTest {
 	/**
 	 * Tries to delete a closed project containing an unremovable file.
 	 * Works only for Linux with natives.
-	 * 
+	 *
 	 * TODO: enable this test once bug 48321 is fixed.
 	 */
 	public void testDeleteClosedProjectLinux() {
@@ -375,7 +375,7 @@ public class Bug_026294 extends ResourceTest {
 				folder.delete(IResource.FORCE, getMonitor());
 				fail("2.0 - should have failed");
 			} catch (CoreException ce) {
-				// success - a file couldn't be removed			
+				// success - a file couldn't be removed
 			}
 			assertTrue("2.2", file1.exists());
 			assertTrue("2.4", !file3.exists());
@@ -434,7 +434,7 @@ public class Bug_026294 extends ResourceTest {
 				folder.delete(IResource.FORCE, getMonitor());
 				fail("2.0 - should have failed");
 			} catch (CoreException ce) {
-				// success - a file couldn't be removed			
+				// success - a file couldn't be removed
 			}
 			assertTrue("2.2", file1.exists());
 			assertTrue("2.3", subFolder.exists());

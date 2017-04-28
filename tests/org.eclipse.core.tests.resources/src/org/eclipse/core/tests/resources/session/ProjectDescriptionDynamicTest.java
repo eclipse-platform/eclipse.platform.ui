@@ -3,7 +3,7 @@
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Broadcom Corporation - initial API and implementation
  ******************************************************************************/
@@ -115,7 +115,7 @@ public class ProjectDescriptionDynamicTest extends WorkspaceSessionTest {
 		assertEquals("2.1", configs[1], proj.getActiveBuildConfig());
 		// At description dynamic refs are what was set
 		assertEquals("2.2", dynRefs, proj.getDescription().getDynamicReferences());
-		// At project all references are union of build configuration and project references		
+		// At project all references are union of build configuration and project references
 		assertEquals("2.4", configRefsProjects, proj.getReferencedProjects());
 
 		// At the description level, dynamic config references match what was set.

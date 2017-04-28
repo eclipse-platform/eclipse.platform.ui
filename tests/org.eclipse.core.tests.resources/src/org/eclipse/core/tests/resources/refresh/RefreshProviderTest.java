@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -189,13 +189,13 @@ public class RefreshProviderTest extends ResourceTest {
 	}
 
 	private void joinAutoRefreshJobs() throws InterruptedException {
-		// We must join on the auto-refresh family because the workspace changes done in the 
-		// tests above may be batched and broadcasted by the RefreshJob, not the main thread. 
-		// There is then a race condition between the main thread, the refresh job and the job 
-		// scheduled by MonitorManager.monitorAsync. Thus, we must join on both the RefreshJob 
-		// and the job scheduled by MonitorManager.monitorAsync. For simplicity, the job 
-		// scheduled by MonitorManager.monitorAsync has been set to belong to the same family 
-		// as the RefreshJob. 
+		// We must join on the auto-refresh family because the workspace changes done in the
+		// tests above may be batched and broadcasted by the RefreshJob, not the main thread.
+		// There is then a race condition between the main thread, the refresh job and the job
+		// scheduled by MonitorManager.monitorAsync. Thus, we must join on both the RefreshJob
+		// and the job scheduled by MonitorManager.monitorAsync. For simplicity, the job
+		// scheduled by MonitorManager.monitorAsync has been set to belong to the same family
+		// as the RefreshJob.
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 	}
 }

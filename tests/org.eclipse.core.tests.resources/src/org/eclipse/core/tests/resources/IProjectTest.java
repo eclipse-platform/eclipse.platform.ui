@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -2465,7 +2465,7 @@ public class IProjectTest extends ResourceTest {
 			// aren't the same
 			assertTrue("2.0", !oldPath.equals(newPath));
 
-			// make sure all the resources still exist.	
+			// make sure all the resources still exist.
 			IResourceVisitor visitor = resource -> {
 				assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
 				return true;
@@ -2632,7 +2632,7 @@ public class IProjectTest extends ResourceTest {
 	}
 
 	public void testProjectMoveVariations_bug307140() {
-		// Test moving project to its subfolder 
+		// Test moving project to its subfolder
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		IProjectDescription description;
 		try {

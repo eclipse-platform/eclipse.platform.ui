@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class Bug_288315 extends ResourceTest {
 		Arrays.fill(chars, 'a');
 		String value1 = new String(chars);
 		Float value2 = new Float(1.1);
-		
+
 		IMarker nonPersistentMarker = ResourcesPlugin.getWorkspace().getRoot().createMarker(IMarker.MARKER);
 		try {
 			nonPersistentMarker.setAttribute(IMarker.MESSAGE, value1);

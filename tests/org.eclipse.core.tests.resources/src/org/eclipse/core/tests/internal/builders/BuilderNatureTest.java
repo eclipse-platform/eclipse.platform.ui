@@ -52,7 +52,7 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 	}
 
 	public void testBasic() {
-		//add the water and snow natures to the project, and ensure 
+		//add the water and snow natures to the project, and ensure
 		//the snow builder gets run
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("P1");
 		ensureExistsInWorkspace(project, true);

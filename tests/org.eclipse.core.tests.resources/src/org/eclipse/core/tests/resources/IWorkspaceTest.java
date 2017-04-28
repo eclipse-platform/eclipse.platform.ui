@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
@@ -177,7 +177,7 @@ public class IWorkspaceTest extends ResourceTest {
 			// should fail
 		}
 
-		//source files contains duplicates	
+		//source files contains duplicates
 		try {
 			getWorkspace().copy(new IResource[] {file, file2, file}, folder2.getFullPath(), false, getMonitor());
 			fail("1.9");

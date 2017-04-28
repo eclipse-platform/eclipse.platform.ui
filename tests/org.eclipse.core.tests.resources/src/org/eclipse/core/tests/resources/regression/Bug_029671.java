@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ public class Bug_029671 extends ResourceTest {
 		ensureExistsInWorkspace(file, true);
 
 		try {
-			// sets sync info for the folder and its children	
+			// sets sync info for the folder and its children
 			try {
 				synchronizer.setSyncInfo(partner, folder, getRandomString().getBytes());
 				synchronizer.setSyncInfo(partner, file, getRandomString().getBytes());

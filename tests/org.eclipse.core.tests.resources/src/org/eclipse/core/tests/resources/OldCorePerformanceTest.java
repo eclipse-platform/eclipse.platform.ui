@@ -26,7 +26,7 @@ import org.eclipse.core.tests.harness.PerformanceTestResult;
  * a more heavy-weight mechanism that allows logging, multiple
  * timers, and overlapping timers.
  *
- * For benchmarking operations that should be instantaneous, use the 
+ * For benchmarking operations that should be instantaneous, use the
  * startBench(), stopBench() methods.  Here is an example:
  *
  *	<code>
