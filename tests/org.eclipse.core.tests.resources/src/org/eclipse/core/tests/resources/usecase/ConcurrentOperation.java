@@ -94,10 +94,11 @@ public abstract class ConcurrentOperation implements Runnable, IWorkspaceRunnabl
 	}
 
 	protected void logException(Exception e) {
-		if (e instanceof CoreException)
+		if (e instanceof CoreException) {
 			status.add(((CoreException) e).getStatus());
-		else
+		} else {
 			status.add(new ResourceStatus(0, null, null, e));
+		}
 	}
 
 	/**
@@ -141,8 +142,9 @@ public abstract class ConcurrentOperation implements Runnable, IWorkspaceRunnabl
 			} catch (Exception e) {
 				logException(e);
 			}
-		} else
+		} else {
 			setHasStarted(false);
+		}
 
 	}
 

@@ -45,10 +45,10 @@ abstract public class TestPerformer {
 	final public void performTest(Object[][] inputs) {
 		// call helper method
 		int permutations = 1;
-		for (int i = 0; i < inputs.length; i++) {
-			permutations = permutations * inputs[i].length;
-			if (inputs[i].length > 2) {
-				scramble(inputs[i]);
+		for (Object[] input : inputs) {
+			permutations = permutations * input.length;
+			if (input.length > 2) {
+				scramble(input);
 			}
 		}
 		//	System.out.println("\nTesting " + permutations + " permutations of " + name);
@@ -71,8 +71,8 @@ abstract public class TestPerformer {
 						invokeMethod(args, count);
 						StringBuffer buffer = new StringBuffer();
 						buffer.append("invocation " + count + " should fail, but it doesn't [");
-						for (int j = 0; j < args.length; j++) {
-							buffer.append(args[j]);
+						for (Object arg : args) {
+							buffer.append(arg);
 							buffer.append(',');
 						}
 						buffer.deleteCharAt(buffer.length() - 1);
@@ -123,13 +123,15 @@ abstract public class TestPerformer {
 		for (int i = 0; i < len * 100; i++) {
 			/* get any array offset */
 			int off1 = (int) (random.nextFloat() * len);
-			if (off1 == len)
+			if (off1 == len) {
 				continue;
+			}
 
 			/* get another array offset */
 			int off2 = (int) (random.nextFloat() * len);
-			if (off2 == len)
+			if (off2 == len) {
 				continue;
+			}
 
 			/* switch */
 			Object temp = first[off1];

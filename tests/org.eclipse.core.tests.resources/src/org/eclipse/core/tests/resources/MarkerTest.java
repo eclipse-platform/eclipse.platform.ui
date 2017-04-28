@@ -132,8 +132,9 @@ public class MarkerTest extends ResourceTest {
 		// Create an array with a bunch of markers.
 		IWorkspaceRunnable body = monitor -> {
 			IResourceVisitor visitor = resource -> {
-				for (int i = 0; i < markersPerResource; i++)
+				for (int i = 0; i < markersPerResource; i++) {
 					resource.createMarker(IMarker.PROBLEM);
+				}
 				return true;
 			};
 			getWorkspace().getRoot().accept(visitor);
@@ -153,16 +154,18 @@ public class MarkerTest extends ResourceTest {
 		try {
 			IMarker[] temp = getWorkspace().getRoot().findMarkers(null, true, IResource.DEPTH_INFINITE);
 			assertEquals("0.1", numMarkers, temp.length);
-			for (int i = 0; i < temp.length; i++)
+			for (int i = 0; i < temp.length; i++) {
 				markers[i] = temp[i];
+			}
 		} catch (CoreException e) {
 			fail("0.2", e);
 		}
 
 		// create attributes on each marker
 		body = monitor -> {
-			for (int i = 0; i < markers.length; i++)
-				markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
+			for (IMarker marker : markers) {
+				marker.setAttribute(IMarker.MESSAGE, getRandomString());
+			}
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -176,8 +179,9 @@ public class MarkerTest extends ResourceTest {
 
 		// get the attribute from each marker
 		body = monitor -> {
-			for (int i = 0; i < markers.length; i++)
-				markers[i].getAttribute(IMarker.MESSAGE);
+			for (IMarker marker : markers) {
+				marker.getAttribute(IMarker.MESSAGE);
+			}
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -220,8 +224,9 @@ public class MarkerTest extends ResourceTest {
 
 		// create attributes on each marker
 		body = monitor -> {
-			for (int i = 0; i < markers.length; i++)
-				markers[i].setAttribute(IMarker.MESSAGE, getRandomString());
+			for (IMarker marker : markers) {
+				marker.setAttribute(IMarker.MESSAGE, getRandomString());
+			}
 		};
 		try {
 			start = System.currentTimeMillis();
@@ -237,10 +242,12 @@ public class MarkerTest extends ResourceTest {
 			try {
 				String name1 = (String) o1.getAttribute(IMarker.MESSAGE);
 				String name2 = (String) o2.getAttribute(IMarker.MESSAGE);
-				if (name1 == null)
+				if (name1 == null) {
 					name1 = "";
-				if (name2 == null)
+				}
+				if (name2 == null) {
 					name2 = "";
+				}
 				int result = name1.compareToIgnoreCase(name2);
 				return result;
 			} catch (CoreException e) {
@@ -270,8 +277,9 @@ public class MarkerTest extends ResourceTest {
 	}
 
 	protected void assertDoesNotExist(String message, IMarker[] markers) {
-		for (int i = 0; i < markers.length; i++)
-			assertDoesNotExist(message, markers[i]);
+		for (IMarker marker : markers) {
+			assertDoesNotExist(message, marker);
+		}
 	}
 
 	protected void assertDoesNotExist(String message, IMarker marker) {
@@ -285,8 +293,9 @@ public class MarkerTest extends ResourceTest {
 	 */
 	protected void assertEquals(String message, IMarker[] expectedMarkers, IMarker[] actualMarkers) {
 		int n = expectedMarkers.length;
-		if (n != actualMarkers.length)
+		if (n != actualMarkers.length) {
 			fail(message);
+		}
 		boolean[] seen = new boolean[n];
 		for (int i = 0; i < n; ++i) {
 			boolean found = false;
@@ -313,18 +322,21 @@ public class MarkerTest extends ResourceTest {
 			for (int j = 0; !found && j < keys.length; j++) {
 				if (keys[j].equals(key)) {
 					found = true;
-					if (!values[j].equals(value))
+					if (!values[j].equals(value)) {
 						fail(message);
+					}
 				}
 			}
-			if (!found)
+			if (!found) {
 				assertTrue(message, false);
+			}
 		}
 	}
 
 	protected void assertExists(String message, IMarker[] markers) {
-		for (int i = 0; i < markers.length; i++)
-			assertExists(message, markers[i]);
+		for (IMarker marker : markers) {
+			assertExists(message, marker);
+		}
 	}
 
 	protected void assertExists(String message, IMarker marker) {
@@ -384,10 +396,12 @@ public class MarkerTest extends ResourceTest {
 	 */
 	public static boolean equals(IMarker a, IMarker b) {
 		try {
-			if (a.getType() != b.getType())
+			if (a.getType() != b.getType()) {
 				return false;
-			if (a.getId() != b.getId())
+			}
+			if (a.getId() != b.getId()) {
 				return false;
+			}
 			return true;
 		} catch (CoreException e) {
 			return false;
@@ -443,9 +457,8 @@ public class MarkerTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 
 		// create markers on our hierarchy of resources
-		for (int i = 0; i < resources.length; i++) {
+		for (IResource resource : resources) {
 			listener.reset();
-			IResource resource = resources[i];
 			IMarker[] markers = new IMarker[3];
 			try {
 				markers[0] = resource.createMarker(IMarker.PROBLEM);
@@ -511,9 +524,7 @@ public class MarkerTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 
 		// for each resource in the hierarchy do...
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-
+		for (IResource resource : resources) {
 			// create the marker, assert that it exists, and then remove it
 			try {
 				listener.reset();
@@ -583,8 +594,9 @@ public class MarkerTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		for (int i = 0; i < markers.length; i++)
+		for (int i = 0; i < markers.length; i++) {
 			assertTrue("1.1", !markers[i].exists());
+		}
 
 		// Check that an empty collection of markers can be removed.
 		try {
@@ -627,22 +639,25 @@ public class MarkerTest extends ResourceTest {
 
 		// add more markers and do a search on all marker types
 		Vector<IMarker> allMarkers = new Vector<>(markers.length * 3);
-		for (int i = 0; i < markers.length; i++)
-			allMarkers.add(markers[i]);
+		for (IMarker marker : markers) {
+			allMarkers.add(marker);
+		}
 		try {
 			markers = createMarkers(resources, IMarker.BOOKMARK);
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
-		for (int i = 0; i < markers.length; i++)
-			allMarkers.add(markers[i]);
+		for (IMarker marker : markers) {
+			allMarkers.add(marker);
+		}
 		try {
 			markers = createMarkers(resources, IMarker.TASK);
 		} catch (CoreException e) {
 			fail("3.1", e);
 		}
-		for (int i = 0; i < markers.length; i++)
-			allMarkers.add(markers[i]);
+		for (IMarker marker : markers) {
+			allMarkers.add(marker);
+		}
 		try {
 			IMarker[] found = getWorkspace().getRoot().findMarkers(null, false, IResource.DEPTH_INFINITE);
 			assertEquals("3.2", allMarkers.toArray(new IMarker[allMarkers.size()]), found);
@@ -856,8 +871,8 @@ public class MarkerTest extends ResourceTest {
 			IResource resource;
 			IMarker[] markers;
 			IMarker marker;
-			for (int i = 0; i < resources.length; i++) {
-				resource = resources[i];
+			for (IResource resource2 : resources) {
+				resource = resource2;
 				markers = new IMarker[3];
 
 				// ADD a marker
@@ -1057,8 +1072,9 @@ public class MarkerTest extends ResourceTest {
 			count[0] = 0;
 			IWorkspaceRunnable body = monitor -> {
 				IResourceVisitor visitor = resource -> {
-					if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
+					if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
 						return true;
+					}
 					IMarker marker = resource.createMarker(IMarker.BOOKMARK);
 					table.put(resource, marker);
 					count[0]++;
@@ -1076,11 +1092,11 @@ public class MarkerTest extends ResourceTest {
 			// copy all non-project resources
 			try {
 				IProject[] projects = getWorkspace().getRoot().getProjects();
-				for (int i = 0; i < projects.length; i++) {
-					IResource[] children = projects[i].members();
-					for (int j = 0; j < children.length; j++) {
-						IPath destination = new Path(children[j].getName() + "copy");
-						children[j].copy(destination, true, getMonitor());
+				for (IProject project : projects) {
+					IResource[] children = project.members();
+					for (IResource element : children) {
+						IPath destination = new Path(element.getName() + "copy");
+						element.copy(destination, true, getMonitor());
 					}
 				}
 			} catch (CoreException e) {
@@ -1132,9 +1148,7 @@ public class MarkerTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener);
 
 		try {
-			for (int i = 0; i < resources.length; i++) {
-				final IResource resource = resources[i];
-
+			for (final IResource resource : resources) {
 				// ADD + REMOVE = nothing
 				try {
 					IWorkspaceRunnable body = monitor -> {
@@ -1397,8 +1411,9 @@ public class MarkerTest extends ResourceTest {
 			count[0] = 0;
 			IWorkspaceRunnable body = monitor -> {
 				IResourceVisitor visitor = resource -> {
-					if (resource.getType() == IResource.ROOT)
+					if (resource.getType() == IResource.ROOT) {
 						return true;
+					}
 					IMarker marker = resource.createMarker(IMarker.BOOKMARK);
 					table.put(resource, marker);
 					count[0]++;
@@ -1415,10 +1430,10 @@ public class MarkerTest extends ResourceTest {
 
 			// move all resources
 			IProject[] projects = getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				IPath destination = new Path(projects[i].getName() + "move");
+			for (IProject project : projects) {
+				IPath destination = new Path(project.getName() + "move");
 				try {
-					projects[i].move(destination, true, getMonitor());
+					project.move(destination, true, getMonitor());
 				} catch (CoreException e) {
 					fail("1.99", e);
 				}
@@ -1426,8 +1441,9 @@ public class MarkerTest extends ResourceTest {
 
 			// verify marker deltas
 			IResourceVisitor visitor = resource -> {
-				if (resource.getType() == IResource.ROOT)
+				if (resource.getType() == IResource.ROOT) {
 					return true;
+				}
 				String name = resource.getFullPath().segment(0);
 				IPath path = new Path(name.substring(0, name.length() - 4)).makeAbsolute();
 				path = path.append(resource.getFullPath().removeFirstSegments(1));
@@ -1460,14 +1476,17 @@ public class MarkerTest extends ResourceTest {
 		try {
 			newMarkers = createMarkers(resources, IMarker.PROBLEM);
 			expected = new IMarker[newMarkers.length * 3];
-			for (int i = 0; i < newMarkers.length; i++)
+			for (int i = 0; i < newMarkers.length; i++) {
 				expected[i] = newMarkers[i];
+			}
 			newMarkers = createMarkers(resources, IMarker.BOOKMARK);
-			for (int i = 0; i < newMarkers.length; i++)
+			for (int i = 0; i < newMarkers.length; i++) {
 				expected[i + newMarkers.length] = newMarkers[i];
+			}
 			newMarkers = createMarkers(resources, IMarker.TASK);
-			for (int i = 0; i < newMarkers.length; i++)
+			for (int i = 0; i < newMarkers.length; i++) {
 				expected[i + (newMarkers.length * 2)] = newMarkers[i];
+			}
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
@@ -1489,8 +1508,9 @@ public class MarkerTest extends ResourceTest {
 		IResourceVisitor visitor = resource -> {
 			try {
 				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-				if (info == null)
+				if (info == null) {
 					return true;
+				}
 				IPathRequestor requestor = new IPathRequestor() {
 					@Override
 					public IPath requestPath() {
@@ -1617,8 +1637,9 @@ public class MarkerTest extends ResourceTest {
 		visitor = resource -> {
 			try {
 				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-				if (info == null)
+				if (info == null) {
 					return true;
+				}
 				IPathRequestor requestor = new IPathRequestor() {
 					@Override
 					public IPath requestPath() {
@@ -1747,8 +1768,7 @@ public class MarkerTest extends ResourceTest {
 	public void testSetGetAttribute() {
 		debug("testSetGetAttribute");
 
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			IMarker marker = null;
 
 			// getting a non-existant attribute should return null
@@ -1881,8 +1901,7 @@ public class MarkerTest extends ResourceTest {
 	public void testSetGetAttribute2() {
 		debug("testSetGetAttribute2");
 
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			IMarker marker = null;
 
 			// getting a non-existant attribute should return null or the specified default

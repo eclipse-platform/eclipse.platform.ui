@@ -133,8 +133,8 @@ public class ElementTreeIteratorTest extends WatsonTest {
 	 */
 	void recursiveDelete(ElementTree tree, IPath path) {
 		IPath[] children = tree.getChildren(path);
-		for (int i = 0; i < children.length; i++) {
-			recursiveDelete(tree, children[i]);
+		for (IPath element : children) {
+			recursiveDelete(tree, element);
 		}
 		tree.deleteElement(path);
 	}
@@ -147,8 +147,8 @@ public class ElementTreeIteratorTest extends WatsonTest {
 			private static final long serialVersionUID = 1L;
 
 			public void pushAll(IPath[] array) {
-				for (int i = 0; i < array.length; i++) {
-					push(array[i]);
+				for (IPath element : array) {
+					push(element);
 				}
 			}
 		}

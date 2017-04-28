@@ -39,8 +39,9 @@ public class FileStoreTest extends LocalStoreTest {
 	}
 
 	private IFileStore createDir(IFileStore store, boolean clear) throws CoreException {
-		if (clear && store.fetchInfo().exists())
+		if (clear && store.fetchInfo().exists()) {
 			store.delete(EFS.NONE, null);
+		}
 		store.mkdir(EFS.NONE, null);
 		IFileInfo info = store.fetchInfo();
 		assertTrue("createDir.1", info.exists());
@@ -114,8 +115,9 @@ public class FileStoreTest extends LocalStoreTest {
 		IFileStore[] tempDirectories = getFileStoresOnTwoVolumes();
 
 		/* test if we are in the adequate environment */
-		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null)
+		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null) {
 			return;
+		}
 
 		/* build scenario */
 		// create source root folder
@@ -236,8 +238,9 @@ public class FileStoreTest extends LocalStoreTest {
 
 		/* copy a big file to test progress monitor */
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < 1000; i++)
+		for (int i = 0; i < 1000; i++) {
 			sb.append("asdjhasldhaslkfjhasldkfjhasdlkfjhasdlfkjhasdflkjhsdaf");
+		}
 		IFileStore bigFile = temp.getChild("bigFile");
 		createFile(bigFile, sb.toString());
 		assertTrue("7.1", bigFile.fetchInfo().exists());
@@ -260,8 +263,9 @@ public class FileStoreTest extends LocalStoreTest {
 		IFileStore[] tempDirectories = getFileStoresOnTwoVolumes();
 
 		/* test if we are in the adequate environment */
-		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null)
+		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null) {
 			return;
+		}
 
 		/* build scenario */
 		/* get the source folder */
@@ -433,8 +437,9 @@ public class FileStoreTest extends LocalStoreTest {
 		IFileStore[] tempDirectories = getFileStoresOnTwoVolumes();
 
 		/* test if we are in the adequate environment */
-		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null)
+		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null) {
 			return;
+		}
 
 		/* build scenario */
 		/* get the source folder */
@@ -558,8 +563,9 @@ public class FileStoreTest extends LocalStoreTest {
 	}
 
 	private void testAttribute(int attribute) throws CoreException {
-		if (!isAttributeSupported(attribute))
+		if (!isAttributeSupported(attribute)) {
 			return;
+		}
 
 		IPath root = getWorkspace().getRoot().getLocation().append("" + new Date().getTime());
 		IFileStore targetFolder = createDir(root.toString(), true);

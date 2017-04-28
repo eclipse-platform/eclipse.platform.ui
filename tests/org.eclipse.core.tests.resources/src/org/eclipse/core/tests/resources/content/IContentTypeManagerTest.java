@@ -104,9 +104,11 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	}
 
 	boolean contains(Object[] array, Object element) {
-		for (int i = 0; i < array.length; i++)
-			if (array[i].equals(element))
+		for (Object element2 : array) {
+			if (element2.equals(element)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -117,14 +119,17 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	public InputStream getInputStream(byte[][] contents) {
 		int size = 0;
 		// computes final array size
-		for (int i = 0; i < contents.length; i++)
-			size += contents[i].length;
+		for (byte[] content : contents) {
+			size += content.length;
+		}
 		byte[] full = new byte[size];
 		int fullIndex = 0;
 		// concatenates all byte arrays
-		for (int i = 0; i < contents.length; i++)
-			for (int j = 0; j < contents[i].length; j++)
-				full[fullIndex++] = contents[i][j];
+		for (byte[] content : contents) {
+			for (int j = 0; j < content.length; j++) {
+				full[fullIndex++] = content[j];
+			}
+		}
 		return new ByteArrayInputStream(full);
 	}
 
@@ -1057,8 +1062,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertNotNull("1.0", description);
 		assertEquals("1.1", myContent, description.getContentType());
 		assertNotSame("1.2", myContent.getDefaultDescription(), description);
-		for (int i = 0; i < MyContentDescriber.MY_OPTIONS.length; i++)
+		for (int i = 0; i < MyContentDescriber.MY_OPTIONS.length; i++) {
 			assertEquals("2." + i, MyContentDescriber.MY_OPTION_VALUES[i], description.getProperty(MyContentDescriber.MY_OPTIONS[i]));
+		}
 	}
 
 	public void testNoExtensionAssociation() {
@@ -1368,8 +1374,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		int bufferLimit = ContentTypeManager.BLOCK_SIZE * 4;
 		// create a long XML comment as prefix
 		StringBuffer comment = new StringBuffer("<!--");
-		for (int i = 0; i < bufferLimit; i++)
+		for (int i = 0; i < bufferLimit; i++) {
 			comment.append('*');
+		}
 		comment.append("-->");
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType rootElement = manager.getContentType(PI_RESOURCES_TESTS + ".root-element");
@@ -1404,8 +1411,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			try {
 				text.removeFileSpec("mytext", IContentType.FILE_EXTENSION_SPEC);
 			} catch (CoreException e) {
-				if (!assertionFailed)
+				if (!assertionFailed) {
 					fail(" 2.0", e);
+				}
 			}
 		}
 		IContentType result = manager.findContentTypeFor("test.mytext");

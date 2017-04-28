@@ -106,8 +106,9 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		arguments = args == null ? new HashMap<>(1) : args;
 		logPluginLifecycleEvent(getBuildId());
-		if (ruleCallBack == null)
+		if (ruleCallBack == null) {
 			return new IProject[0];
+		}
 		ruleCallBack.builder = this;
 		return ruleCallBack.build(kind, args, monitor);
 	}
@@ -118,8 +119,9 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 */
 	@Override
 	public ISchedulingRule getRule(int trigger, Map<String, String> args) {
-		if (ruleCallBack == null)
+		if (ruleCallBack == null) {
 			return super.getRule(trigger, args);
+		}
 		ruleCallBack.builder = this;
 		return ruleCallBack.getRule(name, this, trigger, args);
 	}
@@ -136,8 +138,9 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 */
 	private String getBuildId() {
 		String buildId = arguments.get(BUILD_ID);
-		if (buildId == null)
+		if (buildId == null) {
 			buildId = DEFAULT_BUILD_ID;
+		}
 		return buildId;
 	}
 

@@ -154,8 +154,8 @@ public class IResourceChangeListenerTest extends ResourceTest {
 				assertTrue(message, !deltaResource.equals(resources[i]));
 			}
 			IResourceDelta[] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; i++) {
-				assertNotDeltaIncludes(message, children[i], resources);
+			for (IResourceDelta element : children) {
+				assertNotDeltaIncludes(message, element, resources);
 			}
 		} catch (RuntimeException e) {
 			fail(message, e);
@@ -194,8 +194,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 	 */
 	protected void setAutoBuilding(boolean value) {
 		IWorkspace workspace = getWorkspace();
-		if (workspace.isAutoBuilding() == value)
+		if (workspace.isAutoBuilding() == value) {
 			return;
+		}
 		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(value);
 		try {
@@ -841,8 +842,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							if (event.getResource() != p)
+							if (event.getResource() != p) {
 								p.refreshLocal(IResource.DEPTH_INFINITE, null);
+							}
 							wasPerformed = true;
 						} catch (Exception e) {
 							fail("3.0", e);
@@ -860,8 +862,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				try {
-					if (event.getResource() != p)
+					if (event.getResource() != p) {
 						p.refreshLocal(IResource.DEPTH_INFINITE, null);
+					}
 					fail("4.0");
 				} catch (Exception e) {
 					// should fail
@@ -1624,8 +1627,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		} catch (CoreException e) {
 			handleCoreException(e);
 		} finally {
-			if (path.toFile().exists())
+			if (path.toFile().exists()) {
 				path.toFile().delete();
+			}
 		}
 	}
 
@@ -1650,8 +1654,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		} catch (CoreException e) {
 			handleCoreException(e);
 		} finally {
-			if (path.toFile().exists())
+			if (path.toFile().exists()) {
 				path.toFile().delete();
+			}
 		}
 	}
 
@@ -1672,8 +1677,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		} catch (CoreException e) {
 			handleCoreException(e);
 		} finally {
-			if (path.toFile().exists())
+			if (path.toFile().exists()) {
 				path.toFile().delete();
+			}
 		}
 	}
 }

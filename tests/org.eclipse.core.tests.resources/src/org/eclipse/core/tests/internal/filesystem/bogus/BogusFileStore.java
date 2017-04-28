@@ -36,8 +36,9 @@ public class BogusFileStore extends MemoryFileStore {
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) {
 		IPath parentPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().append("bogus_fs");
 		File parent = new java.io.File(parentPath.toOSString());
-		if (!parent.exists())
+		if (!parent.exists()) {
 			parent.mkdirs();
+		}
 		return new java.io.File(parentPath.append(getName()).toOSString());
 	}
 

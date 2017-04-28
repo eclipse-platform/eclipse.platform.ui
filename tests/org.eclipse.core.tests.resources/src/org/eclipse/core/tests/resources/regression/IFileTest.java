@@ -49,17 +49,20 @@ public class IFileTest extends ResourceTest {
 		// This test is no longer valid since the error code is dependent on whether
 		// or not the parent folder is marked as read-only. We need to write a different
 		// test to make the file.create fail.
-		if (DISABLED )
+		if (DISABLED ) {
 			return;
+		}
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!isReadOnlySupported())
+		if (!isReadOnlySupported()) {
 			return;
+		}
 
 		// Don't test this on Windows
-		if (isWindows())
+		if (isWindows()) {
 			return;
+		}
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFolder folder = project.getFolder("folder");
@@ -89,13 +92,15 @@ public class IFileTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!isReadOnlySupported())
+		if (!isReadOnlySupported()) {
 			return;
+		}
 
 		// Only run this test on Linux for now since Windows lets you create
 		// a file within a read-only folder.
-		if (!Platform.getOS().equals(Platform.OS_LINUX))
+		if (!Platform.getOS().equals(Platform.OS_LINUX)) {
 			return;
+		}
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFolder folder = project.getFolder("folder");

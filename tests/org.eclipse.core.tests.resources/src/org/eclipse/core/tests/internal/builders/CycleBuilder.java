@@ -45,8 +45,8 @@ public class CycleBuilder extends TestBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (beforeProjects != null) {
-			for (int i = 0; i < beforeProjects.length; i++) {
-				Assert.assertTrue("Missing before project: " + beforeProjects[i], hasBeenBuilt(beforeProjects[i]));
+			for (IProject beforeProject : beforeProjects) {
+				Assert.assertTrue("Missing before project: " + beforeProject, hasBeenBuilt(beforeProject));
 			}
 		}
 		if (afterProjects != null) {
@@ -59,8 +59,9 @@ public class CycleBuilder extends TestBuilder {
 			needRebuild();
 		}
 		//ensure that subsequent builds are always incremental
-		if (buildCount > 0)
+		if (buildCount > 0) {
 			Assert.assertTrue("Should be incremental build", kind == IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		}
 		buildCount++;
 		return null;
 	}
@@ -79,8 +80,9 @@ public class CycleBuilder extends TestBuilder {
 	private void changeAllFiles() throws CoreException {
 		IResourceVisitor visitor = resource -> {
 			if (resource.getType() == IResource.FILE) {
-				if (resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME))
+				if (resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 					return false;
+				}
 				((IFile) resource).setContents(getRandomContents(), IResource.NONE, null);
 			}
 			return true;

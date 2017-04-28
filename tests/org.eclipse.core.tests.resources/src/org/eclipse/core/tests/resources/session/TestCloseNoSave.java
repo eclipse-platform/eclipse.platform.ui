@@ -58,8 +58,9 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 		IFile file = folder.getFile(FILE);
 
 		//opening the project does an automatic local refresh
-		if (!project.isOpen())
+		if (!project.isOpen()) {
 			project.open(null);
+		}
 
 		assertEquals("2.0", 2, project.members().length);
 		assertTrue("2.1", folder.exists());

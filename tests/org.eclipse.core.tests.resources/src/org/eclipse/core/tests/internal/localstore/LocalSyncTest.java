@@ -73,8 +73,9 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 		assertTrue("1.1", project.exists());
 
 		/* resources should not exist anymore */
-		for (int i = 1; i < resources.length; i++)
+		for (int i = 1; i < resources.length; i++) {
 			assertTrue("1.2", !resources[i].exists());
+		}
 	}
 
 	public void testProjectWithNoResources() {

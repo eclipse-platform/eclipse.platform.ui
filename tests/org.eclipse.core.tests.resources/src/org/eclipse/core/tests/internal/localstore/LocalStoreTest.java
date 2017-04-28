@@ -38,13 +38,15 @@ public abstract class LocalStoreTest extends ResourceTest {
 
 	protected int countChildren(File root) {
 		String[] children = root.list();
-		if (children == null)
+		if (children == null) {
 			return 0;
+		}
 		int result = 0;
-		for (int i = 0; i < children.length; i++) {
-			File child = new File(root, children[i]);
-			if (child.isDirectory())
+		for (String element : children) {
+			File child = new File(root, element);
+			if (child.isDirectory()) {
 				result += countChildren(child);
+			}
 			result++;
 		}
 		return result;
@@ -53,11 +55,12 @@ public abstract class LocalStoreTest extends ResourceTest {
 	public int countChildren(IFolder root) throws CoreException {
 		int total = 0;
 		IResource[] children = root.members();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getType() == IResource.FILE)
+		for (IResource element : children) {
+			if (element.getType() == IResource.FILE) {
 				total++;
-			else
-				total += countChildren((IFolder) children[i]);
+			} else {
+				total += countChildren((IFolder) element);
+			}
 		}
 		return total;
 	}
@@ -87,9 +90,9 @@ public abstract class LocalStoreTest extends ResourceTest {
 
 	protected void createNode(IFileStore node) throws CoreException {
 		char type = node.getName().charAt(0);
-		if (type == 'd')
+		if (type == 'd') {
 			node.mkdir(EFS.NONE, null);
-		else {
+		} else {
 			InputStream input = getRandomContents();
 			OutputStream output = node.openOutputStream(EFS.NONE, null);
 			transferData(input, output);
@@ -97,8 +100,9 @@ public abstract class LocalStoreTest extends ResourceTest {
 	}
 
 	protected void createTree(IFileStore[] tree) throws CoreException {
-		for (int i = 0; i < tree.length; i++)
-			createNode(tree[i]);
+		for (IFileStore element : tree) {
+			createNode(element);
+		}
 	}
 
 	/**
@@ -113,8 +117,9 @@ public abstract class LocalStoreTest extends ResourceTest {
 	 */
 	protected String getBigString(int size) {
 		StringBuffer sb = new StringBuffer();
-		while (sb.length() < size)
+		while (sb.length() < size) {
 			sb.append(getRandomString());
+		}
 		return sb.toString();
 	}
 
@@ -128,8 +133,9 @@ public abstract class LocalStoreTest extends ResourceTest {
 
 	protected IFileStore[] getTree(IFileStore root, String[] elements) {
 		IFileStore[] tree = new IFileStore[elements.length];
-		for (int i = 0; i < elements.length; i++)
+		for (int i = 0; i < elements.length; i++) {
 			tree[i] = root.getChild(elements[i]);
+		}
 		return tree;
 	}
 
@@ -194,9 +200,11 @@ public abstract class LocalStoreTest extends ResourceTest {
 	}
 
 	protected boolean verifyTree(IFileStore[] tree) {
-		for (int i = 0; i < tree.length; i++)
-			if (!verifyNode(tree[i]))
+		for (int i = 0; i < tree.length; i++) {
+			if (!verifyNode(tree[i])) {
 				return false;
+			}
+		}
 		return true;
 	}
 }

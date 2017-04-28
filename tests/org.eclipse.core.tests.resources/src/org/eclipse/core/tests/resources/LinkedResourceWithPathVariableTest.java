@@ -78,8 +78,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, null);
 		IPath[] paths = toDelete.toArray(new IPath[toDelete.size()]);
 		toDelete.clear();
-		for (int i = 0; i < paths.length; i++)
-			Workspace.clear(paths[i].toFile());
+		for (IPath path : paths) {
+			Workspace.clear(path.toFile());
+		}
 		super.tearDown();
 	}
 
@@ -119,10 +120,12 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 				ib = is.read();
 			}
 		} finally {
-			if (is != null)
+			if (is != null) {
 				is.close();
-			if (os != null)
+			}
+			if (os != null) {
 				os.close();
+			}
 		}
 	}
 
@@ -451,9 +454,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	public void testPROJECT_LOC_MoveFileToDifferentProject() {
 
 		String[] existingVariables = nonExistingFileInExistingFolder.getProject().getPathVariableManager().getPathVariableNames();
-		for (int i = 0; i < existingVariables.length; i++) {
+		for (String existingVariable : existingVariables) {
 			try {
-				nonExistingFileInExistingFolder.getProject().getPathVariableManager().setValue(existingVariables[i], null);
+				nonExistingFileInExistingFolder.getProject().getPathVariableManager().setValue(existingVariable, null);
 			} catch (CoreException e) {
 			}
 		}
@@ -823,8 +826,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		}
 
 		// Don't run this test if we cannot set a file read-only
-		if ((projStore.getFileSystem().attributes() & EFS.ATTRIBUTE_READ_ONLY) == 0)
+		if ((projStore.getFileSystem().attributes() & EFS.ATTRIBUTE_READ_ONLY) == 0) {
 			return;
+		}
 
 		try {
 			// Create a linked resource with a non-existing path variable
@@ -1422,9 +1426,10 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		String[] variables = manager.getPathVariableNames();
 		boolean found = false;
 
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].equals("Test338185"))
+		for (String variable : variables) {
+			if (variable.equals("Test338185")) {
 				found = true;
+			}
 		}
 		assertTrue(found);
 	}

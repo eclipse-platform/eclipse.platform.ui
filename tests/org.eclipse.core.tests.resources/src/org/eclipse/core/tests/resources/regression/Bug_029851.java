@@ -44,8 +44,9 @@ public class Bug_029851 extends ResourceTest {
 		for (int i = 0; i < breadth; i++) {
 			IPath child = prefix.append(Integer.toString(i)).addTrailingSeparator();
 			result.add(child.toString());
-			if (depth > 0)
+			if (depth > 0) {
 				result.addAll(createChildren(breadth, depth - 1, child));
+			}
 		}
 		return result;
 	}
@@ -62,8 +63,9 @@ public class Bug_029851 extends ResourceTest {
 
 	public void test() {
 		// disable for now.
-		if (DISABLED)
+		if (DISABLED) {
 			return;
+		}
 		createHierarchy();
 		final QualifiedName key = new QualifiedName("local", getUniqueString());
 		final String value = getUniqueString();

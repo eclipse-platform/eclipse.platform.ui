@@ -31,8 +31,9 @@ public class Bug_329836 extends ResourceTest {
 	}
 
 	public void testBug() {
-		if (!Platform.getOS().equals(Platform.OS_MACOSX))
+		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
 			return;
+		}
 
 		IFileStore fileStore = getTempStore().getChild(getUniqueString());
 		createFileInFileSystem(fileStore);

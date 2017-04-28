@@ -41,12 +41,14 @@ public class Bug_147232 extends AbstractBuilderTest implements IResourceChangeLi
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		//we are only concerned with seeing duplicate post change events
-		if (event.getType() != IResourceChangeEvent.POST_CHANGE)
+		if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
 			return;
+		}
 		//record occurrence of the file creation delta if we find it
 		IResourceDelta delta = event.getDelta().findMember(file.getFullPath());
-		if (delta != null && delta.getKind() == IResourceDelta.ADDED)
+		if (delta != null && delta.getKind() == IResourceDelta.ADDED) {
 			deltaSeenCount++;
+		}
 	}
 
 	@Override

@@ -14,8 +14,9 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.*;
-import org.eclipse.core.filesystem.provider.*;
+import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.filesystem.provider.FileTree;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 

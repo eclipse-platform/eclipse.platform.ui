@@ -24,18 +24,20 @@ public class LocalSelectionPolicy implements ISelectionPolicy {
 	@Override
 	public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
 		List<IContentType> result = new ArrayList<>(candidates.length);
-		for (int i = 0; i < candidates.length; i++) {
-			String namespace = getNamespace(candidates[i].getId());
-			if (namespace.equals(ContentTypeTest.PI_RESOURCES_TESTS) || namespace.equals(Platform.PI_RUNTIME))
-				result.add(candidates[i]);
+		for (IContentType candidate : candidates) {
+			String namespace = getNamespace(candidate.getId());
+			if (namespace.equals(ContentTypeTest.PI_RESOURCES_TESTS) || namespace.equals(Platform.PI_RUNTIME)) {
+				result.add(candidate);
+			}
 		}
 		return result.toArray(new IContentType[result.size()]);
 	}
 
 	private static String getNamespace(String id) {
 		int lastDot = id.lastIndexOf('.');
-		if (lastDot <= 1)
+		if (lastDot <= 1) {
 			throw new IllegalArgumentException("lastDot ==" + lastDot);
+		}
 		return id.substring(0, lastDot);
 	}
 }

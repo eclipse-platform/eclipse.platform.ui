@@ -331,8 +331,9 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 			assertEquals(testId + ".2", 0, expectedCount);
 		} else {
 			assertEquals(testId + ".3", expectedCount, builder.buildCount);
-			if (shouldBuild)
+			if (shouldBuild) {
 				assertEquals(testId + ".4", expectedTrigger, builder.triggerForLastBuild);
+			}
 		}
 	}
 }

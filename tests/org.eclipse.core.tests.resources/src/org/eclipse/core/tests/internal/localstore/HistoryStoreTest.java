@@ -41,11 +41,13 @@ public class HistoryStoreTest extends ResourceTest {
 		String dump() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Expected:\n");
-			for (Integer integer : expected)
+			for (Integer integer : expected) {
 				buffer.append("\t" + integer + "\n");
+			}
 			buffer.append("Actual:\n");
-			for (Integer integer : actual)
+			for (Integer integer : actual) {
 				buffer.append("\t" + integer + "\n");
+			}
 			return buffer.toString();
 		}
 
@@ -138,8 +140,9 @@ public class HistoryStoreTest extends ResourceTest {
 		} catch (IOException e) {
 			i = 0;
 		}
-		if (c != -1)
+		if (c != -1) {
 			i = 0;
+		}
 		return i;
 	}
 
@@ -263,8 +266,9 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 
 		// assert that the most recent states were preserved
-		for (int i = 0; i < states.length; i++)
+		for (int i = 0; i < states.length; i++) {
 			assertEquals("1.4." + i, oldStates[i], states[i]);
+		}
 
 		/* test max file state size */
 		description.setMaxFileStates(15);
@@ -1032,8 +1036,9 @@ public class HistoryStoreTest extends ResourceTest {
 		// Make sure we have ITERATIONS number of states
 		assertEquals("5.1", ITERATIONS, states.length);
 		// Make sure that each of these states really exists in the filesystem.
-		for (int i = 0; i < states.length; i++)
+		for (int i = 0; i < states.length; i++) {
 			assertTrue("5.2." + i, states[i].exists());
+		}
 	}
 
 	public void testFindDeleted() {
@@ -1398,8 +1403,9 @@ public class HistoryStoreTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("3.1." + i, e);
 			}
-			if (!compareContent(inFile, inContents))
+			if (!compareContent(inFile, inContents)) {
 				fail("3.2." + i + " No match, files are not identical.");
+			}
 		}
 
 		stateArray = historyStore.getStates(secondValidFile.getFullPath(), getMonitor());
@@ -1410,8 +1416,9 @@ public class HistoryStoreTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("4.1." + i, e);
 			}
-			if (!compareContent(inFile, inContents))
+			if (!compareContent(inFile, inContents)) {
 				fail("4.2." + i + " No match, files are not identical.");
+			}
 		}
 
 		/* Test getting an invalid file state. */
@@ -1977,8 +1984,9 @@ public class HistoryStoreTest extends ResourceTest {
 
 		/* Set new contents on the file. Should add two entries to the store. */
 		try {
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < 2; i++) {
 				file.setContents(getContents(contents[i + 1]), true, true, getMonitor());
+			}
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}

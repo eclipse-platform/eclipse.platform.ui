@@ -36,28 +36,30 @@ public class ChangeValidationTest extends ResourceTest {
 		List<String> actualMessages = new ArrayList<>();
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				String message = getModelMessage(children[i]);
-				if (message != null)
+			for (IStatus element : children) {
+				String message = getModelMessage(element);
+				if (message != null) {
 					actualMessages.add(message);
+				}
 			}
 		} else {
 			String message = getModelMessage(status);
-			if (message != null)
+			if (message != null) {
 				actualMessages.add(message);
+			}
 		}
 		if (expectedMessages.length < actualMessages.size()) {
 			for (String actual : actualMessages) {
 				boolean found = false;
-				for (int i = 0; i < expectedMessages.length; i++) {
-					String expected = expectedMessages[i];
+				for (String expected : expectedMessages) {
 					if (actual.equals(expected)) {
 						found = true;
 						break;
 					}
 				}
-				if (!found)
+				if (!found) {
 					fail("Unexpected message returned: " + actual);
+				}
 			}
 		} else {
 			for (String expectedMessage : expectedMessages) {
@@ -80,8 +82,9 @@ public class ChangeValidationTest extends ResourceTest {
 		if (status instanceof ModelStatus) {
 			ModelStatus ms = (ModelStatus) status;
 			String id = ms.getModelProviderId();
-			if (id.equals(TestModelProvider.ID))
+			if (id.equals(TestModelProvider.ID)) {
 				return status.getMessage();
+			}
 		}
 		return null;
 	}

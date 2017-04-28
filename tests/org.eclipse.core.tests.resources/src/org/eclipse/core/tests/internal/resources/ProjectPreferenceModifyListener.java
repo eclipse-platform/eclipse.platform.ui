@@ -22,16 +22,19 @@ public class ProjectPreferenceModifyListener extends PreferenceModifyListener {
 	private static String getSegment(String path, int segment) {
 		int start = path.indexOf(IPath.SEPARATOR) == 0 ? 1 : 0;
 		int end = path.indexOf(IPath.SEPARATOR, start);
-		if (end == path.length() - 1)
+		if (end == path.length() - 1) {
 			end = -1;
+		}
 		for (int i = 0; i < segment; i++) {
-			if (end == -1)
+			if (end == -1) {
 				return null;
+			}
 			start = end + 1;
 			end = path.indexOf(IPath.SEPARATOR, start);
 		}
-		if (end == -1)
+		if (end == -1) {
 			end = path.length();
+		}
 		return path.substring(start, end);
 	}
 
@@ -41,8 +44,9 @@ public class ProjectPreferenceModifyListener extends PreferenceModifyListener {
 
 	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
-		if (equalsQualifier(node, "test.load.is.import"))
+		if (equalsQualifier(node, "test.load.is.import")) {
 			return testLoadIsImport(node);
+		}
 		return super.preApply(node);
 	}
 

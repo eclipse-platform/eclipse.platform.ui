@@ -734,10 +734,10 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		IResource[] resources = new IResource[] {project, folder, file, subFile};
 
 		// Trying to set the value on non-existing resources will fail
-		for (int i = 0; i < resources.length; i++) {
+		for (IResource resource : resources) {
 			try {
-				resources[i].setTeamPrivateMember(true);
-				fail("0.0." + resources[i].getFullPath());
+				resource.setTeamPrivateMember(true);
+				fail("0.0." + resource.getFullPath());
 			} catch (CoreException e) {
 				// expected
 			}
@@ -747,14 +747,13 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		ensureExistsInWorkspace(resources, true);
 
 		// Initial values should be false.
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			assertTrue("1.0: " + resource.getFullPath(), !resource.isTeamPrivateMember());
 		}
 
 		// Now set the values.
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			try {
 				resource.setTeamPrivateMember(true);
 			} catch (CoreException e) {
@@ -763,8 +762,8 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		}
 
 		// The values should be true for files and folders, false otherwise.
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			switch (resource.getType()) {
 				case IResource.FILE :
 				case IResource.FOLDER :
@@ -778,8 +777,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		}
 
 		// Clear the values.
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			try {
 				resource.setTeamPrivateMember(false);
 			} catch (CoreException e) {
@@ -788,8 +786,8 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		}
 
 		// Values should be false again.
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			assertTrue("5.0: " + resource.getFullPath(), !resource.isTeamPrivateMember());
 		}
 	}
@@ -799,8 +797,9 @@ public class TeamPrivateMemberTest extends ResourceTest {
 			@Override
 			public boolean visit(IResource resource) {
 				boolean expected = false;
-				if (resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
+				if (resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER) {
 					expected = value;
+				}
 				assertEquals(message + resource.getFullPath(), expected, resource.isTeamPrivateMember());
 				return true;
 			}

@@ -57,8 +57,9 @@ public class Bug_265810 extends ResourceTest {
 	protected void tearDown() throws Exception {
 		IPath[] paths = toDelete.toArray(new IPath[0]);
 		toDelete.clear();
-		for (int i = 0; i < paths.length; i++)
-			Workspace.clear(paths[i].toFile());
+		for (IPath path : paths) {
+			Workspace.clear(path.toFile());
+		}
 		super.tearDown();
 	}
 
@@ -184,10 +185,12 @@ public class Bug_265810 extends ResourceTest {
 		try {
 			event.getDelta().accept(delta -> {
 				IResource resource = delta.getResource();
-				if (resource instanceof IFile && !resource.getName().equals(".project"))
+				if (resource instanceof IFile && !resource.getName().equals(".project")) {
 					addToResourceDelta(delta);
-				if (delta.getAffectedChildren().length > 0)
+				}
+				if (delta.getAffectedChildren().length > 0) {
 					return true;
+				}
 				return false;
 			});
 		} catch (CoreException e) {

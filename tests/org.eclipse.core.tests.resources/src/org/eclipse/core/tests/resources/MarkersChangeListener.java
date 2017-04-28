@@ -34,25 +34,30 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	public boolean checkChanges(IResource resource, IMarker[] added, IMarker[] removed, IMarker[] changed) {
 		IPath path = resource == null ? Path.ROOT : resource.getFullPath();
 		Vector<IMarkerDelta> v = changes.get(path);
-		if (v == null)
+		if (v == null) {
 			v = new Vector<>();
+		}
 		int numChanges = (added == null ? 0 : added.length) + (removed == null ? 0 : removed.length) + (changed == null ? 0 : changed.length);
-		if (numChanges != v.size())
+		if (numChanges != v.size()) {
 			return false;
+		}
 		for (int i = 0; i < v.size(); ++i) {
 			IMarkerDelta delta = v.elementAt(i);
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED :
-					if (!contains(added, delta.getMarker()))
+					if (!contains(added, delta.getMarker())) {
 						return false;
+					}
 					break;
 				case IResourceDelta.REMOVED :
-					if (!contains(removed, delta.getMarker()))
+					if (!contains(removed, delta.getMarker())) {
 						return false;
+					}
 					break;
 				case IResourceDelta.CHANGED :
-					if (!contains(changed, delta.getMarker()))
+					if (!contains(changed, delta.getMarker())) {
 						return false;
+					}
 					break;
 				default :
 					throw new Error();
@@ -66,9 +71,10 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	 */
 	protected boolean contains(IMarker[] markers, IMarker marker) {
 		if (markers != null) {
-			for (int i = 0; i < markers.length; ++i) {
-				if (markers[i].equals(marker))
+			for (IMarker marker2 : markers) {
+				if (marker2.equals(marker)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -97,8 +103,9 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	 * Recurse over the delta, extracting marker changes.
 	 */
 	protected void resourceChanged(IResourceDelta delta) {
-		if (delta == null)
+		if (delta == null) {
 			return;
+		}
 		if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 			IPath path = delta.getFullPath();
 			Vector<IMarkerDelta> v = changes.get(path);
@@ -107,13 +114,13 @@ public class MarkersChangeListener implements IResourceChangeListener {
 				changes.put(path, v);
 			}
 			IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
-			for (int i = 0; i < markerDeltas.length; ++i) {
-				v.addElement(markerDeltas[i]);
+			for (IMarkerDelta markerDelta : markerDeltas) {
+				v.addElement(markerDelta);
 			}
 		}
 		IResourceDelta[] children = delta.getAffectedChildren();
-		for (int i = 0; i < children.length; ++i) {
-			resourceChanged(children[i]);
+		for (IResourceDelta element : children) {
+			resourceChanged(element);
 		}
 	}
 }

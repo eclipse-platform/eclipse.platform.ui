@@ -34,8 +34,9 @@ public class ClearMarkersBuilder extends TestBuilder {
 		getProject().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		//wait after build if requested
 		try {
-			if (pauseAfterBuild)
+			if (pauseAfterBuild) {
 				Thread.sleep(5000);
+			}
 		} catch (InterruptedException e) {
 			//ignore
 		}

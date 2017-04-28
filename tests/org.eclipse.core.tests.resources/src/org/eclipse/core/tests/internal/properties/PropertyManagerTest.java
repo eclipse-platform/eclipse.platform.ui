@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.properties;
 
-import java.util.Enumeration;
 import java.util.Vector;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -115,9 +114,9 @@ public class PropertyManagerTest extends LocalStoreTest {
 
 	private void join(Thread[] threads) {
 		//wait for all threads to finish
-		for (int j = 0; j < threads.length; j++) {
+		for (Thread thread : threads) {
 			try {
-				threads[j].join();
+				thread.join();
 			} catch (InterruptedException e) {
 				fail("#join", e);
 			}
@@ -146,8 +145,9 @@ public class PropertyManagerTest extends LocalStoreTest {
 		final CoreException[] errorPointer = new CoreException[1];
 		Thread[] threads = createThreads(target, names, values, errorPointer);
 		join(threads);
-		if (errorPointer[0] != null)
+		if (errorPointer[0] != null) {
 			fail("2.0", errorPointer[0]);
+		}
 
 		// remove trash
 		try {
@@ -191,8 +191,9 @@ public class PropertyManagerTest extends LocalStoreTest {
 				fail("1.99." + i, e);
 			}
 			join(threads);
-			if (errorPointer[0] != null)
+			if (errorPointer[0] != null) {
 				fail("2.0." + i, errorPointer[0]);
+			}
 		}
 		// remove trash
 		try {
@@ -486,14 +487,12 @@ public class PropertyManagerTest extends LocalStoreTest {
 		props.addElement(new StoredProperty(propName3, propValue3));
 
 		// set the properties individually and retrieve them
-		for (Enumeration<StoredProperty> e = props.elements(); e.hasMoreElements();) {
-			StoredProperty prop = e.nextElement();
+		for (StoredProperty prop : props) {
 			manager.setProperty(target, prop.getName(), prop.getStringValue());
 			assertEquals("1.0." + prop.getName(), prop.getStringValue(), manager.getProperty(target, prop.getName()));
 		}
 		// check properties are be appropriately deleted (when set to null)
-		for (Enumeration<StoredProperty> e = props.elements(); e.hasMoreElements();) {
-			StoredProperty prop = e.nextElement();
+		for (StoredProperty prop : props) {
 			manager.setProperty(target, prop.getName(), null);
 			assertEquals("2.0." + prop.getName(), null, manager.getProperty(target, prop.getName()));
 		}

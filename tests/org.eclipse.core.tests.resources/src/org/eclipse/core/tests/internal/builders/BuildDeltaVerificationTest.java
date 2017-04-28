@@ -162,8 +162,9 @@ public class BuildDeltaVerificationTest extends AbstractBuilderTest {
 			file2.delete(true, getMonitor());
 			rebuild();
 			//builder for project1 may not even be called (empty delta)
-			if (verifier.wasFullBuild())
+			if (verifier.wasFullBuild()) {
 				verifier.emptyBuild();
+			}
 			assertTrue(verifier.getMessage(), verifier.isDeltaValid());
 		} catch (CoreException e) {
 			handleCoreException(e);
@@ -181,8 +182,9 @@ public class BuildDeltaVerificationTest extends AbstractBuilderTest {
 			folder2.delete(true, getMonitor());
 			rebuild();
 			//builder for project1 may not even be called (empty delta)
-			if (verifier.wasFullBuild())
+			if (verifier.wasFullBuild()) {
 				verifier.emptyBuild();
+			}
 			assertTrue(verifier.getMessage(), verifier.isDeltaValid());
 		} catch (CoreException e) {
 			handleCoreException(e);

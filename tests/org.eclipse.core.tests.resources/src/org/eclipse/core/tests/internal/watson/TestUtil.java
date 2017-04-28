@@ -221,9 +221,9 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		/* create file elements */
 		tree = tree.newEmptyDelta();
 		IPath[] files = getFilePaths(path);
-		for (int i = 0; i < files.length; i++) {
-			Object data = files[i].toString();
-			tree.createElement(files[i], data);
+		for (IPath file : files) {
+			Object data = file.toString();
+			tree.createElement(file, data);
 
 			tree.immutable();
 			trees.addElement(tree);
@@ -233,8 +233,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		/* modify the data of all file elements a few times */
 		for (int i = 0; i < repeat; i++) {
 			Object data = "data" + i;
-			for (int f = 0; f < files.length; f++) {
-				tree.setElementData(files[f], data);
+			for (IPath file : files) {
+				tree.setElementData(file, data);
 				tree.immutable();
 				trees.addElement(tree);
 				tree = tree.newEmptyDelta();
@@ -242,8 +242,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		}
 
 		/* delete all file elements */
-		for (int i = 0; i < files.length; i++) {
-			tree.deleteElement(files[i]);
+		for (IPath file : files) {
+			tree.deleteElement(file);
 			tree.immutable();
 			trees.addElement(tree);
 			tree = tree.newEmptyDelta();
@@ -267,10 +267,10 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		/* create file elements */
 		tree = tree.newEmptyDelta();
 		IPath[] files = getFilePaths(path);
-		for (int i = 0; i < files.length; i++) {
-			Object data = files[i].toString();
+		for (IPath file : files) {
+			Object data = file.toString();
 
-			tree.createElement(files[i], data);
+			tree.createElement(file, data);
 		}
 
 		tree.immutable();
@@ -280,8 +280,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		/* modify the data of all file elements a few times */
 		for (int i = 0; i < repeat; i++) {
 			Object data = "data" + i;
-			for (int f = 0; f < files.length; f++) {
-				tree.setElementData(files[f], data);
+			for (IPath file : files) {
+				tree.setElementData(file, data);
 			}
 		}
 
@@ -290,8 +290,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		tree = tree.newEmptyDelta();
 
 		/* delete all file elements */
-		for (int i = 0; i < files.length; i++) {
-			tree.deleteElement(files[i]);
+		for (IPath file : files) {
+			tree.deleteElement(file);
 		}
 
 		tree.immutable();
@@ -345,13 +345,15 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		for (int i = 0; i < len * 100; i++) {
 			/* get any array offset */
 			int off1 = (int) (random.nextFloat() * len);
-			if (off1 == len)
+			if (off1 == len) {
 				continue;
+			}
 
 			/* get another array offset */
 			int off2 = (int) (random.nextFloat() * len);
-			if (off2 == len)
+			if (off2 == len) {
 				continue;
+			}
 
 			/* switch */
 			Object temp = first[off1];
@@ -372,13 +374,15 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		for (int i = 0; i < len * 100; i++) {
 			/* get any array offset */
 			int off1 = (int) (random.nextFloat() * len);
-			if (off1 == len)
+			if (off1 == len) {
 				continue;
+			}
 
 			/* get another array offset */
 			int off2 = (int) (random.nextFloat() * len);
-			if (off2 == len)
+			if (off2 == len) {
 				continue;
+			}
 
 			/* switch */
 			Object temp = first[off1];

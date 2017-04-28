@@ -59,8 +59,9 @@ public class MemoryFileStore extends FileStore {
 
 	@Override
 	public IFileStore getParent() {
-		if (path.segmentCount() == 0)
+		if (path.segmentCount() == 0) {
 			return null;
+		}
 		return new MemoryFileStore(path.removeLastSegments(1));
 	}
 

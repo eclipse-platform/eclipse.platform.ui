@@ -104,8 +104,9 @@ public class IResourceTest extends ResourceTest {
 
 	public void testBug28790() {
 		// only activate this test on platforms that support it
-		if (!isAttributeSupported(EFS.ATTRIBUTE_ARCHIVE))
+		if (!isAttributeSupported(EFS.ATTRIBUTE_ARCHIVE)) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("a.txt");
 		ensureExistsInWorkspace(file, getRandomString());
@@ -170,15 +171,17 @@ public class IResourceTest extends ResourceTest {
 
 			@Override
 			public boolean visit(IResourceDelta aDelta) {
-				if (aDelta.getResource().equals(file))
+				if (aDelta.getResource().equals(file)) {
 					mySeen[0] = true;
+				}
 				return true;
 			}
 		}
 		IResourceChangeListener listener = event -> {
 			IResourceDelta delta = event.getDelta();
-			if (delta == null)
+			if (delta == null) {
 				return;
+			}
 			try {
 				delta.accept(new DeltaVisitor(seen));
 				delta.accept(new DeltaVisitor(phantomSeen), true);
@@ -229,8 +232,9 @@ public class IResourceTest extends ResourceTest {
 
 	public void testBug111821() {
 		//this test only makes sense on Windows
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("testBug111821");
 		IFolder folder = project.getFolder(new Path(null, "c:"));
 		ensureExistsInWorkspace(project, true);
@@ -312,11 +316,13 @@ public class IResourceTest extends ResourceTest {
 		IFile anotherFile = project.getFile("File");
 		try {
 			anotherFile.create(getRandomContents(), true, null);
-			if (!caseSensitive)
+			if (!caseSensitive) {
 				fail("2.1");
+			}
 		} catch (CoreException e) {
-			if (caseSensitive)
+			if (caseSensitive) {
 				fail("2.2", e);
+			}
 		}
 
 		// clean-up
@@ -329,21 +335,25 @@ public class IResourceTest extends ResourceTest {
 		// force = false
 		try {
 			anotherFile.create(getRandomContents(), false, null);
-			if (!caseSensitive)
+			if (!caseSensitive) {
 				fail("4.0");
+			}
 		} catch (CoreException e) {
-			if (caseSensitive)
+			if (caseSensitive) {
 				fail("4.1", e);
+			}
 		}
 
 		// test refreshLocal
 		try {
 			anotherFile.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
-			if (!caseSensitive)
+			if (!caseSensitive) {
 				fail("5.0");
+			}
 		} catch (CoreException e) {
-			if (caseSensitive)
+			if (caseSensitive) {
 				fail("5.1", e);
+			}
 		}
 
 		// clean up
@@ -367,8 +377,9 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < 260; i++)
+		for (int i = 0; i < 260; i++) {
 			sb.append('a');
+		}
 		sb.append('b');
 		IFolder folder = project.getFolder(sb.toString());
 		try {
@@ -439,8 +450,9 @@ public class IResourceTest extends ResourceTest {
 		// This test cannot be done automatically because we don't know in that
 		// file system we are running. Will leave test here in case it needs
 		// to be run it in a special environment.
-		if (DISABLED)
+		if (DISABLED) {
 			return;
+		}
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("MyFile");

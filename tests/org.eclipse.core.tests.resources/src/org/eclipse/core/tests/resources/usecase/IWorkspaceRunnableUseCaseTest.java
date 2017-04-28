@@ -36,10 +36,12 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 				}
 				throw new IllegalArgumentException(exceptionToThrow);
 			}
-			if (triggerBuild)
+			if (triggerBuild) {
 				project.touch(getMonitor());
-			if (nestedOperation != null)
+			}
+			if (nestedOperation != null) {
 				getWorkspace().run(nestedOperation, getMonitor());
+			}
 		};
 	}
 

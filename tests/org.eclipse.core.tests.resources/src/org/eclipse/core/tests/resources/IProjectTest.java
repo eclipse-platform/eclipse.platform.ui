@@ -44,8 +44,9 @@ public class IProjectTest extends ResourceTest {
 	}
 
 	public void ensureExistsInWorkspace(final IProject project, final IProjectDescription description) {
-		if (project == null)
+		if (project == null) {
 			return;
+		}
 		IWorkspaceRunnable body = monitor -> {
 			project.create(description, monitor);
 			project.open(monitor);
@@ -255,9 +256,9 @@ public class IProjectTest extends ResourceTest {
 
 		//should not be able to create a project with invalid path on any platform
 		String[] names = new String[] {"", "/"};
-		for (int i = 0; i < names.length; i++) {
+		for (String name : names) {
 			try {
-				root.getProject(names[i]);
+				root.getProject(name);
 				fail("0.99");
 			} catch (RuntimeException e) {
 				//should fail
@@ -272,18 +273,18 @@ public class IProjectTest extends ResourceTest {
 			//invalid names on non-windows platforms
 			names = new String[] {};
 		}
-		for (int i = 0; i < names.length; i++) {
-			IProject project = root.getProject(names[i]);
-			assertTrue("1.0 " + names[i], !project.exists());
+		for (String name : names) {
+			IProject project = root.getProject(name);
+			assertTrue("1.0 " + name, !project.exists());
 			try {
 				project.create(getMonitor());
 				project.open(getMonitor());
-				fail("1.1 " + names[i]);
+				fail("1.1 " + name);
 			} catch (CoreException e) {
 				// expected
 			}
-			assertTrue("1.2 " + names[i], !project.exists());
-			assertTrue("1.3 " + names[i], !project.isOpen());
+			assertTrue("1.2 " + name, !project.exists());
+			assertTrue("1.3 " + name, !project.isOpen());
 		}
 
 		//do some tests with valid names that are *almost* invalid
@@ -294,17 +295,17 @@ public class IProjectTest extends ResourceTest {
 			//these names are valid on non-windows platforms
 			names = new String[] {"foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", "hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		}
-		for (int i = 0; i < names.length; i++) {
-			IProject project = root.getProject(names[i]);
-			assertTrue("2.0 " + names[i], !project.exists());
+		for (String name : names) {
+			IProject project = root.getProject(name);
+			assertTrue("2.0 " + name, !project.exists());
 			try {
 				project.create(getMonitor());
 				project.open(getMonitor());
 			} catch (CoreException e) {
-				fail("2.1 " + names[i], e);
+				fail("2.1 " + name, e);
 			}
-			assertTrue("2.2 " + names[i], project.exists());
-			assertTrue("2.3 " + names[i], project.isOpen());
+			assertTrue("2.2 " + name, project.exists());
+			assertTrue("2.3 " + name, project.isOpen());
 		}
 	}
 
@@ -669,10 +670,11 @@ public class IProjectTest extends ResourceTest {
 			assertEquals("3.0", newInstanceValue, getLineSeparatorFromFile(file));
 
 			// remove preference for the next step
-			if (oldInstanceValue == null)
+			if (oldInstanceValue == null) {
 				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
-			else
+			} else {
 				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			}
 			instanceNode.flush();
 			description = project.getDescription();
 			description.setComment("some comment");
@@ -701,10 +703,11 @@ public class IProjectTest extends ResourceTest {
 			assertEquals("8.0", newProjectValue, getLineSeparatorFromFile(file));
 		} finally {
 			// revert instance preference to original value
-			if (oldInstanceValue == null)
+			if (oldInstanceValue == null) {
 				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
-			else
+			} else {
 				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			}
 			instanceNode.flush();
 			project.delete(true, getMonitor());
 		}

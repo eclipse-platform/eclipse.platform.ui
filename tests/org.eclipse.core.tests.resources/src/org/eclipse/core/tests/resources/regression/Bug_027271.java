@@ -48,9 +48,11 @@ public class Bug_027271 extends ResourceTest {
 	private void clearPathVariablesProperties() {
 		// ensure we have no preferences related to path variables
 		String[] propertyNames = preferences.propertyNames();
-		for (int i = 0; i < propertyNames.length; i++)
-			if (propertyNames[i].startsWith(VARIABLE_PREFIX))
-				preferences.setToDefault(propertyNames[i]);
+		for (String propertyName : propertyNames) {
+			if (propertyName.startsWith(VARIABLE_PREFIX)) {
+				preferences.setToDefault(propertyName);
+			}
+		}
 	}
 
 	public static Test suite() {
@@ -59,8 +61,9 @@ public class Bug_027271 extends ResourceTest {
 
 	public void testBug() {
 		//this bug is only relevant on Windows
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IPathVariableManager pvm = getWorkspace().getPathVariableManager();
 		Preferences prefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 

@@ -41,12 +41,14 @@ public class TestElementComparator implements IElementComparator {
 	@Override
 	public int compare(Object oldInfo, Object newInfo) {
 		if (oldInfo == null) {
-			if (newInfo == null)
+			if (newInfo == null) {
 				return CHANGED;
+			}
 			return ADDED;
 		}
-		if (newInfo == null)
+		if (newInfo == null) {
 			return REMOVED;
+		}
 		return testEquality(oldInfo, newInfo) ? K_NO_CHANGE : CHANGED;
 	}
 
@@ -64,10 +66,12 @@ public class TestElementComparator implements IElementComparator {
 	 * Makes a comparison based on equality
 	 */
 	protected boolean testEquality(Object oldInfo, Object newInfo) {
-		if (oldInfo == null && newInfo == null)
+		if (oldInfo == null && newInfo == null) {
 			return true;
-		if (oldInfo == null || newInfo == null)
+		}
+		if (oldInfo == null || newInfo == null) {
 			return false;
+		}
 
 		return oldInfo.equals(newInfo);
 	}

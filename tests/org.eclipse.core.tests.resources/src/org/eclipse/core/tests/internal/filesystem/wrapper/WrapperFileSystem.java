@@ -45,8 +45,9 @@ public class WrapperFileSystem extends FileSystem {
 	}
 
 	public static synchronized WrapperFileSystem getInstance() {
-		if (instance != null)
+		if (instance != null) {
 			return instance;
+		}
 		return instance = new WrapperFileSystem();
 	}
 
@@ -60,10 +61,11 @@ public class WrapperFileSystem extends FileSystem {
 	 *        based implementation.
 	 */
 	public static void setCustomFileStore(Class<? extends WrapperFileStore> fs) {
-		if (fs == null)
+		if (fs == null) {
 			customFS = WrapperFileStore.class;
-		else
+		} else {
 			customFS = fs;
+		}
 	}
 
 	public static URI getWrappedURI(URI baseURI) {

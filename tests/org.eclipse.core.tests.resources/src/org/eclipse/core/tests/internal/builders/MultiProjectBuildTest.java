@@ -62,8 +62,8 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	 */
 	protected void dirty(final IProject[] projects) throws CoreException {
 		getWorkspace().run((IWorkspaceRunnable) monitor -> {
-			for (int i = 0; i < projects.length; i++) {
-				IResource[] members = projects[i].members();
+			for (IProject project : projects) {
+				IResource[] members = project.members();
 				for (int j = 0; j < members.length; j++) {
 					if (members[j].getType() == IResource.FILE && !members[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 						((IFile) members[j]).setContents(getRandomContents(), true, true, null);
@@ -78,8 +78,9 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	 * Returns an array reversed.
 	 */
 	Object[] reverse(Object[] input) {
-		if (input == null)
+		if (input == null) {
 			return null;
+		}
 		int len = input.length;
 		Object[] output = new Object[len];
 		for (int i = 0; i < len; i++) {
@@ -177,27 +178,29 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 				HashSet<IProject> modified = new HashSet<>(Arrays.asList((IProject[]) args[1]));
 				modified.addAll(previouslyModified);
 				HashSet<IProject> obtained = new HashSet<>();
-				if (!builder.getReceivedDeltas().isEmpty())
+				if (!builder.getReceivedDeltas().isEmpty()) {
 					obtained.addAll(builder.getReceivedDeltas());
+				}
 				ArrayList<IProject> emptyDeltas = builder.getEmptyDeltas();
 
 				//the builder's project is implicitly requested
 				requested.add(builder.getProject());
 
-				for (int i = 0; i < allProjects.length; i++) {
-					IProject project = allProjects[i];
+				for (IProject project : allProjects) {
 					boolean wasObtained = obtained.contains(project);
 					boolean wasRequested = requested.contains(project);
 					boolean wasModified = modified.contains(project);
 					boolean wasEmpty = emptyDeltas.contains(project);
 					if (wasObtained) {
 						//every delta we obtained should have been requested and (modified or empty)
-						if (!wasRequested || !(wasModified || wasEmpty))
+						if (!wasRequested || !(wasModified || wasEmpty)) {
 							return false;
+						}
 					} else {
 						//if delta was not obtained, then must be unchanged or not requested
-						if (wasRequested && wasModified)
+						if (wasRequested && wasModified) {
 							return false;
+						}
 					}
 				}
 				return true;

@@ -37,8 +37,9 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteOpenProjectWindows() {
-		if (!(isWindows()))
+		if (!(isWindows())) {
 			return;
+		}
 
 		IProject project = null;
 		InputStream input = null;
@@ -125,8 +126,9 @@ public class Bug_026294 extends ResourceTest {
 			try {
 				assertClose(input);
 			} finally {
-				if (projectRoot != null)
+				if (projectRoot != null) {
 					ensureDoesNotExistInFileSystem(projectRoot);
+				}
 			}
 		}
 	}
@@ -136,8 +138,9 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteOpenProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported())) {
 			return;
+		}
 
 		IProject project = null;
 		File projectRoot = null;
@@ -189,10 +192,12 @@ public class Bug_026294 extends ResourceTest {
 
 			assertTrue("6.0", !projectRoot.exists());
 		} finally {
-			if (folder != null && folder.exists())
+			if (folder != null && folder.exists()) {
 				setReadOnly(folder, false);
-			if (projectRoot != null)
+			}
+			if (projectRoot != null) {
 				ensureDoesNotExistInFileSystem(projectRoot);
+			}
 		}
 	}
 
@@ -201,8 +206,9 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteClosedProjectWindows() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		IProject project = null;
 		InputStream input = null;
@@ -260,13 +266,15 @@ public class Bug_026294 extends ResourceTest {
 			assertDoesNotExistInFileSystem("7.0", projectFile);
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
 				fail("8.0", e);
 			} finally {
-				if (projectRoot != null)
+				if (projectRoot != null) {
 					ensureDoesNotExistInFileSystem(projectRoot);
+				}
 			}
 		}
 	}
@@ -278,8 +286,9 @@ public class Bug_026294 extends ResourceTest {
 	 * TODO: enable this test once bug 48321 is fixed.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX)))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX))) {
 			return;
+		}
 
 		IProject project = null;
 		File projectRoot = null;
@@ -335,10 +344,12 @@ public class Bug_026294 extends ResourceTest {
 			assertTrue("6.2", !projectRoot.exists());
 			assertDoesNotExistInFileSystem("6.3", projectFile);
 		} finally {
-			if (folder != null && folder.exists())
+			if (folder != null && folder.exists()) {
 				setReadOnly(folder, false);
-			if (projectRoot != null)
+			}
+			if (projectRoot != null) {
 				ensureDoesNotExistInFileSystem(projectRoot);
+			}
 		}
 	}
 
@@ -347,8 +358,9 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteFolderWindows() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		IProject project = null;
 		InputStream input = null;
@@ -399,8 +411,9 @@ public class Bug_026294 extends ResourceTest {
 			try {
 				assertClose(input);
 			} finally {
-				if (projectRoot != null)
+				if (projectRoot != null) {
 					ensureDoesNotExistInFileSystem(projectRoot);
+				}
 			}
 		}
 	}
@@ -410,8 +423,9 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX)))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX))) {
 			return;
+		}
 
 		IProject project = null;
 		File projectRoot = null;
@@ -457,10 +471,12 @@ public class Bug_026294 extends ResourceTest {
 			assertTrue("5.4", file1.isSynchronized(IResource.DEPTH_INFINITE));
 			assertTrue("5.5", folder.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
-			if (subFolder != null && subFolder.exists())
+			if (subFolder != null && subFolder.exists()) {
 				setReadOnly(subFolder, false);
-			if (projectRoot != null)
+			}
+			if (projectRoot != null) {
 				ensureDoesNotExistInFileSystem(projectRoot);
+			}
 		}
 	}
 

@@ -142,12 +142,14 @@ public class LazyInputStreamTest extends TestCase {
 
 	public void testVariedContent() throws IOException {
 		byte[] contents = new byte[VARIOUS_INTS.length];
-		for (int i = 0; i < contents.length; i++)
+		for (int i = 0; i < contents.length; i++) {
 			contents[i] = (byte) VARIOUS_INTS[i];
+		}
 		ByteArrayInputStream underlying = new ByteArrayInputStream(contents);
 		OpenLazyInputStream stream = new OpenLazyInputStream(underlying, 7);
-		for (int i = 0; i < VARIOUS_INTS.length; i++)
+		for (int i = 0; i < VARIOUS_INTS.length; i++) {
 			assertEquals("1.0." + i, VARIOUS_INTS[i], stream.read());
+		}
 		stream.close();
 	}
 

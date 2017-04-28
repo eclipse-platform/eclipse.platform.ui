@@ -151,9 +151,11 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 		//make sure the build spec doesn't include snow builder
 		try {
 			ICommand[] commands = project.getDescription().getBuildSpec();
-			for (int i = 0; i < commands.length; i++)
-				if (commands[i].getBuilderName().equals(SnowBuilder.BUILDER_NAME))
+			for (ICommand command : commands) {
+				if (command.getBuilderName().equals(SnowBuilder.BUILDER_NAME)) {
 					assertTrue("2.1", false);
+				}
+			}
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
@@ -190,9 +192,11 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 		//make sure the build spec doesn't include snow builder
 		try {
 			ICommand[] commands = project.getDescription().getBuildSpec();
-			for (int i = 0; i < commands.length; i++)
-				if (commands[i].getBuilderName().equals(SnowBuilder.BUILDER_NAME))
+			for (ICommand command : commands) {
+				if (command.getBuilderName().equals(SnowBuilder.BUILDER_NAME)) {
 					assertTrue("4.1", false);
+				}
+			}
 		} catch (CoreException e) {
 			fail("5.99", e);
 		}

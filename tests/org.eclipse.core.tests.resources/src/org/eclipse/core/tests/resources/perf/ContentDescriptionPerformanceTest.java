@@ -50,12 +50,13 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 	}
 
 	void assertHasExpectedDescription(String fileName, IContentDescription description) {
-		if (fileName.endsWith(DEFAULT_DESCRIPTION_FILE_NAME))
+		if (fileName.endsWith(DEFAULT_DESCRIPTION_FILE_NAME)) {
 			assertTrue("description for " + fileName, description == description.getContentType().getDefaultDescription());
-		else if (fileName.endsWith(NON_DEFAULT_DESCRIPTION_FILE_NAME))
+		} else if (fileName.endsWith(NON_DEFAULT_DESCRIPTION_FILE_NAME)) {
 			assertTrue("description for " + fileName, description != description.getContentType().getDefaultDescription());
-		else
+		} else {
 			assertNull("description for " + fileName, description);
+		}
 	}
 
 	void createFiles() throws CoreException {
@@ -81,8 +82,9 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 			protected void test() {
 				try {
 					project.accept(resource -> {
-						if (resource.getType() == IResource.FILE && !resource.getName().equals(".project"))
+						if (resource.getType() == IResource.FILE && !resource.getName().equals(".project")) {
 							assertHasExpectedDescription(resource.getName(), ((IFile) resource).getContentDescription());
+						}
 						return true;
 					});
 				} catch (CoreException e) {

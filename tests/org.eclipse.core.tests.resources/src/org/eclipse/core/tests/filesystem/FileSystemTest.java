@@ -54,9 +54,10 @@ public abstract class FileSystemTest extends CoreTest {
 		//check that the parent knows about it
 		try {
 			IFileInfo[] children = store.getParent().childInfos(EFS.NONE, getMonitor());
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].getName().equals(store.getName()))
+			for (IFileInfo element : children) {
+				if (element.getName().equals(store.getName())) {
 					return;
+				}
 			}
 			assertTrue(message, false);
 		} catch (CoreException e) {

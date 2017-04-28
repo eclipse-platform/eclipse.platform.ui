@@ -40,8 +40,9 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testFileBugOnWindows() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		InputStream input = null;
 		IProject project = null;
@@ -116,20 +117,23 @@ public class Bug_032076 extends ResourceTest {
 
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
 				fail("5.0", e);
 			} finally {
-				if (project != null)
+				if (project != null) {
 					ensureDoesNotExistInFileSystem(project);
+				}
 			}
 		}
 	}
 
 	public void testFolderBugOnWindows() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		InputStream input = null;
 		IProject project = null;
@@ -213,20 +217,23 @@ public class Bug_032076 extends ResourceTest {
 
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
 				fail("5.0", e);
 			} finally {
-				if (project != null)
+				if (project != null) {
 					ensureDoesNotExistInFileSystem(project);
+				}
 			}
 		}
 	}
 
 	public void testProjectBugOnWindows() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		IProject sourceProject = null;
 		IProject destinationProject = null;
@@ -293,15 +300,18 @@ public class Bug_032076 extends ResourceTest {
 
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
 				fail("6.0", e);
 			} finally {
-				if (sourceProject != null)
+				if (sourceProject != null) {
 					ensureDoesNotExistInFileSystem(sourceProject);
-				if (destinationProject != null)
+				}
+				if (destinationProject != null) {
 					ensureDoesNotExistInFileSystem(destinationProject);
+				}
 			}
 		}
 	}
@@ -310,8 +320,9 @@ public class Bug_032076 extends ResourceTest {
 	 * TODO: This test is currently failing and needs further investigation (bug 203078)
 	 */
 	public void _testFileBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported())) {
 			return;
+		}
 
 		IFileStore roFolderStore = null;
 		IProject project = null;
@@ -382,10 +393,12 @@ public class Bug_032076 extends ResourceTest {
 			assertTrue("4.7", sourceFile.exists());
 
 		} finally {
-			if (roFolderStore != null)
+			if (roFolderStore != null) {
 				setReadOnly(roFolderStore, false);
-			if (project != null)
+			}
+			if (project != null) {
 				ensureDoesNotExistInFileSystem(project);
+			}
 		}
 	}
 
@@ -393,8 +406,9 @@ public class Bug_032076 extends ResourceTest {
 	 * TODO: This test is currently failing and needs further investigation (bug 203078)
 	 */
 	public void _testFolderBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported())) {
 			return;
+		}
 
 		IFileStore roFolderLocation = null, destinationROFolderLocation = null;
 		IProject project = null;
@@ -480,12 +494,15 @@ public class Bug_032076 extends ResourceTest {
 			assertTrue("4.8", !file2.exists());
 
 		} finally {
-			if (roFolderLocation != null)
+			if (roFolderLocation != null) {
 				setReadOnly(roFolderLocation, false);
-			if (destinationROFolderLocation != null)
+			}
+			if (destinationROFolderLocation != null) {
 				setReadOnly(destinationROFolderLocation, false);
-			if (project != null)
+			}
+			if (project != null) {
 				ensureDoesNotExistInFileSystem(project);
+			}
 		}
 	}
 
@@ -493,8 +510,9 @@ public class Bug_032076 extends ResourceTest {
 	 * TODO: This test is currently failing and needs further investigation (bug 203078)
 	 */
 	public void _testProjectBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported())) {
 			return;
+		}
 
 		IWorkspace workspace = getWorkspace();
 		IProject sourceProject = workspace.getRoot().getProject(getUniqueString() + ".source");
@@ -572,8 +590,9 @@ public class Bug_032076 extends ResourceTest {
 		} finally {
 			setReadOnly(projectParentStore, false);
 			ensureDoesNotExistInFileSystem(sourceProject);
-			if (destinationProject != null)
+			if (destinationProject != null) {
 				ensureDoesNotExistInFileSystem(destinationProject);
+			}
 		}
 	}
 }

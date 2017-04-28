@@ -65,8 +65,9 @@ public class IFileTest extends ResourceTest {
 	 * if applicable.
 	 */
 	public boolean existsAndOpen(IContainer container) {
-		if (!container.exists())
+		if (!container.exists()) {
 			return false;
+		}
 		if (container instanceof IFolder) {
 			return true;
 		}
@@ -84,8 +85,7 @@ public class IFileTest extends ResourceTest {
 	 */
 	protected void generateInterestingFiles() throws CoreException {
 		IProject[] interestingProjects = interestingProjects();
-		for (int i = 0; i < interestingProjects.length; i++) {
-			IProject project = interestingProjects[i];
+		for (IProject project : interestingProjects) {
 			//file in project
 			generateInterestingFiles(project);
 
@@ -243,8 +243,9 @@ public class IFileTest extends ResourceTest {
 	 * Makes sure file requirements are met (out of sync, workspace only, etc).
 	 */
 	public void refreshFiles() {
-		for (IFile file : allFiles)
+		for (IFile file : allFiles) {
 			refreshFile(file);
+		}
 	}
 
 	@Override
@@ -404,11 +405,13 @@ public class IFileTest extends ResourceTest {
 				InputStream stream = (InputStream) args[1];
 				boolean force = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				file.create(stream, force, monitor);
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -421,12 +424,14 @@ public class IFileTest extends ResourceTest {
 				boolean fileExistsInFS = fileLocation != null && fileLocation.toFile().exists();
 
 				// parent must be accessible
-				if (!file.getParent().isAccessible())
+				if (!file.getParent().isAccessible()) {
 					return true;
+				}
 
 				// should never fail if force is true
-				if (force && !fileExistsInWS)
+				if (force && !fileExistsInWS) {
 					return false;
+				}
 
 				// file must not exist in WS or on filesystem.
 				return fileExistsInWS || fileExistsInFS;
@@ -838,8 +843,9 @@ public class IFileTest extends ResourceTest {
 			try {
 				content = target.getContents(false);
 			} finally {
-				if (content != null)
+				if (content != null) {
 					content.close();
+				}
 			}
 			fail("1.0");
 		} catch (CoreException e) {
@@ -851,8 +857,9 @@ public class IFileTest extends ResourceTest {
 			try {
 				content = target.getContents(true);
 			} finally {
-				if (content != null)
+				if (content != null) {
 					content.close();
+				}
 			}
 		} catch (CoreException e) {
 			fail("2.1", e);
@@ -862,8 +869,9 @@ public class IFileTest extends ResourceTest {
 			try {
 				content = target.getContents(false);
 			} finally {
-				if (content != null)
+				if (content != null) {
 					content.close();
+				}
 			}
 			fail("3.0");
 		} catch (CoreException e) {
@@ -912,16 +920,16 @@ public class IFileTest extends ResourceTest {
 			//invalid names on non-windows platforms
 			names = new String[] {};
 		}
-		for (int i = 0; i < names.length; i++) {
-			IFile file = project.getFile(Path.fromPortableString(names[i]));
-			assertTrue("1.0 " + names[i], !file.exists());
+		for (String name : names) {
+			IFile file = project.getFile(Path.fromPortableString(name));
+			assertTrue("1.0 " + name, !file.exists());
 			try {
 				file.create(getRandomContents(), true, getMonitor());
-				fail("1.1 " + names[i]);
+				fail("1.1 " + name);
 			} catch (CoreException e) {
 				// expected
 			}
-			assertTrue("1.2 " + names[i], !file.exists());
+			assertTrue("1.2 " + name, !file.exists());
 		}
 
 		//do some tests with valid names that are *almost* invalid
@@ -932,15 +940,15 @@ public class IFileTest extends ResourceTest {
 			//these names are valid on non-windows platforms
 			names = new String[] {"  a", "a  ", "foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", "hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		}
-		for (int i = 0; i < names.length; i++) {
-			IFile file = project.getFile(names[i]);
-			assertTrue("2.0 " + names[i], !file.exists());
+		for (String name : names) {
+			IFile file = project.getFile(name);
+			assertTrue("2.0 " + name, !file.exists());
 			try {
 				file.create(getRandomContents(), true, getMonitor());
 			} catch (CoreException e) {
-				fail("2.1 " + names[i], e);
+				fail("2.1 " + name, e);
 			}
-			assertTrue("2.2 " + names[i], file.exists());
+			assertTrue("2.2 " + name, file.exists());
 		}
 	}
 
@@ -968,11 +976,13 @@ public class IFileTest extends ResourceTest {
 				InputStream stream = (InputStream) args[1];
 				boolean force = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				file.setContents(stream, force, false, monitor);
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 

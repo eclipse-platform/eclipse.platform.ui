@@ -104,9 +104,9 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 		IPath[] paths = TestUtil.getTreePaths();
 		int[] depths = getTreeDepths();
 
-		for (int p = 0; p < paths.length; p++) {
-			for (int d = 0; d < depths.length; d++) {
-				doTest(paths[p], depths[d]);
+		for (IPath path : paths) {
+			for (int depth : depths) {
+				doTest(path, depth);
 			}
 		}
 	}

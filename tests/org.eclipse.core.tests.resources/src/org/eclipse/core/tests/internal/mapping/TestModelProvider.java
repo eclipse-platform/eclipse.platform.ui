@@ -34,8 +34,9 @@ public class TestModelProvider extends ModelProvider {
 
 	@Override
 	public IStatus validateChange(IResourceDelta rootDelta, IProgressMonitor monitor) {
-		if (!enabled)
+		if (!enabled) {
 			return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, ID, Status.OK_STATUS.getMessage());
+		}
 		final ChangeDescription description = new ChangeDescription();
 		try {
 			rootDelta.accept(delta -> description.recordChange(delta));

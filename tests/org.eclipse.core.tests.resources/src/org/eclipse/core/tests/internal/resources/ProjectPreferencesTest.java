@@ -212,12 +212,13 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (IOException e) {
 			fail("1.0", e);
 		} finally {
-			if (input != null)
+			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 
 		// change settings in the file
@@ -233,12 +234,13 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (IOException e) {
 			fail("2.0", e);
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 
 		IFile workspaceFile = getFileInWorkspace(project, qualifier);
@@ -425,12 +427,13 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (IOException e) {
 			fail("1.3", e);
 		} finally {
-			if (contents != null)
+			if (contents != null) {
 				try {
 					contents.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 		assertEquals("2.0", value2, props.getProperty("subnode/" + key2));
 		assertEquals("2.1", value1, props.getProperty("subnode/" + key1));
@@ -573,8 +576,9 @@ public class ProjectPreferencesTest extends ResourceTest {
 			fail("1.1", e);
 		} finally {
 			try {
-				if (output != null)
+				if (output != null) {
 					output.close();
+				}
 			} catch (IOException e) {
 				// ignore
 			}
@@ -585,10 +589,12 @@ public class ProjectPreferencesTest extends ResourceTest {
 			@Override
 			public void logging(IStatus status, String plugin) {
 				Throwable exception = status.getException();
-				if (exception == null || !(exception instanceof CoreException))
+				if (exception == null || !(exception instanceof CoreException)) {
 					return;
-				if (IResourceStatus.WORKSPACE_LOCKED == ((CoreException) exception).getStatus().getCode())
+				}
+				if (IResourceStatus.WORKSPACE_LOCKED == ((CoreException) exception).getStatus().getCode()) {
 					fail("3.0");
+				}
 			}
 		};
 
@@ -874,8 +880,9 @@ public class ProjectPreferencesTest extends ResourceTest {
 			List<String> lines = new ArrayList<>();
 			String line = br.readLine();
 			while (line != null) {
-				if ((!line.startsWith("#")) && (!line.startsWith("eclipse.preferences.version")))
+				if ((!line.startsWith("#")) && (!line.startsWith("eclipse.preferences.version"))) {
 					lines.add(line);
+				}
 				line = br.readLine();
 			}
 			br.close();
@@ -956,14 +963,16 @@ public class ProjectPreferencesTest extends ResourceTest {
 			// don't delete the prefs file, it will be used in the next step
 
 			// remove preferences for the next step
-			if (oldInstanceValue == null)
+			if (oldInstanceValue == null) {
 				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
-			else
+			} else {
 				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
-			if (oldProjectValue == null)
+			}
+			if (oldProjectValue == null) {
 				projectNode.remove(Platform.PREF_LINE_SEPARATOR);
-			else
+			} else {
 				projectNode.put(Platform.PREF_LINE_SEPARATOR, oldProjectValue);
+			}
 			instanceNode.flush();
 			projectNode.flush();
 			node.put(key, getUniqueString());
@@ -972,10 +981,11 @@ public class ProjectPreferencesTest extends ResourceTest {
 			assertEquals("4.0", recentlyUsedLineSeparator, getLineSeparatorFromFile(file));
 		} finally {
 			// revert instance preference to original value
-			if (oldInstanceValue == null)
+			if (oldInstanceValue == null) {
 				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
-			else
+			} else {
 				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			}
 			instanceNode.flush();
 			project.delete(true, getMonitor());
 		}
@@ -1081,12 +1091,13 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (IOException e) {
 			fail("1.0", e);
 		} finally {
-			if (input != null)
+			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 
 		// reset the listener
@@ -1222,15 +1233,17 @@ public class ProjectPreferencesTest extends ResourceTest {
 	 */
 	private boolean isNodeCleared(Preferences node, String[] childrenNames) throws BackingStoreException {
 		// check if the node has associate values
-		if (node.keys().length != 0)
+		if (node.keys().length != 0) {
 			return false;
+		}
 
 		// perform a subsequent check for the node children
 		Preferences childNode = null;
-		for (int i = 0; i < childrenNames.length; i++) {
-			childNode = node.node(childrenNames[i]);
-			if (!isNodeCleared(childNode, childNode.childrenNames()))
+		for (String childrenName : childrenNames) {
+			childNode = node.node(childrenName);
+			if (!isNodeCleared(childNode, childNode.childrenNames())) {
 				return false;
+			}
 		}
 		return true;
 	}

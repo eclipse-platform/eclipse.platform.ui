@@ -83,8 +83,9 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	 */
 	public void testBug232426() throws Exception {
 		// Only activate this test if testing of symbolic links is possible.
-		if (!canCreateSymLinks())
+		if (!canCreateSymLinks()) {
 			return;
+		}
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
 		getWorkspace().run((IWorkspaceRunnable) monitor -> {
@@ -113,8 +114,9 @@ public class SymlinkResourceTest extends LocalStoreTest {
 
 	public void testBug358830() throws Exception {
 		// Only activate this test if testing of symbolic links is possible.
-		if (!canCreateSymLinks())
+		if (!canCreateSymLinks()) {
 			return;
+		}
 		/* Re-use projects which are cleaned up automatically */
 		final IProject project = projects[0];
 		getWorkspace().run((IWorkspaceRunnable) monitor -> {

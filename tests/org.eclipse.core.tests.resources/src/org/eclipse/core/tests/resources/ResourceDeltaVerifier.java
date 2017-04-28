@@ -120,8 +120,9 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * @see #addExpectedChange
 	 */
 	public void addExpectedChange(IResource[] resources, int status, int changeFlags) {
-		for (int i = 0; i < resources.length; i++)
-			addExpectedChange(resources[i], null, status, changeFlags, null, null);
+		for (IResource resource : resources) {
+			addExpectedChange(resource, null, status, changeFlags, null, null);
+		}
 	}
 
 	/**
@@ -132,8 +133,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		if (resource instanceof IContainer) {
 			try {
 				IResource[] children = ((IContainer) resource).members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-				for (int i = 0; i < children.length; i++) {
-					addExpectedDeletion(children[i]);
+				for (IResource element : children) {
+					addExpectedDeletion(element);
 				}
 			} catch (CoreException e) {
 				e.printStackTrace();
@@ -223,8 +224,9 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		int status = delta.getKind();
 		int changeFlags = delta.getFlags();
 
-		if (status == IResourceDelta.NO_CHANGE)
+		if (status == IResourceDelta.NO_CHANGE) {
 			return;
+		}
 
 		if (expectedChange == null) {
 			recordMissingExpectedChange(status, changeFlags);
@@ -245,8 +247,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 		Hashtable<IResource, IResourceDelta> h = new Hashtable<>(affectedChildren.length + 1);
 
-		for (int i = 0; i < addedChildren.length; ++i) {
-			IResourceDelta childDelta1 = addedChildren[i];
+		for (IResourceDelta childDelta1 : addedChildren) {
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
@@ -259,8 +260,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			}
 		}
 
-		for (int i = 0; i < changedChildren.length; ++i) {
-			IResourceDelta childDelta1 = changedChildren[i];
+		for (IResourceDelta childDelta1 : changedChildren) {
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
@@ -273,8 +273,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			}
 		}
 
-		for (int i = 0; i < removedChildren.length; ++i) {
-			IResourceDelta childDelta1 = removedChildren[i];
+		for (IResourceDelta childDelta1 : removedChildren) {
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.get(childResource);
 			if (childDelta2 != null) {
@@ -287,8 +286,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			}
 		}
 
-		for (int i = 0; i < affectedChildren.length; ++i) {
-			IResourceDelta childDelta1 = affectedChildren[i];
+		for (IResourceDelta childDelta1 : affectedChildren) {
 			IResource childResource = childDelta1.getResource();
 			IResourceDelta childDelta2 = h.remove(childResource);
 			if (childDelta2 == null) {
@@ -306,8 +304,8 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 			recordMissingChild(childResource.getFullPath(), childDelta.getKind(), true);
 		}
 
-		for (int i = 0; i < affectedChildren.length; ++i) {
-			internalVerifyDelta(affectedChildren[i]);
+		for (IResourceDelta element : affectedChildren) {
+			internalVerifyDelta(element);
 		}
 
 		for (IResourceDelta childDelta : h.values()) {
@@ -496,8 +494,9 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	void internalVerifyDelta(IResourceDelta delta) {
 		try {
 			// FIXME: bogus
-			if (delta == null)
+			if (delta == null) {
 				return;
+			}
 			fMessage.append("Verifying delta for ");
 			fMessage.append(delta.getFullPath());
 			fMessage.append("\n");

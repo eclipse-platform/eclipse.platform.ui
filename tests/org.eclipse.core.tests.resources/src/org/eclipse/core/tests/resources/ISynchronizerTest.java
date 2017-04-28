@@ -36,8 +36,9 @@ public class ISynchronizerTest extends ResourceTest {
 
 	protected void assertEquals(String message, byte[] b1, byte[] b2) {
 		assertTrue(message, b1.length == b2.length);
-		for (int i = 0; i < b1.length; i++)
+		for (int i = 0; i < b1.length; i++) {
 			assertTrue(message, b1[i] == b2[i]);
+		}
 	}
 
 	/**
@@ -60,8 +61,9 @@ public class ISynchronizerTest extends ResourceTest {
 		final QualifiedName[] partners = synchronizer.getPartners();
 		IWorkspaceRunnable body = monitor -> {
 			IResourceVisitor visitor = resource -> {
-				for (int i = 0; i < partners.length; i++)
-					synchronizer.setSyncInfo(partners[i], resource, null);
+				for (QualifiedName partner : partners) {
+					synchronizer.setSyncInfo(partner, resource, null);
+				}
 				return true;
 			};
 			root.accept(visitor, IResource.DEPTH_INFINITE, true);
@@ -88,8 +90,9 @@ public class ISynchronizerTest extends ResourceTest {
 		// remove all registered sync partners so we don't create
 		// phantoms when we delete
 		QualifiedName[] names = getWorkspace().getSynchronizer().getPartners();
-		for (int i = 0; i < names.length; i++)
-			getWorkspace().getSynchronizer().remove(names[i]);
+		for (QualifiedName name : names) {
+			getWorkspace().getSynchronizer().remove(name);
+		}
 
 		// delete the root and everything under it
 		super.tearDown();
@@ -105,8 +108,9 @@ public class ISynchronizerTest extends ResourceTest {
 		// setup the sync bytes
 		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		IResourceVisitor visitor = resource -> {
-			if (resource.getType() == IResource.ROOT)
+			if (resource.getType() == IResource.ROOT) {
 				return true;
+			}
 			byte[] b = getRandomString().getBytes();
 			table.put(resource.getFullPath(), b);
 			synchronizer.setSyncInfo(qname, resource, b);
@@ -125,8 +129,9 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("1.0." + resource.getFullPath(), actual);
 					return true;
-				} else
+				} else {
 					assertNotNull("1.1." + resource.getFullPath(), actual);
+				}
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("1.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -143,10 +148,11 @@ public class ISynchronizerTest extends ResourceTest {
 		// delete all resources under the projects.
 		final IProject[] projects = getWorkspace().getRoot().getProjects();
 		IWorkspaceRunnable body = monitor -> {
-			for (int i = 0; i < projects.length; i++) {
-				IResource[] children = projects[i].members();
-				for (int j = 0; j < children.length; j++)
-					children[j].delete(false, getMonitor());
+			for (IProject project : projects) {
+				IResource[] children = project.members();
+				for (IResource element : children) {
+					element.delete(false, getMonitor());
+				}
 			}
 		};
 		try {
@@ -162,8 +168,9 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("3.0", actual);
 					return true;
-				} else
+				} else {
 					assertNotNull("3.1." + resource.getFullPath(), actual);
+				}
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("3.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -178,9 +185,9 @@ public class ISynchronizerTest extends ResourceTest {
 		}
 
 		// delete the projects
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				projects[i].delete(false, getMonitor());
+				project.delete(false, getMonitor());
 			} catch (CoreException e) {
 				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 				fail("4.0", e);
@@ -213,8 +220,9 @@ public class ISynchronizerTest extends ResourceTest {
 		// setup the sync bytes
 		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		IResourceVisitor visitor = resource -> {
-			if (resource.getType() == IResource.ROOT)
+			if (resource.getType() == IResource.ROOT) {
 				return true;
+			}
 			byte[] b = getRandomString().getBytes();
 			table.put(resource.getFullPath(), b);
 			synchronizer.setSyncInfo(qname, resource, b);
@@ -233,8 +241,9 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("1.0." + resource.getFullPath(), actual);
 					return true;
-				} else
+				} else {
 					assertNotNull("1.1." + resource.getFullPath(), actual);
+				}
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("1.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -251,11 +260,12 @@ public class ISynchronizerTest extends ResourceTest {
 		// delete all resources under the projects.
 		final IProject[] projects = getWorkspace().getRoot().getProjects();
 		IWorkspaceRunnable body = monitor -> {
-			for (int i = 0; i < projects.length; i++) {
-				IResource[] children = projects[i].members();
+			for (IProject project : projects) {
+				IResource[] children = project.members();
 				for (int j = 0; j < children.length; j++) {
-					if (!children[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME))
+					if (!children[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 						children[j].delete(false, getMonitor());
+					}
 				}
 			}
 		};
@@ -272,8 +282,9 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("3.0", actual);
 					return true;
-				} else
+				} else {
 					assertNotNull("3.1." + resource.getFullPath(), actual);
+				}
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("3.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -289,10 +300,11 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// remove the sync info for the immediate children of the projects.
 		body = monitor -> {
-			for (int i = 0; i < projects.length; i++) {
-				IResource[] children = projects[i].members(true);
-				for (int j = 0; j < children.length; j++)
-					synchronizer.setSyncInfo(qname, children[j], null);
+			for (IProject project : projects) {
+				IResource[] children = project.members(true);
+				for (IResource element : children) {
+					synchronizer.setSyncInfo(qname, element, null);
+				}
 			}
 		};
 		try {
@@ -304,10 +316,12 @@ public class ISynchronizerTest extends ResourceTest {
 		// there should be no sync info for any resources except the project
 		visitor = resource -> {
 			int type = resource.getType();
-			if (type == IResource.ROOT || type == IResource.PROJECT)
+			if (type == IResource.ROOT || type == IResource.PROJECT) {
 				return true;
-			if (type == IResource.FILE && resource.getParent().getType() == IResource.PROJECT && resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME))
+			}
+			if (type == IResource.FILE && resource.getParent().getType() == IResource.PROJECT && resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 				return true;
+			}
 			assertNull("5.0." + resource.getFullPath(), synchronizer.getSyncInfo(qname, resource));
 			return true;
 		};
@@ -470,8 +484,9 @@ public class ISynchronizerTest extends ResourceTest {
 		assertEquals("3.1", NUMBER_OF_PARTNERS, list.length);
 
 		// unregister all targets
-		for (int i = 0; i < NUMBER_OF_PARTNERS; i++)
+		for (int i = 0; i < NUMBER_OF_PARTNERS; i++) {
 			synchronizer.remove(partners[i]);
+		}
 		assertEquals("4.0", 0, synchronizer.getPartners().length);
 	}
 
@@ -483,8 +498,9 @@ public class ISynchronizerTest extends ResourceTest {
 		// register the sync partner and set the sync info on the resources
 		synchronizer.add(qname);
 		IResourceVisitor visitor = resource -> {
-			if (resource.getType() == IResource.ROOT)
+			if (resource.getType() == IResource.ROOT) {
 				return true;
+			}
 			try {
 				byte[] b = getRandomString().getBytes();
 				synchronizer.setSyncInfo(qname, resource, b);
@@ -515,8 +531,9 @@ public class ISynchronizerTest extends ResourceTest {
 		visitor = resource -> {
 			try {
 				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-				if (info == null)
+				if (info == null) {
 					return true;
+				}
 				IPathRequestor requestor = new IPathRequestor() {
 					@Override
 					public IPath requestPath() {
@@ -586,8 +603,9 @@ public class ISynchronizerTest extends ResourceTest {
 			if (resource.getType() == IResource.ROOT) {
 				assertNull("4.0", actual);
 				return true;
-			} else
+			} else {
 				assertNotNull("4.1." + resource.getFullPath(), actual);
+			}
 			byte[] expected = table.get(resource.getFullPath());
 			assertEquals("4.2." + resource.getFullPath(), expected, actual);
 			return true;
@@ -735,8 +753,9 @@ public class ISynchronizerTest extends ResourceTest {
 		// setup the sync bytes
 		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		IResourceVisitor visitor = resource -> {
-			if (resource.getType() == IResource.ROOT)
+			if (resource.getType() == IResource.ROOT) {
 				return true;
+			}
 			byte[] b = getRandomString().getBytes();
 			table.put(resource.getFullPath(), b);
 			return true;
@@ -749,8 +768,9 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// should not be able to set sync info before the target has been registered.
 		visitor = resource -> {
-			if (resource.getType() == IResource.ROOT)
+			if (resource.getType() == IResource.ROOT) {
 				return true;
+			}
 			try {
 				synchronizer.setSyncInfo(qname, resource, table.get(resource.getFullPath()));
 				assertTrue("1.0." + resource.getFullPath(), false);
@@ -820,8 +840,9 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("5.0", actual);
 					return true;
-				} else
+				} else {
 					assertNotNull("5.1." + resource.getFullPath(), actual);
+				}
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("5.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -837,8 +858,9 @@ public class ISynchronizerTest extends ResourceTest {
 
 		// change the info and then set it
 		visitor = resource -> {
-			if (resource.getType() == IResource.ROOT)
+			if (resource.getType() == IResource.ROOT) {
 				return true;
+			}
 			try {
 				byte[] b = getRandomString().getBytes();
 				synchronizer.setSyncInfo(qname, resource, b);
@@ -861,8 +883,9 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("7.0", actual);
 					return true;
-				} else
+				} else {
 					assertNotNull("7.1." + resource.getFullPath(), actual);
+				}
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("7.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {

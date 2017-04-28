@@ -58,25 +58,25 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 		boolean[][] flags = { {true, true, false}, {true, false, false}, {false, true, false}, {false, false, false}, {true, true, true}, {true, false, true}, {false, true, true}, {false, false, true}};
 
 		IContentDescription description = null;
-		for (int i = 0; i < flags.length; i++) {
-			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF8, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		for (boolean[] flag : flags) {
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF8, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("1.0", description);
 
-			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF16, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF16, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("2.0", description);
 
-			description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_INCORRECT, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_INCORRECT, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("3.0", description);
 		}
 
-		for (int i = 0; i < flags.length; i++) {
-			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF8, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		for (boolean[] flag : flags) {
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF8, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("1.0", description);
 
-			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF16, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF16, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("2.0", description);
 
-			description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_EMPTY, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_EMPTY, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("3.0", description);
 		}
 	}
@@ -93,11 +93,11 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 		boolean[][] flags = { {true, true, false}, {true, false, false}, {false, true, false}, {false, false, false}, {true, true, true}, {true, false, true}, {false, true, true}, {false, false, true}};
 
 		IContentDescription description = null;
-		for (int i = 0; i < flags.length; i++) {
-			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(encodingInContent, encoding, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
-			assertNotNull("1.0: " + flags[i][0] + " " + flags[i][1] + " " + flags[i][2], description);
-			assertEquals("1.1: " + flags[i][0] + " " + flags[i][1] + " " + flags[i][2], Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
-			assertEquals("1.2: " + flags[i][0] + " " + flags[i][1] + " " + flags[i][2], expectedEncoding, description.getProperty(IContentDescription.CHARSET));
+		for (boolean[] flag : flags) {
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(encodingInContent, encoding, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			assertNotNull("1.0: " + flag[0] + " " + flag[1] + " " + flag[2], description);
+			assertEquals("1.1: " + flag[0] + " " + flag[1] + " " + flag[2], Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
+			assertEquals("1.2: " + flag[0] + " " + flag[1] + " " + flag[2], expectedEncoding, description.getProperty(IContentDescription.CHARSET));
 		}
 	}
 
@@ -105,11 +105,11 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 		boolean[][] flags = { {true, true, false}, {true, false, false}, {false, true, false}, {false, false, false}, {true, true, true}, {true, false, true}, {false, true, true}, {false, false, true}};
 
 		IContentDescription description = null;
-		for (int i = 0; i < flags.length; i++) {
-			description = Platform.getContentTypeManager().getDescriptionFor(getReader(encodingInContent, flags[i][0], flags[i][1], flags[i][2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
-			assertNotNull("1.0: " + flags[i][0] + " " + flags[i][1] + " " + flags[i][2], description);
-			assertEquals("1.1: " + flags[i], Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
-			assertEquals("1.2: " + flags[i], expectedEncoding, description.getProperty(IContentDescription.CHARSET));
+		for (boolean[] flag : flags) {
+			description = Platform.getContentTypeManager().getDescriptionFor(getReader(encodingInContent, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			assertNotNull("1.0: " + flag[0] + " " + flag[1] + " " + flag[2], description);
+			assertEquals("1.1: " + flag, Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
+			assertEquals("1.2: " + flag, expectedEncoding, description.getProperty(IContentDescription.CHARSET));
 		}
 	}
 

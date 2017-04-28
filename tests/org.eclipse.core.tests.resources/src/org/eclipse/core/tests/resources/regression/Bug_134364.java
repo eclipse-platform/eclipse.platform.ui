@@ -107,7 +107,8 @@ public class Bug_134364 extends CoreTest {
 		writer.schedule();
 		writer.join();
 		done[0] = true;
-		if (failure[0] != null)
+		if (failure[0] != null) {
 			fail("1.0", failure[0]);
+		}
 	}
 }

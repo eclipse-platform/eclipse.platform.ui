@@ -41,8 +41,9 @@ public class Bug_025457 extends ResourceTest {
 
 	public void testFile() {
 		//this test only works on windows
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IFile sourceFile = source.getFile("file.txt");
 		IFile destFile = source.getFile("File.txt");
@@ -86,8 +87,9 @@ public class Bug_025457 extends ResourceTest {
 	public void testFolder() {
 		//this test only works on windows
 		//native code must also be present so move can detect the case change
-		if (!isWindows() || !isReadOnlySupported())
+		if (!isWindows() || !isReadOnlySupported()) {
 			return;
+		}
 		IProject source = getWorkspace().getRoot().getProject("SourceProject");
 		IFolder sourceFolder = source.getFolder("folder");
 		IFile sourceFile = sourceFolder.getFile("Important.txt");
@@ -128,8 +130,9 @@ public class Bug_025457 extends ResourceTest {
 
 	public void testProject() {
 		//this test only works on windows
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IProject destination = getWorkspace().getRoot().getProject("Project");
 		IFile sourceFile = source.getFile("Important.txt");

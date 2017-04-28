@@ -64,8 +64,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		// String default-default (ResourcesPlugin.PREF_BUILD_ORDER).
 		String[] descriptionProperties = {ResourcesPlugin.PREF_AUTO_BUILDING, ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, ResourcesPlugin.PREF_MAX_FILE_STATES, ResourcesPlugin.PREF_SNAPSHOT_INTERVAL};
 		List<String> defaultPropertiesList = Arrays.asList(preferences.defaultPropertyNames());
-		for (int i = 0; i < descriptionProperties.length; i++) {
-			String property = descriptionProperties[i];
+		for (String property : descriptionProperties) {
 			assertTrue("2.0 - Description property is not default: " + property, defaultPropertiesList.contains(property));
 		}
 	}

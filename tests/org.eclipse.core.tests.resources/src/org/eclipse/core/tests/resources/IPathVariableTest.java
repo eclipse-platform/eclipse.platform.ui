@@ -69,11 +69,13 @@ public class IPathVariableTest extends ResourceTest {
 
 			@Override
 			public boolean equals(Object obj) {
-				if (obj == null || !(obj instanceof Event))
+				if (obj == null || !(obj instanceof Event)) {
 					return false;
+				}
 				Event that = (Event) obj;
-				if (this.type != that.type || !this.name.equals(that.name))
+				if (this.type != that.type || !this.name.equals(that.name)) {
 					return false;
+				}
 				return this.value == null ? that.value == null : this.value.equals(that.value);
 			}
 
@@ -141,11 +143,13 @@ public class IPathVariableTest extends ResourceTest {
 		String dump() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Expected:\n");
-			for (Event event : expected)
+			for (Event event : expected) {
 				buffer.append("\t" + event + "\n");
+			}
 			buffer.append("Actual:\n");
-			for (Event event : actual)
+			for (Event event : actual) {
 				buffer.append("\t" + event + "\n");
+			}
 			return buffer.toString();
 		}
 	}
@@ -416,8 +420,9 @@ public class IPathVariableTest extends ResourceTest {
 
 	private IPath getVariableRelativePathLocation(IProject project, IPath location) {
 		URI variableRelativePathLocation = project.getPathVariableManager().getVariableRelativePathLocation(URIUtil.toURI(location));
-		if (variableRelativePathLocation != null)
+		if (variableRelativePathLocation != null) {
 			return URIUtil.toPath(variableRelativePathLocation);
+		}
 		return null;
 	}
 
@@ -714,9 +719,11 @@ public class IPathVariableTest extends ResourceTest {
 	}
 
 	boolean contains(Object[] array, Object obj) {
-		for (int i = 0; i < array.length; i++)
-			if (array[i].equals(obj))
+		for (Object element : array) {
+			if (element.equals(obj)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -727,8 +734,8 @@ public class IPathVariableTest extends ResourceTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		String[] names = manager.getPathVariableNames();
-		for (int i = 0; i < names.length; i++) {
-			manager.setValue(names[i], (IPath) null);
+		for (String name : names) {
+			manager.setValue(name, (IPath) null);
 		}
 	}
 
@@ -783,9 +790,9 @@ public class IPathVariableTest extends ResourceTest {
 		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
 		String[] varNames = pathVariableManager.getPathVariableNames();
 
-		for (int i = 0; i < varNames.length; i++) {
+		for (String varName : varNames) {
 			try {
-				pathVariableManager.getURIValue(varNames[i]);
+				pathVariableManager.getURIValue(varName);
 			} catch (Exception e) {
 				fail("3.99", e);
 			}

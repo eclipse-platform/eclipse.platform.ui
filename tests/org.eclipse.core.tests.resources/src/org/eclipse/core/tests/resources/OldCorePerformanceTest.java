@@ -66,10 +66,11 @@ public abstract class OldCorePerformanceTest extends ResourceTest {
 	 * Logs or writes string to console.
 	 */
 	public void perfLog(String s) {
-		if (logger != null)
+		if (logger != null) {
 			logger.log(s);
-		else
+		} else {
 			System.out.println(s);
+		}
 	}
 
 	/**
@@ -92,14 +93,16 @@ public abstract class OldCorePerformanceTest extends ResourceTest {
 	 */
 	public void run(PerformanceTestResult test) {
 		result = test;
-		if (test instanceof LoggingPerformanceTestResult)
+		if (test instanceof LoggingPerformanceTestResult) {
 			logger = (LoggingPerformanceTestResult) test;
+		}
 		super.run(test);
 	}
 
 	protected void startBench() {
-		for (int i = 0; i < 20; ++i)
+		for (int i = 0; i < 20; ++i) {
 			System.gc();
+		}
 		benchStart = System.currentTimeMillis();
 	}
 
@@ -116,11 +119,13 @@ public abstract class OldCorePerformanceTest extends ResourceTest {
 		long duration = System.currentTimeMillis() - benchStart;
 		double perOp = (double) duration / (double) numOperations;
 		String opString;
-		if (perOp > 100.0)
+		if (perOp > 100.0) {
 			opString = "(" + perOp + "ms per operation)"; //$NON-NLS-1$ //$NON-NLS-2$
-		else
+		}
+		else {
 			//Note us == microseconds
 			opString = "(" + (perOp * 1000.0) + "us per operation)"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		System.out.println(benchName + " took " + duration + "ms " + opString); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

@@ -68,14 +68,17 @@ public class NatureTest extends ResourceTest {
 			IProjectDescription desc = project.getDescription();
 			desc.setNatureIds(natures);
 			int flags = IResource.KEEP_HISTORY;
-			if (silent)
+			if (silent) {
 				flags |= IResource.AVOID_NATURE_CONFIG;
+			}
 			project.setDescription(desc, flags, getMonitor());
-			if (shouldFail)
+			if (shouldFail) {
 				fail(message);
+			}
 		} catch (CoreException e) {
-			if (!shouldFail)
+			if (!shouldFail) {
 				fail(message, e);
+			}
 		}
 	}
 
@@ -365,8 +368,9 @@ public class NatureTest extends ResourceTest {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					if (finished[0] == false) {
-						if (project.exists() && project.isOpen())
+						if (project.exists() && project.isOpen()) {
 							project.isNatureEnabled(NATURE_SIMPLE);
+						}
 						schedule();
 					}
 				} catch (CoreException e) {

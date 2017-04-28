@@ -62,11 +62,13 @@ public class BuilderTest extends AbstractBuilderTest {
 		super.tearDown();
 		getWorkspace().getRoot().delete(true, null);
 		TestBuilder builder = SortBuilder.getInstance();
-		if (builder != null)
+		if (builder != null) {
 			builder.reset();
+		}
 		builder = DeltaVerifierBuilder.getInstance();
-		if (builder != null)
+		if (builder != null) {
 			builder.reset();
+		}
 	}
 
 	/**
@@ -1029,8 +1031,9 @@ public class BuilderTest extends AbstractBuilderTest {
 		byte[] result = out.toByteArray();
 		byte[] expected = new byte[] {1, 2, 3, 4, 5};
 		assertEquals("2.0", expected.length, result.length);
-		for (int i = 0; i < expected.length; i++)
+		for (int i = 0; i < expected.length; i++) {
 			assertEquals("2.1." + i, expected[i], result[i]);
+		}
 	}
 
 	/**

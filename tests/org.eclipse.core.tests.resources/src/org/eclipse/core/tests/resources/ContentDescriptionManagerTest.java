@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import org.eclipse.core.runtime.CoreException;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import junit.framework.Test;
@@ -65,8 +63,9 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 
 	protected InputStream projectDescriptionWithNatures(String project, String[] natures) {
 		StringBuffer contents = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>" + project + "</name><natures>");
-		for (int i = 0; i < natures.length; i++)
-			contents.append("<nature>" + natures[i] + "</nature>");
+		for (String nature : natures) {
+			contents.append("<nature>" + nature + "</nature>");
+		}
 		contents.append("</natures></projectDescription>");
 		return new ByteArrayInputStream(contents.toString().getBytes());
 	}

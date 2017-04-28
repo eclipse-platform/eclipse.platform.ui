@@ -34,8 +34,9 @@ public class Bug440110FileStore extends MemoryFileStore {
 
 	@Override
 	public IFileStore getParent() {
-		if (path.segmentCount() == 0)
+		if (path.segmentCount() == 0) {
 			return null;
+		}
 		return new Bug440110FileStore(path.removeLastSegments(1));
 	}
 

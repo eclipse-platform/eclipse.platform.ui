@@ -190,8 +190,9 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		final IFolder folder = project.getFolder("Folder1");
 		IWorkspaceRunnable operation = monitor -> {
 			IResource[] members = folder.members();
-			for (int i = 0; i < members.length; i++)
-				((Resource) members[i]).getResourceInfo(false, true).clear(M_LOCAL_EXISTS);
+			for (IResource member : members) {
+				((Resource) member).getResourceInfo(false, true).clear(M_LOCAL_EXISTS);
+			}
 		};
 		getWorkspace().run(operation, null);
 		assertTrue("2.0", project.isLocal(IResource.DEPTH_ONE));

@@ -28,8 +28,9 @@ public class BogusFileSystem extends MemoryFileSystem {
 
 	public static BogusFileSystem getInstance() {
 		BogusFileSystem tmpInstance = instance;
-		if (tmpInstance != null)
+		if (tmpInstance != null) {
 			return tmpInstance;
+		}
 		return instance = new BogusFileSystem();
 	}
 

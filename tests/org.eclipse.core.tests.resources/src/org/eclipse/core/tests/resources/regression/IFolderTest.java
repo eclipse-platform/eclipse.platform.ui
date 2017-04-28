@@ -48,13 +48,15 @@ public class IFolderTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!isReadOnlySupported())
+		if (!isReadOnlySupported()) {
 			return;
+		}
 
 		// Only run this test on Linux for now since Windows lets you create
 		// a file within a read-only folder.
-		if (!Platform.getOS().equals(Platform.OS_LINUX))
+		if (!Platform.getOS().equals(Platform.OS_LINUX)) {
 			return;
+		}
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFolder parentFolder = project.getFolder("parentFolder");

@@ -54,8 +54,9 @@ public class ObjectMapTest extends ResourceTest {
 		ObjectMap<Integer, Object> map = new ObjectMap<>();
 		int max = 100;
 		Object[] values = new Object[max];
-		for (int i = 0; i < max; i++)
+		for (int i = 0; i < max; i++) {
 			values[i] = new Long(System.currentTimeMillis());
+		}
 
 		// add each object to the map
 		for (int i = 0; i < values.length; i++) {
@@ -92,8 +93,9 @@ public class ObjectMapTest extends ResourceTest {
 			assertTrue("2.0." + i, !map.containsKey(key));
 			assertEquals("2.1," + i, i, map.size());
 			// check that the others still exist
-			for (int j = 0; j < i; j++)
+			for (int j = 0; j < i; j++) {
 				assertTrue("2.2." + j, map.containsKey(Integer.valueOf(j)));
+			}
 		}
 
 		// all gone?
@@ -118,8 +120,9 @@ public class ObjectMapTest extends ResourceTest {
 		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
 
 		Collection<Object> result = map.values();
-		for (int i = 0; i < MAXIMUM; i++)
+		for (int i = 0; i < MAXIMUM; i++) {
 			assertTrue("2.0." + i, result.contains(values[i]));
+		}
 	}
 
 	public void testKeySet() {
@@ -131,8 +134,9 @@ public class ObjectMapTest extends ResourceTest {
 	public void testEntrySet() {
 		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
 		Set<Map.Entry<Integer, Object>> entries = map.entrySet();
-		for (int i = 0; i < MAXIMUM; i++)
+		for (int i = 0; i < MAXIMUM; i++) {
 			assertTrue("1.0." + i, contains(entries, values[i]));
+		}
 	}
 
 	/**
@@ -140,8 +144,9 @@ public class ObjectMapTest extends ResourceTest {
 	 */
 	private boolean contains(Set<Map.Entry<Integer, Object>> set, Object value) {
 		for (Map.Entry<Integer, Object> entry : set) {
-			if (entry.getValue().equals(value))
+			if (entry.getValue().equals(value)) {
 				return true;
+			}
 		}
 		return false;
 	}

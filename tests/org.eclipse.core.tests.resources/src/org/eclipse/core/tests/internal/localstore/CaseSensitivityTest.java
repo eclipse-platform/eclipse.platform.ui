@@ -52,8 +52,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			project2.open(null);
 			assertTrue("2.0", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("2.1", e);
+			}
 		}
 	}
 
@@ -75,8 +76,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			folder2.create(true, true, null);
 			assertTrue("2.0", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("2.1", e);
+			}
 		}
 
 		// create a file; should fail because has same name with different casing
@@ -107,8 +109,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			file2.create(getRandomContents(), true, null);
 			assertTrue("2.0", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("2.1", e);
+			}
 		}
 
 		// create a folder; should fail because has same name with different casing
@@ -147,8 +150,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			project1.move(Path.ROOT.append(project2.getName().toUpperCase()), true, null);
 			assertTrue("3.0", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("3.99", e);
+			}
 		}
 	}
 
@@ -178,8 +182,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			folder1.move(folder3.getFullPath(), true, null);
 			assertTrue("3.1", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("3.2", e);
+			}
 		}
 	}
 
@@ -209,8 +214,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			file1.move(file3.getFullPath(), true, null);
 			assertTrue("3.1", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("3.2", e);
+			}
 		}
 	}
 
@@ -279,8 +285,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			file1.copy(destinationProject.getFullPath().append(file1.getName()), true, null);
 			assertTrue("1.2.1", isCaseSensitive);
 		} catch (CoreException e) {
-			if (isCaseSensitive)
+			if (isCaseSensitive) {
 				fail("1.2.2", e);
+			}
 		}
 
 		// try to move the file from source project to destination project.

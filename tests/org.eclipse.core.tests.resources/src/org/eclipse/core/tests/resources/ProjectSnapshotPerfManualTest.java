@@ -51,13 +51,15 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 
 	protected int countChildren(File root) {
 		String[] children = root.list();
-		if (children == null)
+		if (children == null) {
 			return 0;
+		}
 		int result = 0;
-		for (int i = 0; i < children.length; i++) {
-			File child = new File(root, children[i]);
-			if (child.isDirectory())
+		for (String element : children) {
+			File child = new File(root, element);
+			if (child.isDirectory()) {
 				result += countChildren(child);
+			}
 			result++;
 		}
 		return result;
@@ -77,8 +79,9 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 	 */
 	public void testSnapshotImportPerformance() throws Exception {
 		// test if the test can be done in this machine
-		if (!bigSiteLocation.toFile().isDirectory())
+		if (!bigSiteLocation.toFile().isDirectory()) {
 			return;
+		}
 
 		// create common objects
 		final IProject project = getWorkspace().getRoot().getProject("MyTestProject");

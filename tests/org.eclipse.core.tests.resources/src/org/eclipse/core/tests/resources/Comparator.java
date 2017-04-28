@@ -70,10 +70,10 @@ public class Comparator {
 				checkList[i] = false;
 			}
 
-			for (int i = 0; i < obj0.length; ++i) {
+			for (Object element : obj0) {
 				boolean found = false;
 				for (int j = 0; !found && j < obj1.length; ++j) {
-					if (!checkList[j] && equals(obj0[i], obj1[j])) {
+					if (!checkList[j] && equals(element, obj1[j])) {
 						checkList[j] = true;
 						found = true;
 					}
@@ -88,17 +88,22 @@ public class Comparator {
 	}
 
 	public static boolean equals(ICommand[] cs0, ICommand[] cs1) {
-		if (cs0 == cs1)
+		if (cs0 == cs1) {
 			return true;
-		if (cs0 == null || cs1 == null)
+		}
+		if (cs0 == null || cs1 == null) {
 			return false;
-		if (cs0.length != cs1.length)
+		}
+		if (cs0.length != cs1.length) {
 			return false;
+		}
 		for (int i = 0; i < cs0.length; ++i) {
-			if (!cs0[i].getBuilderName().equals(cs1[i].getBuilderName()))
+			if (!cs0[i].getBuilderName().equals(cs1[i].getBuilderName())) {
 				return false;
-			if (!equals(cs0[i].getArguments(), cs1[i].getArguments()))
+			}
+			if (!equals(cs0[i].getArguments(), cs1[i].getArguments())) {
 				return false;
+			}
 		}
 		return true;
 	}

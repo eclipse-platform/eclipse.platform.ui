@@ -40,8 +40,9 @@ public class Bug_378156 extends ResourceTest {
 
 		@Override
 		public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-			if (cancel)
+			if (cancel) {
 				throw new OperationCanceledException();
+			}
 			jobFile.setContents(getRandomContents(), IResource.NONE, null);
 			//wait for signal
 			try {

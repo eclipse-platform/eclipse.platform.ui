@@ -23,10 +23,12 @@ import org.eclipse.core.tests.internal.filesystem.ram.MemoryFileStore;
 public class RemoteFileStore extends MemoryFileStore {
 	private static String createAuthoritySegment(String userInfo, String host, int port) {
 		String authority = host;
-		if (userInfo != null)
+		if (userInfo != null) {
 			authority = userInfo + "___" + authority;
-		if (port != -1)
+		}
+		if (port != -1) {
 			authority += "___" + port;
+		}
 		return authority;
 	}
 
@@ -50,8 +52,9 @@ public class RemoteFileStore extends MemoryFileStore {
 
 	@Override
 	public IFileStore getParent() {
-		if (remotePath.segmentCount() == 0)
+		if (remotePath.segmentCount() == 0) {
 			return null;
+		}
 		return new RemoteFileStore(userInfo, host, port, remotePath.removeLastSegments(1));
 	}
 

@@ -38,8 +38,9 @@ public class IProjectTest extends AbstractBuilderTest {
 
 		/* define a visitor that renames all resources it visits */
 		IResourceVisitor renameVisitor = resource -> {
-			if (!resource.exists())
+			if (!resource.exists()) {
 				return false;
+			}
 			IPath path = resource.getFullPath();
 			path = path.removeLastSegments(1);
 			long timestamp = System.currentTimeMillis();

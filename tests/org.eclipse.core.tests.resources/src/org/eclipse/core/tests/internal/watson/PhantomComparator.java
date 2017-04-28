@@ -69,8 +69,9 @@ public class PhantomComparator extends TestElementComparator implements IElement
 				if (oldInfo.name == null && newInfo.name == null) {
 					return K_NO_CHANGE;
 				}
-				if (oldInfo.name == null || newInfo.name == null)
+				if (oldInfo.name == null || newInfo.name == null) {
 					return CHANGED;
+				}
 				if (oldInfo.name.equals(newInfo.name)) {
 					return K_NO_CHANGE;
 				} else {

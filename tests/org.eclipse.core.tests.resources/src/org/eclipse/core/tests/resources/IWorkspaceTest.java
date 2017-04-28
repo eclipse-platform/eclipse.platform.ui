@@ -42,9 +42,11 @@ public class IWorkspaceTest extends ResourceTest {
 	 * Returns the nature descriptor with the given Id, or null if not found
 	 */
 	protected IProjectNatureDescriptor findNature(IProjectNatureDescriptor[] descriptors, String id) {
-		for (int i = 0; i < descriptors.length; i++)
-			if (descriptors[i].getNatureId().equals(id))
-				return descriptors[i];
+		for (IProjectNatureDescriptor descriptor : descriptors) {
+			if (descriptor.getNatureId().equals(id)) {
+				return descriptor;
+			}
+		}
 		return null;
 	}
 
@@ -739,8 +741,7 @@ public class IWorkspaceTest extends ResourceTest {
 			project.create(null);
 			project.open(null);
 			// define an operation which will create a bunch of resources including a project.
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				switch (resource.getType()) {
 					case IResource.FILE :
 						((IFile) resource).create(null, false, getMonitor());
@@ -799,14 +800,15 @@ public class IWorkspaceTest extends ResourceTest {
 			}, "Autobuild " + i);
 			threads[i].start();
 		}
-		for (int i = 0; i < threads.length; i++) {
+		for (Thread thread : threads) {
 			try {
-				threads[i].join();
+				thread.join();
 			} catch (InterruptedException e) {
 			}
 		}
-		if (errorPointer[0] != null)
+		if (errorPointer[0] != null) {
 			fail("1.0", errorPointer[0]);
+		}
 	}
 
 	/**
@@ -838,11 +840,11 @@ public class IWorkspaceTest extends ResourceTest {
 
 		//invalid sets shouldn't fail
 		String[][] invalid = getInvalidNatureSets();
-		for (int i = 0; i < invalid.length; i++) {
-			String[] sorted = ws.sortNatureSet(invalid[i]);
+		for (String[] element : invalid) {
+			String[] sorted = ws.sortNatureSet(element);
 			assertTrue("0.0", sorted != null);
 			//set may grow if it contained duplicates
-			assertTrue("0.1", sorted.length <= invalid[i].length);
+			assertTrue("0.1", sorted.length <= element.length);
 		}
 		String[] sorted = ws.sortNatureSet(new String[] {});
 		assertEquals("1.0", 0, sorted.length);
@@ -868,8 +870,9 @@ public class IWorkspaceTest extends ResourceTest {
 	public void testValidateEdit() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!isReadOnlySupported())
+		if (!isReadOnlySupported()) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("myfile.txt");
 		ensureExistsInWorkspace(new IResource[] {project, file}, true);
@@ -1060,8 +1063,9 @@ public class IWorkspaceTest extends ResourceTest {
 		//can overlap platform directory on another device
 		IPath anotherDevice = platformLocation.setDevice("u:");
 		assertTrue("6.1", workspace.validateProjectLocation(project, new Path("u:", "/")).isOK());
-		if (WINDOWS)
+		if (WINDOWS) {
 			assertTrue("6.2", workspace.validateProjectLocation(project, new Path("u:", "\\")).isOK());
+		}
 		assertTrue("6.4", workspace.validateProjectLocation(project, anotherDevice).isOK());
 		assertTrue("6.5", workspace.validateProjectLocation(project, anotherDevice.append("foo")).isOK());
 

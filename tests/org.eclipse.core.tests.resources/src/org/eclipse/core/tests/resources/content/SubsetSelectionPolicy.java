@@ -24,9 +24,11 @@ public class SubsetSelectionPolicy implements ISelectionPolicy {
 	@Override
 	public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
 		List<IContentType> result = new ArrayList<>(candidates.length);
-		for (int i = 0; i < candidates.length; i++)
-			if (subset.contains(candidates[i]))
-				result.add(candidates[i]);
+		for (IContentType candidate : candidates) {
+			if (subset.contains(candidate)) {
+				result.add(candidate);
+			}
+		}
 		return result.toArray(new IContentType[result.size()]);
 	}
 }

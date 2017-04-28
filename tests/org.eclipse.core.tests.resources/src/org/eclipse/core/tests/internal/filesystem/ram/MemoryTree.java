@@ -50,8 +50,9 @@ public class MemoryTree {
 		Node getChild(String name) {
 			for (int i = 0, imax = children.size(); i < imax; i++) {
 				Node child = children.get(i);
-				if (child.getInfo(false).getName().equals(name))
+				if (child.getInfo(false).getName().equals(name)) {
 					return child;
+				}
 			}
 			return null;
 		}
@@ -69,8 +70,9 @@ public class MemoryTree {
 
 		void remove(String name) {
 			Node child = getChild(name);
-			if (child != null)
+			if (child != null) {
 				children.remove(child);
+			}
 		}
 
 		@Override
@@ -113,8 +115,9 @@ public class MemoryTree {
 				System.arraycopy(oldContents, 0, newContents, 0, oldContents.length);
 				System.arraycopy(bytes, 0, newContents, oldContents.length, bytes.length);
 				this.contents = newContents;
-			} else
+			} else {
 				this.contents = bytes;
+			}
 			info.setLastModified(System.currentTimeMillis());
 			((FileInfo) info).setLength(bytes.length);
 		}
@@ -124,8 +127,9 @@ public class MemoryTree {
 		protected IFileInfo info;
 
 		Node(Node parent, String name) {
-			if (parent != null)
+			if (parent != null) {
 				((DirNode) parent).add(this);
+			}
 			FileInfo fileInfo = new FileInfo(name);
 			initializeInfo(fileInfo);
 			this.info = fileInfo;
@@ -144,8 +148,9 @@ public class MemoryTree {
 
 		void putInfo(IFileInfo newInfo, int options) {
 			if ((options & EFS.SET_ATTRIBUTES) != 0) {
-				for (int i = 0; i < ALL_ATTRIBUTES.length; i++)
-					info.setAttribute(ALL_ATTRIBUTES[i], newInfo.getAttribute(ALL_ATTRIBUTES[i]));
+				for (int element : ALL_ATTRIBUTES) {
+					info.setAttribute(element, newInfo.getAttribute(element));
+				}
 			}
 			if ((options & EFS.SET_LAST_MODIFIED) != 0) {
 				info.setLastModified(newInfo.getLastModified());
@@ -177,18 +182,21 @@ public class MemoryTree {
 
 	public String[] childNames(IPath path) {
 		Node node = findNode(path);
-		if (node == null || node.isFile())
+		if (node == null || node.isFile()) {
 			return null;
+		}
 		return ((DirNode) node).childNames();
 	}
 
 	public void delete(IPath path) {
 		//cannot delete the root
-		if (path.segmentCount() == 0)
+		if (path.segmentCount() == 0) {
 			return;
+		}
 		Node parent = findNode(path.removeLastSegments(1));
-		if (parent == null || parent.isFile())
+		if (parent == null || parent.isFile()) {
 			return;
+		}
 		((DirNode) parent).remove(path.lastSegment());
 
 	}
@@ -207,8 +215,9 @@ public class MemoryTree {
 	 */
 	public synchronized IFileInfo fetchInfo(IPath path) {
 		Node node = findNode(path);
-		if (node == null)
+		if (node == null) {
 			return new FileInfo(path.lastSegment());
+		}
 		return node.getInfo(true);
 	}
 
@@ -221,8 +230,9 @@ public class MemoryTree {
 	private Node findNode(IPath path) {
 		Node current = root;
 		for (int i = 0, imax = path.segmentCount(); i < imax; i++) {
-			if (current == null || current.isFile())
+			if (current == null || current.isFile()) {
 				return null;
+			}
 			current = ((DirNode) current).getChild(path.segment(i));
 		}
 		return current;
@@ -231,18 +241,21 @@ public class MemoryTree {
 	public Node mkdir(IPath path, boolean deep) throws CoreException {
 		Node dir = findNode(path);
 		if (dir != null) {
-			if (dir.isFile())
+			if (dir.isFile()) {
 				Policy.error("A file exists with this name: " + path);
+			}
 			return dir;
 		}
 		final IPath parentPath = path.removeLastSegments(1);
 		Node parent = findNode(parentPath);
 		if (parent != null) {
-			if (parent.isFile())
+			if (parent.isFile()) {
 				Policy.error("Parent is a file: " + path);
+			}
 		} else {
-			if (!deep)
+			if (!deep) {
 				Policy.error("Parent does not exist: " + parentPath);
+			}
 			parent = mkdir(parentPath, deep);
 		}
 		//create the child directory
@@ -251,32 +264,38 @@ public class MemoryTree {
 
 	public InputStream openInputStream(IPath path) throws CoreException {
 		Node node = findNode(path);
-		if (node == null)
+		if (node == null) {
 			Policy.error("File not found: " + path);
-		if (!node.isFile())
+		}
+		if (!node.isFile()) {
 			Policy.error("Cannot open stream on directory: " + path);
+		}
 		return ((FileNode) node).openInputStream();
 	}
 
 	public OutputStream openOutputStream(IPath path, int options) throws CoreException {
 		Node node = findNode(path);
 		//if we already have such a file, just open a stream on it
-		if (node instanceof DirNode)
+		if (node instanceof DirNode) {
 			Policy.error("Could not create file: " + path);
-		if (node instanceof FileNode)
+		}
+		if (node instanceof FileNode) {
 			return ((FileNode) node).openOutputStream(options);
+		}
 		//if the parent exists we can create the file
 		Node parent = findNode(path.removeLastSegments(1));
-		if (!(parent instanceof DirNode))
+		if (!(parent instanceof DirNode)) {
 			Policy.error("Could not create file: " + path);
+		}
 		node = new FileNode(parent, path.lastSegment());
 		return ((FileNode) node).openOutputStream(options);
 	}
 
 	public void putInfo(IPath path, IFileInfo info, int options) throws CoreException {
 		Node node = findNode(path);
-		if (node == null)
+		if (node == null) {
 			Policy.error("File not found: " + path);
+		}
 		node.putInfo(info, options);
 	}
 }

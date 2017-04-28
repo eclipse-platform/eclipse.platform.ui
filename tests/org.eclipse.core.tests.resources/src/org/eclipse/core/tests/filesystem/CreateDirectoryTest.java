@@ -147,11 +147,13 @@ public class CreateDirectoryTest extends FileSystemTest {
 	}
 
 	public void testParentDeviceNotExistsInLocalFile() {
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
 			return;
+		}
 		String device = findNonExistingDevice();
-		if (device == null)
+		if (device == null) {
 			return;
+		}
 
 		try {
 			IFileStore localFileTopDir = EFS.getStore(URI.create("file:/" + device + ":" + getUniqueString()));

@@ -33,8 +33,9 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 	}
 
 	public void addExpected(IResource[] resources) {
-		for (int i = 0; i < resources.length; i++)
-			expected.add(resources[i]);
+		for (IResource resource : resources) {
+			expected.add(resource);
+		}
 	}
 
 	@Override
@@ -52,8 +53,9 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 	}
 
 	private void verify() {
-		if (verified)
+		if (verified) {
 			return;
+		}
 		// Add messages for the resources which weren't visited but were expected.
 		for (IResource resource : expected) {
 			success = false;

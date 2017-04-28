@@ -33,8 +33,9 @@ public class RefreshLocalJavaFileBuilder extends TestBuilder {
 		IPath localLocation = project.getLocation().append(file.getName());
 		java.io.File localFile = localLocation.toFile();
 		try {
-			if (localFile.exists())
+			if (localFile.exists()) {
 				localFile.delete();
+			}
 			FileOutputStream out = new FileOutputStream(localFile);
 			out.write("public class A {}".getBytes());
 			out.close();

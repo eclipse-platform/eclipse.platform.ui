@@ -30,15 +30,20 @@ public class MyContentDescriber implements IContentDescriber {
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] signature = SIGNATURE.getBytes("US-ASCII");
 		byte[] buffer = new byte[signature.length];
-		if (contents.read(buffer) != buffer.length)
+		if (contents.read(buffer) != buffer.length) {
 			return INVALID;
-		for (int i = 0; i < signature.length; i++)
-			if (signature[i] != buffer[i])
+		}
+		for (int i = 0; i < signature.length; i++) {
+			if (signature[i] != buffer[i]) {
 				return INVALID;
-		if (description == null)
+			}
+		}
+		if (description == null) {
 			return VALID;
-		for (int i = 0; i < MY_OPTIONS.length; i++)
+		}
+		for (int i = 0; i < MY_OPTIONS.length; i++) {
 			setIfRequested(description, i);
+		}
 		return VALID;
 	}
 
@@ -48,7 +53,8 @@ public class MyContentDescriber implements IContentDescriber {
 	}
 
 	private void setIfRequested(IContentDescription description, int option) {
-		if (description.isRequested(MY_OPTIONS[option]))
+		if (description.isRequested(MY_OPTIONS[option])) {
 			description.setProperty(MY_OPTIONS[option], MY_OPTION_VALUES[option]);
+		}
 	}
 }

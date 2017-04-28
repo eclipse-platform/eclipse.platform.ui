@@ -254,13 +254,14 @@ public class WorkspaceTest extends ResourceTest {
 		final IProject project = getWorkspace().getRoot().getProject("bar");
 		final IResource[] resources = buildResources(project, new String[] {"a/", "a/b"});
 		IWorkspaceRunnable body = monitor -> {
-			if (!project.exists())
+			if (!project.exists()) {
 				project.create(null);
-			if (!project.isOpen())
+			}
+			if (!project.isOpen()) {
 				project.open(null);
+			}
 			// define an operation which will create a bunch of resources including a project.
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				switch (resource.getType()) {
 					case IResource.FILE :
 						((IFile) resource).create(null, false, getMonitor());
@@ -328,8 +329,9 @@ public class WorkspaceTest extends ResourceTest {
 
 	public void testWorkingLocationDeletion_bug433061() throws Throwable {
 		// Only activate this test if testing of symbolic links is possible.
-		if (!canCreateSymLinks())
+		if (!canCreateSymLinks()) {
 			return;
+		}
 		IProject project = getTestProject();
 		project.create(null, getMonitor());
 		IPath workingLocation = project.getWorkingLocation("org.eclipse.core.tests.resources");

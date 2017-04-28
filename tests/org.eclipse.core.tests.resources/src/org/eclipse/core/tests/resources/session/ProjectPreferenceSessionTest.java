@@ -70,13 +70,16 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 		ILogListener listener = new ILogListener() {
 			@Override
 			public void logging(IStatus status, String plugin) {
-				if (!Platform.PI_RUNTIME.equals(plugin))
+				if (!Platform.PI_RUNTIME.equals(plugin)) {
 					return;
+				}
 				Throwable t = status.getException();
-				if (t == null)
+				if (t == null) {
 					return;
-				if (t instanceof BackingStoreException)
+				}
+				if (t instanceof BackingStoreException) {
 					fail("1.0", t);
+				}
 			}
 		};
 		try {

@@ -120,8 +120,9 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			} catch (InterruptedException e1) {
 				//ignore
 			}
-			if (error[0] != null)
+			if (error[0] != null) {
 				fail("3.0", error[0]);
+			}
 		} finally {
 			getWorkspace().removeResourceChangeListener(listener);
 		}
@@ -261,17 +262,21 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 
 			//ensure no jobs failed
 			IStatus result = jobOne.getResult();
-			if (!result.isOK())
+			if (!result.isOK()) {
 				fail("1.0", new CoreException(result));
+			}
 			result = jobTwo.getResult();
-			if (!result.isOK())
+			if (!result.isOK()) {
 				fail("1.1", new CoreException(result));
+			}
 			result = jobThree.getResult();
-			if (!result.isOK())
+			if (!result.isOK()) {
 				fail("1.2", new CoreException(result));
+			}
 
-			if (failure[0] != null)
+			if (failure[0] != null) {
 				fail("1.3", failure[0]);
+			}
 		} finally {
 			//ensure listener is removed
 			workspace.removeResourceChangeListener(listener);

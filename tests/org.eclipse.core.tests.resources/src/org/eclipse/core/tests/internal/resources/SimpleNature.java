@@ -23,8 +23,9 @@ public class SimpleNature extends TestNature {
 	 * Returns the instance of this nature.
 	 */
 	public static SimpleNature getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			new SimpleNature();
+		}
 		return instance;
 	}
 

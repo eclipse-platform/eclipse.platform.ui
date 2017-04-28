@@ -145,8 +145,9 @@ public class LinkedResourceTest extends ResourceTest {
 			desc.setLocation(Path.fromOSString(dir.getAbsolutePath()));
 			existingProjectInSubDirectory.create(desc, getMonitor());
 		}
-		if (!existingProjectInSubDirectory.isOpen())
+		if (!existingProjectInSubDirectory.isOpen()) {
 			existingProjectInSubDirectory.open(getMonitor());
+		}
 	}
 
 	@Override
@@ -196,10 +197,11 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 
 		//try to create with local path that can never exist
-		if (isWindows())
+		if (isWindows()) {
 			location = new Path("b:\\does\\not\\exist");
-		else
+		} else {
 			location = new Path("/dev/null/does/not/exist");
+		}
 		location = FileUtil.canonicalPath(location);
 		try {
 			folder.createLink(location, IResource.NONE, getMonitor());
@@ -349,16 +351,18 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					source.createLink(localFile, IResource.NONE, null);
 					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -368,17 +372,22 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
-				if (source.equals(destination))
+				}
+				if (source.equals(destination)) {
 					return true;
+				}
 				IResource parent = destination.getParent();
-				if (!isDeep && parent == null)
+				if (!isDeep && parent == null) {
 					return true;
-				if (!parent.isAccessible())
+				}
+				if (!parent.isAccessible()) {
 					return true;
-				if (destination.exists())
+				}
+				if (destination.exists()) {
 					return true;
+				}
 				//passed all failure cases so it should succeed
 				return false;
 			}
@@ -389,27 +398,36 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
-				if (!destination.exists())
+				}
+				if (!destination.exists()) {
 					return false;
+				}
 				//destination should only be linked for a shallow copy
 				if (isDeep) {
-					if (destination.isLinked())
+					if (destination.isLinked()) {
 						return false;
-					if (source.getLocation().equals(destination.getLocation()))
+					}
+					if (source.getLocation().equals(destination.getLocation())) {
 						return false;
-					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation()))
+					}
+					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation())) {
 						return false;
+					}
 				} else {
-					if (!destination.isLinked())
+					if (!destination.isLinked()) {
 						return false;
-					if (!source.getLocation().equals(destination.getLocation()))
+					}
+					if (!source.getLocation().equals(destination.getLocation())) {
 						return false;
-					if (!source.getRawLocation().equals(destination.getRawLocation()))
+					}
+					if (!source.getRawLocation().equals(destination.getRawLocation())) {
 						return false;
-					if (!source.getLocationURI().equals(destination.getLocationURI()))
+					}
+					if (!source.getLocationURI().equals(destination.getLocationURI())) {
 						return false;
+					}
 				}
 				return true;
 			}
@@ -441,16 +459,18 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					source.createLink(localFolder, IResource.NONE, null);
 					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -460,19 +480,25 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
+				}
 				IResource parent = destination.getParent();
-				if (destination.getType() == IResource.PROJECT)
+				if (destination.getType() == IResource.PROJECT) {
 					return true;
-				if (source.equals(destination))
+				}
+				if (source.equals(destination)) {
 					return true;
-				if (!isDeep && parent == null)
+				}
+				if (!isDeep && parent == null) {
 					return true;
-				if (!parent.isAccessible())
+				}
+				if (!parent.isAccessible()) {
 					return true;
-				if (destination.exists())
+				}
+				if (destination.exists()) {
 					return true;
+				}
 				//passed all failure case so it should succeed
 				return false;
 			}
@@ -483,27 +509,36 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
-				if (!destination.exists())
+				}
+				if (!destination.exists()) {
 					return false;
+				}
 				//destination should only be linked for a shallow copy
 				if (isDeep) {
-					if (destination.isLinked())
+					if (destination.isLinked()) {
 						return false;
-					if (source.getLocation().equals(destination.getLocation()))
+					}
+					if (source.getLocation().equals(destination.getLocation())) {
 						return false;
-					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation()))
+					}
+					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation())) {
 						return false;
+					}
 				} else {
-					if (!destination.isLinked())
+					if (!destination.isLinked()) {
 						return false;
-					if (!source.getLocation().equals(destination.getLocation()))
+					}
+					if (!source.getLocation().equals(destination.getLocation())) {
 						return false;
-					if (!source.getLocationURI().equals(destination.getLocationURI()))
+					}
+					if (!source.getLocationURI().equals(destination.getLocationURI())) {
 						return false;
-					if (!source.getRawLocation().equals(destination.getRawLocation()))
+					}
+					if (!source.getRawLocation().equals(destination.getRawLocation())) {
 						return false;
+					}
 				}
 				return true;
 			}
@@ -629,8 +664,9 @@ public class LinkedResourceTest extends ResourceTest {
 			try {
 				IResource[] srcChildren = existingProject.members();
 				for (int i = 0; i < srcChildren.length; i++) {
-					if (!srcChildren[i].equals(linkedFile))
+					if (!srcChildren[i].equals(linkedFile)) {
 						assertNotNull("6.3." + i, destination.findMember(srcChildren[i].getProjectRelativePath()));
+					}
 				}
 			} catch (CoreException e) {
 				fail("6.4", e);
@@ -655,8 +691,9 @@ public class LinkedResourceTest extends ResourceTest {
 			try {
 				IResource[] srcChildren = existingProject.members();
 				for (int i = 0; i < srcChildren.length; i++) {
-					if (!srcChildren[i].equals(linkedFile))
+					if (!srcChildren[i].equals(linkedFile)) {
 						assertNotNull("6.8." + i, destination.findMember(srcChildren[i].getProjectRelativePath()));
+					}
 				}
 			} catch (CoreException e) {
 				fail("6.99", e);
@@ -697,12 +734,14 @@ public class LinkedResourceTest extends ResourceTest {
 		try {
 			link.createLink(localFolder, IResource.NONE, getMonitor());
 			//should fail on case insensitive platforms
-			if (!isCaseSensitive(variant))
+			if (!isCaseSensitive(variant)) {
 				fail("1.0");
+			}
 		} catch (CoreException e) {
 			//should not fail on case sensitive platforms
-			if (isCaseSensitive(variant))
+			if (isCaseSensitive(variant)) {
 				fail("1.1", e);
+			}
 		}
 
 	}
@@ -977,8 +1016,9 @@ public class LinkedResourceTest extends ResourceTest {
 	 */
 	public void testFindFilesForLocationCaseVariant() {
 		//this test only applies to file systems with a device in the path
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IFolder link = nonExistingFolderInExistingProject;
 		IPath localLocation = resolve(localFolder);
 		IPath upperCase = localLocation.setDevice(localLocation.getDevice().toUpperCase());
@@ -1213,15 +1253,17 @@ public class LinkedResourceTest extends ResourceTest {
 				IFile file = (IFile) args[0];
 				IPath location = (IPath) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					file.createLink(location, IResource.NONE, monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -1230,27 +1272,34 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
+				}
 				//This resource already exists in the workspace
-				if (resource.exists())
+				if (resource.exists()) {
 					return true;
+				}
 				IPath resolvedLocation = resolve(location);
 				//The corresponding location in the local file system does not exist.
-				if (!resolvedLocation.toFile().exists())
+				if (!resolvedLocation.toFile().exists()) {
 					return true;
+				}
 				//The workspace contains a resource of a different type at the same path as this resource
-				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
+				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null) {
 					return true;
+				}
 				//The parent of this resource does not exist.
-				if (!resource.getParent().isAccessible())
+				if (!resource.getParent().isAccessible()) {
 					return true;
+				}
 				//The name of this resource is not valid (according to IWorkspace.validateName)
-				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
+				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK()) {
 					return true;
+				}
 				//The corresponding location in the local file system is occupied by a directory (as opposed to a file)
-				if (resolvedLocation.toFile().isDirectory())
+				if (resolvedLocation.toFile().isDirectory()) {
 					return true;
+				}
 				//passed all failure case so it should succeed
 				return false;
 			}
@@ -1260,15 +1309,19 @@ public class LinkedResourceTest extends ResourceTest {
 				IFile resource = (IFile) args[0];
 				IPath location = (IPath) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
+				}
 				IPath resolvedLocation = resolve(location);
-				if (!resource.exists() || !resolvedLocation.toFile().exists())
+				if (!resource.exists() || !resolvedLocation.toFile().exists()) {
 					return false;
-				if (!resource.getLocation().equals(resolvedLocation))
+				}
+				if (!resource.getLocation().equals(resolvedLocation)) {
 					return false;
-				if (!resource.isSynchronized(IResource.DEPTH_INFINITE))
+				}
+				if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
 					return false;
+				}
 				return true;
 			}
 		}.performTest(inputs);
@@ -1300,15 +1353,17 @@ public class LinkedResourceTest extends ResourceTest {
 				IFolder folder = (IFolder) args[0];
 				IPath location = (IPath) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					folder.createLink(location, IResource.NONE, monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -1317,26 +1372,33 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
+				}
 				//This resource already exists in the workspace
-				if (resource.exists())
+				if (resource.exists()) {
 					return true;
+				}
 				//The corresponding location in the local file system does not exist.
-				if (!resolve(location).toFile().exists())
+				if (!resolve(location).toFile().exists()) {
 					return true;
+				}
 				//The workspace contains a resource of a different type at the same path as this resource
-				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
+				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null) {
 					return true;
+				}
 				//The parent of this resource does not exist.
-				if (!resource.getParent().isAccessible())
+				if (!resource.getParent().isAccessible()) {
 					return true;
+				}
 				//The name of this resource is not valid (according to IWorkspace.validateName)
-				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
+				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK()) {
 					return true;
+				}
 				//The corresponding location in the local file system is occupied by a file (as opposed to a directory)
-				if (resolve(location).toFile().isFile())
+				if (resolve(location).toFile().isFile()) {
 					return true;
+				}
 				//passed all failure case so it should succeed
 				return false;
 			}
@@ -1346,16 +1408,20 @@ public class LinkedResourceTest extends ResourceTest {
 				IFolder resource = (IFolder) args[0];
 				IPath location = (IPath) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
+				}
 				IPath resolvedLocation = resolve(location);
-				if (!resource.exists() || !resolvedLocation.toFile().exists())
+				if (!resource.exists() || !resolvedLocation.toFile().exists()) {
 					return false;
-				if (!resource.getLocation().equals(resolvedLocation))
+				}
+				if (!resource.getLocation().equals(resolvedLocation)) {
 					return false;
+				}
 				//ensure child exists
-				if (!resource.getFile(childName).exists())
+				if (!resource.getFile(childName).exists()) {
 					return false;
+				}
 				return true;
 			}
 		}.performTest(inputs);
@@ -1385,8 +1451,9 @@ public class LinkedResourceTest extends ResourceTest {
 	 */
 	public void testLocationWithColon() {
 		//windows does not allow a location with colon in the name
-		if (isWindows())
+		if (isWindows()) {
 			return;
+		}
 		IFolder folder = nonExistingFolderInExistingProject;
 		try {
 			//Note that on *nix, "c:/temp" is a relative path with two segments
@@ -1462,16 +1529,18 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					source.createLink(localFile, IResource.NONE, null);
 					source.move(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -1481,19 +1550,25 @@ public class LinkedResourceTest extends ResourceTest {
 				IResource destination = (IResource) args[1];
 				boolean isDeep = ((Boolean) args[2]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
+				}
 				IResource parent = destination.getParent();
-				if (!isDeep && parent == null)
+				if (!isDeep && parent == null) {
 					return true;
-				if (!parent.isAccessible())
+				}
+				if (!parent.isAccessible()) {
 					return true;
-				if (source.equals(destination))
+				}
+				if (source.equals(destination)) {
 					return true;
-				if (source.getType() != destination.getType())
+				}
+				if (source.getType() != destination.getType()) {
 					return true;
-				if (destination.exists())
+				}
+				if (destination.exists()) {
 					return true;
+				}
 				//passed all failure case so it should succeed
 				return false;
 			}
@@ -1505,25 +1580,33 @@ public class LinkedResourceTest extends ResourceTest {
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
 				IPath sourceLocation = resolve(localFile);
 				URI sourceLocationURI = URIUtil.toURI(sourceLocation);
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
-				if (!destination.exists())
+				}
+				if (!destination.exists()) {
 					return false;
+				}
 				//destination should only be linked for a shallow move
 				if (isDeep) {
-					if (destination.isLinked())
+					if (destination.isLinked()) {
 						return false;
-					if (resolve(localFile).equals(destination.getLocation()))
+					}
+					if (resolve(localFile).equals(destination.getLocation())) {
 						return false;
-					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation()))
+					}
+					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation())) {
 						return false;
+					}
 				} else {
-					if (!destination.isLinked())
+					if (!destination.isLinked()) {
 						return false;
-					if (!sourceLocation.equals(destination.getLocation()))
+					}
+					if (!sourceLocation.equals(destination.getLocation())) {
 						return false;
-					if (!sourceLocationURI.equals(destination.getLocationURI()))
+					}
+					if (!sourceLocationURI.equals(destination.getLocationURI())) {
 						return false;
+					}
 				}
 				return true;
 			}
@@ -1553,16 +1636,18 @@ public class LinkedResourceTest extends ResourceTest {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					source.createLink(localFolder, IResource.NONE, null);
 					source.move(destination.getFullPath(), IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -1571,19 +1656,25 @@ public class LinkedResourceTest extends ResourceTest {
 				IFolder source = (IFolder) args[0];
 				IResource destination = (IResource) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
+				}
 				IResource parent = destination.getParent();
-				if (parent == null)
+				if (parent == null) {
 					return true;
-				if (source.equals(destination))
+				}
+				if (source.equals(destination)) {
 					return true;
-				if (source.getType() != destination.getType())
+				}
+				if (source.getType() != destination.getType()) {
 					return true;
-				if (!parent.isAccessible())
+				}
+				if (!parent.isAccessible()) {
 					return true;
-				if (destination.exists())
+				}
+				if (destination.exists()) {
 					return true;
+				}
 				//passed all failure case so it should succeed
 				return false;
 			}
@@ -1592,14 +1683,18 @@ public class LinkedResourceTest extends ResourceTest {
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource destination = (IResource) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
-				if (!destination.exists())
+				}
+				if (!destination.exists()) {
 					return false;
-				if (!destination.isLinked())
+				}
+				if (!destination.isLinked()) {
 					return false;
-				if (!resolve(localFolder).equals(destination.getLocation()))
+				}
+				if (!resolve(localFolder).equals(destination.getLocation())) {
 					return false;
+				}
 				return true;
 			}
 		}.performTest(inputs);
@@ -1972,8 +2067,9 @@ public class LinkedResourceTest extends ResourceTest {
 
 	public void testLinkedFolderWithSymlink_Bug338010() {
 		// Only activate this test if testing of symbolic links is possible.
-		if (!canCreateSymLinks())
+		if (!canCreateSymLinks()) {
 			return;
+		}
 		IPath baseLocation = getRandomLocation();
 		IPath resolvedBaseLocation = resolve(baseLocation);
 		deleteOnTearDown(resolvedBaseLocation);
@@ -2001,8 +2097,9 @@ public class LinkedResourceTest extends ResourceTest {
 	 */
 	public void testDeleteLinkTarget_Bug507084() throws Exception {
 		// Only activate this test if testing of symbolic links is possible.
-		if (!canCreateSymLinks())
+		if (!canCreateSymLinks()) {
 			return;
+		}
 		IPath baseLocation = getRandomLocation();
 		IPath resolvedBaseLocation = resolve(baseLocation);
 		deleteOnTearDown(resolvedBaseLocation);

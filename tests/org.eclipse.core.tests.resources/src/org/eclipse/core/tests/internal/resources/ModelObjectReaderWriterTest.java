@@ -175,10 +175,11 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 				String key = entry.getKey();
 				String value = entry.getValue();
 				String value2 = args2.get(key);
-				if (value == null)
+				if (value == null) {
 					assertNull(errorTag + ".2." + (i + 1) + x, value2);
-				else
+				} else {
 					assertTrue(errorTag + ".3." + (i + 1) + x, args.get(key).equals((args2.get(key))));
+				}
 				x++;
 			}
 		}
@@ -217,8 +218,9 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			// The old reader previously returned null for an empty comment.  We
 			// are changing this so it now returns an empty string.
 			assertEquals(errorTag + ".1", 0, description2.getComment().length());
-		} else
+		} else {
 			assertTrue(errorTag + ".2", description.getComment().equals(description2.getComment()));
+		}
 
 		IProject[] projects = description.getReferencedProjects();
 		IProject[] projects2 = description2.getReferencedProjects();
@@ -246,9 +248,11 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	protected boolean contains(Object key, Object[] array) {
-		for (int i = 0; i < array.length; i++)
-			if (key.equals(array[i]))
+		for (Object element : array) {
+			if (key.equals(element)) {
 				return true;
+			}
+		}
 		return false;
 	}
 

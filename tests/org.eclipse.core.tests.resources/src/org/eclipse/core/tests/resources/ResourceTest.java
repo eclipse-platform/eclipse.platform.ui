@@ -119,8 +119,9 @@ public abstract class ResourceTest extends CoreTest {
 				} catch (IOException e) {
 					fail("Failed to read during transferStreams", e);
 				}
-				if (bytesRead == -1)
+				if (bytesRead == -1) {
 					break;
+				}
 				try {
 					destination.write(buffer, 0, bytesRead);
 				} catch (IOException e) {
@@ -191,8 +192,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * local store.
 	 */
 	public void assertDoesNotExistInFileSystem(String message, IResource[] resources) {
-		for (int i = 0; i < resources.length; i++)
-			assertDoesNotExistInFileSystem(message, resources[i]);
+		for (IResource resource : resources) {
+			assertDoesNotExistInFileSystem(message, resource);
+		}
 	}
 
 	/**
@@ -227,8 +229,8 @@ public abstract class ResourceTest extends CoreTest {
 	 * in the workspace resource info tree.
 	 */
 	public void assertDoesNotExistInWorkspace(String message, IResource[] resources) {
-		for (int i = 0; i < resources.length; i++) {
-			assertDoesNotExistInWorkspace(message, resources[i]);
+		for (IResource resource : resources) {
+			assertDoesNotExistInWorkspace(message, resource);
 		}
 	}
 
@@ -264,8 +266,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * Assert that each element in the resource array  exists in the local store.
 	 */
 	public void assertExistsInFileSystem(String message, IResource[] resources) {
-		for (int i = 0; i < resources.length; i++)
-			assertExistsInFileSystem(message, resources[i]);
+		for (IResource resource : resources) {
+			assertExistsInFileSystem(message, resource);
+		}
 	}
 
 	/**
@@ -324,8 +327,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * workspace resource info tree.
 	 */
 	public void assertExistsInWorkspace(String message, IResource[] resources) {
-		for (int i = 0; i < resources.length; i++)
-			assertExistsInWorkspace(message, resources[i], false);
+		for (IResource resource : resources) {
+			assertExistsInWorkspace(message, resource, false);
+		}
 	}
 
 	/**
@@ -333,8 +337,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * workspace resource info tree.
 	 */
 	public void assertExistsInWorkspace(String message, IResource[] resources, boolean phantom) {
-		for (int i = 0; i < resources.length; i++)
-			assertExistsInWorkspace(message, resources[i], phantom);
+		for (IResource resource : resources) {
+			assertExistsInWorkspace(message, resource, phantom);
+		}
 	}
 
 	/**
@@ -361,10 +366,11 @@ public abstract class ResourceTest extends CoreTest {
 					result[i] = getWorkspace().getRoot().getProject(fullPath.segment(0));
 					break;
 				default :
-					if (hierarchy[i].charAt(hierarchy[i].length() - 1) == IPath.SEPARATOR)
+					if (hierarchy[i].charAt(hierarchy[i].length() - 1) == IPath.SEPARATOR) {
 						result[i] = root.getFolder(path);
-					else
+					} else {
 						result[i] = root.getFile(path);
+					}
 					break;
 			}
 		}
@@ -377,8 +383,9 @@ public abstract class ResourceTest extends CoreTest {
 		getWorkspace().run((IWorkspaceRunnable) monitor -> {
 			getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
 			//clear stores in workspace runnable to avoid interaction with resource jobs
-			for (int i = 0; i < toDelete.length; i++)
-				clear(toDelete[i]);
+			for (IFileStore element : toDelete) {
+				clear(element);
+			}
 		}, null);
 		getWorkspace().save(true, null);
 		//don't leak builder jobs, since they may affect subsequent tests
@@ -399,11 +406,13 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public boolean compareContent(InputStream a, InputStream b) {
 		int c, d;
-		if (a == null && b == null)
+		if (a == null && b == null) {
 			return true;
+		}
 		try {
-			if (a == null || b == null)
+			if (a == null || b == null) {
 				return false;
+			}
 			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1)) {
 				//body not needed
 			}
@@ -430,10 +439,12 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	protected void create(final IResource resource, boolean local) throws CoreException {
-		if (resource == null || resource.exists())
+		if (resource == null || resource.exists()) {
 			return;
-		if (!resource.getParent().exists())
+		}
+		if (!resource.getParent().exists()) {
 			create(resource.getParent(), local);
+		}
 		switch (resource.getType()) {
 			case IResource.FILE :
 				((IFile) resource).create(local ? new ByteArrayInputStream(new byte[0]) : null, true, getMonitor());
@@ -516,16 +527,18 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureDoesNotExistInFileSystem(IResource resource) {
 		IPath path = resource.getLocation();
-		if (path != null)
+		if (path != null) {
 			ensureDoesNotExistInFileSystem(path.toFile());
+		}
 	}
 
 	/**
 	 * Delete the resources in the array from the local store.
 	 */
 	public void ensureDoesNotExistInFileSystem(IResource[] resources) {
-		for (int i = 0; i < resources.length; i++)
-			ensureDoesNotExistInFileSystem(resources[i]);
+		for (IResource resource : resources) {
+			ensureDoesNotExistInFileSystem(resource);
+		}
 	}
 
 	/**
@@ -533,8 +546,9 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureDoesNotExistInWorkspace(IResource resource) {
 		try {
-			if (resource.exists())
+			if (resource.exists()) {
 				resource.delete(true, null);
+			}
 		} catch (CoreException e) {
 			fail("#ensureDoesNotExistInWorkspace(IResource): " + resource.getFullPath(), e);
 		}
@@ -546,8 +560,9 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureDoesNotExistInWorkspace(final IResource[] resources) {
 		IWorkspaceRunnable body = monitor -> {
-			for (int i = 0; i < resources.length; i++)
-				ensureDoesNotExistInWorkspace(resources[i]);
+			for (IResource resource : resources) {
+				ensureDoesNotExistInWorkspace(resource);
+			}
 		};
 		try {
 			getWorkspace().run(body, null);
@@ -569,9 +584,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * manager to ensure that we have a correct Path -> File mapping.
 	 */
 	public void ensureExistsInFileSystem(IResource resource) {
-		if (resource instanceof IFile)
+		if (resource instanceof IFile) {
 			ensureExistsInFileSystem((IFile) resource);
-		else {
+		} else {
 			try {
 				((Resource) resource).getStore().mkdir(EFS.NONE, null);
 			} catch (CoreException e) {
@@ -584,16 +599,18 @@ public abstract class ResourceTest extends CoreTest {
 	 * Create the each resource of the array in the local store.
 	 */
 	public void ensureExistsInFileSystem(IResource[] resources) {
-		for (int i = 0; i < resources.length; i++)
-			ensureExistsInFileSystem(resources[i]);
+		for (IResource resource : resources) {
+			ensureExistsInFileSystem(resource);
+		}
 	}
 
 	/**
 	 * Create the given file in the workspace resource info tree.
 	 */
 	public void ensureExistsInWorkspace(final IFile resource, final InputStream contents) {
-		if (resource == null)
+		if (resource == null) {
 			return;
+		}
 		IWorkspaceRunnable body = monitor -> {
 			if (resource.exists()) {
 				resource.setContents(contents, true, false, null);
@@ -634,8 +651,9 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureExistsInWorkspace(final IResource[] resources, final boolean local) {
 		IWorkspaceRunnable body = monitor -> {
-			for (int i = 0; i < resources.length; i++)
-				create(resources[i], local);
+			for (IResource resource : resources) {
+				create(resource, local);
+			}
 		};
 		try {
 			getWorkspace().run(body, null);
@@ -661,8 +679,9 @@ public abstract class ResourceTest extends CoreTest {
 	public void touchInFilesystem(IResource resource) {
 		// Ensure the resource exists in the filesystem
 		IPath location = resource.getLocation();
-		if (!location.toFile().exists())
+		if (!location.toFile().exists()) {
 			ensureExistsInFileSystem(resource);
+		}
 		// Manually check that the core.resource time-stamp is out-of-sync
 		// with the java.io.File last modified. #isSynchronized() will schedule
 		// out-of-sync resources for refresh, so we don't use that here.
@@ -689,8 +708,9 @@ public abstract class ResourceTest extends CoreTest {
 
 	private boolean existsInFileSystem(IResource resource) {
 		IPath path = resource.getLocation();
-		if (path == null)
+		if (path == null) {
 			path = computeDefaultLocation(resource);
+		}
 		return path.toFile().exists();
 	}
 
@@ -732,13 +752,18 @@ public abstract class ResourceTest extends CoreTest {
 			try {
 				input = file.getContents();
 				int c = input.read();
-				while (c != -1 && c != '\r' && c != '\n')
+				while (c != -1 && c != '\r' && c != '\n') {
 					c = input.read();
+				}
 				if (c == '\n')
+				 {
 					return "\n"; //$NON-NLS-1$
+				}
 				if (c == '\r') {
 					if (input.read() == '\n')
+					 {
 						return "\r\n"; //$NON-NLS-1$
+					}
 					return "\r"; //$NON-NLS-1$
 				}
 			} catch (CoreException e) {

@@ -49,8 +49,9 @@ public class UnifiedTreeTest extends LocalStoreTest {
 				out.write("contents".getBytes());
 			} finally {
 				try {
-					if (out != null)
+					if (out != null) {
 						out.close();
+					}
 				} catch (IOException e) {
 					//ignore
 				}
@@ -78,8 +79,9 @@ public class UnifiedTreeTest extends LocalStoreTest {
 			IFileStore child = folder.getChild("fsFolder" + i);
 			child.mkdir(EFS.NONE, null);
 			set.put(child.toString(), "");
-			if (i < (limit / 2))
+			if (i < (limit / 2)) {
 				createFiles(child, set);
+			}
 		}
 	}
 
@@ -90,8 +92,9 @@ public class UnifiedTreeTest extends LocalStoreTest {
 			child.create(true, true, null);
 			String location = child.getLocation().toOSString();
 			set.put(location, "");
-			if (i < (limit / 2))
+			if (i < (limit / 2)) {
 				createFiles(child, set);
+			}
 		}
 	}
 
@@ -128,8 +131,9 @@ public class UnifiedTreeTest extends LocalStoreTest {
 			/* test the node.getLocalName() method */
 			final IResource resource = node.getResource();
 			final IFileStore store = ((Resource) resource).getStore();
-			if (node.existsInFileSystem())
+			if (node.existsInFileSystem()) {
 				assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
+			}
 			assertEquals("1.1", store, node.getStore());
 
 			/* remove from the hash table the resource we're visiting */
@@ -173,16 +177,18 @@ public class UnifiedTreeTest extends LocalStoreTest {
 			final IResource resource = node.getResource();
 			IFileStore store = ((Resource) resource).getStore();
 			String key = store.fetchInfo().getName();
-			if (node.existsInFileSystem())
+			if (node.existsInFileSystem()) {
 				assertEquals("1.0", key, node.getLocalName());
+			}
 			assertEquals("1.1", store, node.getStore());
 
 			/* force children to be added to the queue */
 			node.getChildren();
 
 			/* skip some resources */
-			if (resource.getName().startsWith("fsFolder"))
+			if (resource.getName().startsWith("fsFolder")) {
 				return false;
+			}
 
 			/* remove from the hash table the resource we're visiting */
 			set.remove(resource.getLocation().toOSString());
@@ -225,8 +231,9 @@ public class UnifiedTreeTest extends LocalStoreTest {
 			/* test the node.getLocalName() method */
 			final IResource resource = node.getResource();
 			IFileStore store = ((Resource) resource).getStore();
-			if (node.existsInFileSystem())
+			if (node.existsInFileSystem()) {
 				assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
+			}
 			assertEquals("1.1", store, node.getStore());
 			/* remove from the hash table the resource we're visiting */
 			set.remove(resource.getLocation().toOSString());

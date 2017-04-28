@@ -37,23 +37,29 @@ public class FileCacheTest extends FileSystemTest {
 	 * Overrides generic method from Assert to perform proper array equality test.
 	 */
 	public void assertEquals(String message, byte[] expected, byte[] actual) {
-		if (expected.length != actual.length)
+		if (expected.length != actual.length) {
 			fail(message + " arrays of different length");
+		}
 		assertEquals(message + " different length", expected.length, actual.length);
-		for (int i = 0; i < actual.length; i++)
-			if (expected[i] != actual[i])
+		for (int i = 0; i < actual.length; i++) {
+			if (expected[i] != actual[i]) {
 				fail(message + " arrays differ at position " + i + "; expected: " + expected[i] + " but was: " + actual[i]);
+			}
+		}
 	}
 
 	/**
 	 * Overrides generic method from Assert to perform proper array equality test.
 	 */
 	public void assertNotSame(String message, byte[] expected, byte[] actual) {
-		if (expected.length != actual.length)
+		if (expected.length != actual.length) {
 			return;
-		for (int i = 0; i < actual.length; i++)
-			if (expected[i] != actual[i])
+		}
+		for (int i = 0; i < actual.length; i++) {
+			if (expected[i] != actual[i]) {
 				return;
+			}
+		}
 		fail(message + " arrays should be different, but they are not: " + expected);
 	}
 

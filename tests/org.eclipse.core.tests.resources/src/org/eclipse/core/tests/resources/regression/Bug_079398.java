@@ -47,8 +47,9 @@ public class Bug_079398 extends ResourceTest {
 		try {
 			ensureExistsInWorkspace(file1, getRandomContents());
 			try {
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++) {
 					file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+				}
 			} catch (CoreException e) {
 				fail("0.2", e);
 			}
@@ -89,8 +90,9 @@ public class Bug_079398 extends ResourceTest {
 
 			// now cause the destination to have many more states
 			try {
-				for (int i = 0; i <= description.getMaxFileStates(); i++)
+				for (int i = 0; i <= description.getMaxFileStates(); i++) {
 					file2.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+				}
 			} catch (CoreException e) {
 				fail("1.5", e);
 			}
@@ -115,8 +117,9 @@ public class Bug_079398 extends ResourceTest {
 			// the source should have any extra states removed as well,
 			// but the ones left should still exist
 			assertEquals("1.7", description.getMaxFileStates(), sourceStates.length);
-			for (int i = 0; i < sourceStates.length; i++)
+			for (int i = 0; i < sourceStates.length; i++) {
 				assertTrue("1.8." + i, sourceStates[i].exists());
+			}
 		} finally {
 			// restore the original description
 			try {

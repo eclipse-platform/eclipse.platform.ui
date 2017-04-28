@@ -79,8 +79,9 @@ public class BucketTreeTests extends ResourceTest {
 		protected Object readEntryValue(DataInputStream source) throws IOException {
 			int length = source.readUnsignedShort();
 			Map<String, String> value = new HashMap<>(length);
-			for (int j = 0; j < length; j++)
+			for (int j = 0; j < length; j++) {
 				value.put(source.readUTF(), source.readUTF());
+			}
 			return value;
 		}
 
@@ -98,10 +99,12 @@ public class BucketTreeTests extends ResourceTest {
 			}
 			if (value == null) {
 				existing.remove(key);
-				if (existing.isEmpty())
+				if (existing.isEmpty()) {
 					existing = null;
-			} else
+				}
+			} else {
 				existing.put(key, value);
+			}
 			setEntryValue(pathAsString, existing);
 		}
 
@@ -197,8 +200,7 @@ public class BucketTreeTests extends ResourceTest {
 			fail(tag + ".3", e);
 		}
 		assertEquals(tag + ".4", expected.size(), visited.size());
-		for (Iterator<IPath> i = expected.iterator(); i.hasNext();) {
-			IPath path = i.next();
+		for (IPath path : expected) {
 			assertTrue(tag + ".5 " + path, visited.contains(path));
 		}
 	}

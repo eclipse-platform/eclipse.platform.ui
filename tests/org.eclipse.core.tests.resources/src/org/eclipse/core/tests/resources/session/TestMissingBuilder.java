@@ -47,9 +47,10 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 	protected boolean hasBuilder(IProject project, String builderId) {
 		try {
 			ICommand[] commands = project.getDescription().getBuildSpec();
-			for (int i = 0; i < commands.length; i++) {
-				if (commands[i].getBuilderName().equals(builderId))
+			for (ICommand command : commands) {
+				if (command.getBuilderName().equals(builderId)) {
 					return true;
+				}
 			}
 		} catch (CoreException e) {
 			fail("Failed in hasBuilder(" + project.getName() + ", " + builderId + ")", e);
@@ -67,8 +68,9 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 	 */
 	protected void setAutoBuilding(boolean value) throws CoreException {
 		IWorkspace workspace = getWorkspace();
-		if (workspace.isAutoBuilding() == value)
+		if (workspace.isAutoBuilding() == value) {
 			return;
+		}
 		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(value);
 		workspace.setDescription(desc);

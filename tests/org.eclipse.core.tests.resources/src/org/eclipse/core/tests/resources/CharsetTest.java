@@ -40,8 +40,9 @@ public class CharsetTest extends ResourceTest {
 		void internalVerifyDelta(IResourceDelta delta) {
 			// do NOT ignore any changes to project preferences only to .project
 			IPath path = delta.getFullPath();
-			if (path.segmentCount() == 2 && path.segment(1).equals(".project"))
+			if (path.segmentCount() == 2 && path.segment(1).equals(".project")) {
 				return;
+			}
 			super.internalVerifyDelta(delta);
 		}
 
@@ -52,17 +53,20 @@ public class CharsetTest extends ResourceTest {
 		@Override
 		public synchronized void resourceChanged(IResourceChangeEvent e) {
 			// to make testing easier, we allow events from the main or other thread to be ignored
-			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread)
+			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread) {
 				return;
-			if (isSet(IGNORE_CREATION_THREAD) && Thread.currentThread() == creationThread)
+			}
+			if (isSet(IGNORE_CREATION_THREAD) && Thread.currentThread() == creationThread) {
 				return;
+			}
 			super.resourceChanged(e);
 			this.notify();
 		}
 
 		public synchronized boolean waitForEvent(long limit) {
-			if (hasBeenNotified())
+			if (hasBeenNotified()) {
 				return true;
+			}
 			try {
 				this.wait(limit);
 			} catch (InterruptedException e) {
@@ -136,9 +140,9 @@ public class CharsetTest extends ResourceTest {
 	 * Asserts that the given resources have the given [default] charset.
 	 */
 	private void assertCharsetIs(String tag, String encoding, IResource[] resources, boolean checkImplicit) throws CoreException {
-		for (int i = 0; i < resources.length; i++) {
-			String resourceCharset = resources[i] instanceof IFile ? ((IFile) resources[i]).getCharset(checkImplicit) : ((IContainer) resources[i]).getDefaultCharset(checkImplicit);
-			assertEquals(tag + " " + resources[i].getFullPath(), encoding, resourceCharset);
+		for (IResource resource : resources) {
+			String resourceCharset = resource instanceof IFile ? ((IFile) resource).getCharset(checkImplicit) : ((IContainer) resource).getDefaultCharset(checkImplicit);
+			assertEquals(tag + " " + resource.getFullPath(), encoding, resourceCharset);
 		}
 	}
 
@@ -177,11 +181,13 @@ public class CharsetTest extends ResourceTest {
 	//	}
 
 	private void clearAllEncodings(IResource root) throws CoreException {
-		if (root == null || !root.exists())
+		if (root == null || !root.exists()) {
 			return;
+		}
 		IResourceVisitor visitor = resource -> {
-			if (!resource.exists())
+			if (!resource.exists()) {
 				return false;
+			}
 			switch (resource.getType()) {
 				case IResource.FILE :
 					((IFile) resource).setCharset(null, getMonitor());
@@ -198,8 +204,9 @@ public class CharsetTest extends ResourceTest {
 	}
 
 	private IFile getResourcesPreferenceFile(IProject project, boolean forDerivedResources) {
-		if (forDerivedResources)
+		if (forDerivedResources) {
 			return project.getFolder(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME).getFile(ResourcesPlugin.PI_RESOURCES + ".derived." + EclipsePreferences.PREFS_FILE_EXTENSION);
+		}
 		return project.getFolder(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME).getFile(ResourcesPlugin.PI_RESOURCES + "." + EclipsePreferences.PREFS_FILE_EXTENSION);
 	}
 
@@ -211,11 +218,13 @@ public class CharsetTest extends ResourceTest {
 		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 		String projectName = project.getName();
 		try {
-			if (!node.nodeExists(projectName))
+			if (!node.nodeExists(projectName)) {
 				return false;
+			}
 			node = node.node(projectName);
-			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES))
+			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES)) {
 				return false;
+			}
 			node = node.node(ResourcesPlugin.PI_RESOURCES);
 			return node.getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false);
 		} catch (BackingStoreException e) {
@@ -226,10 +235,11 @@ public class CharsetTest extends ResourceTest {
 
 	private void setDerivedEncodingStoredSeparately(String tag, IProject project, boolean value) {
 		org.osgi.service.prefs.Preferences prefs = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
-		if (!value)
+		if (!value) {
 			prefs.remove(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS);
-		else
+		} else {
 			prefs.putBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, true);
+		}
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -337,8 +347,9 @@ public class CharsetTest extends ResourceTest {
 			root.setDefaultCharset(null);
 			assertNull("1.0", root.getDefaultCharset(false));
 		} finally {
-			if (originalUserCharset != null)
+			if (originalUserCharset != null) {
 				root.setDefaultCharset(originalUserCharset);
+			}
 		}
 	}
 
@@ -397,8 +408,9 @@ public class CharsetTest extends ResourceTest {
 		// test that we can get the charset, when the file is out-of-sync
 		ensureExistsInWorkspace(file, true);
 		try {
-			if (!file.getLocation().toFile().delete())
+			if (!file.getLocation().toFile().delete()) {
 				fail("2.0");
+			}
 			file.getCharset(true);
 		} catch (CoreException ex) {
 			fail("2.1");

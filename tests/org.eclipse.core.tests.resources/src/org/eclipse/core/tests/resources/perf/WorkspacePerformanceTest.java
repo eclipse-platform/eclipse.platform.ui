@@ -133,8 +133,9 @@ public class WorkspacePerformanceTest extends ResourceTest {
 			IFile file = parentFolder.getFile(createString(10));
 			file.create(new ByteArrayInputStream(createBytes(5000)), IResource.NONE, getMonitor());
 		}
-		if (depth <= 0)
+		if (depth <= 0) {
 			return;
+		}
 		//create TREE_WIDTH folders
 		for (int i = 0; i < TREE_WIDTH; i++) {
 			IFolder folder = parentFolder.getFolder(createString(6));

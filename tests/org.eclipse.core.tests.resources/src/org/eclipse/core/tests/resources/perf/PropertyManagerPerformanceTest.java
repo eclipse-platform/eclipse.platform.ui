@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
@@ -25,8 +26,9 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 
 	public static String getPropertyValue(int size) {
 		StringBuffer value = new StringBuffer(size);
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < size; i++) {
 			value.append((char) (Math.random() * Character.MAX_VALUE));
+		}
 		return value.toString();
 	}
 
@@ -52,8 +54,9 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		folders[3] = folders[2].getFolder("folder4");
 		folders[4] = folders[3].getFolder("folder5");
 		List<IResource> resources = new ArrayList<>(filesPerFolder * folders.length);
-		for (IFolder folder : folders)
+		for (IFolder folder : folders) {
 			resources.add(folder);
+		}
 		ensureExistsInWorkspace(folders, true);
 		for (IFolder folder : folders) {
 			for (int j = 0; j < filesPerFolder; j++) {
@@ -70,18 +73,19 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		final IFolder folder1 = proj1.getFolder("folder1");
 		final List<IResource> allResources = createTree(folder1, filesPerFolder);
 		for (IResource resource : allResources) {
-			for (int j = 0; j < properties; j++)
+			for (int j = 0; j < properties; j++) {
 				try {
 					resource.setPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + j), getPropertyValue(200));
 				} catch (CoreException ce) {
 					fail("0.2", ce);
 				}
+			}
 		}
 
 		new PerformanceTestRunner() {
 			@Override
 			protected void test() {
-				for (int j = 0; j < properties; j++)
+				for (int j = 0; j < properties; j++) {
 					for (IResource resource : allResources) {
 						try {
 							assertNotNull(resource.getPersistentProperty(new QualifiedName(PI_RESOURCES_TESTS, "prop" + j)));
@@ -89,6 +93,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 							fail("0.2", ce);
 						}
 					}
+				}
 			}
 		}.run(this, measurements, repetitions);
 		try {

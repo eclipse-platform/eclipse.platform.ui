@@ -44,8 +44,7 @@ public class ConfigurationBuilder extends TestBuilder {
 	}
 
 	public static void clearStats() {
-		for (Iterator<ConfigurationBuilder> it = builders.values().iterator(); it.hasNext();) {
-			ConfigurationBuilder builder = it.next();
+		for (ConfigurationBuilder builder : builders.values()) {
 			builder.buildCount = 0;
 			builder.triggerForLastBuild = 0;
 			builder.deltaForLastBuild = null;

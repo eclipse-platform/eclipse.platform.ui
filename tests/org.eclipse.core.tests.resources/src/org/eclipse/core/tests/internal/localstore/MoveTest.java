@@ -52,13 +52,15 @@ public class MoveTest extends LocalStoreTest {
 	 * This test has Windows as the target OS. Drives C: and D: should be available.
 	 */
 	public void testMoveFileAcrossVolumes() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		/* look for the adequate environment */
 		String[] devices = findAvailableDevices();
-		if (devices[0] == null || devices[1] == null)
+		if (devices[0] == null || devices[1] == null) {
 			return;
+		}
 
 		// create common objects
 		String location = getUniqueString();
@@ -182,13 +184,15 @@ public class MoveTest extends LocalStoreTest {
 	 * This test has Windows as the target OS. Drives C: and D: should be available.
 	 */
 	public void testMoveFolderAcrossVolumes() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		/* look for the adequate environment */
 		String[] devices = findAvailableDevices();
-		if (devices[0] == null || devices[1] == null)
+		if (devices[0] == null || devices[1] == null) {
 			return;
+		}
 
 		// create common objects
 		String location = getUniqueString();
@@ -332,8 +336,7 @@ public class MoveTest extends LocalStoreTest {
 		for (int j = 0; j < numberOfProperties; j++) {
 			propNames[j] = "prop" + j;
 			propValues[j] = "value" + j;
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				QualifiedName propName = new QualifiedName("test", resource.getName() + propNames[j]);
 				String propValue = resource.getName() + propValues[j];
 				resource.setPersistentProperty(propName, propValue);
@@ -403,8 +406,7 @@ public class MoveTest extends LocalStoreTest {
 		for (int j = 0; j < numberOfProperties; j++) {
 			propNames[j] = "prop" + j;
 			propValues[j] = "value" + j;
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				QualifiedName propName = new QualifiedName("test", resource.getName() + propNames[j]);
 				String propValue = resource.getName() + propValues[j];
 				resource.setPersistentProperty(propName, propValue);
@@ -704,8 +706,9 @@ public class MoveTest extends LocalStoreTest {
 		}
 
 		// get new projects instances
-		for (int i = 0; i < numberOfProjects; i++)
+		for (int i = 0; i < numberOfProjects; i++) {
 			projects[i] = getWorkspace().getRoot().getProject(projectNames[i]);
+		}
 
 		// assert properties still exist (persistent and session)
 		for (int i = 0; i < numberOfProjects; i++) {

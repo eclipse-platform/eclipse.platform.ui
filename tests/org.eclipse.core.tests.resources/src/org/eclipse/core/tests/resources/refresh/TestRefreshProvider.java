@@ -62,8 +62,9 @@ public class TestRefreshProvider extends RefreshProvider implements IRefreshMoni
 	 */
 	@Override
 	public IRefreshMonitor installMonitor(IResource resource, IRefreshResult result) {
-		if (!monitoredResources.add(resource))
+		if (!monitoredResources.add(resource)) {
 			failures.add(new AssertionFailedError("installMonitor on resource that is already monitored: " + resource));
+		}
 		return this;
 	}
 
@@ -76,7 +77,8 @@ public class TestRefreshProvider extends RefreshProvider implements IRefreshMoni
 			monitoredResources.clear();
 			return;
 		}
-		if (!monitoredResources.remove(resource))
+		if (!monitoredResources.remove(resource)) {
 			failures.add(new AssertionFailedError("Unmonitor on resource that is not monitored: " + resource));
+		}
 	}
 }

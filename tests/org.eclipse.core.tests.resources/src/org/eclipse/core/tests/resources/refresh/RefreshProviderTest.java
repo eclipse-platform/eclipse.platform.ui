@@ -89,8 +89,9 @@ public class RefreshProviderTest extends ResourceTest {
 			assertEquals("1.3", 0, provider.getMonitoredResources().length);
 			//check provider for other errors
 			AssertionFailedError[] failures = provider.getFailures();
-			if (failures.length > 0)
+			if (failures.length > 0) {
 				fail("" + failures.length + " failures", failures[0]);
+			}
 		} catch (CoreException e) {
 			fail("1.99", e);
 		} finally {
@@ -124,8 +125,9 @@ public class RefreshProviderTest extends ResourceTest {
 			assertEquals("1.3", 0, provider.getMonitoredResources().length);
 			//check provider for other errors
 			AssertionFailedError[] failures = provider.getFailures();
-			if (failures.length > 0)
+			if (failures.length > 0) {
 				fail("" + failures.length + " failures", failures[0]);
+			}
 		} catch (CoreException e) {
 			fail("1.99", e);
 		} finally {

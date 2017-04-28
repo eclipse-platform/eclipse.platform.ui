@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,25 +44,26 @@ public class ContextBuilder extends TestBuilder {
 	}
 
 	public static IBuildContext getContext(IBuildConfiguration variant) {
-		if (!builders.containsKey(variant))
+		if (!builders.containsKey(variant)) {
 			return null;
+		}
 		return getBuilder(variant).contextForLastBuild;
 	}
 
 	public static boolean checkValid() {
-		for (Iterator<ContextBuilder> it = builders.values().iterator(); it.hasNext();) {
-			ContextBuilder builder = it.next();
-			if (builder.getRuleCalledForLastBuild && !builder.contextForLastBuild.equals(builder.contextForLastBuildInGetRule))
+		for (ContextBuilder builder : builders.values()) {
+			if (builder.getRuleCalledForLastBuild && !builder.contextForLastBuild.equals(builder.contextForLastBuildInGetRule)) {
 				return false;
-			if (builder.getRuleCalledForLastBuild && !builder.buildConfigurationForLastBuild.equals(builder.buildConfigurationForLastBuildInGetRule))
+			}
+			if (builder.getRuleCalledForLastBuild && !builder.buildConfigurationForLastBuild.equals(builder.buildConfigurationForLastBuildInGetRule)) {
 				return false;
+			}
 		}
 		return true;
 	}
 
 	public static void clearStats() {
-		for (Iterator<ContextBuilder> it = builders.values().iterator(); it.hasNext();) {
-			ContextBuilder builder = it.next();
+		for (ContextBuilder builder : builders.values()) {
 			builder.contextForLastBuild = null;
 			builder.contextForLastBuildInGetRule = null;
 			builder.buildConfigurationForLastBuild = null;

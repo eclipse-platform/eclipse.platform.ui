@@ -51,14 +51,17 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		super.tearDown();
 		getWorkspace().getRoot().delete(true, null);
 		TestBuilder builder = DeltaVerifierBuilder.getInstance();
-		if (builder != null)
+		if (builder != null) {
 			builder.reset();
+		}
 		builder = EmptyDeltaBuilder.getInstance();
-		if (builder != null)
+		if (builder != null) {
 			builder.reset();
+		}
 		builder = EmptyDeltaBuilder2.getInstance();
-		if (builder != null)
+		if (builder != null) {
 			builder.reset();
+		}
 	}
 
 	/**
@@ -89,12 +92,13 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				assertTrue(Job.getJobManager().currentRule() == null);
 				tb.setStatus(TestBarrier.STATUS_START);
-				while (!monitor.isCanceled())
+				while (!monitor.isCanceled()) {
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						// Don't care
 					}
+				}
 				tb.setStatus(TestBarrier.STATUS_DONE);
 				return super.build(kind, args, monitor);
 			}
@@ -218,12 +222,14 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 
 	HashSet<ISchedulingRule> getRulesAsSet(ISchedulingRule rule) {
 		HashSet<ISchedulingRule> rules = new HashSet<>();
-		if (rule == null)
+		if (rule == null) {
 			return rules;
-		if (rule instanceof MultiRule)
+		}
+		if (rule instanceof MultiRule) {
 			rules.addAll(Arrays.asList(((MultiRule) rule).getChildren()));
-		else
+		} else {
 			rules.add(rule);
+		}
 		return rules;
 	}
 

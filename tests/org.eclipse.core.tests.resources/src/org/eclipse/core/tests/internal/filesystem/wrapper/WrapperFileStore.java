@@ -54,9 +54,10 @@ public class WrapperFileStore extends FileStore {
 	@Override
 	public IFileStore[] childStores(int options, IProgressMonitor monitor) throws CoreException {
 		IFileStore[] childStores = baseStore.childStores(options, monitor);
-		for (int i = 0; i < childStores.length; i++)
+		for (int i = 0; i < childStores.length; i++) {
 			// replace ordinary file store with wrapper version
 			childStores[i] = createNewWrappedStore(childStores[i]);
+		}
 		return childStores;
 	}
 
@@ -72,10 +73,12 @@ public class WrapperFileStore extends FileStore {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (!(obj instanceof WrapperFileStore))
+		}
+		if (!(obj instanceof WrapperFileStore)) {
 			return false;
+		}
 		return baseStore.equals(((WrapperFileStore) obj).baseStore);
 	}
 
@@ -132,8 +135,9 @@ public class WrapperFileStore extends FileStore {
 
 	@Override
 	public boolean isParentOf(IFileStore other) {
-		if (!(other instanceof WrapperFileStore))
+		if (!(other instanceof WrapperFileStore)) {
 			return false;
+		}
 		IFileStore otherBaseStore = ((WrapperFileStore) other).baseStore;
 		return baseStore.isParentOf(otherBaseStore);
 	}
@@ -146,8 +150,9 @@ public class WrapperFileStore extends FileStore {
 
 	@Override
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
-		if (destination instanceof WrapperFileStore)
+		if (destination instanceof WrapperFileStore) {
 			destination = ((WrapperFileStore) destination).baseStore;
+		}
 		baseStore.move(destination, options, monitor);
 	}
 

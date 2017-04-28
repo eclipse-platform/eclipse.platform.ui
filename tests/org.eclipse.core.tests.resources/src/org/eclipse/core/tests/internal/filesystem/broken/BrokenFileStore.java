@@ -71,8 +71,9 @@ public class BrokenFileStore extends FileStore {
 	@Override
 	public IFileStore getParent() {
 		IPath path = getPath();
-		if (path.segmentCount() == 0)
+		if (path.segmentCount() == 0) {
 			return null;
+		}
 		return new BrokenFileStore(path.removeLastSegments(1));
 	}
 

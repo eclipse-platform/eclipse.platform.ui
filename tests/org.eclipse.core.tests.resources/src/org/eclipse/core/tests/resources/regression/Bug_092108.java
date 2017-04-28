@@ -33,8 +33,9 @@ public class Bug_092108 extends ResourceTest {
 	}
 
 	public void testBug() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IFileStore root;
 		try {
 			root = EFS.getStore(new java.io.File("c:\\").toURI());

@@ -682,10 +682,10 @@ public class HiddenResourceTest extends ResourceTest {
 		IResource[] resources = new IResource[] {project, folder, file, subFile};
 
 		// trying to set the value on non-existing resources will fail
-		for (int i = 0; i < resources.length; i++) {
+		for (IResource resource : resources) {
 			try {
-				resources[i].setHidden(true);
-				fail("0.0." + resources[i].getFullPath());
+				resource.setHidden(true);
+				fail("0.0." + resource.getFullPath());
 			} catch (CoreException e) {
 				// expected
 			}
@@ -695,14 +695,13 @@ public class HiddenResourceTest extends ResourceTest {
 		ensureExistsInWorkspace(resources, true);
 
 		// initial values should be false
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			assertTrue("1.0: " + resource.getFullPath(), !resource.isHidden());
 		}
 
 		// now set the values
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			try {
 				resource.setHidden(true);
 			} catch (CoreException e) {
@@ -711,8 +710,8 @@ public class HiddenResourceTest extends ResourceTest {
 		}
 
 		// the values should be true for projects only
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			switch (resource.getType()) {
 				case IResource.PROJECT :
 				case IResource.FOLDER :
@@ -726,8 +725,7 @@ public class HiddenResourceTest extends ResourceTest {
 		}
 
 		// clear the values
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			try {
 				resource.setHidden(false);
 			} catch (CoreException e) {
@@ -736,8 +734,8 @@ public class HiddenResourceTest extends ResourceTest {
 		}
 
 		// values should be false again
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			assertTrue("5.0: " + resource.getFullPath(), !resource.isHidden());
 		}
 	}
@@ -781,8 +779,9 @@ public class HiddenResourceTest extends ResourceTest {
 	protected void assertHidden(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = resource -> {
 			boolean expected = false;
-			if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER)
+			if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER) {
 				expected = value;
+			}
 			assertEquals(message + resource.getFullPath(), expected, resource.isHidden());
 			return true;
 		};

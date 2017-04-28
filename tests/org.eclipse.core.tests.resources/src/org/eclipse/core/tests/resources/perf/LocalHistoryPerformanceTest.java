@@ -60,17 +60,19 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		try {
 			workspace.run((IWorkspaceRunnable) monitor -> {
 				ensureExistsInWorkspace(folders, true);
-				for (IFolder folder : folders)
+				for (IFolder folder : folders) {
 					for (int j = 0; j < filesPerFolder; j++) {
 						IFile file = folder.getFile("file" + j);
 						ensureExistsInWorkspace(file, getRandomContents());
 						try {
-							for (int k = 0; k < statesPerFile; k++)
+							for (int k = 0; k < statesPerFile; k++) {
 								file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+							}
 						} catch (CoreException ce) {
 							fail("0.5", ce);
 						}
 					}
+				}
 			}, workspace.getRuleFactory().modifyRule(workspace.getRoot()), IWorkspace.AVOID_UPDATE, getMonitor());
 		} catch (CoreException e) {
 			fail("#createTree at : " + base.getFullPath(), e);
@@ -201,8 +203,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 
 			@Override
 			protected void tearDown() throws CoreException {
-				if (original != null)
+				if (original != null) {
 					getWorkspace().setDescription(original);
+				}
 			}
 
 			@Override
@@ -297,8 +300,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		final IFile file = project.getFile("file.txt");
 		ensureExistsInWorkspace(file, getRandomContents());
 		try {
-			for (int i = 0; i < 100; i++)
+			for (int i = 0; i < 100; i++) {
 				file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+			}
 		} catch (CoreException ce) {
 			fail("0.5", ce);
 		}
@@ -333,8 +337,9 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 
 			@Override
 			protected void tearDown() throws CoreException {
-				if (original != null)
+				if (original != null) {
 					getWorkspace().setDescription(original);
+				}
 			}
 
 			@Override

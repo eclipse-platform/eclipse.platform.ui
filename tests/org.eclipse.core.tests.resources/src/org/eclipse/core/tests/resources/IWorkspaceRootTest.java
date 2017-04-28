@@ -48,8 +48,9 @@ public class IWorkspaceRootTest extends ResourceTest {
 	 */
 	public void testFindFilesNonCanonicalPath() {
 		// this test is for windows only
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("testFindFilesNonCanonicalPath");
 		ensureExistsInWorkspace(project, true);
 
@@ -275,12 +276,13 @@ public class IWorkspaceRootTest extends ResourceTest {
 	 */
 	private void assertResources(String message, IResource expected0, IResource expected1, IResource[] actual) {
 		assertEquals(message, 2, actual.length);
-		if (actual[0].equals(expected0))
+		if (actual[0].equals(expected0)) {
 			assertEquals(message, expected1, actual[1]);
-		else if (actual[0].equals(expected1))
+		} else if (actual[0].equals(expected1)) {
 			assertEquals(message, expected0, actual[1]);
-		else
+		} else {
 			assertEquals(message, expected0, actual[0]);
+		}
 	}
 
 	/**
@@ -530,24 +532,24 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IFolder mFolderInFolder = createFolder(folder, updateFlags, false);
 		IFolder mLinkedFolderInFolder = createFolder(folder, updateFlags, true);
 
-		for (int i = 0; i < results.length; i++) {
-			checkFindContainers(hiddenFolder.getLocationURI(), results[i][0], results[i][1]);
-			checkFindFiles(mFileInHiddenFolder.getLocationURI(), results[i][0], results[i][4]);
-			checkFindFiles(mLinkedFileInHiddenFolder.getLocationURI(), results[i][0], results[i][5]);
-			checkFindContainers(mFolderInHiddenFolder.getLocationURI(), results[i][0], results[i][2]);
-			checkFindContainers(mLinkedFolderInHiddenFolder.getLocationURI(), results[i][0], results[i][3]);
+		for (int[] result : results) {
+			checkFindContainers(hiddenFolder.getLocationURI(), result[0], result[1]);
+			checkFindFiles(mFileInHiddenFolder.getLocationURI(), result[0], result[4]);
+			checkFindFiles(mLinkedFileInHiddenFolder.getLocationURI(), result[0], result[5]);
+			checkFindContainers(mFolderInHiddenFolder.getLocationURI(), result[0], result[2]);
+			checkFindContainers(mLinkedFolderInHiddenFolder.getLocationURI(), result[0], result[3]);
 
-			checkFindContainers(folder.getLocationURI(), results[i][0], results[i][6]);
-			checkFindFiles(mFileInFolder.getLocationURI(), results[i][0], results[i][7]);
-			checkFindFiles(mLinkedFileInFolder.getLocationURI(), results[i][0], results[i][8]);
-			checkFindContainers(mFolderInFolder.getLocationURI(), results[i][0], results[i][9]);
-			checkFindContainers(mLinkedFolderInFolder.getLocationURI(), results[i][0], results[i][10]);
+			checkFindContainers(folder.getLocationURI(), result[0], result[6]);
+			checkFindFiles(mFileInFolder.getLocationURI(), result[0], result[7]);
+			checkFindFiles(mLinkedFileInFolder.getLocationURI(), result[0], result[8]);
+			checkFindContainers(mFolderInFolder.getLocationURI(), result[0], result[9]);
+			checkFindContainers(mLinkedFolderInFolder.getLocationURI(), result[0], result[10]);
 
-			checkFindContainers(teamFolder.getLocationURI(), results[i][0], results[i][11]);
-			checkFindFiles(mFileInTeamFolder.getLocationURI(), results[i][0], results[i][12]);
-			checkFindFiles(mLinkedFileInTeamFolder.getLocationURI(), results[i][0], results[i][13]);
-			checkFindContainers(mFolderInTeamFolder.getLocationURI(), results[i][0], results[i][14]);
-			checkFindContainers(mLinkedFolderInTeamFolder.getLocationURI(), results[i][0], results[i][15]);
+			checkFindContainers(teamFolder.getLocationURI(), result[0], result[11]);
+			checkFindFiles(mFileInTeamFolder.getLocationURI(), result[0], result[12]);
+			checkFindFiles(mLinkedFileInTeamFolder.getLocationURI(), result[0], result[13]);
+			checkFindContainers(mFolderInTeamFolder.getLocationURI(), result[0], result[14]);
+			checkFindContainers(mLinkedFolderInTeamFolder.getLocationURI(), result[0], result[15]);
 		}
 	}
 
@@ -569,8 +571,9 @@ public class IWorkspaceRootTest extends ResourceTest {
 					IPath path = getTempDir().append(getUniqueString());
 					path.toFile().createNewFile();
 					file.createLink(URIUtil.toURI(path), updateFlags, getMonitor());
-					if ((updateFlags & IResource.TEAM_PRIVATE) == IResource.TEAM_PRIVATE)
+					if ((updateFlags & IResource.TEAM_PRIVATE) == IResource.TEAM_PRIVATE) {
 						file.setTeamPrivateMember(true);
+					}
 				} catch (IOException e) {
 					fail("Can't create the file", e);
 				}
@@ -590,8 +593,9 @@ public class IWorkspaceRootTest extends ResourceTest {
 				IPath path = getTempDir().append(getUniqueString());
 				path.toFile().mkdir();
 				folder.createLink(URIUtil.toURI(path), updateFlags, getMonitor());
-				if ((updateFlags & IResource.TEAM_PRIVATE) == IResource.TEAM_PRIVATE)
+				if ((updateFlags & IResource.TEAM_PRIVATE) == IResource.TEAM_PRIVATE) {
 					folder.setTeamPrivateMember(true);
+				}
 			} else {
 				folder.create(updateFlags, true, getMonitor());
 			}

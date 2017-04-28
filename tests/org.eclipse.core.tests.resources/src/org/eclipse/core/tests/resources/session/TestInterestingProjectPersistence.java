@@ -58,8 +58,9 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 	 */
 	protected void setAutoBuilding(boolean value) throws CoreException {
 		IWorkspace workspace = getWorkspace();
-		if (workspace.isAutoBuilding() == value)
+		if (workspace.isAutoBuilding() == value) {
 			return;
+		}
 		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(value);
 		workspace.setDescription(desc);

@@ -29,20 +29,25 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	}
 
 	protected boolean compare(byte[] source, byte[] target) {
-		if (source.length != target.length)
+		if (source.length != target.length) {
 			return false;
-		for (int i = 0; i < target.length; i++)
-			if (source[i] != target[i])
+		}
+		for (int i = 0; i < target.length; i++) {
+			if (source[i] != target[i]) {
 				return false;
+			}
+		}
 		return true;
 	}
 
 	protected byte[] merge(byte[] b1, byte[] b2) {
 		byte[] result = new byte[b1.length + b2.length];
-		for (int i = 0; i < b1.length; i++)
+		for (int i = 0; i < b1.length; i++) {
 			result[i] = b1[i];
-		for (int i = 0; i < b2.length; i++)
+		}
+		for (int i = 0; i < b2.length; i++) {
 			result[b1.length + i] = b2[i];
+		}
 		return result;
 	}
 
@@ -212,12 +217,13 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		} catch (IOException e) {
 			fail("1.0", e);
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					fail("1.1", e);
 				}
+			}
 		}
 
 		DataInputStream input = null;
@@ -230,12 +236,13 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		} catch (IOException e) {
 			fail("2.1", e);
 		} finally {
-			if (input != null)
+			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					fail("2.2", e);
 				}
+			}
 		}
 	}
 

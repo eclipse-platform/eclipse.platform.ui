@@ -99,8 +99,9 @@ public class BenchWorkspace extends ResourceTest {
 				IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 				for (IMarker marker : markers) {
 					int severity = marker.getAttribute(IMarker.SEVERITY, -1);
-					if (severity > maxSeverity)
+					if (severity > maxSeverity) {
 						maxSeverity = severity;
+					}
 				}
 				return true;
 			}

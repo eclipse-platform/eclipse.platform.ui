@@ -157,8 +157,9 @@ public class SortBuilder extends TestBuilder {
 			forgetLastBuiltState();
 		}
 		String project = arguments.get(INTERESTING_PROJECT);
-		if (project != null)
+		if (project != null) {
 			return new IProject[] {getProject().getWorkspace().getRoot().getProject(project)};
+		}
 		return new IProject[0];
 	}
 
@@ -223,8 +224,8 @@ public class SortBuilder extends TestBuilder {
 		if (type == IResource.FOLDER) {
 			IFolder folder = (IFolder) resource;
 			IResource[] members = folder.members();
-			for (int i = 0; i < members.length; i++) {
-				deleteResource(members[i]);
+			for (IResource member : members) {
+				deleteResource(member);
 			}
 			folder.delete(true, null);
 		} else if (type == IResource.FILE) {
@@ -247,8 +248,8 @@ public class SortBuilder extends TestBuilder {
 			if (sortedFolder.exists()) {
 				//delete all sorted files
 				IResource[] members = sortedFolder.members();
-				for (int i = 0; i < members.length; i++) {
-					deleteResource(members[i]);
+				for (IResource member : members) {
+					deleteResource(member);
 				}
 			}
 
@@ -270,8 +271,7 @@ public class SortBuilder extends TestBuilder {
 			build((IFile) unsortedResource);
 		} else {
 			IResource[] members = ((IFolder) unsortedResource).members();
-			for (int i = 0; i < members.length; i++) {
-				IResource member = members[i];
+			for (IResource member : members) {
 				fullBuild(member);
 			}
 		}
@@ -291,8 +291,9 @@ public class SortBuilder extends TestBuilder {
 	 */
 	private IFolder getSortedFolder() {
 		String sortedFolder = arguments.get(SORTED_FOLDER);
-		if (sortedFolder == null)
+		if (sortedFolder == null) {
 			sortedFolder = DEFAULT_SORTED_FOLDER;
+		}
 		return getProject().getFolder(sortedFolder);
 	}
 
@@ -302,8 +303,9 @@ public class SortBuilder extends TestBuilder {
 	 */
 	private IFolder getUnsortedFolder() {
 		String unsortedFolder = arguments.get(UNSORTED_FOLDER);
-		if (unsortedFolder == null)
+		if (unsortedFolder == null) {
 			unsortedFolder = DEFAULT_UNSORTED_FOLDER;
+		}
 		return getProject().getFolder(unsortedFolder);
 	}
 
@@ -344,8 +346,8 @@ public class SortBuilder extends TestBuilder {
 
 		if (isUnderUnsortedFolder || isOverUnsortedFolder) {
 			IResourceDelta[] affectedChildren = delta.getAffectedChildren();
-			for (int i = 0; i < affectedChildren.length; ++i) {
-				incrementalBuild(affectedChildren[i]);
+			for (IResourceDelta element : affectedChildren) {
+				incrementalBuild(element);
 			}
 		}
 	}
@@ -395,8 +397,9 @@ public class SortBuilder extends TestBuilder {
 	 */
 	private void recordChangedResources(IResourceDelta delta) throws CoreException {
 		changedResources.clear();
-		if (delta == null)
+		if (delta == null) {
 			return;
+		}
 		delta.accept(delta1 -> {
 			changedResources.add(delta1.getResource());
 			return true;

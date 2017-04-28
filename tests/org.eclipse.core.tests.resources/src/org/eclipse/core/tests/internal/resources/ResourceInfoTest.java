@@ -44,38 +44,46 @@ public class ResourceInfoTest extends ResourceTest {
 	}
 
 	static public void assertEquals(String message, byte[] expected, byte[] actual) {
-		if (expected == null && actual == null)
+		if (expected == null && actual == null) {
 			return;
-		if (expected == null || actual == null)
+		}
+		if (expected == null || actual == null) {
 			assertTrue(message, false);
+		}
 		assertEquals(message, expected.length, actual.length);
-		for (int i = 0; i < expected.length; i++)
+		for (int i = 0; i < expected.length; i++) {
 			assertEquals(message, expected[i], actual[i]);
+		}
 	}
 
 	static public void assertEquals(String message, Map<?, ?> expected, Map<?, ?> actual) {
-		if (expected == null && actual == null)
+		if (expected == null && actual == null) {
 			return;
-		if (expected == null || actual == null)
+		}
+		if (expected == null || actual == null) {
 			assertTrue(message, false);
+		}
 		assertEquals(message, expected.size(), actual.size());
 		for (Map.Entry<?, ?> entry : expected.entrySet()) {
 			Object key = entry.getKey();
 			assertTrue(message, actual.containsKey(key));
 			Object expectedValue = entry.getValue();
 			Object actualValue = actual.get(key);
-			if (expectedValue instanceof byte[] && actualValue instanceof byte[])
+			if (expectedValue instanceof byte[] && actualValue instanceof byte[]) {
 				assertEquals(message, (byte[]) expectedValue, (byte[]) actualValue);
-			else
+			} else {
 				assertEquals(message, expectedValue, actualValue);
+			}
 		}
 	}
 
 	static public void assertEquals(String message, ResourceInfo expected, ResourceInfo actual) {
-		if (expected == null && actual == null)
+		if (expected == null && actual == null) {
 			return;
-		if (expected == null || actual == null)
+		}
+		if (expected == null || actual == null) {
 			assertTrue(message, false);
+		}
 		boolean different = false;
 		different &= expected.getFlags() == actual.getFlags();
 		different &= expected.getContentId() == actual.getContentId();
@@ -85,8 +93,9 @@ public class ResourceInfoTest extends ResourceTest {
 		// TODO sync info isn't serialized by this class so don't expect it to be loaded
 		//	assertEquals(message, expected.getSyncInfo(false), actual.getSyncInfo(false));
 		different &= expected.getMarkerGenerationCount() == actual.getMarkerGenerationCount();
-		if (different)
+		if (different) {
 			assertTrue(message, false);
+		}
 	}
 
 	public void testSerialization() {

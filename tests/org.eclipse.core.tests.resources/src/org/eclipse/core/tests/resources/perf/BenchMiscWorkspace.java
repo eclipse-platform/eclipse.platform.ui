@@ -68,8 +68,9 @@ public class BenchMiscWorkspace extends ResourceTest {
 			@Override
 			protected void test() {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				for (int i = 0; i < 2000; i++)
+				for (int i = 0; i < 2000; i++) {
 					root.getProject(Integer.toString(i));
+				}
 			}
 		}.run(this, 10, 1000);
 

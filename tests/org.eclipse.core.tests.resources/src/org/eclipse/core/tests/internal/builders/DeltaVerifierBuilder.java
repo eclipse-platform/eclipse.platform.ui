@@ -155,16 +155,17 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * deltas were actually returned.
 	 */
 	protected void doCheckDeltas() {
-		if (checkDeltas == null)
+		if (checkDeltas == null) {
 			return;
+		}
 		receivedDeltas.clear();
-		for (int i = 0; i < checkDeltas.length; i++) {
-			IResourceDelta delta = getDelta(checkDeltas[i]);
+		for (IProject checkDelta : checkDeltas) {
+			IResourceDelta delta = getDelta(checkDelta);
 			if (delta != null) {
-				receivedDeltas.add(checkDeltas[i]);
+				receivedDeltas.add(checkDelta);
 				//check if the delta was empty
 				if (delta.getKind() == IResourceDelta.NO_CHANGE && delta.getAffectedChildren().length == 0) {
-					emptyDeltas.add(checkDeltas[i]);
+					emptyDeltas.add(checkDelta);
 				}
 				//regression test -- ensure delta resource is non null
 				Assert.assertTrue("Non-null delta", delta.getResource() != null);
@@ -245,8 +246,9 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	public void reset() {
 		super.reset();
 		triggerForLastBuild = 0;
-		if (verifier != null)
+		if (verifier != null) {
 			verifier.reset();
+		}
 	}
 
 	public boolean wasAutoBuild() {

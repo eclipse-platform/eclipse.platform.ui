@@ -53,8 +53,9 @@ public class NLTest extends ResourceTest {
 				name.append(((int) current) + "_");
 			}
 		}
-		if (name.length() > 0)
+		if (name.length() > 0) {
 			list.add(name.toString());
+		}
 	}
 
 	public String[] getFileNames(String language) {

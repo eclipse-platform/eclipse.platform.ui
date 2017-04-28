@@ -82,8 +82,8 @@ public class IResourceTest extends ResourceTest {
 		Set<File> result = new HashSet<>(50);
 		String[] members = dir.list();
 		if (members != null) {
-			for (int i = 0; i < members.length; i++) {
-				File member = new File(dir, members[i]);
+			for (String member2 : members) {
+				File member = new File(dir, member2);
 				result.add(member);
 				if (member.isDirectory()) {
 					result.addAll(getAllFilesForDirectory(member));
@@ -114,8 +114,7 @@ public class IResourceTest extends ResourceTest {
 					if (resource.getType() != IResource.FILE) {
 						IContainer container = (IContainer) resource;
 						IResource[] children = container.members();
-						for (int i = 0; i < children.length; i++) {
-							IResource member = children[i];
+						for (IResource member : children) {
 							result.addAll(getAllFilesForResource(member, considerUnsyncLocalFiles));
 						}
 					}
@@ -136,8 +135,7 @@ public class IResourceTest extends ResourceTest {
 			if (resource.getType() != IResource.FILE && resource.isAccessible()) {
 				IContainer container = (IContainer) resource;
 				IResource[] children = container.members();
-				for (int i = 0; i < children.length; i++) {
-					IResource member = children[i];
+				for (IResource member : children) {
 					result.addAll(getAllResourcesForResource(member));
 				}
 			}
@@ -189,8 +187,8 @@ public class IResourceTest extends ResourceTest {
 
 		IResource[] deleted = buildResources(root, new String[] {"1/1/2/1/", "1/2/3/1"});
 		ensureDoesNotExistInWorkspace(deleted);
-		for (int i = 0; i < deleted.length; ++i) {
-			nonExistingResources.add(deleted[i]);
+		for (IResource element : deleted) {
+			nonExistingResources.add(element);
 		}
 		//out of sync
 		IResource[] unsynchronized = buildResources(root, new String[] {"1/2/3/3"});
@@ -255,8 +253,9 @@ public class IResourceTest extends ResourceTest {
 		IResource target = (IResource) args[1];
 		int state = ((Integer) args[2]).intValue();
 		int depth = ((Integer) args[3]).intValue();
-		if (!makesSense(receiver, target, state, depth))
+		if (!makesSense(receiver, target, state, depth)) {
 			return;
+		}
 		try {
 			getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
@@ -264,8 +263,9 @@ public class IResourceTest extends ResourceTest {
 		}
 		//target may have changed gender
 		IResource changedTarget = getWorkspace().getRoot().findMember(target.getFullPath());
-		if (changedTarget != null && changedTarget.getType() != target.getType())
+		if (changedTarget != null && changedTarget.getType() != target.getType()) {
 			ensureDoesNotExistInWorkspace(changedTarget);
+		}
 		ensureExistsInWorkspace(interestingResources, true);
 	}
 
@@ -274,9 +274,9 @@ public class IResourceTest extends ResourceTest {
 	 */
 	protected IProject[] getProjects(IResource[] resources) {
 		ArrayList<IProject> list = new ArrayList<>();
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].getType() == IResource.PROJECT) {
-				list.add((IProject) resources[i]);
+		for (IResource resource : resources) {
+			if (resource.getType() == IResource.PROJECT) {
+				list.add((IProject) resource);
 			}
 		}
 		return list.toArray(new IProject[list.size()]);
@@ -288,8 +288,9 @@ public class IResourceTest extends ResourceTest {
 	 * "depth" will hit resource1.
 	 */
 	protected boolean hasParent(IResource resource1, IResource resource2, int depth) {
-		if (depth == IResource.DEPTH_ZERO)
+		if (depth == IResource.DEPTH_ZERO) {
 			return false;
+		}
 		if (depth == IResource.DEPTH_ONE) {
 			return resource2.equals(resource1.getParent());
 		}
@@ -398,14 +399,14 @@ public class IResourceTest extends ResourceTest {
 
 			Vector<IResource> resources = new Vector<>();
 			resources.addElement(openProject);
-			for (int i = 0; i < resourcesInOpenProject.length; i++) {
-				resources.addElement(resourcesInOpenProject[i]);
+			for (IResource element : resourcesInOpenProject) {
+				resources.addElement(element);
 			}
 
 			resources.addElement(closedProject);
-			for (int i = 0; i < resourcesInClosedProject.length; i++) {
-				resources.addElement(resourcesInClosedProject[i]);
-				nonExistingResources.add(resourcesInClosedProject[i]);
+			for (IResource element : resourcesInClosedProject) {
+				resources.addElement(element);
+				nonExistingResources.add(element);
 			}
 
 			resources.addElement(nonExistingProject);
@@ -454,8 +455,9 @@ public class IResourceTest extends ResourceTest {
 					// we only get a delta if the receiver of refreshLocal
 					// is a parent of the changed resource, or they're the same
 					// resource.
-					if (hasParent(target, receiver, depth) || target.equals(receiver))
+					if (hasParent(target, receiver, depth) || target.equals(receiver)) {
 						verifier.addExpectedDeletion(target);
+					}
 				}
 				break;
 			case S_FILESYSTEM_ONLY :
@@ -466,14 +468,16 @@ public class IResourceTest extends ResourceTest {
 					// we only get a delta if the receiver of refreshLocal
 					// is a parent of the changed resource, or they're the same
 					// resource.
-					if (hasParent(target, receiver, depth) || target.equals(receiver))
+					if (hasParent(target, receiver, depth) || target.equals(receiver)) {
 						verifier.addExpectedChange(target, IResourceDelta.ADDED, 0);
+					}
 				}
 				break;
 			case S_UNCHANGED :
 				ensureExistsInWorkspace(target, true);
-				if (addVerifier)
+				if (addVerifier) {
 					verifier.reset();
+				}
 				break;
 			case S_CHANGED :
 				ensureExistsInWorkspace(target, true);
@@ -483,15 +487,17 @@ public class IResourceTest extends ResourceTest {
 					// we only get a delta if the receiver of refreshLocal
 					// is a parent of the changed resource, or they're the same
 					// resource.
-					if (hasParent(target, receiver, depth) || target.equals(receiver))
+					if (hasParent(target, receiver, depth) || target.equals(receiver)) {
 						verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+					}
 				}
 				break;
 			case S_DOES_NOT_EXIST :
 				ensureDoesNotExistInWorkspace(target);
 				ensureDoesNotExistInFileSystem(target);
-				if (addVerifier)
+				if (addVerifier) {
 					verifier.reset();
+				}
 				break;
 			case S_FOLDER_TO_FILE :
 				ensureExistsInWorkspace(target, true);
@@ -502,8 +508,9 @@ public class IResourceTest extends ResourceTest {
 					// we only get a delta if the receiver of refreshLocal
 					// is a parent of the changed resource, or they're the same
 					// resource.
-					if (hasParent(target, receiver, depth) || target.equals(receiver))
+					if (hasParent(target, receiver, depth) || target.equals(receiver)) {
 						verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.REPLACED | IResourceDelta.TYPE | IResourceDelta.CONTENT);
+					}
 				}
 				break;
 			case S_FILE_TO_FOLDER :
@@ -515,8 +522,9 @@ public class IResourceTest extends ResourceTest {
 					// we only get a delta if the receiver of refreshLocal
 					// is a parent of the changed resource, or they're the same
 					// resource.
-					if (hasParent(target, receiver, depth) || target.equals(receiver))
+					if (hasParent(target, receiver, depth) || target.equals(receiver)) {
 						verifier.addExpectedChange(target, IResourceDelta.CHANGED, IResourceDelta.REPLACED | IResourceDelta.TYPE | IResourceDelta.CONTENT);
+					}
 				}
 				break;
 		}
@@ -524,10 +532,12 @@ public class IResourceTest extends ResourceTest {
 
 	@Override
 	protected void tearDown() throws Exception {
-		if (noSideEffects)
+		if (noSideEffects) {
 			return;
-		if (verifier != null)
+		}
+		if (verifier != null) {
 			getWorkspace().removeResourceChangeListener(verifier);
+		}
 		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 		interestingPaths = null;
@@ -792,8 +802,9 @@ public class IResourceTest extends ResourceTest {
 		//add markers to all resources ... markers should not be copied
 		try {
 			getWorkspace().getRoot().accept(resource -> {
-				if (resource.isAccessible())
+				if (resource.isAccessible()) {
 					resource.createMarker(IMarker.TASK);
+				}
 				return true;
 			});
 		} catch (CoreException e) {
@@ -814,11 +825,13 @@ public class IResourceTest extends ResourceTest {
 				IPath destination = (IPath) args[1];
 				Boolean force = (Boolean) args[2];
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				resource.copy(destination, force.booleanValue(), monitor);
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -827,10 +840,12 @@ public class IResourceTest extends ResourceTest {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
 				//Boolean force = (Boolean) args[2];
-				if (!resource.isAccessible())
+				if (!resource.isAccessible()) {
 					return true;
-				if (isProject(resource) && destination.segmentCount() > 1 && !getWorkspace().validatePath(destination.toString(), IResource.FOLDER).isOK())
+				}
+				if (isProject(resource) && destination.segmentCount() > 1 && !getWorkspace().validatePath(destination.toString(), IResource.FOLDER).isOK()) {
 					return true;
+				}
 				java.io.File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
 				java.io.File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
 				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
@@ -845,13 +860,16 @@ public class IResourceTest extends ResourceTest {
 				// container of the resource being copied."
 				IPath path = destination.isAbsolute() ? destination : source.getParent().getFullPath().append(destination);
 				IResource copy = getWorkspace().getRoot().findMember(path);
-				if (copy == null)
+				if (copy == null) {
 					return false;
-				if (!copy.exists())
+				}
+				if (!copy.exists()) {
 					return false;
+				}
 				//markers are never copied, so ensure copy has none
-				if (copy.findMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE).length > 0)
+				if (copy.findMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE).length > 0) {
 					return false;
+				}
 				return true;
 			}
 		}.performTest(inputs);
@@ -879,15 +897,17 @@ public class IResourceTest extends ResourceTest {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
 				IResource resource = (IResource) args[2];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				try {
 					resource.delete(force.booleanValue(), monitor);
 				} catch (OperationCanceledException e) {
 					return CANCELED;
 				}
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -896,20 +916,23 @@ public class IResourceTest extends ResourceTest {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
 				IResource resource = (IResource) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
+				if (monitor instanceof CancelingProgressMonitor) {
 					return false;
-				if (force.booleanValue() || !resource.exists())
+				}
+				if (force.booleanValue() || !resource.exists()) {
 					return false;
+				}
 				if (resource.getType() == IResource.PROJECT) {
 					IProject project = (IProject) resource;
 					try {
-						if (!project.isOpen())
+						if (!project.isOpen()) {
 							return false;
+						}
 						IResource[] children = project.members();
-						for (int i = 0; i < children.length; i++) {
-							IResource member = children[i];
-							if (shouldFail(new Object[] {args[0], args[1], member}, count))
+						for (IResource member : children) {
+							if (shouldFail(new Object[] {args[0], args[1], member}, count)) {
 								return true;
+							}
 						}
 					} catch (CoreException ex) {
 						ex.printStackTrace();
@@ -935,17 +958,20 @@ public class IResourceTest extends ResourceTest {
 								hasUnsynchronizedResources[0] = true;
 								return false;
 							}
-							if (target.isFile())
+							if (target.isFile()) {
 								return false;
+							}
 							String[] list = target.list();
-							if (list == null)
+							if (list == null) {
 								return true;
+							}
 							IContainer container = (IContainer) toVisit;
-							for (int i = 0; i < list.length; i++) {
-								File file = new File(target, list[i]);
-								IResource child = file.isFile() ? (IResource) container.getFile(new Path(list[i])) : container.getFolder(new Path(list[i]));
-								if (!child.exists())
+							for (String element : list) {
+								File file = new File(target, element);
+								IResource child = file.isFile() ? (IResource) container.getFile(new Path(element)) : container.getFolder(new Path(element));
+								if (!child.exists()) {
 									visit(child);
+								}
 							}
 							return true;
 						}
@@ -962,8 +988,9 @@ public class IResourceTest extends ResourceTest {
 				Boolean force = (Boolean) args[0];
 				IProgressMonitor monitor = (IProgressMonitor) args[1];
 				IResource resource = (IResource) args[2];
-				if (result == CANCELED)
+				if (result == CANCELED) {
 					return monitor instanceof CancelingProgressMonitor;
+				}
 				//oldState[0] : was resource accessible before the invocation?
 				//oldState[1] : all files that should have been deleted from
 				// the file system
@@ -973,26 +1000,28 @@ public class IResourceTest extends ResourceTest {
 					// check the parent's members, deleted resource should not
 					// be a member
 					IResource[] children = ((IContainer) getWorkspace().getRoot().findMember(resource.getFullPath().removeLastSegments(1))).members();
-					for (int i = 0; i < children.length; i++) {
-						if (resource == children[i])
+					for (IResource element : children) {
+						if (resource == element) {
 							return false;
+						}
 					}
 				}
-				if (!getAllFilesForResource(resource, force.booleanValue()).isEmpty())
+				if (!getAllFilesForResource(resource, force.booleanValue()).isEmpty()) {
 					return false;
+				}
 				@SuppressWarnings("unchecked")
 				Set<File> oldFiles = (Set<File>) oldState[1];
-				for (Iterator<File> i = oldFiles.iterator(); i.hasNext();) {
-					File oldFile = i.next();
-					if (oldFile.exists())
+				for (File oldFile : oldFiles) {
+					if (oldFile.exists()) {
 						return false;
+					}
 				}
 				@SuppressWarnings("unchecked")
 				Set<IResource> oldResources = (Set<IResource>) oldState[2];
-				for (Iterator<IResource> i = oldResources.iterator(); i.hasNext();) {
-					IResource oldResource = i.next();
-					if (oldResource.exists() || getWorkspace().getRoot().findMember(oldResource.getFullPath()) != null)
+				for (IResource oldResource : oldResources) {
+					if (oldResource.exists() || getWorkspace().getRoot().findMember(oldResource.getFullPath()) != null) {
 						return false;
+					}
 				}
 				return true;
 			}
@@ -1266,8 +1295,8 @@ public class IResourceTest extends ResourceTest {
 		ensureExistsInWorkspace(resources, true);
 
 		// initial values should be false
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			assertTrue("1.0: " + resource.getFullPath(), !resource.isDerived());
 		}
 
@@ -1324,8 +1353,8 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		// values should be false again
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource2 : resources) {
+			IResource resource = resource2;
 			assertTrue("7.0: " + resource.getFullPath(), !resource.isDerived());
 		}
 	}
@@ -1431,12 +1460,14 @@ public class IResourceTest extends ResourceTest {
 				IResource resource = (IResource) args[0];
 				IPath resultPath = (IPath) result;
 				if (resource.getType() == IResource.PROJECT) {
-					if (!resource.exists())
+					if (!resource.exists()) {
 						return resultPath == null;
+					}
 					return resultPath != null;
 				}
-				if (!resource.getProject().exists())
+				if (!resource.getProject().exists()) {
 					return resultPath == null;
+				}
 				return resultPath != null;
 			}
 		}.performTest(inputs);
@@ -1454,18 +1485,18 @@ public class IResourceTest extends ResourceTest {
 		IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] {"/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"});
 		final Map<IPath, Long> table = new HashMap<>(resources.length);
 
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (resource.getType() != IResource.ROOT)
+		for (IResource resource : resources) {
+			if (resource.getType() != IResource.ROOT) {
 				assertEquals("1.0." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
+			}
 		}
 
 		// create the project(s). the resources should still have null
 		// modification stamp
 		IProject[] projects = getProjects(resources);
 		IProject project;
-		for (int i = 0; i < projects.length; i++) {
-			project = projects[i];
+		for (IProject project2 : projects) {
+			project = project2;
 			try {
 				project.create(getMonitor());
 			} catch (CoreException e) {
@@ -1476,8 +1507,8 @@ public class IResourceTest extends ResourceTest {
 
 		// open the project(s) and create the resources. none should have a
 		// null stamp anymore.
-		for (int i = 0; i < projects.length; i++) {
-			project = projects[i];
+		for (IProject project2 : projects) {
+			project = project2;
 			assertEquals("3.1." + project.getFullPath(), IResource.NULL_STAMP, project.getModificationStamp());
 			try {
 				project.open(getMonitor());
@@ -1488,8 +1519,7 @@ public class IResourceTest extends ResourceTest {
 			// cache the value for later use
 			table.put(project.getFullPath(), new Long(project.getModificationStamp()));
 		}
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			if (resource.getType() != IResource.PROJECT) {
 				assertEquals("3.4." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
 				ensureExistsInWorkspace(resource, true);
@@ -1500,31 +1530,30 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		// close the projects. now all resources should have a null stamp again
-		for (int i = 0; i < projects.length; i++) {
-			project = projects[i];
+		for (IProject project2 : projects) {
+			project = project2;
 			try {
 				project.close(getMonitor());
 			} catch (CoreException e) {
 				fail("4.0." + project.getFullPath(), e);
 			}
 		}
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (resource.getType() != IResource.ROOT)
+		for (IResource resource : resources) {
+			if (resource.getType() != IResource.ROOT) {
 				assertEquals("4.1." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
+			}
 		}
 
 		// re-open the projects. all resources should have the same stamps
-		for (int i = 0; i < projects.length; i++) {
-			project = projects[i];
+		for (IProject project2 : projects) {
+			project = project2;
 			try {
 				project.open(getMonitor());
 			} catch (CoreException e) {
 				fail("5.0." + project.getFullPath(), e);
 			}
 		}
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			if (resource.getType() != IResource.PROJECT) {
 				Object v = table.get(resource.getFullPath());
 				assertNotNull("5.1." + resource.getFullPath(), v);
@@ -1535,8 +1564,7 @@ public class IResourceTest extends ResourceTest {
 
 		// touch all the resources. this will update the modification stamp
 		final Map<IPath, Long> tempTable = new HashMap<>(resources.length);
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			if (resource.getType() != IResource.ROOT) {
 				try {
 					resource.touch(getMonitor());
@@ -1586,8 +1614,7 @@ public class IResourceTest extends ResourceTest {
 			fail("8.1", e);
 		}
 		tempTable.clear();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			if (resource.getType() != IResource.ROOT) {
 				long stamp = resource.getModificationStamp();
 				assertTrue("8.2." + resource.getFullPath(), stamp != IResource.NULL_STAMP);
@@ -1607,8 +1634,7 @@ public class IResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("9.1", e);
 		}
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			if (resource.getType() != IResource.ROOT) {
 				long newStamp = resource.getModificationStamp();
 				assertTrue("9.2." + resource.getFullPath(), newStamp != IResource.NULL_STAMP);
@@ -1628,16 +1654,15 @@ public class IResourceTest extends ResourceTest {
 
 		// none of the resources exist yet so all the modification stamps
 		// should be null
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (resource.getType() != IResource.ROOT)
+		for (IResource resource : resources) {
+			if (resource.getType() != IResource.ROOT) {
 				assertEquals("10.1" + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
+			}
 		}
 
 		// create all the resources (non-local) and ensure all stamps are null
 		ensureExistsInWorkspace(resources, false);
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			switch (resource.getType()) {
 				case IResource.ROOT :
 					break;
@@ -1656,8 +1681,9 @@ public class IResourceTest extends ResourceTest {
 			fail("12.0", e);
 		}
 		visitor = resource -> {
-			if (resource.getType() != IResource.ROOT)
+			if (resource.getType() != IResource.ROOT) {
 				assertTrue("12.1." + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
+			}
 			return true;
 		};
 		try {
@@ -1904,8 +1930,9 @@ public class IResourceTest extends ResourceTest {
 				IResource target = (IResource) args[1];
 				int state = ((Integer) args[2]).intValue();
 				int depth = ((Integer) args[3]).intValue();
-				if (!makesSense(receiver, target, state, depth))
+				if (!makesSense(receiver, target, state, depth)) {
 					return null;
+				}
 				setupBeforeState(receiver, target, state, depth, false);
 				boolean result = receiver.isSynchronized(depth);
 				return result ? Boolean.TRUE : Boolean.FALSE;
@@ -1919,7 +1946,9 @@ public class IResourceTest extends ResourceTest {
 			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
+				 {
 					return true; //combination didn't make sense
+				}
 				boolean bResult = ((Boolean) result).booleanValue();
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
@@ -1927,8 +1956,9 @@ public class IResourceTest extends ResourceTest {
 				int depth = ((Integer) args[3]).intValue();
 
 				//only !synchronized if target is same as or child of receiver
-				if (!(receiver.equals(target) || hasParent(target, receiver, depth)))
+				if (!(receiver.equals(target) || hasParent(target, receiver, depth))) {
 					return bResult;
+				}
 				switch (state) {
 					case S_UNCHANGED :
 					case S_DOES_NOT_EXIST :
@@ -1968,11 +1998,13 @@ public class IResourceTest extends ResourceTest {
 				IPath destination = (IPath) args[1];
 				Boolean force = (Boolean) args[2];
 				IProgressMonitor monitor = (IProgressMonitor) args[3];
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).prepare();
+				}
 				resource.move(destination, force.booleanValue(), monitor);
-				if (monitor instanceof FussyProgressMonitor)
+				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
+				}
 				return null;
 			}
 
@@ -1981,11 +2013,13 @@ public class IResourceTest extends ResourceTest {
 				IResource resource = (IResource) args[0];
 				IPath destination = (IPath) args[1];
 				//			Boolean force = (Boolean) args[2];
-				if (!resource.isAccessible())
+				if (!resource.isAccessible()) {
 					return true;
+				}
 				if (isProject(resource)) {
-					if (destination.isAbsolute() ? destination.segmentCount() != 2 : destination.segmentCount() != 1)
+					if (destination.isAbsolute() ? destination.segmentCount() != 2 : destination.segmentCount() != 1) {
 						return true;
+					}
 					return !getWorkspace().validateName(destination.segment(0), IResource.PROJECT).isOK();
 				}
 				File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
@@ -2016,8 +2050,7 @@ public class IResourceTest extends ResourceTest {
 		assertExistsInWorkspace("1.3", project);
 		// define an operation which will create a bunch of resources including
 		// a project.
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			try {
 				switch (resource.getType()) {
 					case IResource.FILE :
@@ -2142,8 +2175,9 @@ public class IResourceTest extends ResourceTest {
 	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!isReadOnlySupported())
+		if (!isReadOnlySupported()) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		IFile file = project.getFile("target");
 		try {
@@ -2201,8 +2235,9 @@ public class IResourceTest extends ResourceTest {
 				IResource target = (IResource) args[1];
 				int state = ((Integer) args[2]).intValue();
 				int depth = ((Integer) args[3]).intValue();
-				if (!makesSense(receiver, target, state, depth))
+				if (!makesSense(receiver, target, state, depth)) {
 					return null;
+				}
 				setupBeforeState(receiver, target, state, depth, true);
 				receiver.refreshLocal(depth, getMonitor());
 				return Boolean.TRUE;
@@ -2216,7 +2251,9 @@ public class IResourceTest extends ResourceTest {
 			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
+				 {
 					return true; //permutation didn't make sense
+				}
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
 				int state = ((Integer) args[2]).intValue();
@@ -2277,15 +2314,17 @@ public class IResourceTest extends ResourceTest {
 		//revert all existing resources
 		try {
 			getWorkspace().getRoot().accept(resource -> {
-				if (!resource.isAccessible())
+				if (!resource.isAccessible()) {
 					return false;
+				}
 				long oldStamp = resource.getModificationStamp();
 				resource.touch(null);
 				long newStamp = resource.getModificationStamp();
-				if (resource.getType() == IResource.ROOT)
+				if (resource.getType() == IResource.ROOT) {
 					assertTrue("1.0." + resource.getFullPath(), oldStamp == newStamp);
-				else
+				} else {
 					assertTrue("1.0." + resource.getFullPath(), oldStamp != newStamp);
+				}
 				resource.revertModificationStamp(oldStamp);
 				assertEquals("1.1." + resource.getFullPath(), oldStamp, resource.getModificationStamp());
 				return true;
@@ -2297,8 +2336,9 @@ public class IResourceTest extends ResourceTest {
 		IResource[] resources = buildInterestingResources();
 		long[] illegal = new long[] {-1, -10, -100};
 		for (int i = 0; i < resources.length; i++) {
-			if (!resources[i].isAccessible())
+			if (!resources[i].isAccessible()) {
 				continue;
+			}
 			for (int j = 0; j < illegal.length; j++) {
 				try {
 					resources[i].revertModificationStamp(illegal[j]);
@@ -2317,15 +2357,17 @@ public class IResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("3.99", e);
 		}
-		for (int i = 0; i < resources.length; i++) {
+		for (IResource resource : resources) {
 			try {
-				resources[i].revertModificationStamp(1);
-				if (resources[i].getType() != IResource.ROOT)
-					fail("4." + resources[i].getFullPath());
+				resource.revertModificationStamp(1);
+				if (resource.getType() != IResource.ROOT) {
+					fail("4." + resource.getFullPath());
+				}
 			} catch (CoreException e) {
 				//should fail except for root
-				if (resources[i].getType() == IResource.ROOT)
+				if (resource.getType() == IResource.ROOT) {
 					fail("4.99");
+				}
 			}
 		}
 	}
@@ -2366,14 +2408,17 @@ public class IResourceTest extends ResourceTest {
 			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				IResource receiver = (IResource) args[0];
-				if (receiver.getType() == IResource.ROOT)
+				if (receiver.getType() == IResource.ROOT) {
 					return true;
+				}
 				long time = ((Long) args[1]).longValue();
 				long actual = ((Long) result).longValue();
-				if (actual != receiver.getLocalTimeStamp())
+				if (actual != receiver.getLocalTimeStamp()) {
 					return false;
-				if (Math.abs(actual - time) > 2000)
+				}
+				if (Math.abs(actual - time) > 2000) {
 					return false;
+				}
 				return true;
 			}
 		}.performTest(inputs);

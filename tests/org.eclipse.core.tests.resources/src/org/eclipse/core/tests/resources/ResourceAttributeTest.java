@@ -67,8 +67,9 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeArchive() {
 		// only activate this test on platforms that support it
-		if (!isAttributeSupported(EFS.ATTRIBUTE_ARCHIVE))
+		if (!isAttributeSupported(EFS.ATTRIBUTE_ARCHIVE)) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());
@@ -101,8 +102,9 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeExecutable() {
 		// only activate this test on platforms that support it
-		if (!isAttributeSupported(EFS.ATTRIBUTE_EXECUTABLE))
+		if (!isAttributeSupported(EFS.ATTRIBUTE_EXECUTABLE)) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());
@@ -136,8 +138,9 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeHidden() {
 		// only activate this test on platforms that support it
-		if (!isAttributeSupported(EFS.ATTRIBUTE_HIDDEN))
+		if (!isAttributeSupported(EFS.ATTRIBUTE_HIDDEN)) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());
@@ -170,8 +173,9 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeReadOnly() {
 		// only activate this test on platforms that support it
-		if (!isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY))
+		if (!isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY)) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());
@@ -243,8 +247,9 @@ public class ResourceAttributeTest extends ResourceTest {
 	 */
 	public void _testRefreshExecutableOnFolder() {
 		// only test on platforms that implement the executable bit
-		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_EXECUTABLE) == 0)
+		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_EXECUTABLE) == 0) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("testRefreshExecutableOnFolder");
 		IFolder folder = project.getFolder("folder");
 		IFile file = folder.getFile("file");
@@ -281,8 +286,9 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeSymlink() {
 		// Only activate this test if testing of symbolic links is possible.
-		if (!canCreateSymLinks())
+		if (!canCreateSymLinks()) {
 			return;
+		}
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile link = project.getFile("link");
 		ensureExistsInWorkspace(link, getRandomContents());
@@ -351,8 +357,9 @@ public class ResourceAttributeTest extends ResourceTest {
 		try {
 			for (int attribute : attributes) {
 				// only activate this test on platforms that support it
-				if (!isAttributeSupported(attribute))
+				if (!isAttributeSupported(attribute)) {
 					continue;
+				}
 
 				// file
 				ResourceAttributes resAttr = file.getResourceAttributes();

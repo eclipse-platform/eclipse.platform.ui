@@ -29,8 +29,9 @@ public class TestWorkspaceJob extends WorkspaceJob {
 		super("TestWorkspaceJob");
 		this.duration = duration;
 		//only allow durations that are a multiple of the tick length for simplicity
-		if (duration % tickLength > 0)
+		if (duration % tickLength > 0) {
 			throw new IllegalArgumentException("Use a job duration that it is a multiple of " + tickLength);
+		}
 	}
 
 	@Override
@@ -39,15 +40,16 @@ public class TestWorkspaceJob extends WorkspaceJob {
 		monitor.beginTask(getName(), ticks <= 0 ? 1 : ticks);
 		if (touch) {
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				projects[i].touch(null);
+			for (IProject project : projects) {
+				project.touch(null);
 			}
 		}
 		try {
 			for (int i = 0; i < ticks; i++) {
 				monitor.subTask("Tick: " + i);
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
+				}
 				try {
 					Thread.sleep(tickLength);
 				} catch (InterruptedException e) {
@@ -55,8 +57,9 @@ public class TestWorkspaceJob extends WorkspaceJob {
 				}
 				monitor.worked(1);
 			}
-			if (ticks <= 0)
+			if (ticks <= 0) {
 				monitor.worked(1);
+			}
 		} finally {
 			monitor.done();
 		}

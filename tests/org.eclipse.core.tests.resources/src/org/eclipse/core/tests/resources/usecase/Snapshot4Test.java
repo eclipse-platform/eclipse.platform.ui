@@ -32,8 +32,9 @@ public class Snapshot4Test extends SnapshotTest {
 	protected static String[] defineHierarchy1() {
 		List<String> result = new ArrayList<>();
 		String[] old = Snapshot3Test.defineHierarchy1();
-		for (int i = 0; i < old.length; i++)
-			result.add(old[i]);
+		for (String element : old) {
+			result.add(element);
+		}
 		result.remove(new Path(PROJECT_1).append("added file").toString());
 		result.remove(new Path(PROJECT_1).append("yet another file").toString());
 		result.remove(new Path(PROJECT_1).append("a folder").addTrailingSeparator().toString());

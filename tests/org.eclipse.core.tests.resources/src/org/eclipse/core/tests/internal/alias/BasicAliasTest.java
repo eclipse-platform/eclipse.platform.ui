@@ -90,8 +90,9 @@ public class BasicAliasTest extends ResourceTest {
 	 * alphabetical order.
 	 */
 	private IResource[] getSortedChildren(IResource resource) throws CoreException {
-		if (!(resource instanceof IContainer))
+		if (!(resource instanceof IContainer)) {
 			return new IResource[0];
+		}
 		IResource[] children = ((IContainer) resource).members();
 		Arrays.sort(children, (arg0, arg1) -> arg0.getFullPath().toString().compareTo(arg1.getFullPath().toString()));
 		return children;
@@ -226,13 +227,15 @@ public class BasicAliasTest extends ResourceTest {
 	 * used in the locations map of AliasManager.
 	 */
 	public void testBug198571() {
-		if (!isWindows())
+		if (!isWindows()) {
 			return;
+		}
 
 		/* look for the adequate environment */
 		String[] devices = findAvailableDevices();
-		if (devices[0] == null || devices[1] == null)
+		if (devices[0] == null || devices[1] == null) {
 			return;
+		}
 
 		String location = getUniqueString();
 		IProject testProject1 = getWorkspace().getRoot().getProject(location + "1");

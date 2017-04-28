@@ -35,8 +35,9 @@ public class TestBug323833 extends WorkspaceSessionTest {
 	}
 
 	public void test1() {
-		if (!Platform.getOS().equals(Platform.OS_MACOSX))
+		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
 			return;
+		}
 
 		IFileStore fileStore = getTempStore().getChild(getUniqueString());
 		createFileInFileSystem(fileStore);
@@ -66,8 +67,9 @@ public class TestBug323833 extends WorkspaceSessionTest {
 	}
 
 	public void test2() {
-		if (!Platform.getOS().equals(Platform.OS_MACOSX))
+		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
 			return;
+		}
 
 		try {
 			FileCache.getCache();

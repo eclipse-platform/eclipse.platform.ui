@@ -215,10 +215,10 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("1.9", e);
 		}
 		assertEquals("2.0", members.length, 3);
-		for (int i = 0; i < members.length; i++) {
-			if (members[i].getType() == IResource.FOLDER) {
-				assertEquals("2.1", members[i].getType(), IResource.FOLDER);
-				assertEquals("2.2", members[i].getName(), "foo");
+		for (IResource member : members) {
+			if (member.getType() == IResource.FOLDER) {
+				assertEquals("2.1", member.getType(), IResource.FOLDER);
+				assertEquals("2.2", member.getName(), "foo");
 			}
 		}
 

@@ -46,14 +46,16 @@ public class MarkerSetTest extends ResourceTest {
 		java.util.Comparator<IMarkerSetElement> compare = (e1, e2) -> {
 			long id1 = e1.getId();
 			long id2 = e2.getId();
-			if (id1 == id2)
+			if (id1 == id2) {
 				return 0;
+			}
 			return id1 < id2 ? -1 : 1;
 		};
 		Arrays.sort(m1, compare);
 		Arrays.sort(m2, compare);
-		for (int i = 0; i < m1.length; i++)
+		for (int i = 0; i < m1.length; i++) {
 			assertEquals(message, m1[i].getId(), m2[i].getId());
+		}
 	}
 
 	/**
@@ -144,8 +146,9 @@ public class MarkerSetTest extends ResourceTest {
 			assertTrue("2.0." + i, !set.contains(info.getId()));
 			assertEquals("2.1," + i, i, set.size());
 			// check that the others still exist
-			for (int j = 0; j < i; j++)
+			for (int j = 0; j < i; j++) {
 				assertTrue("2.2." + j, set.contains(infos[j].getId()));
+			}
 		}
 
 		// all gone?

@@ -27,8 +27,9 @@ public class BrokenFileSystem extends FileSystem {
 
 	public static BrokenFileSystem getInstance() {
 		BrokenFileSystem tmpInstance = instance;
-		if (tmpInstance != null)
+		if (tmpInstance != null) {
 			return tmpInstance;
+		}
 		return instance = new BrokenFileSystem();
 	}
 

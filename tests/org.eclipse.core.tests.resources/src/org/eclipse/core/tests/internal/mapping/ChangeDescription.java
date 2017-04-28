@@ -43,8 +43,7 @@ public class ChangeDescription {
 	}
 
 	private void accumulateStatus(IResource[] resources, List<ModelStatus> result, String message) {
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			result.add(new ModelStatus(IStatus.WARNING, "org.eclipse.core.tests.resources", TestModelProvider.ID, getMessageFor(message, resource)));
 		}
 	}
@@ -63,8 +62,9 @@ public class ChangeDescription {
 			accumulateStatus(changedRoots.toArray(new IResource[changedRoots.size()]), result, CHANGED);
 			accumulateStatus(closedProjects.toArray(new IResource[closedProjects.size()]), result, CLOSED);
 			if (!result.isEmpty()) {
-				if (result.size() == 1)
+				if (result.size() == 1) {
 					return result.get(0);
+				}
 				return new MultiStatus("org.eclipse.core.tests.resources", 0, result.toArray(new IStatus[result.size()]), "Changes were validated", null);
 			}
 			return Status.OK_STATUS;
