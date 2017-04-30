@@ -499,3 +499,7 @@ StyledText {
 Link {
 	swt-link-foreground-color: '#org-eclipse-ui-workbench-LINK_COLOR'
 }
+
+ExpandableComposite {
+    titlebar-color: #cccccc;
+}
