@@ -12,6 +12,12 @@
 
 package org.eclipse.ui.tests.forms.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -22,7 +28,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class FormImagesTest {
@@ -32,11 +37,12 @@ public class FormImagesTest {
 		Display display = Display.getCurrent();
 		FormImages instance = FormImages.getInstance();
 		// ensure the singleton is returning the same instance
-		Assert.assertTrue("getInstance() returned a different FormImages instance", instance.equals(FormImages.getInstance()));
+		assertTrue("getInstance() returned a different FormImages instance", instance.equals(FormImages.getInstance()));
 		Image gradient = instance.getGradient(new Color(display, 1, 1, 1), new Color(display, 7, 7, 7), 21, 21, 0, display);
 		instance.markFinished(gradient, display);
 		// ensure the singleton is returning the same instance after creating and disposing one gradient
-		Assert.assertTrue("getInstance() returned a different FormImages instance after creation and disposal of one image", instance.equals(FormImages.getInstance()));
+		assertTrue("getInstance() returned a different FormImages instance after creation and disposal of one image",
+				instance.equals(FormImages.getInstance()));
 	}
 
 	@Test
@@ -46,8 +52,8 @@ public class FormImagesTest {
 				new Color(display, 0, 0, 0), 21, 21, 0, display);
 		getFormImagesInstance().markFinished(gradient, display);
 		// ensure that getting a single gradient and marking it as finished disposed it
-		Assert.assertTrue("markFinished(...) did not dispose an image after a single getGradient()", gradient.isDisposed());
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertTrue("markFinished(...) did not dispose an image after a single getGradient()", gradient.isDisposed());
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -58,19 +64,20 @@ public class FormImagesTest {
 		int count;
 		// ensure that the same image is returned for many calls with the same parameter
 		for (count = 1; count < 20; count ++)
-			Assert.assertEquals("getGradient(...) returned a different image for the same params on iteration "+count,
+			assertEquals("getGradient(...) returned a different image for the same params on iteration " + count,
 					gradient, getFormImagesInstance().getGradient(new Color(display, 200, 200, 200),
 							new Color(display, 0, 0, 0), 30, 16, 3, display));
 		for ( ;count > 0; count--) {
 			getFormImagesInstance().markFinished(gradient, display);
 			if (count != 1)
 				// ensure that the gradient is not disposed early
-				Assert.assertFalse("markFinished(...) disposed a shared image early on iteration "+count,gradient.isDisposed());
+				assertFalse("markFinished(...) disposed a shared image early on iteration " + count,
+						gradient.isDisposed());
 			else
 				// ensure that the gradient is disposed on the last markFinished
-				Assert.assertTrue("markFinished(...) did not dispose a shared image on the last call",gradient.isDisposed());
+				assertTrue("markFinished(...) did not dispose a shared image on the last call", gradient.isDisposed());
 		}
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -82,21 +89,22 @@ public class FormImagesTest {
 		// ensure that the same image is returned for many calls with the same
 		// parameter
 		for (count = 1; count < 20; count++)
-			Assert.assertEquals("getSectionGradientImage(...) returned a different image for the same params on iteration " + count,
+			assertEquals(
+					"getSectionGradientImage(...) returned a different image for the same params on iteration " + count,
 					gradient, getFormImagesInstance().getSectionGradientImage(new Color(display, 200, 200, 200),
 							new Color(display, 0, 0, 0), 30, 16, 3, display));
 		for (; count > 0; count--) {
 			getFormImagesInstance().markFinished(gradient, display);
 			if (count != 1)
 				// ensure that the gradient is not disposed early
-				Assert.assertFalse("markFinished(...) disposed a shared image early on iteration " + count,
+				assertFalse("markFinished(...) disposed a shared image early on iteration " + count,
 						gradient.isDisposed());
 			else
 				// ensure that the gradient is disposed on the last markFinished
-				Assert.assertTrue("markFinished(...) did not dispose a shared image on the last call",
+				assertTrue("markFinished(...) did not dispose a shared image on the last call",
 						gradient.isDisposed());
 		}
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -108,7 +116,7 @@ public class FormImagesTest {
 		int count;
 		// ensure that the same image is returned for many calls with the same parameter
 		for (count = 1; count < 20; count ++)
-			Assert.assertEquals("getGradient(...) returned a different image for the same params on iteration "+count,
+			assertEquals("getGradient(...) returned a different image for the same params on iteration " + count,
 					gradient,
 					getFormImagesInstance().getGradient(
 							new Color[] { new Color(display, 200, 200, 200), new Color(display, 0, 0, 0) },
@@ -117,12 +125,13 @@ public class FormImagesTest {
 			getFormImagesInstance().markFinished(gradient, display);
 			if (count != 1)
 				// ensure that the gradient is not disposed early
-				Assert.assertFalse("markFinished(...) disposed a shared image early on iteration "+count,gradient.isDisposed());
+				assertFalse("markFinished(...) disposed a shared image early on iteration " + count,
+						gradient.isDisposed());
 			else
 				// ensure that the gradient is disposed on the last markFinished
-				Assert.assertTrue("markFinished(...) did not dispose a shared image on the last call",gradient.isDisposed());
+				assertTrue("markFinished(...) did not dispose a shared image on the last call", gradient.isDisposed());
 		}
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -193,15 +202,18 @@ public class FormImagesTest {
 		// ensure none of the images are the same
 		for (int i = 0; i < images.length - 1; i++) {
 			for (int j = i+1; j < images.length; j++) {
-				Assert.assertNotSame("getGradient(...) returned the same image for different parameters: i = " + i + "; j = " + j, images[i], images[j]);
+				assertNotSame(
+						"getGradient(...) returned the same image for different parameters: i = " + i + "; j = " + j,
+						images[i], images[j]);
 			}
 		}
 		// ensure all of the images are disposed with one call to markFinished
 		for (int i = 0; i < images.length; i++) {
 			getFormImagesInstance().markFinished(images[i], display);
-			Assert.assertTrue("markFinished(...) did not dispose an image that was only requested once: i = " + i, images[i].isDisposed());
+			assertTrue("markFinished(...) did not dispose an image that was only requested once: i = " + i,
+					images[i].isDisposed());
 		}
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -213,7 +225,9 @@ public class FormImagesTest {
 		Image image2 = getFormImagesInstance().getGradient(
 				new Color[] { new Color(display, 0, 0, 0), new Color(display, 255, 255, 255) },
 				new int[] {100}, 20, true, new Color(display,0,0,0), display);
-		Assert.assertEquals("different images were created with only the background color differing when that difference is irrelevant", image1, image2);
+		assertEquals(
+				"different images were created with only the background color differing when that difference is irrelevant",
+				image1, image2);
 		getFormImagesInstance().markFinished(image1, display);
 		getFormImagesInstance().markFinished(image2, display);
 		image1 = getFormImagesInstance().getGradient(
@@ -222,10 +236,10 @@ public class FormImagesTest {
 		image2 = getFormImagesInstance().getGradient(
 				new Color[] { new Color(display, 0, 0, 0), new Color(display, 255, 255, 255) },
 				new int[] {80}, 20, true, new Color(display,0,0,0), display);
-		Assert.assertNotSame("the same image was used when different background colors were specified", image1, image2);
+		assertNotSame("the same image was used when different background colors were specified", image1, image2);
 		getFormImagesInstance().markFinished(image1, display);
 		getFormImagesInstance().markFinished(image2, display);
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -244,21 +258,21 @@ public class FormImagesTest {
 				kit1.getColors().getColor(redKey), 21, 21, 0, display);
 		Image image2 = getFormImagesInstance().getGradient(kit2.getColors().getColor(blueKey),
 				kit2.getColors().getColor(redKey), 21, 21, 0, display);
-		Assert.assertEquals("different images were created for the same RGBs with different Color instances", image1, image2);
+		assertEquals("different images were created for the same RGBs with different Color instances", image1, image2);
 		Image image3 = getFormImagesInstance().getGradient(new Color(display, 0, 0, 255), new Color(display, 255, 0, 0),
 				21, 21, 0, display);
-		Assert.assertEquals("different images were created for the same RGBs with different Color instances", image1, image3);
+		assertEquals("different images were created for the same RGBs with different Color instances", image1, image3);
 		kit1.dispose();
-		Assert.assertFalse("image was disposed after toolkits were disposed", image1.isDisposed());
+		assertFalse("image was disposed after toolkits were disposed", image1.isDisposed());
 		kit2.dispose();
-		Assert.assertFalse("image was disposed after toolkits were disposed", image2.isDisposed());
+		assertFalse("image was disposed after toolkits were disposed", image2.isDisposed());
 		getFormImagesInstance().markFinished(image1, display);
-		Assert.assertFalse("image was disposed early", image1.isDisposed());
+		assertFalse("image was disposed early", image1.isDisposed());
 		getFormImagesInstance().markFinished(image2, display);
-		Assert.assertFalse("image was disposed early", image2.isDisposed());
+		assertFalse("image was disposed early", image2.isDisposed());
 		getFormImagesInstance().markFinished(image3, display);
-		Assert.assertTrue("image was not disposed", image3.isDisposed());
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertTrue("image was not disposed", image3.isDisposed());
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	@Test
@@ -266,8 +280,8 @@ public class FormImagesTest {
 		Display display = Display.getCurrent();
 		Image image = new Image(display, 10, 10);
 		getFormImagesInstance().markFinished(image, display);
-		Assert.assertTrue("markFinished(...) did not dispose of an unknown image", image.isDisposed());
-		Assert.assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
+		assertTrue("markFinished(...) did not dispose of an unknown image", image.isDisposed());
+		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
 	}
 
 	private static HashMap<?, ?> getDescriptors(FormImages formImages) throws Exception {

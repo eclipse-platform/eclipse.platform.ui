@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.ui.internal.forms.widgets.FormTextModel;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -24,7 +25,7 @@ public class FormTextModelTest {
 		FormTextModel formTextModel = new FormTextModel();
 		formTextModel.setWhitespaceNormalized(true);
 		formTextModel.parseTaggedText("<form><p>   line with   \r\n   <b>  whitespace </b> Test </p></form>", false);
-		Assert.assertEquals("FormTextModel does not remove whitespace correctly according to the rules",
+		assertEquals("FormTextModel does not remove whitespace correctly according to the rules",
 				"line with whitespace Test" + System.lineSeparator(), formTextModel.getAccessibleText());
 	}
 
@@ -33,7 +34,7 @@ public class FormTextModelTest {
 		FormTextModel formTextModel = new FormTextModel();
 		formTextModel.setWhitespaceNormalized(false);
 		formTextModel.parseTaggedText("<form><p>   line with      <b>  whitespace </b> Test </p></form>", false);
-		Assert.assertEquals("FormTextModel does not preserve whitespace correctly according to the rules",
+		assertEquals("FormTextModel does not preserve whitespace correctly according to the rules",
 				"   line with        whitespace  Test " + System.lineSeparator(), formTextModel.getAccessibleText());
 	}
 }
