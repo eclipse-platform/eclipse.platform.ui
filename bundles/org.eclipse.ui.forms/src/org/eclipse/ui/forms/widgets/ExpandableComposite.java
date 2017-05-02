@@ -1032,8 +1032,7 @@ public class ExpandableComposite extends Canvas {
 	 *            the title bar foreground
 	 */
 	public void setTitleBarForeground(Color color) {
-		if (hasTitleBar())
-			titleBarForeground = color;
+		titleBarForeground = color;
 		if (textLabel != null)
 			textLabel.setForeground(color);
 	}
