@@ -117,6 +117,6 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
 	@Override
 	public String getTitle() {
-		return MarkerMessages.propertiesDialog_description_text;
+		return MarkerMessages.filtersDialog_description;
 	}
 }
