@@ -10,14 +10,14 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%javaEditorName"
-            icon="icons/obj16/java.gif"
+            icon="icons/obj16/java.png"
             extensions="jav"
             contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
             class="org.eclipse.ui.examples.javaeditor.JavaEditor"
             id="org.eclipse.ui.JavaEditor">
       </editor>
    </extension>
-   
+
    <extension
          id="ExampleJavaDocumentSetupParticipant"
          name="%documentSetupParticipantName"
@@ -27,7 +27,7 @@
             class="org.eclipse.ui.examples.javaeditor.JavaDocumentSetupParticipant">
       </participant>
    </extension>
-   
+
 <!-- =========================================================================== -->
 <!-- Template Editor Example                                                     -->
 <!-- =========================================================================== -->
@@ -36,7 +36,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%xml.editor.name"
-            icon="icons/sample.gif"
+            icon="icons/sample.png"
             extensions="xml"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             class="org.eclipse.ui.examples.templateeditor.editors.TemplateEditor"
@@ -62,7 +62,7 @@
       </contextType>
       <template
             name="%ant.tasks.copy.name"
-            icon="icons/template.gif"
+            icon="icons/template.png"
             description="%ant.tasks.copy.description"
             contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
             id="org.eclipse.ui.examples.templateeditor.ant.copy">
@@ -73,7 +73,7 @@
       <resolver
             name="%ant.resolvers.src"
             type="src"
-            icon="icons/resolver.gif"
+            icon="icons/resolver.png"
             description="%ant.resolvers.src.description"
             contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
             class="org.eclipse.ui.examples.templateeditor.template.AntVariableResolver">
@@ -81,7 +81,7 @@
       <resolver
             name="%ant.resolvers.dst"
             type="dst"
-            icon="icons/resolver.gif"
+            icon="icons/resolver.png"
             description="%ant.resolvers.dst.description"
             contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
             class="org.eclipse.ui.examples.templateeditor.template.AntVariableResolver">
