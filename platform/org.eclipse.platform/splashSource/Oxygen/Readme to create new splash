@@ -1,0 +1,17 @@
+Procedure to generate new splash screen for .x releases
+
+Prereqs
+Need Gimp 2.8 and above
+install all the fonts available inder fonts folder
+
+Steps.
+1. Open EclipseOxygen.xcf
+2. Open layers-gradients view from windows menu if not opened
+3. select Oxygen text layer from the layers view. double click on the icon. This will show atest box on Oxygen text in the circle
+4. Change it to oxygen.1/.2 as required
+5. select June 2017 text box. change it to release month and year similar to oxygen
+6. Save the file.
+7. Resize the canvas to 650x434 by selecting "Image->Canvas Size". place the image in center. make sure you resize all the layers.
+8. Absorb all the layers by selecting "Layer->merge down" till you have only one layer
+9. Resize image by selecting "Image->Scale Image". and set the size to 452x302
+10. Export the image to bmp with 24 but color and without color space information using compatibility options
