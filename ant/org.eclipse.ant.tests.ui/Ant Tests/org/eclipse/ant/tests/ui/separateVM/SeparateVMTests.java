@@ -247,7 +247,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testAntHome() throws CoreException {
 		launch("environmentVar"); //$NON-NLS-1$
 		assertLines(6);
-		String message = ConsoleLineTracker.getMessage(2);
+		String message = ConsoleLineTracker.getMessage(1);
 		assertTrue("Incorrect message. Should end with org.apache.ant [" + message + "]", checkAntHomeMessage(message)); //$NON-NLS-1$ //$NON-NLS-2$
 		message = ConsoleLineTracker.getMessage(2);
 		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message)); //$NON-NLS-1$

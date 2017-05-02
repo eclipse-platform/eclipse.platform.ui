@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -272,7 +272,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	private void restoreAntHomeEntries() {
 		String entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, "ant_urls", //$NON-NLS-1$
-		null, null); // old constant
+				null, null); // old constant
 		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
 			entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, null, null);
 		} else {
@@ -299,7 +299,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	private void restoreAdditionalEntries() {
 		String entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, "urls", //$NON-NLS-1$
-		null, null); // old constant
+				null, null); // old constant
 		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
 			entries = Platform.getPreferencesService().getString(AntCorePlugin.PI_ANTCORE, IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES, null, null);
 		} else {
@@ -372,7 +372,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public String getDefaultAntHome() {
 		IAntClasspathEntry[] entries = getDefaultAntHomeEntries();
 		if (entries.length > 0) {
-			URL antjar = entries[0].getEntryURL();
+			URL antjar = entries[1].getEntryURL(); // first entry is .
 			IPath antHomePath = new Path(antjar.getFile());
 			// parent directory of the lib directory
 			antHomePath = antHomePath.removeLastSegments(2);
@@ -723,7 +723,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[] { objectName }), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[] {
+					objectName }), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return false;
 		}
@@ -1182,7 +1183,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 					prereqs.add(new Relation(currentFrag, hostWires.get(0).getProvider()));
 				}
 			} else {
-				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, NLS.bind(InternalCoreAntMessages.AntCorePreferences_1, new String[] { currentFrag.getSymbolicName() }), null));
+				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, NLS.bind(InternalCoreAntMessages.AntCorePreferences_1, new String[] {
+						currentFrag.getSymbolicName() }), null));
 			}
 		}
 
@@ -1687,8 +1689,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		for (int i = 0; i < customTasks.length; i++) {
 			tasks.append(customTasks[i].getTaskName());
 			tasks.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName()
-					+ "," + customTasks[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," //$NON-NLS-1$
+					+ customTasks[i].getLibraryEntry().getLabel());
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, tasks.toString());
 	}
@@ -1710,8 +1712,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		for (int i = 0; i < customTypes.length; i++) {
 			types.append(customTypes[i].getTypeName());
 			types.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName()
-					+ "," + customTypes[i].getLibraryEntry().getLabel()); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," //$NON-NLS-1$
+					+ customTypes[i].getLibraryEntry().getLabel());
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, types.toString());
 	}
@@ -1739,7 +1741,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	protected void updateAdditionalEntries(Preferences prefs) {
-		prefs.setValue("urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
+		prefs.setValue("urls", IAntCoreConstants.EMPTY_STRING); // old constant removed //$NON-NLS-1$
 		String serialized = IAntCoreConstants.EMPTY_STRING;
 		IAntClasspathEntry toolsJarEntry = getToolsJarEntry();
 		List<IAntClasspathEntry> userLibs = getUserLibraries();
@@ -1778,7 +1780,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	protected void updateAntHomeEntries(Preferences prefs) {
-		prefs.setValue("ant_urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
+		prefs.setValue("ant_urls", IAntCoreConstants.EMPTY_STRING); // old constant removed //$NON-NLS-1$
 
 		// see if the custom entries are just the default entries
 		IAntClasspathEntry[] defaultEntries = getDefaultAntHomeEntries();
