@@ -74,7 +74,21 @@ public final class JFacePreferences {
 	 */
 	public static final String CONTENT_ASSIST_FOREGROUND_COLOR = "CONTENT_ASSIST_FOREGROUND_COLOR"; //$NON-NLS-1$
 
+	/**
+	 * The color used for the background of controls that provide information
+	 * for reading. E.g. Hover boxes with information like javadoc or view parts.
+	 *
+	 * @since 3.14
+	 */
+	public static final String INFORMATION_BACKGROUND_COLOR = "org.eclipse.ui.workbench.INFORMATION_BACKGROUND"; //$NON-NLS-1$
 
+	/**
+	 * The color used for text for controls that provide information for
+	 * reading. E.g. Hover boxes with information like javadoc or view parts.
+	 *
+	 * @since 3.14
+	 */
+	public static final String INFORMATION_FOREGROUND_COLOR = "org.eclipse.ui.workbench.INFORMATION_FOREGROUND"; //$NON-NLS-1$
 
 	private static IPreferenceStore preferenceStore;
 

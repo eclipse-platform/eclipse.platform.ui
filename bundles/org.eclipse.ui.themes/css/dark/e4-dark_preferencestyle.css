@@ -55,6 +55,8 @@ IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes { /* pseudo a
 		'CONFLICTING_COLOR=240,15,66'
 		'CONTENT_ASSIST_BACKGROUND_COLOR=52,57,61'
 		'CONTENT_ASSIST_FOREGROUND_COLOR=238,238,238'
+		'org.eclipse.ui.workbench.INFORMATION_BACKGROUND=52,57,61'
+		'org.eclipse.ui.workbench.INFORMATION_FOREGROUND=238,238,238'
 		'org.eclipse.ui.workbench.HOVER_BACKGROUND=52,57,61'
 		'org.eclipse.ui.workbench.HOVER_FOREGROUND=238,238,238'
 		'ERROR_COLOR=247,68,117'
