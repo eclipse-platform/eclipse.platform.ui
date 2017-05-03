@@ -295,13 +295,13 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		recentWorkspacesForm = toolkit.createForm(composite);
 		recentWorkspacesForm.setBackground(composite.getBackground());
 		recentWorkspacesForm.getBody().setLayout(new GridLayout());
-		ExpandableComposite expandableComposite = toolkit.createExpandableComposite(recentWorkspacesForm.getBody(),
+		ExpandableComposite recentWorkspacesExpandable = toolkit.createExpandableComposite(recentWorkspacesForm.getBody(),
 				ExpandableComposite.TWISTIE);
-		recentWorkspacesForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		expandableComposite.setBackground(composite.getBackground());
-		expandableComposite.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_recentWorkspaces);
-		expandableComposite.setExpanded(launchData.isShowRecentWorkspaces());
-		expandableComposite.addExpansionListener(new ExpansionAdapter() {
+		recentWorkspacesForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		recentWorkspacesExpandable.setBackground(composite.getBackground());
+		recentWorkspacesExpandable.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_recentWorkspaces);
+		recentWorkspacesExpandable.setExpanded(launchData.isShowRecentWorkspaces());
+		recentWorkspacesExpandable.addExpansionListener(new ExpansionAdapter() {
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				launchData.setShowRecentWorkspaces(((ExpandableComposite) e.getSource()).isExpanded());
@@ -312,8 +312,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			}
 		});
 
-		Composite panel = new Composite(expandableComposite, SWT.NONE);
-		expandableComposite.setClient(panel);
+		Composite panel = new Composite(recentWorkspacesExpandable, SWT.NONE);
+		recentWorkspacesExpandable.setClient(panel);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginLeft = 14;
 		layout.spacing = 6;
