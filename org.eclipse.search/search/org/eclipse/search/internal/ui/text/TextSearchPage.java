@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,6 +140,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * @since 3.6
 	 */
 	private String[] fPreviousExtensions;
+	private Label fFileNamePatternDescription;
 
 
 	private static class SearchPatternData {
@@ -749,11 +750,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 		fFileTypeEditor= new FileTypeEditor(fExtensions, button);
 
-		// Text line which explains the special characters
-		Label description= new Label(group, SWT.LEAD);
-		description.setText(SearchMessages.SearchPage_fileNamePatterns_hint);
-		description.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		description.setFont(group.getFont());
+		fFileNamePatternDescription = new Label(group, SWT.LEAD);
+		fFileNamePatternDescription.setText(SearchMessages.SearchPage_fileNamePatterns_hint);
+		fFileNamePatternDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		fFileNamePatternDescription.setFont(group.getFont());
 
 
 		Group searchInGroup= new Group(group, SWT.NONE);
@@ -903,10 +903,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private void statusMessage(boolean error, String message) {
 		fStatusLabel.setText(message);
-		if (error)
+		if (error) {
 			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
-		else
-			fStatusLabel.setForeground(null);
+		}
+		else {
+			// use same color as another label to respect styling
+			fStatusLabel.setForeground(fFileNamePatternDescription.getForeground());
+		}
 	}
 
 }
