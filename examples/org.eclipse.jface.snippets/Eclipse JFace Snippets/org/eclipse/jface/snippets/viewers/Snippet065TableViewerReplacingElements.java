@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -45,7 +44,7 @@ public class Snippet065TableViewerReplacingElements {
 				"The elements are ordere lexicografically, i.e. 11 comes before 2,\nPress q, to rename one element.");
 		final TableViewer v = new TableViewer(c);
 		String[] rootElements = new String[] { "root 1", "root 2", "root 3" };
-		final IObservableList<String> input = new WritableList(DisplayRealm.getRealm(shell.getDisplay()));
+		final IObservableList<String> input = new WritableList<>(DisplayRealm.getRealm(shell.getDisplay()));
 		input.addAll(Arrays.asList(rootElements));
 		IContentProvider contentProvider = new ObservableListContentProvider();
 		v.setContentProvider(contentProvider);
