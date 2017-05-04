@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2016 QNX Software Systems and others.
+ *  Copyright (c) 2009, 2017 QNX Software Systems and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -164,8 +164,10 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 				continue;
 			}
 
-			if (!modes.containsKey(launchGroup.getMode())) {
-				modes.put(launchGroup.getMode(), launchGroup);
+			String label = launchGroup.getLabel();
+			label = DebugUIPlugin.removeAccelerators(label);
+			if (!modes.containsKey(label)) {
+				modes.put(label, launchGroup);
 			}
 		}
 
