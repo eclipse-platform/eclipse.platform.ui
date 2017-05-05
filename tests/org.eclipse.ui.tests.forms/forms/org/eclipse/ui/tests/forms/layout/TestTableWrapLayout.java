@@ -238,13 +238,6 @@ public class TestTableWrapLayout {
 		assertEquals(new Rectangle(LEFT_MARGIN, bottomEdge(labCenter), 300, 5), labFill.getBounds());
 	}
 
-	private static void makeFilled(Control control) {
-		TableWrapData data = new TableWrapData();
-		data.align = TableWrapData.FILL;
-		data.valign = TableWrapData.FILL;
-		control.setLayoutData(data);
-	}
-
 	private int leftEdge(Control control) {
 		Rectangle bounds = control.getBounds();
 
