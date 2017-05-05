@@ -13,7 +13,9 @@ package org.eclipse.ui.tests.datatransfer;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -29,11 +32,16 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
@@ -58,6 +66,7 @@ public class SmartImportTests extends UITestCase {
 	@Override
 	public void doSetUp() throws Exception {
 		super.doSetUp();
+		ImportMeProjectConfigurator.configuredProjects.clear();
 		clearAll();
 	}
 
@@ -89,6 +98,10 @@ public class SmartImportTests extends UITestCase {
 	public void runSmartImport(File source) throws OperationCanceledException, InterruptedException {
 		SmartImportWizard wizard = new SmartImportWizard();
 		wizard.setInitialImportSource(source);
+		proceedSmartImportWizard(wizard);
+	}
+
+	private void proceedSmartImportWizard(SmartImportWizard wizard) throws InterruptedException {
 		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
@@ -225,6 +238,93 @@ public class SmartImportTests extends UITestCase {
 					if (item.getToolTipText().equals(JFaceResources.getString("ProgressMonitorPart.cancelToolTip"))) { //$NON-NLS-1$ ))
 						return item;
 					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@Test
+	public void testInitialWorkingSets() throws Exception {
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.createWorkingSet("testWorkingSet", new IAdaptable[0]);
+		workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
+		workingSetManager.addWorkingSet(workingSet);
+		File directoryToImport = Files.createTempDirectory(getClass().getSimpleName()).toFile();
+		try {
+			SmartImportWizard wizard = new SmartImportWizard();
+			wizard.setInitialImportSource(directoryToImport);
+			wizard.setInitialWorkingSets(Collections.singleton(workingSet));
+			proceedSmartImportWizard(wizard);
+			assertEquals("Projects were not added to working set", 1, workingSet.getElements().length);
+		} finally {
+			for (File child : directoryToImport.listFiles()) {
+				child.delete();
+			}
+			directoryToImport.delete();
+			workingSetManager.removeWorkingSet(workingSet);
+		}
+	}
+
+	@Test
+	public void testChangedWorkingSets() throws Exception {
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.createWorkingSet("testWorkingSet", new IAdaptable[0]);
+		workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
+		workingSetManager.addWorkingSet(workingSet);
+		IWorkingSet workingSet2 = workingSetManager.createWorkingSet("testWorkingSet2", new IAdaptable[0]);
+		workingSet2.setId("org.eclipse.ui.resourceWorkingSetPage");
+		workingSetManager.addWorkingSet(workingSet2);
+		WorkbenchPlugin.getDefault().getDialogSettings().put("workingset_selection_history",
+				new String[] { workingSet.getName(), workingSet2.getName() });
+		File directoryToImport = Files.createTempDirectory(getClass().getSimpleName()).toFile();
+		try {
+			SmartImportWizard wizard = new SmartImportWizard();
+			wizard.setInitialImportSource(directoryToImport);
+			wizard.setInitialWorkingSets(Collections.singleton(workingSet));
+			this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+			dialog.setBlockOnOpen(false);
+			dialog.open();
+			processEvents();
+			SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
+			Combo combo = getComboWithSelection(workingSet.getName(), (Composite) page.getControl());
+			combo.select(1);
+			Event e = new Event();
+			e.widget = combo;
+			e.display = combo.getDisplay();
+			e.type = SWT.Selection;
+			e.text = workingSet2.getName();
+			e.index = 1;
+			combo.notifyListeners(SWT.Selection, e);
+			processEvents();
+			wizard.performFinish();
+			waitForJobs(100, 1000); // give the job framework time to schedule
+									// the
+									// job
+			wizard.getImportJob().join();
+			waitForJobs(100, 5000); // give some time for asynchronous workspace
+									// jobs to complete
+			assertEquals("WorkingSet2 should be selected", Collections.singleton(workingSet2),
+					page.getSelectedWorkingSets());
+			assertEquals("Projects were not added to working set", 1, workingSet2.getElements().length);
+		} finally {
+			for (File child : directoryToImport.listFiles()) {
+				child.delete();
+			}
+			directoryToImport.delete();
+			workingSetManager.removeWorkingSet(workingSet);
+			workingSetManager.removeWorkingSet(workingSet2);
+		}
+	}
+
+	private static Combo getComboWithSelection(String selection, Composite parent) {
+		for (Control control : parent.getChildren()) {
+			if (control instanceof Combo && ((Combo) control).getText().equals(selection)) {
+				return (Combo) control;
+			} else if (control instanceof Composite) {
+				Combo res = getComboWithSelection(selection, (Composite) control);
+				if (res != null) {
+					return res;
 				}
 			}
 		}

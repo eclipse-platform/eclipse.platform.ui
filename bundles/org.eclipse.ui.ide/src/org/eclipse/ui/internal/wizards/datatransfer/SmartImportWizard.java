@@ -289,6 +289,11 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 			this.easymportJob = new SmartImportJob(this.directoryToImport, projectRootPage.getSelectedWorkingSets(),
 					projectRootPage.isConfigureProjects(), projectRootPage.isDetectNestedProject());
 		}
+		if (this.easymportJob != null) {
+			// always update working set on request as the job isn't updated on
+			// WS change automatically
+			this.easymportJob.setWorkingSets(projectRootPage.getSelectedWorkingSets());
+		}
 		return this.easymportJob;
 	}
 

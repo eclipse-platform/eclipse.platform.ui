@@ -105,16 +105,27 @@ public class SmartImportJob extends Job {
 		super(rootDirectory.getAbsolutePath());
 		this.workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		this.rootDirectory = rootDirectory;
-		if (workingSets != null) {
-			this.workingSets = workingSets.toArray(new IWorkingSet[workingSets.size()]);
-		} else {
-			this.workingSets = new IWorkingSet[0];
-		}
+		setWorkingSets(workingSets);
 		this.configureProjects = configureProjects;
 		this.deepChildrenDetection = recuriveChildrenDetection;
 		this.report = Collections.synchronizedMap(new HashMap<IProject, List<ProjectConfigurator>>());
 		this.errors = Collections.synchronizedMap(new HashMap<IPath, Exception>());
 		this.crawlerJobGroup = new JobGroup(DataTransferMessages.SmartImportJob_detectAndConfigureProjects, 0, 1);
+	}
+
+	/**
+	 * Sets the working sets to assign to newly imported projects.
+	 *
+	 * @param workingSets
+	 *            to assign to newly imported projects.
+	 * @since 3.13
+	 */
+	public void setWorkingSets(Set<IWorkingSet> workingSets) {
+		if (workingSets != null) {
+			this.workingSets = workingSets.toArray(new IWorkingSet[workingSets.size()]);
+		} else {
+			this.workingSets = new IWorkingSet[0];
+		}
 	}
 
 	/**

@@ -743,7 +743,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	 * @return The user selected working sets to assign to imported projects.
 	 */
 	public Set<IWorkingSet> getSelectedWorkingSets() {
-		this.workingSets.clear();
+		this.workingSets = new HashSet<>();
 		// workingSetsGroup doesn't support listeners...
 		Runnable workingSetsRetriever = new Runnable() {
 			@Override
