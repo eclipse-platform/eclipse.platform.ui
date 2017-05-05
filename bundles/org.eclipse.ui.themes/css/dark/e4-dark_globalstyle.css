@@ -507,3 +507,18 @@ ExpandableComposite {
 TabbedPropertyTitle > CLabel{
 	color: #9AC9D8;
 }
+
+TabbedPropertyTitle {
+	swt-backgroundGradientStart-color:  #505F70;
+	swt-backgroundGradientEnd-color:    #505F70;
+	swt-backgroundBottomKeyline1-color: #505F70;
+	swt-backgroundBottomKeyline2-color: #505F70;
+}
+
+TabbedPropertyList {
+	swt-tabAreaBackground-color : #515658;   /*same as canvas*/
+	swt-tabBackground-color     : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START';
+	swt-tabNormalShadow-color   : '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';             /* color of shadow lines around the tabs */
+	swt-tabDarkShadow-color     : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR'; /* line color of the tiny scroll triangle (at top / at bottom) */
+	color                       : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR'; /* text color in the tab / tab area */
+}
