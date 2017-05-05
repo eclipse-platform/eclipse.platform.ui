@@ -20,11 +20,13 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
@@ -69,8 +71,8 @@ public class TabbedPropertyTitle
 					label.setVisible(false);
 				} else {
 					label.setVisible(true);
-					drawTitleBackground(e);
 				}
+				drawTitleBackground(e);
 			}
 		});
 
@@ -158,5 +160,23 @@ public class TabbedPropertyTitle
 		}
 		label.setImage(image);
 		redraw();
+	}
+
+	public void setColor(String key, RGBA color) {
+		this.factory.getColors().createColor(key, color.rgb);
+	}
+
+	public void resetSectionToolBarColors() {
+		TabbedPropertySheetWidgetFactory f = new TabbedPropertySheetWidgetFactory();
+		FormColors defaultColors = f.getColors();
+		defaultColors.initializeSectionToolBarColors();
+
+		FormColors colors = factory.getColors();
+		colors.createColor(IFormColors.H_GRADIENT_START, defaultColors.getColor(IFormColors.H_GRADIENT_START).getRGB());
+		colors.createColor(IFormColors.H_GRADIENT_END, defaultColors.getColor(IFormColors.H_GRADIENT_END).getRGB());
+		colors.createColor(IFormColors.H_BOTTOM_KEYLINE1,
+				defaultColors.getColor(IFormColors.H_BOTTOM_KEYLINE1).getRGB());
+		colors.createColor(IFormColors.H_BOTTOM_KEYLINE2,
+				defaultColors.getColor(IFormColors.H_BOTTOM_KEYLINE2).getRGB());
 	}
 }
