@@ -179,11 +179,15 @@ public class BasicPartList extends AbstractTableInformationControl {
 	}
 
 	@Override
-	protected boolean deleteSelectedElements() {
-		Object selectedElement = getSelectedElement();
-		if (selectedElement != null) {
-			if (partService.savePart((MPart) selectedElement, true))
-				partService.hidePart((MPart) selectedElement);
+	protected boolean deleteSelectedElement(Object selectedElement) {
+		if (selectedElement == null) {
+			selectedElement = getSelectedElement();
+		}
+		if (selectedElement instanceof MPart) {
+			MPart part = (MPart) selectedElement;
+			if (partService.savePart(part, true)) {
+				partService.hidePart(part);
+			}
 
 			if (getShell() == null) {
 				// Bug 421170: Contract says to return true if there are no
@@ -198,11 +202,8 @@ public class BasicPartList extends AbstractTableInformationControl {
 			}
 
 			// Remove part from viewer model
-			@SuppressWarnings("unchecked")
-			List<Object> viewerInput = (List<Object>) getTableViewer()
-					.getInput();
+			List<?> viewerInput = (List<?>) getTableViewer().getInput();
 			viewerInput.remove(selectedElement);
-
 		}
 		return false;
 
