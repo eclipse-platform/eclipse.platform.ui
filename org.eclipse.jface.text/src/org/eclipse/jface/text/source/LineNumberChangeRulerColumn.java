@@ -166,10 +166,13 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 	void doPaint(GC gc, ILineRange visibleLines) {
 		Color foreground= gc.getForeground();
 		if (visibleLines != null) {
-			if (fRevisionPainter.hasInformation())
+			if (fRevisionPainter.hasInformation()) {
+				fRevisionPainter.setZoom(fZoom);
 				fRevisionPainter.paint(gc, visibleLines);
-			else if (fDiffPainter.hasInformation()) // don't paint quick diff colors if revisions are painted
+			} else if (fDiffPainter.hasInformation()) { // don't paint quick diff colors if revisions are painted
+				fDiffPainter.setZoom(fZoom);
 				fDiffPainter.paint(gc, visibleLines);
+			}
 		}
 		gc.setForeground(foreground);
 		if (fShowNumbers || fCharacterDisplay)

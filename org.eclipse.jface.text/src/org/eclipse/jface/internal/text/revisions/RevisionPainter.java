@@ -588,6 +588,11 @@ public final class RevisionPainter {
 	 * @since 3.3
 	 */
 	private int fLastWidth= -1;
+	/**
+	 * The zoom level for the current painting operation. Workaround for bug 516293.
+	 * @since 3.12
+	 */
+	private int fZoom= 100;
 
 	/**
 	 * Creates a new revision painter for a vertical ruler column.
@@ -655,6 +660,20 @@ public final class RevisionPainter {
 	 */
 	public void setParentRuler(CompositeRuler parentRuler) {
 		fParentRuler= parentRuler;
+	}
+
+	/**
+	 * Sets the zoom level for the current painting operation. Workaround for bug 516293.
+	 * 
+	 * @param zoom the zoom to set
+	 * @since 3.12
+	 */
+	public void setZoom(int zoom) {
+		fZoom= zoom;
+	}
+
+	private int autoScaleUp(int value) {
+		return value * fZoom / 100;
 	}
 
 	/**
@@ -1058,7 +1077,7 @@ public final class RevisionPainter {
 		int y1= fWidget.getLinePixel(range.getStartLine());
 		int y2= fWidget.getLinePixel(range.getStartLine() + range.getNumberOfLines());
 
-		return new Rectangle(0, y1, getWidth(), y2 - y1 - 1);
+		return new Rectangle(0, autoScaleUp(y1), autoScaleUp(getWidth()), autoScaleUp(y2 - y1 - 1));
 	}
 
 	/**

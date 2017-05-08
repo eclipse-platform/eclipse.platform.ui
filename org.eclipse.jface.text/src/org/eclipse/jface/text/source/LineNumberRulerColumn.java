@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
@@ -30,9 +31,12 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -40,6 +44,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TypedListener;
+
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -60,6 +66,17 @@ import org.eclipse.jface.text.TextEvent;
  * @since 2.0
  */
 public class LineNumberRulerColumn implements IVerticalRulerColumn {
+
+	/**
+	 * <code>true</code> if we're on a Mac, where drawing on an Image currently only draws at 100% zoom level,
+	 * which results in blurry line numbers on a Retina display.
+	 *
+	 * @see <a href="https://bugs.eclipse.org/516293">bug 516293</a>
+	 * @since 3.6
+	 */
+	private final boolean IS_MAC_BUG_516293= Util.isMac()
+			&& !"false".equals(System.getProperty("LineNumberRulerColumn.retina.workaround")) //$NON-NLS-1$ //$NON-NLS-2$
+			&& internalSupportsZoomedPaint();
 
 	/**
 	 * Internal listener class.
@@ -420,6 +437,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	};
 	/* @since 3.2 */
 	private MouseHandler fMouseHandler;
+	/*
+	 * Zoom level and cached font for the current painting operation. Workaround for bug 516293.
+	 * @since 3.12
+	 */
+	int fZoom= 100;
+	private WeakReference<Font> fLastFont;
+	private Font fLastZoomedFont;
 
 
 	/**
@@ -666,6 +690,12 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fBuffer.dispose();
 			fBuffer= null;
 		}
+
+		if (fLastZoomedFont != null) {
+			fLastZoomedFont.dispose();
+			fLastZoomedFont= null;
+			fLastFont= null;
+		}
 	}
 
 	/**
@@ -687,30 +717,109 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				fBuffer= null;
 			}
 		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
 
-		GC gc= new GC(fBuffer);
-		gc.setFont(fCanvas.getFont());
-		if (fForeground != null)
-			gc.setForeground(fForeground);
+		ILineRange visibleLines= JFaceTextUtil.getVisibleModelLines(fCachedTextViewer);
+		if (visibleLines == null)
+			return;
 
-		try {
-			gc.setBackground(getBackground(fCanvas.getDisplay()));
-			gc.fillRectangle(0, 0, size.x, size.y);
+		if (IS_MAC_BUG_516293) {
+			/* FIXME: Workaround (bug 516293):
+			 * Relies on SWT implementation detail that GC drawing on macOS only draws at 100% zoom level.
+			 * For higher zoom levels (200%), we manually scale the font and drawing coordinates,
+			 * and then use getImageData(100) to extract the high-resolution image data. */
+			fBuffer= new Image(fCanvas.getDisplay(), (ImageDataProvider) zoom -> {
+				fZoom = zoom;
+				internalSetZoom(zoom);
+				int width= size.x * zoom / 100;
+				int height= size.y * zoom / 100;
+				Image gcImage= new Image(fCanvas.getDisplay(), width, height);
 
-			ILineRange visibleLines= JFaceTextUtil.getVisibleModelLines(fCachedTextViewer);
-			if (visibleLines == null)
-				return;
-			fScrollPos= fCachedTextWidget.getTopPixel();
-			doPaint(gc, visibleLines);
-		} finally {
-			gc.dispose();
+				GC gc= new GC(gcImage);
+				Font font= fCanvas.getFont();
+				if (zoom != 100) {
+					if (fLastFont != null && font == fLastFont.get()) {
+						font= fLastZoomedFont;
+					} else {
+						fLastFont= new WeakReference<>(font);
+						FontData fontData= font.getFontData()[0];
+						fontData.setHeight(fontData.getHeight() * zoom / 100);
+						font= new Font(font.getDevice(), fontData);
+						fLastZoomedFont= font;
+					}
+				}
+				gc.setFont(font);
+				if (fForeground != null)
+					gc.setForeground(fForeground);
+
+				try {
+					gc.setBackground(getBackground(fCanvas.getDisplay()));
+					gc.fillRectangle(0, 0, width, height);
+
+					fScrollPos= fCachedTextWidget.getTopPixel();
+					doPaint(gc, visibleLines);
+				} finally {
+					gc.dispose();
+					fZoom= 100;
+				}
+
+				ImageData imageData= gcImage.getImageData(100);
+				gcImage.dispose();
+				return imageData;
+			});
+			
+		} else {
+			if (fBuffer == null)
+				fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+
+			GC gc= new GC(fBuffer);
+			gc.setFont(fCanvas.getFont());
+			if (fForeground != null)
+				gc.setForeground(fForeground);
+
+			try {
+				gc.setBackground(getBackground(fCanvas.getDisplay()));
+				gc.fillRectangle(0, 0, size.x, size.y);
+
+				fScrollPos= fCachedTextWidget.getTopPixel();
+				doPaint(gc, visibleLines);
+			} finally {
+				gc.dispose();
+			}
 		}
 
 		dest.drawImage(fBuffer, 0, 0);
 	}
 
+	/**
+	 * This method is not API and it is expected to disappear in Eclipse 4.8.
+	 * Subclasses that want to take advantage of the unsupported workaround for bug 516258
+	 * can re-implement this method and return true.
+	 * 
+	 * @return true iff this class supports the workaround for bug 516258
+	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 3.12
+	 */
+	protected boolean internalSupportsZoomedPaint() {
+		return getClass().getPackage().equals(LineNumberChangeRulerColumn.class.getPackage());
+	}
+
+	/**
+	 * This method is not API and it is expected to disappear in Eclipse 4.8.
+	 * Subclasses that want to take advantage of the unsupported workaround for bug 516258
+	 * can override this method and store the given zoom level for later use.
+	 * 
+	 * @param zoom the zoom level to use for drawing operations
+	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 3.12
+	 */
+	protected void internalSetZoom(int zoom) {
+		// callback for subclasses
+	}
+	
 	/**
 	 * Returns the view port height in lines.
 	 *
@@ -848,7 +957,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 		int indentation= fIndentation[index];
 		int baselineBias= getBaselineBias(gc, widgetLine);
-		gc.drawString(s, indentation, y + baselineBias, true);
+		gc.drawString(s, indentation * fZoom / 100, (y + baselineBias) * fZoom / 100, true);
 	}
 
 	/**

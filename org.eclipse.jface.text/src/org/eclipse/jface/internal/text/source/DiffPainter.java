@@ -82,6 +82,11 @@ public final class DiffPainter {
 	private final AnnotationListener fAnnotationListener= new AnnotationListener();
 	/** The shared color provider, possibly <code>null</code>. */
 	private final ISharedTextColors fSharedColors;
+	/**
+	 * The zoom level for the current painting operation. Workaround for bug 516293.
+	 * @since 3.12
+	 */
+	private int fZoom= 100;
 
 	/**
 	 * Creates a new diff painter for a vertical ruler column.
@@ -132,6 +137,20 @@ public final class DiffPainter {
 	 */
 	public void setBackground(Color background) {
 		fBackground= background;
+	}
+
+	/**
+	 * Sets the zoom level for the current painting operation. Workaround for bug 516293.
+	 * 
+	 * @param zoom the zoom to set
+	 * @since 3.12
+	 */
+	public void setZoom(int zoom) {
+		fZoom= zoom;
+	}
+
+	private int autoScaleUp(int value) {
+		return value * fZoom / 100;
 	}
 
 	/**
@@ -226,7 +245,7 @@ public final class DiffPainter {
 			// draw background color if special
 			if (hasSpecialColor(info)) {
 				gc.setBackground(getColor(info));
-				gc.fillRectangle(0, y, width, lineHeight);
+				gc.fillRectangle(0, autoScaleUp(y), autoScaleUp(width), autoScaleUp(lineHeight));
 			}
 
 			/* Deletion Indicator: Simply a horizontal line */
@@ -234,10 +253,11 @@ public final class DiffPainter {
 			int delBelow= info.getRemovedLinesBelow();
 			if (delBefore > 0 || delBelow > 0) {
 				gc.setForeground(deletionColor);
+				gc.setLineWidth(autoScaleUp(1));
 				if (delBefore > 0)
-					gc.drawLine(0, y, width, y);
+					gc.drawLine(0, autoScaleUp(y), autoScaleUp(width), autoScaleUp(y));
 				if (delBelow > 0)
-					gc.drawLine(0, y + lineHeight - 1, width, y + lineHeight - 1);
+					gc.drawLine(0, autoScaleUp(y + lineHeight - 1), autoScaleUp(width), autoScaleUp(y + lineHeight - 1));
 			}
 		}
 	}
