@@ -190,6 +190,25 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
+	 * Creates a new system {@link Job} with the given name that will execute the
+	 * provided function when it runs.
+	 *
+	 * @param name
+	 *            the name of the job
+	 * @param function
+	 *            The function to execute
+	 * @return a job that encapsulates the provided function
+	 * @see IJobFunction
+	 * @see Job#setSystem(boolean)
+	 * @since 3.10
+	 */
+	public static Job createSystem(String name, final IJobFunction function) {
+		Job job = create(name, function);
+		job.setSystem(true);
+		return job;
+	}
+
+	/**
 	 * Creates a new system {@link Job} with the given name that will execute
 	 * the provided runnable when it runs.
 	 *
