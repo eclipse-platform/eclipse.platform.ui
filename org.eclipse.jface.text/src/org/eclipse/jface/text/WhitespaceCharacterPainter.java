@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc., IBM Corporation and others.
+ * Copyright (c) 2006, 2017 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -292,6 +292,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param endOffset exclusive end index of the drawing range
 	 * @param lineOffset inclusive start index of the line
 	 * @param lineEndOffset exclusive end index of the line
+	 * @param optimizeWhitespacePainting <code>true</code> if whitespace painting can be optimized, <code>false</code> otherwise
 	 */
 	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset, boolean optimizeWhitespacePainting) {
 		StyledTextContent content= fTextWidget.getContent();
