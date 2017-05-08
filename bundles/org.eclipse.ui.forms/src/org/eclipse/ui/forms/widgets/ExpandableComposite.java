@@ -322,7 +322,7 @@ public class ExpandableComposite extends Canvas {
 			if (toggle != null) {
 				// if label control is absent we vertically center the toggle,
 				// because the text client is usually a lot thicker
-				int ty = (height - toggleSize.y) / 2;
+				int ty = (height - toggleSize.y) / 2 + 1;
 				ty = Math.max(ty, 0);
 				ty += marginHeight + tvmargin;
 				toggle.setLocation(x, ty);
