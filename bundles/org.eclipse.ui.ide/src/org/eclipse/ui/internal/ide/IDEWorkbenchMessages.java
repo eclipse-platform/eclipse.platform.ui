@@ -970,6 +970,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceWithSettingsDialog_TransferFailedMessage;
 	public static String ChooseWorkspaceWithSettingsDialog_SaveSettingsFailed;
 	public static String ChooseWorkspaceWithSettingsDialog_ClassCreationFailed;
+	public static String ChooseWorkspaceWithSettingsDialog_copySettingsDecoLabel;
 
 	public static String IDEApplication_workspaceMandatoryTitle;
 	public static String IDEApplication_workspaceMandatoryMessage;
@@ -1004,7 +1005,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CleanDialog_cleanSelectedTaskName;
 	public static String CleanDialog_cleanAllTaskName;
 	public static String CleanDialog_alwaysCleanAllButton;
-	public static String CleanDialog_copySettingsDecoLabel;
 	public static String IDEEncoding_EncodingJob;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink;
