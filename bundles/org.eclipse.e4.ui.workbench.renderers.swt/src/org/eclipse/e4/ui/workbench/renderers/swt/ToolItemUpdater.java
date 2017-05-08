@@ -32,8 +32,10 @@ public class ToolItemUpdater {
 
 	public void updateContributionItems(Selector selector) {
 		for (final AbstractContributionItem ci : itemsToCheck) {
-			if (ci.getModel() != null && ci.getModel().getParent() != null && selector.select(ci.getModel())) {
-				ci.updateItemEnablement();
+			if (ci.getModel() != null && ci.getModel().getParent() != null) {
+				if (selector.select(ci.getModel())) {
+					ci.updateItemEnablement();
+				}
 			} else {
 				orphanedToolItems.add(ci);
 			}
