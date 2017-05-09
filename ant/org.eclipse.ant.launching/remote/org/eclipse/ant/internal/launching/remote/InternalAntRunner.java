@@ -664,8 +664,8 @@ public class InternalAntRunner {
 		}
 	}
 
-	/*
-	 * Returns a String representation of the Ant version number as specified in the version.txt file.
+	/**
+	 * @return a String representation of the Ant version number as specified in the version.txt file
 	 */
 	private String getAntVersionNumber() throws BuildException {
 		if (antVersionNumber == null) {
@@ -687,7 +687,7 @@ public class InternalAntRunner {
 		return antVersionNumber;
 	}
 
-	/*
+	/**
 	 * Returns whether the given version is compatible with the current Ant version. A version is compatible if it is less than or equal to the
 	 * current version.
 	 */
@@ -698,7 +698,12 @@ public class InternalAntRunner {
 		return osgiVersion.compareTo(osgiComparison) >= 0;
 	}
 
-	class Version {
+	/**
+	 * Copy of org.osgi.framework.Version.
+	 * <p>
+	 * We can't know how Ant version numbers will evolve in the future, but the OSGi version number format looks like a good bet.
+	 */
+	private static class Version {
 		private final int major;
 		private final int minor;
 		private final int micro;
