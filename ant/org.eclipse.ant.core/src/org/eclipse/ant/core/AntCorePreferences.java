@@ -372,7 +372,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public String getDefaultAntHome() {
 		IAntClasspathEntry[] entries = getDefaultAntHomeEntries();
 		if (entries.length > 0) {
-			URL antjar = entries[1].getEntryURL(); // first entry is .
+			URL antjar = entries[entries.length - 1].getEntryURL();
 			IPath antHomePath = new Path(antjar.getFile());
 			// parent directory of the lib directory
 			antHomePath = antHomePath.removeLastSegments(2);
