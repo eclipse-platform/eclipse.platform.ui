@@ -95,6 +95,7 @@
                mnemonic="%menu.editor.mnemonic">
             <command
                   commandId="org.eclipse.ui.window.splitEditor"
+                  icon="icons/full/elcl16/split_horizontal.png"
                   mnemonic="%command.split.horizontal.mnemonic"
                   style="push">
                <parameter
@@ -104,6 +105,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.window.splitEditor"
+                  icon="icons/full/elcl16/split_vertical.png"
                   mnemonic="%command.split.vertical.mnemonic"
                   style="push">
                <parameter
