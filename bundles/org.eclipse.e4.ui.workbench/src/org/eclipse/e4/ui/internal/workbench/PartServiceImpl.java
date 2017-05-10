@@ -835,20 +835,44 @@ public class PartServiceImpl implements EPartService {
 		MPart sharedPart = null;
 
 		// check for existing parts if necessary
+		boolean secondaryId = false;
+		String descId = id;
 		if (!force) {
+			int colonIndex = id.indexOf(':');
+			if (colonIndex >= 0) {
+				secondaryId = true;
+				descId = id.substring(0, colonIndex);
+				descId += ":*"; //$NON-NLS-1$
+			}
 			for (MUIElement element : sharedWindow.getSharedElements()) {
-				if (element.getElementId().equals(id)) {
+				if (element.getElementId().equals(descId)) {
 					sharedPart = (MPart) element;
 					break;
 				}
 			}
 		}
 
-		if (sharedPart == null) {
+		if (sharedPart == null || secondaryId) {
 			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 			sharedPart = modelService.createPart(descriptor);
 			if (sharedPart == null) {
 				return null;
+			}
+			if (secondaryId && getActivePart() != null) {
+				MElementContainer<MUIElement> parent = getActivePart().getParent();
+				if (getActivePart().getCurSharedRef() != null) {
+					parent = getActivePart().getCurSharedRef().getParent();
+				}
+				while (!(MPerspective.class.isInstance(parent) || MWindow.class.isInstance(parent))) {
+					parent = parent.getParent();
+				}
+
+				List<MPlaceholder> phs = modelService.findElements(parent, descId, MPlaceholder.class, null);
+				if (phs.size() == 1) {
+					MPlaceholder ph = phs.get(0);
+					sharedPart.setCloseable(ph.isCloseable());
+					sharedPart.getTags().addAll(ph.getTags());
+				}
 			}
 
 			// Replace the id to ensure that multi-instance parts work correctly
@@ -865,6 +889,8 @@ public class PartServiceImpl implements EPartService {
 		MPlaceholder sharedPartRef = modelService.createModelElement(MPlaceholder.class);
 		sharedPartRef.setElementId(sharedPart.getElementId());
 		sharedPartRef.setRef(sharedPart);
+		sharedPartRef.setCloseable(sharedPart.isCloseable());
+		sharedPartRef.getTags().addAll(sharedPart.getTags());
 		return sharedPartRef;
 	}
 
