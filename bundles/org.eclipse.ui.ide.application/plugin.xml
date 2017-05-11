@@ -18,6 +18,7 @@
             class="org.eclipse.ui.internal.ide.application.dialogs.IDEStartupPreferencePage"
             id="org.eclipse.ui.preferencePages.Startup">
          <keywordReference id="org.eclipse.ui.ide.startupAndShutdown"/>
+         <keywordReference id="org.eclipse.ui.ide.application.problems"/>
       </page>
      <page
             name="%PreferencePages.Startup.Workspaces"
@@ -160,5 +161,12 @@
       <fragment
             uri="LegacyIDE_fragment.e4xmi">
       </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="org.eclipse.ui.ide.application.problems"
+            label="%keyword.problems">
+      </keyword>
    </extension>
 </plugin>
