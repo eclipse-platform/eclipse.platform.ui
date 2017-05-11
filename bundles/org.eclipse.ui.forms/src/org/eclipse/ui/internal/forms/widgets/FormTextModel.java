@@ -92,7 +92,7 @@ public class FormTextModel {
 	public String getAccessibleText() {
 		if (paragraphs == null)
 			return ""; //$NON-NLS-1$
-		StringBuffer sbuf = new StringBuffer();
+		StringBuilder sbuf = new StringBuilder();
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph paragraph = paragraphs.get(i);
 			String text = paragraph.getAccessibleText();
@@ -350,7 +350,7 @@ public class FormTextModel {
 		}
 	}
 
-	private void appendText(String value, StringBuffer buf, int[] spaceCounter) {
+	private void appendText(String value, StringBuilder buf, int[] spaceCounter) {
 		if (!whitespaceNormalized)
 			buf.append(value);
 		else {
@@ -377,7 +377,7 @@ public class FormTextModel {
 
 	private String getNormalizedText(String text) {
 		int[] spaceCounter = new int[1];
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		if (text == null)
 			return null;
@@ -399,7 +399,7 @@ public class FormTextModel {
 
 	private String getNodeText(Node node) {
 		NodeList children = node.getChildNodes();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		int[] spaceCounter = new int[1];
 
 		for (int i = 0; i < children.getLength(); i++) {
