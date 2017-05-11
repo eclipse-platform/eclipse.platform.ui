@@ -139,6 +139,9 @@ public final class ThemeElementHelper {
 					prefFont = defaultFont;
 				}
             }
+			if (!definition.isEditable()) {
+				prefFont = defaultFont;
+			}
 
             if (prefFont != null) {
                 registry.put(id, prefFont);
@@ -320,7 +323,7 @@ public final class ThemeElementHelper {
 			}
 		}
 
-		if (prefColor == null) {
+		if (prefColor == null || !definition.isEditable()) {
 			prefColor = defaultColor;
 		}
 
