@@ -145,7 +145,7 @@ public final class LegacyViewerContributionExpression extends
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("ViewerContributionExpression("); //$NON-NLS-1$
 		buffer.append(targetId);
 		buffer.append(',');

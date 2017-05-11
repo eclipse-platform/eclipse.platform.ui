@@ -53,7 +53,7 @@ public class SwitchToWindowMenu extends ContributionItem {
 			return null;
 		}
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (number < 10) {
 			sb.append('&');
 		}

@@ -139,7 +139,7 @@ public final class CategoryActivityBindingDefinition {
     @Override
 	public String toString() {
         if (string == null) {
-            final StringBuffer stringBuffer = new StringBuffer();
+            final StringBuilder stringBuffer = new StringBuilder();
             stringBuffer.append('[');
             stringBuffer.append(activityId);
             stringBuffer.append(',');

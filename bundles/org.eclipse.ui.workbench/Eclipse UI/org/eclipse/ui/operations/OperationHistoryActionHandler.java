@@ -443,7 +443,7 @@ try {
 	private String shortenText(String message) {
 		int length = message.length();
 		if (length > MAX_LABEL_LENGTH) {
-			StringBuffer result = new StringBuffer();
+			StringBuilder result = new StringBuilder();
 			int end = MAX_LABEL_LENGTH / 2 - 1;
 			result.append(message.substring(0, end));
 			result.append("..."); //$NON-NLS-1$

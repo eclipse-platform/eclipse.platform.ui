@@ -229,7 +229,7 @@ final class Category implements ICategory {
     @Override
 	public String toString() {
         if (string == null) {
-            final StringBuffer stringBuffer = new StringBuffer();
+            final StringBuilder stringBuffer = new StringBuilder();
             stringBuffer.append('[');
             stringBuffer.append(categoryActivityBindings);
             stringBuffer.append(',');

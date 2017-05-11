@@ -88,10 +88,10 @@ public class ReopenEditorMenu extends ContributionItem {
      * @return a string suitable for an MRU file menu
      */
     public static String calcText(int index, String name, String toolTip, boolean rtl) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         int mnemonic = index + 1;
-        StringBuffer nm = new StringBuffer();
+        StringBuilder nm = new StringBuilder();
         nm.append(mnemonic);
         if (mnemonic <= MAX_MNEMONIC_SIZE) {
         	nm.insert(nm.length() - (mnemonic + "").length(), '&'); //$NON-NLS-1$

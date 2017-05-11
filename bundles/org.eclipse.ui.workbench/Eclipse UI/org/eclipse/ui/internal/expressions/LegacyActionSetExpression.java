@@ -107,7 +107,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("ActionSetExpression("); //$NON-NLS-1$
 		buffer.append(actionSetId);
 		buffer.append(',');

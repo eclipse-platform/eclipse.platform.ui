@@ -748,7 +748,7 @@ public class DecoratorManager implements ILabelProviderListener,
 	 * Store the currently enabled decorators in preference store.
 	 */
 	private void writeDecoratorsPreference() {
-		StringBuffer enabledIds = new StringBuffer();
+		StringBuilder enabledIds = new StringBuilder();
 		writeDecoratorsPreference(enabledIds, getFullDefinitions());
 		writeDecoratorsPreference(enabledIds, getLightweightManager()
 				.getDefinitions());
@@ -758,7 +758,7 @@ public class DecoratorManager implements ILabelProviderListener,
 		PrefUtil.savePrefs();
 	}
 
-	private void writeDecoratorsPreference(StringBuffer enabledIds,
+	private void writeDecoratorsPreference(StringBuilder enabledIds,
 			DecoratorDefinition[] definitions) {
 		for (DecoratorDefinition definition : definitions) {
 			enabledIds.append(definition.getId());

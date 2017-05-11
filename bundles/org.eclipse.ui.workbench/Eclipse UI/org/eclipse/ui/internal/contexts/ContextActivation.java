@@ -104,7 +104,7 @@ final class ContextActivation extends EvaluationResultCache implements
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append("ContextActivation(contextId="); //$NON-NLS-1$
 		buffer.append(contextId);

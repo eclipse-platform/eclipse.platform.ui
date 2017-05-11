@@ -104,7 +104,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 			elements = ((IStructuredSelection) element).toArray();
 		else
 			elements = new Object[] { element };
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		// Print at most 3 entries...
 		for (int i = 0; i < elements.length; i++) {
 			element = elements[i];

@@ -442,7 +442,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                 .getFirstElement();
 
         // Place text as the data
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(entry.getDisplayName());
         buffer.append("\t"); //$NON-NLS-1$
         buffer.append(entry.getValueAsString());

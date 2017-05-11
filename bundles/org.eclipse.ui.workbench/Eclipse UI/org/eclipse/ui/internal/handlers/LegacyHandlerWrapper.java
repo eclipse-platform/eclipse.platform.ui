@@ -83,7 +83,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 			throws ExecutionException {
 		// Debugging output
 		if (DEBUG_HANDLERS) {
-			final StringBuffer buffer = new StringBuffer("Executing LegacyHandlerWrapper for "); //$NON-NLS-1$
+			final StringBuilder buffer = new StringBuilder("Executing LegacyHandlerWrapper for "); //$NON-NLS-1$
 			if (handler == null) {
 				buffer.append("no handler"); //$NON-NLS-1$
 			} else {
@@ -137,7 +137,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append("LegacyHandlerWrapper("); //$NON-NLS-1$
 		buffer.append(handler);

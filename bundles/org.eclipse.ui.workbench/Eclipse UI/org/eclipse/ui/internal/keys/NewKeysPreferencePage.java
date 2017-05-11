@@ -352,7 +352,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			if (rc == null) {
 				rc = super.getText(element);
 			}
-			StringBuffer buf = new StringBuffer(rc);
+			StringBuilder buf = new StringBuilder(rc);
 			for (int i = 1; i < USER_DELTA_COLUMN; i++) {
 				String text = getColumnText(element, i);
 				if (text != null) {

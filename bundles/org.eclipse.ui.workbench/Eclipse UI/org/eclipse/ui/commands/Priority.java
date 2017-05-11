@@ -115,7 +115,7 @@ public final class Priority implements Comparable {
 	@Deprecated
 	public String toString() {
 		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
+			final StringBuilder stringBuffer = new StringBuilder();
 			stringBuffer.append("[value="); //$NON-NLS-1$
 			stringBuffer.append(value);
 			stringBuffer.append(']');

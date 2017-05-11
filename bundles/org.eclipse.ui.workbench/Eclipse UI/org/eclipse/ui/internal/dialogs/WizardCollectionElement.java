@@ -313,7 +313,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
      */
     @Override
 	public String toString() {
-        StringBuffer buf = new StringBuffer("WizardCollection, "); //$NON-NLS-1$
+        StringBuilder buf = new StringBuilder("WizardCollection, "); //$NON-NLS-1$
         buf.append(children.size());
         buf.append(" children, "); //$NON-NLS-1$
         buf.append(wizards.size());

@@ -385,7 +385,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
      */
     @Override
 	public String toString() {
-    	StringBuffer buffer = new StringBuffer();
+    	StringBuilder buffer = new StringBuilder();
     	IConfigurationElement[] children = config.getChildren();
     	for (IConfigurationElement element : children) {
 			String label = element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);

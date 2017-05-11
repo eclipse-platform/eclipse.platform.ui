@@ -309,7 +309,7 @@ public class RetargetAction extends PartEventAction implements
 	 */
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append("RetargetAction("); //$NON-NLS-1$
 		buffer.append(getId());

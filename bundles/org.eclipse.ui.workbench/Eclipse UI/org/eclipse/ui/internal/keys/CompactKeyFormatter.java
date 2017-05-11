@@ -34,7 +34,7 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
 
     @Override
 	public String format(KeySequence keySequence) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
 
         List keyStrokes = keySequence.getKeyStrokes();
         KeyStroke[] keyStrokeArray = (KeyStroke[]) keyStrokes
@@ -69,7 +69,7 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
     }
 
     public String formatKeyStrokes(Set modifierKeys, List naturalKeys) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         String keyDelimiter = getKeyDelimiter();
 
         // Format the modifier keys, in sorted order.

@@ -88,7 +88,7 @@ public final class ActivePartExpression extends Expression {
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("ActivePartExpression("); //$NON-NLS-1$
 		buffer.append(activePart);
 		buffer.append(')');

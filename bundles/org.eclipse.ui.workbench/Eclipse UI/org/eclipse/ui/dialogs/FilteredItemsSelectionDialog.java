@@ -1657,13 +1657,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			gc.dispose();
 
-			StringBuffer dashes = new StringBuffer();
+			StringBuilder dashes = new StringBuilder();
 			int chars = (((width - fMessageLength) / fSeparatorWidth) / 2) - 2;
 			for (int i = 0; i < chars; i++) {
 				dashes.append('-');
 			}
 
-			StringBuffer result = new StringBuffer();
+			StringBuilder result = new StringBuilder();
 			result.append(dashes);
 			result.append(" " + separatorLabel + " "); //$NON-NLS-1$//$NON-NLS-2$
 			result.append(dashes);

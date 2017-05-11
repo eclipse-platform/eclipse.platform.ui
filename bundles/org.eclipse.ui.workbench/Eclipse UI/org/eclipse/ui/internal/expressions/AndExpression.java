@@ -51,7 +51,7 @@ public final class AndExpression extends CompositeExpression {
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("AndExpression("); //$NON-NLS-1$
 		if (fExpressions != null) {
 			final Iterator itr = fExpressions.iterator();

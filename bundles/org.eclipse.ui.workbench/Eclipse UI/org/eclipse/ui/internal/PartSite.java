@@ -627,7 +627,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("PartSite(id="); //$NON-NLS-1$
 		buffer.append(getId());
 		buffer.append(",pluginId="); //$NON-NLS-1$

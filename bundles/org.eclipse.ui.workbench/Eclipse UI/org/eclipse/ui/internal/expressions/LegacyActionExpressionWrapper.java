@@ -116,7 +116,7 @@ public final class LegacyActionExpressionWrapper extends
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("LegacyActionExpressionWrapper("); //$NON-NLS-1$
 		buffer.append(expression);
 		buffer.append(',');

@@ -163,7 +163,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 
 	@Override
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append("LegacyHandlerSubmission("); //$NON-NLS-1$
 		buffer.append(activeShell);
 		buffer.append(',');

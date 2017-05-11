@@ -477,7 +477,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 
 		// Debugging output
 		if (DEBUG) {
-			final StringBuffer buffer = new StringBuffer("register shell '"); //$NON-NLS-1$
+			final StringBuilder buffer = new StringBuilder("register shell '"); //$NON-NLS-1$
 			buffer.append(shell);
 			buffer.append("' as "); //$NON-NLS-1$
 			switch (type) {

@@ -61,7 +61,7 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
                 .getFirstElement();
 
         // Place text on the clipboard
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(entry.getDisplayName());
         buffer.append("\t"); //$NON-NLS-1$
         buffer.append(entry.getValueAsString());
