@@ -137,7 +137,7 @@ public class WebBrowserUtil {
 			isInternalBrowserOperational = Boolean.TRUE;
 			return true;
 		} catch (Throwable t) {
-			StringBuffer message = new StringBuffer("Internal browser is not available"); //$NON-NLS-1$
+			StringBuilder message = new StringBuilder("Internal browser is not available"); //$NON-NLS-1$
 			message.append(t.getMessage() == null?".":": " + t.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			WebBrowserUIPlugin.getInstance().getLog().log(
 					new Status(IStatus.WARNING, WebBrowserUIPlugin.PLUGIN_ID,

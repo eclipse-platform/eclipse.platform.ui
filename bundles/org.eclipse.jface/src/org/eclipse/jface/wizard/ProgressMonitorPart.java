@@ -192,7 +192,7 @@ public class ProgressMonitorPart extends Composite implements
 			return in;
 		}
         int length = in.length();
-        StringBuffer out = new StringBuffer(length + 1);
+        StringBuilder out = new StringBuilder(length + 1);
         for (int i = 0; i < length; i++) {
             char c = in.charAt(i);
             if (c == '&') {

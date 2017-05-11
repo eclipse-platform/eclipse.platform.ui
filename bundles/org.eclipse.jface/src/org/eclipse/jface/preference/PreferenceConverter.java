@@ -524,7 +524,7 @@ public class PreferenceConverter {
      * @since 3.0
      */
     public static String getStoredRepresentation(FontData[] fontData) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (FontData element : fontData) {
             if (element != null) {
                 buffer.append(element.toString());

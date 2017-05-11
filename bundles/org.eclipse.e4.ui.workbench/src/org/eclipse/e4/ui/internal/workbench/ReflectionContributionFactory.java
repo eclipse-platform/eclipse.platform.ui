@@ -91,7 +91,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 				Activator.log(LogService.LOG_ERROR, message);
 				return null;
 			}
-			StringBuffer resource = new StringBuffer(uri.segment(1));
+			StringBuilder resource = new StringBuilder(uri.segment(1));
 			for (int i = 2; i < uri.segmentCount(); i++) {
 				resource.append('/');
 				resource.append(uri.segment(i));

@@ -89,7 +89,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 
 	@Override
 	public String format(KeySequence keySequence) {
-		StringBuffer stringBuffer = new StringBuffer();
+		StringBuilder stringBuffer = new StringBuilder();
 
 		final KeyStroke[] keyStrokes = keySequence.getKeyStrokes();
 		final int keyStrokesLength = keyStrokes.length;
@@ -111,7 +111,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		// Format the modifier keys, in sorted order.
 		final int modifierKeys = keyStroke.getModifierKeys();
 		final int[] sortedModifierKeys = sortModifierKeys(modifierKeys);
-		final StringBuffer stringBuffer = new StringBuffer();
+		final StringBuilder stringBuffer = new StringBuilder();
 		if (sortedModifierKeys != null) {
 			for (final int modifierKey : sortedModifierKeys) {
 				if (modifierKey != KeyStroke.NO_KEY) {

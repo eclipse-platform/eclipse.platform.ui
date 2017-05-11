@@ -82,7 +82,7 @@ public class WebBrowserPreference {
 	 *            the history
 	 */
 	public static void setInternalWebBrowserHistory(List<String> list) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (list != null) {
 			Iterator<String> iterator = list.iterator();
 			while (iterator.hasNext()) {

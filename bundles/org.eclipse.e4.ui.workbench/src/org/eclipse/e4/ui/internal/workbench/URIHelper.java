@@ -56,7 +56,7 @@ public class URIHelper {
 		if (bundleRevision == null)
 			return null;
 
-		StringBuffer tmp = new StringBuffer();
+		StringBuilder tmp = new StringBuilder();
 		tmp.append(PLATFORM_SCHEMA);
 		if ((bundleRevision.getTypes() & BundleRevision.TYPE_FRAGMENT) == BundleRevision.TYPE_FRAGMENT)
 			tmp.append(FRAGMENT_SEGMENT);

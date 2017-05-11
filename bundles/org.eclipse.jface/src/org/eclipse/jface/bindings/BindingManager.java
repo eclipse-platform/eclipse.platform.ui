@@ -146,7 +146,7 @@ public final class BindingManager extends HandleObjectManager implements
 		}
 
 		final List<String> strings = new ArrayList<>();
-		final StringBuffer stringBuffer = new StringBuffer();
+		final StringBuilder stringBuffer = new StringBuilder();
 		string = string.trim(); // remove whitespace
 		if (string.length() > 0) {
 			final StringTokenizer stringTokenizer = new StringTokenizer(string,

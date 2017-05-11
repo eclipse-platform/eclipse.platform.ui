@@ -382,7 +382,7 @@ public final class Util {
 			return "null"; //$NON-NLS-1$
 		}
 
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		buffer.append('[');
 
 		final int length = array.length;
@@ -451,7 +451,7 @@ public final class Util {
 			return src;
 		}
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		int beginIndex = 0;
 		while (idx != -1 && idx < len) {
 			buf.append(src.substring(beginIndex, idx));

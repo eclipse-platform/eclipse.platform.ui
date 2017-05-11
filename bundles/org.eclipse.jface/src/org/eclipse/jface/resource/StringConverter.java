@@ -701,7 +701,7 @@ public class StringConverter {
      * @since 3.0
      */
     public static String asString(FontData[] value) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < value.length; i++) {
             buffer.append(asString(value[i]));
             if (i != value.length - 1) {
@@ -719,7 +719,7 @@ public class StringConverter {
      */
     public static String asString(FontData value) {
         Assert.isNotNull(value);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(value.getName());
         buffer.append(SEPARATOR);
         int style = value.getStyle();
@@ -754,7 +754,7 @@ public class StringConverter {
      */
     public static String asString(Point value) {
         Assert.isNotNull(value);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(value.x);
         buffer.append(',');
         buffer.append(value.y);
@@ -776,7 +776,7 @@ public class StringConverter {
      */
     public static String asString(Rectangle value) {
         Assert.isNotNull(value);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(value.x);
         buffer.append(',');
         buffer.append(value.y);
@@ -801,7 +801,7 @@ public class StringConverter {
      */
     public static String asString(RGB value) {
         Assert.isNotNull(value);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(value.red);
         buffer.append(',');
         buffer.append(value.green);
@@ -847,7 +847,7 @@ public class StringConverter {
 			return s;
 		}
 
-        StringBuffer result = new StringBuffer(s.substring(0, wsIndex));
+        StringBuilder result = new StringBuilder(s.substring(0, wsIndex));
         for (int i = wsIndex + 1; i < size; i++) {
             char ch = s.charAt(i);
             if (!Character.isWhitespace(ch)) {
@@ -868,7 +868,7 @@ public class StringConverter {
     @Deprecated
 	public static String asDisplayableString(FontData value) {
         Assert.isNotNull(value);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(value.getName());
         buffer.append(SEPARATOR);
         int style = value.getStyle();

@@ -1664,11 +1664,11 @@ public class ContentProposalAdapter {
 				case SWT.Traverse:
 				case SWT.KeyDown:
 					if (DEBUG) {
-						StringBuffer sb;
+						StringBuilder sb;
 						if (e.type == SWT.Traverse) {
-							sb = new StringBuffer("Traverse"); //$NON-NLS-1$
+							sb = new StringBuilder("Traverse"); //$NON-NLS-1$
 						} else {
-							sb = new StringBuffer("KeyDown"); //$NON-NLS-1$
+							sb = new StringBuilder("KeyDown"); //$NON-NLS-1$
 						}
 						sb.append(" received by adapter"); //$NON-NLS-1$
 						dump(sb.toString(), e);
@@ -1678,11 +1678,11 @@ public class ContentProposalAdapter {
 					if (popup != null) {
 						popup.getTargetControlListener().handleEvent(e);
 						if (DEBUG) {
-							StringBuffer sb;
+							StringBuilder sb;
 							if (e.type == SWT.Traverse) {
-								sb = new StringBuffer("Traverse"); //$NON-NLS-1$
+								sb = new StringBuilder("Traverse"); //$NON-NLS-1$
 							} else {
-								sb = new StringBuffer("KeyDown"); //$NON-NLS-1$
+								sb = new StringBuilder("KeyDown"); //$NON-NLS-1$
 							}
 							sb.append(" after being handled by popup"); //$NON-NLS-1$
 							dump(sb.toString(), e);
@@ -1810,7 +1810,7 @@ public class ContentProposalAdapter {
 			 *            the event
 			 */
 			private void dump(String who, Event e) {
-				StringBuffer sb = new StringBuffer(
+				StringBuilder sb = new StringBuilder(
 						"--- [ContentProposalAdapter]\n"); //$NON-NLS-1$
 				sb.append(who);
 				sb.append(" - e: keyCode=" + e.keyCode + hex(e.keyCode)); //$NON-NLS-1$

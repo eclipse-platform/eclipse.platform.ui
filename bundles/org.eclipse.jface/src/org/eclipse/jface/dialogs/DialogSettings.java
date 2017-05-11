@@ -477,7 +477,7 @@ public class DialogSettings implements IDialogSettings {
     	}
 
     	private void printTag(String name, HashMap<String, String> parameters, boolean shouldTab, boolean newLine, boolean close) throws IOException {
-    		StringBuffer sb = new StringBuffer();
+    		StringBuilder sb = new StringBuilder();
     		sb.append('<');
     		sb.append(name);
     		if (parameters != null) {
@@ -519,7 +519,7 @@ public class DialogSettings implements IDialogSettings {
     		printTag(name, parameters, true, newLine, false);
     	}
 
-    	private static void appendEscapedChar(StringBuffer buffer, char c) {
+    	private static void appendEscapedChar(StringBuilder buffer, char c) {
     		String replacement = getReplacement(c);
     		if (replacement != null) {
     			buffer.append('&');
@@ -531,7 +531,7 @@ public class DialogSettings implements IDialogSettings {
     	}
 
     	private static String getEscaped(String s) {
-    		StringBuffer result = new StringBuffer(s.length() + 10);
+    		StringBuilder result = new StringBuilder(s.length() + 10);
     		for (int i = 0; i < s.length(); ++i) {
 				appendEscapedChar(result, s.charAt(i));
 			}

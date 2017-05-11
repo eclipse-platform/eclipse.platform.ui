@@ -135,7 +135,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 	 */
 	protected String doSubstitutions(String token, String url) {
 		boolean substituted = false;
-		StringBuffer newToken = new StringBuffer(token);
+		StringBuilder newToken = new StringBuilder(token);
 		String substitutionMarker = "%1"; //$NON-NLS-1$
 		int index = newToken.indexOf(substitutionMarker);
 		while (index != -1) {

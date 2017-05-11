@@ -738,7 +738,7 @@ public final class LegacyActionTools {
 			return text;
 		}
 		int len = text.length();
-		StringBuffer sb = new StringBuffer(len);
+		StringBuilder sb = new StringBuilder(len);
 		int lastIndex = 0;
 		while (index != -1) {
 			// ignore & at the end

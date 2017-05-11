@@ -95,14 +95,14 @@ public class StyledString implements CharSequence {
 	}
 
 	private static final StyleRange[] EMPTY = new StyleRange[0];
-	private StringBuffer fBuffer;
+	private StringBuilder fBuffer;
 	private StyleRunList fStyleRuns;
 
 	/**
 	 * Creates an empty {@link StyledString}.
 	 */
 	public StyledString() {
-		fBuffer = new StringBuffer();
+		fBuffer = new StringBuilder();
 		fStyleRuns = null;
 	}
 
