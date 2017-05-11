@@ -181,7 +181,7 @@ public class UITestHelper {
 		}
 
 		String message =
-			new StringBuffer("Warning: ")
+			new StringBuilder("Warning: ")
 				.append(widget)
 				.append("\n\tActual Width -> ")
 				.append(size.x)
@@ -213,7 +213,7 @@ public class UITestHelper {
 				preferred.x /= (size.y / preferred.y);
 			}
 		}
-		String message = new StringBuffer("Warning: ").append(widget)
+		String message = new StringBuilder("Warning: ").append(widget)
 			.append("\n\tActual Width -> ").append(size.x)
 			.append("\n\tRecommended Width -> ").append(preferred.x).toString();
 		if (preferred.x > size.x) {

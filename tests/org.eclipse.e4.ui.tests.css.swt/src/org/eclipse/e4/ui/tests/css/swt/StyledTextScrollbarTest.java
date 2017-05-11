@@ -45,7 +45,7 @@ public class StyledTextScrollbarTest extends CSSSWTTestCase {
 		shell.setLayout(layout);
 
 		StyledText styledText = new StyledText(shell, SWT.V_SCROLL | SWT.H_SCROLL);
-		StringBuffer buf = new StringBuffer(500);
+		StringBuilder buf = new StringBuilder(500);
 		for (int i = 0; i < 1000; i++) {
 			buf.append(i
 					+ "  - This is a really really really really really really long line to be shown in the styled text\n");
@@ -78,7 +78,7 @@ public class StyledTextScrollbarTest extends CSSSWTTestCase {
 	public void testScrollBarEngine() throws Exception {
 		StyledText styledText = createStyledText();
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("StyledText{");
 
 		// It's here mostly as a way for non-themed variants to set it to false
@@ -109,7 +109,7 @@ public class StyledTextScrollbarTest extends CSSSWTTestCase {
 		assertEquals(false, styledText.getVerticalBar().getVisible());
 
 		// Remove the theming now
-		buf = new StringBuffer();
+		buf = new StringBuilder();
 		buf.append("StyledText{");
 		buf.append("  swt-scrollbar-themed: false;");
 		buf.append("}");

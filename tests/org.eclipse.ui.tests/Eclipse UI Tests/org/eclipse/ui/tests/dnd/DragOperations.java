@@ -145,7 +145,7 @@ public class DragOperations {
      * @return
      */
     public static String getLayoutDescription(WorkbenchPage page) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         //page.getActivePerspective().describeLayout(buf);
         buf.append("this layout still not quite described - TODO");

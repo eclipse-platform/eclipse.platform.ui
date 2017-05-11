@@ -62,7 +62,7 @@ public class LabelProvider
             obj = structuredSelection.getFirstElement();
             size = structuredSelection.size();
         }
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         Element element = (Element) ((TreeNode) obj).getValue();
         String type = element.getClass().getName();
         String name = element.getName();

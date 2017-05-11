@@ -341,7 +341,7 @@ public class MutableObservableCollectionContractTest extends
 		listener.contains = true;
 		collection.remove(elementNotContained);
 		assertFalse(
-				formatFail(new StringBuffer("When ")
+				formatFail(new StringBuilder("When ")
 						.append(methodName)
 						.append(" fires a change event the element should have been removed from the Collection.")
 						.toString()), listener.contains);
@@ -368,7 +368,7 @@ public class MutableObservableCollectionContractTest extends
 		runnable.run();
 
 		assertTrue(
-				formatFail(new StringBuffer("When ")
+				formatFail(new StringBuilder("When ")
 						.append(methodName)
 						.append(" fires a change event the element should have been added to the Collection.")
 						.toString()), listener.contains);

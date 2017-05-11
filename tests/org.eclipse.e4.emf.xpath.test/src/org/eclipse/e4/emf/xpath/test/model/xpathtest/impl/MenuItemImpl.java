@@ -154,7 +154,7 @@ public class MenuItemImpl extends MenuElementImpl implements MenuItem {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (mnemonic: ");
 		result.append(mnemonic);
 		result.append(')');

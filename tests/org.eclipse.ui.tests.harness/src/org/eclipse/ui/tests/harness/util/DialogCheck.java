@@ -216,7 +216,7 @@ public class DialogCheck {
             }
         }
 
-        String message = new StringBuffer("Warning: ").append(widget).append(
+        String message = new StringBuilder("Warning: ").append(widget).append(
                 "\n\tActual Width -> ").append(size.x).append(
                 "\n\tRecommended Width -> ").append(preferred.x).toString();
         if (preferred.x > size.x) {
@@ -248,7 +248,7 @@ public class DialogCheck {
                 preferred.x /= (size.y / preferred.y);
             }
         }
-        String message = new StringBuffer("Warning: ").append(widget).append(
+        String message = new StringBuilder("Warning: ").append(widget).append(
                 "\n\tActual Width -> ").append(size.x).append(
                 "\n\tRecommended Width -> ").append(preferred.x).toString();
         if (preferred.x > size.x) {

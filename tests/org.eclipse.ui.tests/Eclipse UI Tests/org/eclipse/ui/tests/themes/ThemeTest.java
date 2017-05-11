@@ -37,7 +37,7 @@ public abstract class ThemeTest extends UITestCase {
     }
 
     protected static String formatArray(Object[] datas) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (datas == null) {
 			buffer.append("null");
 		} else {

@@ -150,7 +150,7 @@ public class FileTool {
 	}
 
 	public static StringBuffer read(Reader reader) throws IOException {
-		StringBuffer s= new StringBuffer();
+		StringBuffer s = new StringBuffer();
 		try {
 			char[] buffer= new char[8196];
 			int chars= reader.read(buffer);

@@ -461,7 +461,7 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		 */
 		protected void drawName(Event event) {
 
-			StringBuffer buffer = getDisplayString();
+			StringBuilder buffer = getDisplayString();
 
 			Display display = fViewer.getControl().getDisplay();
 			TextLayout layout = new TextLayout(display);
@@ -489,8 +489,8 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		/**
 		 * @return
 		 */
-		private StringBuffer getDisplayString() {
-			StringBuffer buffer = new StringBuffer();
+		private StringBuilder getDisplayString() {
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(name);
 			buffer.append(" (");
 			buffer.append(baseName);

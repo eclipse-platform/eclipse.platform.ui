@@ -1980,7 +1980,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (commandName: ");
 		result.append(commandName);
 		result.append(", description: ");
