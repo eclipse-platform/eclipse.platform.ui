@@ -4,7 +4,7 @@ Bundle-SymbolicName: org.eclipse.e4.core.commands;singleton:=true
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-Version: 0.12.0.qualifier
+Bundle-Version: 0.12.100.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
