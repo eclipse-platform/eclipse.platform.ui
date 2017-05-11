@@ -192,7 +192,7 @@ public class DetailsView {
 	}
 
 	private void updatePartTitle(Contact contact) {
-		StringBuffer title = new StringBuffer("Details of ");
+		StringBuilder title = new StringBuilder("Details of ");
 		title.append(contact.getFirstName()).append(' ')
 		.append(contact.getLastName());
 		uiItem.setLabel(title.toString());

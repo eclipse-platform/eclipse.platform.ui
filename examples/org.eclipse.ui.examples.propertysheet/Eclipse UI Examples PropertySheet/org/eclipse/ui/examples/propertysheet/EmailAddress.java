@@ -202,7 +202,7 @@ public class EmailAddress implements IPropertySource {
      */
     @Override
 	public String toString() {
-        StringBuffer strbuffer = new StringBuffer(getUserid());
+        StringBuilder strbuffer = new StringBuilder(getUserid());
         strbuffer.append('@');
         strbuffer.append(getDomain());
         return strbuffer.toString();

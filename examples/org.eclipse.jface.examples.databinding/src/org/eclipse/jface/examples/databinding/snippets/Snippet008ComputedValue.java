@@ -111,7 +111,7 @@ public class Snippet008ComputedValue {
 			firstName = (firstName != null && firstName.length() > 0) ? firstName
 					: "[First Name]";
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(lastName).append(", ").append(firstName);
 
 			return buffer.toString();

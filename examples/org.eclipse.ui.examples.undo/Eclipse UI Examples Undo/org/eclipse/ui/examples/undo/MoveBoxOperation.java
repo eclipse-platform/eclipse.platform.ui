@@ -66,7 +66,7 @@ public class MoveBoxOperation extends BoxOperation {
 
 	@Override
 	public String getLabel() {
-		final StringBuffer stringBuffer = new StringBuffer();
+		final StringBuilder stringBuffer = new StringBuilder();
 		stringBuffer.append(super.getLabel());
 		stringBuffer.append("["); //$NON-NLS-1$
 		stringBuffer.append("("); //$NON-NLS-1$

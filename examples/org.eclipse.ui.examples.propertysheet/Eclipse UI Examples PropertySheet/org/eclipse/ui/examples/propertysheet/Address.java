@@ -103,7 +103,7 @@ public class Address implements IPropertySource {
                 final char space = ' ';
 
                 //removes white space
-                StringBuffer postalCodeBuffer = new StringBuffer(6);
+                StringBuilder postalCodeBuffer = new StringBuilder(6);
                 char current;
                 for (int i = 0; i < length; i++) {
                     current = testPostalCode.charAt(i);
@@ -363,20 +363,20 @@ public class Address implements IPropertySource {
      */
     @Override
 	public String toString() {
-        StringBuffer outStringBuffer = new StringBuffer();
+        StringBuilder outStringBuilder = new StringBuilder();
         final String comma_space = ", "; //$NON-NLS-1$
         final String space = " "; //$NON-NLS-1$
         if (!getStreet().equals(STREET_DEFAULT)) {
-            outStringBuffer.append(getStreet());
-            outStringBuffer.append(comma_space);
+            outStringBuilder.append(getStreet());
+            outStringBuilder.append(comma_space);
         }
 
-        outStringBuffer.append(getCity());
-        outStringBuffer.append(space);
-        outStringBuffer.append(provinceValues[getProvince().intValue()]);
-        outStringBuffer.append(comma_space);
-        outStringBuffer.append(getPostalCode());
+        outStringBuilder.append(getCity());
+        outStringBuilder.append(space);
+        outStringBuilder.append(provinceValues[getProvince().intValue()]);
+        outStringBuilder.append(comma_space);
+        outStringBuilder.append(getPostalCode());
 
-        return outStringBuffer.toString();
+        return outStringBuilder.toString();
     }
 }

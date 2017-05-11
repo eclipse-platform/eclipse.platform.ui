@@ -401,7 +401,7 @@ public class UndoHistoryView extends ViewPart implements
 			@Override
 			public void run() {
 				IUndoableOperation operation = (IUndoableOperation) viewer.getStructuredSelection().getFirstElement();
-				StringBuffer buf = new StringBuffer(operation.getLabel());
+				StringBuilder buf = new StringBuilder(operation.getLabel());
 				buf.append("\n");
 				buf.append("Enabled=");	//$NON-NLS-1$
 				buf.append(Boolean.valueOf(operation.canUndo()).toString());

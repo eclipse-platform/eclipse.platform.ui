@@ -75,7 +75,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 
 	@Override
 	public Object doGetValue() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < observableValues.length; i++) {
 			if (i > 0 & i < observableValues.length) {
 				result.append(delimiter);

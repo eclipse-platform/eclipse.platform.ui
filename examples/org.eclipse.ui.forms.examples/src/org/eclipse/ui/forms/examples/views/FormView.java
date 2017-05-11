@@ -168,7 +168,7 @@ public class FormView extends ViewPart {
 		button = toolkit.createButton(sectionClient, "Radio 2", SWT.RADIO);
 		section.setClient(sectionClient);
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<form>");
 		buf.append("<p>");
 		buf.append("Here is some plain text for the text to render; ");

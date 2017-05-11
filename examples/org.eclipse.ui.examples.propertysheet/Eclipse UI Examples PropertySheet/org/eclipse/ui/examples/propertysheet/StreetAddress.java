@@ -248,18 +248,18 @@ public class StreetAddress implements IPropertySource {
      */
     @Override
 	public String toString() {
-        StringBuffer outStringBuffer = new StringBuffer();
+        StringBuilder outStringBuilder = new StringBuilder();
         if (!getAptBox().equals(APTBOX_DEFAULT)) {
-            outStringBuffer.append(getAptBox());
-            outStringBuffer.append(", "); //$NON-NLS-1$
+            outStringBuilder.append(getAptBox());
+            outStringBuilder.append(", "); //$NON-NLS-1$
         }
         if (!getBuildNo().equals(BUILD_NO_DEFAULT)) {
-            outStringBuffer.append(getBuildNo());
-            outStringBuffer.append(" "); //$NON-NLS-1$
+            outStringBuilder.append(getBuildNo());
+            outStringBuilder.append(" "); //$NON-NLS-1$
         }
         if (!getStreetName().equals(STREETNAME_DEFAULT)) {
-            outStringBuffer.append(getStreetName());
+            outStringBuilder.append(getStreetName());
         }
-        return outStringBuffer.toString();
+        return outStringBuilder.toString();
     }
 }

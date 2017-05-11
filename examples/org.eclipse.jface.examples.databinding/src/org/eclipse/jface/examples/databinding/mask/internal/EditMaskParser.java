@@ -68,7 +68,7 @@ public class EditMaskParser {
 	 * @return the formatted version of the user input
 	 */
 	public String getFormattedResult() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < expectedTokens.length; i++) {
 			String outputChar = expectedTokens[i].getInput();
 			if (outputChar == null) {
@@ -83,7 +83,7 @@ public class EditMaskParser {
 	 * @return the user input with all literals removed
 	 */
 	public String getRawResult() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < expectedTokens.length; i++) {
 			if (expectedTokens[i].isReadOnly()) {
 				continue;

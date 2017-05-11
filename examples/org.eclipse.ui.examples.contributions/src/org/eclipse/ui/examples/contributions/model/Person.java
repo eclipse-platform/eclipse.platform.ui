@@ -60,7 +60,7 @@ public class Person {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer(surname);
+		StringBuilder buf = new StringBuilder(surname);
 		buf.append(", "); //$NON-NLS-1$
 		buf.append(givenname);
 		buf.append(" ("); //$NON-NLS-1$

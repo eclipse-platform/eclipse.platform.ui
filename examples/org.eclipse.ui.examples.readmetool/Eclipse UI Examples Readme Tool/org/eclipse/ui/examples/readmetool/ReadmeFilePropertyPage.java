@@ -90,7 +90,7 @@ public class ReadmeFilePropertyPage extends PropertyPage {
                 contentStream = file.getContents();
                 Reader in = new InputStreamReader(contentStream);
                 int chunkSize = contentStream.available();
-                StringBuffer buffer = new StringBuffer(chunkSize);
+                StringBuilder buffer = new StringBuilder(chunkSize);
                 char[] readBuffer = new char[chunkSize];
                 int n = in.read(readBuffer);
 
