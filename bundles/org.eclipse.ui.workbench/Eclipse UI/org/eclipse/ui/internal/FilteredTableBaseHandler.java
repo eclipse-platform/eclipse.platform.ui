@@ -55,6 +55,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -84,9 +86,13 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
+	private boolean bypassFocusLost;
+
 	private Object selection;
 
 	protected IWorkbenchWindow window;
+
+	protected WorkbenchPage page;
 
 	// true to go to next and false to go to previous part
 	protected boolean gotoDirection;
@@ -117,11 +123,10 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-
-		IWorkbenchPage page = window.getActivePage();
+		page = (WorkbenchPage) window.getActivePage();
 		IWorkbenchPart activePart= page.getActivePart();
 		getTriggers();
-		openDialog((WorkbenchPage) page, activePart);
+		openDialog(page, activePart);
 		clearTriggers();
 		activate(page, selection);
 
@@ -337,7 +342,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				}
 				// check if the focus is still in dialog elements
 				Control fc = dialog.getDisplay().getFocusControl();
-				if (fc != text && fc != table && fc != dialog) {
+				if (fc != text && fc != table && fc != dialog && !bypassFocusLost) {
 					// otherwise, close
 					cancel(dialog);
 				}
@@ -486,6 +491,12 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				case SWT.ESC:
 					cancel(dialog);
 					break;
+				case SWT.DEL:
+					// no filter text, closes selected item
+					if (text.getText().length() == 0) {
+						deleteSelectedItem();
+					}
+					break;
 				}
 			}
 
@@ -539,6 +550,9 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 					}
 
 					moveBackward();
+				} else if (keyCode == SWT.DEL && isFiltered()) {
+					e.doit = false;
+					deleteSelectedItem();
 				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND
 						&& keyCode != SWT.CTRL && keyCode != SWT.SHIFT
 						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP
@@ -630,6 +644,44 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		}
 	}
 
+	/** deletes the currently selected item */
+	private void deleteSelectedItem() {
+		int index = table.getSelectionIndex();
+		if (index == -1 || index >= table.getItemCount()) {
+			return;
+		}
+		TableItem item = table.getItem(index);
+		close(item);
+	}
+
+	/** closes the given item */
+	private void close(TableItem ti) {
+		// currently works for editors only (Ctrl+E)
+		if (ti.getData() instanceof EditorReference) {
+			int index = table.indexOf(ti);
+			EditorReference ed = (EditorReference) ti.getData();
+			bypassFocusLost = true;
+			page.closeEditors(new IEditorReference[] { ed }, true);
+			bypassFocusLost = false;
+			// reset focus when closing active editor
+			table.setFocus();
+			tableViewer.setInput(getInput(page));
+
+			if (table.getItemCount() == 0) {
+				cancel(dialog);
+			}
+
+			if (table.isDisposed()) {
+				return;
+			}
+
+			if (index > 0 && index <= table.getItemCount()) {
+				index -= 1;
+			}
+			table.setSelection(index);
+		}
+	}
+
 	/**
 	 * Adds a listener to the given table that blocks all traversal operations.
 	 *
@@ -714,12 +766,29 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 			@Override
 			public void mouseDown(MouseEvent e) {
-				ok(dialog, table);
+				if (e.button == 3) {
+					// right click, nop
+				} else {
+					ok(dialog, table);
+				}
 			}
 
 			@Override
 			public void mouseUp(MouseEvent e) {
-				ok(dialog, table);
+				if (e.button == 3) {
+					if (table.equals(e.getSource())) {
+						TableItem ti = table.getItem(new Point(e.x, e.y));
+						if (ti != null && ti.getData() instanceof EditorReference) {
+							Menu menu = new Menu(table);
+							MenuItem mi = new MenuItem(menu, SWT.NONE);
+							mi.setText(WorkbenchMessages.FilteredTableBaseHandler_Close);
+							mi.addListener(SWT.Selection, se -> close(ti));
+							menu.setVisible(true);
+						}
+					}
+				} else {
+					ok(dialog, table);
+				}
 			}
 		});
 	}
