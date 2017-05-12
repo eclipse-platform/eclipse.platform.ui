@@ -74,9 +74,6 @@ public class InstanceofExpression extends Expression {
 
 	//---- Debugging ---------------------------------------------------
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "<instanceof value=\"" + fTypeName + "\"/>"; //$NON-NLS-1$ //$NON-NLS-2$

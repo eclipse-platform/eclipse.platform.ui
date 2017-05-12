@@ -85,9 +85,6 @@ public class SystemTestExpression extends Expression {
 
 	// ---- Debugging ---------------------------------------------------
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "<systemTest property=\"" + fProperty +  //$NON-NLS-1$

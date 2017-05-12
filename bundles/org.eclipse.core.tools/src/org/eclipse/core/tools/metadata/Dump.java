@@ -125,8 +125,6 @@ public class Dump implements IDump {
 	/**
 	 * Returns a human-readable representation for this dump object (for
 	 * debugging purposes).
-	 *
-	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {

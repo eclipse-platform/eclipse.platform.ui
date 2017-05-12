@@ -128,9 +128,6 @@ public class TestExpression extends Expression {
 
 	//---- Debugging ---------------------------------------------------
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer args= new StringBuffer();

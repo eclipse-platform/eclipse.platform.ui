@@ -119,17 +119,11 @@ public class PluginDependencyGraphNode {
 		return this.getId().equals(other.getId());
 	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

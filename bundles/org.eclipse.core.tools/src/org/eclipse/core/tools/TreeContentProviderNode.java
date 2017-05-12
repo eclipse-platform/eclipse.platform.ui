@@ -105,11 +105,6 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 		return children != null && !children.isEmpty();
 	}
 
-	/**
-	 * Returns a string representation of the object.
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		if (name == null)
