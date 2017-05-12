@@ -80,13 +80,15 @@ public class TabbedPropertySheetWidgetFactory
         return list;
     }
 
-    public Composite createComposite(Composite parent, int style) {
+    @Override
+	public Composite createComposite(Composite parent, int style) {
         Composite c = super.createComposite(parent, style);
         paintBordersFor(c);
         return c;
     }
 
-    public Composite createComposite(Composite parent) {
+    @Override
+	public Composite createComposite(Composite parent) {
         Composite c = createComposite(parent, SWT.NONE);
         return c;
     }
@@ -217,7 +219,8 @@ public class TabbedPropertySheetWidgetFactory
         return label;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (getColors() != null) {
             super.dispose();
         }

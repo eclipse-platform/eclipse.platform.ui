@@ -113,19 +113,24 @@ public class TabbedPropertySheetPage
 	 */
 	private IPartListener partActivationListener = new IPartListener() {
 
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 			handlePartActivated(part);
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
 	};
@@ -150,6 +155,7 @@ public class TabbedPropertySheetPage
 		/**
 		 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
 		 */
+		@Override
 		public String getContributorId() {
 			return contributorId;
 		}
@@ -162,6 +168,7 @@ public class TabbedPropertySheetPage
 	class TabbedPropertySheetPageLabelProvider
 		extends LabelProvider {
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof ITabDescriptor) {
 				return ((ITabDescriptor) element).getLabel();
@@ -179,6 +186,7 @@ public class TabbedPropertySheetPage
 		/**
 		 * Shows the tab associated with the selection.
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) event
 				.getSelection();
@@ -345,6 +353,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		widgetFactory = new TabbedPropertySheetWidgetFactory();
 		tabbedPropertyComposite = new TabbedPropertyComposite(parent,
@@ -369,6 +378,7 @@ public class TabbedPropertySheetPage
 		tabbedPropertyComposite.getScrolledComposite().addControlListener(
 				new ControlAdapter() {
 
+					@Override
 					public void controlResized(ControlEvent e) {
 						resizeScrolledComposite();
 					}
@@ -477,6 +487,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 
 		disposeContributor();
@@ -507,6 +518,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * @see org.eclipse.ui.part.IPage#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return tabbedPropertyComposite;
 	}
@@ -514,6 +526,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void setActionBars(IActionBars actionBars) {
 		// Override the undo and redo global action handlers
 		// to use the contributor action handlers
@@ -543,6 +556,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		getControl().setFocus();
 	}
@@ -551,6 +565,7 @@ public class TabbedPropertySheetPage
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		setInput(part, selection);
 	}
@@ -856,6 +871,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
 	 */
+	@Override
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
 		refreshTitleBar();
 	}

@@ -39,6 +39,7 @@ public class TabListContentProvider implements IStructuredContentProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		Assert.isTrue(inputElement instanceof ISelection);
 			return registry
@@ -48,6 +49,7 @@ public class TabListContentProvider implements IStructuredContentProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.currentPart = ((TabbedPropertyViewer)viewer).getWorkbenchPart();
 	}

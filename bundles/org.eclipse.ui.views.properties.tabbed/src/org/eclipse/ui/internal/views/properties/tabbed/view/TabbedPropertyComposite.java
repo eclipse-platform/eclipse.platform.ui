@@ -187,6 +187,7 @@ public class TabbedPropertyComposite
 	/**
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
+	@Override
 	public void dispose() {
 		listComposite.dispose();
 		if (displayTitle) {
