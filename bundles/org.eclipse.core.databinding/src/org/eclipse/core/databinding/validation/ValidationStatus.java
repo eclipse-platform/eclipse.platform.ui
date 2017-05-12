@@ -125,7 +125,6 @@ public class ValidationStatus extends Status {
 	/**
 	 * Equality is based upon instance equality rather than identity.
 	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {

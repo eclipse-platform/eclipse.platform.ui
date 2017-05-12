@@ -207,9 +207,6 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 		return inputTypes;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	public String toString() {
 		return getId();
 	}

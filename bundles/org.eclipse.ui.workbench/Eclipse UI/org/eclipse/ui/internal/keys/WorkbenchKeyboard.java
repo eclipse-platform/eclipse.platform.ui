@@ -36,10 +36,6 @@ public class WorkbenchKeyboard {
 			delegate.handleEvent(event);
 		}
 
-		/**
-		 * @return
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return delegate.toString();
@@ -51,29 +47,16 @@ public class WorkbenchKeyboard {
 
 	}
 
-	/**
-	 * @param o
-	 * @return
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		return delegate.equals(o);
 	}
 
-	/**
-	 * @return
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return delegate.hashCode();
 	}
 
-	/**
-	 * @return
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return delegate.toString();

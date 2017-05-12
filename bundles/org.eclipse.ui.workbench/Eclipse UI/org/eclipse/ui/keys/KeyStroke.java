@@ -277,9 +277,6 @@ public final class KeyStroke implements Comparable {
         return compareTo;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object object) {
         if (!(object instanceof KeyStroke)) {
@@ -324,9 +321,6 @@ public final class KeyStroke implements Comparable {
         return naturalKey;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         if (!hashCodeComputed) {
@@ -354,7 +348,6 @@ public final class KeyStroke implements Comparable {
      *
      * @return The formal string representation for this key stroke. Guaranteed
      *         not to be <code>null</code>.
-     * @see java.lang.Object#toString()
      */
     @Override
 	public String toString() {

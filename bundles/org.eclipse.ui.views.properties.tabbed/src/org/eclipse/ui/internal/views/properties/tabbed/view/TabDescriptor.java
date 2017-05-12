@@ -181,9 +181,6 @@ public class TabDescriptor extends AbstractTabDescriptor {
 		return false;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	public String toString() {
 		return getId();
 	}

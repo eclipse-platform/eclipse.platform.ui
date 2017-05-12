@@ -70,9 +70,6 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 		return tab;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -137,9 +134,6 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 		return getLabel();
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
 	public int hashCode() {
 
 		int hashCode = getCategory().hashCode();
