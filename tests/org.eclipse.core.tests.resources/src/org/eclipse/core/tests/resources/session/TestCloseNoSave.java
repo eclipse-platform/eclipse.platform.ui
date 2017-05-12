@@ -50,7 +50,7 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 			project.open(null);
 		}
 
-		assertEquals("2.0", 2, project.members().length);
+		assertEquals("2.0", 3, project.members().length);
 		assertTrue("2.1", folder.exists());
 		assertTrue("2.2", file.exists());
 	}

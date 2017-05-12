@@ -2518,6 +2518,8 @@ public class IResourceTest extends ResourceTest {
 	// https://bugs.eclipse.org/461838
 	public void testAcceptProxyVisitorAlphabetic() throws CoreException {
 		IProject project = getWorkspace().getRoot().getProject("P");
+		IFolder settings = project.getFolder(".settings");
+		IFile prefs = settings.getFile("org.eclipse.core.resources.prefs");
 		IFolder a = project.getFolder("a");
 		IFile a1 = a.getFile("a1.txt");
 		IFile a2 = a.getFile("a2.txt");
@@ -2525,7 +2527,7 @@ public class IResourceTest extends ResourceTest {
 		IFile b1 = b.getFile("b1.txt");
 		IFile b2 = b.getFile("B2.txt");
 
-		ensureExistsInWorkspace(new IResource[] {project, a, a1, a2, b, b1, b2}, true);
+		ensureExistsInWorkspace(new IResource[] {project, settings, prefs, a, a1, a2, b, b1, b2}, true);
 
 		final List<IResource> actualOrder = new ArrayList<>();
 		IResourceProxyVisitor visitor = proxy -> {
@@ -2535,7 +2537,7 @@ public class IResourceTest extends ResourceTest {
 
 		project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
 
-		List<IResource> expectedOrder = Arrays.asList(project, project.getFile(".project"), a, a1, a2, b, b2, b1);
+		List<IResource> expectedOrder = Arrays.asList(project, project.getFile(".project"),  settings, prefs, a, a1, a2, b, b2, b1);
 		assertEquals("1.0", expectedOrder.toString(), actualOrder.toString());
 	}
 }

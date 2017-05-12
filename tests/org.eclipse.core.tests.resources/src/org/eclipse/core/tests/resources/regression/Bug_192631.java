@@ -80,13 +80,13 @@ public class Bug_192631 extends ResourceTest {
 		linkB.createLink(commonB, IResource.NONE, getMonitor());
 
 		toVisit.addAll(Arrays.asList(new URI[] {projectA.getLocationURI(), commonA, folderA, projectA.getFile(".project").getLocationURI()}));
-		toVisitCount[0] = 4;
+		toVisitCount[0] = 6;
 		projectA.accept(visitor);
 		assertTrue("1.1", toVisit.isEmpty());
 		assertEquals("1.2", 0, toVisitCount[0]);
 
 		toVisit.addAll(Arrays.asList(new URI[] {projectB.getLocationURI(), commonB, folderB, projectB.getFile(".project").getLocationURI()}));
-		toVisitCount[0] = 4;
+		toVisitCount[0] = 6;
 		projectB.accept(visitor);
 		assertTrue("2.1", toVisit.isEmpty());
 		assertEquals("2.2", 0, toVisitCount[0]);
@@ -125,13 +125,13 @@ public class Bug_192631 extends ResourceTest {
 		linkB.createLink(commonB, IResource.NONE, getMonitor());
 
 		toVisit.addAll(Arrays.asList(new URI[] {projectA.getLocationURI(), commonA, folderA, projectA.getFile(".project").getLocationURI()}));
-		toVisitCount[0] = 4;
+		toVisitCount[0] = 6;
 		projectA.accept(visitor);
 		assertTrue("1.1", toVisit.isEmpty());
 		assertEquals("1.2", 0, toVisitCount[0]);
 
 		toVisit.addAll(Arrays.asList(new URI[] {projectB.getLocationURI(), commonB, folderB, projectB.getFile(".project").getLocationURI()}));
-		toVisitCount[0] = 4;
+		toVisitCount[0] = 6;
 		projectB.accept(visitor);
 		assertTrue("2.1", toVisit.isEmpty());
 		assertEquals("2.2", 0, toVisitCount[0]);
@@ -170,13 +170,13 @@ public class Bug_192631 extends ResourceTest {
 		linkB.createLink(commonB, IResource.NONE, getMonitor());
 
 		toVisit.addAll(Arrays.asList(new URI[] {projectA.getLocationURI(), commonA, folderA, projectA.getFile(".project").getLocationURI()}));
-		toVisitCount[0] = 4;
+		toVisitCount[0] = 6;
 		projectA.accept(visitor);
 		assertTrue("1.1", toVisit.isEmpty());
 		assertEquals("1.2", 0, toVisitCount[0]);
 
 		toVisit.addAll(Arrays.asList(new URI[] {projectB.getLocationURI(), commonB, folderB, projectB.getFile(".project").getLocationURI()}));
-		toVisitCount[0] = 4;
+		toVisitCount[0] = 6;
 		projectB.accept(visitor);
 		assertTrue("2.1", toVisit.isEmpty());
 		assertEquals("2.2", 0, toVisitCount[0]);

@@ -99,7 +99,7 @@ public class HiddenResourceTest extends ResourceTest {
 			fail("2.0", e);
 		}
 		// +1 for the project description file
-		assertEquals("2.1", 3, members.length);
+		assertEquals("2.1", 4, members.length);
 		try {
 			members = folder.members();
 		} catch (CoreException e) {
@@ -141,14 +141,14 @@ public class HiddenResourceTest extends ResourceTest {
 			fail("7.0", e);
 		}
 		// +1 for the project description file
-		assertEquals("7.1", 3, members.length);
+		assertEquals("7.1", 4, members.length);
 		try {
 			members = project.members(IContainer.INCLUDE_HIDDEN);
 		} catch (CoreException e) {
 			fail("7.2", e);
 		}
 		// +1 for the project description file
-		assertEquals("7.3", 3, members.length);
+		assertEquals("7.3", 4, members.length);
 		try {
 			members = folder.members();
 		} catch (CoreException e) {
@@ -164,7 +164,7 @@ public class HiddenResourceTest extends ResourceTest {
 			fail("8.1", e);
 		}
 		// +1 for project description, -1 for hidden folder
-		assertEquals("8.2", 2, members.length);
+		assertEquals("8.2", 3, members.length);
 		try {
 			members = folder.members();
 		} catch (CoreException e) {
@@ -177,7 +177,7 @@ public class HiddenResourceTest extends ResourceTest {
 			fail("8.5", e);
 		}
 		// +1 for project description, -1 for hidden folder
-		assertEquals("8.6", 2, members.length);
+		assertEquals("8.6", 3, members.length);
 		try {
 			members = folder.members();
 		} catch (CoreException e) {
@@ -190,7 +190,7 @@ public class HiddenResourceTest extends ResourceTest {
 			fail("8.9", e);
 		}
 		// +1 for project description
-		assertEquals("8.10", 3, members.length);
+		assertEquals("8.10", 4, members.length);
 		try {
 			members = folder.members();
 		} catch (CoreException e) {
@@ -219,7 +219,7 @@ public class HiddenResourceTest extends ResourceTest {
 			fail("9.6", e);
 		}
 		// +1 for project description
-		assertEquals("9.7", 3, members.length);
+		assertEquals("9.7", 4, members.length);
 		try {
 			members = folder.members(IContainer.INCLUDE_HIDDEN);
 		} catch (CoreException e) {
@@ -237,7 +237,9 @@ public class HiddenResourceTest extends ResourceTest {
 		IFolder folder = project.getFolder("folder");
 		IFile file = project.getFile("file.txt");
 		IFile subFile = folder.getFile("subfile.txt");
-		IResource[] resources = new IResource[] {project, folder, file, subFile};
+		IFolder settings = project.getFolder(".settings");
+		IFile prefs = settings.getFile("org.eclipse.core.resources.prefs");
+		IResource[] resources = new IResource[] { project, folder, file, subFile, settings, prefs };
 		ensureExistsInWorkspace(resources, true);
 		IResource description = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 
@@ -279,6 +281,8 @@ public class HiddenResourceTest extends ResourceTest {
 		visitor.addExpected(project);
 		visitor.addExpected(file);
 		visitor.addExpected(description);
+		visitor.addExpected(settings);
+		visitor.addExpected(prefs);
 		try {
 			project.accept(visitor);
 		} catch (CoreException e) {
@@ -290,6 +294,8 @@ public class HiddenResourceTest extends ResourceTest {
 		visitor.addExpected(project);
 		visitor.addExpected(file);
 		visitor.addExpected(description);
+		visitor.addExpected(settings);
+		visitor.addExpected(prefs);
 		try {
 			project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
 		} catch (CoreException e) {
@@ -569,7 +575,9 @@ public class HiddenResourceTest extends ResourceTest {
 		IFile file = project.getFile("file.txt");
 		IFile subFile = folder.getFile("subfile.txt");
 		IFile description = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-		final IResource[] resources = new IResource[] {project, folder, file, subFile};
+		IFolder settings = project.getFolder(".settings");
+		IFile prefs = settings.getFile("org.eclipse.core.resources.prefs");
+		final IResource[] resources = new IResource[] { project, folder, file, subFile, settings, prefs };
 		final ResourceDeltaVerifier listener = new ResourceDeltaVerifier();
 		getWorkspace().addResourceChangeListener(listener);
 		try {

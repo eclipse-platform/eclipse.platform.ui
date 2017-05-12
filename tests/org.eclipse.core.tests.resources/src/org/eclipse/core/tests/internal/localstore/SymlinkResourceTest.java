@@ -91,8 +91,8 @@ public class SymlinkResourceTest extends LocalStoreTest {
 			@Override
 			public boolean visit(IResource resource) {
 				resourceCount++;
-				//We have 1 root + 3 folders + 4 elements --> 8 elements to visit at most
-				assertTrue(resourceCount <= 8);
+				// We have 1 root + 4 folders + 5 elements --> 10 elements to visit at most
+				assertTrue(resourceCount <= 10);
 				return true;
 			}
 		});
@@ -120,7 +120,9 @@ public class SymlinkResourceTest extends LocalStoreTest {
 			resourceCount[0]++;
 			return true;
 		});
-		//We have 1 root + 1 folder + 1 file (.project) --> 3 elements to visit
-		assertEquals(3, resourceCount[0]);
+		// We have 1 root + 1 folder + 1 file (.project)
+		// + .settings / resources prefs
+		// --> 5 elements to visit
+		assertEquals(5, resourceCount[0]);
 	}
 }

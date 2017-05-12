@@ -36,6 +36,8 @@ public class Bug_028981 extends ResourceTest {
 		IFile phantomFile = project.getFile("phantom.txt");
 		IFile regularFile = project.getFile("regular.txt");
 		IFile projectDescriptionFile = project.getFile(".project");
+		IFolder settings = project.getFolder(".settings");
+		IFile prefs = settings.getFile("org.eclipse.core.resources.prefs");
 
 		ensureExistsInWorkspace(new IResource[] {teamPrivateFile, regularFile}, true);
 		try {
@@ -61,6 +63,8 @@ public class Bug_028981 extends ResourceTest {
 		verifier.addExpected(project);
 		verifier.addExpected(projectDescriptionFile);
 		verifier.addExpected(regularFile);
+		verifier.addExpected(settings);
+		verifier.addExpected(prefs);
 		try {
 			project.accept(verifier);
 		} catch (CoreException e) {

@@ -97,11 +97,11 @@ public class Bug_332543 extends ResourceTest {
 		IFile f = project.getFile("foo.txt");
 		ensureExistsInFileSystem(f);
 
-		// Set our evil IOException on close() fs.
-		WrapperFileSystem.setCustomFileStore(IOErrOnCloseFileStore.class);
-
 		// Now open the project
 		project.open(getMonitor());
+
+		// Set our evil IOException on close() fs.
+		WrapperFileSystem.setCustomFileStore(IOErrOnCloseFileStore.class);
 
 		// Try #setContents on an existing file
 		try {

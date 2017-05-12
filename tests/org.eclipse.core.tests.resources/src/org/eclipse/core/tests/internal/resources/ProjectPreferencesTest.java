@@ -398,7 +398,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertEquals("0.8", value1, node.get(key1, null));
 		assertEquals("0.9", value2, node.get(key2, null));
 		IFile prefsFile = getFileInWorkspace(project1, ResourcesPlugin.PI_RESOURCES);
-		assertTrue("1.0", !prefsFile.exists());
+		assertTrue("1.0", prefsFile.exists());
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
@@ -478,8 +478,8 @@ public class ProjectPreferencesTest extends ResourceTest {
 		IProject project2 = getProject(getUniqueString());
 		ensureExistsInWorkspace(new IResource[] {project1}, true);
 		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES);
+		assertTrue("1.0", getFileInWorkspace(project1, ResourcesPlugin.PI_RESOURCES).exists());
 		node.put("key", "value");
-		assertTrue("1.0", !getFileInWorkspace(project1, ResourcesPlugin.PI_RESOURCES).exists());
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
@@ -508,6 +508,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	public void test_61277c() {
 		IProject project1 = getProject(getUniqueString());
 		ensureExistsInWorkspace(new IResource[] {project1}, true);
+		assertTrue("1.0", getFileInWorkspace(project1, ResourcesPlugin.PI_RESOURCES).exists());
 		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES);
 		String key1 = "key";
 		String emptyKey = "";
@@ -515,8 +516,6 @@ public class ProjectPreferencesTest extends ResourceTest {
 		String value2 = getUniqueString();
 		node.put(key1, value1);
 		node.put(emptyKey, value2);
-		assertTrue("1.0", !getFileInWorkspace(project1, ResourcesPlugin.PI_RESOURCES).exists());
-
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
@@ -729,6 +728,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 		// copy the pref file to the destination project
 		try {
+			getFileInWorkspace(project2, ResourcesPlugin.PI_RESOURCES).delete(true, null);
 			prefFile.copy(getFileInWorkspace(project2, ResourcesPlugin.PI_RESOURCES).getFullPath(), true, null);
 		} catch (CoreException e) {
 			fail("4.0", e);
@@ -1259,8 +1259,8 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 		Preferences node = new ProjectScope(project1).getNode("");
 		String[] childrenNames = node.childrenNames();
-		assertEquals(1, childrenNames.length);
-		assertEquals(nodeA, childrenNames[0]);
+		assertEquals(2, childrenNames.length);
+		assertEquals(nodeA, childrenNames[1]);
 		node = node.node(nodeA);
 		childrenNames = node.childrenNames();
 		assertEquals(1, childrenNames.length);
@@ -1586,9 +1586,8 @@ public class ProjectPreferencesTest extends ResourceTest {
 		File projectFolder = new File(project1.getLocationURI());
 		File settingsFolder = new File(projectFolder, ".settings");
 		assertTrue(projectFolder.exists());
-		assertFalse(settingsFolder.exists());
-		settingsFolder.mkdir();
 		assertTrue(settingsFolder.exists());
+
 		// create the preference file also out of synch with the workspace
 		File prefsFile = new File(settingsFolder, "nodeA.prefs");
 		prefsFile.createNewFile();

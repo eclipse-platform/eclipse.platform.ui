@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SubMonitor;
@@ -67,8 +68,12 @@ public class PR_1GEAB3C_Test extends ResourceTest {
 	public void test_1GEAB3C() {
 		verifier.reset();
 		final IProject project = getWorkspace().getRoot().getProject("MyAddedAndOpenedProject");
+		IFile prefs = project.getFolder(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME)
+				.getFile(ResourcesPlugin.PI_RESOURCES + "." + EclipsePreferences.PREFS_FILE_EXTENSION);
 		verifier.addExpectedChange(project, IResourceDelta.ADDED, IResourceDelta.OPEN);
 		verifier.addExpectedChange(project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME), IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(new IResource[] { prefs.getParent() }, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(new IResource[] { prefs }, IResourceDelta.ADDED, 0);
 		IWorkspaceRunnable body = monitor -> {
 			monitor.beginTask("Creating and deleting", 100);
 			try {

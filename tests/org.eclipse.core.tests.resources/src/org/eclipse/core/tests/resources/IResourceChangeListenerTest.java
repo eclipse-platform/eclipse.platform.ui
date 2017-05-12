@@ -49,9 +49,11 @@ public class IResourceChangeListenerTest extends ResourceTest {
 	IFolder folder1; //below project2
 	IFolder folder2; //below folder1
 	IFolder folder3; //same as file1
+	IFolder settings; // .settings
 	/* some random resource handles */
 	IProject project1;
 	IFile project1MetaData;
+	IFile prefs; // org.eclipse.core.resources.prefs
 	IProject project2;
 	IFile project2MetaData;
 	ResourceDeltaVerifier verifier;
@@ -208,6 +210,8 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		folder1 = project1.getFolder("Folder" + 1);
 		folder2 = folder1.getFolder("Folder" + 2);
 		folder3 = folder1.getFolder("File" + 1);
+		settings = project1.getFolder(".settings");
+		prefs = settings.getFile("org.eclipse.core.resources.prefs");
 		file1 = folder1.getFile("File" + 1);
 		file2 = folder1.getFile("File" + 2);
 		file3 = folder2.getFile("File" + 1);
@@ -1248,10 +1252,17 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			verifier.addExpectedChange(project1.getFile(".project"), IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, project2.getFile(".project").getFullPath());
 			verifier.addExpectedChange(folder1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, project2.getFolder(folder1.getProjectRelativePath()).getFullPath());
 			verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, project2.getFile(file1.getProjectRelativePath()).getFullPath());
+			
+			verifier.addExpectedChange(settings, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, project2.getFolder(settings.getProjectRelativePath()).getFullPath());
+			verifier.addExpectedChange(prefs, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, project2.getFile(prefs.getProjectRelativePath()).getFullPath());
+			
 			verifier.addExpectedChange(project2, IResourceDelta.ADDED, IResourceDelta.OPEN | IResourceDelta.DESCRIPTION | IResourceDelta.MOVED_FROM, project1.getFullPath(), null);
 			verifier.addExpectedChange(project2.getFile(".project"), IResourceDelta.ADDED, IResourceDelta.CONTENT | IResourceDelta.MOVED_FROM, project1.getFile(".project").getFullPath(), null);
 			verifier.addExpectedChange(project2.getFolder(folder1.getProjectRelativePath()), IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, folder1.getFullPath(), null);
 			verifier.addExpectedChange(project2.getFile(file1.getProjectRelativePath()), IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file1.getFullPath(), null);
+			
+			verifier.addExpectedChange(project2.getFolder(settings.getProjectRelativePath()), IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, settings.getFullPath(), null);
+			verifier.addExpectedChange(project2.getFile(prefs.getProjectRelativePath()), IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, prefs.getFullPath(), null);
 			getWorkspace().run((IWorkspaceRunnable) m -> {
 				m.beginTask("Creating and moving", 100);
 				try {

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
@@ -1095,6 +1096,11 @@ public class Project extends Container implements IProject {
 						monitor.worked(Policy.opWork * 60 / 100);
 					}
 				}
+
+				// Project is new and does not have any content already (not imported)
+				if (!used && !unknownChildren) {
+					writeEncodingAfterOpen(monitor);
+				}
 				//creation of this project may affect overlapping resources
 				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_INFINITE, monitor);
 			} catch (OperationCanceledException e) {
@@ -1105,6 +1111,28 @@ public class Project extends Container implements IProject {
 			}
 		} finally {
 			monitor.done();
+		}
+	}
+
+	/**
+	 * Try to set encoding if we open the project for the first time. See bug 479450
+	 */
+	private void writeEncodingAfterOpen(IProgressMonitor monitor) throws CoreException {
+		IPath settings = new Path(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME).append(ResourcesPlugin.PI_RESOURCES)
+				.addFileExtension(EclipsePreferences.PREFS_FILE_EXTENSION);
+		IFile file = getFile(settings);
+
+		// The file could not yet be up-to-date with underlined resource
+		// force refresh to force reading project preferences via
+		// org.eclipse.core.internal.resources.ProjectPreferences.updatePreferences(IFile)
+		IPath location = file.getLocation();
+		if (!file.exists() && location != null && location.toFile().exists()) {
+			file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+		}
+		String charset = workspace.getCharsetManager().getCharsetFor(getFullPath(), false);
+		if (charset == null) {
+			String encoding = ResourcesPlugin.getEncoding();
+			workspace.getCharsetManager().setCharsetFor(getFullPath(), encoding);
 		}
 	}
 
