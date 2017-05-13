@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     salesforce.com - limit number of sleeping worker threads
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -33,6 +34,14 @@ class WorkerPool {
 	 * There will always be at least MIN_THREADS workers in the pool.
 	 */
 	private static final int MIN_THREADS = 1;
+
+	/**
+	 * Soft limit on the maximum number of workers in the pool. An idle worker
+	 * is not put back in the pool if the total number of workers is more than
+	 * MAX_THREADS.
+	 */
+	private static final int MAX_THREADS = 50;
+
 	/**
 	 * Use the busy thread count to avoid starting new threads when a living
 	 * thread is just doing house cleaning (notifying listeners, etc).
@@ -199,15 +208,17 @@ class WorkerPool {
 	 * Returns a new job to run. Returns null if the thread should die.
 	 */
 	protected InternalJob startJob(Worker worker) {
-		//if we're above capacity, kill the thread
+		// must endWorker and decrementBusyThreads from the same synchronized block
+		boolean busy;
 		synchronized (this) {
 			if (!manager.isActive()) {
 				//must remove the worker immediately to prevent all threads from expiring
 				endWorker(worker);
 				return null;
 			}
-			//set the thread to be busy now in case of reentrant scheduling
+			// set the thread to be busy now in case of reentrant scheduling
 			incrementBusyThreads();
+			busy = true;
 		}
 		Job job = null;
 		try {
@@ -216,8 +227,17 @@ class WorkerPool {
 			long idleStart = System.currentTimeMillis();
 			while (manager.isActive() && job == null) {
 				long hint = manager.sleepHint();
-				if (hint > 0)
+				if (hint > 0) {
+					synchronized (this) {
+						if (numThreads > MAX_THREADS) {
+							endWorker(worker);
+							decrementBusyThreads();
+							busy = false;
+							return null;
+						}
+					}
 					sleep(Math.min(hint, BEST_BEFORE));
+				}
 				job = manager.startJob(worker);
 				//if we were already idle, and there are still no new jobs, then
 				// the thread can expire
@@ -225,6 +245,8 @@ class WorkerPool {
 					if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (numThreads - busyThreads) > MIN_THREADS) {
 						//must remove the worker immediately to prevent all threads from expiring
 						endWorker(worker);
+						decrementBusyThreads();
+						busy = false;
 						return null;
 					}
 				}
@@ -245,7 +267,7 @@ class WorkerPool {
 			}
 		} finally {
 			//decrement busy thread count if we're not running a job
-			if (job == null)
+			if (job == null && busy)
 				decrementBusyThreads();
 		}
 		return job;
