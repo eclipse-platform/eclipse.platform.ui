@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,8 @@ public class NaturesAndProjectsContentAssistProcessor implements IContentAssistP
         String natureTag= "<nature>";
         String projectReferenceTag="<project>";
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        if (text.length() >= natureTag.length() && text.substring(offset - natureTag.length(), offset).equals(natureTag)) {
+        int natureTagLength = natureTag.length();
+		if (text.length() >= natureTagLength && offset >= natureTagLength && text.substring(offset - natureTagLength, offset).equals(natureTag)) {
             IProjectNatureDescriptor[] natureDescriptors= workspace.getNatureDescriptors();
             ICompletionProposal[] proposals = new ICompletionProposal[natureDescriptors.length];
             for (int i= 0; i < natureDescriptors.length; i++) {
@@ -39,7 +40,8 @@ public class NaturesAndProjectsContentAssistProcessor implements IContentAssistP
             }
             return proposals;
         }
-        if (text.length() >= projectReferenceTag.length() && text.substring(offset - projectReferenceTag.length(), offset).equals(projectReferenceTag)) {
+        int projectReferenceTagLength = projectReferenceTag.length();
+		if (text.length() >= projectReferenceTagLength && offset >= projectReferenceTagLength && text.substring(offset - projectReferenceTagLength, offset).equals(projectReferenceTag)) {
             IProject[] projects= workspace.getRoot().getProjects();
             //TODO - filter out the project this file is in
             ICompletionProposal[] proposals = new ICompletionProposal[projects.length];
