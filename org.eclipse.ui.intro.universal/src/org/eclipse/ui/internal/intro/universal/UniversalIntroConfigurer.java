@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -245,9 +245,9 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		// root-like pages have more details on the page and action links
 		boolean rootLike = pageId.equals(ID_ROOT) || isStartPage(pageId) || pageId.equals(ID_STANDBY);
 		if (rootLike && groupId.equals(DIV_PAGE_LINKS))
-				return getRootPageLinks(false);
+				return getRootPageLinks(pageId.equals(ID_STANDBY));
 		if (rootLike && groupId.equals(DIV_ACTION_LINKS))
-				return getRootPageActionLinks(false);
+				return getRootPageActionLinks(pageId.equals(ID_STANDBY));
 		// other pages
 		if (groupId.equals(DIV_PAGE_LINKS))
 			return getNavLinks(pageId);
