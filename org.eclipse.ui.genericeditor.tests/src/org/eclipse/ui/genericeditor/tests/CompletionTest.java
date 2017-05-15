@@ -30,6 +30,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor;
 import org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -51,17 +52,28 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		afterShell.removeAll(beforeShell);
 		assertEquals("No completion", 1, afterShell.size());
 		Shell completionShell= afterShell.iterator().next();
-		Table completionProposalList = findCompletionSelectionControl(completionShell);
-		// instantaneous
+		final Table completionProposalList = findCompletionSelectionControl(completionShell);
+		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return completionProposalList.getItemCount() == 2;
+			}
+		}.waitForCondition(completionShell.getDisplay(), 200);
 		assertEquals(2, completionProposalList.getItemCount());
-		TableItem computingItem = completionProposalList.getItem(0);
+		final TableItem computingItem = completionProposalList.getItem(0);
 		assertTrue("Missing computing info entry", computingItem.getText().contains("Computing")); //$NON-NLS-1$ //$NON-NLS-2$
 		TableItem completionProposalItem = completionProposalList.getItem(1);
 		ICompletionProposal completionProposal = (ICompletionProposal)completionProposalItem.getData();
 		assertEquals(BarContentAssistProcessor.PROPOSAL, completionProposal .getDisplayString());
 		completionProposalList.setSelection(completionProposalItem);
-		waitAndDispatch(LongRunningBarContentAssistProcessor.DELAY + 100);
 		// asynchronous
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return completionProposalList.getItem(0) != computingItem;
+			}
+		}.waitForCondition(completionShell.getDisplay(), LongRunningBarContentAssistProcessor.DELAY + 200);
 		assertEquals(2, completionProposalList.getItemCount());
 		completionProposalItem = completionProposalList.getItem(0);
 		assertEquals(BarContentAssistProcessor.PROPOSAL, ((ICompletionProposal)completionProposalItem.getData()).getDisplayString());

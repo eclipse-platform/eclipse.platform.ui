@@ -18,6 +18,8 @@ import static org.junit.Assert.fail;
 
 import java.util.Collections;
 
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -31,6 +33,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IMarker;
 
@@ -56,6 +60,11 @@ public class HoverTest extends AbstratGenericEditorTest {
 
 	@Rule
 	public TestName testName = new TestName();
+
+	@Before
+	public void skipOnWindows() {
+		Assume.assumeFalse("This test currently always fail on Windows (bug 505842), skipping", Platform.OS_WIN32.equals(Platform.getOS()));
+	}
 
 	@Test
 	public void testHover() throws Exception {
