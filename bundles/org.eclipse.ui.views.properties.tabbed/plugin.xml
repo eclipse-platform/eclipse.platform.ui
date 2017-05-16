@@ -5,56 +5,5 @@
    <extension-point id="propertyContributor" name="%ExtPoint.propertyContributor" schema="schema/propertyContributor.exsd"/>
    <extension-point id="propertyTabs" name="%ExtPoint.propertyTabs" schema="schema/propertyTabs.exsd"/>
    <extension-point id="propertySections" name="%ExtPoint.propertySections" schema="schema/propertySections.exsd"/>
-   <extension
-         point="org.eclipse.e4.ui.css.core.propertyHandler">
-      <handler
-            adapter="org.eclipse.ui.internal.views.properties.tabbed.css.TabbedPropertyTitleAdapter"
-            composite="true"
-            handler="org.eclipse.ui.internal.views.properties.tabbed.css.TabbedPropertyTitleCssPropertyHandler">
-         <property-name
-               name="swt-backgroundBottomKeyline1-color">
-         </property-name>
-         <property-name
-               name="swt-backgroundBottomKeyline2-color">
-         </property-name>
-         <property-name
-               name="swt-backgroundGradientStart-color">
-         </property-name>
-         <property-name
-               name="swt-backgroundGradientEnd-color">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.ui.internal.views.properties.tabbed.css.TabbedPropertyListAdapter"
-            composite="true"
-            handler="org.eclipse.ui.internal.views.properties.tabbed.css.TabbedPropertyListCssPropertyHandler">
-         <property-name
-               name="swt-tabAreaBackground-color">
-         </property-name>
-         <property-name
-               name="swt-tabBackground-color">
-         </property-name>
-         <property-name
-               name="swt-tabNormalShadow-color">
-         </property-name>
-         <property-name
-               name="swt-tabDarkShadow-color">
-         </property-name>
-         <property-name
-               name="color">
-         </property-name>
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.e4.ui.css.core.elementProvider">
-      <provider
-            class="org.eclipse.ui.internal.views.properties.tabbed.css.TabbedPropertyElementProvider">
-         <widget
-               class="org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle"></widget>
-         <widget
-               class="org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList">
-         </widget>
-      </provider>
-   </extension> 
 
 </plugin>
