@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -75,17 +74,17 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 	public void titleBackgroundColorIsStyledAndReset() {
 		createTabbedPropertiesTitle(null);
 
-		Color colorGradStartBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_START);
-		Color colorGradEndBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_END);
-		Color colorBottomKeylineOneBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE1);
-		Color colorBottomKeylineTwoBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE2);
+		RGB colorGradStartBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_START).getRGB();
+		RGB colorGradEndBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_END).getRGB();
+		RGB colorBottomKeylineOneBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE1).getRGB();
+		RGB colorBottomKeylineTwoBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE2).getRGB();
 
 		engine.applyStyles(shell, true);
 		engine.reset();
-		assertColor(colorGradStartBeforStyling.getRGB(), IFormColors.H_GRADIENT_START);
-		assertColor(colorGradEndBeforStyling.getRGB(), IFormColors.H_GRADIENT_END);
-		assertColor(colorBottomKeylineOneBeforStyling.getRGB(), IFormColors.H_BOTTOM_KEYLINE1);
-		assertColor(colorBottomKeylineTwoBeforStyling.getRGB(), IFormColors.H_BOTTOM_KEYLINE2);
+		assertColor(colorGradStartBeforStyling, IFormColors.H_GRADIENT_START);
+		assertColor(colorGradEndBeforStyling, IFormColors.H_GRADIENT_END);
+		assertColor(colorBottomKeylineOneBeforStyling, IFormColors.H_BOTTOM_KEYLINE1);
+		assertColor(colorBottomKeylineTwoBeforStyling, IFormColors.H_BOTTOM_KEYLINE2);
 	}
 
 	@Test
@@ -93,16 +92,16 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 		createTabbedPropertiesTitle(
 				"SomeOtherWidget { h-gradient-start-color: #FF0000; h-gradient-end-color: #FF0000; h-bottom-keyline-1-color: #FF0000; h-bottom-keyline-2-color: #FF0000;}");
 
-		Color colorGradStartBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_START);
-		Color colorGradEndBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_END);
-		Color colorBottomKeylineOneBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE1);
-		Color colorBottomKeylineTwoBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE2);
+		RGB colorGradStartBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_START).getRGB();
+		RGB colorGradEndBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_END).getRGB();
+		RGB colorBottomKeylineOneBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE1).getRGB();
+		RGB colorBottomKeylineTwoBeforStyling = factory.getColors().getColor(IFormColors.H_BOTTOM_KEYLINE2).getRGB();
 
 		engine.applyStyles(shell, true);
-		assertColor(colorGradStartBeforStyling.getRGB(), IFormColors.H_GRADIENT_START);
-		assertColor(colorGradEndBeforStyling.getRGB(), IFormColors.H_GRADIENT_END);
-		assertColor(colorBottomKeylineOneBeforStyling.getRGB(), IFormColors.H_BOTTOM_KEYLINE1);
-		assertColor(colorBottomKeylineTwoBeforStyling.getRGB(), IFormColors.H_BOTTOM_KEYLINE2);
+		assertColor(colorGradStartBeforStyling, IFormColors.H_GRADIENT_START);
+		assertColor(colorGradEndBeforStyling, IFormColors.H_GRADIENT_END);
+		assertColor(colorBottomKeylineOneBeforStyling, IFormColors.H_BOTTOM_KEYLINE1);
+		assertColor(colorBottomKeylineTwoBeforStyling, IFormColors.H_BOTTOM_KEYLINE2);
 	}
 
 }
