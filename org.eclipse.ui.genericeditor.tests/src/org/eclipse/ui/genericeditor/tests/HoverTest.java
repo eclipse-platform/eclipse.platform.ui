@@ -97,6 +97,13 @@ public class HoverTest extends AbstratGenericEditorTest {
 			event.doit = true;
 			event.type = SWT.Selection;
 			link.notifyListeners(SWT.Selection, event);
+			final IMarker m = marker;
+			new DisplayHelper() {
+				@Override
+				protected boolean condition() {
+					return !m.exists();
+				}
+			}.waitForCondition(event.display, 1000);
 			assertFalse(marker.exists());
 		} finally {
 			if (marker != null && marker.exists()) {
