@@ -15,25 +15,25 @@
 			 point="org.eclipse.ui.genericeditor.contentAssistProcessors">
 		<contentAssistProcessor
 					class="org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor"
-					contentType="org.eclipse.core.runtime.text">
+					contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</contentAssistProcessor>
   <contentAssistProcessor
         class="org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor"
-        contentType="org.eclipse.core.runtime.text">
+        contentType="org.eclipse.ui.genericeditor.tests.content-type">
   </contentAssistProcessor>
  </extension>
  <extension
 			 point="org.eclipse.ui.genericeditor.hoverProviders">
 		<hoverProvider
 					class="org.eclipse.ui.genericeditor.tests.contributions.MagicHoverProvider"
-					contentType="org.eclipse.core.runtime.text">
+					contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</hoverProvider>
  </extension>
  <extension
 			 point="org.eclipse.ui.genericeditor.presentationReconcilers">
 		<presentationReconciler
 					class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconciler"
-					contentType="org.eclipse.core.runtime.text">
+					contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</presentationReconciler>
    </extension>
  <extension
@@ -42,6 +42,16 @@
           class="org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator"
           markerType="org.eclipse.core.resources.problemmarker">
     </markerResolutionGenerator>
+ </extension>
+ <extension
+       point="org.eclipse.core.contenttype.contentTypes">
+    <content-type
+          base-type="org.eclipse.core.runtime.text"
+          file-names="foo.txt"
+          id="org.eclipse.ui.genericeditor.tests.content-type"
+          name="Generic Editor Test content-type"
+          priority="normal">
+    </content-type>
  </extension>
 
 </plugin>
