@@ -48,7 +48,7 @@
             composite="true"
             handler="org.eclipse.ui.internal.forms.css.properties.css2.CSSPropertyExpandableCompositeHandler">
          <property-name
-               name="titlebar-color">
+               name="swt-titlebar-color">
          </property-name>
       </handler>
    </extension>

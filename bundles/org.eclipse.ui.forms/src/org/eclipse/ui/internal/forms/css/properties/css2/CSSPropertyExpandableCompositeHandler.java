@@ -9,7 +9,7 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyExpandableCompositeHandler extends AbstractCSSPropertySWTHandler {
 
-	private static final String TITLE_BAR_FOREGROUND = "titlebar-color"; //$NON-NLS-1$
+	private static final String TITLE_BAR_FOREGROUND = "swt-titlebar-color"; //$NON-NLS-1$
 
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)

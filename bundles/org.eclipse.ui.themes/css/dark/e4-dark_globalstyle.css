@@ -501,7 +501,7 @@ Link {
 }
 
 ExpandableComposite {
-    titlebar-color: #cccccc;
+    swt-titlebar-color: #cccccc;
 }
 
 TabbedPropertyTitle > CLabel{

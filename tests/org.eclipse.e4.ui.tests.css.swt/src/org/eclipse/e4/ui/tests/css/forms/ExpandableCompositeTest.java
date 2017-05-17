@@ -52,7 +52,7 @@ public class ExpandableCompositeTest extends CSSSWTTestCase {
 	@Test
 	public void testExpandableCompositeColor() {
 		ExpandableComposite compositeToTest = createTestExpandableComposite(
-				"ExpandableComposite { titlebar-color: #FF0000; }");
+				"ExpandableComposite { swt-titlebar-color: #FF0000; }");
 		assertNotNull(compositeToTest.getTitleBarForeground());
 		assertEquals(RED, compositeToTest.getTitleBarForeground().getRGB());
 	}
@@ -60,7 +60,7 @@ public class ExpandableCompositeTest extends CSSSWTTestCase {
 	@Test
 	public void testExpandableComposite_foregroundColorGetsReset_foregroundCollorIsNull() throws Exception {
 		ExpandableComposite compositeToTest = createTestExpandableComposite(
-				"ExpandableComposite { titlebar-color: #FF0000; }");
+				"ExpandableComposite { swt-titlebar-color: #FF0000; }");
 		assertNotNull(compositeToTest.getTitleBarForeground());
 		assertEquals(RED, compositeToTest.getTitleBarForeground().getRGB());
 
