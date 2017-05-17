@@ -12,6 +12,7 @@ package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Layout data used in conjunction with <code>TableWrapLayout</code>.
@@ -24,17 +25,26 @@ import org.eclipse.swt.graphics.Point;
  */
 public final class TableWrapData {
 	/**
-	 * The control will be left-justified.
+	 * The control will be left-justified unless it has the SWT.WRAP flag set or
+	 * it is a {@link Composite} with a layout that implements
+	 * {@link ILayoutExtension}, in which case it will have {@link #FILL}
+	 * alignment.
 	 */
 	public static final int LEFT = 1 << 1;
 
 	/**
-	 * The control will be centered horizontally.
+	 * The control will be centered horizontally unless it has the SWT.WRAP flag
+	 * set or it is a {@link Composite} with a layout that implements
+	 * {@link ILayoutExtension}, in which case it will have {@link #FILL}
+	 * alignment.
 	 */
 	public static final int CENTER = 1 << 2;
 
 	/**
-	 * The control will be right-justified.
+	 * The control will be right-justified unless it has the SWT.WRAP flag set
+	 * or it is a {@link Composite} with a layout that implements
+	 * {@link ILayoutExtension}, in which case it will have {@link #FILL}
+	 * alignment.
 	 */
 	public static final int RIGHT = 1 << 3;
 

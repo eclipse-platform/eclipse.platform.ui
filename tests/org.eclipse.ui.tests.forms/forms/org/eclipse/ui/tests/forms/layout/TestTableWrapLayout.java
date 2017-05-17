@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -69,8 +70,8 @@ public class TestTableWrapLayout {
 	 * Test a simple two-cell layout.
 	 */
 	@Test
-	public void testTableWrapLayoutNonWrappingLabels() {
-		Control l1 = ControlFactory.create(inner, 10, 100, 15);
+	public void testSimpleTwoCellLayout() {
+		Control l1 = ControlFactory.create(inner, 10, 100, 80);
 		Control l2 = ControlFactory.create(inner, 80, 800, 15);
 
 		Point preferredSize = inner.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -78,11 +79,11 @@ public class TestTableWrapLayout {
 		Point wrappedSize = inner.computeSize(400, SWT.DEFAULT);
 
 		inner.pack();
-		assertEquals(new Rectangle(0, 0, 100, 15), l1.getBounds());
-		assertEquals(new Rectangle(0, 15, 800, 15), l2.getBounds());
-		assertEquals(new Point(800, 30), preferredSize);
+		assertEquals(new Rectangle(0, 0, 800, 10), l1.getBounds());
+		assertEquals(new Rectangle(0, 10, 800, 15), l2.getBounds());
+		assertEquals(new Point(800, 25), preferredSize);
 		assertEquals(80, minimumWidth);
-		assertEquals(new Point(400, 45), wrappedSize);
+		assertEquals(new Point(400, 50), wrappedSize);
 	}
 
 	/**
@@ -121,18 +122,18 @@ public class TestTableWrapLayout {
 	}
 
 	/**
-	 * Test that labels with the WRAP property set do indeed wrap.
+	 * Test that wrapping controls do indeed wrap.
 	 */
 	@Test
 	public void testTableWrapLayoutWrappingLabels() {
-		Control l1 = ControlFactory.create(inner, 30, 100, 15);
+		Control l1 = ControlFactory.create(inner, 30, 100, 30);
 		Control l2 = ControlFactory.create(inner, 50, 800, 15);
 
 		inner.setSize(300, 1000);
 		inner.layout(false);
 
-		assertEquals("l1 had the wrong bounds", new Rectangle(0, 0, 100, 15), l1.getBounds());
-		assertEquals("l2 had the wrong bounds", new Rectangle(0, 15, 300, 40), l2.getBounds());
+		assertEquals("l1 had the wrong bounds", new Rectangle(0, 0, 300, 10), l1.getBounds());
+		assertEquals("l2 had the wrong bounds", new Rectangle(0, 10, 300, 40), l2.getBounds());
 	}
 
 	/**
@@ -156,7 +157,7 @@ public class TestTableWrapLayout {
 		assertTrue(bottomEdge(l1) <= l4.getBounds().y);
 
 		Point preferredSize = inner.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
-		assertEquals(new Point(1200, 30), preferredSize);
+		assertEquals(new Point(1200, 18), preferredSize);
 
 		int minWidth = layout.computeMinimumWidth(inner, false);
 		assertEquals(67, minWidth);
@@ -190,6 +191,90 @@ public class TestTableWrapLayout {
 	}
 
 	/**
+	 * Runs a horizontal alignment test for the given control. Returns true iff
+	 * the control was fill-aligned.
+	 */
+	private boolean runAlignmentTest(Control control, int alignment) {
+		TableWrapData dataLeft = new TableWrapData();
+		dataLeft.align = alignment;
+		dataLeft.grabHorizontal = true;
+		control.setLayoutData(dataLeft);
+
+		inner.setSize(1000, 1000);
+		inner.layout(false);
+		return control.getSize().x == 1000;
+	}
+
+	@Test
+	public void testLeftAlignmentIsIgnoredForWrappingControls() {
+		Label label = new Label(inner, SWT.WRAP);
+		label.setText("test");
+
+		assertEquals(true, runAlignmentTest(label, TableWrapData.LEFT));
+	}
+
+	@Test
+	public void testLeftAlignmentIsRespectedForNonWrappingControls() {
+		Label label = new Label(inner, SWT.NONE);
+		label.setText("test");
+
+		assertEquals(false, runAlignmentTest(label, TableWrapData.LEFT));
+	}
+
+	@Test
+	public void testLeftAlignmentIsIgnoredForLayoutsImplementingLayoutExtension() {
+		Control label = ControlFactory.create(inner, 10, 200, 100);
+
+		assertEquals(true, runAlignmentTest(label, TableWrapData.LEFT));
+	}
+
+	@Test
+	public void testRightAlignmentIsIgnoredForWrappingControls() {
+		Label label = new Label(inner, SWT.WRAP);
+		label.setText("test");
+
+		assertEquals(true, runAlignmentTest(label, TableWrapData.RIGHT));
+	}
+
+	@Test
+	public void testRightAlignmentIsRespectedForNonWrappingControls() {
+		Label label = new Label(inner, SWT.NONE);
+		label.setText("test");
+
+		assertEquals(false, runAlignmentTest(label, TableWrapData.RIGHT));
+	}
+
+	@Test
+	public void testRightAlignmentIsIgnoredForLayoutsImplementingLayoutExtension() {
+		Control label = ControlFactory.create(inner, 10, 200, 100);
+
+		assertEquals(true, runAlignmentTest(label, TableWrapData.RIGHT));
+	}
+
+	@Test
+	public void testCenterAlignmentIsIgnoredForWrappingControls() {
+		Label label = new Label(inner, SWT.WRAP);
+		label.setText("test");
+
+		assertEquals(true, runAlignmentTest(label, TableWrapData.CENTER));
+	}
+
+	@Test
+	public void testCenterAlignmentIsRespectedForNonWrappingControls() {
+		Label label = new Label(inner, SWT.NONE);
+		label.setText("test");
+
+		assertEquals(false, runAlignmentTest(label, TableWrapData.CENTER));
+	}
+
+	@Test
+	public void testCenterAlignmentIsIgnoredForLayoutsImplementingLayoutExtension() {
+		Control label = ControlFactory.create(inner, 10, 200, 100);
+
+		assertEquals(true, runAlignmentTest(label, TableWrapData.CENTER));
+	}
+
+	/**
 	 * Test alignments and margins
 	 */
 	@Test
@@ -209,7 +294,7 @@ public class TestTableWrapLayout {
 		dataLeft.align = TableWrapData.LEFT;
 		labLeft.setLayoutData(dataLeft);
 
-		Control labRight = ControlFactory.create(inner, 50, 100, 15);
+		Control labRight = ControlFactory.create(inner, 100, 15);
 		TableWrapData dataRight = new TableWrapData();
 		dataRight.align = TableWrapData.RIGHT;
 		labRight.setLayoutData(dataRight);
@@ -229,7 +314,7 @@ public class TestTableWrapLayout {
 
 		// Check layout
 		assertEquals(new Rectangle(LEFT_MARGIN, TOP_MARGIN, 300, 40), lab0.getBounds());
-		assertEquals(new Rectangle(LEFT_MARGIN, bottomEdge(lab0), 100, 15), labLeft.getBounds());
+		assertEquals(new Rectangle(LEFT_MARGIN, bottomEdge(lab0), 300, 5), labLeft.getBounds());
 		assertEquals(new Rectangle(rightEdge(lab0) - 100, bottomEdge(labLeft), 100, 15), labRight.getBounds());
 
 		int centerPoint = (leftEdge(labCenter) + rightEdge(labCenter)) / 2;

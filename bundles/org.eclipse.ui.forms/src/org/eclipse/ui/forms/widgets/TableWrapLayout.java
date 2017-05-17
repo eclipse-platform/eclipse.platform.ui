@@ -320,7 +320,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 						cwidth += horizontalSpacing;
 				}
 				Point size = FormUtil.computeControlSize(cache.getCache(td.childIndex), cwidth - td.indent, td.maxWidth,
-						td.maxHeight, td.align == TableWrapData.FILL);
+						td.maxHeight, isFillAligned(child));
 				size.x += td.indent;
 				td.compWidth = cwidth;
 				if (td.heightHint != SWT.DEFAULT) {
@@ -414,12 +414,12 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			}
 		}
 		// align horizontally
-		if (td.align == TableWrapData.CENTER) {
+		if (isFillAligned(control)) {
+			width = colWidth;
+		} else if (td.align == TableWrapData.CENTER) {
 			xloc = x + (colWidth - width) / 2;
 		} else if (td.align == TableWrapData.RIGHT) {
 			xloc = x + colWidth - width;
-		} else if (td.align == TableWrapData.FILL) {
-			width = colWidth;
 		}
 		// align vertically
 		if (td.valign == TableWrapData.MIDDLE) {
@@ -660,7 +660,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				if (cy == SWT.DEFAULT) {
 					SizeCache controlCache = cache.getCache(td.childIndex);
 					Point size = FormUtil.computeControlSize(controlCache, cwidth - td.indent, td.maxWidth,
-							td.maxHeight, td.align == TableWrapData.FILL);
+							td.maxHeight, isFillAligned(child));
 					cy = size.y;
 				}
 				RowSpan rowspan = rowspans.get(child);
@@ -843,7 +843,16 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 	}
 
-	boolean isWrap(Control control) {
+	boolean isFillAligned(Control control) {
+		Object layoutData = control.getLayoutData();
+
+		if (layoutData instanceof TableWrapData) {
+			TableWrapData tableWrapData = (TableWrapData) layoutData;
+
+			if (tableWrapData.align == TableWrapData.FILL) {
+				return true;
+			}
+		}
 		if (control instanceof Composite
 				&& ((Composite) control).getLayout() instanceof ILayoutExtension)
 			return true;
