@@ -435,7 +435,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @return the shell used for the popup window
 	 */
-	protected final Shell getShell() {
+	public final Shell getShell() {
 		return fShell;
 	}
 

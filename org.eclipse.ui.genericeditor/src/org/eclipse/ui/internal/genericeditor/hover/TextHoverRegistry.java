@@ -8,7 +8,7 @@
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
  *******************************************************************************/
-package org.eclipse.ui.internal.genericeditor;
+package org.eclipse.ui.internal.genericeditor.hover;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.internal.genericeditor.GenericContentTypeRelatedExtension;
+import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
 
 /**
  * Text hover registry that manages the detectors
@@ -90,19 +92,15 @@ public final class TextHoverRegistry {
 		}, EXTENSION_POINT_ID);
 	}
 
-	public ITextHover getAvailableHover(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+	public List<ITextHover> getAvailableHovers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
-		List<ITextHover> hoversToConsider = this.extensions.stream()
+		return this.extensions.stream()
 				.filter(ext -> contentTypes.contains(ext.targetContentType))
 				// don't sort in the stream as the initial structure is already sorted by isAfter/isBefore
 				.map(GenericContentTypeRelatedExtension<ITextHover>::createDelegate)
 				.collect(Collectors.toList());
-		if (!hoversToConsider.isEmpty()) {
-			return new CompositeTextHover(hoversToConsider);
-		}
-		return null;
 	}
 
 	private void sync() {

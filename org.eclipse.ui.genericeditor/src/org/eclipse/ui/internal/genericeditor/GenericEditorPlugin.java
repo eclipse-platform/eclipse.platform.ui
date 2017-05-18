@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.genericeditor;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.ui.internal.genericeditor.hover.TextHoverRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

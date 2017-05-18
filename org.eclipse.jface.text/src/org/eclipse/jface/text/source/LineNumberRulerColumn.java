@@ -762,7 +762,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					fZoom= 100;
 				}
 
-				ImageData imageData= gcImage.getImageData(100);
+				ImageData imageData= gcImage.getImageData();
 				gcImage.dispose();
 				return imageData;
 			});

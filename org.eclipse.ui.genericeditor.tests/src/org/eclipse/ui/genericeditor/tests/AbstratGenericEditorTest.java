@@ -17,6 +17,8 @@ import org.junit.Before;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -47,17 +49,42 @@ public class AbstratGenericEditorTest {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
 		project.create(null);
 		project.open(null);
-		file = project.getFile("foo.txt");
-		file.create(new ByteArrayInputStream("bar 'bar'".getBytes()), true, null);
-		editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().openEditor(new FileEditorInput(this.file), "org.eclipse.ui.genericeditor.GenericEditor");
+		createAndOpenFile("foo.txt", "bar 'bar'");
 	 }
+	
+	/**
+	 * Creates a new file in the project, opens it, and associate that file with the test state
+	 * @param name name of the file in the project
+	 * @param contents content of the file
+	 * @throws Exception ex
+	 * @since 1.1
+	 */
+	protected void createAndOpenFile(String name, String contents) throws Exception {
+		this.file = project.getFile(name);
+		this.file.create(new ByteArrayInputStream(contents.getBytes()), true, null);
+		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().openEditor(new FileEditorInput(this.file), "org.eclipse.ui.genericeditor.GenericEditor");
+	}
+
+	/**
+	 * Closes editor and delete file. Keeps project open.
+	 * @throws Exception ex
+	 * @since 1.1
+	 */
+	protected void cleanFileAndEditor() throws Exception {
+		if (editor != null) {
+			editor.close(false);
+			editor = null;
+		}
+		if (file != null) {
+			file.delete(true, new NullProgressMonitor());
+			file = null;
+		}
+	}
 
 	@After
 	public void tearDown() throws Exception {
-		if (file != null) {
-			file.delete(true, null);
-		}
+		cleanFileAndEditor();
 		if (project != null) {
 			project.delete(true, null);
 		}
