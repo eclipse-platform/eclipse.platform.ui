@@ -42,6 +42,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.genericeditor.hover.CompositeTextHover;
 import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistProcessor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
@@ -99,8 +100,14 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		TextHoverRegistry registry= GenericEditorPlugin.getDefault().getHoverRegistry();
-		return registry.getAvailableHover(sourceViewer, getContentTypes());
+		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer, getContentTypes());
+		if (hovers == null || hovers.isEmpty()) {
+			return null;
+		} else if (hovers.size() == 1) {
+			return hovers.get(0);
+		} else {
+			return new CompositeTextHover(hovers);
+		}
 	}
 
 	@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *   Mickael Istria (Red Hat Inc.) - initial implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.genericeditor;
+package org.eclipse.ui.internal.genericeditor.hover;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -17,12 +17,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.ui.internal.genericeditor.TextHoverRegistry.TextHoverExtension;
+import org.eclipse.ui.internal.genericeditor.hover.TextHoverRegistry.TextHoverExtension;
 
 /**
  * A comparator that allows to sort elements according to their relative
  * placement (isBefore and isAfter)
- *
+ *TODO: generalizing to any kind of extension supporting isBefore and isAfter
  */
 class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 

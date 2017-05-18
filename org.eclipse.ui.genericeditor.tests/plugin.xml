@@ -26,8 +26,12 @@
  <extension
 			 point="org.eclipse.ui.genericeditor.hoverProviders">
 		<hoverProvider
-					class="org.eclipse.ui.genericeditor.tests.contributions.MagicHoverProvider"
+					class="org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider"
 					contentType="org.eclipse.ui.genericeditor.tests.content-type">
+		</hoverProvider>
+		<hoverProvider
+					class="org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider"
+					contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type-bartxt">
 		</hoverProvider>
  </extension>
   <extension
@@ -36,11 +40,11 @@
 					class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerFirst"
 					contentType="org.eclipse.core.runtime.text">
 		</reconciler>
-  <reconciler
-        class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerSecond"
-        contentType="org.eclipse.ui.genericeditor.tests.reconciled-content-type">
-  </reconciler>
-  </extension>
+		<reconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerSecond"
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type-bartxt">
+		</reconciler>
+	</extension>
 	<extension
 			 point="org.eclipse.ui.genericeditor.presentationReconcilers">
 		<presentationReconciler
@@ -80,10 +84,10 @@
           priority="normal">
     </content-type>
     <content-type
-          base-type="org.eclipse.core.runtime.text"
+          base-type="org.eclipse.ui.genericeditor.tests.content-type"
           file-names="bar.txt"
-          id="org.eclipse.ui.genericeditor.tests.reconciled-content-type"
-          name="Generic Editor Reconciler Test content-type"
+          id="org.eclipse.ui.genericeditor.tests.specialized-content-type-bartxt"
+          name="Specialized Generic Editor content-type for &apos;bar.txt&apos;"
           priority="normal">
     </content-type>
  </extension>
