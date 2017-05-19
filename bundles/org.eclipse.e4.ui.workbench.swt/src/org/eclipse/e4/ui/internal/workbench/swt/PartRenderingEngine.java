@@ -116,7 +116,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public static final String ENABLED_THEME_KEY = "themeEnabled";
 
-	private static boolean enableThemePreference;
+	private static boolean enableThemePreference = true;
 	private String factoryUrl;
 
 	IRendererFactory curFactory = null;
