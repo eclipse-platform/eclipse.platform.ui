@@ -20,6 +20,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	BindingInteractionsTest.class,
 	BindingManagerTest.class,
+		DispatcherTest.class,
 	BindingPersistenceTest.class,
 	// TODO This no longer works due to focus issues related to key bindings
 	//Bug36420Test.class,
@@ -45,7 +46,7 @@ import org.junit.runners.Suite;
 	 */
 	//Bug53489Test.class,
 	Bug189167Test.class,
-	KeysPreferenceModelTest.class
+		KeysPreferenceModelTest.class
  })
 public class KeysTestSuite {
 
