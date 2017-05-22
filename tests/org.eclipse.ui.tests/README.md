@@ -3,7 +3,7 @@ org.eclipse.ui.tests
 
 Contains the main tests for the Platform UI project.
 
-For more information, refer to the [Platform UI wiki page] [1].
+For more information, refer to the [Platform UI wiki page][1].
 
 
 Running the tests
@@ -18,7 +18,7 @@ See [https://wiki.eclipse.org/Platform_UI/How_to_Contribute#Unit_Testing][2] for
 Contributions
 -------------
 
-For information how to contribute to the Platform UI project see [Platform UI - How to contribute wiki page] [3].
+For information how to contribute to the Platform UI project see [Platform UI - How to contribute wiki page][3].
 
 License
 -------

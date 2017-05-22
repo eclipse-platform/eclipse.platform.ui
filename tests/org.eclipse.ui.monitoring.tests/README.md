@@ -3,7 +3,7 @@ org.eclipse.ui.tests
 
 Contains the tests org.eclipse.ui.monitoring plugin.
 
-For more information, refer to the [Platform UI wiki page] [1].
+For more information, refer to the [Platform UI wiki page][1].
 
 
 Running the tests

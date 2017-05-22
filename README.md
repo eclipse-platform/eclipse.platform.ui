@@ -12,13 +12,13 @@ Website: <http://www.eclipse.org/platform/ui/>
 
 - <https://projects.eclipse.org/projects/eclipse.platform.ui>
 
-For more information, refer to the [Platform UI wiki page] [1].
+For more information, refer to the [Platform UI wiki page][1].
 
 How to contribute:
 --------------------
 Contributions to Platform UI are most welcome. There are many ways to contribute,
 from entering high quality bug reports, to contributing code or documentation changes.
-For a complete guide, see the [Platform UI - How to contribute wiki page] [2] page on the team wiki.
+For a complete guide, see the [Platform UI - How to contribute wiki page][2] page on the team wiki.
 
 How to build on the command line
 --------------------------------

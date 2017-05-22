@@ -3,7 +3,7 @@ org.eclipse.e4.ui.workbench.renderers.swt.cocoa
 
 Renderer implementations specific for the Mac cocoa platform.
 
-For more information, refer to the [Platform UI wiki page] [1].
+For more information, refer to the [Platform UI wiki page][1].
 
 Contributors
 ------------
