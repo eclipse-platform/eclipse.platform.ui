@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 Wind River Systems, Inc., IBM Corporation and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,13 +215,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 */
 	private void drawLineRange(GC gc, int startLine, int endLine, int x, int w) {
 		final int viewPortWidth= fTextWidget.getClientArea().width;
-		int spaceCharWidth = gc.stringExtent(" ").x; //$NON-NLS-1$
-		boolean optimizeWhitespacePainting = false;
-		if ( (spaceCharWidth == gc.stringExtent(String.valueOf(SPACE_SIGN)).x) &&
-				(spaceCharWidth == gc.stringExtent(String.valueOf(IDEOGRAPHIC_SPACE_SIGN)).x)) {
-			optimizeWhitespacePainting = true;
-		}
-
 		for (int line= startLine; line <= endLine; line++) {
 			int lineOffset= fTextWidget.getOffsetAtLine(line);
 			// line end offset including line delimiter
@@ -275,7 +268,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 			// draw character range
 			if (endOffset > startOffset) {
-				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset, optimizeWhitespacePainting);
+				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset);
 			}
 		}
 	}
@@ -292,9 +285,8 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param endOffset exclusive end index of the drawing range
 	 * @param lineOffset inclusive start index of the line
 	 * @param lineEndOffset exclusive end index of the line
-	 * @param optimizeWhitespacePainting <code>true</code> if whitespace painting can be optimized, <code>false</code> otherwise
 	 */
-	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset, boolean optimizeWhitespacePainting) {
+	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset) {
 		StyledTextContent content= fTextWidget.getContent();
 		String lineText= content.getTextRange(lineOffset, lineEndOffset - lineOffset);
 		int startOffsetInLine= startOffset - lineOffset;
@@ -346,12 +338,8 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 								visibleChar.append(SPACE_SIGN);
 							}
 						}
-						// 'continue' improves performance but may produce drawing errors
-						// for long runs of space if width of space and dot differ, therefore
-						// it can be used only for monospace fonts
-						if (optimizeWhitespacePainting) {
-							continue;
-						}
+						// 'continue' would improve performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ
 						break;
 					case '\u3000': // ideographic whitespace
 						if (isEmptyLine) {
@@ -371,12 +359,8 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
 							}
 						}
-						// 'continue' improves performance but may produce drawing errors
-						// for long runs of space if width of space and dot differ, therefore
-						// it can be used only for monospace fonts
-						if (optimizeWhitespacePainting) {
-							continue;
-						}
+						// 'continue' would improve performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ
 						break;
 					case '\t':
 						if (isEmptyLine) {
