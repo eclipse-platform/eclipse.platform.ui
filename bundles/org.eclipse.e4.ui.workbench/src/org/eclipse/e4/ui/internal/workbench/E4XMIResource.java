@@ -95,6 +95,7 @@ public class E4XMIResource extends XMIResourceImpl {
 
 		id = objectMap.get(eObject);
 		if (id != null) {
+			setID(eObject, id);
 			return id;
 		}
 

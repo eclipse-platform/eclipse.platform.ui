@@ -15,6 +15,7 @@ package org.eclipse.e4.ui.tests;
 import org.eclipse.e4.ui.tests.application.Bug299755Test;
 import org.eclipse.e4.ui.tests.application.Bug308220Test;
 import org.eclipse.e4.ui.tests.application.Bug320857Test;
+import org.eclipse.e4.ui.tests.application.E4ResourceTest;
 import org.eclipse.e4.ui.tests.application.ModelElementTest;
 import org.eclipse.e4.ui.tests.application.ModelRobustnessTest;
 import org.eclipse.e4.ui.tests.application.ResourceHandlerTest;
@@ -85,7 +86,7 @@ import org.junit.runners.Suite;
 		ExtensionsSortTests.class,
 		HandlerActivationTest.class,
 		ModelAssemblerTests.class,
-		ModelAssemblerFragmentOrderingTests.class
+		ModelAssemblerFragmentOrderingTests.class, E4ResourceTest.class
 		// SWTPartRendererTest.class,
 })
 public class UIAllTests {
