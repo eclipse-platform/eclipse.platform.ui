@@ -156,10 +156,27 @@ abstract class DragAgent {
 	public void dragFinished(boolean performDrop, DnDInfo info) {
 		boolean isNoDrop = dndManager.getDragShell().getCursor() == Display.getCurrent()
 				.getSystemCursor(SWT.CURSOR_NO);
+
 		if (performDrop && dropAgent != null && !isNoDrop) {
+			if (dragPH == null) {
+				return;
+			}
+
+			if (dragPH != null) {
+				dragPH.getParent().getChildren().remove(dragPH);
+				dragPH = null;
+			}
 			dropAgent.drop(dragElement, info);
 		} else {
 			cancelDrag();
+			if (dragPH == null) {
+				return;
+			}
+
+			if (dragPH != null) {
+				dragPH.getParent().getChildren().remove(dragPH);
+				dragPH = null;
+			}
 		}
 
 		if (dropAgent != null) {
