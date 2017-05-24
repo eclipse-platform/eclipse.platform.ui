@@ -4158,7 +4158,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		if (nullRefList != null && nullRefList.size() > 0) {
 			for (MPlaceholder ph : nullRefList) {
-				replacePlaceholder(ph);
+				if (ph.isToBeRendered()) {
+					replacePlaceholder(ph);
+				}
 			}
 		}
 	}
