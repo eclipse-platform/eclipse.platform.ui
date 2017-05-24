@@ -485,9 +485,11 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				case SWT.KEYPAD_CR:
 					ok(dialog, table);
 					break;
+				case SWT.PAGE_DOWN:
 				case SWT.ARROW_DOWN:
 					moveForward();
 					break;
+				case SWT.PAGE_UP:
 				case SWT.ARROW_UP:
 					moveBackward();
 					break;
@@ -559,6 +561,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				} else if (keyCode != SWT.ALT && keyCode != SWT.COMMAND
 						&& keyCode != SWT.CTRL && keyCode != SWT.SHIFT
 						&& keyCode != SWT.ARROW_DOWN && keyCode != SWT.ARROW_UP
+						&& keyCode != SWT.PAGE_DOWN && keyCode != SWT.PAGE_UP
 						&& keyCode != SWT.ARROW_LEFT
 						&& keyCode != SWT.ARROW_RIGHT) {
 					if (!isFiltered()) {
@@ -579,11 +582,12 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 							cancel(dialog);
 						}
 					}
-				} else if (keyCode == SWT.ARROW_DOWN && table.getSelectionIndex() == table.getItemCount() - 1) {
+				} else if ((keyCode == SWT.ARROW_DOWN || keyCode == SWT.PAGE_DOWN)
+						&& table.getSelectionIndex() == table.getItemCount() - 1) {
 					/** DOWN is managed by table, except when "rotating" */
 					moveForward();
 					e.doit = false;
-				} else if (keyCode == SWT.ARROW_UP && table.getSelectionIndex() == 0) {
+				} else if ((keyCode == SWT.ARROW_UP || keyCode == SWT.PAGE_UP) && table.getSelectionIndex() == 0) {
 					/** UP is managed by table, except when "rotating" */
 					moveBackward();
 					e.doit = false;
