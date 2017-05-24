@@ -3,10 +3,13 @@
 <schema targetNamespace="org.eclipse.e4.ui.css.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.e4.ui.css.core" id="org.eclipse.e4.ui.css.core.elementProvider" name="element_provider"/>
+         <meta.schema plugin="org.eclipse.e4.ui.css.core" id="org.eclipse.e4.ui.css.core.elementProvider" name="DOM Element Provider"/>
       </appinfo>
       <documentation>
-         Maps widgets or objects to an element provider.
+         &lt;p&gt;
+The &lt;code&gt;org.eclipse.e4.ui.css.core.elementProvider&lt;/code&gt; extension point is used to map widgets or objects to elements of a &lt;em&gt;Document Object Model&lt;/em&gt; (DOM).  The Element Provider is responsible for checking whether the supplied widgets/objects are compatible with the provided CSS Engine.
+&lt;/p&gt;
+
       </documentation>
    </annotation>
 
@@ -48,6 +51,11 @@
    </element>
 
    <element name="provider">
+      <annotation>
+         <documentation>
+            An object that maps widgets/objects to DOM elements.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="widget" minOccurs="1" maxOccurs="unbounded"/>
@@ -55,7 +63,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  
+                  the implementation class for the element provider. This class must implement the &lt;samp&gt;org.eclipse.e4.ui.css.core.dom.IElementProvider&lt;/samp&gt; interface.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.e4.ui.css.core.dom.IElementProvider"/>
@@ -66,11 +74,16 @@
    </element>
 
    <element name="widget">
+      <annotation>
+         <documentation>
+            A type of widget/object that this provider can map to a DOM element.
+         </documentation>
+      </annotation>
       <complexType>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the type of a widget/object supported by this element provider. This type may be either a class or interface.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java"/>
@@ -85,7 +98,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         0.9
       </documentation>
    </annotation>
 
@@ -94,7 +107,13 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.e4.ui.css.core.elementProvider&quot;&gt;
+      &lt;provider class=&quot;org.eclipse.e4.ui.css.swt.dom.SWTElementProvider&quot;&gt;
+         &lt;widget class=&quot;org.eclipse.swt.widgets.Control&quot;/&gt;
+      &lt;/provider&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -103,7 +122,10 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Enter API information here.]
+         &lt;tt&gt;elementProvider&lt;/tt&gt; is currently internal and should not be considered API.
+&lt;p&gt;
+The supplied element provider must implement the &lt;samp&gt;org.eclipse.e4.ui.css.core.dom.IElementProvider&lt;samp&gt; interface.
+&lt;/p&gt; 
       </documentation>
    </annotation>
 
@@ -112,7 +134,7 @@
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         None.
       </documentation>
    </annotation>
 

@@ -77,7 +77,7 @@
          <attribute name="handler" type="string">
             <annotation>
                <documentation>
-                  This class implements the property setting.
+                  implements the property fetching and setting. This class must implement &lt;samp&gt;org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler&lt;/samp&gt;.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler"/>
@@ -92,7 +92,7 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The CSS property name.  If not officially part of the W3C&apos;s &lt;a href=&quot;http://www.w3.org/TR/CSS2/&quot;&gt;CSS 2 Standard&lt;/a&gt; then the property should be prefixed.  For example, SWT-specific properties are prefixed with &lt;tt&gt;-swt-&lt;/tt&gt;.
+                  The CSS property name.  If not officially part of the W3C&apos;s &lt;a href=&quot;http://www.w3.org/TR/CSS2/&quot;&gt;CSS 2 Standard&lt;/a&gt; then the property should be prefixed.  For example, SWT-specific properties are prefixed with &lt;tt&gt;swt-&lt;/tt&gt; . (Due to a bug in the underlying implementation, we cannot use a leading hyphen as specified in the standard, &quot;-swt-&quot;.)
                </documentation>
             </annotation>
          </attribute>
@@ -106,6 +106,14 @@
       </complexType>
    </element>
 
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         0.9
+      </documentation>
+   </annotation>
 
    <annotation>
       <appinfo>
@@ -125,6 +133,20 @@
       </documentation>
    </annotation>
 
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         &lt;tt&gt;propertyHandler&lt;/tt&gt; is currently internal and should not be considered API.
+&lt;p&gt;
+The property handler &lt;em&gt;provider&lt;/em&gt; must implement the &lt;samp&gt;org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider&lt;/samp&gt; interface.  In addition to providing property handlers, the provider is also expected to provide the default style declaration for an element.
+&lt;/p&gt;
+&lt;p&gt;
+Property handlers must implement the &lt;samp&gt;org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler&lt;samp&gt; interface; there are several specializations to allow providing additional functionality.  There are a number of specialized interfaces, abstract classes, and helper classes, for implementing property handlers.  There is also some support for defining composite CSS2 properties, such as &lt;em&gt;background&lt;/em&gt;, defined in &lt;samp&gt;org.eclipse.e4.ui.css.core.dom.properties.css2&lt;/samp&gt;.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
 
    <annotation>
       <appinfo>
