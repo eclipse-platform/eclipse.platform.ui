@@ -109,7 +109,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			searchPattern = null;
 		} else {
 			SearchPattern patternMatcher = new SearchPattern();
-			patternMatcher.setPattern("*" + pattern); //$NON-NLS-1$
+			patternMatcher.setPattern(pattern);
 			searchPattern = patternMatcher;
 		}
 	}
@@ -199,6 +199,10 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 				String matchName = null;
 				if (element instanceof EditorReference) {
 					matchName = ((EditorReference) element).getTitle();
+					// skips dirty editor prefix
+					if (matchName.startsWith("*")) { //$NON-NLS-1$
+						matchName = matchName.substring(1);
+					}
 				}
 				if (matchName == null) {
 					return false;
