@@ -12,8 +12,6 @@ package org.eclipse.debug.tests.breakpoint;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -26,6 +24,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsComparator;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestsPlugin;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
@@ -42,7 +41,7 @@ import org.eclipse.ui.IEditorInput;
  *
  * Using a special Comparator which sorts breakpoint texts like file:1, file:2 and file:11 in a numerical ordering.
  */
-public class BreakpointOrderingTests extends TestCase {
+public class BreakpointOrderingTests extends AbstractDebugTest {
 
 	public BreakpointOrderingTests(String name) {
 		super(name);

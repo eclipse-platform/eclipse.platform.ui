@@ -13,14 +13,13 @@ package org.eclipse.debug.tests.viewer.model;
 
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewerFilter;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -38,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.8
  */
-abstract public class FilterTests extends TestCase implements ITestModelUpdatesListenerConstants {
+abstract public class FilterTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
 
     Display fDisplay;
     Shell fShell;
@@ -54,6 +53,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
      */
     @Override
 	protected void setUp() throws Exception {
+		super.setUp();
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -83,6 +83,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 				Thread.sleep(0);
 			}
 		}
+		super.tearDown();
     }
 
     @Override

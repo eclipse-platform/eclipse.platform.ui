@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.internal.ui.viewers.model.FilterTransform;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Tests the virtual viewer's filter transform
  * @since 3.3
  */
-public class FilterTransformTests extends TestCase {
+public class FilterTransformTests extends AbstractDebugTest {
 
 	public Object root;
 	public Object element0;

@@ -25,15 +25,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.osgi.service.environment.Constants;
-
-import junit.framework.TestCase;
 
 /**
  * Tests {@link org.eclipse.debug.core.DebugPlugin#parseArguments(String)} and
  * {@link org.eclipse.debug.core.DebugPlugin#renderArguments(String[], int[])}.
  */
-public class ArgumentParsingTests extends TestCase {
+public class ArgumentParsingTests extends AbstractDebugTest {
 
 	private void execute1Arg(String cmdLine) throws Exception {
 		execute1Arg(cmdLine, cmdLine);

@@ -14,13 +14,12 @@ package org.eclipse.debug.tests.viewer.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -34,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Tests to verify that the viewer properly handles selection changes.
  */
-abstract public class SelectionTests extends TestCase implements ITestModelUpdatesListenerConstants {
+abstract public class SelectionTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
@@ -49,6 +48,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
      */
     @Override
 	protected void setUp() throws Exception {
+		super.setUp();
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -78,6 +78,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
 				Thread.sleep(0);
 			}
 		}
+		super.tearDown();
     }
 
     private static class SelectionListener implements ISelectionChangedListener {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.statushandlers;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -19,12 +17,13 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.Preferences;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestsPlugin;
 
 /**
  * Tests status handlers
  */
-public class StatusHandlerTests extends TestCase {
+public class StatusHandlerTests extends AbstractDebugTest {
 
 	/**
 	 * Status for which a handler is registered.

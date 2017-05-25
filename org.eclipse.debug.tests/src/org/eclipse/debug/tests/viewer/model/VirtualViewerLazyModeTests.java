@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -29,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
  *
  *  @since 3.6
  */
-public class VirtualViewerLazyModeTests extends TestCase {
+public class VirtualViewerLazyModeTests extends AbstractDebugTest {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
@@ -44,6 +43,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
      */
     @Override
 	protected void setUp() throws Exception {
+		super.setUp();
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
         fShell.setMaximized(true);
@@ -80,6 +80,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
 				Thread.sleep(0);
 			}
 		}
+		super.tearDown();
     }
 
     public void test() {

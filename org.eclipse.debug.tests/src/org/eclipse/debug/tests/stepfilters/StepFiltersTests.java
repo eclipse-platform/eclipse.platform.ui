@@ -7,15 +7,14 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.stepfilters;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStepFilter;
+import org.eclipse.debug.tests.AbstractDebugTest;
 
 /**
  * Tests step filters
  */
-public class StepFiltersTests extends TestCase {
+public class StepFiltersTests extends AbstractDebugTest {
 
 	public void testStepFitlersExtension_01() {
 		IStepFilter[] stepFilters = DebugPlugin.getStepFilters("com.example.lalala.model"); //$NON-NLS-1$

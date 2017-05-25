@@ -13,14 +13,13 @@ package org.eclipse.debug.tests.viewer.model;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
@@ -38,7 +37,7 @@ import org.eclipse.ui.XMLMemento;
 /**
  * Tests to verify that the viewer properly handles initial columns width.
  */
-public class ColumnPresentationTests extends TestCase implements ITestModelUpdatesListenerConstants {
+public class ColumnPresentationTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
 	private Display fDisplay;
 	private Shell fShell;
 	private TreeModelViewer fViewer;
@@ -49,20 +48,16 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		super(name);
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		createViewer();
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		destroyViewer();
+		super.tearDown();
 	}
 
 	void createViewer() {

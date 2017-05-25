@@ -74,12 +74,12 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		// delete the configuration used during this test
 		ILaunchConfiguration configuration = getLaunchConfiguration();
 		if (configuration.exists()) {
 			configuration.delete();
 		}
+		super.tearDown();
 	}
 
 	/**

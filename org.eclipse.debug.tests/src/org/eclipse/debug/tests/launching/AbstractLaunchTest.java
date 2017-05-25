@@ -18,13 +18,12 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-
-import junit.framework.TestCase;
+import org.eclipse.debug.tests.AbstractDebugTest;
 
 /**
  * Common function for launch related tests.
  */
-public abstract class AbstractLaunchTest extends TestCase {
+public abstract class AbstractLaunchTest extends AbstractDebugTest {
 
 	/**
 	 * Constructs a test with the given name.

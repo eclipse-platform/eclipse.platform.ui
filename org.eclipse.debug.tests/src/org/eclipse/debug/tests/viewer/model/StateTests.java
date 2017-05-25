@@ -15,13 +15,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -37,7 +36,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class StateTests extends TestCase implements ITestModelUpdatesListenerConstants {
+abstract public class StateTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
@@ -52,6 +51,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
      */
     @Override
 	protected void setUp() throws Exception {
+		super.setUp();
         fDisplay = PlatformUI.getWorkbench().getDisplay();
 
         fShell = new Shell(fDisplay);
@@ -82,6 +82,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 				Thread.sleep(0);
 			}
 		}
+		super.tearDown();
     }
 
     @Override

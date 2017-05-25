@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -26,6 +24,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisito
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.layout.FillLayout;
@@ -40,7 +39,7 @@ import org.junit.Assert;
  *
  * @since 3.6
  */
-abstract public class UpdateTests extends TestCase implements ITestModelUpdatesListenerConstants {
+abstract public class UpdateTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
@@ -55,6 +54,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      */
     @Override
 	protected void setUp() throws Exception {
+		super.setUp();
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -84,6 +84,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 				Thread.sleep(0);
 			}
 		}
+		super.tearDown();
     }
 
     @Override

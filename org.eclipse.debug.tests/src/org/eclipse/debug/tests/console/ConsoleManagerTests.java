@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
@@ -34,12 +35,10 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 
-import junit.framework.TestCase;
-
 /**
  * Tests console manager
  */
-public class ConsoleManagerTests extends TestCase {
+public class ConsoleManagerTests extends AbstractDebugTest {
 
 	private static final String INTROVIEW_ID = "org.eclipse.ui.internal.introview"; //$NON-NLS-1$
 	private ExecutorService executorService;

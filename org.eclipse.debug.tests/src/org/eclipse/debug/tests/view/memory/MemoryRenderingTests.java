@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.view.memory;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
@@ -21,7 +20,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 /**
  * Tests memory rendering manager
  */
-public class MemoryRenderingTests extends TestCase {
+public class MemoryRenderingTests extends AbstractDebugTest {
 
 	public MemoryRenderingTests(String name) {
 		super(name);

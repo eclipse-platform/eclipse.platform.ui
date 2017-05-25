@@ -17,16 +17,15 @@ import java.util.LinkedHashMap;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
-
-import junit.framework.TestCase;
 
 /**
  * Tests {@link SourceLookupFacility}
  *
  * @since 3.9.200
  */
-public class SourceLookupFacilityTests extends TestCase {
+public class SourceLookupFacilityTests extends AbstractDebugTest {
 
 	/**
 	 * {@link IStackFrame} to be reused

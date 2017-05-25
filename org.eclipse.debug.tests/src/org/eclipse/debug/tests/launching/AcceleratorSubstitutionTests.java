@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.tests.AbstractDebugTest;
 
 /**
  * Tests accelerator adjustments for DBCS languages.
@@ -20,7 +19,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  *
  * @since 3.3
  */
-public class AcceleratorSubstitutionTests extends TestCase {
+public class AcceleratorSubstitutionTests extends AbstractDebugTest {
 
 	/**
 	 * Constructor

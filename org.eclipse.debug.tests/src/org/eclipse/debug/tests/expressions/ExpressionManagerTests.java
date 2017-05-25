@@ -13,8 +13,6 @@ package org.eclipse.debug.tests.expressions;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
@@ -23,11 +21,12 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.IExpressionsListener2;
+import org.eclipse.debug.tests.AbstractDebugTest;
 
 /**
  * Tests expression manager and listener call backs
  */
-public class ExpressionManagerTests extends TestCase {
+public class ExpressionManagerTests extends AbstractDebugTest {
 
 	class SinlgeListener implements IExpressionListener {
 
@@ -154,14 +153,11 @@ public class ExpressionManagerTests extends TestCase {
 		return DebugPlugin.getDefault().getExpressionManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		// remove all expressions from the manager
-		super.tearDown();
 		getManager().removeExpressions(getManager().getExpressions());
+		super.tearDown();
 	}
 
 	/**

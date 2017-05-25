@@ -14,6 +14,7 @@ package org.eclipse.debug.tests.console;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -22,7 +23,7 @@ import org.eclipse.ui.console.MessageConsole;
 import junit.framework.TestCase;
 
 
-public class ConsoleTests extends TestCase {
+public class ConsoleTests extends AbstractDebugTest {
 
 	public ConsoleTests() {
 		super("ConsoleTests"); //$NON-NLS-1$

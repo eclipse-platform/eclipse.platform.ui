@@ -11,10 +11,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.XMLMemento;
 
@@ -23,7 +22,7 @@ import org.eclipse.ui.XMLMemento;
  *
  * @since 3.4
  */
-public class PresentationContextTests extends TestCase {
+public class PresentationContextTests extends AbstractDebugTest {
 
     public PresentationContextTests(String name) {
         super(name);

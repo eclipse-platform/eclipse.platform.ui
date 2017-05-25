@@ -11,12 +11,11 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -32,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class LazyTests extends TestCase implements ITestModelUpdatesListenerConstants {
+abstract public class LazyTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
 
     Display fDisplay;
     Shell fShell;
@@ -48,6 +47,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
      */
     @Override
 	protected void setUp() throws Exception {
+		super.setUp();
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay);
         fShell.setMaximized(true);
@@ -76,6 +76,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 				Thread.sleep(0);
 			}
 		}
+		super.tearDown();
     }
 
     @Override
