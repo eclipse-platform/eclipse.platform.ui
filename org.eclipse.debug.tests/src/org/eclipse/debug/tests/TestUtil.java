@@ -73,16 +73,35 @@ public class TestUtil {
 	}
 
 	/**
-	 * Utility for waiting until the execution of jobs of any family has finished or timeout is reached. If no jobs are running, the method waits
-	 * given minimum wait time. While this method is waiting for jobs, UI events are processed.
+	 * Process all queued UI events. If called from background thread, just
+	 * waits
+	 */
+	public static void processUIEvents(final long millis) throws Exception {
+		long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start < millis) {
+			Display display = Display.getCurrent();
+			if (display != null && !display.isDisposed()) {
+				while (display.readAndDispatch()) {
+					// loop until the queue is empty
+				}
+			} else {
+				Thread.sleep(10);
+			}
+		}
+	}
+
+	/**
+	 * Utility for waiting until the execution of jobs of any family has
+	 * finished or timeout is reached. If no jobs are running, the method waits
+	 * given minimum wait time. While this method is waiting for jobs, UI events
+	 * are processed.
 	 *
-	 * @param owner
-	 *            name of the caller which will be logged as prefix if the wait times out
-	 * @param minTimeMs
-	 *            minimum wait time in milliseconds
-	 * @param maxTimeMs
-	 *            maximum wait time in milliseconds
-	 * @return true if the method timed out, false if all the jobs terminated before the timeout
+	 * @param owner name of the caller which will be logged as prefix if the
+	 *            wait times out
+	 * @param minTimeMs minimum wait time in milliseconds
+	 * @param maxTimeMs maximum wait time in milliseconds
+	 * @return true if the method timed out, false if all the jobs terminated
+	 *         before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs) {
 		return waitForJobs(owner, minTimeMs, maxTimeMs, (Object[]) null);

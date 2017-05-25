@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -42,21 +43,21 @@ public class ConsoleTests extends AbstractDebugTest {
 		MessageConsole console = new MessageConsole("Test Console", //$NON-NLS-1$
 				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
 		IDocument document = console.getDocument();
-		TestHelper.waitForJobs();
+		TestUtil.waitForJobs(getName(), 200, 5000);
 		TestCase.assertEquals("Document should be empty", "", document.get()); //$NON-NLS-1$ //$NON-NLS-2$
 		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
 			outStream.write(testStringBuffer, 0, 6);
 			// half of Ã¶ (\u00f6) is written so we don't expect this char in
 			// output but all previous chars can be decoded
-			TestHelper.waitForJobs();
+			TestUtil.waitForJobs(getName(), 200, 5000);
 			TestCase.assertEquals("First 4 chars should be written", testString.substring(0, 4), document.get()); //$NON-NLS-1$
 			outStream.write(testStringBuffer, 6, 6);
 			// all remaining bytes are written so we expect the whole string
 			// including the Ã¶ (\u00f6) which was at buffer boundary
-			TestHelper.waitForJobs();
+			TestUtil.waitForJobs(getName(), 200, 5000);
 			TestCase.assertEquals("whole test string should be written", testString, document.get()); //$NON-NLS-1$
 		}
-		TestHelper.waitForJobs();
+		TestUtil.waitForJobs(getName(), 200, 5000);
 		// after closing the stream, the document content should still be the
 		// same
 		TestCase.assertEquals("closing the stream should not alter the document", testString, document.get()); //$NON-NLS-1$
@@ -69,15 +70,15 @@ public class ConsoleTests extends AbstractDebugTest {
 		MessageConsole console = new MessageConsole("Test Console 2", //$NON-NLS-1$
 				IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, StandardCharsets.UTF_8.name(), true);
 		IDocument document = console.getDocument();
-		TestHelper.waitForJobs();
+		TestUtil.waitForJobs(getName(), 200, 5000);
 		TestCase.assertEquals("Document should be empty", "", document.get()); //$NON-NLS-1$ //$NON-NLS-2$
 		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
 			outStream.write(testStringBuffer);
 			// everything but pending \r should be written
-			TestHelper.waitForJobs();
+			TestUtil.waitForJobs(getName(), 200, 5000);
 			TestCase.assertEquals("First char should be written", testString.substring(0, 1), document.get()); //$NON-NLS-1$
 		}
-		TestHelper.waitForJobs();
+		TestUtil.waitForJobs(getName(), 200, 5000);
 		// after closing the stream, the document content should still be the
 		// same
 		TestCase.assertEquals("closing the stream should write the pending \\r", testString, document.get()); //$NON-NLS-1$

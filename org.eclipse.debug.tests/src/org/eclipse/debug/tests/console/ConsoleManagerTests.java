@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
@@ -25,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -40,7 +40,6 @@ import org.eclipse.ui.part.MessagePage;
  */
 public class ConsoleManagerTests extends AbstractDebugTest {
 
-	private static final String INTROVIEW_ID = "org.eclipse.ui.internal.introview"; //$NON-NLS-1$
 	private ExecutorService executorService;
 	private IConsoleManager manager;
 	private int count;
@@ -58,8 +57,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 		executorService = Executors.newFixedThreadPool(count);
 		manager = ConsolePlugin.getDefault().getConsoleManager();
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		hideWelcomePage(activePage);
-		TestHelper.processUIEvents(100);
+		TestUtil.processUIEvents(100);
 		consoles = new ConsoleMock[count];
 		for (int i = 0; i < count; i++) {
 			final ConsoleMock console = new ConsoleMock(i + 1);
@@ -70,7 +68,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 
 		IViewPart consoleView = activePage.showView("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
 		activePage.activate(consoleView);
-		TestHelper.processUIEvents(100);
+		TestUtil.processUIEvents(100);
 
 		// The test is unstable ("show" event on the the first console seem to
 		// be not always sent), so make sure console view has shown at least
@@ -78,8 +76,8 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 		firstConsole = new ConsoleMock(0);
 		manager.addConsoles(new ConsoleMock[] { firstConsole });
 		manager.showConsoleView(firstConsole);
-		TestHelper.waitForJobs();
-		TestHelper.processUIEvents(100);
+		TestUtil.waitForJobs(getName(), 200, 5000);
+		TestUtil.processUIEvents(100);
 		ConsoleMock.allShownConsoles.set(0);
 	}
 
@@ -88,22 +86,8 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 		executorService.shutdownNow();
 		manager.removeConsoles(consoles);
 		manager.removeConsoles(new ConsoleMock[] { firstConsole });
-		TestHelper.processUIEvents(100);
+		TestUtil.processUIEvents(100);
 		super.tearDown();
-	}
-
-	private void hideWelcomePage(IWorkbenchPage activePage) {
-		IViewReference[] refs = activePage.getViewReferences();
-		IViewPart intro = null;
-		for (IViewReference ref : refs) {
-			if (INTROVIEW_ID.equals(ref.getId())) {
-				intro = ref.getView(false);
-			}
-		}
-		if (intro != null) {
-			activePage.hideView(intro);
-			TestHelper.processUIEvents(100);
-		}
 	}
 
 	/**
@@ -122,15 +106,15 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 			showConsole(console);
 		}
 		System.out.println("All tasks scheduled, processing UI events now..."); //$NON-NLS-1$
-		TestHelper.processUIEvents(1000);
+		TestUtil.processUIEvents(1000);
 
 		// Console manager starts a job with delay, let wait for him a bit
 		System.out.println("Waiting on jobs now..."); //$NON-NLS-1$
-		TestHelper.waitForJobs();
+		TestUtil.waitForJobs(getName(), 200, 5000);
 
 		// Give UI a chance to proceed pending console manager jobs
 		System.out.println("Done with jobs, processing UI events again..."); //$NON-NLS-1$
-		TestHelper.processUIEvents(3000);
+		TestUtil.processUIEvents(3000);
 
 		executorService.shutdown();
 
@@ -138,7 +122,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 		boolean OK = waitForExecutorService();
 		if (!OK) {
 			System.out.println("Timed out..."); //$NON-NLS-1$
-			TestHelper.processUIEvents(10000);
+			TestUtil.processUIEvents(10000);
 
 			// timeout?
 			assertTrue("Timeout occurred while waiting on console to be shown", //$NON-NLS-1$
@@ -150,12 +134,12 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 		assertEquals("Only " + shown + " consoles were shown from " + count, count, shown); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private boolean waitForExecutorService() throws InterruptedException {
+	private boolean waitForExecutorService() throws Exception {
 		for (int i = 0; i < 60; i++) {
 			if (executorService.awaitTermination(1, TimeUnit.SECONDS)) {
 				return true;
 			}
-			TestHelper.processUIEvents(100);
+			TestUtil.processUIEvents(100);
 		}
 		return false;
 	}
@@ -171,7 +155,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 					latch.await(1, TimeUnit.MINUTES);
 					System.out.println("Requesting to show: " + console); //$NON-NLS-1$
 					manager.showConsoleView(console);
-					TestHelper.waitForJobs();
+					TestUtil.waitForJobs(getName(), 200, 5000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					Thread.interrupted();

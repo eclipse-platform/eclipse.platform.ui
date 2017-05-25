@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -35,6 +36,7 @@ import org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class LaunchGroupTests extends AbstractLaunchTest {
@@ -77,7 +79,20 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 	protected void tearDown() throws Exception {
 		// make sure listener is removed
 		getLaunchManager().removeLaunchListener(lcListener);
-
+		ILaunch[] launches = getLaunchManager().getLaunches();
+		for (ILaunch launch : launches) {
+			try {
+				if (!launch.isTerminated()) {
+					IProcess[] processes = launch.getProcesses();
+					for (IProcess process : processes) {
+						process.terminate();
+					}
+					launch.terminate();
+				}
+			} catch (Exception e) {
+				TestUtil.log(IStatus.ERROR, getName(), "Error terminating launch: " + launch, e);
+			}
+		}
 		super.tearDown();
 	}
 
@@ -170,8 +185,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 						}
 					}
 				} catch (Exception e) {
-					// uh oh
-					e.printStackTrace();
+					TestUtil.log(IStatus.ERROR, getName(), e.getMessage(), e);
 				}
 			}
 
@@ -192,7 +206,6 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[1] should be Test2", history[1].contentsEqual(t2)); //$NON-NLS-1$
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
-
 
 	public void testAdopt() throws Exception {
 		final ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
