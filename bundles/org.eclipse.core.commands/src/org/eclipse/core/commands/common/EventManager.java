@@ -41,7 +41,7 @@ public abstract class EventManager {
 	 * A collection of objects listening to changes to this manager. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private volatile ListenerList<Object> listenerList = null;
+	private volatile transient ListenerList<Object> listenerList = null;
 
 	/**
 	 * Adds a listener to this manager that will be notified when this manager's
