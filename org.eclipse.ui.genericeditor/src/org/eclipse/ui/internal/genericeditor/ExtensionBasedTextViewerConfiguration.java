@@ -108,6 +108,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		contentAssistant= new ContentAssistant(true);
 		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
 		contentAssistant.setProposalPopupOrientation(ContentAssistant.PROPOSAL_REMOVE);
+		contentAssistant.setAutoActivationDelay(0);
 		contentAssistant.enableColoredLabels(true);
 		contentAssistant.enableAutoActivation(true);
 		this.processors = registry.getContentAssistProcessors(sourceViewer, getContentTypes());
