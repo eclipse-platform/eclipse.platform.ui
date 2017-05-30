@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -265,12 +265,17 @@ public class PrintData extends RequestData {
 	private int generateToc(ITopic topic, String sectionId, int tocGenerated, Writer out) throws IOException {
 		if (tocGenerated < allowedMaxTopics) {
 			out.write("<div class=\"toc_" + (sectionId.length() > 2 ? "sub" : "") + "entry\">\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			out.write(sectionId + ". " + "<a href=\"#section" + sectionId + "\">" + topic.getLabel() + "</a>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			String hrefContent = sectionId + ". " + "<a href=\"#section" + sectionId + "\">" + topic.getLabel() + "</a>\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			String href = topic.getHref();
 			if (href != null && href.length() > 0) {
 				tocGenerated++;
+				//If the link points to an anchor, use the anchor ID instead of using the section ID
+				if (href.contains("#")) //$NON-NLS-1$
+					hrefContent = sectionId + ". " + "<a href=\"" + getAnchor(href) + "\">" + topic.getLabel() + "</a>\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
+
+			out.write(hrefContent);
 
 			ITopic[] subtopics = ScopeUtils.inScopeTopics(topic.getSubtopics(), scope);
 			for (int i = 0; i < subtopics.length; ++i) {
@@ -491,6 +496,14 @@ public class PrintData extends RequestData {
 			return href.substring(0, index);
 		}
 		return href;
+	}
+
+	private static String getAnchor(String href) {
+		int index = href.indexOf('#');
+		if (index != -1) {
+			return href.substring(index, href.length());
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	private String getCssIncludes() {
