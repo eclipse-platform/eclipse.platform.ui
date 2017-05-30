@@ -26,21 +26,22 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,6 +58,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -72,7 +74,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class ContentTypesPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	private ListViewer fileAssociationViewer;
+	private TableViewer fileAssociationViewer;
 
 	private Button removeButton;
 
@@ -110,12 +112,11 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 				toString = "*." + ext; //$NON-NLS-1$
 			}
 
-			if (isPredefined) {
-				toString = NLS.bind(
-						WorkbenchMessages.ContentTypes_lockedFormat, toString);
-			}
-
 			return toString;
+		}
+
+		public boolean getPredefined() {
+			return isPredefined;
 		}
 	}
 
@@ -132,6 +133,17 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		public String getText(Object element) {
 			String label = super.getText(element);
 			return TextProcessor.process(label, "*."); //$NON-NLS-1$
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			// only Spec objects will be in here
+			Spec spec = (Spec) element;
+			if (spec.getPredefined()) {
+				// Temporary until we decide on a location to host the icon
+				return JFaceResources.getImage(ProgressManager.BLOCKED_JOB_KEY);
+			}
+			return null;
 		}
 	}
 
@@ -343,7 +355,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			label.setLayoutData(data);
 		}
 		{
-			fileAssociationViewer = new ListViewer(composite);
+			fileAssociationViewer = new TableViewer(composite);
 			fileAssociationViewer.setComparator(new FileSpecComparator());
 			fileAssociationViewer.getControl().setFont(composite.getFont());
 			fileAssociationViewer
