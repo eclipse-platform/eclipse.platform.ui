@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Doc
 Bundle-SymbolicName: org.eclipse.ua.tests.doc;singleton:=true
-Bundle-Version: 1.0.300.qualifier
+Bundle-Version: 1.0.400.qualifier
 Bundle-Activator: org.eclipse.ua.tests.doc.internal.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

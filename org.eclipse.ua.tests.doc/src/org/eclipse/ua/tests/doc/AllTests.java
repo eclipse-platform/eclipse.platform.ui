@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ua.tests.doc;
 
 import org.eclipse.ua.tests.doc.internal.linkchecker.ApiDocTest;
+import org.eclipse.ua.tests.doc.internal.linkchecker.LinkTest;
 import org.eclipse.ua.tests.doc.internal.linkchecker.PrebuiltIndexChecker;
 import org.eclipse.ua.tests.doc.internal.linkchecker.TocLinkChecker;
 import org.junit.runner.RunWith;
@@ -20,6 +21,6 @@ import org.junit.runners.Suite;
  * Tests all user assistance functionality (automated).
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ PrebuiltIndexChecker.class, TocLinkChecker.class, ApiDocTest.class })
+@Suite.SuiteClasses({ PrebuiltIndexChecker.class, TocLinkChecker.class, ApiDocTest.class, LinkTest.class })
 public class AllTests {
 }
