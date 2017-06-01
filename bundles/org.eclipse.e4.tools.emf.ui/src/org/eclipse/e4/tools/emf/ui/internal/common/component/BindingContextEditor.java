@@ -42,6 +42,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -169,9 +170,9 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
 				EMFEditProperties
 				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Name, master, context, textProp,
+		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Name, null, master, context, textProp,
 				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME),
-				Messages.BindingContextEditor_NameWarning);
+				Messages.BindingContextEditor_NameWarning, FieldDecorationRegistry.DEC_ERROR);
 		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Description, master, context, textProp,
 				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION));
 

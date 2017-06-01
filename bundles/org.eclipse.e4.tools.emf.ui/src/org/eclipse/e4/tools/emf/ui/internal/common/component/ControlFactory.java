@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
@@ -387,12 +388,37 @@ public class ControlFactory {
 	 * @param textProp
 	 * @param modelProp
 	 * @param warningText
-	 *            Non null warningText means that a warning with this non-null
-	 *            text will be shown when the field is left empty
+	 *            Non null warningText means that a warning with this non-null text
+	 *            will be shown when the field is left empty
 	 */
 	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master,
 			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp,
 			final String warningText) {
+		createTextField(parent, label, tooltip, master, context, textProp, modelProp, warningText,
+				FieldDecorationRegistry.DEC_WARNING);
+	}
+
+	/**
+	 *
+	 * @param parent
+	 * @param label
+	 * @param master
+	 * @param context
+	 * @param textProp
+	 * @param modelProp
+	 * @param decorationText
+	 *            Non null decorationText means that a message with this non-null
+	 *            text will be shown when the field is left empty
+	 * @param decorationType
+	 *            Non null decorationType describes the type of the decoration.
+	 *            Supported types: FieldDecorationRegistry.DEC_ERROR,
+	 *            FieldDecorationRegistry.DEC_WARNING,
+	 *            FieldDecorationRegistry.DEC_INFORMATION
+	 *
+	 */
+	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master,
+			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp,
+			final String decorationText, final String decorationType) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		if (tooltip != null) {
@@ -405,23 +431,26 @@ public class ControlFactory {
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
 		TextPasteHandler.createFor(t);
-		if (warningText != null) {
+		if (decorationText != null) {
 			final ControlDecoration controlDecoration = new ControlDecoration(t, SWT.LEFT | SWT.TOP);
-			controlDecoration.setDescriptionText(warningText);
+			controlDecoration.setDescriptionText(decorationText);
 			final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
-					FieldDecorationRegistry.DEC_WARNING);
+					decorationType);
 			controlDecoration.setImage(fieldDecoration.getImage());
 			final IValidator iv = value -> {
 				if (value == null) {
 					controlDecoration.show();
-					return ValidationStatus.warning(warningText);
+					return ValidationStatus.warning(decorationText);
 				}
 				if (value instanceof String) {
 					final String text = (String) value;
 					if (text.trim().length() == 0) {
 						controlDecoration.show();
-						return ValidationStatus.warning(warningText);
+						return getValidationStatus(decorationType, decorationText);
 					}
+
+					controlDecoration.hide();
+					return Status.OK_STATUS;
 				}
 
 				controlDecoration.hide();
@@ -468,6 +497,23 @@ public class ControlFactory {
 		// b.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_world_edit));
 		// }
 	}
+
+	private static IStatus getValidationStatus(String decorationType, String decorationText) {
+		switch (decorationType) {
+		case FieldDecorationRegistry.DEC_ERROR:
+			return ValidationStatus.error(decorationText);
+		case FieldDecorationRegistry.DEC_WARNING:
+			return ValidationStatus.warning(decorationText);
+		case FieldDecorationRegistry.DEC_INFORMATION:
+			return ValidationStatus.info(decorationText);
+
+		default:
+			break;
+		}
+
+		return ValidationStatus.warning(decorationText);
+	}
+
 
 	public static void createFindImport(Composite parent, final Messages Messages,
 			final AbstractComponentEditor editor, EMFDataBindingContext context) {
