@@ -1076,6 +1076,10 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 			@Override
 			public void mouseUp(MouseEvent e) {
+				if (tabFolder.isDisposed()) {
+					// 517654: MouseUp may be sent after stack has been disposed
+					return;
+				}
 				CTabItem item = tabFolder.getItem(new Point(e.x, e.y));
 
 				// If the user middle clicks on a tab, close it
@@ -1093,7 +1097,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 							item = tabFolder.getSelection();
 						}
 					}
-					
+
 					// but only transfer focus if we have it.
 					// If we don't own it, the widget has already the focus
 					// so don't set it second time
