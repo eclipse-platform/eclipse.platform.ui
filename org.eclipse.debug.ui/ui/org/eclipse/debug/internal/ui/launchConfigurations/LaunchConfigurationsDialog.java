@@ -1512,8 +1512,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 null,
 												 buffer.toString(),
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32,
-															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},
+				new String[] {
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_Discard_Button,
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_Dont_Discard_Button },
 												 1);
 		int val = IDialogConstants.NO_ID;
 		if (dialog.open() == 0) {
@@ -1547,9 +1548,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 null,
 												 message,
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32,
-															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33,
-															   LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel},
+				new String[] {
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_Save_Button,
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_Dont_Save_Button,
+						LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel },
 												 0);
 		int ret = dialog.open();
 		int val = IDialogConstants.CANCEL_ID;

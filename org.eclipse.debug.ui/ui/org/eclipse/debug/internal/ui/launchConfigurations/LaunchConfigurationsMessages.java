@@ -77,12 +77,14 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog_Launch_Configuration_Error_46;
 	public static String LaunchConfigurationDialog_Launch_Configurations_18;
 	public static String LaunchConfigurationDialog_Name_required_for_launch_configuration_11;
-	public static String LaunchConfigurationDialog_No_33;
 	public static String LaunchConfigurationDialog_Ready_to_launch_2;
 	public static String LaunchConfigurationDialog_The_configuration___29;
 	public static String LaunchConfigurationDialog_The_configuration___35;
 	public static String LaunchConfigurationDialog_unspecified_28;
-	public static String LaunchConfigurationDialog_Yes_32;
+	public static String LaunchConfigurationDialog_Save_Button;
+	public static String LaunchConfigurationDialog_Dont_Save_Button;
+	public static String LaunchConfigurationDialog_Discard_Button;
+	public static String LaunchConfigurationDialog_Dont_Discard_Button;
 	public static String LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1;
 	public static String LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2;
 	public static String LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3;
