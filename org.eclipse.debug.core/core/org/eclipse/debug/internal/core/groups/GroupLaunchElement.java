@@ -21,7 +21,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * @since 3.11
  */
 public class GroupLaunchElement {
-	public static final String MODE_INHERIT = DebugCoreMessages.GroupLaunchElement_inherit_launch_mode;
+	public static final String MODE_INHERIT = "inherit"; //$NON-NLS-1$
 
 	/**
 	 * Describes the possible post-launch actions for each

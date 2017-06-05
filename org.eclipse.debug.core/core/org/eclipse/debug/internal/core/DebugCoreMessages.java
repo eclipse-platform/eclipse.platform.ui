@@ -43,7 +43,7 @@ public class DebugCoreMessages extends NLS {
 	public static String GroupLaunchConfigurationDelegate_None;
 	public static String GroupLaunchConfigurationDelegate_Wait_until_terminated;
 	public static String GroupLaunchConfigurationDelegate_Waiting_for_termination;
-	public static String GroupLaunchElement_inherit_launch_mode;
+	public static String GroupLaunchElement_inherit_launch_mode_label;
 	public static String GroupLaunchElement_outputRegexp;
 	public static String LaunchConfiguration_0;
 	public static String LaunchConfiguration_11;
