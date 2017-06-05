@@ -27,6 +27,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
@@ -164,10 +165,9 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 				continue;
 			}
 
-			String label = launchGroup.getLabel();
-			label = DebugUIPlugin.removeAccelerators(label);
-			if (!modes.containsKey(label)) {
-				modes.put(label, launchGroup);
+			String modeName = launchGroup.getMode();
+			if (!modes.containsKey(modeName)) {
+				modes.put(modeName, launchGroup);
 			}
 		}
 
@@ -220,12 +220,15 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(DebugUIMessages.GroupLaunchConfigurationSelectionDialog_4);
 
-		Map<String, String> capitalized = new LinkedHashMap<>();
-		modes.keySet().forEach(m -> capitalized.put(m.substring(0, 1).toUpperCase() + m.substring(1), m));
+		Map<String, String> labelToMode = new LinkedHashMap<>();
+		modes.forEach((modeName, launchGrp) -> {
+			String launchGrpLabel = DebugUIPlugin.removeAccelerators(launchGrp.getLabel());
+			labelToMode.put(launchGrpLabel, modeName);
+		});
 
 		Combo cvMode = new Combo(comp, SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().applyTo(cvMode);
-		cvMode.setItems(capitalized.keySet().toArray(new String[capitalized.size()]));
+		cvMode.setItems(labelToMode.keySet().toArray(new String[labelToMode.size()]));
 
 		// initial selection to the current mode.
 		int index = 0;
@@ -240,7 +243,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		cvMode.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				mode = capitalized.get(cvMode.getText());
+				mode = labelToMode.get(cvMode.getText());
 				validate();
 			}
 		});
@@ -467,7 +470,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 
 		@Override
 		public String getLabel() {
-			return null;
+			return DebugCoreMessages.GroupLaunchElement_inherit_launch_mode_label;
 		}
 
 		@Override
