@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,15 @@ public class PartRenderingEngineTests {
 			System.out.println("skipping " + PartRenderingEngineTests.class.getName() + "#"
 					+ this.getClass().getSimpleName()
 					+ " on Mac for now, see bug 466636");
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkMacBug517231() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			System.out.println("skipping " + PartRenderingEngineTests.class.getName() + "#"
+					+ this.getClass().getSimpleName() + " on Mac for now, see bug 517231");
 			return true;
 		}
 		return false;
@@ -3339,6 +3348,9 @@ public class PartRenderingEngineTests {
 
 	@Test
 	public void test_persistState_371087_1() {
+		if (checkMacBug517231())
+			return;
+
 		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
