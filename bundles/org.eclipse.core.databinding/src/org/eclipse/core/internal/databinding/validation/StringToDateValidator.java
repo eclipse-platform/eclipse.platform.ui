@@ -55,7 +55,7 @@ public class StringToDateValidator implements IValidator {
 		// FIXME We need to use the information from the
 		// converter, not use another instance of DateConversionSupport.
 		FormatUtil util = new FormatUtil();
-		StringBuffer samples = new StringBuffer();
+		StringBuilder samples = new StringBuilder();
 		for (int formatterIdx = 1; formatterIdx < util.numFormatters() - 2; formatterIdx++) {
 			samples.append('\'');
 			samples.append(util.format(sampleDate, formatterIdx));

@@ -64,7 +64,7 @@ public abstract class ValueDiff<T> implements IDiff {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer
 			.append(getClass().getName())
 			.append("{oldValue [") //$NON-NLS-1$
