@@ -150,7 +150,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 		if (stylableElement.getDefaultStyleDeclaration(pseudoE) != null)
 			return stylableElement.getDefaultStyleDeclaration(pseudoE);
 		if (newStyle != null) {
-			StringBuffer style = null;
+			StringBuilder style = null;
 			int length = newStyle.getLength();
 			for (int i = 0; i < length; i++) {
 				String propertyName = newStyle.item(i);
@@ -163,7 +163,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 								propertyName, pseudoE);
 						if (s != null) {
 							if (style == null)
-								style = new StringBuffer();
+								style = new StringBuilder();
 							style.append(s);
 						}
 					}
@@ -172,7 +172,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 							propertyName, pseudoE);
 					if (s != null) {
 						if (style == null)
-							style = new StringBuffer();
+							style = new StringBuilder();
 						style.append(s);
 					}
 				}

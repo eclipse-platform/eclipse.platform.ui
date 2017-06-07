@@ -35,7 +35,7 @@ public class StringUtils {
 			char line2[] = line.toCharArray();
 			char newString2[] = newString.toCharArray();
 			int oLength = oldString.length();
-			StringBuffer buf = new StringBuffer(line2.length);
+			StringBuilder buf = new StringBuilder(line2.length);
 			buf.append(line2, 0, i).append(newString2);
 			i += oLength;
 			int j;
@@ -152,7 +152,7 @@ public class StringUtils {
 			return str;
 		}
 		int strLen = str.length();
-		StringBuffer buffer = new StringBuffer(strLen);
+		StringBuilder buffer = new StringBuilder(strLen);
 		boolean capitalizeNext = true;
 		for (int i = 0; i < strLen; i++) {
 			char ch = str.charAt(i);

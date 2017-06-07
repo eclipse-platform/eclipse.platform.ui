@@ -73,7 +73,7 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < getLength(); i++) {
 			sb.append(item(i).toString()).append("\r\n");
 		}

@@ -247,14 +247,14 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 			return defaultStyleDeclaration;
 
 		// Default style must be computed.
-		StringBuffer style = null;
+		StringBuilder style = null;
 		Collection<String> propertyNames = getAllCSSPropertyNames();
 		for (String propertyName : propertyNames) {
 			String s = getCSSPropertyStyle(engine, stylableElement,
 					propertyName, pseudoE);
 			if (s != null) {
 				if (style == null)
-					style = new StringBuffer();
+					style = new StringBuilder();
 				style.append(s);
 			}
 		}
