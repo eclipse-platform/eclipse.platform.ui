@@ -154,9 +154,6 @@ public abstract class SetDiff<E> implements IDiff {
 		}
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

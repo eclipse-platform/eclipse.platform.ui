@@ -39,9 +39,6 @@ public abstract class ListDiffEntry<E> {
 	 */
 	public abstract E getElement();
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
