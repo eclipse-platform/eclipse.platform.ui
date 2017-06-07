@@ -977,7 +977,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 
 		// Debugging output
 		if ((DEBUG_HANDLERS) && ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID.equals(id)))) {
-			final StringBuffer buffer = new StringBuffer("Command('"); //$NON-NLS-1$
+			final StringBuilder buffer = new StringBuilder("Command('"); //$NON-NLS-1$
 			buffer.append(id);
 			buffer.append("') has changed to "); //$NON-NLS-1$
 			if (handler == null) {

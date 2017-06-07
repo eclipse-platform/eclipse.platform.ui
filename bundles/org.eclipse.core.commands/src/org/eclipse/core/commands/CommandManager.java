@@ -171,8 +171,8 @@ public final class CommandManager extends HandleObjectManager implements
 	private static final String unescape(final String escapedText)
 			throws SerializationException {
 
-		// defer initialization of a StringBuffer until we know we need one
-		StringBuffer buffer = null;
+		// defer initialization of a StringBuilder until we know we need one
+		StringBuilder buffer = null;
 
 		for (int i = 0; i < escapedText.length(); i++) {
 
@@ -184,7 +184,7 @@ public final class CommandManager extends HandleObjectManager implements
 				}
 			} else {
 				if (buffer == null) {
-					buffer = new StringBuffer(escapedText.substring(0, i));
+					buffer = new StringBuilder(escapedText.substring(0, i));
 				}
 
 				if (++i < escapedText.length()) {

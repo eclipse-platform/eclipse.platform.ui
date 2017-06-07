@@ -136,7 +136,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 */
 	@Override
 	public String toString() {
-		final StringBuffer stringBuffer = new StringBuffer();
+		final StringBuilder stringBuffer = new StringBuilder();
 		stringBuffer.append(getLabel());
 		stringBuffer.append("("); //$NON-NLS-1$
 		IUndoContext[] contexts = getContexts();

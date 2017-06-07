@@ -222,8 +222,7 @@ public final class ExecutionEvent {
 	 */
 	@Override
 	public final String toString() {
-		final StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append("ExecutionEvent("); //$NON-NLS-1$
+		final StringBuilder stringBuffer = new StringBuilder("ExecutionEvent("); //$NON-NLS-1$
 		stringBuffer.append(command);
 		stringBuffer.append(',');
 		stringBuffer.append(parameters);
