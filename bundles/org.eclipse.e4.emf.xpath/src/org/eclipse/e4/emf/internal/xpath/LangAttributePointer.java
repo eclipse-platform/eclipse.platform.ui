@@ -97,7 +97,7 @@ public class LangAttributePointer extends NodePointer {
 
     @Override
 	public String asPath() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (parent != null) {
             buffer.append(parent.asPath());
             if (buffer.length() == 0

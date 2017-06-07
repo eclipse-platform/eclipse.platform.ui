@@ -223,7 +223,7 @@ public class NullEStructuralFeaturePointer extends EStructuralFeaturePointer {
         if (!byNameAttribute) {
             return super.asPath();
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(getImmediateParentPointer().asPath());
         buffer.append("[@name='");
         buffer.append(escape(getPropertyName()));

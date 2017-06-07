@@ -145,7 +145,7 @@ public class NullElementPointer extends CollectionPointer {
 
     @Override
 	public String asPath() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         NodePointer parent = getImmediateParentPointer();
         if (parent != null) {
             buffer.append(parent.asPath());
