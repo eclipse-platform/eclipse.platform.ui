@@ -31,6 +31,7 @@ import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.progress.ProgressTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
+import org.eclipse.ui.tests.releng.PluginActivationTests;
 import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
@@ -56,6 +57,7 @@ import org.junit.runners.Suite;
 	OperationsTestSuite.class,
 	FieldAssistTestSuite.class,
 	ServicesTestSuite.class,
+	PluginActivationTests.class,
 	ProgressTestSuite.class,
 	PropertySheetTestSuite.class,
 	AdaptableTestSuite.class,
