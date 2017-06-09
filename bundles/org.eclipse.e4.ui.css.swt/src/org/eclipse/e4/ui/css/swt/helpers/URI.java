@@ -382,7 +382,7 @@ public final class URI
 /*
   private static String toBits(long l)
   {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     for (int i = 0; i < 64; i++)
     {
       boolean b = (l & 1L) != 0;
@@ -1798,7 +1798,7 @@ public final class URI
 		return null;
 	}
 
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     if (hasAbsolutePath()) {
 		result.append(SEGMENT_SEPARATOR);
 	}
@@ -1837,7 +1837,7 @@ public final class URI
 		return null;
 	}
 
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
 
     if (hasAuthority())
     {
@@ -2424,7 +2424,7 @@ public final class URI
   {
     if (cachedToString == null)
     {
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       if (!isRelative())
       {
         result.append(scheme);
@@ -2484,7 +2484,7 @@ public final class URI
   // showing each of the components.
   String toString(boolean includeSimpleForm)
   {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     if (includeSimpleForm) {
 		result.append(toString());
 	}
@@ -2538,7 +2538,7 @@ public final class URI
 		return null;
 	}
 
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     char separator = File.separatorChar;
 
     if (hasAuthority())
@@ -2582,7 +2582,7 @@ public final class URI
   {
     if (isPlatform())
     {
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       for (int i = 1, len = segments.length; i < len; i++)
       {
         result.append('/').append(decode ? URI.decode(segments[i]) : segments[i]);
@@ -2760,7 +2760,7 @@ public final class URI
     if (SEGMENT_EMPTY.equals(lastSegment)) {
 		return this;
 	}
-    StringBuffer newLastSegment = new StringBuffer(lastSegment);
+    StringBuilder newLastSegment = new StringBuilder(lastSegment);
     newLastSegment.append(FILE_EXTENSION_SEPARATOR);
     newLastSegment.append(fileExtension);
 
@@ -3011,7 +3011,7 @@ public final class URI
 		return null;
 	}
 
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
 
     int i = uri.indexOf(SCHEME_SEPARATOR);
     if (i != -1)
@@ -3054,7 +3054,7 @@ public final class URI
 		return null;
 	}
 
-    StringBuffer result = null;
+    StringBuilder result = null;
 
     for (int i = 0, len = value.length(); i < len; i++)
     {
@@ -3065,7 +3065,7 @@ public final class URI
       {
         if (result == null)
         {
-          result = new StringBuffer(value.substring(0, i));
+          result = new StringBuilder(value.substring(0, i));
         }
         appendEscaped(result, (byte)c);
       }
@@ -3087,9 +3087,9 @@ public final class URI
   }
 
   // Computes a three-character escape sequence for the byte, appending
-  // it to the StringBuffer.  Only characters up to 0xFF should be escaped;
+  // it to the StringBuilder.  Only characters up to 0xFF should be escaped;
   // all but the least significant byte will be ignored.
-  private static void appendEscaped(StringBuffer result, byte b)
+  private static void appendEscaped(StringBuilder result, byte b)
   {
     result.append(ESCAPE);
 
@@ -3297,7 +3297,7 @@ public final class URI
   {
     if (value == null) return null;
 
-    StringBuffer result = null;
+    StringBuilder result = null;
 
     for (int i = 0, length = value.length(); i < length; i++)
     {
@@ -3307,7 +3307,7 @@ public final class URI
       {
         if (result == null)
         {
-          result = new StringBuffer(value.substring(0, i));
+          result = new StringBuilder(value.substring(0, i));
         }
 
         try
