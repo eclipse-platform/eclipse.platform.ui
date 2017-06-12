@@ -1146,7 +1146,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				ici = getManager(menuElement);
 				clearModelToManager(menuElement, (MenuManager) ici);
 			} else {
-				clearModelToContribution(menuModel, ici);
+				// Bug 518036: the call below removes too much.
+				// clearModelToContribution(menuModel, ici);
+				contributionToModel.remove(ici);
 			}
 			menuManager.remove(ici);
 			clearModelToContribution(mMenuElement, ici);
