@@ -15,7 +15,6 @@
  *     Sopot Cela <scela@redhat.com> - Bug 472761
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 473184
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 506306
- *     Axel Richard <axel.richard@oebo.fr> - Bug 354538
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -837,13 +836,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 * @param manager
 	 */
 	public void clearModelToManager(MToolBar model, ToolBarManager manager) {
-		for (MToolBarElement element : model.getChildren()) {
-			if (element instanceof MToolBar) {
-				clearModelToManager((MToolBar) element, getManager((MToolBar) element));
-			}
-			IContributionItem ici = getContribution(element);
-			clearModelToContribution(element, ici);
-		}
 		modelToManager.remove(model);
 		managerToModel.remove(manager);
 		if (Policy.DEBUG_RENDERER) {
@@ -887,12 +879,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 * @param item
 	 */
 	public void clearModelToContribution(MToolBarElement model, IContributionItem item) {
-		if (model instanceof MToolBar) {
-			for (MToolBarElement element : ((MToolBar) model).getChildren()) {
-				IContributionItem ici = getContribution(element);
-				clearModelToContribution(element, ici);
-			}
-		}
 		modelToContribution.remove(model);
 		contributionToModel.remove(item);
 		if (Policy.DEBUG_RENDERER) {
