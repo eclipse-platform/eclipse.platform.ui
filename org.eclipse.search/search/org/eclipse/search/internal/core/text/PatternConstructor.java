@@ -53,7 +53,7 @@ public class PatternConstructor {
 			Assert.isTrue(!isWholeWord, "isWholeWord unsupported together with isRegex"); //$NON-NLS-1$
 		} else {
 			int len= pattern.length();
-			StringBuffer buffer= new StringBuffer(len + 10);
+			StringBuilder buffer= new StringBuilder(len + 10);
 			// don't add a word boundary if the search text does not start with
 			// a word char. (this works around a user input error).
 			if (isWholeWord && len > 0 && isWordChar(pattern.charAt(0))) {
@@ -82,7 +82,7 @@ public class PatternConstructor {
 	 */
 	private static String substituteLinebreak(String findString) throws PatternSyntaxException {
 		int length= findString.length();
-		StringBuffer buf= new StringBuffer(length);
+		StringBuilder buf= new StringBuilder(length);
 
 		int inCharGroup= 0;
 		int inBraces= 0;
@@ -166,7 +166,7 @@ public class PatternConstructor {
 	 * @throws PatternSyntaxException if "\R" is at an illegal position
 	 */
 	public static Pattern createPattern(String[] patterns, boolean isCaseSensitive) throws PatternSyntaxException {
-		StringBuffer pattern= new StringBuffer();
+		StringBuilder pattern= new StringBuilder();
 		for (int i= 0; i < patterns.length; i++) {
 			if (i > 0) {
                 // note that this works only as we know that the operands of the
@@ -179,7 +179,7 @@ public class PatternConstructor {
 	}
 
 
-	public static StringBuffer appendAsRegEx(boolean isStringMatcher, String pattern, StringBuffer buffer) {
+	public static StringBuilder appendAsRegEx(boolean isStringMatcher, String pattern, StringBuilder buffer) {
         boolean isEscaped= false;
         for (int i = 0; i < pattern.length(); i++) {
             char c = pattern.charAt(i);
@@ -297,7 +297,7 @@ public class PatternConstructor {
 		private String interpretReplaceEscapes(String replaceText, String foundText) {
 			int length= replaceText.length();
 			boolean inEscape= false;
-			StringBuffer buf= new StringBuffer(length);
+			StringBuilder buf= new StringBuilder(length);
 
 			/* every string we did not check looks mixed at first
 			 * so initialize retain case mode with RC_MIXED
@@ -358,7 +358,7 @@ public class PatternConstructor {
 		 * @return the new offset
 		 * @since 3.4
 		 */
-		private int interpretReplaceEscape(final char ch, int i, StringBuffer buf, String replaceText, String foundText) {
+		private int interpretReplaceEscape(final char ch, int i, StringBuilder buf, String replaceText, String foundText) {
 			int length= replaceText.length();
 			switch (ch) {
 				case 'r':
@@ -488,7 +488,7 @@ public class PatternConstructor {
 		 * @param ch the character to process
 		 * @since 3.4
 		 */
-		private void interpretRetainCase(StringBuffer buf, char ch) {
+		private void interpretRetainCase(StringBuilder buf, char ch) {
 			if (fRetainCaseMode == RC_UPPER)
 				buf.append(String.valueOf(ch).toUpperCase());
 			else if (fRetainCaseMode == RC_LOWER)

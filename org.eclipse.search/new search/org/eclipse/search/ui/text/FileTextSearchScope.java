@@ -190,7 +190,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			return BasicElementLabels.getFilePattern("*"); //$NON-NLS-1$
 		}
 		Arrays.sort(ext);
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		for (int i= 0; i < ext.length; i++) {
 			if (i > 0) {
 				buf.append(", "); //$NON-NLS-1$

@@ -99,7 +99,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 	}
 
 	private void addToMenu(Menu localMenu, IAction action, int accelerator) {
-		StringBuffer label= new StringBuffer();
+		StringBuilder label= new StringBuilder();
 		if (accelerator >= 0 && accelerator < 10) {
 			//add the numerical accelerator
 			label.append('&');

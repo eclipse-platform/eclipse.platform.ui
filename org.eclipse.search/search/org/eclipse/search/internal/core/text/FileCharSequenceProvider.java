@@ -187,11 +187,11 @@ public class FileCharSequenceProvider {
 			return fBuf[pos - fOffset];
 		}
 
-		public StringBuffer append(StringBuffer buf, int start, int length) {
+		public StringBuilder append(StringBuilder buf, int start, int length) {
 			return buf.append(fBuf, start - fOffset, length);
 		}
 
-		public StringBuffer appendAll(StringBuffer buf) {
+		public StringBuilder appendAll(StringBuilder buf) {
 			return buf.append(fBuf, 0, fLength);
 		}
 
@@ -427,7 +427,7 @@ public class FileCharSequenceProvider {
 				throw new IndexOutOfBoundsException("end must be smaller than length"); //$NON-NLS-1$
 			}
 
-			StringBuffer res= new StringBuffer(length);
+			StringBuilder res= new StringBuilder(length);
 
 			Buffer buffer= getBuffer(pos);
 			while (pos < endPos && buffer != null) {
@@ -464,7 +464,7 @@ public class FileCharSequenceProvider {
 		@Override
 		public String toString() {
 			int len= fLength != null ? fLength.intValue() : 4000;
-			StringBuffer res= new StringBuffer(len);
+			StringBuilder res= new StringBuilder(len);
 			try {
 				Buffer buffer= getBuffer(0);
 				while (buffer != null) {

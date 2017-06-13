@@ -48,7 +48,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		}
 
 		private String escapeAmp(String label) {
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < label.length(); i++) {
 				char ch= label.charAt(i);
 				buf.append(ch);

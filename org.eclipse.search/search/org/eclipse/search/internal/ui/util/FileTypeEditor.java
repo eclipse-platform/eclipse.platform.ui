@@ -114,7 +114,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 
 	public static String typesToString(String[] types) {
 		Arrays.sort(types, FILE_TYPES_COMPARATOR);
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		for (int i= 0; i < types.length; i++) {
 			if (i > 0) {
 				result.append(TYPE_DELIMITER);

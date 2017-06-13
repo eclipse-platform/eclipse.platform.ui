@@ -108,7 +108,7 @@ public class CopyToClipboardAction extends Action {
 
 		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
 		String lineDelim= System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		Iterator<?> iter= getSelection();
 		while (iter.hasNext()) {
 			if (buf.length() > 0) {

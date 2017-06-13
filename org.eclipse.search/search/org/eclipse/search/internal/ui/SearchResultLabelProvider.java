@@ -37,7 +37,7 @@ class SearchResultLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		StringBuffer buf= new StringBuffer(getLabelProvider().getText(element));
+		StringBuilder buf= new StringBuilder(getLabelProvider().getText(element));
 		int count= ((ISearchResultViewEntry)element).getMatchCount();
 		if (count > 1) {
 			buf.append(" ("); //$NON-NLS-1$

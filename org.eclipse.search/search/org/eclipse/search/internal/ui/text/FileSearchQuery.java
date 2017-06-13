@@ -174,7 +174,7 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		private static String getContents(TextSearchMatchAccess matchRequestor, int start, int end) {
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			for (int i= start; i < end; i++) {
 				char ch= matchRequestor.getFileContentChar(i);
 				if (Character.isWhitespace(ch) || Character.isISOControl(ch)) {

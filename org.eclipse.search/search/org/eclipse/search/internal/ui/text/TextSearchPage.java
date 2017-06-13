@@ -686,7 +686,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private String insertEscapeChars(String text) {
 		if (text == null || text.equals("")) //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
-		StringBuffer sbIn= new StringBuffer(text);
+		StringBuilder sbIn= new StringBuilder(text);
 		BufferedReader reader= new BufferedReader(new StringReader(text));
 		int lengthOfFirstLine= 0;
 		try {
@@ -694,7 +694,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		} catch (IOException ex) {
 			return ""; //$NON-NLS-1$
 		}
-		StringBuffer sbOut= new StringBuffer(lengthOfFirstLine + 5);
+		StringBuilder sbOut= new StringBuilder(lengthOfFirstLine + 5);
 		int i= 0;
 		while (i < lengthOfFirstLine) {
 			char ch= sbIn.charAt(i);
