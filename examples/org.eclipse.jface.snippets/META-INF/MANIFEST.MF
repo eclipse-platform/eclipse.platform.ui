@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JFace Snippets Plug-in
 Bundle-SymbolicName: org.eclipse.jface.snippets
-Bundle-Version: 3.3.300.qualifier
+Bundle-Version: 3.3.400.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.jface,
  org.eclipse.jface.databinding,
