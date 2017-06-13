@@ -105,7 +105,7 @@ public final class HippieCompletionEngine {
 	 * @return the string converted to a regex pattern
 	 */
 	private String asRegPattern(CharSequence string) {
-		StringBuffer out= new StringBuffer(string.length());
+		StringBuilder out= new StringBuilder(string.length());
 		boolean quoting= false;
 
 		for (int i= 0, length= string.length(); i < length; i++) {

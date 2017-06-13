@@ -149,7 +149,7 @@ public class JoinLinesAction extends TextEditorAction {
 		if (startLine == endLine)
 			endLine++; // append join with the next line
 
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		for (int line= startLine; line <= endLine; line++) {
 			buffer.append(trim(document, line, line == startLine));
 			if (line != endLine)

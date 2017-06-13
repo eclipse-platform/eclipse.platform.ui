@@ -89,7 +89,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	/** The find replace target to delegate find requests */
 	private final IFindReplaceTarget fTarget;
 	/** The current find string */
-	private StringBuffer fFindString= new StringBuffer();
+	private StringBuilder fFindString= new StringBuilder();
 	/** The position of the first upper case character, -1 if none */
 	private int fCasePosition;
 	/**
@@ -193,7 +193,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		text.setSelectionRange(searchResult.selection, searchResult.length);
 		text.showSelection();
 
-		// relies on the contents of the StringBuffer
+		// relies on the contents of the StringBuilder
 		fFindString.setLength(searchResult.findLength);
 		fCurrentIndex= searchResult.index;
 		fFound= searchResult.found;
@@ -503,7 +503,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	private boolean repeatSearch(boolean forward) {
 		if (fFindString.length() == 0) {
-			fFindString= new StringBuffer(fPrevFindString);
+			fFindString= new StringBuilder(fPrevFindString);
 			fCasePosition= fPrevCasePosition;
 		}
 
@@ -718,7 +718,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @return the given string with all tab characters replace with a proper status line presentation
 	 */
 	private String escapeTabs(String string) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 
 		int begin= 0;
 		int end= string.indexOf('\t', begin);
