@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +50,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -675,7 +677,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 				message = LaunchConfigurationsMessages.PerspectiveManager_15;
 			}
 		}
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, args), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey);
+		LinkedHashMap<String, Integer> buttonLabelToId = new LinkedHashMap<>();
+		buttonLabelToId.put(LaunchConfigurationsMessages.PerspectiveManager_switch, IDialogConstants.YES_ID);
+		buttonLabelToId.put(IDialogConstants.CANCEL_LABEL, IDialogConstants.CANCEL_ID);
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.QUESTION, shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, args), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey, SWT.NONE, buttonLabelToId);
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
 			fPrompting= false;
