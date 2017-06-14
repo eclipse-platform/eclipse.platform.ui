@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -85,7 +84,12 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 							// In case event is sent during doUpdateItem() we
 							// should run async update to avoid RuntimeException
 							// from ColumnViewer.checkBusy(), see bug 488484
-							getControl().getDisplay().asyncExec(() -> lazyProvider.updateElement(index));
+							Control control = getControl();
+							control.getDisplay().asyncExec(() -> {
+								if (!control.isDisposed()) {
+									lazyProvider.updateElement(index);
+								}
+							});
 						}
 						return;
 					}
