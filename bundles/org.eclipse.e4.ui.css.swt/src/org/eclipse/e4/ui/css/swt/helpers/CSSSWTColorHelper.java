@@ -326,7 +326,9 @@ public class CSSSWTColorHelper {
 		IColorAndFontProvider provider = CSSActivator.getDefault().getColorAndFontProvider();
 		if (provider != null) {
 			RGB rgb = provider.getColor(normalizeId(name.substring(1)));
-			return new RGBA(rgb.red, rgb.green, rgb.blue, 255);
+			if (rgb != null) {
+				return new RGBA(rgb.red, rgb.green, rgb.blue, 255);
+			}
 		}
 		return null;
 	}
