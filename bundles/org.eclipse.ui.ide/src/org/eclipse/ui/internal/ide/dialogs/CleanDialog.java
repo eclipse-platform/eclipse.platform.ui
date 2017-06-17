@@ -13,6 +13,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472784
  *     David Weiser <David.Weiser@vogella.com> - Bug 500598
+ *     Conrad Groth <info@conrad-groth.de> - Bug 514694
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -52,6 +53,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -388,8 +390,16 @@ public class CleanDialog extends MessageDialog {
     	return contents;
     }
 
+	private void checkAllItemsIfSelectAllEventIsFired(SelectionEvent e) {
+		if (e.item == null) {
+			projectNames.setAllChecked(true);
+			checkStateChanged();
+		}
+	}
+
 	private void createProjectSelectionTable(Composite parent) {
 		projectNames = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
+		projectNames.getTable().addSelectionListener(SelectionListener.widgetSelectedAdapter(this::checkAllItemsIfSelectAllEventIsFired));
         projectNames.setContentProvider(new WorkbenchContentProvider());
         projectNames.setLabelProvider(new WorkbenchLabelProvider());
         projectNames.setComparator(new ResourceComparator(ResourceComparator.NAME));
@@ -421,11 +431,13 @@ public class CleanDialog extends MessageDialog {
 		if (checked.length > 0) {
             projectNames.reveal(checked[0]);
         }
-        projectNames.addCheckStateListener(event -> {
-		    selection = projectNames.getCheckedElements();
-		    updateEnablement();
-		});
+		projectNames.addCheckStateListener(event -> checkStateChanged());
     }
+
+	private void checkStateChanged() {
+		selection = projectNames.getCheckedElements();
+		updateEnablement();
+	}
 
     /**
      * Performs the actual clean operation.
