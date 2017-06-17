@@ -323,6 +323,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel);
 			// the return value influences the next loop's iteration
 			returnValue = dialog.open();
+			// Remember the locked workspace as recent workspace
+			launchData.writePersistedData();
         }
     }
 
