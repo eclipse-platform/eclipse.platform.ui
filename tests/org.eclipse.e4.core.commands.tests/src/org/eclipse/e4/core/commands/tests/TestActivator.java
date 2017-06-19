@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 IBM Corporation and others.
+ * Copyright (c) 2013, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.log.LogService;
 
 public class TestActivator implements BundleActivator {
 
@@ -34,37 +32,6 @@ public class TestActivator implements BundleActivator {
 		plugin = this;
 		serviceContext = EclipseContextFactory.getServiceContext(context);
 		appContext = serviceContext.createChild();
-		addLogService(appContext);
-	}
-
-	private void addLogService(IEclipseContext context) {
-		context.set(LogService.class, new LogService() {
-
-			@Override
-			public void log(int level, String message) {
-				System.out.println(level + ": " + message);
-			}
-
-			@Override
-			public void log(int level, String message, Throwable exception) {
-				System.out.println(level + ": " + message);
-				if (exception != null) {
-					exception.printStackTrace();
-				}
-			}
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void log(ServiceReference sr, int level, String message) {
-				// Nothing
-			}
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void log(ServiceReference sr, int level, String message, Throwable exception) {
-				// Nothing
-			}
-		});
 	}
 
 	@Override
