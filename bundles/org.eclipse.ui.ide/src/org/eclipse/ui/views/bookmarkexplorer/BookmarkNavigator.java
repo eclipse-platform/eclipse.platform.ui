@@ -452,7 +452,7 @@ public class BookmarkNavigator extends ViewPart {
         if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
 			Object[] markers = viewer.getStructuredSelection().toArray();
             if (markers != null) {
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 ILabelProvider provider = (ILabelProvider) getViewer()
                         .getLabelProvider();
                 for (int i = 0; i < markers.length; i++) {

@@ -198,7 +198,7 @@ class MarkerUtil implements IMarkerConstants {
         if (n > 1) {
 			len += n - 1;
 		}
-        StringBuffer sb = new StringBuffer(len);
+        StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < n; ++i) {
             if (i != 0) {
 				sb.append('/');

@@ -86,7 +86,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 			filterPath =  dialog.getFilterPath();
 
 			int numberOfFilesNotFound =  0;
-			StringBuffer notFound =  new StringBuffer();
+			StringBuilder notFound =  new StringBuilder();
 			for (String name : names) {
 				IFileStore fileStore =  EFS.getLocalFileSystem().getStore(new Path(filterPath));
 				fileStore =  fileStore.getChild(name);

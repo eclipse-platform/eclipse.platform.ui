@@ -86,7 +86,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 		}
 
 		Iterator<MarkerType> selected = selectedTypes.iterator();
-		StringBuffer settings = new StringBuffer();
+		StringBuilder settings = new StringBuilder();
 		while (selected.hasNext()) {
 			MarkerType markerType = selected.next();
 			settings.append(markerType.getId());

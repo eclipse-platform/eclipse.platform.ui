@@ -115,7 +115,7 @@ public class TarInputStream extends FilterInputStream
 		int pos, i;
 
 		pos = 148;
-		StringBuffer checksumString = new StringBuffer();
+		StringBuilder checksumString = new StringBuilder();
 		for(i = 0; i < 8; i++) {
 			if(header[pos + i] == ' ') {
 				continue;
@@ -227,7 +227,7 @@ public class TarInputStream extends FilterInputStream
 		}
 
 		pos = 100;
-		StringBuffer mode = new StringBuffer();
+		StringBuilder mode = new StringBuilder();
 		for(i = 0; i < 8; i++) {
 			if(header[pos + i] == 0) {
 				break;
@@ -248,7 +248,7 @@ public class TarInputStream extends FilterInputStream
 		}
 
 		pos = 100 + 24;
-		StringBuffer size = new StringBuffer();
+		StringBuilder size = new StringBuilder();
 		for(i = 0; i < 12; i++) {
 			if(header[pos + i] == 0) {
 				break;
