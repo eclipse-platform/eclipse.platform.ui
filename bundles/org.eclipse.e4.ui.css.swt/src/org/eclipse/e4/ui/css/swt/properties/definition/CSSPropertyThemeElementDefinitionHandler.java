@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IThemeElementDefinitionOverridable;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
@@ -94,8 +95,12 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 		return null;
 	}
 
-	private Bundle getBundle(URI uri) {
-		return CSSActivator.getDefault().getBundleForName(uri.lastSegment());
+	private Bundle getBundle(URI uri) throws BundleException {
+		Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.lastSegment());
+		if (bundle != null && (bundle.getState() & Bundle.ACTIVE) == 0) {
+			bundle.start(); // Bundle is lazy init
+		}
+		return bundle;
 	}
 
 	private ResourceBundle getResourceBundle(URL resourceBundleURL) {
