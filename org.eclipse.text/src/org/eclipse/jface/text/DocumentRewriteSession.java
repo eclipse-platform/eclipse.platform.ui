@@ -43,6 +43,6 @@ public class DocumentRewriteSession {
 
 	@Override
 	public String toString() {
-		return new StringBuffer().append(hashCode()).toString();
+		return new StringBuilder().append(hashCode()).toString();
 	}
 }

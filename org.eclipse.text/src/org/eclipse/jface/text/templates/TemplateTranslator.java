@@ -184,7 +184,7 @@ public class TemplateTranslator {
 	private TemplateBuffer parse(String string) throws TemplateException {
 
 		fErrorMessage= null;
-		final StringBuffer buffer= new StringBuffer(string.length());
+		final StringBuilder buffer= new StringBuilder(string.length());
 		final Matcher matcher= ESCAPE_PATTERN.matcher(string);
 		final Map<String, VariableDescription> variables= new LinkedHashMap<>();
 

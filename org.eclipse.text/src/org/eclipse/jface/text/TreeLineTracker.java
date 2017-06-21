@@ -1231,7 +1231,7 @@ abstract class TreeLineTracker implements ILineTracker {
 
 		List<Node> roots= new LinkedList<>();
 		roots.add(fRoot);
-		StringBuffer buf= new StringBuffer((width + 1) * depth);
+		StringBuilder buf= new StringBuilder((width + 1) * depth); // see Bug 137688
 		int indents= leaves;
 		char[] space= new char[leaves * WIDTH / 2];
 		Arrays.fill(space, ' ');

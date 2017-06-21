@@ -209,7 +209,7 @@ public class MultiTextEdit extends TextEdit {
 	}
 
 	@Override
-	void internalToString(StringBuffer buffer, int indent) {
+	void internalToString(StringBuilder buffer, int indent) {
 		super.internalToString(buffer, indent);
 		if (! fDefined)
 			buffer.append(" [undefined]"); //$NON-NLS-1$

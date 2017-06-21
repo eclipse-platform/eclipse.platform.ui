@@ -235,7 +235,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		if (fReplaceList.isEmpty())
 			return;
 
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 
 		int delta= 0;
 		for (Replace replace : fReplaceList) {

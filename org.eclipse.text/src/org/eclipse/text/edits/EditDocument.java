@@ -24,10 +24,10 @@ import org.eclipse.jface.text.Position;
 
 class EditDocument implements IDocument {
 
-	private StringBuffer fBuffer;
+	private StringBuilder fBuffer;
 
 	public EditDocument(String content) {
-		fBuffer= new StringBuffer(content);
+		fBuffer= new StringBuilder(content);
 	}
 
 	@Override

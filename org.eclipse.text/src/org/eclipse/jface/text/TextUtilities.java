@@ -194,7 +194,7 @@ public class TextUtilities {
 		final IDocument document= unprocessedDocument;
 		int offset= firstEvent.getOffset();
 		int length= firstEvent.getLength();
-		final StringBuffer text= new StringBuffer(firstEvent.getText() == null ? "" : firstEvent.getText()); //$NON-NLS-1$
+		final StringBuilder text= new StringBuilder(firstEvent.getText() == null ? "" : firstEvent.getText()); //$NON-NLS-1$
 
 		while (iterator.hasNext()) {
 

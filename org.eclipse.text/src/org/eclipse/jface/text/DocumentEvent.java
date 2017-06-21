@@ -131,7 +131,7 @@ public class DocumentEvent {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		buffer.append("offset: " ); //$NON-NLS-1$
 		buffer.append(fOffset);
 		buffer.append(", length: " ); //$NON-NLS-1$

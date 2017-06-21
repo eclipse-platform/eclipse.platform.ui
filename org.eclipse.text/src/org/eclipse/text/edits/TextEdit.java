@@ -514,20 +514,20 @@ public abstract class TextEdit {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		toStringWithChildren(buffer, 0);
 		return buffer.toString();
 	}
 
 	/**
 	 * Adds the string representation of this text edit without
-	 * children information to the given string buffer.
+	 * children information to the given string builder.
 	 *
-	 * @param buffer	the string buffer
+	 * @param buffer	the string builder
 	 * @param indent	the indent level in number of spaces
 	 * @since 3.3
 	 */
-	void internalToString(StringBuffer buffer, int indent) {
+	void internalToString(StringBuilder buffer, int indent) {
 		for (int i= indent; i > 0; i--) {
 			buffer.append("  "); //$NON-NLS-1$
 		}
@@ -553,13 +553,13 @@ public abstract class TextEdit {
 
 	/**
 	 * Adds the string representation for this text edit
-	 * and its children to the given string buffer.
+	 * and its children to the given string builder.
 	 *
-	 * @param buffer	the string buffer
+	 * @param buffer	the string builder
 	 * @param indent	the indent level in number of spaces
 	 * @since 3.3
 	 */
-	private void toStringWithChildren(StringBuffer buffer, int indent) {
+	private void toStringWithChildren(StringBuilder buffer, int indent) {
 		internalToString(buffer, indent);
 		if (fChildren != null) {
 			for (TextEdit child : fChildren) {

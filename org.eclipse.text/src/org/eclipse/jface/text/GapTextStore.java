@@ -156,7 +156,7 @@ public class GapTextStore implements ITextStore {
 		if (end <= fGapStart)
 			return new String(fContent, offset, length);
 
-		StringBuffer buf= new StringBuffer(length);
+		StringBuilder buf= new StringBuilder(length); // see Bug 113871
 		buf.append(fContent, offset, fGapStart - offset);
 		buf.append(fContent, fGapEnd, end - fGapStart);
 		return buf.toString();

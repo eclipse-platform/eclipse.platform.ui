@@ -372,7 +372,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		@Override
 		public String toString() {
 			String delimiter= ", "; //$NON-NLS-1$
-			StringBuffer text= new StringBuffer(super.toString());
+			StringBuilder text= new StringBuilder(super.toString());
 			text.append("\n"); //$NON-NLS-1$
 			text.append(this.getClass().getName());
 			text.append(" undo modification stamp: "); //$NON-NLS-1$
@@ -711,7 +711,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/**
 	 * Text buffer to collect viewer content which has been replaced
 	 */
-	private StringBuffer fPreservedTextBuffer;
+	private StringBuilder fPreservedTextBuffer;
 
 	/**
 	 * The document modification stamp for undo.
@@ -726,7 +726,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/**
 	 * Text buffer to collect text which is inserted into the viewer
 	 */
-	private StringBuffer fTextBuffer;
+	private StringBuilder fTextBuffer;
 
 	/** Indicates inserting state. */
 	private boolean fInserting= false;
@@ -1142,8 +1142,8 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		// open up the current text edit
 		fCurrent= new UndoableTextChange(this);
 		fPreviousDelete= new UndoableTextChange(this);
-		fTextBuffer= new StringBuffer();
-		fPreservedTextBuffer= new StringBuffer();
+		fTextBuffer= new StringBuilder();
+		fPreservedTextBuffer= new StringBuilder();
 
 		addListeners();
 	}
