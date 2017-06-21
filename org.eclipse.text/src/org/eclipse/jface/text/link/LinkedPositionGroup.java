@@ -81,7 +81,7 @@ public class LinkedPositionGroup {
 	 * change.
 	 */
 	private IRegion fLastRegion;
-	
+
 	/**
 	 * <code>true</code> iff not all positions contain the same content.
 	 * In that case, the contents of the last edited position will replace the

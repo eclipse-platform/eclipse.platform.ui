@@ -588,7 +588,7 @@ public interface IDocument {
 	 * <p>
 	 * Note that a document always has at least one line.
 	 * </p>
-	 * 
+	 *
 	 * @return the number of lines in this document.
 	 */
 	int getNumberOfLines();

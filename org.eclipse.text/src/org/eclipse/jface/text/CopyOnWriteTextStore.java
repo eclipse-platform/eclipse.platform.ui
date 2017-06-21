@@ -41,7 +41,7 @@ public class CopyOnWriteTextStore implements ITextStore {
 
 		/** Represents the content of this text store. */
 		private final String fText;
-		
+
 		/** Minimum length limit below which {@link #get(int, int)} will return a String copy */
 		private final int fCopyLimit;
 

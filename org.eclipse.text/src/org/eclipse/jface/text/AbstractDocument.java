@@ -1699,7 +1699,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	/**
 	 * Logs the given exception by reusing the code in {@link SafeRunner}.
-	 * 
+	 *
 	 * @param ex the exception
 	 * @since 3.6
 	 */

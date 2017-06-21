@@ -16,7 +16,7 @@ package org.eclipse.jface.text;
  * <p>
  * Adds the ability to query whether the repairable document would have to be repaired after
  * replacing some text.
- * 
+ *
  * @see org.eclipse.jface.text.IRepairableDocument
  * @since 3.4
  */
@@ -25,7 +25,7 @@ public interface IRepairableDocumentExtension {
 	/**
 	 * Tells whether the line information of the document implementing this interface needs to be
 	 * repaired after replacing the given text.
-	 * 
+	 *
 	 * @param offset the document offset
 	 * @param length the length of the specified range
 	 * @param text the substitution text to check

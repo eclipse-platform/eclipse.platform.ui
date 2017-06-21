@@ -191,7 +191,7 @@ public class Position {
 		Assert.isTrue(offset >= 0);
 		this.offset= offset;
 	}
-	
+
 	@Override
 	public String toString() {
 		String position= "offset: " + offset + ", length: " + length; //$NON-NLS-1$//$NON-NLS-2$

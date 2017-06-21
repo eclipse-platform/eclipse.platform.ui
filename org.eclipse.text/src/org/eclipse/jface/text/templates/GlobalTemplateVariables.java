@@ -52,14 +52,14 @@ public class GlobalTemplateVariables {
 
 	/**
 	 * The selection variable determines templates that work on a selection.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static class Selection extends SimpleTemplateVariableResolver {
 
 		/**
 		 * Creates a word selection variable.
-		 * 
+		 *
 		 * @param name the name of the variable
 		 * @param description the description of the variable
 		 */

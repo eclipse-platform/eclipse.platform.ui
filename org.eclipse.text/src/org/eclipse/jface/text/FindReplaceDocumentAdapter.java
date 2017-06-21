@@ -644,7 +644,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 */
 	public static String escapeForRegExPattern(String string) {
 		//implements https://bugs.eclipse.org/bugs/show_bug.cgi?id=44422
-	
+
 		StringBuilder pattern= new StringBuilder(string.length() + 16);
 		int length= string.length();
 		for (int i= 0; i < length; i++) {
@@ -666,7 +666,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				case '$':
 					pattern.append('\\').append(ch);
 					break;
-	
+
 				case '\r':
 					if (i + 1 < length && string.charAt(i + 1) == '\n')
 						i++;
@@ -686,7 +686,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				case 0x1B:
 					pattern.append("\\e"); //$NON-NLS-1$
 					break;
-	
+
 				default:
 					if (0 <= ch && ch < 0x20) {
 						pattern.append("\\x"); //$NON-NLS-1$

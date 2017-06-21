@@ -184,7 +184,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 	/**
 	 * A single iterator builds its behavior based on a sequence of iterators.
-	 * 
+	 *
 	 * @param <E> the type of elements returned by this iterator
 	 * @since 3.1
 	 */

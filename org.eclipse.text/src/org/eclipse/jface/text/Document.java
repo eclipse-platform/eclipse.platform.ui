@@ -36,7 +36,7 @@ package org.eclipse.jface.text;
  * See {@link GapTextStore} and <code>TreeLineTracker</code> for algorithmic behavior of the used
  * document structures.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.GapTextStore
  * @see org.eclipse.jface.text.CopyOnWriteTextStore
  */

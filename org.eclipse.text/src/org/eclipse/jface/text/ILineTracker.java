@@ -65,7 +65,7 @@ public interface ILineTracker {
 	 * <p>
 	 * Note that a document always has at least one line.
 	 * </p>
-	 * 
+	 *
 	 * @return the number of lines in this tracker's line structure
 	 */
 	int getNumberOfLines();

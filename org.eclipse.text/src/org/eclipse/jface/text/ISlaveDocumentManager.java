@@ -96,7 +96,7 @@ public interface ISlaveDocumentManager {
 	 * contain the lines 8-20.
 	 * <p>
 	 * This call is without effect if the given document is unknown to this slave document manager.
-	 * 
+	 *
 	 * @param slave the slave whose auto expand mode should be set
 	 * @param autoExpand <code>true</code> for auto expand, <code>false</code> otherwise
 	 */
