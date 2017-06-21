@@ -132,18 +132,12 @@ public class MultiTextEdit extends TextEdit {
 		return true;
 	}
 
-	/*
-	 * @see TextEdit#copy
-	 */
 	@Override
 	protected TextEdit doCopy() {
 		Assert.isTrue(MultiTextEdit.class == getClass(), "Subclasses must reimplement copy0"); //$NON-NLS-1$
 		return new MultiTextEdit(this);
 	}
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -164,26 +158,17 @@ public class MultiTextEdit extends TextEdit {
 			super.adjustLength(delta);
 	}
 
-	/*
-	 * @see TextEdit#performConsistencyCheck
-	 */
 	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		checkIntegrity();
 	}
 
-	/*
-	 * @see TextEdit#performDocumentUpdating
-	 */
 	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
 
-	/*
-	 * @see TextEdit#deleteChildren
-	 */
 	@Override
 	boolean deleteChildren() {
 		return false;

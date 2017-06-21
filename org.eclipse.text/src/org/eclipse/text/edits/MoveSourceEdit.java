@@ -146,17 +146,11 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- Copying -------------------------------------------------------------
 
-	/*
-	 * @see TextEdit#doCopy
-	 */
 	@Override
 	protected TextEdit doCopy() {
 		return new MoveSourceEdit(this);
 	}
 
-	/*
-	 * @see TextEdit#postProcessCopy
-	 */
 	@Override
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fTarget != null) {
@@ -169,9 +163,6 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- Visitor -------------------------------------------------------------
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -276,9 +267,6 @@ public final class MoveSourceEdit extends TextEdit {
 
 	//---- region updating --------------------------------------------------------------
 
-	/*
-	 * @see TextEdit#deleteChildren
-	 */
 	@Override
 	boolean deleteChildren() {
 		return false;

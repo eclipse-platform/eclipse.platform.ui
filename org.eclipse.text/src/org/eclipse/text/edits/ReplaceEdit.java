@@ -58,17 +58,11 @@ public final class ReplaceEdit extends TextEdit {
 		return fText;
 	}
 
-	/*
-	 * @see TextEdit#doCopy
-	 */
 	@Override
 	protected TextEdit doCopy() {
 		return new ReplaceEdit(this);
 	}
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -77,9 +71,6 @@ public final class ReplaceEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#performDocumentUpdating
-	 */
 	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), fText);
@@ -87,9 +78,6 @@ public final class ReplaceEdit extends TextEdit {
 		return fDelta;
 	}
 
-	/*
-	 * @see TextEdit#deleteChildren
-	 */
 	@Override
 	boolean deleteChildren() {
 		return true;

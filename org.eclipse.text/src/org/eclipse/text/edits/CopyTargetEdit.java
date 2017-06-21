@@ -96,17 +96,11 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#doCopy
-	 */
 	@Override
 	protected TextEdit doCopy() {
 		return new CopyTargetEdit(this);
 	}
 
-	/*
-	 * @see TextEdit#postProcessCopy
-	 */
 	@Override
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
@@ -117,9 +111,6 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -128,17 +119,11 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#traverseConsistencyCheck
-	 */
 	@Override
 	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List<List<TextEdit>> sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
 
-	/*
-	 * @see TextEdit#performConsistencyCheck
-	 */
 	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
@@ -147,9 +132,6 @@ public final class CopyTargetEdit extends TextEdit {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopyTargetEdit.different_target")); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see TextEdit#performDocumentUpdating
-	 */
 	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
@@ -159,9 +141,6 @@ public final class CopyTargetEdit extends TextEdit {
 		return fDelta;
 	}
 
-	/*
-	 * @see TextEdit#deleteChildren
-	 */
 	@Override
 	boolean deleteChildren() {
 		return false;

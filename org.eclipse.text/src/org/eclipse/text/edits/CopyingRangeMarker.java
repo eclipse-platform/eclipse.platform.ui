@@ -43,17 +43,11 @@ public final class CopyingRangeMarker extends TextEdit {
 		fText= other.fText;
 	}
 
-	/*
-	 * @see TextEdit#doCopy
-	 */
 	@Override
 	protected TextEdit doCopy() {
 		return new CopyingRangeMarker(this);
 	}
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -62,9 +56,6 @@ public final class CopyingRangeMarker extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#performDocumentUpdating
-	 */
 	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fText= document.get(getOffset(), getLength());
@@ -72,9 +63,6 @@ public final class CopyingRangeMarker extends TextEdit {
 		return fDelta;
 	}
 
-	/*
-	 * @see TextEdit#deleteChildren
-	 */
 	@Override
 	boolean deleteChildren() {
 		return false;

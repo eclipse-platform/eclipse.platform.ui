@@ -95,17 +95,11 @@ public final class MoveTargetEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#doCopy
-	 */
 	@Override
 	protected TextEdit doCopy() {
 		return new MoveTargetEdit(this);
 	}
 
-	/*
-	 * @see TextEdit#postProcessCopy
-	 */
 	@Override
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
@@ -116,9 +110,6 @@ public final class MoveTargetEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -129,17 +120,11 @@ public final class MoveTargetEdit extends TextEdit {
 
 	//---- consistency check ----------------------------------------------------------
 
-	/*
-	 * @see TextEdit#traverseConsistencyCheck
-	 */
 	@Override
 	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List<List<TextEdit>> sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
 
-	/*
-	 * @see TextEdit#performConsistencyCheck
-	 */
 	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
@@ -176,9 +161,6 @@ public final class MoveTargetEdit extends TextEdit {
 
 	//---- region updating --------------------------------------------------------------
 
-	/*
-	 * @see org.eclipse.text.edits.TextEdit#traversePassThree
-	 */
 	@Override
 	int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
 		// the children got already updated / normalized while they got removed

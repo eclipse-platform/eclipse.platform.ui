@@ -64,9 +64,6 @@ public final class UndoEdit extends TextEdit {
 		return new UndoEdit(this);
 	}
 
-	/*
-	 * @see TextEdit#accept0
-	 */
 	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
@@ -75,9 +72,6 @@ public final class UndoEdit extends TextEdit {
 		}
 	}
 
-	/*
-	 * @see TextEdit#performDocumentUpdating
-	 */
 	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
