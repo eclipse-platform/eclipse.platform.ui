@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class LazyReaderTest extends TestCase {
 		super(name);
 	}
 
-	public void testReadSingleChar() throws UnsupportedEncodingException, IOException {
+	public void testReadSingleChar() throws IOException {
 		CharArrayReader underlying = new CharArrayReader(DATA.toCharArray());
 		OpenLazyReader stream = new OpenLazyReader(underlying, 7);
 		assertEquals("1.0", '0', stream.read());
@@ -66,7 +66,7 @@ public class LazyReaderTest extends TestCase {
 		stream.close();
 	}
 
-	public void testReadBlock() throws UnsupportedEncodingException, IOException {
+	public void testReadBlock() throws IOException {
 		CharArrayReader underlying = new CharArrayReader(DATA.toCharArray());
 		OpenLazyReader stream = new OpenLazyReader(underlying, 7);
 		stream.skip(4);
@@ -104,7 +104,7 @@ public class LazyReaderTest extends TestCase {
 		stream.close();
 	}
 
-	public void testMarkAndReset() throws UnsupportedEncodingException, IOException {
+	public void testMarkAndReset() throws IOException {
 		CharArrayReader underlying = new CharArrayReader(DATA.toCharArray());
 		OpenLazyReader stream = new OpenLazyReader(underlying, 7);
 		assertTrue("0.1", stream.ready());

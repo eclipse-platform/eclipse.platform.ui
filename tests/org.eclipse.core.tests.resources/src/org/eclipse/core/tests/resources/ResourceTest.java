@@ -12,6 +12,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.util.HashSet;
@@ -863,14 +864,9 @@ public abstract class ResourceTest extends CoreTest {
 	 * @param file
 	 */
 	protected void modifyInWorkspace(IFile file) throws CoreException {
-		String m = getClassName() + ".modifyInWorkspace(IFile): ";
-		try {
-			String newContent = readStringInWorkspace(file) + "w";
-			ByteArrayInputStream is = new ByteArrayInputStream(newContent.getBytes("UTF8"));
-			file.setContents(is, false, false, null);
-		} catch (UnsupportedEncodingException e) {
-			fail(m + "0.0");
-		}
+		String newContent = readStringInWorkspace(file) + "w";
+		ByteArrayInputStream is = new ByteArrayInputStream(newContent.getBytes(StandardCharsets.UTF_8));
+		file.setContents(is, false, false, null);
 	}
 
 	/**
@@ -920,13 +916,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * @param file
 	 */
 	protected String readStringInFileSystem(IFile file) {
-		String m = getClassName() + ".readStringInFileSystem(IFile): ";
-		try {
-			return new String(readBytesInFileSystem(file), "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			fail(m + "0.0", e);
-		}
-		return null;
+		return new String(readBytesInFileSystem(file), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -935,13 +925,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * @param file
 	 */
 	protected String readStringInWorkspace(IFile file) {
-		String m = getClassName() + ".readStringInWorkspace(IFile): ";
-		try {
-			return new String(readBytesInWorkspace(file), "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			fail(m + "0.0", e);
-		}
-		return null;
+		return new String(readBytesInWorkspace(file), StandardCharsets.UTF_8);
 	}
 
 	protected void setAttribute(IFileStore target, int attribute, boolean value) {

@@ -13,6 +13,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -29,8 +30,8 @@ public class CharsetTest extends ResourceTest {
 	public class CharsetVerifier extends ResourceDeltaVerifier {
 		final static int IGNORE_BACKGROUND_THREAD = 0x02;
 		final static int IGNORE_CREATION_THREAD = 0x01;
-		private Thread creationThread = Thread.currentThread();
-		private int flags;
+		private final Thread creationThread = Thread.currentThread();
+		private final int flags;
 
 		CharsetVerifier(int flags) {
 			this.flags = flags;
@@ -303,7 +304,7 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	public void testBug62732() throws UnsupportedEncodingException, CoreException {
+	public void testBug62732() throws CoreException {
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject("MyProject");
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
@@ -311,7 +312,7 @@ public class CharsetTest extends ResourceTest {
 		assertNotNull("0.5", anotherXML);
 		ensureExistsInWorkspace(project, true);
 		IFile file = project.getFile("file.xml");
-		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_SPECIFIC_XML.getBytes("UTF-8")));
+		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_SPECIFIC_XML.getBytes(StandardCharsets.UTF_8)));
 		IContentDescription description = file.getContentDescription();
 		assertNotNull("1.0", description);
 		assertEquals("1.1", anotherXML, description.getContentType());
@@ -762,18 +763,18 @@ public class CharsetTest extends ResourceTest {
 	 * deleted and recreated, with the same content id but a different content type.
 	 * This tricks the content type cache into returning an invalid result.
 	 */
-	public void testBug261994() throws UnsupportedEncodingException, CoreException {
+	public void testBug261994() throws CoreException {
 		//recreate a file with different contents but the same content id
 		IWorkspace workspace = getWorkspace();
 		IProject project1 = workspace.getRoot().getProject("Project1");
 		IFile file = project1.getFile("file1.xml");
-		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes("ISO-8859-1")));
+		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes(StandardCharsets.ISO_8859_1)));
 		ContentDescriptionManagerTest.waitForCacheFlush();
 		assertEquals("1.0", "ISO-8859-1", file.getCharset());
 
 		//delete and recreate the file with different contents
 		ensureDoesNotExistInWorkspace(file);
-		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")));
+		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes(StandardCharsets.UTF_8)));
 		assertEquals("2.0", "UTF-8", file.getCharset());
 	}
 
@@ -881,7 +882,7 @@ public class CharsetTest extends ResourceTest {
 	/**
 	 * Tests Content Manager-based charset setting.
 	 */
-	public void testContentBasedCharset() throws CoreException, UnsupportedEncodingException {
+	public void testContentBasedCharset() throws CoreException {
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject("MyProject");
 		try {
@@ -890,26 +891,26 @@ public class CharsetTest extends ResourceTest {
 			IFile file = project.getFile("file.xml");
 			assertEquals("0.9", "FOO", project.getDefaultCharset());
 			// content-based encoding is BAR
-			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_US_ASCII_ENCODING.getBytes("UTF-8")));
+			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_US_ASCII_ENCODING.getBytes(StandardCharsets.UTF_8)));
 			assertEquals("1.0", "US-ASCII", file.getCharset());
 			// content-based encoding is FRED
-			file.setContents(new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes("ISO-8859-1")), false, false, null);
+			file.setContents(new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes(StandardCharsets.ISO_8859_1)), false, false, null);
 			assertEquals("2.0", "ISO-8859-1", file.getCharset());
 			// content-based encoding is UTF-8 (default for XML)
-			file.setContents(new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")), false, false, null);
+			file.setContents(new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes(StandardCharsets.UTF_8)), false, false, null);
 			assertEquals("3.0", "UTF-8", file.getCharset());
 			// tests with BOM -BOMs are strings for convenience, encoded itno bytes using ISO-8859-1 (which handles 128-255 bytes better)
 			// tests with UTF-8 BOM
-			String UTF8_BOM = new String(IContentDescription.BOM_UTF_8, "ISO-8859-1");
-			file.setContents(new ByteArrayInputStream((UTF8_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
+			String UTF8_BOM = new String(IContentDescription.BOM_UTF_8, StandardCharsets.ISO_8859_1);
+			file.setContents(new ByteArrayInputStream((UTF8_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes(StandardCharsets.ISO_8859_1)), false, false, null);
 			assertEquals("4.0", "UTF-8", file.getCharset());
 			// tests with UTF-16 Little Endian BOM
-			String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, "ISO-8859-1");
-			file.setContents(new ByteArrayInputStream((UTF16_LE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
+			String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, StandardCharsets.ISO_8859_1);
+			file.setContents(new ByteArrayInputStream((UTF16_LE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes(StandardCharsets.ISO_8859_1)), false, false, null);
 			assertEquals("5.0", "UTF-16", file.getCharset());
 			// tests with UTF-16 Big Endian BOM
-			String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, "ISO-8859-1");
-			file.setContents(new ByteArrayInputStream((UTF16_BE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
+			String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, StandardCharsets.ISO_8859_1);
+			file.setContents(new ByteArrayInputStream((UTF16_BE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes(StandardCharsets.ISO_8859_1)), false, false, null);
 			assertEquals("6.0", "UTF-16", file.getCharset());
 		} finally {
 			try {

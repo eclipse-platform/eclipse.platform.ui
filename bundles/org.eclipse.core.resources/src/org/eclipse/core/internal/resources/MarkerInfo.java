@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.core.internal.utils.*;
@@ -54,13 +54,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 			//optimized test based on maximum 3 bytes per character
 			if (valueString.length() < 21000)
 				return value;
-			byte[] bytes;
-			try {
-				bytes = valueString.getBytes(("UTF-8"));//$NON-NLS-1$
-			} catch (UnsupportedEncodingException uee) {
-				//cannot validate further
-				return value;
-			}
+			byte[] bytes = valueString.getBytes(StandardCharsets.UTF_8);
 			if (bytes.length > 65535) {
 				String msg = "Marker property value is too long: " + valueString.substring(0, 10000); //$NON-NLS-1$
 				Assert.isTrue(false, msg);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
 package org.eclipse.core.internal.filesystem.local.unix;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -168,12 +168,7 @@ public abstract class UnixFileNatives {
 	public static int getFlag(String flag) {
 		if (!usingNatives)
 			return -1;
-		try {
-			return getflag(flag.getBytes("ASCII")); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			// Should never happen
-			return -1;
-		}
+		return getflag(flag.getBytes(StandardCharsets.US_ASCII));
 	}
 
 	private static byte[] fileNameToBytes(String fileName) {
