@@ -14,7 +14,7 @@
   <parent>
     <artifactId>tests-pom</artifactId>
     <groupId>eclipse.platform.text</groupId>
-    <version>4.7.0-SNAPSHOT</version>
+    <version>4.8.0-SNAPSHOT</version>
     <relativePath>../tests-pom/</relativePath>
   </parent>
   <groupId>org.eclipse.jface</groupId>

@@ -14,10 +14,10 @@
   <parent>
     <artifactId>eclipse.platform.text</artifactId>
     <groupId>eclipse.platform.text</groupId>
-    <version>4.7.0-SNAPSHOT</version>
+    <version>4.8.0-SNAPSHOT</version>
   </parent>
   <artifactId>tests-pom</artifactId>
-  <version>4.7.0-SNAPSHOT</version>
+  <version>4.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
