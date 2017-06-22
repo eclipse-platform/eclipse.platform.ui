@@ -875,8 +875,11 @@ public class CommandContributionItem extends ContributionItem {
 						}
 						@Override
 						public void menuAboutToHide(IMenuManager manager) {
+							IMenuService menuService = CommandContributionItem.this.menuService;
 							display.asyncExec(() -> {
-								menuService.releaseContributions(menuManager);
+								if (menuService != null) {
+									menuService.releaseContributions(menuManager);
+								}
 								menuManager.dispose();
 							});
 						}
