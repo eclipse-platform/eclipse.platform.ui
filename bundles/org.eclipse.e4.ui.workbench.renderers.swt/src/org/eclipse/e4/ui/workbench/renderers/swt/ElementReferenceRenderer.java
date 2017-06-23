@@ -110,6 +110,7 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 			}
 
 			renderingEngine.removeGui(refElement);
+			renderedMap.remove(refElement);
 		} else {
 			// Ensure that the dispose of the element reference doesn't cascade
 			// to dispose the 'real' part
