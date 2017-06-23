@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hofmann, Perspectix AG - https://bugs.eclipse.org/bugs/show_bug.cgi?id=291750
+ *     Asma Smaoui - CEA LIST - https://bugs.eclipse.org/bugs/show_bug.cgi?id=517379
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
@@ -201,7 +202,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * 2. Otherwise if this is the final item return to the introduction
 	 * 3. If neither condition 1 or 2 is satisfied move to the next item
 	 */
-	void advanceItem(ImageHyperlink link, boolean markAsCompleted) {
+	public void advanceItem(ImageHyperlink link, boolean markAsCompleted) {
 		currentItem = (ViewItem) link.getData();
 		int indexNextItem = getIndexOfItem(currentItem) +1;
 		boolean isFinalItem = indexNextItem >= viewItemList.size();
@@ -270,7 +271,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		item.setAsCurrentActiveItem();
 	}
 
-	/*package*/ void advanceSubItem(ImageHyperlink link, boolean markAsCompleted, int subItemIndex) {
+	public void advanceSubItem(ImageHyperlink link, boolean markAsCompleted, int subItemIndex) {
 		Label l = null;
 		ArrayList<SubItemCompositeHolder> list = null;
 		SubItemCompositeHolder sich = null;
@@ -1086,7 +1087,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}
 	}
 
-	/*package*/ void saveCurrentSheet() {
+	public void saveCurrentSheet() {
 		if(currentID != null) {
 			if (currentPage instanceof CheatSheetPage) {
 				Properties properties = saveHelper.createProperties(currentItemNum, viewItemList, getExpandRestoreActionState(), expandRestoreList, currentID, restorePath);

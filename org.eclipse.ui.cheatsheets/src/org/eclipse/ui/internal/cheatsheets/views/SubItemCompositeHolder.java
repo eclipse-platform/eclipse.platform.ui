@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Asma Smaoui - CEA LIST - https://bugs.eclipse.org/bugs/show_bug.cgi?id=517379
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
@@ -56,7 +57,7 @@ public class SubItemCompositeHolder {
 	/**
 	 * @param isCompleted
 	 */
-	/*package*/ void setCompleted(boolean isCompleted) {
+	public void setCompleted(boolean isCompleted) {
 		completed = isCompleted;
 		if (isCompleted && checkDoneLabel != null) {
 			checkDoneLabel.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_COMPLETE));
@@ -67,7 +68,7 @@ public class SubItemCompositeHolder {
 	/**
 	 * @param isSkipped
 	 */
-	/*package*/ void setSkipped(boolean isSkipped) {
+	public void setSkipped(boolean isSkipped) {
 		skipped = isSkipped;
 		if (isSkipped && checkDoneLabel != null) {
 			checkDoneLabel.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_SKIP));

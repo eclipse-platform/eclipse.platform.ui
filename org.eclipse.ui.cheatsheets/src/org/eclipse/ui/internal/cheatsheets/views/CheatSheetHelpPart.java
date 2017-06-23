@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Asma Smaoui - CEA LIST - https://bugs.eclipse.org/bugs/show_bug.cgi?id=517379
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
@@ -36,7 +37,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 
 	public static final String ID = "cheatsheet-page"; //$NON-NLS-1$
 
-	private CheatSheetViewer viewer;
+	public CheatSheetViewer viewer;
 	private String id;
 
 	/**

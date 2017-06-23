@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Asma Smaoui - CEA LIST - https://bugs.eclipse.org/bugs/show_bug.cgi?id=517379
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
@@ -533,8 +534,7 @@ public abstract class ViewItem {
 	}
 
 	//marks the item as complete.
-	/*package*/
-	void setComplete() {
+	public void setComplete() {
 		completed = true;
 		checkDoneLabel.setImage(getCompleteImage());
 
@@ -544,8 +544,7 @@ public abstract class ViewItem {
 	}
 
 	//expands the item
-	/*package*/
-	void setExpanded() {
+	public void setExpanded() {
 		if (!mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(true);
 			if(initialized) {
