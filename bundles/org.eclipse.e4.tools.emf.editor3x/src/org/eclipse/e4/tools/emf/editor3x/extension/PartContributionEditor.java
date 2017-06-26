@@ -13,6 +13,7 @@ package org.eclipse.e4.tools.emf.editor3x.extension;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.internal.tools.wizards.classes.NewPartClassWizard;
 import org.eclipse.e4.tools.emf.editor3x.Messages;
@@ -42,15 +43,15 @@ import org.eclipse.ui.PartInitException;
 public class PartContributionEditor implements IContributionClassCreator {
 	@Override
 	public void createOpen(MContribution contribution, EditingDomain domain,
-		IProject project, Shell shell) {
+			IProject project, Shell shell) {
 		createOpen(contribution, domain, project, shell, false);
 	}
 
 	private void createOpen(MContribution contribution, EditingDomain domain,
-		IProject project, Shell shell, boolean forceNew) {
+			IProject project, Shell shell, boolean forceNew) {
 		if (forceNew || contribution.getContributionURI() == null
-			|| contribution.getContributionURI().trim().length() == 0
-			|| !contribution.getContributionURI().startsWith("bundleclass:")) { //$NON-NLS-1$
+				|| contribution.getContributionURI().trim().length() == 0
+				|| !contribution.getContributionURI().startsWith("bundleclass:")) { //$NON-NLS-1$
 			final NewPartClassWizard wizard = new NewPartClassWizard(contribution.getContributionURI());
 			wizard.init(null, new StructuredSelection(project));
 			final WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -72,8 +73,8 @@ public class PartContributionEditor implements IContributionClassCreator {
 					}
 
 					final Command cmd = SetCommand.create(domain, contribution,
-						ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
-						"bundleclass://" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified); //$NON-NLS-1$ //$NON-NLS-2$
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
+							"bundleclass://" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified); //$NON-NLS-1$ //$NON-NLS-2$
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 					}
@@ -83,15 +84,18 @@ public class PartContributionEditor implements IContributionClassCreator {
 				}
 			}
 		} else {
+			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 			final URI uri = URI.createURI(contribution.getContributionURI());
 			if (uri.hasAuthority() && uri.segmentCount() == 1) {
 				final String symbolicName = uri.authority();
 				final String fullyQualified = uri.segment(0);
-				IProject p = ResourcesPlugin.getWorkspace().getRoot()
-					.getProject(symbolicName);
-
-				if (!p.exists()) {
-					for (final IProject check : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+				IProject p = null;
+				// shortcut: check if there's a project with this symbolicName
+				if (workspaceRoot.getLocation().isValidSegment(symbolicName)) {
+					p = workspaceRoot.getProject(symbolicName);
+				}
+				if (p == null || !p.exists()) {
+					for (final IProject check : workspaceRoot.getProjects()) {
 						final String name = Util.getBundleSymbolicName(check);
 						if (symbolicName.equals(name)) {
 							p = check;
@@ -128,7 +132,7 @@ public class PartContributionEditor implements IContributionClassCreator {
 				}
 			} else {
 				MessageDialog.openError(shell, Messages.ContributionEditor_InvalidURL,
-					Messages.ContributionEditor_CurrentURLIsInvalid);
+						Messages.ContributionEditor_CurrentURLIsInvalid);
 			}
 		}
 	}
