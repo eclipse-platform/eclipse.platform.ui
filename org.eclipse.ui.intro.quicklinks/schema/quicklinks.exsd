@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.intro.quicklinks" id="org.eclipse.ui.intro.quicklinks" name="Quicklinks Configuration"/>
       </appinfo>
       <documentation>
-         This extension point is used to configure the Quicklinks Welcome/Intro viewer component.  Quicklinks are useful actions to be shown to a user in the Intro/Welcome.  The Quicklinks use the Eclipse Core Commands framework (see the &lt;tt&gt;org.eclipse.ui.commands&lt;/tt&gt; extension point), but supports overriding the icon and text to be used for an item.
+         This extension point is used to configure the Quicklinks Welcome/Intro viewer component.  Quicklinks are useful actions to be shown to a user in the Welcome/Intro.  The Quicklinks use the Eclipse Core Commands framework (see the &lt;tt&gt;org.eclipse.ui.commands&lt;/tt&gt; extension point), but supports overriding the icon and text to be used for an item.
 
 The Quicklinks is experimental component and is not yet considered API.
       </documentation>
@@ -323,7 +323,7 @@ Quicklinks are shown using the Quicklinks Viewer Component in a &lt;tt&gt;introC
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2016 Manumitting Technologies Inc and others.
+         Copyright (c) 2016, 2017 Manumitting Technologies Inc and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
