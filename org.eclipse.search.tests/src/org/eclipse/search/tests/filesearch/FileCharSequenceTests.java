@@ -46,7 +46,7 @@ public class FileCharSequenceTests {
 	
 	@Test
 	public void testFileCharSequence() throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		for (int i= 0; i < 500; i++) {
 			buf.append(TEST_CONTENT);
 		}
@@ -56,7 +56,7 @@ public class FileCharSequenceTests {
 
 	@Test
 	public void testFileCharSequence2() throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		for (int i= 0; i < 2000; i++) {
 			buf.append(TEST_CONTENT);
 		}
@@ -66,7 +66,7 @@ public class FileCharSequenceTests {
 
 	@Test
 	public void testFileCharSequence3() throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		for (int i= 0; i < FileCharSequenceProvider.BUFFER_SIZE * 2; i++) {
 			buf.append(TEST_CONTENT);
 		}

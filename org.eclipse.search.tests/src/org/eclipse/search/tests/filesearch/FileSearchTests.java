@@ -136,7 +136,7 @@ public class FileSearchTests {
 	}
 
 	private void testSimpleFiles(TestResultCollector collector) throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("File1\n");
 		buf.append("hello\n");
 		buf.append("more hello\n");
@@ -168,7 +168,7 @@ public class FileSearchTests {
 	}
 
 	private void testWildCards1(TestResultCollector collector) throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("File1\n");
 		buf.append("no more\n");
 		buf.append("mornings\n");
@@ -198,7 +198,7 @@ public class FileSearchTests {
 	}
 
 	private void testWildCards2(TestResultCollector collector) throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("File1\n");
 		buf.append("no more\n");
 		buf.append("mornings\n");
@@ -272,7 +272,7 @@ public class FileSearchTests {
 	}
 
 	private void testWholeWord(TestResultCollector collector) throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		// nothing after
 		buf.append("hell\n"); // nothing before
 		buf.append("hill\n"); // nothing before
@@ -328,7 +328,7 @@ public class FileSearchTests {
 	}
 
 	private void testFileOpenInEditor(TestResultCollector collector) throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("File1\n");
 		buf.append("hello\n");
 		buf.append("more hello\n");
@@ -366,7 +366,7 @@ public class FileSearchTests {
 	}
 
 	private void testDerivedFiles(TestResultCollector collector) throws Exception {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append("hello\n");
 		IFolder folder1= ResourceHelper.createFolder(fProject.getFolder("folder1"));
 		ResourceHelper.createFile(folder1, "file1", buf.toString());

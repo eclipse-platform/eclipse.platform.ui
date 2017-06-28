@@ -101,7 +101,7 @@ public class PositionTrackerTest {
 				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
 				assertNotNull(currentPosition);
 				String text= doc.get(currentPosition.offset, currentPosition.length);
-				StringBuffer buf= new StringBuffer();
+				StringBuilder buf= new StringBuilder();
 				buf.append(text.charAt(0));
 				buf.append(text.substring(5));
 				assertEquals(buf.toString(), ((FileSearchQuery) result.getQuery()).getSearchString());
