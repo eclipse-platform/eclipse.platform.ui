@@ -24,7 +24,7 @@ public final class StringSetSerializer {
 
 	public static String serialize(Set<String> strings) {
 		Assert.isLegal(strings != null);
-		StringBuffer buf= new StringBuffer(strings.size() * 20);
+		StringBuilder buf= new StringBuilder(strings.size() * 20);
 		for (Iterator<String> it= strings.iterator(); it.hasNext();) {
 			buf.append(it.next());
 			if (it.hasNext())

@@ -78,7 +78,7 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 		/** The clip board. */
 		private Clipboard fClipboard;
 		/** A string buffer. */
-		private final StringBuffer fBuffer= new StringBuffer();
+		private final StringBuilder fBuffer= new StringBuilder();
 		/** The delete flag indicates if a deletion is in progress. */
 		private boolean fDeleting;
 
