@@ -164,7 +164,8 @@ public class HoverTest extends AbstratGenericEditorTest {
 
 	private <T extends Control> T findControl(Control control, Class<T> controlType, String label) {
 		if (control.getClass() == controlType) {
-			T res = (T)control;
+			@SuppressWarnings("unchecked")
+			T res = (T) control;
 			if (label == null) {
 				return res;
 			}
