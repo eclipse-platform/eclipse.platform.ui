@@ -96,7 +96,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		final Image packageImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
 				"/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
 		final Image classImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
+				"/icons/full/obj16/class_obj.png")); //$NON-NLS-1$
 		final Image featureImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
 				"/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
 		final Image newTitleImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(

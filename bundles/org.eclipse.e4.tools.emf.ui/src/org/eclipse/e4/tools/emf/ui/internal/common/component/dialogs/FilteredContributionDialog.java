@@ -320,7 +320,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		setTitleImage(titleImage);
 
 		// TODO param or context
-		contributionTypeImage = imageCache.create("/icons/full/obj16/class_obj.gif"); //$NON-NLS-1$
+		contributionTypeImage = imageCache.create("/icons/full/obj16/class_obj.png"); //$NON-NLS-1$
 
 		compOptions = new Composite(comp, SWT.NONE);
 		compOptions.setLayoutData(new GridData(GridData.FILL_BOTH));
