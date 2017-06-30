@@ -66,7 +66,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 	private final IEclipseContext context;
 
 	public NonReferencedResourceDialog(Shell parentShell, IProject project, String bundle, IFile file,
-		String installLocation, IEclipseContext context) {
+			String installLocation, IEclipseContext context) {
 		super(parentShell);
 		this.project = project;
 		this.bundle = bundle;
@@ -195,7 +195,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				final Text label6 = new Text(comp, SWT.SINGLE | SWT.LEAD | SWT.READ_ONLY);
 				label6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				label6
-					.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+				.setText("platform:/plugin/" + bundle + "/" + file.getFullPath().removeFirstSegments(1).toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -235,7 +235,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			final Button btnImport = new Button(group, SWT.RADIO);
 			btnImport.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnImport.setText(Messages.NonReferencedResourceDialog_importPackage);
-			btnImport.setImage(imageCache.create("/icons/full/obj16/package_obj.gif")); //$NON-NLS-1$
+			btnImport.setImage(imageCache.create("/icons/full/obj16/package_obj.png")); //$NON-NLS-1$
 			btnImport.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -308,22 +308,22 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 									try {
 										final ContributionData contributionData = cdf.getContributionData();
 										bundleId = BundleConverter.convertProjectToBundle(
-											contributionData.installLocation, project.getWorkspace());
+												contributionData.installLocation, project.getWorkspace());
 										if (bundleId != null) {
 
 											final ContributionData cdConverted = new ContributionData(bundleId,
-												contributionData.className, contributionData.sourceType,
-												contributionData.iconPath);
+													contributionData.className, contributionData.sourceType,
+													contributionData.iconPath);
 											cdConverted.installLocation = installLocation;
 											cdConverted.resourceRelativePath = Path
-												.fromOSString(contributionData.iconPath).removeFirstSegments(1)
-												.toOSString();
+													.fromOSString(contributionData.iconPath).removeFirstSegments(1)
+													.toOSString();
 											doRequireBundle(bundleId, installLocation);
 											result = new ContributionDataFile(cdConverted);
 										}
 									} catch (final Exception e1) {
 										MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
-											e1.getMessage());
+												e1.getMessage());
 									}
 								}
 							};
@@ -369,7 +369,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 							@Override
 							public void run() {
 								final ReferencedProjectPickerDialog dlg = new ReferencedProjectPickerDialog(getShell(),
-									project) {
+										project) {
 									@Override
 									protected Control createContents(Composite parent) {
 										final Control ret = super.createContents(parent);
@@ -437,7 +437,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 	public void copyResourceToProject(IProject project) {
 		try {
 			final ProjectFolderPickerDialog dlg = new ProjectFolderPickerDialog(getShell(), project, file.getFullPath()
-				.toOSString()) {
+					.toOSString()) {
 				@Override
 				protected Control createContents(Composite parent) {
 					final Control ret = super.createContents(parent);

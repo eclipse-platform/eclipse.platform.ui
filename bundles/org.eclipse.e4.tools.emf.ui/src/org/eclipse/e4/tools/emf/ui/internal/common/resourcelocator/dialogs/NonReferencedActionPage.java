@@ -68,7 +68,7 @@ public class NonReferencedActionPage extends WizardPage {
 	private final BundleImageCache imageCache;
 
 	protected NonReferencedActionPage(IProject project, String bundle, IFile file, String installLocation,
-		IEclipseContext context) {
+			IEclipseContext context) {
 		super(Messages.NonReferencedActionPage_NonreferencedResourceAction);
 
 		this.project = project;
@@ -80,7 +80,7 @@ public class NonReferencedActionPage extends WizardPage {
 		imageCache = context.get(BundleImageCache.class);
 
 		setImageDescriptor(ImageDescriptor.createFromImage(imageCache.create(Plugin.ID,
-			"/icons/full/wizban/newefix_wizban.png"))); //$NON-NLS-1$
+				"/icons/full/wizban/newefix_wizban.png"))); //$NON-NLS-1$
 
 		if (bundle == null && installLocation != null) {
 			this.bundle = FilteredContributionDialog.getBundle(installLocation);
@@ -238,7 +238,7 @@ public class NonReferencedActionPage extends WizardPage {
 			final Button btnImport = new Button(group, SWT.RADIO);
 			btnImport.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			btnImport.setText(Messages.NonReferencedResourceDialog_importPackage);
-			btnImport.setImage(imageCache.create("/icons/full/obj16/package_obj.gif")); //$NON-NLS-1$
+			btnImport.setImage(imageCache.create("/icons/full/obj16/package_obj.png")); //$NON-NLS-1$
 			btnImport.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -317,22 +317,22 @@ public class NonReferencedActionPage extends WizardPage {
 									try {
 										final ContributionData contributionData = cdf.getContributionData();
 										bundleId = BundleConverter.convertProjectToBundle(
-											contributionData.installLocation, project.getWorkspace());
+												contributionData.installLocation, project.getWorkspace());
 										if (bundleId != null) {
 
 											final ContributionData cdConverted = new ContributionData(bundleId,
-												contributionData.className, contributionData.sourceType,
-												contributionData.iconPath);
+													contributionData.className, contributionData.sourceType,
+													contributionData.iconPath);
 											cdConverted.installLocation = installLocation;
 											cdConverted.resourceRelativePath = Path
-												.fromOSString(contributionData.iconPath).removeFirstSegments(1)
-												.toOSString();
+													.fromOSString(contributionData.iconPath).removeFirstSegments(1)
+													.toOSString();
 											doRequireBundle(bundleId, installLocation);
 											context.set("resolvedFile", new ContributionDataFile(cdConverted)); //$NON-NLS-1$
 										}
 									} catch (final Exception e1) {
 										MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
-											e1.getMessage());
+												e1.getMessage());
 									}
 								}
 							};
