@@ -75,6 +75,7 @@ public class Messages {
 	public static String FilteredContributionDialog_Package;
 	public static String FilteredContributionDialog_Location;
 	public static String FilteredContributionDialog_NonBundles;
+	public static String FilteredContributionDialog_Select;
 	public static String FilteredContributionDialog_SelectTheBundle;
 	public static String FilteredContributionDialog_SelectThePackage;
 	public static String FilteredContributionDialog_PackageFilter;

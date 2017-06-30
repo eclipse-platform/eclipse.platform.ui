@@ -160,7 +160,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				message += Messages.FilteredContributionDialog_SearchWasCancelled;
 			} else {
 				message += Messages.FilteredContributionDialog_MoreThan + maxResults
-					+ Messages.FilteredContributionDialog_itemsWereFound;
+						+ Messages.FilteredContributionDialog_itemsWereFound;
 			}
 		}
 
@@ -244,7 +244,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		searchScope = ResourceSearchScope.valueOf(searchScopeString);
 
 		final String searchScopesString = getPreferences().get(PREF_SEARCHSCOPES,
-			EnumSet.of(ResourceSearchScope.PROJECT).toString());
+				EnumSet.of(ResourceSearchScope.PROJECT).toString());
 		searchScopes = valueOf(ResourceSearchScope.class, searchScopesString);
 	}
 
@@ -269,7 +269,10 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
+
+		// Rename the default OK text for the button
+		createButton(parent, IDialogConstants.OK_ID, Messages.FilteredContributionDialog_Select, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		((GridLayout) parent.getLayout()).numColumns = 4;
 
 		btnClearCache = new Button(parent, SWT.PUSH);
@@ -384,7 +387,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask(Messages.FilteredContributionDialog_ContributionSearch,
-							IProgressMonitor.UNKNOWN);
+								IProgressMonitor.UNKNOWN);
 						currentResultHandler = new ContributionResultHandlerImpl(viewerList);
 						getShell().getDisplay().syncExec(new Runnable() {
 
@@ -494,7 +497,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				}
 			});
 			btnScopeProject.setSelection(searchScopes.contains(ResourceSearchScope.PROJECT)
-				&& !searchScopes.contains(ResourceSearchScope.REFERENCES));
+					&& !searchScopes.contains(ResourceSearchScope.REFERENCES));
 
 			final Button btnProjectAndReferences = new Button(compScope, SWT.RADIO);
 			btnProjectAndReferences.setText(Messages.FilteredContributionDialog_ProjectAndReferences);
@@ -511,7 +514,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				}
 			});
 			btnProjectAndReferences.setSelection(searchScopes.contains(ResourceSearchScope.PROJECT)
-				&& searchScopes.contains(ResourceSearchScope.REFERENCES));
+					&& searchScopes.contains(ResourceSearchScope.REFERENCES));
 
 			final Button btnScopeWorkspace = new Button(compScope, SWT.RADIO);
 			btnScopeWorkspace.setText(Messages.FilteredContributionDialog_Workspace);
@@ -928,7 +931,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			} else if (selected instanceof Entry) {
 				final Entry entry = (Entry) selected;
 				final ContributionData cd = new ContributionData(null, null, Messages.FilteredContributionDialog_Java,
-					entry.file.getFullPath().toOSString());
+						entry.file.getFullPath().toOSString());
 				cd.installLocation = entry.installLocation;
 				cd.resourceRelativePath = entry.file.getProjectRelativePath().toOSString();
 				return new ContributionDataFile(cd);
@@ -961,7 +964,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		if (bundle == null) {
 			final String message = Messages.FilteredContributionDialog_ResourceIsNotContainedInABundle;
 			final NonReferencedResourceWizard wizard = new NonReferencedResourceWizard(getShell(),
-				context.get(IProject.class), bundle, file, installLocation, context);
+					context.get(IProject.class), bundle, file, installLocation, context);
 			wizard.setMessage(message);
 			final WizardDialog wizDlg = new WizardDialog(getShell(), wizard);
 			wizDlg.setBlockOnOpen(true);
@@ -980,7 +983,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				final BundleModel model = loadBundleModel(currentProject);
 
 				final RequireBundleHeader rbh = (RequireBundleHeader) model.getBundle().getManifestHeader(
-					"Require-Bundle"); //$NON-NLS-1$
+						"Require-Bundle"); //$NON-NLS-1$
 				if (rbh != null) {
 					for (final RequireBundleObject item : rbh.getRequiredBundles()) {
 						if (item.getValue().equals(bundle)) {
@@ -997,7 +1000,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 						if (className != null) {
 							final String pakage = NonReferencedResourceDialog.getPackageFromClassName(className);
 							final ImportPackageHeader iph = (ImportPackageHeader) model.getBundle().getManifestHeader(
-								"Import-Package"); //$NON-NLS-1$
+									"Import-Package"); //$NON-NLS-1$
 							if (iph != null) {
 								for (final ImportPackageObject item : iph.getPackages()) {
 									if (item.getValue().equals(pakage)) {
@@ -1015,7 +1018,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			if (!found) {
 				final String message = Messages.FilteredContributionDialog_ResourceIsNotReferencedByThisBundle;
 				final NonReferencedResourceWizard wizard = new NonReferencedResourceWizard(getShell(),
-					context.get(IProject.class), bundle, file, installLocation, context);
+						context.get(IProject.class), bundle, file, installLocation, context);
 				wizard.setMessage(message);
 				final WizardDialog wiz = new WizardDialog(getShell(), wizard);
 				wiz.setBlockOnOpen(true);
