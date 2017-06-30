@@ -441,6 +441,11 @@ implements ControlListener, Listener, DisposeListener, KeyListener, MouseWheelLi
 	}
 
 	public void setScrollBarBackgroundColor(Color newColor) {
+		Color currBackgroundColor = fScrollBarSettings.getBackgroundColor();
+		if (currBackgroundColor != null && currBackgroundColor.equals(newColor)) {
+			// No need to reset if the color is still the same.
+			return;
+		}
 		fScrollBarSettings.setBackgroundColor(newColor);
 		this.fPainter.redrawScrollBars();
 	}
@@ -450,6 +455,11 @@ implements ControlListener, Listener, DisposeListener, KeyListener, MouseWheelLi
 	}
 
 	public void setScrollBarForegroundColor(Color newColor) {
+		Color currForegroundColor = fScrollBarSettings.getForegroundColor();
+		if (currForegroundColor != null && currForegroundColor.equals(newColor)) {
+			// No need to reset if the color is still the same.
+			return;
+		}
 		fScrollBarSettings.setForegroundColor(newColor);
 		this.fPainter.redrawScrollBars();
 	}
