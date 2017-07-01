@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.text.tests
-Bundle-Version: 3.11.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
@@ -12,7 +12,7 @@ Export-Package:
 Require-Bundle: 
  org.eclipse.core.commands;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.text;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.text;bundle-version="[3.6.3,4.0.0)",
  org.junit;bundle-version="4.12.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir

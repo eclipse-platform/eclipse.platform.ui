@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
  *     Cagatay Calli <ccalli@gmail.com> - [find/replace] define & fix behavior of retain caps with other escapes and text before \C - https://bugs.eclipse.org/bugs/show_bug.cgi?id=217061
+ *     Florian Ingerl <imelflorianingerl@gmail.com> - [find/replace] replace doesn't work when using a regex with a lookahead or boundary matchers - https://bugs.eclipse.org/bugs/show_bug.cgi?id=109481
  *******************************************************************************/
 package org.eclipse.text.tests;
 
@@ -499,5 +500,28 @@ public class FindReplaceDocumentAdapterTest {
 			return;
 		}
 		fail();
+	}
+
+	@Test
+	public void testRegexReplaceWithLookarounds() throws Exception {
+		fDocument.set("1<2<3<4");
+		replaceAllRegex("(?<=(\\d))\\<(\\d)(?=\\<(\\d))", "<($1+$3)/2=$2", true);
+		assertEquals("1<(1+3)/2=2<(2+4)/2=3<4", fDocument.get());
+
+		fDocument.set("1<2<3<4");
+		replaceAllRegex("(?<=(\\d)\\<)(\\d)\\<(?=(\\d))", "$2=($1+$3)/2<", false);
+		assertEquals("1<2=(1+3)/2<3=(2+4)/2<4", fDocument.get());
+	}
+
+	private void replaceAllRegex(String findString, String replaceString, boolean forwardSearch) throws BadLocationException {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+
+		int index= forwardSearch ? 0 : fDocument.getLength();
+		while(index!=-1) {
+			if(findReplaceDocumentAdapter.find(index, findString, forwardSearch, true, false, true)==null)
+				break;
+			IRegion region= findReplaceDocumentAdapter.replace(replaceString, true);
+			index= forwardSearch ? region.getOffset() + region.getLength() : region.getOffset() - 1;
+		}
 	}
 }

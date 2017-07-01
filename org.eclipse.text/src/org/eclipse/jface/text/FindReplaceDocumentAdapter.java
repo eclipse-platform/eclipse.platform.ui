@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
  *     Cagatay Calli <ccalli@gmail.com> - [find/replace] define & fix behavior of retain caps with other escapes and text before \C - https://bugs.eclipse.org/bugs/show_bug.cgi?id=217061
+ *     Florian Ingerl <imelflorianingerl@gmail.com> - [find/replace] replace doesn't work when using a regex with a lookahead or boundary matchers - https://bugs.eclipse.org/bugs/show_bug.cgi?id=109481
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -194,8 +195,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				String prevMatch= fFindReplaceMatcher.group();
 				try {
 					replaceText= interpretReplaceEscapes(replaceText, prevMatch);
-					Matcher replaceTextMatcher= pattern.matcher(prevMatch);
-					replaceText= replaceTextMatcher.replaceFirst(replaceText);
+					Matcher replaceTextMatcher= pattern.matcher(this);
+					replaceTextMatcher.find(fFindReplaceMatcher.start());
+					StringBuffer sb= new StringBuffer();
+					replaceTextMatcher.appendReplacement(sb, replaceText);
+					replaceText= sb.substring(fFindReplaceMatcher.start());
 				} catch (IndexOutOfBoundsException ex) {
 					throw new PatternSyntaxException(ex.getLocalizedMessage(), replaceText, -1);
 				}
