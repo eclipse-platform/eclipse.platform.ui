@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Named;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -50,12 +52,14 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * This handler exports all Id values within the application model to a file for
@@ -64,6 +68,8 @@ import org.eclipse.swt.widgets.TableColumn;
  * <code>AppModelId.java</code>.
  */
 public class ExportIdsHandler {
+	public static final String DEFAULT_APPMODELID_CLASSNAME = "AppModelId";
+
 	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, @Translation Messages messages, IModelResource resource, IResourcePool pool, IProject project) {
 		TitleAreaDialog dialog = new ExportIdDialog(shell, messages, resource.getRoot(), pool, project);
@@ -76,6 +82,7 @@ public class ExportIdsHandler {
 		private IResourcePool pool;
 		private JavaClass clazz;
 		private CheckboxTableViewer viewer;
+		private Text textClassName;
 
 		public ExportIdDialog(Shell parentShell, Messages messages, IObservableList list, IResourcePool pool, IProject project) {
 			super(parentShell);
@@ -84,7 +91,6 @@ public class ExportIdsHandler {
 			this.pool = pool;
 
 			clazz = new JavaClass();
-			clazz.name = "AppModelId"; //$NON-NLS-1$
 
 			if (JavaProject.hasJavaNature(project)) {
 				try {
@@ -111,8 +117,28 @@ public class ExportIdsHandler {
 			setMessage(messages.ExportIdsHandler_Dialog_DialogMessage);
 			setTitleImage(pool.getImageUnchecked(ResourceProvider.IMG_Wizban16_extstr_wiz));
 
-			Composite container = (Composite) super.createDialogArea(parent);
-			container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			Composite content = (Composite) super.createDialogArea(parent);
+			content.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			Composite container = new Composite(content, SWT.NONE);
+			container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			GridLayout gl = new GridLayout(2, false);
+			gl.numColumns = 2;
+			gl.marginBottom = 4;
+
+			container.setLayout(gl);
+			Label lblTargetClass = new Label(container, SWT.NONE);
+			lblTargetClass.setText(messages.ExportIdsHandler_Dialog_TargetClassName);
+
+			textClassName = new Text(container, SWT.BORDER);
+			textClassName.setText(DEFAULT_APPMODELID_CLASSNAME);
+
+			GridData gdcn = new GridData();
+			gdcn.horizontalAlignment = SWT.FILL;
+			gdcn.grabExcessHorizontalSpace = true;
+
+			textClassName.setLayoutData(gdcn);
 			Table t = new Table(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK);
 
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -120,6 +146,7 @@ public class ExportIdsHandler {
 			container.setLayoutData(gd);
 
 			GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd2.horizontalSpan = 2;
 			gd2.heightHint = t.getItemHeight() * 17;
 			t.setHeaderVisible(true);
 			t.setLinesVisible(true);
@@ -219,6 +246,8 @@ public class ExportIdsHandler {
 
 		@Override
 		protected void okPressed() { // See AbstractNewClassWizard
+			clazz.name = textClassName.getText();
+
 			Object[] els = viewer.getCheckedElements();
 			if (els.length > 0) {
 				try {

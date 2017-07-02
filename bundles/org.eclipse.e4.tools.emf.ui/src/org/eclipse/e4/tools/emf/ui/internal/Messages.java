@@ -750,6 +750,7 @@ public class Messages {
 	public String ExportIdsHandler_Dialog_DialogTitle;
 	public String ExportIdsHandler_Dialog_DialogMessage;
 	public String ExportIdsHandler_Dialog_SelectProject;
+	public String ExportIdsHandler_Dialog_TargetClassName;
 
 	public String ObjectViewer_Tooltip_Value;
 	public String ObjectViewer_Tooltip_InjectionKey;
