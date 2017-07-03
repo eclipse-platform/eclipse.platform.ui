@@ -245,7 +245,7 @@ public final class KeyStroke extends Trigger {
 
 	@Override
 	public final int hashCode() {
-		return modifierKeys << 4 + naturalKey;
+		return (modifierKeys << 4) + naturalKey;
 	}
 
 	/**
