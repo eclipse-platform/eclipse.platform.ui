@@ -19,6 +19,7 @@ import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 import org.eclipse.e4.core.internal.di.shared.CoreLogger;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -36,21 +37,24 @@ public class ProviderHelper {
 	static protected Map<String, ExtendedObjectSupplier> extendedSuppliers = new HashMap<>();
 
 	static {
-		// in case if any extended object supplier changes, clear the supplier cache
-		BundleContext bundleContext = FrameworkUtil.getBundle(ProviderHelper.class).getBundleContext();
-		String filter = '(' + Constants.OBJECTCLASS + '=' + ExtendedObjectSupplier.SERVICE_NAME + ')';
-		try {
-			bundleContext.addServiceListener(new ServiceListener() {
-				@Override
-				public void serviceChanged(ServiceEvent event) {
-					synchronized (extendedSuppliers) {
-						extendedSuppliers.clear();
+		Bundle bundle = FrameworkUtil.getBundle(ProviderHelper.class);
+		if (bundle != null) { // In case we are not in an OSGi context, see bug 513883
+			// in case if any extended object supplier changes, clear the supplier cache
+			BundleContext bundleContext = bundle.getBundleContext();
+			String filter = '(' + Constants.OBJECTCLASS + '=' + ExtendedObjectSupplier.SERVICE_NAME + ')';
+			try {
+				bundleContext.addServiceListener(new ServiceListener() {
+					@Override
+					public void serviceChanged(ServiceEvent event) {
+						synchronized (extendedSuppliers) {
+							extendedSuppliers.clear();
+						}
 					}
-				}
-			}, filter);
-		} catch (InvalidSyntaxException e) {
-			// should not happen - we tested the line above
-			CoreLogger.logError("Invalid filter format in the provider helper", e); //$NON-NLS-1$
+				}, filter);
+			} catch (InvalidSyntaxException e) {
+				// should not happen - we tested the line above
+				CoreLogger.logError("Invalid filter format in the provider helper", e); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -58,7 +62,12 @@ public class ProviderHelper {
 		synchronized (extendedSuppliers) {
 			if (extendedSuppliers.containsKey(qualifier))
 				return extendedSuppliers.get(qualifier);
-			BundleContext bundleContext = FrameworkUtil.getBundle(ProviderHelper.class).getBundleContext();
+			Bundle bundle = FrameworkUtil.getBundle(ProviderHelper.class);
+			if (bundle == null) {
+				// In case we are not in an OSGi context, see bug 513883
+				return null;
+			}
+			BundleContext bundleContext = bundle.getBundleContext();
 			try {
 				String filter = '(' + ExtendedObjectSupplier.SERVICE_CONTEXT_KEY + '=' + qualifier + ')';
 				ServiceReference<?>[] refs = bundleContext.getServiceReferences(ExtendedObjectSupplier.SERVICE_NAME, filter);
