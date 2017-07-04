@@ -310,7 +310,7 @@ public class WorkbenchConfigurerTest {
 		assertEquals(PlatformUI.RETURN_OK, code);
 
 		if (!results.isEmpty()) {
-			StringBuffer buffer = new StringBuffer("Advisor methods called from non-UI threads:\n");
+			StringBuilder buffer = new StringBuilder("Advisor methods called from non-UI threads:\n");
 			int count=0;
 			for (Exception e : results) {
 				StackTraceElement [] stack = e.getStackTrace();

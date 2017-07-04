@@ -386,7 +386,7 @@ public class WorkbenchWindowConfigurerTest {
 		assertEquals(PlatformUI.RETURN_OK, code);
 
 		if (!results.isEmpty()) {
-			StringBuffer buffer = new StringBuffer("Window/action bar advisor methods called from non-UI threads:\n");
+			StringBuilder buffer = new StringBuilder("Window/action bar advisor methods called from non-UI threads:\n");
 			for (String string : results) {
 				buffer.append(string).append('\n');
 			}

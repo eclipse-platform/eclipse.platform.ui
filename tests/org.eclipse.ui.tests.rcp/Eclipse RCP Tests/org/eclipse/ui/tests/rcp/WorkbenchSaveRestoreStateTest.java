@@ -391,7 +391,7 @@ public class WorkbenchSaveRestoreStateTest {
 
 	private File getStateFileLocation() {
 		IPath path = UIPlugin.getDefault().getStateLocation();
-		StringBuffer fileName = new StringBuffer();
+		StringBuilder fileName = new StringBuilder();
 		fileName.append(File.separator);
 		fileName.append("TestWorkbenchState");
 		fileName.append(File.separator);
