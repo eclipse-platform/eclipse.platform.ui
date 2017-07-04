@@ -273,8 +273,10 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 				try {
 					// wait some time before causing the group to continue
 					Thread.sleep(2000);
-					attachListener.getStream().write("TestOutput"); //$NON-NLS-1$
-					finished.set(true);
+					synchronized (finished) {
+						attachListener.getStream().write("TestOutput"); //$NON-NLS-1$
+						finished.set(true);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -286,7 +288,12 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 
 		// launching the group must block until the output is produced
 		grp.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
-		getLaunchManager().removeLaunchListener(attachListener);
+
+		synchronized (finished) {
+			// if the output appeared we have to wait for the thread to finish
+			// setting state.
+			getLaunchManager().removeLaunchListener(attachListener);
+		}
 
 		assertTrue("thread did not finish", finished.get()); //$NON-NLS-1$
 		assertTrue("output was not awaited", (System.currentTimeMillis() - start) >= 2000); //$NON-NLS-1$
