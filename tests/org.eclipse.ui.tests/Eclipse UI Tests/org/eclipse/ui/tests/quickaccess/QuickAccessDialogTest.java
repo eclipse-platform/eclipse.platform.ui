@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504029
  ******************************************************************************/
 
 package org.eclipse.ui.tests.quickaccess;
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.internal.quickaccess.SearchField;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -40,6 +40,8 @@ public class QuickAccessDialogTest extends UITestCase {
 
 	@Override
 	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		openTestWindow();
 		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbench()
 				.getActiveWorkbenchWindow();
 		MWindow window = workbenchWindow.getModel();
@@ -94,8 +96,8 @@ public class QuickAccessDialogTest extends UITestCase {
 	public void testTextFilter(){
 		final Table table = searchField.getQuickAccessTable();
 		Text text = searchField.getQuickAccessSearchText();
-		assertTrue("Quick access table should say to start typing", table.getItemCount() == 1);
-		assertSame("Quick access table should say to start typing", QuickAccessMessages.QuickAccess_StartTypingToFindMatches, table.getItem(0).getText(1));
+		assertTrue("Quick access filter should be empty", text.getText().isEmpty());
+		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
 
 		text.setText("T");
 		processEventsUntil(new Condition() {
@@ -122,25 +124,6 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Not enough quick access items for simple filter", newCount > 3);
 		assertTrue("Too many quick access items for size of table", newCount < 30);
 
-		text.setText("QWERTYUIOPTEST");
-		processEventsUntil(new Condition() {
-			@Override
-			public boolean compute() {
-				return table.getItemCount() == 1;
-			};
-		}, 200);
-		assertTrue("Quick access table should say no results found", table.getItemCount() == 1);
-		assertSame("Quick access table should say no results found", QuickAccessMessages.QuickAccessContents_NoMatchingResults, table.getItem(0).getText());
-
-		text.setText("");
-		processEventsUntil(new Condition() {
-			@Override
-			public boolean compute() {
-				return table.getItemCount() == 1;
-			};
-		}, 200);
-		assertTrue("Quick access table should say to start typing", table.getItemCount() == 1);
-		assertSame("Quick access table should say to start typing", QuickAccessMessages.QuickAccess_StartTypingToFindMatches, table.getItem(0).getText(1));
 	}
 
 	/**
@@ -158,8 +141,8 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Quick access dialog should be visible now", shell.isVisible());
 		final Table table = searchField.getQuickAccessTable();
 		Text text = searchField.getQuickAccessSearchText();
-		assertTrue("Quick access table should say to start typing", table.getItemCount() == 1);
-		assertSame("Quick access table should say to start typing", QuickAccessMessages.QuickAccess_StartTypingToFindMatches, table.getItem(0).getText(1));
+		assertTrue("Quick access filter should be empty", text.getText().isEmpty());
+		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
 
 		// Set a filter to get some items
 		text.setText("T");
