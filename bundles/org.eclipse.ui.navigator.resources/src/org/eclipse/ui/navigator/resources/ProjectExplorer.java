@@ -239,7 +239,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	protected void handleDoubleClick(DoubleClickEvent anEvent) {
 		ICommandService commandService = getViewSite().getService(ICommandService.class);
 		Command openProjectCommand = commandService.getCommand(IWorkbenchCommandConstants.PROJECT_OPEN_PROJECT);
-		if (openProjectCommand != null && openProjectCommand.isHandled()) {
+		if (openProjectCommand != null && openProjectCommand.isHandled() && openProjectCommand.isEnabled()) {
 			IStructuredSelection selection = (IStructuredSelection) anEvent
 					.getSelection();
 			Object element = selection.getFirstElement();
