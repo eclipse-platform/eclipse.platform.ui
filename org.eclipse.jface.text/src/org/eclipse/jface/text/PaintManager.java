@@ -147,6 +147,9 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		 */
 		@Override
 		public void managePosition(Position position) {
+			if (fDocument == null) {
+				return;
+			}
 			try {
 				fDocument.addPosition(fCategory, position);
 			} catch (BadPositionCategoryException x) {
