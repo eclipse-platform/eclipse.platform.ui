@@ -24,8 +24,10 @@ public class JobMessages extends NLS {
 	public static String jobs_internalError;
 	public static String jobs_waitFamSub;
 	public static String jobs_waitFamSubOne;
+	public static String jobs_returnNoStatus;
 	// metadata
 	public static String meta_pluginProblems;
+
 
 	static {
 		// load message values from bundle file

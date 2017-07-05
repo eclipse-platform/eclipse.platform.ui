@@ -71,8 +71,10 @@ public class Worker extends Thread {
 					//clear interrupted state for this thread
 					Thread.interrupted();
 					//result must not be null
-					if (result == null)
-						result = handleException(currentJob, new NullPointerException());
+					if (result == null) {
+						String message = NLS.bind(JobMessages.jobs_returnNoStatus, currentJob.getClass().getName());
+						result = handleException(currentJob, new NullPointerException(message));
+					}
 					pool.endJob(currentJob, result);
 					currentJob = null;
 					//reset thread priority in case job changed it
