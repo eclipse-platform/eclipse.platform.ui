@@ -312,7 +312,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 		StyleRange styleRange= null;
 		Color fg= null;
-		StringBuffer visibleChar= new StringBuffer(10);
+		StringBuilder visibleChar= new StringBuilder(10);
 		for (int textOffset= startOffsetInLine; textOffset <= endOffsetInLine; ++textOffset) {
 			int delta= 0;
 			boolean eol= false;

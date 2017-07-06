@@ -301,7 +301,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	 */
 	private String processHTMLTag() throws IOException {
 
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int ch;
 		do {
 
@@ -337,11 +337,11 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		return html2Text(buf.toString());
 	}
 
-	private static boolean isInComment(StringBuffer buf) {
+	private static boolean isInComment(StringBuilder buf) {
 		return buf.length() >= 3 && "!--".equals(buf.substring(0, 3)); //$NON-NLS-1$
 	}
 
-	private static boolean isCommentEnd(StringBuffer buf) {
+	private static boolean isCommentEnd(StringBuilder buf) {
 		int tagLen= buf.length();
 		return tagLen >= 5 && "--".equals(buf.substring(tagLen - 2)); //$NON-NLS-1$
 	}
@@ -375,7 +375,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	 * A '&' has been read. Process a entity
 	 */
 	private String processEntity() throws IOException {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int ch= nextChar();
 		while (Character.isLetterOrDigit((char)ch) || ch == '#') {
 			buf.append((char) ch);

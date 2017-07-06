@@ -1502,7 +1502,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		if (fHeader.getToolTipText() != null)
 			return;
 
-		StringBuffer overview = new StringBuffer();
+		StringBuilder overview = new StringBuilder();
 
 		for (int i= fAnnotationsSortedByLayer.size() -1; i >= 0; i--) {
 

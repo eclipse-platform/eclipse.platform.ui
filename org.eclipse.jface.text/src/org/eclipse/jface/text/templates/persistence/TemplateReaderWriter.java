@@ -198,7 +198,7 @@ public class TemplateReaderWriter {
 				boolean enabled = getBooleanValue(attributes, ENABLED_ATTRIBUTE, true);
 				boolean autoInsertable= getBooleanValue(attributes, AUTO_INSERTABLE_ATTRIBUTE, true);
 
-				StringBuffer buffer= new StringBuffer();
+				StringBuilder buffer= new StringBuilder();
 				NodeList children= node.getChildNodes();
 				for (int j= 0; j != children.getLength(); j++) {
 					String value= children.item(j).getNodeValue();
@@ -386,7 +386,7 @@ public class TemplateReaderWriter {
 		if (idx == -1) {
 			return str;
 		}
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int k= 0;
 		while (idx != -1) {
 			buf.append(str.substring(k, idx));

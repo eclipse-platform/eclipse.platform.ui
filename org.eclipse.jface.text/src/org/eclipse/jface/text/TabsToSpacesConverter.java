@@ -34,7 +34,7 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		fLineTracker= lineTracker;
 	}
 
-	private int insertTabString(StringBuffer buffer, int offsetInLine) {
+	private int insertTabString(StringBuilder buffer, int offsetInLine) {
 
 		if (fTabRatio == 0)
 			return 0;
@@ -55,7 +55,7 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		int index= text.indexOf('\t');
 		if (index > -1) {
 
-			StringBuffer buffer= new StringBuffer();
+			StringBuilder buffer= new StringBuilder();
 
 			fLineTracker.set(command.text);
 			int lines= fLineTracker.getNumberOfLines();

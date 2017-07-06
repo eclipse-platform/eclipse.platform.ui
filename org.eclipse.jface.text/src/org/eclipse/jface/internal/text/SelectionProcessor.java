@@ -302,7 +302,7 @@ public final class SelectionProcessor {
 		@Override
 		String getText(ISelection selection) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
-			StringBuffer buf= new StringBuffer(cts.getLength());
+			StringBuilder buf= new StringBuilder(cts.getLength());
 			int startLine= cts.getStartLine();
 			int endLine= cts.getEndLine();
 			int startColumn= cts.getStartColumn();
@@ -471,7 +471,7 @@ public final class SelectionProcessor {
 			return new ReplaceEdit(info.getOffset() + startColumn, endColumn - startColumn, replacement);
 		}
 
-		private void appendColumnRange(StringBuffer buf, int line, int visualStartColumn, int visualEndColumn) throws BadLocationException {
+		private void appendColumnRange(StringBuilder buf, int line, int visualStartColumn, int visualEndColumn) throws BadLocationException {
 			IRegion info= fDocument.getLineInformation(line);
 			int lineLength= info.getLength();
 			String content= fDocument.get(info.getOffset(), lineLength);

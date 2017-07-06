@@ -1656,7 +1656,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 
 		// contains the common postfix in the case that there are any proposals matching our LHS
-		StringBuffer rightCasePostfix= null;
+		StringBuilder rightCasePostfix= null;
 		List<ICompletionProposal> rightCase= new ArrayList<>();
 
 		boolean isWrongCaseMatch= false;
@@ -1666,7 +1666,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		CharSequence wrongCasePrefix= null;
 		int wrongCasePrefixStart= 0;
 		// contains the common postfix of all case-insensitive matches
-		StringBuffer wrongCasePostfix= null;
+		StringBuilder wrongCasePostfix= null;
 		List<ICompletionProposal> wrongCase= new ArrayList<>();
 
 		boolean hasMixedProposals= hasMixedProposals();
@@ -1689,7 +1689,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					rightCase.add(proposal);
 					CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
 					if (rightCasePostfix == null)
-						rightCasePostfix= new StringBuffer(newPostfix.toString());
+						rightCasePostfix= new StringBuilder(newPostfix.toString());
 					else
 						truncatePostfix(rightCasePostfix, newPostfix, false);
 				} else if (i == 0 || isWrongCaseMatch) {
@@ -1721,7 +1721,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 							newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
 						}
 						if (wrongCasePostfix == null)
-							wrongCasePostfix= new StringBuffer(newPostfix.toString());
+							wrongCasePostfix= new StringBuilder(newPostfix.toString());
 						else
 							truncatePostfix(wrongCasePostfix, newPostfix, hasMixedProposals);
 						wrongCase.add(proposal);
@@ -1779,7 +1779,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		try {
 			// 4: check if parts of the postfix are already in the document
 			int to= Math.min(document.getLength(), fFilterOffset + postfix.length());
-			StringBuffer inDocument= new StringBuffer(document.get(fFilterOffset, to - fFilterOffset));
+			StringBuilder inDocument= new StringBuilder(document.get(fFilterOffset, to - fFilterOffset));
 			truncatePostfix(inDocument, postfix, hasMixedProposals);
 
 			// 5: replace and reveal
@@ -1864,7 +1864,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param sequence the characters to truncate with
 	 * @param ignoreCase <code>true</code> to ignore case while comparing
 	 */
-	private void truncatePostfix(StringBuffer buffer, CharSequence sequence, boolean ignoreCase) {
+	private void truncatePostfix(StringBuilder buffer, CharSequence sequence, boolean ignoreCase) {
 		// find common prefix
 		int min= Math.min(buffer.length(), sequence.length());
 		for (int c= 0; c < min; c++) {

@@ -69,7 +69,7 @@ public class DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
 			// find white spaces
 			int end= findEndOfWhiteSpace(d, start, c.offset);
 
-			StringBuffer buf= new StringBuffer(c.text);
+			StringBuilder buf= new StringBuilder(c.text);
 			if (end > start) {
 				// append to input
 				buf.append(d.get(start, end - start));

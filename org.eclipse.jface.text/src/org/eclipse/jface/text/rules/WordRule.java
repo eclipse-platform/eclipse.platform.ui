@@ -39,7 +39,7 @@ public class WordRule implements IRule {
 	/** The table of predefined words and token for this rule. */
 	protected Map<String, IToken> fWords= new HashMap<>();
 	/** Buffer used for pattern detection. */
-	private StringBuffer fBuffer= new StringBuffer();
+	private StringBuilder fBuffer= new StringBuilder();
 	/**
 	 * Tells whether this rule is case sensitive.
 	 * @since 3.3

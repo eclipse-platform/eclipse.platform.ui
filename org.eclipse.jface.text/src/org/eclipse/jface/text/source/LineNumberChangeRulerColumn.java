@@ -125,7 +125,7 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 
 	@Override
 	protected String createDisplayString(int line) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		if (fShowNumbers)
 			buffer.append(super.createDisplayString(line));
 		if (fCharacterDisplay && getModel() != null)

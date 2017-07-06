@@ -26,7 +26,7 @@ public class WordPatternRule extends SingleLineRule {
 	/** The word detector used by this rule */
 	protected IWordDetector fDetector;
 	/** The internal buffer used for pattern detection */
-	private StringBuffer fBuffer= new StringBuffer();
+	private StringBuilder fBuffer= new StringBuilder();
 
 	/**
 	 * Creates a rule for the given starting and ending word

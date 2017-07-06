@@ -47,7 +47,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 */
 	protected String formatSource(String content) {
 		if (content != null) {
-			StringBuffer sb= new StringBuffer(content);
+			StringBuilder sb= new StringBuilder(content);
 			final String tabReplacement= getTabReplacement();
 			for (int pos= 0; pos < sb.length(); pos++) {
 				if (sb.charAt(pos) == '\t')
@@ -114,7 +114,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		 * the viewer).
 		 * added controls how many lines are added - added lines are
 		 */
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 		int added= 0;
 		for (ILineDiffInfo info : diffInfos) {
 			String[] original= info.getOriginalText();
@@ -138,7 +138,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			}
 		}
 
-		text = new StringBuffer(text.toString().trim());
+		text = new StringBuilder(text.toString().trim());
 		if (text.length() == 0 && added-- > 0 && maxLines-- > 0) {
 			text.append("+ ");//$NON-NLS-1$
 		}

@@ -76,7 +76,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		}
 	}
 
-	private void append(StringBuffer buffer, String string, TextPresentation presentation) {
+	private void append(StringBuilder buffer, String string, TextPresentation presentation) {
 
 		int length= string.length();
 		buffer.append(string);
@@ -119,7 +119,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		GC gc= new GC(drawable);
 		try {
 
-			StringBuffer buffer= new StringBuffer();
+			StringBuilder buffer= new StringBuilder();
 			int maxNumberOfLines= Math.round(maxHeight / gc.getFontMetrics().getHeight());
 
 			fCounter= 0;
@@ -179,7 +179,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		}
 	}
 
-	private String trim(StringBuffer buffer, TextPresentation presentation) {
+	private String trim(StringBuilder buffer, TextPresentation presentation) {
 
 		int length= buffer.length();
 

@@ -3739,7 +3739,7 @@ public class TextViewer extends Viewer implements
 						} else {
 							int lines= processor.getCoveredLines(selection);
 							String delim= fDocument.getLegalLineDelimiters()[0];
-							StringBuffer text= new StringBuffer(lines * length + (lines - 1) * delim.length());
+							StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
 							text.append(e.text);
 							for (int i= 0; i < lines - 1; i++) {
 								text.append(delim);
@@ -3962,7 +3962,7 @@ public class TextViewer extends Viewer implements
 							int length= contents.length();
 							int lines= processor.getCoveredLines(selection);
 							String delim= fDocument.getLegalLineDelimiters()[0];
-							StringBuffer text= new StringBuffer(lines * length + (lines - 1) * delim.length());
+							StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
 							text.append(contents);
 							for (int i= 0; i < lines - 1; i++) {
 								text.append(delim);

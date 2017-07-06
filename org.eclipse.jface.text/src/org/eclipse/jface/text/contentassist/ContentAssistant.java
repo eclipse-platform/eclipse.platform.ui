@@ -1188,7 +1188,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProcessors == null)
 			return ""; //$NON-NLS-1$
 
-		StringBuffer buf= new StringBuffer(5);
+		StringBuilder buf= new StringBuilder(5);
 		for (Set<IContentAssistProcessor> processorsForContentType : fProcessors.values()) {
 			for (IContentAssistProcessor processor : processorsForContentType) {
 				char[] triggers= processor.getCompletionProposalAutoActivationCharacters();

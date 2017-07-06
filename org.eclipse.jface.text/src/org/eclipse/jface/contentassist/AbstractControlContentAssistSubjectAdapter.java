@@ -238,7 +238,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 * @param ve the verify event
 			 */
 			private void dump(String who, Event e, VerifyEvent ve) {
-				StringBuffer sb= new StringBuffer("--- [AbstractControlContentAssistSubjectAdapter]\n"); //$NON-NLS-1$
+				StringBuilder sb= new StringBuilder("--- [AbstractControlContentAssistSubjectAdapter]\n"); //$NON-NLS-1$
 				sb.append(who);
 				sb.append(" - e: keyCode="+e.keyCode+hex(e.keyCode)); //$NON-NLS-1$
 				sb.append("; character="+e.character+hex(e.character)); //$NON-NLS-1$

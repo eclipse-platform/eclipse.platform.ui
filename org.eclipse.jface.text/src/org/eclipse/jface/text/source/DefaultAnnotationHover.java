@@ -131,7 +131,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	 * @return the formatted message
 	 */
 	protected String formatMultipleMessages(List<String> messages) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		buffer.append(JFaceTextMessages.getString("DefaultAnnotationHover.multipleMarkers")); //$NON-NLS-1$
 
 		Iterator<String> e= messages.iterator();

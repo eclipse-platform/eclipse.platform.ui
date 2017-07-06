@@ -373,7 +373,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		@Override
 		public String toString() {
 			String delimiter= ", "; //$NON-NLS-1$
-		    StringBuffer text= new StringBuffer(super.toString());
+		    StringBuilder text= new StringBuilder(super.toString());
 			text.append("\n"); //$NON-NLS-1$
 			text.append(this.getClass().getName());
 			text.append(" undo modification stamp: "); //$NON-NLS-1$
@@ -768,9 +768,9 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	}
 
 	/** Text buffer to collect text which is inserted into the viewer */
-	private StringBuffer fTextBuffer;
+	private StringBuilder fTextBuffer;
 	/** Text buffer to collect viewer content which has been replaced */
-	private StringBuffer fPreservedTextBuffer;
+	private StringBuilder fPreservedTextBuffer;
 	/** The document modification stamp for undo. */
 	protected long fPreservedUndoModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** The document modification stamp for redo. */
@@ -1199,8 +1199,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	public void connect(ITextViewer textViewer) {
 		if (!isConnected() && textViewer != null) {
 			fTextViewer= textViewer;
-			fTextBuffer= new StringBuffer();
-			fPreservedTextBuffer= new StringBuffer();
+			fTextBuffer= new StringBuilder();
+			fPreservedTextBuffer= new StringBuilder();
 		    if (fUndoContext == null)
 		        fUndoContext= new ObjectUndoContext(this);
 
