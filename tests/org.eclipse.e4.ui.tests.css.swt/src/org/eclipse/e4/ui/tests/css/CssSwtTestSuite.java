@@ -39,7 +39,6 @@ import org.eclipse.e4.ui.tests.css.swt.InheritTest;
 import org.eclipse.e4.ui.tests.css.swt.InnerClassElementTest;
 import org.eclipse.e4.ui.tests.css.swt.LabelTest;
 import org.eclipse.e4.ui.tests.css.swt.LabelTextTransformTest;
-import org.eclipse.e4.ui.tests.css.swt.LifeCycleTest;
 import org.eclipse.e4.ui.tests.css.swt.LinkTest;
 import org.eclipse.e4.ui.tests.css.swt.MarginTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellActiveTest;
@@ -68,7 +67,6 @@ import org.junit.runners.Suite;
 	EclipsePreferencesHelperTest.class,
 	CSSSWTWidgetTest.class,
 	LabelTest.class,
-	LifeCycleTest.class,
 	LinkTest.class,
 	CTabFolderTest.class,
 	CTabItemTest.class,
