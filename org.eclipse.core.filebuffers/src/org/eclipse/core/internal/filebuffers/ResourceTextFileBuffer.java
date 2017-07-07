@@ -521,7 +521,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
-			StringBuffer buffer= new StringBuffer(BUFFER_SIZE);
+			StringBuilder buffer= new StringBuilder(BUFFER_SIZE);
 			char[] readBuffer= new char[READER_CHUNK_SIZE];
 			int n= in.read(readBuffer);
 			while (n > 0) {
