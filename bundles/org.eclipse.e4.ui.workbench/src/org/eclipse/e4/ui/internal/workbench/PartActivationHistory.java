@@ -149,6 +149,9 @@ class PartActivationHistory {
 	 * is.
 	 */
 	private MArea isInArea(MUIElement element) {
+		if (element == null) {
+			return null;
+		}
 		MPlaceholder placeholder = element.getCurSharedRef();
 		if (placeholder == null) {
 			MUIElement parent = element.getParent();
