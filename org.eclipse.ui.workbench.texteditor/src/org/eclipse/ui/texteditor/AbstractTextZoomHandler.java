@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.IEvaluationContext;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -31,7 +32,8 @@ import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
@@ -93,7 +95,10 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 	}
 
 	private AbstractTextEditor getActiveTextEditor(ExecutionEvent event) {
-		IWorkbenchPart part= HandlerUtil.getActiveEditor(event);
+		return getActiveTextEditor(HandlerUtil.getActiveEditor(event));
+	}
+
+	private AbstractTextEditor getActiveTextEditor(IEditorPart part) {
 		if (part instanceof AbstractTextEditor) {
 			return (AbstractTextEditor)part;
 		} else if ((part instanceof AbstractMultiEditor) && ((AbstractMultiEditor)part).getActiveEditor() instanceof AbstractTextEditor) {
@@ -105,8 +110,15 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 	}
 
 	@Override
-	public boolean isEnabled() {
-		return true;
+	public void setEnabled(Object evaluationContext) {
+		boolean enabled = false;
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object activeEditor = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_EDITOR_NAME);
+			if (activeEditor instanceof IEditorPart) {
+				enabled = getActiveTextEditor((IEditorPart) activeEditor) != null;
+			}
+		}
+		setBaseEnabled(enabled);
 	}
 
 	/**
