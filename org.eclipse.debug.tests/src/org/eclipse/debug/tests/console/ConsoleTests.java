@@ -135,4 +135,11 @@ public class ConsoleTests extends TestCase {
 		}
 	}
 
+	public void testSetNullEncoding() throws IOException {
+		MessageConsole console = new MessageConsole("Test Console 6", null); //$NON-NLS-1$
+		try (IOConsoleOutputStream outStream = console.newOutputStream()) {
+			outStream.setEncoding(null);
+		}
+	}
+
 }

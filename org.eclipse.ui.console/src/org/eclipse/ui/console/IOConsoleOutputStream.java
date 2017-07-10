@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
 import org.eclipse.ui.internal.console.StreamDecoder;
 
@@ -311,7 +312,13 @@ public class IOConsoleOutputStream extends OutputStream {
      * @param encoding encoding identifier
      */
     public void setEncoding(String encoding) {
-		Charset charset = Charset.forName(encoding);
+		String charsetName;
+		if (encoding == null) {
+			charsetName = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+		} else {
+			charsetName = encoding;
+		}
+		Charset charset = Charset.forName(charsetName);
 		try {
 			this.setCharset(charset);
 		} catch (IOException ioe) {
