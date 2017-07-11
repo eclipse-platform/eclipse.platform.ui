@@ -447,12 +447,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @exception CoreException if the path points to a group
 	 */
 	public void checkValidGroupContainer(IPath destination, boolean isLink, boolean isGroup) throws CoreException {
-		if (!isLink && !isGroup) {
-			String message = Messages.group_invalidParent;
-			ResourceInfo info = workspace.getResourceInfo(destination, false, false);
-			if (info != null && info.isSet(M_VIRTUAL))
-				throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message));
-		}
+		IStatus status = getValidGroupContainer(destination, isLink, isGroup);
+		if (!status.isOK())
+			throw new ResourceException(status);
 	}
 
 	/**
@@ -472,7 +469,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (!isLink && !isGroup) {
 			String message = Messages.group_invalidParent;
 			ResourceInfo info = workspace.getResourceInfo(destination, false, false);
-			if (info.isSet(M_VIRTUAL))
+			if (info != null && info.isSet(M_VIRTUAL))
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;
