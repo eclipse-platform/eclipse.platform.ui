@@ -19,13 +19,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.function.Consumer;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.internal.workbench.swt.IEventLoopAdvisor;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -77,21 +80,13 @@ public class PartRenderingEngineTests {
 	};
 	private boolean logged = false;
 	private EModelService ems;
+	private Consumer<RuntimeException> runtimeExceptionHandler;
 
 	private boolean checkMacBug466636() {
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
 			System.out.println("skipping " + PartRenderingEngineTests.class.getName() + "#"
 					+ this.getClass().getSimpleName()
 					+ " on Mac for now, see bug 466636");
-			return true;
-		}
-		return false;
-	}
-
-	private boolean checkMacBug517231() {
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			System.out.println("skipping " + PartRenderingEngineTests.class.getName() + "#"
-					+ this.getClass().getSimpleName() + " on Mac for now, see bug 517231");
 			return true;
 		}
 		return false;
@@ -149,6 +144,50 @@ public class PartRenderingEngineTests {
 		while (Display.getCurrent().readAndDispatch()) {
 			// spin the event loop
 		}
+	}
+
+	/**
+	 * Sets a temporary RuntimeException handler, that doesn't show an error dialog
+	 * when an exception occurs. The handler is reset by calling
+	 * resetRuntimeExceptionHandler() in the finally block of handler code.
+	 */
+	private void addRuntimeExceptionHandler() {
+		Display display = Display.getDefault();
+		runtimeExceptionHandler = display.getRuntimeExceptionHandler();
+		display.setRuntimeExceptionHandler(e -> handle(e, new IEventLoopAdvisor() {
+			@Override
+			public void eventLoopIdle(Display display) {
+				display.sleep();
+			}
+
+			@Override
+			public void eventLoopException(Throwable exception) {
+				StatusReporter statusReporter = appContext.get(StatusReporter.class);
+				if (statusReporter != null) {
+					statusReporter.report(statusReporter.newStatus(StatusReporter.ERROR, "Internal Error", exception),
+							StatusReporter.LOG, exception);
+				}
+			}
+		}));
+	}
+
+	private void handle(Throwable ex, IEventLoopAdvisor advisor) {
+		try {
+			advisor.eventLoopException(ex);
+		} catch (Throwable t) {
+			if (t instanceof ThreadDeath) {
+				throw (ThreadDeath) t;
+			}
+			// couldn't handle the exception, print to console
+			t.printStackTrace();
+		} finally {
+			resetRuntimeExceptionHandler();
+		}
+	}
+
+	private void resetRuntimeExceptionHandler() {
+		if (runtimeExceptionHandler != null)
+			Display.getDefault().setRuntimeExceptionHandler(runtimeExceptionHandler);
 	}
 
 	@Test
@@ -1626,6 +1665,7 @@ public class PartRenderingEngineTests {
 		assertNotNull(part.getObject());
 		assertNotNull(part.getContext());
 
+		addRuntimeExceptionHandler();
 		SampleView view = (SampleView) part.getObject();
 		view.errorOnWidgetDisposal = true;
 
@@ -1656,6 +1696,7 @@ public class PartRenderingEngineTests {
 		assertNotNull(part.getObject());
 		assertNotNull(part.getContext());
 
+		addRuntimeExceptionHandler();
 		SampleView view = (SampleView) part.getObject();
 		view.errorOnPreDestroy = true;
 
@@ -3336,6 +3377,7 @@ public class PartRenderingEngineTests {
 		assertNotNull(part.getObject());
 		assertNotNull(part.getContext());
 
+		addRuntimeExceptionHandler();
 		SampleView view = (SampleView) part.getObject();
 		view.errorOnWidgetDisposal = true;
 
@@ -3348,9 +3390,6 @@ public class PartRenderingEngineTests {
 
 	@Test
 	public void test_persistState_371087_1() {
-		if (checkMacBug517231())
-			return;
-
 		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
@@ -3370,6 +3409,7 @@ public class PartRenderingEngineTests {
 		assertNotNull(part.getObject());
 		assertNotNull(part.getContext());
 
+		addRuntimeExceptionHandler();
 		SampleView view = (SampleView) part.getObject();
 		view.errorOnWidgetDisposal = true;
 
