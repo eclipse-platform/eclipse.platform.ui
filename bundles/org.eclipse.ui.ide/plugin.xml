@@ -688,6 +688,7 @@
             name="%PreferencePages.ContentTypes">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
          <keywordReference id="org.eclipse.ui.ide.encoding"/>
+         <keywordReference id="org.eclipse.ui.ide.editors"/>
       </page>
    </extension>
    <extension

@@ -215,6 +215,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_EXTENSION = "extension"; //$NON-NLS-1$
 
+	public static final String TAG_CONTENT_TYPE = "contentType"; //$NON-NLS-1$
+
     public static final String TAG_NAME = "name"; //$NON-NLS-1$
 
     public static final String TAG_IMAGE = "image"; //$NON-NLS-1$
