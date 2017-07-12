@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Sopot Cela, Mickael Istria (Red Hat Inc.) - initial implementation
+ *   Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -188,7 +189,12 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		return null; // to disable spell-checker
+		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
+		List<IReconciler> reconciliers = registry.getReconcilers(sourceViewer, getContentTypes());
+		if (!reconciliers.isEmpty()) {
+			return reconciliers.get(0);
+		}
+		return null;
 	}
 	
 	@Override

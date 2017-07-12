@@ -7,6 +7,7 @@
  *
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
+ * - Lucas Bullen (Red Hat Inc.) - avoid NPE for when TextFileBuffer does not exist
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.examples.dotproject;
 
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -50,7 +52,11 @@ public class SpellCheckDocumentListener implements IDocumentListener {
 		this.lastJob = new Job("Spellcheck") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				IAnnotationModel model = ITextFileBufferManager.DEFAULT.getTextFileBuffer(event.getDocument()).getAnnotationModel();
+				ITextFileBuffer iTextFileBuffer = ITextFileBufferManager.DEFAULT.getTextFileBuffer(event.getDocument());
+				if(iTextFileBuffer == null) {
+					return Status.CANCEL_STATUS;
+				}
+				IAnnotationModel model = iTextFileBuffer.getAnnotationModel();
 				String text = event.getDocument().get();
 				int commentStart = text.indexOf("<comment>");
 				if (commentStart < 0) {
