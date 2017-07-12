@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.ide" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="If we delete API and followed our API process, no major version increase is required" id="923795461">
+            <message_arguments>
+                <message_argument value="3.13.100"/>
+                <message_argument value="3.13.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="extensions/org/eclipse/ui/dialogs/WizardResourceImportPage.java" type="org.eclipse.ui.dialogs.WizardResourceImportPage">
         <filter comment="The type IElementFilter was moved to API" id="338792546">
             <message_arguments>
