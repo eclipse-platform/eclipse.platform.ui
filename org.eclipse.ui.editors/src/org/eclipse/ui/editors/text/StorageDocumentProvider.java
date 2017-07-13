@@ -138,7 +138,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				encoding= getDefaultEncoding();
 
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
-			StringBuffer buffer= new StringBuffer(DEFAULT_FILE_SIZE);
+			StringBuilder buffer= new StringBuilder(DEFAULT_FILE_SIZE);
 			char[] readBuffer= new char[2048];
 			int n= in.read(readBuffer);
 			while (n > 0) {

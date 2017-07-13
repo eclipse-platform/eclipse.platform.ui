@@ -350,7 +350,7 @@ class SelectResourcesDialog extends Dialog {
 	private void updateSelectionCount() {
 		List<Object> listItems= fResourceGroup.getAllCheckedListItems();
 		int checkedFiles= listItems == null ? 0 : listItems.size();
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		switch (checkedFiles) {
 			case 0:
 				buffer.append(TextEditorMessages.SelectResourcesDialog_noFilesSelected);
