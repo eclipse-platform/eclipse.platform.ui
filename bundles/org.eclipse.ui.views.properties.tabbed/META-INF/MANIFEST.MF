@@ -6,6 +6,7 @@ Bundle-Version: 3.8.100.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.internal.views.properties.tabbed;x-internal:=true,
+ org.eclipse.ui.internal.views.properties.tabbed.css;x-internal:=true,
  org.eclipse.ui.internal.views.properties.tabbed.l10n;x-internal:=true,
  org.eclipse.ui.internal.views.properties.tabbed.view;x-internal:=true,
  org.eclipse.ui.views.properties.tabbed
