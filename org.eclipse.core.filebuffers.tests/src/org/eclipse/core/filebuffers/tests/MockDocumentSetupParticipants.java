@@ -58,7 +58,7 @@ public class MockDocumentSetupParticipants {
 		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.IFILE)
-				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
+				append(document, new StringBuilder(location.toPortableString()).reverse().toString());
 		}
 	}
 
@@ -66,7 +66,7 @@ public class MockDocumentSetupParticipants {
 		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.LOCATION)
-				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
+				append(document, new StringBuilder(location.toPortableString()).reverse().toString());
 		}
 	}
 
@@ -74,7 +74,7 @@ public class MockDocumentSetupParticipants {
 		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.NORMALIZE)
-				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
+				append(document, new StringBuilder(location.toPortableString()).reverse().toString());
 		}
 	}
 

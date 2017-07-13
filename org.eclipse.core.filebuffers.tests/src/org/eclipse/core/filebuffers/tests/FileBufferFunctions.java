@@ -862,7 +862,7 @@ public abstract class FileBufferFunctions {
 				IPath newLocation= moveUnderlyingFile();
 				if (newLocation != null) {
 					if (listener.count != 1 || listener.buffer != fileBuffer || !newLocation.equals(listener.newLocation)) {
-						StringBuffer buf= new StringBuffer();
+						StringBuilder buf= new StringBuilder();
 						buf.append("Wrong listener notifcation in " + getClass().getName() + ":\n");
 						buf.append("listener.count: " + listener.count + " (expected: 1)\n");
 						if (newLocation.equals(listener.newLocation))
