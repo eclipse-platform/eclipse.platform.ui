@@ -120,7 +120,7 @@ public class BucketTree {
 		IPath baseLocation = workspace.getMetaArea().locationFor(resourcePath).removeTrailingSeparator();
 		int segmentCount = resourcePath.segmentCount();
 		String locationString = baseLocation.toOSString();
-		StringBuffer locationBuffer = new StringBuffer(locationString.length() + Bucket.INDEXES_DIR_NAME.length() + 16);
+		StringBuilder locationBuffer = new StringBuilder(locationString.length() + Bucket.INDEXES_DIR_NAME.length() + 16);
 		locationBuffer.append(locationString);
 		locationBuffer.append(File.separatorChar);
 		locationBuffer.append(Bucket.INDEXES_DIR_NAME);

@@ -225,7 +225,7 @@ public class KeyedHashSet {
 
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer(100);
+		StringBuilder result = new StringBuilder(100);
 		result.append('{');
 		boolean first = true;
 		for (int i = 0; i < elements.length; i++) {

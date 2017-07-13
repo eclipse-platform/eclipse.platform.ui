@@ -77,7 +77,7 @@ public class PathVariableChangeEvent extends EventObject implements IPathVariabl
 	@Override
 	public String toString() {
 		String[] typeStrings = {"VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		StringBuffer sb = new StringBuffer(getClass().getName());
+		StringBuilder sb = new StringBuilder(getClass().getName());
 		sb.append("[variable = "); //$NON-NLS-1$
 		sb.append(variableName);
 		sb.append(", type = "); //$NON-NLS-1$

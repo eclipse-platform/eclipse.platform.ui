@@ -112,7 +112,7 @@ public final class NodeComparison {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("NodeComparison("); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("NodeComparison("); //$NON-NLS-1$
 		switch (comparison) {
 			case K_ADDED :
 				buf.append("Added, "); //$NON-NLS-1$

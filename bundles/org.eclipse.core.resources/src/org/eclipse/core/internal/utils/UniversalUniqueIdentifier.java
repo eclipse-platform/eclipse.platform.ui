@@ -96,7 +96,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 			System.arraycopy(byteValue, 0, fBits, 0, BYTES_SIZE);
 	}
 
-	private void appendByteString(StringBuffer buffer, byte value) {
+	private void appendByteString(StringBuilder buffer, byte value) {
 		String hexString;
 
 		if (value < 0)
@@ -339,7 +339,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < fBits.length; i++)
 			appendByteString(buffer, fBits[i]);
 		return buffer.toString();

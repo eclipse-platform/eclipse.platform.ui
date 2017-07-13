@@ -1195,7 +1195,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 			if (!shouldConvertToRelative) {
 				String[] segments = PathVariableUtil.splitVariablesAndContent(srcValue.toPortableString());
-				StringBuffer result = new StringBuffer();
+				StringBuilder result = new StringBuilder();
 				for (int i = 0; i < segments.length; i++) {
 					String var = PathVariableUtil.extractVariable(segments[i]);
 					if (var.length() > 0) {
@@ -2423,7 +2423,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * structure suitable for debug purposes.
 	 */
 	public String toDebugString() {
-		final StringBuffer buffer = new StringBuffer("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		final StringBuilder buffer = new StringBuilder("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			@Override

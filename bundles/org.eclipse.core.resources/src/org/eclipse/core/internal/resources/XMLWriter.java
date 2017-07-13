@@ -62,7 +62,7 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public void printTag(String name, HashMap<String, Object> parameters, boolean shouldTab, boolean newLine) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<"); //$NON-NLS-1$
 		sb.append(name);
 		if (parameters != null)
@@ -92,7 +92,7 @@ public class XMLWriter extends PrintWriter {
 		tab++;
 	}
 
-	private static void appendEscapedChar(StringBuffer buffer, char c) {
+	private static void appendEscapedChar(StringBuilder buffer, char c) {
 		String replacement = getReplacement(c);
 		if (replacement != null) {
 			buffer.append('&');
@@ -104,7 +104,7 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public static String getEscaped(String s) {
-		StringBuffer result = new StringBuffer(s.length() + 10);
+		StringBuilder result = new StringBuilder(s.length() + 10);
 		for (int i = 0; i < s.length(); ++i)
 			appendEscapedChar(result, s.charAt(i));
 		return result.toString();

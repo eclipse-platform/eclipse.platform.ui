@@ -159,7 +159,7 @@ public class ElementTreeIterator implements IPathRequestor {
 		for (int i = 0; i < nextFreeSegment; i++) {
 			length += segments[i].length();
 		}
-		StringBuffer pathBuf = new StringBuffer(length);
+		StringBuilder pathBuf = new StringBuilder(length);
 		for (int i = 0; i < nextFreeSegment; i++) {
 			pathBuf.append('/');
 			pathBuf.append(segments[i]);

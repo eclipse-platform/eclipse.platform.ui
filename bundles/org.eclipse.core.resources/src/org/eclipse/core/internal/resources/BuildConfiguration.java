@@ -94,7 +94,7 @@ public class BuildConfiguration extends PlatformObject implements IBuildConfigur
 
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (project != null)
 			result.append(project.getName());
 		else

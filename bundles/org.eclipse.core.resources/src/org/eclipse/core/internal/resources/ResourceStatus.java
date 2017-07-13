@@ -68,7 +68,7 @@ public class ResourceStatus extends Status implements IResourceStatus {
 	// for debug only
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("[type: "); //$NON-NLS-1$
 		sb.append(getTypeName());
 		sb.append("], [path: "); //$NON-NLS-1$

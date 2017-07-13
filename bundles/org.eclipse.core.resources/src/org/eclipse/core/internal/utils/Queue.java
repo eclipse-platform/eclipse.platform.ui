@@ -179,7 +179,7 @@ public class Queue<T> {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		int count = 0;
 		if (!isEmpty()) {

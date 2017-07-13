@@ -713,7 +713,7 @@ public class ElementTree {
 	 * structure suitable for debug purposes.
 	 */
 	public String toDebugString() {
-		final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
+		final StringBuilder buffer = new StringBuilder("\n"); //$NON-NLS-1$
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			@Override
 			public boolean visitElement(ElementTree aTree, IPathRequestor elementID, Object elementContents) {

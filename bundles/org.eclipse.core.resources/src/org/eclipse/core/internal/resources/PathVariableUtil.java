@@ -52,7 +52,7 @@ public class PathVariableUtil {
 			variable = 'A' + variable;
 		}
 
-		StringBuffer builder = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < variable.length(); i++) {
 			char c = variable.charAt(i);
 			if ((Character.isLetter(c) || Character.isDigit(c) || c == '_') && !Character.isWhitespace(c))
@@ -336,7 +336,7 @@ public class PathVariableUtil {
 				}
 			}
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (pathPrefix != 0)
 			buffer.append(pathPrefix);
 		for (int i = 0; i < components.length; i++) {
@@ -355,13 +355,13 @@ public class PathVariableUtil {
 
 	private static String[] splitPathComponents(String userFormat) {
 		ArrayList<String> list = new ArrayList<>();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < userFormat.length(); i++) {
 			char c = userFormat.charAt(i);
 			if (c == '/' || c == '\\') {
 				if (buffer.length() > 0)
 					list.add(buffer.toString());
-				buffer = new StringBuffer();
+				buffer = new StringBuilder();
 			} else
 				buffer.append(c);
 		}
@@ -371,7 +371,7 @@ public class PathVariableUtil {
 	}
 
 	public static String convertToUserEditableFormatInternal(String value, boolean locationFormat) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (locationFormat) {
 			IPath path = Path.fromOSString(value);
 			if (path.isAbsolute())
@@ -391,7 +391,7 @@ public class PathVariableUtil {
 		return buffer.toString();
 	}
 
-	private static void convertVariableToUserFormat(StringBuffer buffer, String component, String variable, boolean generateMacro) {
+	private static void convertVariableToUserFormat(StringBuilder buffer, String component, String variable, boolean generateMacro) {
 		if (PathVariableUtil.isParentVariable(variable)) {
 			String argument = PathVariableUtil.getParentVariableArgument(variable);
 			int count = PathVariableUtil.getParentVariableCount(variable);

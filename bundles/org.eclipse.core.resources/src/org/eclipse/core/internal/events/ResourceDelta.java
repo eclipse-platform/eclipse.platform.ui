@@ -369,7 +369,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	 * immediate structure suitable for debug purposes.
 	 */
 	public String toDebugString() {
-		final StringBuffer buffer = new StringBuffer();
+		final StringBuilder buffer = new StringBuilder();
 		writeDebugString(buffer);
 		return buffer.toString();
 	}
@@ -379,7 +379,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	 * deep structure suitable for debug purposes.
 	 */
 	public String toDeepDebugString() {
-		final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
+		final StringBuilder buffer = new StringBuilder("\n"); //$NON-NLS-1$
 		writeDebugString(buffer);
 		for (int i = 0; i < children.length; ++i)
 			buffer.append(children[i].toDeepDebugString());
@@ -407,7 +407,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	 * Writes a string representation of this delta's
 	 * immediate structure on the given string buffer.
 	 */
-	public void writeDebugString(StringBuffer buffer) {
+	public void writeDebugString(StringBuilder buffer) {
 		buffer.append(getFullPath());
 		buffer.append('[');
 		switch (getKind()) {
@@ -516,7 +516,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			buffer.append(" (hidden)"); //$NON-NLS-1$
 	}
 
-	public void writeMarkerDebugString(StringBuffer buffer) {
+	public void writeMarkerDebugString(StringBuilder buffer) {
 		Map<IPath, MarkerSet> markerDeltas = deltaInfo.getMarkerDeltas();
 		if (markerDeltas == null || markerDeltas.isEmpty())
 			return;

@@ -89,7 +89,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 */
 	private static SAXParser singletonParser;
 
-	protected final StringBuffer charBuffer = new StringBuffer();
+	protected final StringBuilder charBuffer = new StringBuilder();
 
 	protected Stack<Object> objectStack;
 	protected MultiStatus problems;

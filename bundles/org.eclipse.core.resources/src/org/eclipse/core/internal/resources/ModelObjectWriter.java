@@ -34,7 +34,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 * the given command
 	 */
 	private static String triggerString(BuildCommand command) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD))
 			buf.append(TRIGGER_AUTO).append(',');
 		if (command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD))
