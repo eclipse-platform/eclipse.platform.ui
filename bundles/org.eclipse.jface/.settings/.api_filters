@@ -12,7 +12,7 @@
         <filter comment="ug 436448 - Adds API filter as our standard for the scheduled API removals" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.util.ListenerList"/>
-                <message_argument value="org.eclipse.jface_3.13.0"/>
+                <message_argument value="org.eclipse.jface_3.13.1"/>
             </message_arguments>
         </filter>
     </resource>
