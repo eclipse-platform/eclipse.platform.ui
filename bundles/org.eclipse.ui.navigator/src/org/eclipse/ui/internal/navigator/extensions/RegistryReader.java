@@ -77,7 +77,7 @@ public abstract class RegistryReader {
 	 */
 	protected static void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("Plugin " + extension.getNamespaceIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text);//$NON-NLS-1$
 		NavigatorPlugin.logError(0, buf.toString(), null);

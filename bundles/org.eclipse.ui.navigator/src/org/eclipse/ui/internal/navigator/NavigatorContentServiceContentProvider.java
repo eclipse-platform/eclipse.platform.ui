@@ -577,7 +577,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		@Override
 		public String toString() {
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			for (Iterator iter = segments.iterator(); iter.hasNext();) {
 				Object segment = iter.next();
 				buffer.append(segment).append("::"); //$NON-NLS-1$

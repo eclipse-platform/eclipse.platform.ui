@@ -181,7 +181,7 @@ public class CommonActionDescriptorManager {
 		dependentDescriptors.clear();
 
 		if (!unresolvedDependentDescriptors.isEmpty()) {
-			StringBuffer errorMessage = new StringBuffer(
+			StringBuilder errorMessage = new StringBuilder(
 					"There were unresolved dependencies for action provider extensions to a Common Navigator.\n" + //$NON-NLS-1$
 							"Verify that the \"dependsOn\" attribute for each <actionProvider /> element is valid."); //$NON-NLS-1$
 

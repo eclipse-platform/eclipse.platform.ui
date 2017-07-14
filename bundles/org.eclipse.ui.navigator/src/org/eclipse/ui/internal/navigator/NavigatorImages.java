@@ -74,7 +74,7 @@ public class NavigatorImages {
 	 * @return URL
 	 */
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuffer buffer = new StringBuffer(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(ICONS_LOCATION, buffer.toString());

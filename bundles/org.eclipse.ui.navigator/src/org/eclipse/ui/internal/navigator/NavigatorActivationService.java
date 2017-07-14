@@ -198,7 +198,7 @@ public final class NavigatorActivationService implements
 			Iterator<String> activatedExtensionsIterator = activatedExtensionsMap.keySet().iterator();
 
 			/* ensure that the preference will be non-empty */
-			StringBuffer preferenceValue = new StringBuffer();
+			StringBuilder preferenceValue = new StringBuilder();
 			String navigatorExtensionId = null;
 			boolean isActive = false;
 			while (activatedExtensionsIterator.hasNext()) {
