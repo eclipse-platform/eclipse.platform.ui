@@ -36,6 +36,5 @@
     <module>org.eclipse.ui.examples.job</module>
     <module>org.eclipse.ui.examples.navigator</module>
     <module>org.eclipse.ui.forms.examples</module>
-    <module>org.eclipse.ui.examples.rcp.mail</module>
   </modules>
 </project>
