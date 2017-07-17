@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Message class for the undo example.
- * 
+ *
  */
 public class TaskAssistExampleMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.examples.fieldassist.messages";//$NON-NLS-1$

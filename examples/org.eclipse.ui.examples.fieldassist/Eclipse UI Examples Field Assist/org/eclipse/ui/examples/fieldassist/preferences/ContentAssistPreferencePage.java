@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.fieldassist.preferences;
 
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.examples.fieldassist.FieldAssistPlugin;
 import org.eclipse.ui.examples.fieldassist.TaskAssistExampleMessages;
 
@@ -44,6 +47,7 @@ public class ContentAssistPreferencePage extends FieldEditorPreferencePage
 	 * GUI blocks needed to manipulate various types of preferences. Each field
 	 * editor knows how to save and
 	 */
+	@Override
 	public void createFieldEditors() {
 		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.PREF_CONTENTASSISTKEY,
@@ -59,7 +63,7 @@ public class ContentAssistPreferencePage extends FieldEditorPreferencePage
 						{ PreferenceConstants.PREF_CONTENTASSISTKEYAUTOSUBSET,
 								PreferenceConstants.PREF_CONTENTASSISTKEYAUTOSUBSET }, },
 				getFieldEditorParent()));
-		
+
 		IntegerFieldEditor editor = new IntegerFieldEditor(
 				PreferenceConstants.PREF_CONTENTASSISTDELAY,
 				TaskAssistExampleMessages.Preferences_ContentAssistDelay,
@@ -92,7 +96,7 @@ public class ContentAssistPreferencePage extends FieldEditorPreferencePage
 								TaskAssistExampleMessages.Preferences_ContentAssistResultNone,
 								PreferenceConstants.PREF_CONTENTASSISTRESULT_NONE } },
 				getFieldEditorParent()));
-		
+
 		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.PREF_CONTENTASSISTFILTER,
 				TaskAssistExampleMessages.Preferences_ContentAssistFilter,
@@ -113,9 +117,10 @@ public class ContentAssistPreferencePage extends FieldEditorPreferencePage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
