@@ -188,6 +188,7 @@ public class WorkbenchMessages extends NLS {
 
 	public static String LockToolBarAction_toolTip;
 
+	public static String CustomizePerspectiveDialog_okButtonLabel;
 	public static String EditActionSetsAction_text;
 	public static String EditActionSetsAction_toolTip;
 	public static String ActionSetSelection_customize;

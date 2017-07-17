@@ -54,6 +54,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -542,6 +543,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		shell.setText(title);
 		window.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+
+		Button okButton = createButton(parent, IDialogConstants.OK_ID,
+				WorkbenchMessages.CustomizePerspectiveDialog_okButtonLabel, true);
+		okButton.setFocus();
+
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 	@Override
