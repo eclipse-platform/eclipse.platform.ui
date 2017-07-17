@@ -21,6 +21,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -39,6 +41,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -47,12 +50,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -629,14 +635,28 @@ public class FilteredResourcesSelectionDialog extends
 			}
 
 			IResource res = (IResource) element;
+			StyledString str = new StyledString(res.getName().trim());
 
-			StyledString str = new StyledString(res.getName());
+			String searchFieldString = ((Text) getPatternControl()).getText();
+			searchFieldString = searchFieldString.replaceAll("\\*", ""); //$NON-NLS-1$//$NON-NLS-2$
+			searchFieldString = searchFieldString.replaceAll("\\?", ""); //$NON-NLS-1$//$NON-NLS-2$
+			Pattern p = Pattern.compile(searchFieldString, Pattern.CASE_INSENSITIVE); // $NON-NLS-1$
+			Matcher m = p.matcher(str);
+			if (m.find()) {
+				str.setStyle(m.start(), m.end() - m.start(), new Styler() {
+					@Override
+					public void applyStyles(TextStyle textStyle) {
+						textStyle.font = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
+					}
+				});
+			}
 
 			// extra info for duplicates
 			if (isDuplicateElement(element)) {
 				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				str.append(res.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
 			}
+
 
 //Debugging:
 //			int pathDistance = pathDistance(res.getParent());
