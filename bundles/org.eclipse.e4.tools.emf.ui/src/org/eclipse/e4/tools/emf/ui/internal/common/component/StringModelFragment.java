@@ -188,13 +188,28 @@ public class StringModelFragment extends AbstractComponentEditor {
 	 * @return
 	 */
 	private EClass getSelectedContainer() {
-
 		if (selectedContainer != null) {
 			return selectedContainer;
 		}
 
 		// we get the StringModelFragment. If not initialized, no search...
 		StringModelFragmentImpl modelFragment = getStringModelFragment();
+		selectedContainer = findContainerType(modelFragment);
+
+		updateTitle();
+
+		return selectedContainer;
+	}
+
+	/**
+	 * Returns the selectedContainer, which is the EClass behind the Extended
+	 * Element ID. It can be known thanks to the dialog or must be computed from the
+	 * ID value
+	 *
+	 * @return
+	 */
+	public static EClass findContainerType(MStringModelFragment modelFragment) {
+		// we get the StringModelFragment. If not initialized, no search...
 		if (modelFragment == null) {
 			return null;
 		}
@@ -207,8 +222,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 		// known ID for application are directly filtered.
 		if ("xpath:/".equals(parentElementId) || "org.eclipse.e4.legacy.ide.application".equals(parentElementId)) {
-			selectedContainer = ApplicationPackageImpl.eINSTANCE.getApplication();
-			return selectedContainer;
+			return ApplicationPackageImpl.eINSTANCE.getApplication();
 		}
 
 		// We have to proceed to a simple search on all elements in all resource
@@ -230,8 +244,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 					if (o instanceof MApplication) {
 						EClass found = getTargetClassFromXPath((MApplication) o, xpath);
 						if (found != null) {
-							selectedContainer = found;
-							return selectedContainer;
+							return found;
 						}
 					}
 				} else {
@@ -239,16 +252,13 @@ public class StringModelFragment extends AbstractComponentEditor {
 					if ((o instanceof MApplicationElement)
 							&& (o.eContainingFeature() != FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS)
 							&& parentElementId.equals(((MApplicationElement) o).getElementId())) {
-						selectedContainer = o.eClass();
-						return selectedContainer;
+						return o.eClass();
 					}
 				}
 			}
 		}
 
-		updateTitle();
-
-		return selectedContainer;
+		return null;
 	}
 
 	private void updateTitle() {
@@ -605,7 +615,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	 *            : the xpath value without the 'xpath:' prefix
 	 * @return the list of EClass(es) matching this xpath
 	 */
-	private EClass getTargetClassFromXPath(MApplication application, String xpath) {
+	private static EClass getTargetClassFromXPath(MApplication application, String xpath) {
 
 		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
 		XPathContext xpathContext = f.newContext((EObject) application);
@@ -636,16 +646,35 @@ public class StringModelFragment extends AbstractComponentEditor {
 	 */
 
 	public List<FeatureClass> getTargetChildrenClasses() {
+		List<FeatureClass> targetChildrenClasses = new ArrayList<>();
+		if (selectedContainer != null) {
+			List<FeatureClass> childTypes = getTargetChildrenClasses(selectedContainer,
+					getStringModelFragment().getFeaturename());
+			targetChildrenClasses.addAll(childTypes);
+		}
+		return targetChildrenClasses;
+	}
+
+	/**
+	 * This method computes the available classes that can be selected as child for
+	 * the current selected element. The result is cached in a map as the meta model
+	 * will not change !
+	 *
+	 * @param targetClass
+	 *            the target class to check against
+	 *
+	 * @return an empty list or the list for possible children
+	 */
+
+	public static List<FeatureClass> getTargetChildrenClasses(EClass targetClass, String featurename) {
 		List<FeatureClass> result = Collections.emptyList();
 
-		if (selectedContainer != null) {
-
+		if (targetClass != null) {
 			// The top level class for children, is the class of the EReference
 			// bound to feature name
 			EReference childRef = null;
-			String featurename = getStringModelFragment().getFeaturename();
 
-			for (EReference ref : selectedContainer.getEAllReferences()) {
+			for (EReference ref : targetClass.getEAllReferences()) {
 				if (ref.getName().equals(featurename)) {
 					childRef = ref;
 					break;
@@ -661,7 +690,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			// UIElementContainer<T extends UIElement>
 			// We must check if the selectedContainer extends
 			// UIElementContainer<XXX> and in this case childRef is XXX
-			final EClass childClass = (EClass) ModelUtils.getTypeArgument(selectedContainer,
+			final EClass childClass = (EClass) ModelUtils.getTypeArgument(targetClass,
 					childRef.getEGenericType());
 
 			// Search for descendant of ChildClass -> This result could be
@@ -678,7 +707,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 			}
 		}
 		return result;
-
 	}
 
 }

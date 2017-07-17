@@ -170,6 +170,7 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -177,6 +178,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.IEMFProperty;
@@ -305,7 +307,6 @@ public class ModelEditor implements IGotoObject {
 
 	/** An imageRegistry for dynamic component images (see bug #403583) */
 	private final ImageRegistry componentImages = new ImageRegistry();
-
 
 	@Inject
 	ESelectionService selectionService;
@@ -534,8 +535,8 @@ public class ModelEditor implements IGotoObject {
 
 				if (o instanceof MPart) {
 					System.err.println(getClass().getName() + ".findAndHighLight: " + o); //$NON-NLS-1$
-					System.err.println(getClass().getName()
-							+ ".findAndHighLight: " + ((EObject) o).eContainingFeature()); //$NON-NLS-1$
+					System.err
+					.println(getClass().getName() + ".findAndHighLight: " + ((EObject) o).eContainingFeature()); //$NON-NLS-1$
 				}
 
 				viewer.setSelection(new StructuredSelection(o));
@@ -693,8 +694,8 @@ public class ModelEditor implements IGotoObject {
 				if (!s.isEmpty() && noSelected == 1) {
 					List<Action> actions;
 					if (s.getFirstElement() instanceof VirtualEntry<?>) {
-						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(
-								s.getFirstElement());
+						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
+								.getActions(s.getFirstElement());
 						if (actions.size() > 0) {
 							final MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
 							for (final Action a : actions) {
@@ -704,8 +705,8 @@ public class ModelEditor implements IGotoObject {
 							manager.add(addMenu);
 						}
 
-						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActionsImport(
-								s.getFirstElement());
+						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
+								.getActionsImport(s.getFirstElement());
 						if (actions.size() > 0) {
 							final MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
 							for (final Action a : actions) {
@@ -759,8 +760,8 @@ public class ModelEditor implements IGotoObject {
 
 						if (o.eContainer() != null) {
 							addSeparator = true;
-							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor
-									.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
+							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(
+									resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
 								@Override
 								public void run() {
 									final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), o);
@@ -878,8 +879,8 @@ public class ModelEditor implements IGotoObject {
 					final Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
 						@Override
 						public void run() {
-							final ExternalizeStringHandler h = ContextInjectionFactory.make(
-									ExternalizeStringHandler.class, context);
+							final ExternalizeStringHandler h = ContextInjectionFactory
+									.make(ExternalizeStringHandler.class, context);
 							ContextInjectionFactory.invoke(h, Execute.class, context);
 						}
 					};
@@ -1105,8 +1106,8 @@ public class ModelEditor implements IGotoObject {
 		final String property = System
 				.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, false)) {
-			final FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL
-					| SWT.V_SCROLL, new PatternFilter(true));
+			final FilteredTree viewParent = new FilteredTree(treeArea,
+					SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(true));
 			tempViewer = viewParent.getViewer();
 		} else {
 			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL,
@@ -1187,8 +1188,8 @@ public class ModelEditor implements IGotoObject {
 
 		final int ops = DND.DROP_MOVE;
 		viewer.addDragSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DragListener(viewer));
-		viewer.addDropSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DropListener(viewer,
-				modelProvider.getEditingDomain()));
+		viewer.addDropSupport(ops, new Transfer[] { MemoryTransfer.getInstance() },
+				new DropListener(viewer, modelProvider.getEditingDomain()));
 
 		return viewer;
 	}
@@ -1203,8 +1204,8 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			final IContributionFactory fact = context.get(IContributionFactory.class);
-			final AbstractComponentEditor editor = (AbstractComponentEditor) fact.create(
-					"bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			final AbstractComponentEditor editor = (AbstractComponentEditor) fact
+					.create("bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			registerVirtualEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
 		}
 	}
@@ -1216,7 +1217,8 @@ public class ModelEditor implements IGotoObject {
 		registerVirtualEditor(VIRTUAL_COMMAND, ContextInjectionFactory.make(VCommandEditor.class, context));
 		registerVirtualEditor(VIRTUAL_APPLICATION_WINDOWS,
 				ContextInjectionFactory.make(VApplicationWindowEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_WINDOWS, ContextInjectionFactory.make(VWindowWindowsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_WINDOW_WINDOWS,
+				ContextInjectionFactory.make(VWindowWindowsEditor.class, context));
 		registerVirtualEditor(VIRTUAL_PERSPECTIVE_WINDOWS,
 				ContextInjectionFactory.make(VPerspectiveWindowsEditor.class, context));
 		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS,
@@ -1270,7 +1272,8 @@ public class ModelEditor implements IGotoObject {
 				final EClass eClass = desc.getEClass();
 				final IContributionFactory fact = context.get(IContributionFactory.class);
 				final AbstractComponentEditor editor = (AbstractComponentEditor) fact.create(
-						"bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
+						"bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), //$NON-NLS-1$ //$NON-NLS-2$
+						context);
 				registerEditor(eClass, editor);
 			} catch (final CoreException e) {
 				e.printStackTrace();
@@ -1318,16 +1321,20 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void registerDefaultEditors() {
-		// System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool); //$NON-NLS-1$
+		// System.err.println(getClass().getName() + ".registerDefaultEditors: " +
+		// resourcePool); //$NON-NLS-1$
 
 		registerEditor(ApplicationPackageImpl.Literals.APPLICATION,
 				ContextInjectionFactory.make(ApplicationEditor.class, context));
-		registerEditor(ApplicationPackageImpl.Literals.ADDON, ContextInjectionFactory.make(AddonsEditor.class, context));
+		registerEditor(ApplicationPackageImpl.Literals.ADDON,
+				ContextInjectionFactory.make(AddonsEditor.class, context));
 
 		registerEditor(CommandsPackageImpl.Literals.KEY_BINDING,
 				ContextInjectionFactory.make(KeyBindingEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.HANDLER, ContextInjectionFactory.make(HandlerEditor.class, context));
-		registerEditor(CommandsPackageImpl.Literals.COMMAND, ContextInjectionFactory.make(CommandEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.HANDLER,
+				ContextInjectionFactory.make(HandlerEditor.class, context));
+		registerEditor(CommandsPackageImpl.Literals.COMMAND,
+				ContextInjectionFactory.make(CommandEditor.class, context));
 		registerEditor(CommandsPackageImpl.Literals.COMMAND_PARAMETER,
 				ContextInjectionFactory.make(CommandParameterEditor.class, context));
 		registerEditor(CommandsPackageImpl.Literals.PARAMETER,
@@ -1462,8 +1469,8 @@ public class ModelEditor implements IGotoObject {
 	@Inject
 	public void setNotVisibleRenderedColor(
 			@Preference(ModelEditorPreferences.NOT_VISIBLE_AND_RENDERED_COLOR) String color) {
-		final RGB current = JFaceResources.getColorRegistry().getRGB(
-				ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
+		final RGB current = JFaceResources.getColorRegistry()
+				.getRGB(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
 
 		if (current == null || !current.equals(color)) {
 			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY,
@@ -1599,15 +1606,29 @@ public class ModelEditor implements IGotoObject {
 		@SuppressWarnings("unchecked")
 		private void handleStructurePaste() {
 			final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
-			Object o = clip.getContents(MemoryTransfer.getInstance());
+			Object contents = clip.getContents(MemoryTransfer.getInstance());
 			clip.dispose();
-			if (o == null) {
+			if (contents == null) {
+				return;
+			}
+			List<EObject> toCopy = new ArrayList<>();
+			if (contents instanceof EObject) {
+				toCopy.add(EcoreUtil.copy((EObject) contents));
+			} else if (contents instanceof List<?>) {
+				List<Object> list = (List<Object>) contents;
+				for (Object object : list) {
+					if (object instanceof EObject) {
+						toCopy.add(EcoreUtil.copy((EObject) object));
+					}
+				}
+			}
+
+			if (toCopy.isEmpty()) {
 				return;
 			}
 
-			o = EcoreUtil.copy((EObject) o);
-
 			final Object parent = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+			EObject probe = toCopy.get(0);
 
 			EStructuralFeature feature = null;
 			EObject container = null;
@@ -1615,44 +1636,98 @@ public class ModelEditor implements IGotoObject {
 				final VirtualEntry<?> v = (VirtualEntry<?>) parent;
 				feature = ((IEMFProperty) v.getProperty()).getStructuralFeature();
 				container = (EObject) v.getOriginalParent();
-			} else {
-				if (parent instanceof MElementContainer<?>) {
+			} else if (parent instanceof EObject) {
+				container = (EObject) parent;
+				if (container instanceof MElementContainer<?>) {
 					feature = UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN;
-					container = (EObject) parent;
-				} else if (parent instanceof EObject) {
-					container = (EObject) parent;
-					final EClass eClass = container.eClass();
-
-					for (final EStructuralFeature f : eClass.getEAllStructuralFeatures()) {
-						if (ModelUtils.getTypeArgument(eClass, f.getEGenericType()).isInstance(o)) {
-							feature = f;
-							break;
-						}
+				} else {
+					feature = determineTargetFeature(probe, container);
+					if (feature == null && container.eClass().equals(probe.eClass())
+							&& container.eContainer() != null) {
+						// it seems the user has still the original selection active,
+						// try to find the target feature using the container's container
+						container = container.eContainer();
+						feature = determineTargetFeature(probe, container);
 					}
 				}
 			}
 
-			if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && container != null) {
-				final MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) o).eClass());
-				el.setElementId(((MApplicationElement) o).getElementId());
-				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, el);
-				if (cmd.canExecute()) {
-					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
-				}
+			if (container == null) {
+				// no container selected that we can paste into
 				return;
 			}
 
-			if (feature != null && container != null) {
-				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, o);
-				if (cmd.canExecute()) {
-					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
-					if (isLiveModel()) {
-						if (container instanceof MElementContainer<?> && o instanceof MUIElement) {
-							((MElementContainer<MUIElement>) container).setSelectedElement((MUIElement) o);
+			if (feature == null) {
+				// no target feature derivable from current state of the editor
+				return;
+			}
+
+			List<EClass> targetChildrenClasses = new ArrayList<>();
+
+			if (container instanceof MStringModelFragment) {
+				MStringModelFragment stringModelFragment = (MStringModelFragment) container;
+				EClass targetType = StringModelFragment.findContainerType(stringModelFragment);
+				if (targetType != null) {
+					EStructuralFeature targetFeature = targetType
+							.getEStructuralFeature(stringModelFragment.getFeaturename());
+					if (targetFeature != null) {
+						List<FeatureClass> classes = StringModelFragment.getTargetChildrenClasses(targetType,
+								targetFeature.getName());
+						for (FeatureClass fclass : classes) {
+							targetChildrenClasses.add(fclass.eClass);
 						}
 					}
 				}
 			}
+
+			CompoundCommand cc = new CompoundCommand();
+			for (EObject eObject : toCopy) {
+				if (!ModelUtils.getTypeArgument(eObject.eClass(), feature.getEGenericType()).isInstance(eObject)) {
+					// the object to paste does not fit into the target feature
+					continue;
+				}
+				if (!targetChildrenClasses.isEmpty() && !targetChildrenClasses.contains(eObject.eClass())) {
+					// there is a limited list of allowed target types
+					// and a fragment that is pointing to a different feature
+					continue;
+				}
+
+				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+					final MApplicationElement el = (MApplicationElement) EcoreUtil.create(eObject.eClass());
+					el.setElementId(((MApplicationElement) eObject).getElementId());
+					final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature,
+							el);
+					if (cmd.canExecute()) {
+						cc.append(cmd);
+					}
+					return;
+				}
+
+				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature,
+						eObject);
+				if (cmd.canExecute()) {
+					cc.append(cmd);
+					if (isLiveModel()) {
+						if (container instanceof MElementContainer<?> && probe instanceof MUIElement) {
+							// the last selection wins
+							((MElementContainer<MUIElement>) container).setSelectedElement((MUIElement) eObject);
+						}
+					}
+				}
+			}
+			if (!cc.isEmpty()) {
+				getModelProvider().getEditingDomain().getCommandStack().execute(cc);
+			}
+		}
+
+		private EStructuralFeature determineTargetFeature(EObject probe, EObject container) {
+			final EClass eClass = container.eClass();
+			for (final EStructuralFeature f : eClass.getEAllReferences()) {
+				if (ModelUtils.getTypeArgument(eClass, f.getEGenericType()).isInstance(probe)) {
+					return f;
+				}
+			}
+			return null;
 		}
 
 		@Override
@@ -1669,13 +1744,20 @@ public class ModelEditor implements IGotoObject {
 		}
 
 		private void handleStructureCopy() {
-			final Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-			if (o != null && o instanceof EObject) {
-				final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
-				clip.setContents(new Object[] { EcoreUtil.copy((EObject) o) },
-						new Transfer[] { MemoryTransfer.getInstance() });
-				clip.dispose();
+			IStructuredSelection structuredSelection = (IStructuredSelection) viewer.getSelection();
+			List<EObject> toCopy = new ArrayList<>();
+			for (Object obj : structuredSelection.toList()) {
+				if (obj != null && obj instanceof EObject) {
+					EObject copy = EcoreUtil.copy((EObject) obj);
+					toCopy.add(copy);
+				}
 			}
+			if (toCopy.isEmpty()) {
+				return;
+			}
+			final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
+			clip.setContents(new Object[] { toCopy }, new Transfer[] { MemoryTransfer.getInstance() });
+			clip.dispose();
 		}
 
 		@Override
@@ -2003,11 +2085,9 @@ public class ModelEditor implements IGotoObject {
 		return null;
 	}
 
-
 	@Inject
 	@Optional
-	public void refreshOnSave(
-			@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event,
+	public void refreshOnSave(@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event,
 			@Named(IServiceConstants.ACTIVE_PART) MPart part) {
 		// If the application model is saved (-> becomes undirty) we must
 		// refresh tree (bug 472706)
