@@ -82,7 +82,7 @@ public class NavigatorUIPluginImages {
 	 * @return URL
 	 */
 	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuffer buffer = new StringBuffer(prefix);
+		StringBuilder buffer = new StringBuilder(prefix);
 		buffer.append(name);
 		try {
 			return new URL(fgIconLocation, buffer.toString());
