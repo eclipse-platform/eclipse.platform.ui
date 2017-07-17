@@ -57,7 +57,7 @@ class JFaceTextMessages {
 	 * @return the formatted string
 	 * @since 3.0
 	 */
-	public static String getFormattedString(String key, Object[] args) {
+	public static String getFormattedString(String key, Object... args) {
 		String format= null;
 		try {
 			format= fgResourceBundle.getString(key);

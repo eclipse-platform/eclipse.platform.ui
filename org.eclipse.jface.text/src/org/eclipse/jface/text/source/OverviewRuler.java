@@ -1528,7 +1528,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 				if (overview.length() > 0) {
 					overview.append("\n"); //$NON-NLS-1$
 				}
-				overview.append(JFaceTextMessages.getFormattedString("OverviewRulerHeader.toolTipTextEntry", new Object[] {annotationTypeLabel, Integer.valueOf(count)})); //$NON-NLS-1$
+				overview.append(JFaceTextMessages.getFormattedString("OverviewRulerHeader.toolTipTextEntry", annotationTypeLabel, Integer.valueOf(count))); //$NON-NLS-1$
 			}
 		}
 
