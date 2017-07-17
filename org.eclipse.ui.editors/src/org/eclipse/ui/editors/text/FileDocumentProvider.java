@@ -377,14 +377,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
-			InputStream stream= file.getContents(false);
-			try {
+			try (InputStream stream= file.getContents(false)) {
 				setDocumentContent(document, stream);
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException x) {
-				}
+			} catch (IOException x) {
 			}
 			return true;
 		}
@@ -395,9 +390,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
-			InputStream contentStream= file.getContents(false);
-			try {
-
+			try (InputStream contentStream= file.getContents(false)) {
 				FileInfo info= (FileInfo)getElementInfo(editorInput);
 				boolean removeBOM= false;
 				if (CHARSET_UTF_8.equals(encoding)) {
@@ -428,11 +421,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
 				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, ex);
 				throw new CoreException(s);
-			} finally {
-				try {
-					contentStream.close();
-				} catch (IOException e1) {
-				}
 			}
 			return true;
 		}
@@ -666,8 +654,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			return encoding;
 
 		// Probe content
-		Reader reader= new DocumentReader(document);
-		try {
+		try (Reader reader= new DocumentReader(document)) {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
 			if (description != null) {
@@ -677,11 +664,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		} catch (IOException ex) {
 			// continue with next strategy
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException x) {
-			}
 		}
 
 		// Use file's encoding if the file has a BOM

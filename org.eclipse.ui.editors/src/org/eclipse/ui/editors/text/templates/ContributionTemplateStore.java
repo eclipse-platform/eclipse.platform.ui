@@ -132,19 +132,17 @@ public class ContributionTemplateStore extends TemplateStore {
 			URL url= FileLocator.find(plugin, Path.fromOSString(file), null);
 			if (url != null) {
 				ResourceBundle bundle= null;
-				InputStream bundleStream= null;
-				InputStream stream= null;
-				try {
-					String translations= element.getAttribute(TRANSLATIONS);
-					if (translations != null) {
-						URL bundleURL= FileLocator.find(plugin, Path.fromOSString(translations), null);
-						if (bundleURL != null) {
-							bundleStream= bundleURL.openStream();
+				String translations= element.getAttribute(TRANSLATIONS);
+				if (translations != null) {
+					URL bundleURL= FileLocator.find(plugin, Path.fromOSString(translations), null);
+					if (bundleURL != null) {
+						try (InputStream bundleStream= bundleURL.openStream()) {
 							bundle= new PropertyResourceBundle(bundleStream);
 						}
 					}
+				}
 
-					stream= new BufferedInputStream(url.openStream());
+				try (InputStream stream= new BufferedInputStream(url.openStream())) {
 					TemplateReaderWriter reader= new TemplateReaderWriter();
 					TemplatePersistenceData[] datas= reader.read(stream, bundle);
 					for (int i= 0; i < datas.length; i++) {
@@ -156,18 +154,6 @@ public class ContributionTemplateStore extends TemplateStore {
 								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_deleted, data.getTemplate().getName()));
 						} else if (validateTemplate(data.getTemplate())) {
 							templates.add(data);
-						}
-					}
-				} finally {
-					try {
-						if (bundleStream != null)
-							bundleStream.close();
-					} catch (IOException x) {
-					} finally {
-						try {
-							if (stream != null)
-								stream.close();
-						} catch (IOException x) {
 						}
 					}
 				}

@@ -191,14 +191,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput) editorInput).getStorage();
-			InputStream stream= storage.getContents();
-			try {
+			try (InputStream stream= storage.getContents()) {
 				setDocumentContent(document, stream, encoding);
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException x) {
-				}
+			} catch (IOException x) {
 			}
 			return true;
 		}
@@ -409,17 +404,17 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	public IContentType getContentType(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput) element).getStorage();
-			Reader reader= null;
-			InputStream stream= null;
 			try {
 				IContentDescription desc;
 				IDocument document= getDocument(element);
 				if (document != null) {
-					reader= new DocumentReader(document);
-					desc= Platform.getContentTypeManager().getDescriptionFor(reader, storage.getName(), NO_PROPERTIES);
+					try (Reader reader= new DocumentReader(document)) {
+						desc= Platform.getContentTypeManager().getDescriptionFor(reader, storage.getName(), NO_PROPERTIES);
+					}
 				} else {
-					stream= storage.getContents();
-					desc= Platform.getContentTypeManager().getDescriptionFor(stream, storage.getName(), NO_PROPERTIES);
+					try (InputStream stream= storage.getContents()) {
+						desc= Platform.getContentTypeManager().getDescriptionFor(stream, storage.getName(), NO_PROPERTIES);
+					}
 				}
 				if (desc != null && desc.getContentType() != null)
 					return desc.getContentType();
@@ -436,15 +431,6 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				else
 					message= TextEditorMessages.StorageDocumentProvider_getContentDescription;
 				throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
-			} finally {
-				try {
-					// Note: either 'reader' or 'stream' is null
-					if (reader != null)
-						reader.close();
-					if (stream != null)
-						stream.close();
-				} catch (IOException x) {
-				}
 			}
 		}
 		return super.getContentType(element);
