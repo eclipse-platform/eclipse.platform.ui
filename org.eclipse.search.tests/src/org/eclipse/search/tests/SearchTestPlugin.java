@@ -35,7 +35,7 @@ import org.eclipse.search2.internal.ui.SearchView;
 public class SearchTestPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static SearchTestPlugin fgPlugin;
-	
+
 	public SearchTestPlugin() {
 		fgPlugin = this;
 	}
@@ -43,7 +43,7 @@ public class SearchTestPlugin extends AbstractUIPlugin {
 	public static SearchTestPlugin getDefault() {
 		return fgPlugin;
 	}
-		
+
 	public SearchView getSearchView() {
 		return (SearchView) NewSearchUI.activateSearchResultView();
 	}

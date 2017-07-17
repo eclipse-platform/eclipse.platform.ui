@@ -52,7 +52,7 @@ public class SearchResultPageTest {
 		SearchTestPlugin.ensureWelcomePageClosed();
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
-	
+
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 
@@ -67,7 +67,7 @@ public class SearchResultPageTest {
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 		checkViewerDisplay(page);
 	}
-	
+
 	private void checkViewerDisplay(FileSearchPage page) {
 		StructuredViewer viewer= page.getViewer();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
@@ -81,7 +81,7 @@ public class SearchResultPageTest {
 		}
 	}
 
-	
+
 	@Test
 	@Ignore // checkElementDisplay(..) misses cases where one line contains multiple matches
 	public void testRemoveTreeMatches() throws Exception {
@@ -113,7 +113,7 @@ public class SearchResultPageTest {
 			Display.getDefault().readAndDispatch();
 		}
 	}
-	
+
 	private void consumeEvents() {
 		while (Display.getDefault().readAndDispatch()) {
 		}
@@ -128,7 +128,7 @@ public class SearchResultPageTest {
 		if (itemCount > 1)
 			assertTrue(item.getText().indexOf(String.valueOf(itemCount)) >= 0);
 	}
-	
+
 	@Test
 	public void testTableNavigation() {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
@@ -136,25 +136,25 @@ public class SearchResultPageTest {
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 		Table table= ((TableViewer) page.getViewer()).getTable();
-		
+
 		consumeEvents();
-		
+
 		// select the first element.
 		table.setSelection(0);
 		table.showSelection();
-		
+
 		consumeEvents();
 		// back from first match, goto last
 		page.gotoPreviousMatch();
-		
+
 		consumeEvents();
-		
+
 		assertEquals(1, table.getSelectionCount());
 		assertEquals(table.getItemCount()-1, table.getSelectionIndex());
 
 		// and forward again, to the first match.
 		page.gotoNextMatch();
-		
+
 		consumeEvents();
 		assertEquals(1, table.getSelectionCount());
 		assertEquals(0, table.getSelectionIndex());

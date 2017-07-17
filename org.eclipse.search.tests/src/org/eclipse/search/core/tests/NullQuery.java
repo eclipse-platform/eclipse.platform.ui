@@ -17,7 +17,7 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
 public class NullQuery implements ISearchQuery {
-	
+
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		return null;

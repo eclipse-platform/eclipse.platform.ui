@@ -65,13 +65,13 @@ public class AnnotationManagerTest {
 		fQuery1= new FileSearchQuery("Test", false, true, scope);  //$NON-NLS-1$//$NON-NLS-2$
 		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	@After
 	public void tearDown() {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fQuery1= null;
 		fQuery2= null;
-		
+
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLLIGHTER_ANY);
 
 	}
@@ -94,20 +94,20 @@ public class AnnotationManagerTest {
 						positions.add(annotationModel.getPosition(annotation));
 					}
 				}
-	
+
 				Match[] matches= result.getMatches(file);
 				for (int j= 0; j < matches.length; j++) {
 					Position position= new Position(matches[j].getOffset(), matches[j].getLength());
 					assertTrue("position not found at: "+j, positions.remove(position)); //$NON-NLS-1$
 				}
 				assertEquals(0, positions.size());
-			
+
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
-	
+
 	@Test
 	public void testBogusAnnotation() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
@@ -116,14 +116,14 @@ public class AnnotationManagerTest {
 		SearchTestPlugin.openTextEditor(SearchTestPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getPages()[0], file);
 		result.addMatch(new FileMatch(file));
 	}
-	
+
 	@Test
 	public void testRemoveQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
 		InternalSearchUI.getInstance().removeQuery(fQuery1);
-		
+
 		try {
 			for (int i= 0; i < files.length; i++) {
 				IFile file= (IFile)files[i];
@@ -170,7 +170,7 @@ public class AnnotationManagerTest {
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
-	
+
 	@Test
 	public void testSwitchQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);

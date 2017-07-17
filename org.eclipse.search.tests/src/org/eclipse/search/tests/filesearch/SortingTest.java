@@ -36,10 +36,10 @@ public class SortingTest {
 	public void setUp() throws Exception {
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
-	
+
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
-	
+
 	@Test
 	public void testSorted() throws Exception {
 		NewSearchUI.activateSearchResultView();
@@ -47,7 +47,7 @@ public class SortingTest {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		int originalMatchCount= result.getMatchCount();
 		List<Match> allMatches= new ArrayList<>(originalMatchCount);
-		
+
 		// first, collect all matches
 		Object[] elements= result.getElements();
 		for (int i= 0; i < elements.length; i++) {
@@ -59,13 +59,13 @@ public class SortingTest {
 		// now remove them and readd them in reverse order
 		result.removeAll();
 		assertTrue("removed all matches", result.getMatchCount() == 0);
-		
+
 		for (int i= allMatches.size()-1; i >= 0; i--) {
 			result.addMatch(allMatches.get(i));
 		}
-		
+
 		assertEquals("Test that all matches have been added again", result.getMatchCount(), originalMatchCount);
-		
+
 		// now check that they're ordered by position.
 		for (int i= 0; i < elements.length; i++) {
 			Match[] matches= result.getMatches(elements[i]);
@@ -90,5 +90,5 @@ public class SortingTest {
 			return false;
 		}
 	}
-	
+
 }

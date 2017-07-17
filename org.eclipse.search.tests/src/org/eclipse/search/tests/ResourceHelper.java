@@ -40,32 +40,32 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * @since 3.0
  */
 public class ResourceHelper {
-	
+
 	private final static IProgressMonitor NULL_MONITOR= new NullProgressMonitor();
 	private static final int MAX_RETRY= 10;
-	
+
 	public static IProject createProject(String projectName) throws CoreException {
-		
+
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (!project.exists())
 			project.create(NULL_MONITOR);
 		else
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		
+
 		if (!project.isOpen())
 			project.open(NULL_MONITOR);
-		
+
 		return project;
 	}
-	
+
 	public static void deleteProject(String projectName) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (project.exists())
 			delete(project);
 	}
-		
+
 	public static void delete(final IResource resource) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			@Override
@@ -89,12 +89,12 @@ public class ResourceHelper {
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, null);
-		
+
 	}
 
 	/**
 	 * Creates a folder and all parent folders if not existing. Project must exist.
-	 * 
+	 *
 	 * @param folder The folder to create
 	 * @return Returns the input folder
 	 * @throws CoreException if creation fails
@@ -109,7 +109,7 @@ public class ResourceHelper {
 		}
 		return folder;
 	}
-	
+
 	public static IFile createFile(IFolder folder, String name, String contents, String encoding) throws CoreException, IOException {
 		IFile file= folder.getFile(name);
 		if (contents == null)
@@ -121,55 +121,55 @@ public class ResourceHelper {
 
 		return file;
 	}
-	
+
 	public static IFile createFile(IFolder folder, String name, String contents) throws CoreException, IOException {
 		return createFile(folder, name, contents, "ISO-8859-1");
 	}
-	
+
 	public static IFile createLinkedFile(IContainer container, IPath linkPath, File linkedFileTarget) throws CoreException {
 		IFile iFile= container.getFile(linkPath);
 		iFile.createLink(new Path(linkedFileTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
 	}
-	
+
 	public static IFile createLinkedFile(IContainer container, IPath linkPath, Plugin plugin, IPath linkedFileTargetPath) throws CoreException {
 		File file= FileTool.getFileInPlugin(plugin, linkedFileTargetPath);
 		IFile iFile= container.getFile(linkPath);
 		iFile.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
 	}
-	
+
 	public static IFolder createLinkedFolder(IContainer container, IPath linkPath, File linkedFolderTarget) throws CoreException {
 		IFolder folder= container.getFolder(linkPath);
 		folder.createLink(new Path(linkedFolderTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return folder;
 	}
-	
+
 	public static IFolder createLinkedFolder(IContainer container, IPath linkPath, Plugin plugin, IPath linkedFolderTargetPath) throws CoreException {
 		File file= FileTool.getFileInPlugin(plugin, linkedFolderTargetPath);
 		IFolder iFolder= container.getFolder(linkPath);
 		iFolder.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFolder;
 	}
-	
+
 	public static IProject createLinkedProject(String projectName, Plugin plugin, IPath linkPath) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IProject project= workspace.getRoot().getProject(projectName);
-		
+
 		IProjectDescription desc= workspace.newProjectDescription(projectName);
 		File file= FileTool.getFileInPlugin(plugin, linkPath);
 		IPath projectLocation= new Path(file.getAbsolutePath());
 		if (Platform.getLocation().equals(projectLocation))
 			projectLocation= null;
 		desc.setLocation(projectLocation);
-		
+
 		project.create(desc, NULL_MONITOR);
 		if (!project.isOpen())
 			project.open(NULL_MONITOR);
-		
+
 		return project;
 	}
-	
+
 	public static IProject createJUnitSourceProject(String projectName) throws CoreException, ZipException, IOException {
 		IProject project= ResourceHelper.createProject(projectName);
 		ZipFile zip= new ZipFile(FileTool.getFileInPlugin(SearchTestPlugin.getDefault(), new Path("testresources/junit37-noUI-src.zip"))); //$NON-NLS-1$

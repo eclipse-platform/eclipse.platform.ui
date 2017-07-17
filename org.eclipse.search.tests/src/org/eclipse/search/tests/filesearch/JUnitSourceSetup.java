@@ -20,12 +20,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.search.tests.ResourceHelper;
 
 public class JUnitSourceSetup extends ExternalResource {
-	
+
 	public static final String STANDARD_PROJECT_NAME= "JUnitSource";
-	
+
 	private IProject fProject= null;
 	private final String fProjectName;
-		
+
 	public IProject getStandardProject() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(STANDARD_PROJECT_NAME);
 	}
@@ -33,11 +33,11 @@ public class JUnitSourceSetup extends ExternalResource {
 	public JUnitSourceSetup() {
 		this(STANDARD_PROJECT_NAME);
 	}
-	
+
 	public JUnitSourceSetup(String projectName) {
 		fProjectName= projectName;
 	}
-		
+
 	@Override
 	public void before() throws Exception {
 		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(fProjectName);
@@ -45,7 +45,7 @@ public class JUnitSourceSetup extends ExternalResource {
 			fProject= ResourceHelper.createJUnitSourceProject(fProjectName);
 		}
 	}
-	
+
 	@Override
 	public void after() /*throws Exception (but JUnit4 API is stupid...)*/ {
 		if (fProject != null) { // delete only by the setup who created the project

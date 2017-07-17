@@ -57,22 +57,22 @@ public class LineAnnotationManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
-		
+
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
-	
+
 		fLineQuery= new LineBasedFileSearch(scope, false, true, "Test");
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fLineQuery= null;
-		
+
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLLIGHTER_ANY);
 	}
-	
-	@Test		
+
+	@Test
 	public void testLineBasedQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fLineQuery);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fLineQuery.getSearchResult();

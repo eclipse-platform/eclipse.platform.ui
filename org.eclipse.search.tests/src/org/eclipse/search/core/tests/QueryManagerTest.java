@@ -22,7 +22,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 public class QueryManagerTest {
-	
+
 	@Test
 	public void testRemoveQuery() {
 		ISearchQuery query= new NullQuery();

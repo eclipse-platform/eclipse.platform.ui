@@ -30,27 +30,27 @@ import org.eclipse.search.tests.ResourceHelper;
 
 public class ResultUpdaterTest {
 	private FileSearchQuery fQuery1;
-	
+
 	private IProject fProject;
-	
+
 	private static final String PROJECT_TO_MODIFY= "ModifiableProject";
 
 	@Before
 	public void setUp() throws Exception {
 		// create a own project to make modifications
 		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
-		
+
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePatterns, false);
-	
+
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject(PROJECT_TO_MODIFY);
 	}
-	
+
 	@Test
 	public void testRemoveFile() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
@@ -62,7 +62,7 @@ public class ResultUpdaterTest {
 		assertEquals(totalCount-fileCount, result.getMatchCount());
 		assertEquals(0, result.getMatchCount(elements[0]));
 	}
-	
+
 	@Test
 	public void testRemoveProject() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);

@@ -25,14 +25,14 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 
 public class TestSearchResult {
-	
+
 	@Test
 	public void testAddMatch() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		result.addMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
@@ -47,9 +47,9 @@ public class TestSearchResult {
 	public void testAddMatchDifferentStart() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 2, 0);
 		result.addMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
@@ -67,9 +67,9 @@ public class TestSearchResult {
 	public void testAddMatchDifferentStartInOrder() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		result.addMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
@@ -87,9 +87,9 @@ public class TestSearchResult {
 	public void testAddMatchDifferentLength() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 1, 1);
 		result.addMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
@@ -99,14 +99,14 @@ public class TestSearchResult {
 		assertTrue("matches[0]", matches[0] == match2);
 		assertTrue("matches[1]", matches[1] == match1);
 	}
-	
+
 	@Test
 	public void testAddMatchOrderPreserving() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 1, 0);
 		result.addMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
@@ -121,9 +121,9 @@ public class TestSearchResult {
 	public void testAddMatches() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		Match match2= new Match(object, 0, 0);
 		result.addMatches(new Match[] { match1, match2 });
@@ -136,47 +136,47 @@ public class TestSearchResult {
 	public void testRemoveMatch() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		result.addMatch(match1);
 		Match match2= new Match(object, 0, 0);
 		result.addMatch(match2);
 		assertEquals(result.getMatchCount(), 2);
-		
+
 		result.removeMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
 		result.removeMatch(match1);
 		assertEquals(result.getMatchCount(), 1);
-		
+
 	}
-	
+
 	@Test
 	public void testRemoveMatches() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		Match match2= new Match(object, 0, 0);
 		result.addMatches(new Match[] { match1, match2 });
 		assertEquals(result.getMatchCount(), 2);
-		
+
 		result.removeMatches(new Match[] { match1, match2 });
 		assertEquals(result.getMatchCount(), 0);
-		
+
 	}
 
 	@Test
 	public void testMatchEvent() {
 		final boolean [] wasAdded= { false };
 		final boolean [] wasRemoved= { false };
-	
+
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		result.addListener(new ISearchResultListener() {
 			@Override
 			public void searchResultChanged(SearchResultEvent e) {
@@ -190,37 +190,37 @@ public class TestSearchResult {
 				}
 			}
 		});
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		result.addMatch(match1);
 		assertTrue(wasAdded[0]);
 		wasAdded[0]= false;
 		result.addMatch(match1);
 		assertFalse(wasAdded[0]);
-		
+
 		Match match2= new Match(object, 0, 0);
 		result.addMatch(match2);
 		assertTrue(wasAdded[0]);
 		wasAdded[0]= false;
-		
+
 		result.removeMatch(match2);
 		assertTrue(wasRemoved[0]);
 		wasRemoved[0]= false;
-		
+
 		result.removeMatch(match2);
 		assertFalse(wasRemoved[0]);
 	}
-	
+
 	@Test
 	public void testBatchedMatchEvent() {
 		final boolean [] wasAdded= { false };
 		final boolean [] wasRemoved= { false };
-	
+
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
-		
+
 		result.addListener(new ISearchResultListener() {
 			@Override
 			public void searchResultChanged(SearchResultEvent e) {
@@ -234,25 +234,25 @@ public class TestSearchResult {
 				}
 			}
 		});
-		
+
 		String object= "object"; //$NON-NLS-1$
-		
+
 		Match match1= new Match(object, 0, 0);
 		result.addMatches(new Match[] { match1 });
 		assertTrue(wasAdded[0]);
 		wasAdded[0]= false;
 		result.addMatches(new Match[] { match1 });
 		assertFalse(wasAdded[0]);
-		
+
 		Match match2= new Match(object, 0, 0);
 		result.addMatches(new Match[] { match2 });
 		assertTrue(wasAdded[0]);
 		wasAdded[0]= false;
-		
+
 		result.removeMatches(new Match[] { match2 });
 		assertTrue(wasRemoved[0]);
 		wasRemoved[0]= false;
-		
+
 		result.removeMatches(new Match[] { match2 });
 		assertFalse(wasRemoved[0]);
 	}

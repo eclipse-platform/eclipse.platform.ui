@@ -17,14 +17,14 @@ import org.eclipse.core.runtime.Status;
 /**
  */
 public class LongQuery extends NullQuery {
-	
+
 	private boolean fIsRunning= false;
-	
+
 	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
-	
+
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		fIsRunning= true;
@@ -38,7 +38,7 @@ public class LongQuery extends NullQuery {
 		fIsRunning= false;
 		return Status.OK_STATUS;
 	}
-	
+
 	public boolean isRunning() {
 		return fIsRunning;
 	}

@@ -36,7 +36,7 @@ import junit.framework.TestCase;
  */
 public class LineConversionTest extends TestCase {
 	private IFile fFile;
-	
+
 	private static final String LINE_TWO= "This is the second line\n";
 	private static final String LINE_ONE= "This is the first line\n";
 	private static final String LINE_THREE= "This is the third line";
@@ -50,7 +50,7 @@ public class LineConversionTest extends TestCase {
 		fFile.create(new ByteArrayInputStream(getFileContents().getBytes()), true, null);
 		super.setUp();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		SearchPlugin.getActivePage().closeAllEditors(false);
@@ -61,12 +61,12 @@ public class LineConversionTest extends TestCase {
 	private String getFileContents() {
 		return LINE_ONE+LINE_TWO+LINE_THREE;
 	}
-	
+
 	public void testConvertToCharacter() throws Exception {
 		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
-		
+
 		Position p1= new Position(2, 1);
 		Position p2= PositionTracker.convertToCharacterPosition(p1, doc);
 		//assertEquals(LINE_THREE, doc.get(p2.getOffset(), p2.getLength()));
@@ -87,7 +87,7 @@ public class LineConversionTest extends TestCase {
 		assertEquals("", doc.get(p2.getOffset(), p2.getLength()));
 		assertEquals(p1, PositionTracker.convertToLinePosition(p2, doc));
 	}
-	
+
 	public void testBogusLines() throws Exception {
 		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);

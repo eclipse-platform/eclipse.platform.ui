@@ -39,13 +39,13 @@ import org.eclipse.search.ui.text.FileTextSearchScope;
 /**
  */
 public class LineBasedFileSearch extends FileSearchQuery  {
-	
-	
+
+
 	private static class LineBasedTextSearchResultCollector extends TextSearchRequestor {
-		
+
 		private final AbstractTextSearchResult fResult;
 		private IFile fLastFile;
-		private IDocument fLastDocument;	
+		private IDocument fLastDocument;
 		private Object fLock= new Object();
 
 		private LineBasedTextSearchResultCollector(AbstractTextSearchResult result) {
@@ -87,12 +87,12 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 				FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), LocationKind.IFILE, null);
 			}
 			fLastFile= file;
-			
+
 			FileBuffers.getTextFileBufferManager().connect(file.getFullPath(), LocationKind.IFILE, null);
 			fLastDocument= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE).getDocument();
 			return fLastDocument;
 		}
-		
+
 		@Override
 		public void endReporting() {
 			if (fLastFile != null) {
@@ -103,10 +103,10 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 			}
 		}
 	}
-	
+
 	private final FileTextSearchScope fScope;
-	
-	
+
+
 	public LineBasedFileSearch(FileTextSearchScope scope, boolean isRegEx, boolean isCaseSensitive, String searchString) {
 		super(searchString, isRegEx, isCaseSensitive, scope);
 		fScope= scope;
@@ -117,12 +117,12 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 	public IStatus run(IProgressMonitor monitor) {
 		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
-		
+
 		LineBasedTextSearchResultCollector collector= new LineBasedTextSearchResultCollector(textResult);
-		
+
 		Pattern searchPattern= getSearchPattern();
 		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
-	
+
 
 }
