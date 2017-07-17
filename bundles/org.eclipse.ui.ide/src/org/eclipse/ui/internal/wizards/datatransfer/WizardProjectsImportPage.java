@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -339,6 +340,8 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private boolean copyFiles = false;
 
+	private boolean closeProjectsAfterImport = false;
+
 	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
 
 	// Keep track of the directory that we browsed to last time
@@ -488,6 +491,13 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				projectsList.refresh(true);
 			}
 		});
+
+		Button closeProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
+		closeProjectsCheckbox.setText(DataTransferMessages.WizardProjectsImportPage_closeProjectsAfterImport);
+		closeProjectsCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
+		closeProjectsCheckbox.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> closeProjectsAfterImport = closeProjectsCheckbox.getSelection()));
 
 		hideConflictingProjects = new Button(optionsGroup, SWT.CHECK);
 		hideConflictingProjects
@@ -1360,13 +1370,16 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			SubMonitor subTask = subMonitor.split(1).setWorkRemaining(100);
 			subTask.setTaskName(DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask);
 			project.create(record.description, subTask.split(30));
-			project.open(IResource.BACKGROUND_REFRESH, subTask.split(70));
+			if (!closeProjectsAfterImport || copyFiles) {
+				project.open(IResource.BACKGROUND_REFRESH, subTask.split(70));
+			}
 			subTask.setTaskName(""); //$NON-NLS-1$
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
 
 		// import operation to import project files if copy checkbox is selected
+		IStatus result = Status.OK_STATUS;
 		if (copyFiles && importSource != null) {
 			List filesToImport = FileSystemStructureProvider.INSTANCE
 					.getChildren(importSource);
@@ -1387,10 +1400,17 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 2,
 						e.getCause().getLocalizedMessage(), e);
 			}
-			return operation.getStatus();
+
+		}
+		if (closeProjectsAfterImport) {
+			try {
+				project.close(subMonitor.split(1));
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
 		}
 
-		return Status.OK_STATUS;
+		return result;
 	}
 
 	/**
