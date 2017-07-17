@@ -114,10 +114,11 @@ public class ResourceHelper {
 		IFile file= folder.getFile(name);
 		if (contents == null)
 			contents= ""; //$NON-NLS-1$
-		InputStream inputStream= new ByteArrayInputStream(contents.getBytes(encoding));
-		file.create(inputStream, true, NULL_MONITOR);
-		file.setCharset(encoding, null);
-		inputStream.close();
+		try (InputStream inputStream= new ByteArrayInputStream(contents.getBytes(encoding))) {
+			file.create(inputStream, true, NULL_MONITOR);
+			file.setCharset(encoding, null);
+		}
+
 		return file;
 	}
 	
