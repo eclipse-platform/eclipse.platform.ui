@@ -20,6 +20,6 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.examples.undo</artifactId>
-  <version>3.2.400-SNAPSHOT</version>
+  <version>3.2.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
