@@ -1315,8 +1315,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			TemplateReaderWriter reader= new TemplateReaderWriter();
 			File file= new File(path);
 			if (file.exists()) {
-				InputStream input= new BufferedInputStream(new FileInputStream(file));
-				try {
+				try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
 					TemplatePersistenceData[] datas= reader.read(input, null);
 					for (int i= 0; i < datas.length; i++) {
 						TemplatePersistenceData data= datas[i];
@@ -1330,12 +1329,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 								selection.add(data);
 							}
 						}
-					}
-				} finally {
-					try {
-						input.close();
-					} catch (IOException x) {
-						// ignore
 					}
 				}
 			}
@@ -1391,21 +1384,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 
 		if (!file.exists() || confirmOverwrite(file)) {
-			OutputStream output= null;
-			try {
-				output= new BufferedOutputStream(new FileOutputStream(file));
+			try (OutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
 				TemplateReaderWriter writer= new TemplateReaderWriter();
 				writer.save(templates, output);
 			} catch (IOException e) {
 				openWriteErrorDialog(e);
-			} finally {
-				if (output != null) {
-					try {
-						output.close();
-					} catch (IOException e) {
-						// ignore
-					}
-				}
 			}
 		}
 	}
