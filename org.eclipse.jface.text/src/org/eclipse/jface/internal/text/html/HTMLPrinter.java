@@ -87,7 +87,7 @@ public class HTMLPrinter {
 		if (current == -1)
 			return text;
 
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		while (current > -1) {
 			buffer.append(text.substring(previous, current));
 			buffer.append(s);
@@ -141,7 +141,7 @@ public class HTMLPrinter {
 
 	public static String read(Reader rd) {
 
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		char[] readBuffer= new char[2048];
 
 		try {
@@ -157,6 +157,17 @@ public class HTMLPrinter {
 		return null;
 	}
 
+	/**
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 *
+	 * @param buffer the output StringBuilder
+	 * @param position offset where the prolog is placed
+	 * @param fgRGB Foreground-Color
+	 * @param bgRGB Background-Color
+	 * @param styleSheet Stylesheet
+	 */
+	@Deprecated
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
 		if (fgRGB == null)
 			fgRGB= FG_COLOR_RGB;
@@ -171,9 +182,60 @@ public class HTMLPrinter {
 
 		appendColors(pageProlog, fgRGB, bgRGB);
 
+		buffer.insert(position, pageProlog.toString());
+	}
+
+	/**
+	 *
+	 * @param buffer the output StringBuilder
+	 * @param position offset where the prolog is placed
+	 * @param fgRGB Foreground-Color
+	 * @param bgRGB Background-Color
+	 * @param styleSheet Stylesheet
+	 */
+	public static void insertPageProlog(StringBuilder buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
+		if (fgRGB == null)
+			fgRGB= FG_COLOR_RGB;
+		if (bgRGB == null)
+			bgRGB= BG_COLOR_RGB;
+
+		StringBuilder pageProlog= new StringBuilder(300);
+
+		pageProlog.append("<html>"); //$NON-NLS-1$
+
+		appendStyleSheet(pageProlog, styleSheet, fgRGB, bgRGB);
+
+		appendColors(pageProlog, fgRGB, bgRGB);
+
 		buffer.insert(position,  pageProlog.toString());
 	}
 
+	/**
+	 *
+	 *
+	 * @param pageProlog The Pageprolog where the color has to be set
+	 * @param fgRGB Foreground-Color
+	 * @param bgRGB Background-Color
+	 *
+	 */
+	private static void appendColors(StringBuilder pageProlog, RGB fgRGB, RGB bgRGB) {
+		pageProlog.append("<body text=\""); //$NON-NLS-1$
+		appendColor(pageProlog, fgRGB);
+		pageProlog.append("\" bgcolor=\""); //$NON-NLS-1$
+		appendColor(pageProlog, bgRGB);
+		pageProlog.append("\">"); //$NON-NLS-1$
+	}
+
+	/**
+	 *
+	 *
+	 * @param pageProlog The Pageprolog where the color has to be set
+	 * @param fgRGB Foreground-Color
+	 * @param bgRGB Background-Color
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	private static void appendColors(StringBuffer pageProlog, RGB fgRGB, RGB bgRGB) {
 		pageProlog.append("<body text=\""); //$NON-NLS-1$
 		appendColor(pageProlog, fgRGB);
@@ -182,6 +244,29 @@ public class HTMLPrinter {
 		pageProlog.append("\">"); //$NON-NLS-1$
 	}
 
+	/**
+	 *
+	 *
+	 * @param buffer The Output buffer
+	 * @param rgb RGB-Value
+	 *
+	 */
+	private static void appendColor(StringBuilder buffer, RGB rgb) {
+		buffer.append('#');
+		appendAsHexString(buffer, rgb.red);
+		appendAsHexString(buffer, rgb.green);
+		appendAsHexString(buffer, rgb.blue);
+	}
+
+	/**
+	 *
+	 *
+	 * @param buffer The Output buffer
+	 * @param rgb RGB-Value
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	private static void appendColor(StringBuffer buffer, RGB rgb) {
 		buffer.append('#');
 		appendAsHexString(buffer, rgb.red);
@@ -189,6 +274,27 @@ public class HTMLPrinter {
 		appendAsHexString(buffer, rgb.blue);
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param intValue the intValue will be converted to hex and appended
+	 *
+	 */
+	private static void appendAsHexString(StringBuilder buffer, int intValue) {
+		String hexValue= Integer.toHexString(intValue);
+		if (hexValue.length() == 1)
+			buffer.append('0');
+		buffer.append(hexValue);
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param intValue the intValue will be converted to hex and appended
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	private static void appendAsHexString(StringBuffer buffer, int intValue) {
 		String hexValue= Integer.toHexString(intValue);
 		if (hexValue.length() == 1)
@@ -196,6 +302,49 @@ public class HTMLPrinter {
 		buffer.append(hexValue);
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param styles array with styles to be appended
+	 *
+	 */
+	public static void insertStyles(StringBuilder buffer, String[] styles) {
+		if (styles == null || styles.length == 0)
+			return;
+
+		StringBuilder styleBuf= new StringBuilder(10 * styles.length);
+		for (String style : styles) {
+			styleBuf.append(" style=\""); //$NON-NLS-1$
+			styleBuf.append(style);
+			styleBuf.append('"');
+		}
+
+		// Find insertion index
+		// a) within existing body tag with trailing space
+		int index= buffer.indexOf("<body "); //$NON-NLS-1$
+		if (index != -1) {
+			buffer.insert(index+5, styleBuf);
+			return;
+		}
+
+		// b) within existing body tag without attributes
+		index= buffer.indexOf("<body>"); //$NON-NLS-1$
+		if (index != -1) {
+			buffer.insert(index+5, ' ');
+			buffer.insert(index+6, styleBuf);
+			return;
+		}
+	}
+
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param styles array with styles to be appended
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
 		if (styles == null || styles.length == 0)
 			return;
@@ -224,15 +373,23 @@ public class HTMLPrinter {
 		}
 	}
 
-	private static void appendStyleSheet(StringBuffer buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param styleSheet the stylesheet
+	 * @param fgRGB Foreground-Color
+	 * @param bgRGB Background-Color
+	 *
+	 */
+	private static void appendStyleSheet(StringBuilder buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
 		if (styleSheet == null)
 			return;
 
 		// workaround for https://bugs.eclipse.org/318243
-		StringBuffer fg= new StringBuffer();
+		StringBuilder fg= new StringBuilder();
 		appendColor(fg, fgRGB);
 		styleSheet= styleSheet.replaceAll("InfoText", fg.toString()); //$NON-NLS-1$
-		StringBuffer bg= new StringBuffer();
+		StringBuilder bg= new StringBuilder();
 		appendColor(bg, bgRGB);
 		styleSheet= styleSheet.replaceAll("InfoBackground", bg.toString()); //$NON-NLS-1$
 
@@ -241,6 +398,60 @@ public class HTMLPrinter {
 		buffer.append("</style></head>"); //$NON-NLS-1$
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param styleSheet the stylesheet
+	 * @param fgRGB Foreground-Color
+	 * @param bgRGB Background-Color
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
+	private static void appendStyleSheet(StringBuffer buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
+		if (styleSheet == null)
+			return;
+
+		// workaround for https://bugs.eclipse.org/318243
+		StringBuffer fg= new StringBuffer();
+		appendColor(fg, fgRGB);
+		styleSheet= styleSheet.replaceAll("InfoText", fg.toString()); //$NON-NLS-1$
+		StringBuilder bg= new StringBuilder();
+		appendColor(bg, bgRGB);
+		styleSheet= styleSheet.replaceAll("InfoBackground", bg.toString()); //$NON-NLS-1$
+
+		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
+		buffer.append(styleSheet);
+		buffer.append("</style></head>"); //$NON-NLS-1$
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param styleSheetURL the URL to the Stylesheet
+	 *
+	 */
+	private static void appendStyleSheetURL(StringBuilder buffer, URL styleSheetURL) {
+		if (styleSheetURL == null)
+			return;
+
+		buffer.append("<head>"); //$NON-NLS-1$
+
+		buffer.append("<LINK REL=\"stylesheet\" HREF= \""); //$NON-NLS-1$
+		buffer.append(styleSheetURL);
+		buffer.append("\" CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
+
+		buffer.append("</head>"); //$NON-NLS-1$
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param styleSheetURL the URL to the Stylesheet
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	private static void appendStyleSheetURL(StringBuffer buffer, URL styleSheetURL) {
 		if (styleSheetURL == null)
 			return;
@@ -254,6 +465,28 @@ public class HTMLPrinter {
 		buffer.append("</head>"); //$NON-NLS-1$
 	}
 
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param position the offset
+	 *
+	 */
+	public static void insertPageProlog(StringBuilder buffer, int position) {
+		StringBuilder pageProlog= new StringBuilder(60);
+		pageProlog.append("<html>"); //$NON-NLS-1$
+		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
+		buffer.insert(position,  pageProlog.toString());
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param position the offset
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void insertPageProlog(StringBuffer buffer, int position) {
 		StringBuffer pageProlog= new StringBuffer(60);
 		pageProlog.append("<html>"); //$NON-NLS-1$
@@ -261,6 +494,15 @@ public class HTMLPrinter {
 		buffer.insert(position,  pageProlog.toString());
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param position the offset
+	 * @param styleSheetURL URL to the Stylesheet
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL) {
 		StringBuffer pageProlog= new StringBuffer(300);
 		pageProlog.append("<html>"); //$NON-NLS-1$
@@ -269,26 +511,146 @@ public class HTMLPrinter {
 		buffer.insert(position,  pageProlog.toString());
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param position the offset
+	 * @param styleSheetURL URL to the Stylesheet
+	 *
+	 */
+	public static void insertPageProlog(StringBuilder buffer, int position, URL styleSheetURL) {
+		StringBuilder pageProlog= new StringBuilder(300);
+		pageProlog.append("<html>"); //$NON-NLS-1$
+		appendStyleSheetURL(pageProlog, styleSheetURL);
+		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
+		buffer.insert(position,  pageProlog.toString());
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param position the offset
+	 * @param styleSheet Stylesheet
+	 *
+	 */
+	public static void insertPageProlog(StringBuilder buffer, int position, String styleSheet) {
+		insertPageProlog(buffer, position, null, null, styleSheet);
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param position the offset
+	 * @param styleSheet Stylesheet
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void insertPageProlog(StringBuffer buffer, int position, String styleSheet) {
 		insertPageProlog(buffer, position, null, null, styleSheet);
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 *
+	 */
+	public static void addPageProlog(StringBuilder buffer) {
+		insertPageProlog(buffer, buffer.length());
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void addPageProlog(StringBuffer buffer) {
 		insertPageProlog(buffer, buffer.length());
 	}
 
+	public static void addPageEpilog(StringBuilder buffer) {
+		buffer.append("</body></html>"); //$NON-NLS-1$
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void addPageEpilog(StringBuffer buffer) {
 		buffer.append("</body></html>"); //$NON-NLS-1$
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 *
+	 */
+	public static void startBulletList(StringBuilder buffer) {
+		buffer.append("<ul>"); //$NON-NLS-1$
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void startBulletList(StringBuffer buffer) {
 		buffer.append("<ul>"); //$NON-NLS-1$
 	}
 
+	/**
+	 * ends the bulletpointlist
+	 *
+	 * @param buffer the output buffer
+	 *
+	 */
+	public static void endBulletList(StringBuilder buffer) {
+		buffer.append("</ul>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * ends the bulletpointlist
+	 *
+	 * @param buffer the output buffer
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void endBulletList(StringBuffer buffer) {
 		buffer.append("</ul>"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Adds bulletpoint
+	 *
+	 * @param buffer the output buffer
+	 * @param bullet the bulletpoint
+	 *
+	 */
+	public static void addBullet(StringBuilder buffer, String bullet) {
+		if (bullet != null) {
+			buffer.append("<li>"); //$NON-NLS-1$
+			buffer.append(bullet);
+			buffer.append("</li>"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Adds bulletpoint
+	 *
+	 * @param buffer the output buffer
+	 * @param bullet the bulletpoint
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void addBullet(StringBuffer buffer, String bullet) {
 		if (bullet != null) {
 			buffer.append("<li>"); //$NON-NLS-1$
@@ -297,6 +659,32 @@ public class HTMLPrinter {
 		}
 	}
 
+	/**
+	 *
+	 * Adds h5 headline
+	 *
+	 * @param buffer the output buffer
+	 * @param header of h5 headline
+	 *
+	 */
+	public static void addSmallHeader(StringBuilder buffer, String header) {
+		if (header != null) {
+			buffer.append("<h5>"); //$NON-NLS-1$
+			buffer.append(header);
+			buffer.append("</h5>"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 *
+	 * Adds h5 headline
+	 *
+	 * @param buffer the output buffer
+	 * @param header of h5 headline
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void addSmallHeader(StringBuffer buffer, String header) {
 		if (header != null) {
 			buffer.append("<h5>"); //$NON-NLS-1$
@@ -305,6 +693,27 @@ public class HTMLPrinter {
 		}
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param paragraph the content of the paragraph
+	 *
+	 */
+	public static void addParagraph(StringBuilder buffer, String paragraph) {
+		if (paragraph != null) {
+			buffer.append("<p>"); //$NON-NLS-1$
+			buffer.append(paragraph);
+		}
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param paragraph the content of the paragraph
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void addParagraph(StringBuffer buffer, String paragraph) {
 		if (paragraph != null) {
 			buffer.append("<p>"); //$NON-NLS-1$
@@ -319,13 +728,38 @@ public class HTMLPrinter {
 	 * it doesn't starts a new paragraph when rendered with a {@link HTML2TextReader}
 	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
 	 *
-	 * @param buffer the output buffer
+	 * @param buffer the output StringBuilder
 	 * @param preFormatted the string that should be rendered with whitespace preserved
 	 *
 	 * @see #convertToHTMLContent(String)
 	 * @see #convertToHTMLContentWithWhitespace(String)
 	 * @since 3.7
 	 */
+	public static void addPreFormatted(StringBuilder buffer, String preFormatted) {
+		if (preFormatted != null) {
+			buffer.append("<pre>"); //$NON-NLS-1$
+			buffer.append(preFormatted);
+			buffer.append("</pre>"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Appends a string and keeps its whitespace and newlines.
+	 * <p>
+	 * <b>Warning:</b> This starts a new paragraph when rendered in a browser, but
+	 * it doesn't starts a new paragraph when rendered with a {@link HTML2TextReader}
+	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
+	 *
+	 * @param buffer the output buffer
+	 * @param preFormatted the string that should be rendered with whitespace preserved
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 *
+	 * @see #convertToHTMLContent(String)
+	 * @see #convertToHTMLContentWithWhitespace(String)
+	 * @since 3.7
+	 */
+	@Deprecated
 	public static void addPreFormatted(StringBuffer buffer, String preFormatted) {
 		if (preFormatted != null) {
 			buffer.append("<pre>"); //$NON-NLS-1$
@@ -334,6 +768,25 @@ public class HTMLPrinter {
 		}
 	}
 
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param paragraphReader The content of the Read will be added to output buffer
+	 *
+	 */
+	public static void addParagraph(StringBuilder buffer, Reader paragraphReader) {
+		if (paragraphReader != null)
+			addParagraph(buffer, read(paragraphReader));
+	}
+
+	/**
+	 *
+	 * @param buffer the output buffer
+	 * @param paragraphReader The content of the Read will be added to output buffer
+	 *
+	 * @deprecated migrate to new StringBuilder API
+	 */
+	@Deprecated
 	public static void addParagraph(StringBuffer buffer, Reader paragraphReader) {
 		if (paragraphReader != null)
 			addParagraph(buffer, read(paragraphReader));

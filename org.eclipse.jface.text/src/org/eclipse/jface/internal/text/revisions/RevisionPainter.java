@@ -376,7 +376,7 @@ public final class RevisionPainter {
 	        				// there is already a header
 	        				return html;
 
-	        			StringBuffer info= new StringBuffer(512 + html.length());
+	        			StringBuilder info= new StringBuilder(512 + html.length());
 	        			HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
 	        			info.append(html);
 	        			HTMLPrinter.addPageEpilog(info);

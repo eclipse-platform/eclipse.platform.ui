@@ -306,7 +306,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		else
 			styles= new String[] { "overflow:scroll;" }; //$NON-NLS-1$
 
-		StringBuffer buffer= new StringBuffer(content);
+		StringBuilder buffer= new StringBuilder(content);
 		HTMLPrinter.insertStyles(buffer, styles);
 		content= buffer.toString();
 
