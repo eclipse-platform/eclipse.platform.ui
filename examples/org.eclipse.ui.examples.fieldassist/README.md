@@ -1,35 +1,22 @@
-<!doctype html public "-//w3c//dtd html 4.0//en">
-<html>
-<head>
-   <meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2013. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <link rel="stylesheet" href="../../../book.css" charset="ISO-8859-1" type="text/css">
-   <title>Workbench - Field Assist Example</title>
-</head>
-<body>
+# Example - Field Assist
 
-<h2>
-<b>Example - Field Assist</b></h2>
-
-<h3>
-Introduction</h3>
+##### Introduction
 The Field Assist example shows how to use the support provided in <code>org.eclipse.jface.fieldassist</code>
 to provide task assistance in text fields.  An example dialog shows how to set up field decorations
 to indicate required fields, fields with errors and warnings, and fields that supply content assist or quick
 fix.  The 
 example also includes a preference page that 
 allows you to configure the decorations and the content assist support.
-<h3>
-Running the example</h3>
+
+#### Running the example
 When the plug-in is installed, you should see a FieldAssist action
 on the action bar.  Choose the menu item "Open Field Assist Dialog..."
 This will launch the field assist dialog.  The dialog can be configured
 using the example preferences.  
-<h4>
-Setting Field Assist Preferences</h4>
-<p>
+
+#### Setting Field Assist Preferences
 Two preference pages are provided for setting up the way the dialog
-behaves.  The <b>Field Assist Example Preferences</b> page allows you
+behaves.  The **Field Assist Example Preferences** page allows you
 to configure how the dialog annotates fields with errors and warnings,
 required fields, and content assist.  A combination of decorations 
 can be used to annotate the fields.  This preference
@@ -37,9 +24,8 @@ page is intended to show what is possible when configuring decorations.
 It is geared more toward the programmer trying out field assist, and
 is not intended to be an example of a good preference page for letting
 end users control the annotations.
-</p>
-<p>The <b>Content Assist
-Preferences</b> page allows you to configure how the content assist is 
+
+The **Content Assist Preferences** page allows you to configure how the content assist is 
 installed on the dialog text field.  Most of the options provided in the
 field assist API (ContentProposalAdapter) are configurable on this page.
 Note that it is possible to configure the content assist for an undesirable
@@ -51,57 +37,50 @@ to allow the field assist programmer to try all possible combinations.
 It is not expected that any of these preferences would ever be exposed to
 an end user, but rather that the developer chooses the best combination of
 these values to provide a certain style of content assist.
-</p>
-<h4>Using the dialog</h4>
-<p>
+
+#### Using the dialog
+
 The example dialog shows several different ways to configure
 decorations and content proposal behavior in the first
 dialog group (Security group):
-<ul>
-<li> The <b>User name</b> field is configured as a required field with content
+- The **User name** field is configured as a required field with content
 assist.  This field is considered in error when a non-alphabetic character
 is typed in the field.  A quick fix menu is installed on the error decoration
 that allows the user to strip non-alphabetic characters.  The field is
 considered in a warning mode when the name "bob"
 is typed in the field.  This field also installs a default select (double-click) listener on
-the decoration to demonstrate the decoration listener interface.</li>
-<li>The <b>Combo user name</b> field is configured similarly, but uses a combo box 
+the decoration to demonstrate the decoration listener interface.
+- The **Combo user name** field is configured similarly, but uses a combo box 
 instead of a text field, and installs a selection (single click) listener on
-the decoration rather than a default select listener.</li>
-<li>The <b>Age</b> field demonstrates the use of a Spinner widget with decorations.
-It is configured as a required field, but does not provide an error state.  It
-is considered in a warning mode when an age greater than 65 is set.</li>
-<li>The <b>Password</b> field does not use any decorations or content assist.
+the decoration rather than a default select listener.
+- The **Age** field demonstrates the use of a Spinner widget with decorations.
+It is configured as a required field, but does not provide an error state. It
+is considered in a warning mode when an age greater than 65 is set.
+- The **Password** field does not use any decorations or content assist.
 It is merely provided to demonstrate that non-decorated fields can be easily aligned
-with decorated fields.</li>
-</ul>
-</p>
-<p>
+with decorated fields.
+
+
+
 The second dialog group shows how to use the AutoCompleteField to
 get automatic field completion without using a content assist key or
 decorator.
-</p>
-<h4>Example source code</h4>
-<p>
+
+#### Example source code
 The example dialog is not very complex, but is intended to demonstrate how to
 program field assist.  Some notes about the source code follow:
-<ul>
-<li>When using ControlDecoration, the layout code must ensure that there is
+- When using ControlDecoration, the layout code must ensure that there is
 enough margin space around the decoration to render the decoration.
-<li>The example plug-in registers standard field decorators for indicating
+- The example plug-in registers standard field decorators for indicating
 the availability of content assist, marking a field as required, or marking
 a field that has an error with quick fix or warning.  In cases where a standard decorator
 description is used in all fields, the actual decorations from the registry are
 used.  In cases where the field provides a unique description of an error or warning, 
-a unique decoration containing the text is managed by the field. </li>
-<li>SmartField and its subclasses are used to provide field-specific 
+a unique decoration containing the text is managed by the field.
+- SmartField and its subclasses are used to provide field-specific 
 validation, error and warning messages, content retrieval, and optional quick fix for
 the different fields in the dialog.  We expect that applications provide
 similar frameworks (such as data binding) to achieve this goal.  SmartField
 is intended to show a simple technique for validating different fields inside
 a dialog.  It is not considered a robust example of a semantic field definition
-framework.</li>
-</ul>
-</p>
-</body>
-</html>
+framework.
