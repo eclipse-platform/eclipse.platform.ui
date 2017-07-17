@@ -44,8 +44,8 @@ class ShowSearchHistoryDialogAction extends Action {
 		ISearchQuery[] queries= NewSearchUI.getQueries();
 
 		ArrayList<ISearchResult> input= new ArrayList<>();
-		for (int j= 0; j < queries.length; j++) {
-			ISearchResult search= queries[j].getSearchResult();
+		for (ISearchQuery query : queries) {
+			ISearchResult search= query.getSearchResult();
 			input.add(search);
 		}
 

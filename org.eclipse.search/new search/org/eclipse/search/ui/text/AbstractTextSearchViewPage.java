@@ -13,7 +13,6 @@ package org.eclipse.search.ui.text;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -201,8 +200,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		public void selectionChanged(SelectionChangedEvent event) {
 			// forward to my listeners
 			SelectionChangedEvent wrappedEvent= new SelectionChangedEvent(this, event.getSelection());
-			for (Iterator<ISelectionChangedListener> listeners= fListeners.iterator(); listeners.hasNext();) {
-				ISelectionChangedListener listener= listeners.next();
+			for (ISelectionChangedListener listener : fListeners) {
 				listener.selectionChanged(wrappedEvent);
 			}
 		}
@@ -855,8 +853,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		IMenuManager menu= bars.getMenuManager();
 
 		if (filterActions != null) {
-			for (int i= 0; i < filterActions.length; i++) {
-				menu.remove(filterActions[i].getId());
+			for (IAction filterAction : filterActions) {
+				menu.remove(filterAction.getId());
 			}
 		}
 		menu.remove(MatchFilterSelectionAction.ACTION_ID);
@@ -892,8 +890,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void updateFilterActions(IAction[] filterActions) {
 		if (filterActions != null) {
-			for (int i= 0; i < filterActions.length; i++) {
-				IAction curr=  filterActions[i];
+			for (IAction curr : filterActions) {
 				if (curr instanceof IUpdate) {
 					((IUpdate) curr).update();
 				}
@@ -1238,8 +1235,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @since 3.4
 	 */
 	protected void evaluateChangedElements(Match[] matches, Set<Object> changedElements) {
-		for (int i = 0; i < matches.length; i++) {
-			changedElements.add(matches[i].getElement());
+		for (Match match : matches) {
+			changedElements.add(match.getElement());
 		}
 	}
 
@@ -1369,21 +1366,21 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void collectAllMatches(HashSet<Match> set, Object[] elements) {
-		for (int j = 0; j < elements.length; j++) {
-			Match[] matches = getDisplayedMatches(elements[j]);
-			for (int i = 0; i < matches.length; i++) {
-				set.add(matches[i]);
+		for (Object element : elements) {
+			Match[] matches = getDisplayedMatches(element);
+			for (Match match : matches) {
+				set.add(match);
 			}
 		}
 	}
 
 	private void collectAllMatchesBelow(AbstractTextSearchResult result, Set<Match> set, ITreeContentProvider cp, Object[] elements) {
-		for (int j = 0; j < elements.length; j++) {
-			Match[] matches = getDisplayedMatches(elements[j]);
-			for (int i = 0; i < matches.length; i++) {
-				set.add(matches[i]);
+		for (Object element : elements) {
+			Match[] matches = getDisplayedMatches(element);
+			for (Match match : matches) {
+				set.add(match);
 			}
-			Object[] children = cp.getChildren(elements[j]);
+			Object[] children = cp.getChildren(element);
 			collectAllMatchesBelow(result, set, cp, children);
 		}
 	}

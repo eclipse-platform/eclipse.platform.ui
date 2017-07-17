@@ -143,8 +143,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 			shell= shell.getParent();
 		}
 		Shell shells[]= display.getShells();
-		for (int i= 0; i < shells.length; i++) {
-			Object data= shells[i].getData();
+		for (Shell shell2 : shells) {
+			Object data= shell2.getData();
 			if (data instanceof IWorkbenchWindow) {
 				windowRef.window= (IWorkbenchWindow)data;
 				return;
@@ -282,8 +282,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	private List<SearchPageDescriptor> createSearchPageDescriptors(IConfigurationElement[] elements) {
 		List<SearchPageDescriptor> result= new ArrayList<>(5);
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		for (IConfigurationElement element : elements) {
 			if (SearchPageDescriptor.PAGE_TAG.equals(element.getName())) {
 				SearchPageDescriptor desc= new SearchPageDescriptor(element);
 				result.add(desc);
@@ -326,8 +325,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	private List<SorterDescriptor> createSorterDescriptors(IConfigurationElement[] elements) {
 		List<SorterDescriptor> result= new ArrayList<>(5);
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		for (IConfigurationElement element : elements) {
 			if (SorterDescriptor.SORTER_TAG.equals(element.getName()))
 				result.add(new SorterDescriptor(element));
 		}

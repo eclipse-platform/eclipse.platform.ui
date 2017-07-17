@@ -73,8 +73,7 @@ public class TextSearchQueryProviderRegistry {
 			@Override
 			public void run() throws Exception {
 				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
-				for (int i= 0; i < extensions.length; i++) {
-					IConfigurationElement curr= extensions[i];
+				for (IConfigurationElement curr : extensions) {
 					if (PROVIDER_NODE_NAME.equals(curr.getName()) && id.equals(curr.getAttribute(ATTRIB_ID))) {
 						res[0]= (TextSearchQueryProvider) curr.createExecutableExtension(ATTRIB_CLASS);
 						return;
@@ -95,8 +94,7 @@ public class TextSearchQueryProviderRegistry {
 		res.add(new String[] { SearchMessages.TextSearchQueryProviderRegistry_defaultProviderLabel, "" }); //$NON-NLS-1$
 
 		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
-		for (int i= 0; i < extensions.length; i++) {
-			IConfigurationElement engine= extensions[i];
+		for (IConfigurationElement engine : extensions) {
 			if (PROVIDER_NODE_NAME.equals(engine.getName())) {
 				res.add(new String[] { engine.getAttribute(ATTRIB_LABEL), engine.getAttribute(ATTRIB_ID) });
 			}

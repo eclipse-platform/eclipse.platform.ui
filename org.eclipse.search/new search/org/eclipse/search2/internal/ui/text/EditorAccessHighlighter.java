@@ -13,7 +13,6 @@ package org.eclipse.search2.internal.ui.text;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -51,19 +50,19 @@ public class EditorAccessHighlighter extends Highlighter {
 	@Override
 	public void addHighlights(Match[] matches) {
 		Map<IAnnotationModel, HashMap<Annotation, Position>> mapsByAnnotationModel= new HashMap<>();
-		for (int i= 0; i < matches.length; i++) {
-			int offset= matches[i].getOffset();
-			int length= matches[i].getLength();
+		for (Match match : matches) {
+			int offset= match.getOffset();
+			int length= match.getLength();
 			if (offset >= 0 && length >= 0) {
 				try {
-					Position position= createPosition(matches[i]);
+					Position position= createPosition(match);
 					if (position != null) {
-						Map<Annotation, Position> map= getMap(mapsByAnnotationModel, matches[i]);
+						Map<Annotation, Position> map= getMap(mapsByAnnotationModel, match);
 						if (map != null) {
-							Annotation annotation= matches[i].isFiltered()
+							Annotation annotation= match.isFiltered()
 							? new Annotation(SearchPlugin.FILTERED_SEARCH_ANNOTATION_TYPE, true, null)
 							: new Annotation(SearchPlugin.SEARCH_ANNOTATION_TYPE, true, null);
-							fMatchesToAnnotations.put(matches[i], annotation);
+							fMatchesToAnnotations.put(match, annotation);
 							map.put(annotation, position);
 						}
 					}
@@ -124,17 +123,16 @@ public class EditorAccessHighlighter extends Highlighter {
 	@Override
 	public void removeHighlights(Match[] matches) {
 		Map<IAnnotationModel, HashSet<Annotation>> setsByAnnotationModel= new HashMap<>();
-		for (int i= 0; i < matches.length; i++) {
-			Annotation annotation= fMatchesToAnnotations.remove(matches[i]);
+		for (Match match : matches) {
+			Annotation annotation= fMatchesToAnnotations.remove(match);
 			if (annotation != null) {
-				Set<Annotation> annotations= getSet(setsByAnnotationModel, matches[i]);
+				Set<Annotation> annotations= getSet(setsByAnnotationModel, match);
 				if (annotations != null)
 					annotations.add(annotation);
 			}
 		}
 
-		for (Iterator<IAnnotationModel> maps= setsByAnnotationModel.keySet().iterator(); maps.hasNext();) {
-			IAnnotationModel model= maps.next();
+		for (IAnnotationModel model : setsByAnnotationModel.keySet()) {
 			Set<Annotation> set= setsByAnnotationModel.get(model);
 			removeAnnotations(model, set);
 		}
@@ -146,8 +144,7 @@ public class EditorAccessHighlighter extends Highlighter {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
 			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
 		} else {
-			for (Iterator<Annotation> elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
-				Annotation element= elements.next();
+			for (Annotation element : annotationToPositionMap.keySet()) {
 				Position p= annotationToPositionMap.get(element);
 				model.addAnnotation(element, p);
 			}
@@ -167,8 +164,7 @@ public class EditorAccessHighlighter extends Highlighter {
 			Annotation[] annotationArray= new Annotation[annotations.size()];
 			ame.replaceAnnotations(annotations.toArray(annotationArray), Collections.emptyMap());
 		} else {
-			for (Iterator<Annotation> iter= annotations.iterator(); iter.hasNext();) {
-				Annotation element= iter.next();
+			for (Annotation element : annotations) {
 				model.removeAnnotation(element);
 			}
 		}
@@ -187,8 +183,7 @@ public class EditorAccessHighlighter extends Highlighter {
 			return;
 		IDocument document= null;
 		ITextFileBuffer textBuffer= (ITextFileBuffer) buffer;
-		for (Iterator<Match> matches = fMatchesToAnnotations.keySet().iterator(); matches.hasNext();) {
-			Match match = matches.next();
+		for (Match match : fMatchesToAnnotations.keySet()) {
 			document= fEditorAcess.getDocument(match);
 			if (document != null)
 				break;

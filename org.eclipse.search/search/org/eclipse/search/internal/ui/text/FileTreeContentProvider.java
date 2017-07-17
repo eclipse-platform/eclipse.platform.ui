@@ -78,14 +78,14 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 		if (result != null) {
 			Object[] elements= result.getElements();
-			for (int i= 0; i < elements.length; i++) {
+			for (Object element : elements) {
 				if (showLineMatches) {
-					Match[] matches= result.getMatches(elements[i]);
-					for (int j= 0; j < matches.length; j++) {
-						insert(((FileMatch) matches[j]).getLineElement(), false);
+					Match[] matches= result.getMatches(element);
+					for (Match match : matches) {
+						insert(((FileMatch) match).getLineElement(), false);
 					}
 				} else {
-					insert(elements[i], false);
+					insert(element, false);
 				}
 			}
 		}

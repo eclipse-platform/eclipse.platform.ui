@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -126,8 +125,7 @@ public class ReplaceRefactoring extends Refactoring {
 		private Match[] getMatches() {
 			if (fMatches == null) {
 				ArrayList<FileMatch> matches= new ArrayList<>();
-				for (int i= 0; i < fMatchGroups.length; i++) {
-					MatchGroup curr= fMatchGroups[i];
+				for (MatchGroup curr : fMatchGroups) {
 					if (curr.group.isEnabled()) {
 						FileMatch match= curr.match;
 						matches.add(match);
@@ -211,13 +209,13 @@ public class ReplaceRefactoring extends Refactoring {
 		fMatches.clear();
 
 		if (fSelection != null) {
-			for (int i= 0; i < fSelection.length; i++) {
-				collectMatches(fSelection[i]);
+			for (Object element : fSelection) {
+				collectMatches(element);
 			}
 		} else {
 			Object[] elements= fResult.getElements();
-			for (int i= 0; i < elements.length; i++) {
-				collectMatches(elements[i]);
+			for (Object element : elements) {
+				collectMatches(element);
 			}
 		}
 		if (!hasMatches()) {
@@ -230,8 +228,7 @@ public class ReplaceRefactoring extends Refactoring {
 		if (object instanceof LineElement) {
 			LineElement lineElement= (LineElement) object;
 			FileMatch[] matches= lineElement.getMatches(fResult);
-			for (int i= 0; i < matches.length; i++) {
-				FileMatch fileMatch= matches[i];
+			for (FileMatch fileMatch : matches) {
 				if (isMatchToBeIncluded(fileMatch)) {
 					getBucket(fileMatch.getFile()).add(fileMatch);
 				}
@@ -239,15 +236,15 @@ public class ReplaceRefactoring extends Refactoring {
 		} else if (object instanceof IContainer) {
 			IContainer container= (IContainer) object;
 			IResource[] members= container.members();
-			for (int i= 0; i < members.length; i++) {
-				collectMatches(members[i]);
+			for (IResource member : members) {
+				collectMatches(member);
 			}
 		} else if (object instanceof IFile) {
 			Match[] matches= fResult.getMatches(object);
 			if (matches.length > 0) {
 				Collection<FileMatch> bucket= null;
-				for (int i= 0; i < matches.length; i++) {
-					FileMatch fileMatch= (FileMatch) matches[i];
+				for (Match match : matches) {
+					FileMatch fileMatch= (FileMatch) match;
 					if (isMatchToBeIncluded(fileMatch)) {
 						if (bucket == null) {
 							bucket= getBucket((IFile)object);
@@ -265,8 +262,7 @@ public class ReplaceRefactoring extends Refactoring {
 
 	public int getNumberOfMatches() {
 		int count= 0;
-		for (Iterator<Set<FileMatch>> iterator= fMatches.values().iterator(); iterator.hasNext();) {
-			Set<FileMatch> bucket= iterator.next();
+		for (Set<FileMatch> bucket : fMatches.values()) {
 			count += bucket.size();
 		}
 		return count;
@@ -290,8 +286,8 @@ public class ReplaceRefactoring extends Refactoring {
 		if (uri == null)
 			return true;
 
-		for (Iterator<URI> iter= fAlreadyCollected.keySet().iterator(); iter.hasNext();) {
-			if (URIUtil.equals(iter.next(), uri)) {
+		for (URI uri2 : fAlreadyCollected.keySet()) {
+			if (URIUtil.equals(uri2, uri)) {
 				if (file.equals(fAlreadyCollected.get(uri)))
 					return true; // another FileMatch for an IFile which already had matches
 
@@ -358,8 +354,7 @@ public class ReplaceRefactoring extends Refactoring {
 		ArrayList<MatchGroup> matchGroups= new ArrayList<>();
 		boolean hasChanges= false;
 		try {
-			for (int i= 0; i < allFiles.length; i++) {
-				IFile file= allFiles[i];
+			for (IFile file : allFiles) {
 				Set<FileMatch> bucket= fMatches.get(file);
 				if (!bucket.isEmpty()) {
 					try {
@@ -390,8 +385,7 @@ public class ReplaceRefactoring extends Refactoring {
 
 	private void checkFilesToBeChanged(IFile[] filesToBeChanged, RefactoringStatus resultingStatus) throws CoreException {
 		ArrayList<IFile> readOnly= new ArrayList<>();
-		for (int i= 0; i < filesToBeChanged.length; i++) {
-			IFile file= filesToBeChanged[i];
+		for (IFile file : filesToBeChanged) {
 			if (file.isReadOnly())
 				readOnly.add(file);
 		}
@@ -425,8 +419,7 @@ public class ReplaceRefactoring extends Refactoring {
 			IDocument document= textFileBuffer.getDocument();
 			String lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
 
-			for (Iterator<FileMatch> iterator= matches.iterator(); iterator.hasNext();) {
-				FileMatch match= iterator.next();
+			for (FileMatch match : matches) {
 				int offset= match.getOffset();
 				int length= match.getLength();
 				Position currentPosition= tracker.getCurrentPosition(match);

@@ -321,8 +321,7 @@ public class InternalSearchUI {
 		int numberQueriesNotShown= 0;
 		SearchViewManager searchViewManager= getSearchViewManager();
 		ISearchQuery[] queries= searchManager.getQueries();
-		for (int i= 0; i < queries.length; i++) {
-			ISearchQuery query= queries[i];
+		for (ISearchQuery query : queries) {
 			if (!searchViewManager.isShown(query)) {
 				if (++numberQueriesNotShown >= historyLimit) {
 					removeQuery(query);
@@ -332,8 +331,7 @@ public class InternalSearchUI {
 	}
 
 	public void removeAllQueries() {
-		for (Iterator<ISearchQuery> queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
-			ISearchQuery query= queries.next();
+		for (ISearchQuery query : fSearchJobs.keySet()) {
 			cancelSearch(query);
 		}
 		fSearchJobs.clear();

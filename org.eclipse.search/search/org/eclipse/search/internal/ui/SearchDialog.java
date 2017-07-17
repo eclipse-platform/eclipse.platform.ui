@@ -107,8 +107,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			int x= 0;
 			int y= 0;
 			Control[] children= composite.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				Point size= children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			for (Control element : children) {
+				Point size= element.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 				x= Math.max(x, size.x);
 				y= Math.max(y, size.y);
 			}
@@ -128,8 +128,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			Rectangle rect= composite.getClientArea();
 
 			Control[] children= composite.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				children[i].setBounds(rect);
+			for (Control element : children) {
+				element.setBounds(rect);
 			}
 		}
 	}
@@ -204,16 +204,15 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					IWorkingSet workingSet= (IWorkingSet) curr;
 					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
 						IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
-						for (int i= 0; i < projects.length; i++) {
-							IProject proj= projects[i];
+						for (IProject proj : projects) {
 							if (proj.isOpen()) {
 								res.add(proj.getName());
 							}
 						}
 					} else {
 						IAdaptable[] elements= workingSet.getElements();
-						for (int i= 0; i < elements.length; i++) {
-							String name= evaluateEnclosingProject(elements[i]);
+						for (IAdaptable element : elements) {
+							String name= evaluateEnclosingProject(element);
 							if (name != null) {
 								res.add(name);
 							}
@@ -395,8 +394,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	private List<SearchPageDescriptor> filterByActivities(List<SearchPageDescriptor> input) {
 		ArrayList<SearchPageDescriptor> filteredList= new ArrayList<>(input.size());
-		for (Iterator<SearchPageDescriptor> descriptors= input.iterator(); descriptors.hasNext();) {
-			SearchPageDescriptor descriptor= descriptors.next();
+		for (SearchPageDescriptor descriptor : input) {
 			if (!WorkbenchActivityHelper.filterItem(descriptor))
 			    filteredList.add(descriptor);
 

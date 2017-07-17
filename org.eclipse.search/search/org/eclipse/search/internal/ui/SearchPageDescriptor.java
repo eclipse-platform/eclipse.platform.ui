@@ -233,9 +233,9 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 
 	static void setEnabled(Object[] enabledDescriptors) {
 		fgEnabledPageIds= new ArrayList<>(5);
-		for (int i= 0; i < enabledDescriptors.length; i++) {
-			if (enabledDescriptors[i] instanceof SearchPageDescriptor)
-				fgEnabledPageIds.add(((SearchPageDescriptor)enabledDescriptors[i]).getId());
+		for (Object enabledDescriptor : enabledDescriptors) {
+			if (enabledDescriptor instanceof SearchPageDescriptor)
+				fgEnabledPageIds.add(((SearchPageDescriptor)enabledDescriptor).getId());
 		}
 		storeEnabledPageIds();
 	}

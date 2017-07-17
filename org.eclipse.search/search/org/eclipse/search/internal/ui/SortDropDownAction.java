@@ -190,9 +190,9 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		if (memento == null)
 			return;
 		IMemento[] mementoElements= memento.getChildren(TAG_ELEMENT);
-		for (int i= 0; i < mementoElements.length; i++) {
-			String pageId= mementoElements[i].getString(TAG_PAGE_ID);
-			String sorterId= mementoElements[i].getString(TAG_SORTER_ID);
+		for (IMemento mementoElement : mementoElements) {
+			String pageId= mementoElement.getString(TAG_PAGE_ID);
+			String sorterId= mementoElement.getString(TAG_SORTER_ID);
 			SorterDescriptor sorterDesc= getSorter(sorterId);
 			if (sorterDesc != null)
 				map.put(pageId, sorterDesc);

@@ -15,7 +15,6 @@
 package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.ibm.icu.text.MessageFormat;
@@ -556,8 +555,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			int bestActivation= -1;
 			IMemento restorePageMemento= null;
 			IMemento[] children= fPageState.getChildren(MEMENTO_TYPE);
-			for (int i= 0; i < children.length; i++) {
-				IMemento pageMemento= children[i];
+			for (IMemento pageMemento : children) {
 				if (pageMemento.getString(MEMENTO_KEY_RESTORE) != null) {
 					Integer lastActivation= pageMemento.getInteger(MEMENTO_KEY_LAST_ACTIVATION);
 					if (lastActivation != null && lastActivation.intValue() > bestActivation) {
@@ -690,8 +688,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	@Override
 	public void saveState(IMemento memento) {
-		for (Iterator<Entry<ISearchResultPage, DummyPart>> iter= fPagesToParts.entrySet().iterator(); iter.hasNext();) {
-			Entry<ISearchResultPage, DummyPart> entry= iter.next();
+		for (Entry<ISearchResultPage, DummyPart> entry : fPagesToParts.entrySet()) {
 			ISearchResultPage page= entry.getKey();
 			DummyPart part= entry.getValue();
 
@@ -725,9 +722,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		IMemento memento= null;
 		if (fPageState != null) {
 			IMemento[] mementos= fPageState.getChildren(MEMENTO_TYPE);
-			for (int i= 0; i < mementos.length; i++) {
-				if (mementos[i].getID().equals(srPage.getID())) {
-					memento= mementos[i];
+			for (IMemento memento2 : mementos) {
+				if (memento2.getID().equals(srPage.getID())) {
+					memento= memento2;
 					break;
 				}
 			}

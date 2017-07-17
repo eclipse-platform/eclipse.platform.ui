@@ -43,8 +43,8 @@ public class SearchPageRegistry {
 		fExtensionToInstance= new HashMap<>();
 		fResultClassNameToExtension= new HashMap<>();
 		fExtensions= Platform.getExtensionRegistry().getConfigurationElementsFor(ID_EXTENSION_POINT);
-		for (int i= 0; i < fExtensions.length; i++) {
-			fResultClassNameToExtension.put(fExtensions[i].getAttribute(ATTRIB_SEARCH_RESULT_CLASS), fExtensions[i]);
+		for (IConfigurationElement fExtension : fExtensions) {
+			fResultClassNameToExtension.put(fExtension.getAttribute(ATTRIB_SEARCH_RESULT_CLASS), fExtension);
 		}
 	}
 
@@ -108,8 +108,7 @@ public class SearchPageRegistry {
 	}
 
 	private IConfigurationElement findConfigurationElement(String pageId) {
-		for (int i= 0; i < fExtensions.length; i++) {
-			IConfigurationElement curr= fExtensions[i];
+		for (IConfigurationElement curr : fExtensions) {
 			if (pageId.equals(curr.getAttribute(ATTRIB_ID))) {
 				return curr;
 			}
@@ -133,8 +132,8 @@ public class SearchPageRegistry {
 		}
 
 		Class<?>[] interfaces= resultClass.getInterfaces();
-		for (int i= 0; i < interfaces.length; i++) {
-			IConfigurationElement foundExtension= findConfigurationElement(interfaces[i]);
+		for (Class<?> interface1 : interfaces) {
+			IConfigurationElement foundExtension= findConfigurationElement(interface1);
 			if (foundExtension != null) {
 				fResultClassNameToExtension.put(className, configElement);
 				return foundExtension;

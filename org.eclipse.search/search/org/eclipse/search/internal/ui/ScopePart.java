@@ -126,8 +126,8 @@ public class ScopePart {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		if (lruWorkingSetNames != null) {
 			Set<IWorkingSet> existingWorkingSets= new HashSet<>(lruWorkingSetNames.length);
-			for (int i= 0; i < lruWorkingSetNames.length; i++) {
-				IWorkingSet workingSet= getWorkingSet(workingSetManager, lruWorkingSetNames[i]);
+			for (String lruWorkingSetName : lruWorkingSetNames) {
+				IWorkingSet workingSet= getWorkingSet(workingSetManager, lruWorkingSetName);
 				if (workingSet != null) {
 					existingWorkingSets.add(workingSet);
 				}
@@ -231,8 +231,8 @@ public class ScopePart {
 		setSelectedScope(ISearchPageContainer.WORKING_SET_SCOPE);
 		fWorkingSets= null;
 		Set<IWorkingSet> existingWorkingSets= new HashSet<>(workingSets.length);
-		for (int i= 0; i < workingSets.length; i++) {
-			String name= workingSets[i].getName();
+		for (IWorkingSet workingSet2 : workingSets) {
+			String name= workingSet2.getName();
 			IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
 			if (workingSet != null)
 				existingWorkingSets.add(workingSet);
@@ -417,8 +417,8 @@ public class ScopePart {
 		if (workingSets != null && workingSets.length > 0) {
 			Arrays.sort(workingSets, new WorkingSetComparator());
 			boolean firstFound= false;
-			for (int i= 0; i < workingSets.length; i++) {
-				String workingSetName= workingSets[i].getLabel();
+			for (IWorkingSet workingSet : workingSets) {
+				String workingSetName= workingSet.getLabel();
 				if (firstFound)
 					result= Messages.format(SearchMessages.ScopePart_workingSetConcatenation, new String[] { result, workingSetName });
 				else {

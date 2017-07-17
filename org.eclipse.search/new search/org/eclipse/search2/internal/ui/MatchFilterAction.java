@@ -67,8 +67,8 @@ public class MatchFilterAction extends Action implements IUpdate {
 		AbstractTextSearchResult input= fPage.getInput();
 		if (input != null) {
 			MatchFilter[] activeMatchFilters= input.getActiveMatchFilters();
-			for (int i= 0; i < activeMatchFilters.length; i++) {
-				if (fFilter.equals(activeMatchFilters[i])) {
+			for (MatchFilter activeMatchFilter : activeMatchFilters) {
+				if (fFilter.equals(activeMatchFilter)) {
 					return true;
 				}
 			}

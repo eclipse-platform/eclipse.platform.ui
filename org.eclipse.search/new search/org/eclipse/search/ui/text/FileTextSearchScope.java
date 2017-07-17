@@ -262,8 +262,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
 		ArrayList<IResource> res= new ArrayList<>();
-		for (int i= 0; i < elements.length; i++) {
-			IResource curr= elements[i];
+		for (IResource curr : elements) {
 			addToList(res, curr, includeDerived);
 		}
 		return res.toArray(new IResource[res.size()]);
@@ -271,14 +270,13 @@ public final class FileTextSearchScope extends TextSearchScope {
 
 	private static IResource[] convertToResources(IWorkingSet[] workingSets, boolean includeDerived) {
 		ArrayList<IResource> res= new ArrayList<>();
-		for (int i= 0; i < workingSets.length; i++) {
-			IWorkingSet workingSet= workingSets[i];
+		for (IWorkingSet workingSet : workingSets) {
 			if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
 				return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
 			}
 			IAdaptable[] elements= workingSet.getElements();
-			for (int k= 0; k < elements.length; k++) {
-				IResource curr= elements[k].getAdapter(IResource.class);
+			for (IAdaptable element : elements) {
+				IResource curr= element.getAdapter(IResource.class);
 				if (curr != null) {
 					addToList(res, curr, includeDerived);
 				}

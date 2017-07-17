@@ -349,8 +349,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 						return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
 					}
 					IAdaptable[] elements= workingSet.getElements();
-					for (int i= 0; i < elements.length; i++) {
-						IResource resource= elements[i].getAdapter(IResource.class);
+					for (IAdaptable element : elements) {
+						IResource resource= element.getAdapter(IResource.class);
 						if (resource != null && resource.isAccessible()) {
 							resources.add(resource);
 						}
@@ -390,8 +390,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 
 	private SearchPatternData findInPrevious(String pattern) {
-		for (Iterator<SearchPatternData> iter= fPreviousSearchPatterns.iterator(); iter.hasNext();) {
-			SearchPatternData element= iter.next();
+		for (SearchPatternData element : fPreviousSearchPatterns) {
 			if (pattern.equals(element.textPattern)) {
 				return element;
 			}

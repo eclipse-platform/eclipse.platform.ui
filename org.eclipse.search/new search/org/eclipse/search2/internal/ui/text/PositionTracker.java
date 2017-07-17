@@ -12,7 +12,6 @@ package org.eclipse.search2.internal.ui.text;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -86,10 +85,10 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			Match[] matches = evt.getMatches();
 			int kind = evt.getKind();
 			AbstractTextSearchResult result = (AbstractTextSearchResult) e.getSearchResult();
-			for (int i = 0; i < matches.length; i++) {
-				ITextFileBuffer fb= getTrackedFileBuffer(result, matches[i].getElement());
+			for (Match match : matches) {
+				ITextFileBuffer fb= getTrackedFileBuffer(result, match.getElement());
 				if (fb != null) {
-					updateMatch(matches[i], fb, kind, result);
+					updateMatch(match, fb, kind, result);
 				}
 			}
 		} else if (e instanceof RemoveAllEvent) {
@@ -109,8 +108,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 
 	private void untrackAll(AbstractTextSearchResult result) {
 		Set<Match> matchSet= new HashSet<>(fMatchesToPositions.keySet());
-		for (Iterator<Match> matches= matchSet.iterator(); matches.hasNext();) {
-			Match match= matches.next();
+		for (Match match : matchSet) {
 			AbstractTextSearchResult matchContainer= fMatchesToSearchResults.get(match);
 			if (result.equals(matchContainer)) {
 				ITextFileBuffer fb= getTrackedFileBuffer(result, match.getElement());
@@ -249,16 +247,16 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			return;
 
 		ISearchQuery[] queries= NewSearchUI.getQueries();
-		for (int i = 0; i < queries.length; i++) {
-			ISearchResult result = queries[i].getSearchResult();
+		for (ISearchQuery query : queries) {
+			ISearchResult result = query.getSearchResult();
 			if (result instanceof AbstractTextSearchResult) {
 				AbstractTextSearchResult textResult = (AbstractTextSearchResult) result;
 				IFileMatchAdapter adapter = textResult.getFileMatchAdapter();
 				if (adapter != null) {
 					Match[] matches = adapter.computeContainedMatches(textResult, file);
-					for (int j = 0; j < matches.length; j++) {
+					for (Match match : matches) {
 						trackCount[0]++;
-						trackPosition((AbstractTextSearchResult) result, (ITextFileBuffer) buffer, matches[j]);
+						trackPosition((AbstractTextSearchResult) result, (ITextFileBuffer) buffer, match);
 					}
 				}
 			}
@@ -271,8 +269,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		Set<Match> matches= fFileBuffersToMatches.get(buffer);
 		if (matches != null) {
 			Set<Match> matchSet= new HashSet<>(matches);
-			for (Iterator<Match> matchIterator= matchSet.iterator(); matchIterator.hasNext();) {
-				Match element= matchIterator.next();
+			for (Match element : matchSet) {
 				operation.run((ITextFileBuffer) buffer, element);
 			}
 		}

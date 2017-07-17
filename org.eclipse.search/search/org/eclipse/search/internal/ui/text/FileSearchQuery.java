@@ -259,8 +259,8 @@ public class FileSearchQuery implements ISearchQuery {
 		String[] fileNamePatterns= fScope.getFileNamePatterns();
 		if (fileNamePatterns == null)
 			return true;
-		for (int i= 0; i < fileNamePatterns.length; i++) {
-			if ("*".equals(fileNamePatterns[i])) { //$NON-NLS-1$
+		for (String fileNamePattern : fileNamePatterns) {
+			if ("*".equals(fileNamePattern)) { //$NON-NLS-1$
 				return true;
 			}
 		}

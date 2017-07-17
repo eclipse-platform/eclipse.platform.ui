@@ -47,9 +47,8 @@ public class FilesOfScopeCalculator implements IResourceProxyVisitor {
 		fFiles= new ArrayList<>();
 		try {
 			IResource[] roots= fScope.getRoots();
-			for (int i= 0; i < roots.length; i++) {
+			for (IResource resource : roots) {
 				try {
-					IResource resource= roots[i];
 					if (resource.isAccessible()) {
 						resource.accept(this, 0);
 					}

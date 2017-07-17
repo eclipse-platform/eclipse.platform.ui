@@ -64,8 +64,8 @@ public class LineElement {
 	public FileMatch[] getMatches(AbstractTextSearchResult result) {
 		ArrayList<FileMatch> res= new ArrayList<>();
 		Match[] matches= result.getMatches(fParent);
-		for (int i= 0; i < matches.length; i++) {
-			FileMatch curr= (FileMatch) matches[i];
+		for (Match match : matches) {
+			FileMatch curr= (FileMatch) match;
 			if (curr.getLineElement() == this) {
 				res.add(curr);
 			}
@@ -76,8 +76,8 @@ public class LineElement {
 	public int getNumberOfMatches(AbstractTextSearchResult result) {
 		int count= 0;
 		Match[] matches= result.getMatches(fParent);
-		for (int i= 0; i < matches.length; i++) {
-			FileMatch curr= (FileMatch) matches[i];
+		for (Match match : matches) {
+			FileMatch curr= (FileMatch) match;
 			if (curr.getLineElement() == this) {
 				count++;
 			}

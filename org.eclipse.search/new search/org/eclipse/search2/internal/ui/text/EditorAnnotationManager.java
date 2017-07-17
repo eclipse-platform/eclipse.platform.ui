@@ -155,8 +155,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		}
 
 		ArrayList<Match> matchesInEditor= null; // lazy initialization
-		for (int i= 0; i < matches.length; i++) {
-			Match curr= matches[i];
+		for (Match curr : matches) {
 			if (adapter.isShownInEditor(curr, fEditor)) {
 				if (matchesInEditor == null) {
 					matchesInEditor= new ArrayList<>();

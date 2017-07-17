@@ -117,10 +117,10 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
 		ISearchQuery[] searches= NewSearchUI.getQueries();
 		if (searches.length > 0) {
-			for (int i= 0; i < searches.length; i++) {
-				ISearchResult search= searches[i].getSearchResult();
-				ShowSearchFromHistoryAction action= new ShowSearchFromHistoryAction(search);
-				action.setChecked(search.equals(currentSearch));
+			for (ISearchQuery search : searches) {
+				ISearchResult searchResult= search.getSearchResult();
+				ShowSearchFromHistoryAction action= new ShowSearchFromHistoryAction(searchResult);
+				action.setChecked(searchResult.equals(currentSearch));
 				addActionToMenu(fMenu, action);
 			}
 			new MenuItem(fMenu, SWT.SEPARATOR);

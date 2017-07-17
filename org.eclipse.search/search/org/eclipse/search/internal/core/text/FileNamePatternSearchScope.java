@@ -156,8 +156,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
 		ArrayList<IResource> res= new ArrayList<>();
-		for (int i= 0; i < elements.length; i++) {
-			IResource curr= elements[i];
+		for (IResource curr : elements) {
 			addToList(res, curr, includeDerived);
 		}
 		return res.toArray(new IResource[res.size()]);

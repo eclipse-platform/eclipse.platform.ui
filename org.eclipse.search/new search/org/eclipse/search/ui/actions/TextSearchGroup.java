@@ -76,8 +76,7 @@ public class TextSearchGroup extends ActionGroup {
 	private void createActions(IEditorPart editor) {
 		fActions= new FindInRecentScopeActionDelegate[] {
 				new FindInWorkspaceActionDelegate(), new FindInProjectActionDelegate(), new FindInFileActionDelegate(), new FindInWorkingSetActionDelegate()};
-		for (int i= 0; i < fActions.length; i++) {
-			FindInRecentScopeActionDelegate action= fActions[i];
+		for (FindInRecentScopeActionDelegate action : fActions) {
 			action.setActiveEditor(action, editor);
 		}
 	}

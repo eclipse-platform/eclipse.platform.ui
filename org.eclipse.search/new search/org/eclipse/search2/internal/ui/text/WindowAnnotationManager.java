@@ -12,7 +12,6 @@ package org.eclipse.search2.internal.ui.text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ui.IEditorPart;
@@ -103,11 +102,11 @@ public class WindowAnnotationManager {
 
 	private void initEditors() {
 		IWorkbenchPage[] pages= fWindow.getPages();
-		for (int i = 0; i < pages.length; i++) {
-			IEditorReference[] editors= pages[i].getEditorReferences();
-			for (int j = 0; j < editors.length; j++) {
-				IEditorPart editor= editors[j].getEditor(false);
-				if (editor != null && pages[i].isPartVisible(editor)) {
+		for (IWorkbenchPage page : pages) {
+			IEditorReference[] editors= page.getEditorReferences();
+			for (IEditorReference editor2 : editors) {
+				IEditorPart editor= editor2.getEditor(false);
+				if (editor != null && page.isPartVisible(editor)) {
 					startHighlighting(editor);
 				}
 			}
@@ -131,8 +130,7 @@ public class WindowAnnotationManager {
 
 	void dispose() {
 		fWindow.getPartService().removePartListener(fPartListener);
-		for (Iterator<EditorAnnotationManager> mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
-			EditorAnnotationManager mgr = mgrs.next();
+		for (EditorAnnotationManager mgr : fAnnotationManagers.values()) {
 			mgr.dispose();
 		}
 		fAnnotationManagers= null;
@@ -142,8 +140,7 @@ public class WindowAnnotationManager {
 		boolean alreadyShown= fSearchResults.contains(result);
 		fSearchResults.add(result);
 		if (!alreadyShown) {
-			for (Iterator<EditorAnnotationManager> mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
-				EditorAnnotationManager mgr = mgrs.next();
+			for (EditorAnnotationManager mgr : fAnnotationManagers.values()) {
 				mgr.addSearchResult(result);
 			}
 		}
@@ -153,8 +150,7 @@ public class WindowAnnotationManager {
 		fSearchResults.remove(result);
 		boolean stillShown= fSearchResults.contains(result);
 		if (!stillShown) {
-			for (Iterator<EditorAnnotationManager> mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
-				EditorAnnotationManager mgr = mgrs.next();
+			for (EditorAnnotationManager mgr : fAnnotationManagers.values()) {
 				mgr.removeSearchResult(result);
 			}
 		}

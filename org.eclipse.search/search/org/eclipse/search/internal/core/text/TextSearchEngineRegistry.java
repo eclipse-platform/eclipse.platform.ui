@@ -82,8 +82,7 @@ public class TextSearchEngineRegistry {
 			@Override
 			public void run() throws Exception {
 				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
-				for (int i= 0; i < extensions.length; i++) {
-					IConfigurationElement curr= extensions[i];
+				for (IConfigurationElement curr : extensions) {
 					if (ENGINE_NODE_NAME.equals(curr.getName()) && id.equals(curr.getAttribute(ATTRIB_ID))) {
 						res[0]= (TextSearchEngine) curr.createExecutableExtension(ATTRIB_CLASS);
 						return;
@@ -104,8 +103,7 @@ public class TextSearchEngineRegistry {
 		res.add(new String[] { SearchMessages.TextSearchEngineRegistry_defaulttextsearch_label, "" }); //$NON-NLS-1$
 
 		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
-		for (int i= 0; i < extensions.length; i++) {
-			IConfigurationElement engine= extensions[i];
+		for (IConfigurationElement engine : extensions) {
 			if (ENGINE_NODE_NAME.equals(engine.getName())) {
 				res.add(new String[] { engine.getAttribute(ATTRIB_LABEL), engine.getAttribute(ATTRIB_ID) });
 			}

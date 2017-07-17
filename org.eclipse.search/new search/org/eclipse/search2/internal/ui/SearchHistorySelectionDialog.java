@@ -421,8 +421,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			setResult(((IStructuredSelection) fViewer.getSelection()).toList());
 
 		// remove queries
-		for (Iterator<ISearchResult> iter= fRemovedEntries.iterator(); iter.hasNext();) {
-			ISearchResult result= iter.next();
+		for (ISearchResult result : fRemovedEntries) {
 			ISearchQuery query= result.getQuery();
 			if (query != null) { // must not be null: invalid implementation of a search query
 				InternalSearchUI.getInstance().removeQuery(query);

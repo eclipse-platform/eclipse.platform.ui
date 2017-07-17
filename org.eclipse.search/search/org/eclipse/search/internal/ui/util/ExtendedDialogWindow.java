@@ -14,7 +14,6 @@ package org.eclipse.search.internal.ui.util;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -174,8 +173,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 * @param state The new state
 	 */
 	public void setPerformActionEnabled(boolean state) {
-		for (Iterator<Button> buttons = fActionButtons.iterator(); buttons.hasNext(); ) {
-			Button element = buttons.next();
+		for (Button element : fActionButtons) {
 			element.setEnabled(state);
 		}
 	}
@@ -271,16 +269,15 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 	private void setDisplayCursor(Display d, Cursor c) {
 		Shell[] shells= d.getShells();
-		for (int i= 0; i < shells.length; i++)
-			shells[i].setCursor(c);
+		for (Shell shell2 : shells)
+			shell2.setCursor(c);
 	}
 
 	//---- UI state save and restoring ---------------------------------------------
 
 	private void restoreUIState(HashMap<Object, Object> state) {
 		restoreEnableState(fCancelButton, state);
-		for (Iterator<Button> actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
-			Button button = actionButtons.next();
+		for (Button button : fActionButtons) {
 			restoreEnableState(button, state);
 		}
 		ControlEnableState pageState= (ControlEnableState)state.get("tabForm"); //$NON-NLS-1$
@@ -301,8 +298,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	private HashMap<Object, Object> saveUIState(boolean keepCancelEnabled) {
 		HashMap<Object, Object> savedState= new HashMap<>(10);
 		saveEnableStateAndSet(fCancelButton, savedState, keepCancelEnabled);
-		for (Iterator<Button> actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
-			Button button = actionButtons.next();
+		for (Button button : fActionButtons) {
 			saveEnableStateAndSet(button, savedState, false);
 		}
 		savedState.put("tabForm", ControlEnableState.disable(fContents)); //$NON-NLS-1$

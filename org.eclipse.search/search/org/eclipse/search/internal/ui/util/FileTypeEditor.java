@@ -95,8 +95,8 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 			Object[] result= dialog.getResult();
 			HashSet<String> patterns= new HashSet<>();
 			boolean starIncluded= false;
-			for (int i= 0; i < result.length; i++) {
-				String curr= result[i].toString();
+			for (Object element : result) {
+				String curr= element.toString();
 				if (curr.equals("*")) { //$NON-NLS-1$
 					starIncluded= true;
 				} else {

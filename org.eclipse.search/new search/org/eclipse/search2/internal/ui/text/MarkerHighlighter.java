@@ -47,11 +47,11 @@ public class MarkerHighlighter extends Highlighter {
 			SearchPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
-					for (int i = 0; i < matches.length; i++) {
+					for (Match match : matches) {
 						IMarker marker;
-						marker = createMarker(matches[i]);
+						marker = createMarker(match);
 						if (marker != null)
-							fMatchesToAnnotations.put(matches[i], marker);
+							fMatchesToAnnotations.put(match, marker);
 					}
 				}
 			}, fFile, IWorkspace.AVOID_UPDATE, null);
@@ -87,8 +87,8 @@ public class MarkerHighlighter extends Highlighter {
 
 	@Override
 	public void removeHighlights(Match[] matches) {
-		for (int i= 0; i < matches.length; i++) {
-			IMarker marker= fMatchesToAnnotations.remove(matches[i]);
+		for (Match match : matches) {
+			IMarker marker= fMatchesToAnnotations.remove(match);
 			if (marker != null) {
 				try {
 					marker.delete();
