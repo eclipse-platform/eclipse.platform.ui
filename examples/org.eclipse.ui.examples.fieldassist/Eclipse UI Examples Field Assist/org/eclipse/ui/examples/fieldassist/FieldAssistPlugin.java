@@ -24,24 +24,15 @@ public class FieldAssistPlugin extends AbstractUIPlugin {
 	// Our own content assist decorator (which adds the key binding)
 	static String DEC_CONTENTASSIST = "org.eclipse.ui.examples.fieldassist.contentAssistDecoration";
 
-	/**
-	 * The constructor.
-	 */
 	public FieldAssistPlugin() {
 		plugin = this;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);

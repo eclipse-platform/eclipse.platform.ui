@@ -429,8 +429,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 	}
 
 	GridData getFieldGridData() {
-		int margin = FieldDecorationRegistry.getDefault()
-				.getMaximumDecorationWidth();
+		int margin = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		GridData data = new GridData();
 		data.horizontalAlignment = SWT.FILL;
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + margin;
@@ -602,8 +601,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 	}
 
 	int getDecorationLocationBits() {
-		IPreferenceStore store = FieldAssistPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore store = FieldAssistPlugin.getDefault().getPreferenceStore();
 		int bits = 0;
 		String vert = store
 				.getString(PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION);
@@ -646,8 +644,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 
 		// Create a field representing a user name
 		Text text = new Text(main, SWT.BORDER);
-		ControlDecoration dec = new ControlDecoration(text,
-				getDecorationLocationBits());
+		ControlDecoration dec = new ControlDecoration(text, getDecorationLocationBits());
 		dec.setMarginWidth(marginWidth);
 		dec.addSelectionListener(new SelectionListener() {
 			@Override
@@ -775,8 +772,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 	Menu createQuickFixMenu(final SmartField field) {
 		Menu newMenu = new Menu(field.control);
 		MenuItem item = new MenuItem(newMenu, SWT.PUSH);
-		item
-				.setText(TaskAssistExampleMessages.ExampleDialog_DecorationMenuItem);
+		item.setText(TaskAssistExampleMessages.ExampleDialog_DecorationMenuItem);
 		item.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -850,10 +846,6 @@ public class FieldAssistTestDialog extends StatusDialog {
 		return super.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
