@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016-2017 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.ui.internal.genericeditor.TextHoverRegistry.TextHoverExtension;
 
 /**
  * A text hover that delegates its operations to children
@@ -29,23 +28,22 @@ import org.eclipse.ui.internal.genericeditor.TextHoverRegistry.TextHoverExtensio
  */
 public class CompositeTextHover implements ITextHover, ITextHoverExtension, ITextHoverExtension2 {
 
-	private List<TextHoverExtension> hoversToConsider;
-	private TextHoverExtension currentHover = null;
+	private List<ITextHover> hoversToConsider;
+	private ITextHover currentHover = null;
 
-	public CompositeTextHover(List<TextHoverExtension> hoversToConsider) {
+	public CompositeTextHover(List<ITextHover> hoversToConsider) {
 		Assert.isNotNull(hoversToConsider);
 		this.hoversToConsider = hoversToConsider;
 	}
 
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-		for (TextHoverExtension hover : this.hoversToConsider) {
-			ITextHover delegate = hover.getDelegate();
+		for (ITextHover hover : this.hoversToConsider) {
 			Object res = null;
-			if (delegate instanceof ITextHoverExtension2) {
-				res = ((ITextHoverExtension2)delegate).getHoverInfo2(textViewer, hoverRegion);
+			if (hover instanceof ITextHoverExtension2) {
+				res = ((ITextHoverExtension2)hover).getHoverInfo2(textViewer, hoverRegion);
 			} else {
-				res = delegate.getHoverInfo(textViewer, hoverRegion);
+				res = hover.getHoverInfo(textViewer, hoverRegion);
 			}
 			if (res != null) {
 				currentHover = hover;
@@ -57,8 +55,8 @@ public class CompositeTextHover implements ITextHover, ITextHoverExtension, ITex
 
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		if (this.currentHover != null) {
-			ITextHover hover = this.currentHover.getDelegate();
+		ITextHover hover = this.currentHover;
+		if (hover != null) {
 			if (hover instanceof ITextHoverExtension) {
 				return ((ITextHoverExtension)hover).getHoverControlCreator();
 			}
@@ -68,9 +66,8 @@ public class CompositeTextHover implements ITextHover, ITextHoverExtension, ITex
 
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-		for (TextHoverExtension hover : this.hoversToConsider) {
-			ITextHover delegate = hover.getDelegate();
-			String res = delegate.getHoverInfo(textViewer, hoverRegion);
+		for (ITextHover hover : this.hoversToConsider) {
+			String res = hover.getHoverInfo(textViewer, hoverRegion);
 			if (res != null) {
 				currentHover = hover;
 				return res;
@@ -81,9 +78,8 @@ public class CompositeTextHover implements ITextHover, ITextHoverExtension, ITex
 
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-		for (TextHoverExtension hover : this.hoversToConsider) {
-			ITextHover delegate = hover.getDelegate();
-			IRegion res = delegate.getHoverRegion(textViewer, offset);
+		for (ITextHover hover : this.hoversToConsider) {
+			IRegion res = hover.getHoverRegion(textViewer, offset);
 			if (res != null) {
 				return res;
 			}

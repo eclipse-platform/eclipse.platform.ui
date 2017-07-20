@@ -56,7 +56,6 @@ public final class TextHoverRegistry {
 
 		private IConfigurationElement extension;
 		private IContentType targetContentType;
-		private ITextHover delegate;
 		private String id;
 		private String isBefore;
 		private String isAfter;
@@ -69,15 +68,13 @@ public final class TextHoverRegistry {
 			this.isAfter = extension.getAttribute(IS_AFTER_ATTRIBUTE);
 		}
 
-		public ITextHover getDelegate() {
-			if (this.delegate == null) {
-				try {
-					this.delegate = (ITextHover) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
+		public ITextHover createDelegate() {
+			try {
+				return (ITextHover) extension.createExecutableExtension(CLASS_ATTRIBUTE);
+			} catch (CoreException e) {
+				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
 			}
-			return delegate;
+			return null;
 		}
 
 		public String getId() {
@@ -120,7 +117,7 @@ public final class TextHoverRegistry {
 			}
 		}
 		if (!hoversToConsider.isEmpty()) {
-			return new CompositeTextHover(hoversToConsider);
+			return new CompositeTextHover(hoversToConsider.stream().map(TextHoverExtension::createDelegate).collect(Collectors.toList()));
 		}
 		return null;
 	}

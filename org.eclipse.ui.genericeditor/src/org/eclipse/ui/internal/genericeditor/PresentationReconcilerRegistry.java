@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016-2017 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
@@ -46,52 +43,26 @@ public class PresentationReconcilerRegistry {
 	 * and loads it lazily when it can contribute to the editor, then delegates all operations to
 	 * actual reconcilier.
 	 */
-	private static class PresentationReconcilerExtension implements IPresentationReconciler {
+	private static class PresentationReconcilerExtension {
 		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
 		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
 
 		private IConfigurationElement extension;
 		private IContentType targetContentType;
 
-		private IPresentationReconciler delegate;
-
 		private PresentationReconcilerExtension(IConfigurationElement element) throws Exception {
 			this.extension = element;
 			this.targetContentType = Platform.getContentTypeManager().getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
 		}
 
-		private IPresentationReconciler getDelegate() {
-			if (this.delegate == null) {
-				try {
-					this.delegate = (IPresentationReconciler) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
+		public IPresentationReconciler createDelegate() {
+			try {
+				return (IPresentationReconciler) extension.createExecutableExtension(CLASS_ATTRIBUTE);
+			} catch (CoreException e) {
+				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
 			}
-			return delegate;
+			return null;
 		}
-
-		@Override
-		public void install(ITextViewer viewer) {
-			getDelegate().install(viewer);
-		}
-
-		@Override
-		public void uninstall() {
-			getDelegate().uninstall();
-		}
-
-		@Override
-		public IPresentationDamager getDamager(String contentType) {
-			return getDelegate().getDamager(contentType);
-
-		}
-
-		@Override
-		public IPresentationRepairer getRepairer(String contentType) {
-			return getDelegate().getRepairer(contentType);
-		}
-
 	}
 	private Map<IConfigurationElement, PresentationReconcilerExtension> extensions = new HashMap<>();
 	private boolean outOfSync = true;
@@ -122,7 +93,7 @@ public class PresentationReconcilerRegistry {
 		List<IPresentationReconciler> res = new ArrayList<>();
 		for (PresentationReconcilerExtension ext : this.extensions.values()) {
 			if (contentTypes.contains(ext.targetContentType)) {
-				res.add(ext);
+				res.add(ext.createDelegate());
 			}
 		}
 		return res;

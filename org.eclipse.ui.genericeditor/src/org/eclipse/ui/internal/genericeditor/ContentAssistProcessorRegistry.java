@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016-2017 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,37 +45,14 @@ import org.eclipse.ui.PlatformUI;
 public class ContentAssistProcessorRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".contentAssistProcessors"; //$NON-NLS-1$
-	
-	/**
-	 * This class wraps and proxies an {@link IContentAssistProcessor} provided through extensions
-	 * and loads it lazily when it can contribute to the editor, then delegates all operations to
-	 * actual processor.
-	 * When the contribution cannot contribute to the editor, this wrapper will return neutral values
-	 * that don't affect editor behavior.
-	 */
-	private static class ContentAssistProcessorExtension implements IContentAssistProcessor {
-		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
-		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
 
-		private IConfigurationElement extension;
+	static class ContentAssistProcessorDelegate implements IContentAssistProcessor {
+		private final IContentAssistProcessor delegate;
 		private IContentType targetContentType;
 
-		private IContentAssistProcessor delegate;
-
-		private ContentAssistProcessorExtension(IConfigurationElement element) throws Exception {
-			this.extension = element;
-			this.targetContentType = Platform.getContentTypeManager().getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
-		}
-
-		private IContentAssistProcessor getDelegate() {
-			if (this.delegate == null) {
-				try {
-					this.delegate = (IContentAssistProcessor) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
-			return delegate;
+		public ContentAssistProcessorDelegate(IContentAssistProcessor delegate, IContentType targetContentType) {
+			this.delegate = delegate;
+			this.targetContentType = targetContentType;
 		}
 
 		/**
@@ -104,7 +81,7 @@ public class ContentAssistProcessorRegistry {
 		@Override
 		public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 			if (isActive(viewer)) {
-				return getDelegate().computeCompletionProposals(viewer, offset);
+				return delegate.computeCompletionProposals(viewer, offset);
 			}
 			return new ICompletionProposal[0];
 		}
@@ -112,7 +89,7 @@ public class ContentAssistProcessorRegistry {
 		@Override
 		public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 			if (isActive(viewer)) {
-				return getDelegate().computeContextInformation(viewer, offset);
+				return delegate.computeContextInformation(viewer, offset);
 			}
 			return new IContextInformation[0];
 		}
@@ -120,7 +97,7 @@ public class ContentAssistProcessorRegistry {
 		@Override
 		public char[] getCompletionProposalAutoActivationCharacters() {
 			if (isActive(null)) {
-				return getDelegate().getCompletionProposalAutoActivationCharacters();
+				return delegate.getCompletionProposalAutoActivationCharacters();
 			}
 			return null;
 		}
@@ -128,7 +105,7 @@ public class ContentAssistProcessorRegistry {
 		@Override
 		public char[] getContextInformationAutoActivationCharacters() {
 			if (isActive(null)) {
-				return getDelegate().getContextInformationAutoActivationCharacters();
+				return delegate.getContextInformationAutoActivationCharacters();
 			}
 			return null;
 		}
@@ -136,7 +113,7 @@ public class ContentAssistProcessorRegistry {
 		@Override
 		public String getErrorMessage() {
 			if (isActive(null)) {
-				return getDelegate().getErrorMessage();
+				return delegate.getErrorMessage();
 			}
 			return null;
 		}
@@ -144,7 +121,39 @@ public class ContentAssistProcessorRegistry {
 		@Override
 		public IContextInformationValidator getContextInformationValidator() {
 			if (isActive(null)) {
-				return getDelegate().getContextInformationValidator();
+				return delegate.getContextInformationValidator();
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * This class wraps and proxies an {@link IContentAssistProcessor} provided through extensions
+	 * and loads it lazily when it can contribute to the editor, then delegates all operations to
+	 * actual processor.
+	 * When the contribution cannot contribute to the editor, this wrapper will return neutral values
+	 * that don't affect editor behavior.
+	 */
+	private static class ContentAssistProcessorExtension {
+		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
+		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+
+		private IConfigurationElement extension;
+		private IContentType targetContentType;
+
+		private ContentAssistProcessorExtension(IConfigurationElement element) throws Exception {
+			this.extension = element;
+			this.targetContentType = Platform.getContentTypeManager().getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
+		}
+
+		public ContentAssistProcessorDelegate createDelegate() {
+			try {
+				IContentAssistProcessor delegate = (IContentAssistProcessor) extension.createExecutableExtension(CLASS_ATTRIBUTE);
+				if (delegate != null) {
+					return new ContentAssistProcessorDelegate(delegate, targetContentType);
+				}
+			} catch (CoreException e) {
+				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
 			}
 			return null;
 		}
@@ -179,7 +188,7 @@ public class ContentAssistProcessorRegistry {
 		List<IContentAssistProcessor> res = new ArrayList<>();
 		for (ContentAssistProcessorExtension ext : this.extensions.values()) {
 			if (contentTypes.contains(ext.targetContentType)) {
-				res.add(ext);
+				res.add(ext.createDelegate());
 			}
 		}
 		return res;

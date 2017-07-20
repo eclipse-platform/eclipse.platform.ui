@@ -48,7 +48,6 @@ public class AutoEditStrategyRegistry {
 
 		private IConfigurationElement extension;
 		private IContentType targetContentType;
-		private IAutoEditStrategy strategy;
 
 		public AutoEditStrategyExtension(IConfigurationElement extension) throws Exception {
 			this.extension = extension;
@@ -56,15 +55,13 @@ public class AutoEditStrategyRegistry {
 					.getContentType(extension.getAttribute(CONTENT_TYPE_ATTRIBUTE));
 		}
 
-		public IAutoEditStrategy getStrategy() {
-			if (this.strategy == null) {
-				try {
-					this.strategy = (IAutoEditStrategy) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
+		public IAutoEditStrategy createStrategy() {
+			try {
+				return (IAutoEditStrategy) extension.createExecutableExtension(CLASS_ATTRIBUTE);
+			} catch (CoreException e) {
+				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
+				return null;
 			}
-			return strategy;
 		}
 
 		IConfigurationElement getConfigurationElement() {
@@ -102,7 +99,10 @@ public class AutoEditStrategyRegistry {
 		List<IAutoEditStrategy> res = new ArrayList<>();
 		for (AutoEditStrategyExtension ext : this.extensions.values()) {
 			if (contentTypes.contains(ext.targetContentType)) {
-				res.add(ext.getStrategy());
+				IAutoEditStrategy strategy = ext.createStrategy();
+				if (strategy != null) {
+					res.add(strategy);
+				}
 			}
 		}
 		return res;
