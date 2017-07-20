@@ -79,7 +79,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 		@Override
 		public String toString() {
-			StringBuffer buf = new StringBuffer("ExpectedChange(");
+			StringBuilder buf = new StringBuilder("ExpectedChange(");
 			buf.append(fResource);
 			buf.append(", ");
 			buf.append(convertKind(fKind));
@@ -96,7 +96,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 */
 	private Hashtable<IPath, ExpectedChange> fExpectedChanges = new Hashtable<>();
 	boolean fIsDeltaValid = true;
-	private StringBuffer fMessage = new StringBuffer();
+	private StringBuilder fMessage = new StringBuilder();
 	/**
 	 * The verifier can be in one of three states.  In the initial
 	 * state, the verifier is still receiving inputs via the
@@ -355,7 +355,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		if (changeFlags == 0) {
 			return "0";
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 
 		if ((changeFlags & IResourceDelta.CONTENT) != 0) {
 			changeFlags ^= IResourceDelta.CONTENT;

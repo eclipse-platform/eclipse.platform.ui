@@ -34,7 +34,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	private static final String FILE_EXTENSION = "prefs";
 
 	class Tracer implements IEclipsePreferences.IPreferenceChangeListener {
-		public StringBuffer log = new StringBuffer();
+		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {
 			if (value == null) {

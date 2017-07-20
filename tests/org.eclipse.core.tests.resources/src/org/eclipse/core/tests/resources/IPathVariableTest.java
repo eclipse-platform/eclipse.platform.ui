@@ -81,7 +81,7 @@ public class IPathVariableTest extends ResourceTest {
 
 			@Override
 			public String toString() {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append("Event(");
 				buffer.append("type: ");
 				buffer.append(stringForType(type));
@@ -141,7 +141,7 @@ public class IPathVariableTest extends ResourceTest {
 		}
 
 		String dump() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Expected:\n");
 			for (Event event : expected) {
 				buffer.append("\t" + event + "\n");

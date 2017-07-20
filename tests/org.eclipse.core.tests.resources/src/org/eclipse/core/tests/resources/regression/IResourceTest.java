@@ -376,7 +376,7 @@ public class IResourceTest extends ResourceTest {
 			fail("1.0", e);
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 260; i++) {
 			sb.append('a');
 		}

@@ -62,7 +62,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 	}
 
 	protected InputStream projectDescriptionWithNatures(String project, String[] natures) {
-		StringBuffer contents = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>" + project + "</name><natures>");
+		StringBuilder contents = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name>" + project + "</name><natures>");
 		for (String nature : natures) {
 			contents.append("<nature>" + nature + "</nature>");
 		}

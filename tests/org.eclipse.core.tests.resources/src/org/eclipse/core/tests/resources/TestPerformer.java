@@ -69,7 +69,7 @@ abstract public class TestPerformer {
 				if (shouldFail(args, count)) {
 					try {
 						invokeMethod(args, count);
-						StringBuffer buffer = new StringBuffer();
+						StringBuilder buffer = new StringBuilder();
 						buffer.append("invocation " + count + " should fail, but it doesn't [");
 						for (Object arg : args) {
 							buffer.append(arg);

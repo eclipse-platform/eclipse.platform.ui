@@ -39,7 +39,7 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 
 		String dump() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Expected:\n");
 			for (Integer integer : expected) {
 				buffer.append("\t" + integer + "\n");

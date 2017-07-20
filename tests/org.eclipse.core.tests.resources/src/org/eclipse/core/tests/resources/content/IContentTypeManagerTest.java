@@ -96,7 +96,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	 * Helps to ensure we don't get fooled by case sensitivity in file names/specs.
 	 */
 	private String changeCase(String original) {
-		StringBuffer result = new StringBuffer(original);
+		StringBuilder result = new StringBuilder(original);
 		for (int i = result.length() - 1; i >= 0; i--) {
 			char originalChar = original.charAt(i);
 			result.setCharAt(i, i % 2 == 0 ? Character.toLowerCase(originalChar) : Character.toUpperCase(originalChar));
@@ -1374,7 +1374,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	public void testSignatureBeyondBufferLimit() throws IOException {
 		int bufferLimit = ContentTypeManager.BLOCK_SIZE * 4;
 		// create a long XML comment as prefix
-		StringBuffer comment = new StringBuffer("<!--");
+		StringBuilder comment = new StringBuilder("<!--");
 		for (int i = 0; i < bufferLimit; i++) {
 			comment.append('*');
 		}

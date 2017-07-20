@@ -45,7 +45,7 @@ public class BenchCopyFile extends OldCorePerformanceTest {
 	 */
 	@Override
 	public String getRandomString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < 100; i++) {
 			buf.append("This is a line of text\n");
 		}

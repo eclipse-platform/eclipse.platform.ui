@@ -30,7 +30,7 @@ public class PhantomElementData {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("ElementData(");
+		StringBuilder buf = new StringBuilder("ElementData(");
 		buf.append(isPhantom ? "Phantom, " : "Real, ");
 		buf.append(name);
 		buf.append(')');

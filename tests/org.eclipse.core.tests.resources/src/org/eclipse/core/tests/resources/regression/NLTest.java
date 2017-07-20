@@ -36,7 +36,7 @@ public class NLTest extends ResourceTest {
 	public void getFileNames(List<String> list, char begin, char end) {
 		char current = begin;
 		int index = 0;
-		StringBuffer name = new StringBuffer();
+		StringBuilder name = new StringBuilder();
 		name.append(((int) current) + "_");
 		while (current <= end) {
 			if (!Character.isLetterOrDigit(current)) {

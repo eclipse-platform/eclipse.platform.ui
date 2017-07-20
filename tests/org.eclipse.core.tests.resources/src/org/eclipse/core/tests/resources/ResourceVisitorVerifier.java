@@ -19,7 +19,7 @@ import org.junit.Assert;
 
 public class ResourceVisitorVerifier extends Assert implements IResourceVisitor {
 	Set<IResource> expected;
-	StringBuffer message;
+	StringBuilder message;
 	boolean success = true;
 	boolean verified = false;
 
@@ -75,7 +75,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 
 	public void reset() {
 		expected = new HashSet<>();
-		message = new StringBuffer();
+		message = new StringBuilder();
 		verified = false;
 	}
 }

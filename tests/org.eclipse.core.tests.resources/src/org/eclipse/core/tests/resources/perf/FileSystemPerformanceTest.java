@@ -35,7 +35,7 @@ public class FileSystemPerformanceTest extends LocalStoreTest {
 	private IFileStore baseStore;
 
 	public String createString(int length) {
-		StringBuffer buf = new StringBuffer(length);
+		StringBuilder buf = new StringBuilder(length);
 		//fill the string with random characters up to the desired length
 		for (int i = 0; i < length; i++) {
 			buf.append(chars.charAt(random.nextInt(chars.length())));

@@ -408,7 +408,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 
 		QualifiedName name = new QualifiedName("stressTest", "prop");
 		final int SIZE = 10000;
-		StringBuffer valueBuf = new StringBuffer(SIZE);
+		StringBuilder valueBuf = new StringBuilder(SIZE);
 		for (int i = 0; i < SIZE; i++) {
 			valueBuf.append("a");
 		}

@@ -237,7 +237,7 @@ public class FileStoreTest extends LocalStoreTest {
 		}
 
 		/* copy a big file to test progress monitor */
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 1000; i++) {
 			sb.append("asdjhasldhaslkfjhasldkfjhasdlkfjhasdlfkjhasdflkjhsdaf");
 		}

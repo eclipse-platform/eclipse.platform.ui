@@ -25,7 +25,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class PropertyManagerPerformanceTest extends ResourceTest {
 
 	public static String getPropertyValue(int size) {
-		StringBuffer value = new StringBuffer(size);
+		StringBuilder value = new StringBuilder(size);
 		for (int i = 0; i < size; i++) {
 			value.append((char) (Math.random() * Character.MAX_VALUE));
 		}

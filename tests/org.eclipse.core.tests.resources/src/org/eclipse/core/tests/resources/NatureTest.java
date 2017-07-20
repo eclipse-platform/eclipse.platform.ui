@@ -391,7 +391,7 @@ public class NatureTest extends ResourceTest {
 		IFileStore descStore = ((File) project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME)).getStore();
 
 		// create a description with many natures, this will make updating description longer
-		StringBuffer description = new StringBuffer();
+		StringBuilder description = new StringBuilder();
 		description.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name></name><comment></comment><projects></projects><buildSpec></buildSpec><natures>");
 		description.append("<nature>" + NATURE_SIMPLE + "</nature>");
 		for (int i = 0; i < 100; i++) {

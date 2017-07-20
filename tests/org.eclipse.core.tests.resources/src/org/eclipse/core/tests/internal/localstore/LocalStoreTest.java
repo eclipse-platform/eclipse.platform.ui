@@ -116,7 +116,7 @@ public abstract class LocalStoreTest extends ResourceTest {
 	 * The returned array will have at least the specified size.
 	 */
 	protected String getBigString(int size) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while (sb.length() < size) {
 			sb.append(getRandomString());
 		}
