@@ -27,7 +27,7 @@ public class Policy {
 	 * Pre-pend the message with the current date and the name of the current thread.
 	 */
 	public static void debug(String message) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(new Date(System.currentTimeMillis()));
 		buffer.append(" - ["); //$NON-NLS-1$
 		buffer.append(Thread.currentThread().getName());

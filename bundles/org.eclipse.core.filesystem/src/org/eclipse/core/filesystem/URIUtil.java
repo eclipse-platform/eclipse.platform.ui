@@ -130,7 +130,7 @@ public class URIUtil {
 		if (File.separatorChar != '/')
 			pathString = pathString.replace(File.separatorChar, '/');
 		final int length = pathString.length();
-		StringBuffer pathBuf = new StringBuffer(length + 1);
+		StringBuilder pathBuf = new StringBuilder(length + 1);
 		//mark if path is relative
 		if (length > 0 && (pathString.charAt(0) != '/') && forceAbsolute) {
 			pathBuf.append('/');
