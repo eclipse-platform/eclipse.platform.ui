@@ -142,6 +142,10 @@ public class FileTool {
 		}
 	}
 
+	/**
+	 * @deprecated Use {@link FileTool#readToBuilder(String)} instead.
+	 */
+	@Deprecated
 	public static StringBuffer read(String fileName) throws IOException {
 		try (FileReader reader = new FileReader(fileName)) {
 			StringBuffer result = read(reader);
@@ -149,6 +153,17 @@ public class FileTool {
 		}
 	}
 
+	public static StringBuilder readToBuilder(String fileName) throws IOException {
+		try (FileReader reader = new FileReader(fileName)) {
+			StringBuilder result = readToBuilder(reader);
+			return result;
+		}
+	}
+
+	/**
+	 * @deprecated Use {@link FileTool#readToBuilder(Reader)} instead.
+	 */
+	@Deprecated
 	public static StringBuffer read(Reader reader) throws IOException {
 		StringBuffer s = new StringBuffer();
 		try {
@@ -167,7 +182,36 @@ public class FileTool {
 		return s;
 	}
 
+	public static StringBuilder readToBuilder(Reader reader) throws IOException {
+		StringBuilder s = new StringBuilder();
+		try {
+			char[] buffer = new char[8196];
+			int chars = reader.read(buffer);
+			while (chars != -1) {
+				s.append(buffer, 0, chars);
+				chars = reader.read(buffer);
+			}
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+			}
+		}
+		return s;
+	}
+
+	/**
+	 * @deprecated Use {@link FileTool#writeFromBuilder(String, StringBuilder)}
+	 *             instead.
+	 */
+	@Deprecated
 	public static void write(String fileName, StringBuffer content) throws IOException {
+		try (Writer writer = new FileWriter(fileName)) {
+			writer.write(content.toString());
+		}
+	}
+
+	public static void writeFromBuilder(String fileName, StringBuilder content) throws IOException {
 		try (Writer writer = new FileWriter(fileName)) {
 			writer.write(content.toString());
 		}
