@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.TestPlugin;
 import org.osgi.framework.Bundle;
+
+import junit.framework.TestCase;
 
 /**
  * Test loading a directory full of images.
@@ -52,15 +52,15 @@ public class FileImageDescriptorTest extends TestCase {
 	 */
 	public void testFileImageDescriptorWorkbench() {
 
-		Class missing = null;
-		ArrayList images = new ArrayList();
+		Class<?> missing = null;
+		ArrayList<Image> images = new ArrayList<>();
 
 		Bundle bundle = TestPlugin.getDefault().getBundle();
-		Enumeration bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
+		Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 		while (bundleEntries.hasMoreElements()) {
 			ImageDescriptor descriptor;
-			String localImagePath = (String) bundleEntries.nextElement();
+			String localImagePath = bundleEntries.nextElement();
 			URL[] files = FileLocator.findEntries(bundle, new Path(
 					localImagePath));
 
@@ -86,9 +86,9 @@ public class FileImageDescriptorTest extends TestCase {
 
 		}
 
-		Iterator imageIterator = images.iterator();
+		Iterator<Image> imageIterator = images.iterator();
 		while (imageIterator.hasNext()) {
-			((Image) imageIterator.next()).dispose();
+			imageIterator.next().dispose();
 		}
 
 	}

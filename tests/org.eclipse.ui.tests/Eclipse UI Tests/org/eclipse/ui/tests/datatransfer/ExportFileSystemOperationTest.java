@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	public void testGetStatus() throws Exception {
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
         FileSystemExportOperation operation =
         	new FileSystemExportOperation(
@@ -112,7 +112,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	/* Export a project, with all directories */
 	public void testExportRootResource() throws Exception {
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
         FileSystemExportOperation operation =
         	new FileSystemExportOperation(
@@ -124,7 +124,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	/* Export a project, create all leadup folders. */
 	public void testExportResources() throws Exception {
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			resources.add(member);
@@ -139,7 +139,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	/* Export folders, do not create leadup folders. */
 	public void testExportFolderCreateDirectoryStructure() throws Exception {
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)) {
@@ -159,7 +159,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	/* Export files, do not create leadup folders. */
 	public void testExportFilesCreateDirectoryStructure() throws Exception {
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)){
@@ -184,7 +184,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	/* Export files, overwrite - do not create container directories or lead up folders. */
 	public void testExportOverwrite() throws Exception {
-		List resources = new ArrayList();
+		List<IProject> resources = new ArrayList<>();
 		resources.add(project);
         FileSystemExportOperation operation =
         	new FileSystemExportOperation(
@@ -207,9 +207,9 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		return false;
 	}
 
-	private void verifyFiles(List resources){
+	private void verifyFiles(List<IResource> resources) {
 		for (int i = 0; i < resources.size(); i++){
-			IResource resource = (IResource)resources.get(i);
+			IResource resource = resources.get(i);
 			assertTrue(
 				"Export should have exported " + resource.getName(),
 				isFile(resource));
@@ -231,7 +231,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 			root = new File(localDirectory);
 		}
         File[] files = root.listFiles();
-        List directories = new ArrayList();
+		List<File> directories = new ArrayList<>();
         if (files != null){
 	        for (File file : files) {
 	        	if (file.isDirectory()) {
@@ -243,7 +243,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
                 folderCount, directories.size());
 
         for (int i = 0; i < directories.size(); i++) {
-        	File directory = (File)directories.get(i);
+        	File directory = directories.get(i);
             assertTrue("Export failed to export directory " + directory.getName(), directory.exists());
             verifyFolder(directory);
         }

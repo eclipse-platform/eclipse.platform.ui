@@ -70,7 +70,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	}
 
 	public void testExportStatus(){
-		List resources = new ArrayList();
+		List<IProject> resources = new ArrayList<>();
 		resources.add(project);
         ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, localDirectory);
@@ -80,7 +80,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportZip() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
-		List resources = new ArrayList();
+		List<IProject> resources = new ArrayList<>();
 		resources.add(project);
         ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
@@ -95,7 +95,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportZipCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
-		List resources = new ArrayList();
+		List<IProject> resources = new ArrayList<>();
 		resources.add(project);
         ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
@@ -108,7 +108,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportZipCreateSelectedDirectories() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)){
@@ -154,7 +154,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportZipCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)) {
@@ -174,7 +174,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportZipCreateSelectedDirectoriesCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)){
@@ -200,7 +200,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportTar() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
         ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
@@ -214,7 +214,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportTarCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
         ArchiveFileExportOperation operation =
         	new ArchiveFileExportOperation(resources, filePath);
@@ -227,7 +227,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportTarCreateSelectedDirectories() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)){
@@ -252,7 +252,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportTarCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)) {

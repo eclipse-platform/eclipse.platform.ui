@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class MarkerTesterTest extends UITestCase {
 	public void testSeverity() throws Exception {
 
 		IMarker errorMarker = project.createMarker(IMarker.PROBLEM);
-		Map attributes = new HashMap();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
 		errorMarker.setAttributes(attributes);
 
@@ -74,7 +74,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.TRUE, result);
 
 		IMarker warningMarker = project.createMarker(IMarker.PROBLEM);
-		attributes = new HashMap();
+		attributes = new HashMap<>();
 		attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_WARNING));
 		warningMarker.setAttributes(attributes);
 
@@ -124,7 +124,7 @@ public class MarkerTesterTest extends UITestCase {
 	public void testPriority() throws Exception {
 
 		IMarker highPriority = project.createMarker(IMarker.PROBLEM);
-		Map attributes = new HashMap();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(IMarker.PRIORITY, Integer.valueOf(IMarker.PRIORITY_HIGH));
 		highPriority.setAttributes(attributes);
 
@@ -135,7 +135,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.TRUE, result);
 
 		IMarker lowPriority = project.createMarker(IMarker.PROBLEM);
-		attributes = new HashMap();
+		attributes = new HashMap<>();
 		attributes.put(IMarker.PRIORITY, Integer.valueOf(IMarker.PRIORITY_LOW));
 		lowPriority.setAttributes(attributes);
 
@@ -149,7 +149,7 @@ public class MarkerTesterTest extends UITestCase {
 	public void testDone() throws Exception {
 
 		IMarker done = project.createMarker(IMarker.TASK);
-		Map attributes = new HashMap();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(IMarker.DONE, Boolean.TRUE);
 		done.setAttributes(attributes);
 
@@ -160,7 +160,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.TRUE, result);
 
 		IMarker notDone = project.createMarker(IMarker.TASK);
-		attributes = new HashMap();
+		attributes = new HashMap<>();
 		attributes.put(IMarker.DONE, Boolean.FALSE);
 		notDone.setAttributes(attributes);
 
@@ -182,7 +182,7 @@ public class MarkerTesterTest extends UITestCase {
 	public void testMessage() throws Exception {
 
 		IMarker someTaskMarker = project.createMarker(IMarker.TASK);
-		Map attributes = new HashMap();
+		Map<String, String> attributes = new HashMap<>();
 		attributes.put(IMarker.MESSAGE, "Some nice message to test");
 		someTaskMarker.setAttributes(attributes);
 
@@ -217,7 +217,7 @@ public class MarkerTesterTest extends UITestCase {
 	public void testResourceType() throws Exception {
 
 		IMarker someTaskMarker = project.createMarker(IMarker.TASK);
-		Map attributes = new HashMap();
+		Map<String, String> attributes = new HashMap<>();
 		attributes.put(IMarker.MESSAGE, "Some nice message to test");
 		someTaskMarker.setAttributes(attributes);
 
@@ -231,7 +231,7 @@ public class MarkerTesterTest extends UITestCase {
 		folder.create(true, true, null);
 
 		IMarker someOtherMarker = folder.createMarker(IMarker.TASK);
-		attributes = new HashMap();
+		attributes = new HashMap<>();
 		attributes.put(IMarker.MESSAGE, "Some nice message to test");
 		someOtherMarker.setAttributes(attributes);
 

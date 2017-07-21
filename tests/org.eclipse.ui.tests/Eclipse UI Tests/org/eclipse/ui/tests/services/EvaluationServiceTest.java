@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -451,10 +451,11 @@ public class EvaluationServiceTest extends UITestCase {
 		assertEquals(3, listener.count);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testSourceProviderPriority() throws Exception {
 		IHandlerService hs = getWorkbench().getService(IHandlerService.class);
 
-		Collection activations = null;
+		Collection<IHandlerActivation> activations = null;
 		// fill in a set of activations
 		String hsClassName = hs.getClass().getName();
 		if (hsClassName.equals("org.eclipse.ui.internal.handlers.HandlerService")) {
@@ -465,7 +466,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 			Field activationsField = hp.getClass().getDeclaredField("handlerActivations");
 			activationsField.setAccessible(true);
-			activations = (Collection) activationsField.get(hp);
+			activations = (Collection<IHandlerActivation>) activationsField.get(hp);
 			assertNotNull(activations);
 		} else if (hsClassName.equals("org.eclipse.ui.internal.handlers.LegacyHandlerService")) {
 			Field hsField = hs.getClass().getDeclaredField("LEGACY_H_ID");
@@ -475,16 +476,16 @@ public class EvaluationServiceTest extends UITestCase {
 			Object eclipseContext = hpField.get(hs);
 			assertNotNull(eclipseContext);
 			Method getMethod = eclipseContext.getClass().getDeclaredMethod("get", new Class[] { String.class });
-			activations = (Collection) getMethod.invoke(eclipseContext, new Object[] { LEGACY_H_ID + CHECK_HANDLER_ID});
+			activations = (Collection<IHandlerActivation>) getMethod.invoke(eclipseContext, new Object[] { LEGACY_H_ID + CHECK_HANDLER_ID});
 			assertNotNull(activations);
 		} else {
 			fail("Incorrect handler service: " + hsClassName);
 		}
 
 		IHandlerActivation activation = null;
-		Iterator i = activations.iterator();
+		Iterator<IHandlerActivation> i = activations.iterator();
 		while (i.hasNext()) {
-			IHandlerActivation ha = (IHandlerActivation) i.next();
+			IHandlerActivation ha = i.next();
 			if (CHECK_HANDLER_ID.equals(ha.getCommandId())) {
 				activation = ha;
 			}
@@ -612,7 +613,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 		processEvents();
 
-		final ArrayList selection = new ArrayList();
+		final ArrayList<PartSelection> selection = new ArrayList<>();
 		IPropertyChangeListener listener = new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
@@ -696,18 +697,18 @@ public class EvaluationServiceTest extends UITestCase {
 		}
 	}
 
-	private void assertSelection(final ArrayList selection, int callIdx, Class clazz, String viewId) {
+	private void assertSelection(final ArrayList<PartSelection> selection, int callIdx, Class<?> clazz, String viewId) {
 		assertEquals(callIdx + 1, selection.size());
 		assertEquals(clazz, getSelection(selection, callIdx)
 				.getClass());
 		assertEquals(viewId, getPart(selection, callIdx).getSite().getId());
 	}
 
-	private ISelection getSelection(final ArrayList selection, int idx) {
-		return ((PartSelection) selection.get(idx)).selection;
+	private ISelection getSelection(final ArrayList<PartSelection> selection, int idx) {
+		return selection.get(idx).selection;
 	}
 
-	private IWorkbenchPart getPart(final ArrayList selection, int idx) {
-		return ((PartSelection) selection.get(idx)).part;
+	private IWorkbenchPart getPart(final ArrayList<PartSelection> selection, int idx) {
+		return selection.get(idx).part;
 	}
 }

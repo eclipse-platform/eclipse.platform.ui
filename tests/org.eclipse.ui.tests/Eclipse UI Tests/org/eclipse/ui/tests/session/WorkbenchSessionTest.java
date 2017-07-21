@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
@@ -37,7 +37,7 @@ import org.eclipse.ui.tests.harness.util.FileTool;
  */
 public class WorkbenchSessionTest extends SessionTestSuite {
 
-	private Map arguments;
+	private Map<String, String> arguments;
 
 	private String dataLocation;
 
@@ -50,7 +50,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 * @param clazz
 	 *            the <code>Test</code> class
 	 */
-	public WorkbenchSessionTest(String dataLocation, Class clazz, Map arguments) {
+	public WorkbenchSessionTest(String dataLocation, Class<?> clazz, Map<String, String> arguments) {
 		this(dataLocation, clazz);
 		this.arguments = arguments;
 	}
@@ -64,7 +64,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 * @param arguments
 	 *            a map of arguments to use
 	 */
-	public WorkbenchSessionTest(String dataLocation, Map arguments) {
+	public WorkbenchSessionTest(String dataLocation, Map<String, String> arguments) {
 		this(dataLocation);
 		this.arguments = arguments;
 	}
@@ -78,7 +78,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 * @param clazz
 	 *            the <code>Test</code> class
 	 */
-	public WorkbenchSessionTest(String dataLocation, Class clazz) {
+	public WorkbenchSessionTest(String dataLocation, Class<?> clazz) {
 		super("org.eclipse.ui.tests", clazz);
 		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);
 		this.dataLocation = dataLocation;
@@ -109,10 +109,9 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 		try {
 			base.setEclipseArgument(Setup.DATA, copyDataLocation());
 			if (arguments != null) {
-				for(Iterator i = arguments.entrySet().iterator(); i.hasNext(); ) {
-					Map.Entry entry = (Map.Entry) i.next();
-					String key = (String) entry.getKey();
-					String value = (String) entry.getValue();
+				for (Entry<String, String> entry : arguments.entrySet()) {
+					String key = entry.getKey();
+					String value = entry.getValue();
 					base.setEclipseArgument(key, value);
 				}
 			}

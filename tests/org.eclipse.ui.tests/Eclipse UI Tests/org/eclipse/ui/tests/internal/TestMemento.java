@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ public class TestMemento implements IMemento {
 
 	String typeName;
 	String id;
-	HashSet children = new HashSet();
-	Hashtable values = new Hashtable();
+	HashSet<IMemento> children = new HashSet<>();
+	Hashtable<String, Object> values = new Hashtable<>();
 	String textData;
 
 	public TestMemento(String type, String id){
@@ -45,7 +45,7 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public IMemento getChild(String type) {
-		Iterator iterator = children.iterator();
+		Iterator<IMemento> iterator = children.iterator();
 		while(iterator.hasNext()){
 			TestMemento next = (TestMemento) iterator.next();
 			if(next.typeName.equals(type)) {
@@ -64,8 +64,8 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public IMemento[] getChildren(String type) {
-		Iterator iterator = children.iterator();
-		Collection matches = new HashSet();
+		Iterator<IMemento> iterator = children.iterator();
+		Collection<IMemento> matches = new HashSet<>();
 		while(iterator.hasNext()){
 			TestMemento next = (TestMemento) iterator.next();
 			if(next.typeName.equals(type)){
@@ -147,8 +147,8 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public String[] getAttributeKeys() {
-		Set keySet = values.keySet();
-		return (String[]) keySet.toArray(new String[keySet.size()]);
+		Set<String> keySet = values.keySet();
+		return keySet.toArray(new String[keySet.size()]);
 	}
 
 	@Override

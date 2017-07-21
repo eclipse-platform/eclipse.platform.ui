@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -490,8 +490,8 @@ public class IAggregateWorkingSetTest extends UITestCase {
 				new Class[] { IMemento.class });
 	}
 
-	private Object invokeMethod(Class clazz, String methodName,
-			Object instance, Object[] args, Class[] argsClasses) {
+	private Object invokeMethod(Class<?> clazz, String methodName, Object instance, Object[] args,
+			Class<?>[] argsClasses) {
 		try {
 			Method method = clazz.getDeclaredMethod(methodName, argsClasses);
 			method.setAccessible(true);
@@ -502,7 +502,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		return null;
 	}
 
-	private <T> T readField(Class clazz, String filedName, Class<T> type, Object instance) {
+	private <T> T readField(Class<?> clazz, String filedName, Class<T> type, Object instance) {
 		try {
 			Field field = clazz.getDeclaredField(filedName);
 			field.setAccessible(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
     }
 
     protected void checkTreeItems() {
-        List widgets = getWidgets((Composite) fWizardDialog.getCurrentPage()
+		List<Widget> widgets = getWidgets((Composite) fWizardDialog.getCurrentPage()
                 .getControl(), Tree.class);
         Tree tree = (Tree) widgets.get(0);
         TreeItem[] treeItems = tree.getItems();
@@ -107,9 +107,9 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
         return DialogCheck.getShell();
     }
 
-    protected List getWidgets(Composite composite, Class clazz) {
+	protected List<Widget> getWidgets(Composite composite, Class<?> clazz) {
         Widget[] children = composite.getChildren();
-        List selectedChildren = new ArrayList();
+		List<Widget> selectedChildren = new ArrayList<>();
 
         for (Widget child : children) {
             if (child.getClass() == clazz) {
@@ -155,7 +155,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
     }
 
     protected void setTextWidgetText(String text, IWizardPage page) {
-        List widgets = getWidgets((Composite) page.getControl(), Text.class);
+		List<Widget> widgets = getWidgets((Composite) page.getControl(), Text.class);
         Text textWidget = (Text) widgets.get(0);
         textWidget.setText(text);
         textWidget.notifyListeners(SWT.Modify, new Event());
@@ -170,13 +170,13 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
     protected WorkingSetDescriptor[] getEditableWorkingSetDescriptors() {
         WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
         WorkingSetDescriptor[] all = registry.getWorkingSetDescriptors();
-        ArrayList editable = new ArrayList(all.length);
+		ArrayList<WorkingSetDescriptor> editable = new ArrayList<>(all.length);
         for (WorkingSetDescriptor descriptor : all) {
             if (descriptor.isEditable()) {
                 editable.add(descriptor);
             }
         }
-        return (WorkingSetDescriptor[]) editable.toArray(new WorkingSetDescriptor[editable.size()]);
+        return editable.toArray(new WorkingSetDescriptor[editable.size()]);
     }
 
 }

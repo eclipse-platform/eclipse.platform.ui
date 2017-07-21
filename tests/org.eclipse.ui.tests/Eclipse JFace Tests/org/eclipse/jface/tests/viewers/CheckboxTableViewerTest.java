@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,13 +344,13 @@ public class CheckboxTableViewerTest extends TableViewerTest {
     	checkAllStates("Testing checkbox state with a sorter", ctv, 0);
 
     	//Check that the provider is only invoked on elements which pass the filter
-    	for (Iterator i = checkStateProvider.isCheckedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = (TestElement) i.next();
+		for (Iterator<TestElement> i = checkStateProvider.isCheckedInvokedOn.iterator(); i.hasNext();) {
+			TestElement element = i.next();
 			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
 		}
 
-    	for (Iterator i = checkStateProvider.isGrayedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = (TestElement) i.next();
+		for (Iterator<TestElement> i = checkStateProvider.isGrayedInvokedOn.iterator(); i.hasNext();) {
+			TestElement element = i.next();
 			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
 		}
     }
@@ -414,7 +414,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 
 		TestElement[] children = fRootElement.getChildren();
 
-		List checked = new ArrayList((children.length + 1) / 2);
+		List<TestElement> checked = new ArrayList<>((children.length + 1) / 2);
 
 		for (int i = 0; i < children.length; i+=2) {
 			ctv.setChecked(children[i], true);
@@ -435,7 +435,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 
 		TestElement[] children = fRootElement.getChildren();
 
-		List toCheck = new ArrayList((children.length + 1) / 2);
+		List<TestElement> toCheck = new ArrayList<>((children.length + 1) / 2);
 
 		for (int i = 0; i < children.length; i+=2) {
 			toCheck.add(children[i]);
@@ -457,7 +457,7 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 
 		TestElement[] children = fRootElement.getChildren();
 
-		List toGray = new ArrayList((children.length + 1) / 2);
+		List<TestElement> toGray = new ArrayList<>((children.length + 1) / 2);
 
 		for (int i = 0; i < children.length; i+=2) {
 			toGray.add(children[i]);

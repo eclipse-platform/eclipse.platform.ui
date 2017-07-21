@@ -103,7 +103,7 @@ public class MenuTestCase extends UITestCase {
 		return ALL_OK;
 	}
 
-	protected static int checkContribClasses(IContributionItem[] items, Class[] classes) {
+	protected static int checkContribClasses(IContributionItem[] items, Class<?>[] classes) {
 		// Test cases should check this independently so they can issue the
 		// correct error (i.e. "Not enough items...wanted 6 got 5") but for
 		// safety's sake...

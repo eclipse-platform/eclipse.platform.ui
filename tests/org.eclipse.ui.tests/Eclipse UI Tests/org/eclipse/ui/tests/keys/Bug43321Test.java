@@ -79,7 +79,7 @@ public class Bug43321Test extends UITestCase {
 		editor.selectAndReveal(0, 1);
 
 		// Press "Ctrl+C" to perform a copy.
-		List keyStrokes = new ArrayList();
+		List<KeyStroke> keyStrokes = new ArrayList<>();
 		keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
 		Event event = new Event();
 		Workbench workbench = ((Workbench) window.getWorkbench());

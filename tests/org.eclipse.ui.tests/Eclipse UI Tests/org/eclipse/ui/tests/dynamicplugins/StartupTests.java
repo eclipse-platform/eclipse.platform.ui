@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class StartupTests extends DynamicTestCase {
 			SecurityException, NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
 		Bundle bundle = getBundle();
-		Class clazz = bundle.loadClass(getMarkerClass());
+		Class<?> clazz = bundle.loadClass(getMarkerClass());
 		assertNotNull(clazz);
 		Field field = clazz.getDeclaredField("history");
 		assertNotNull(field);

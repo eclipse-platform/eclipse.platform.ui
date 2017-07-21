@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,24 +32,24 @@ public class CheckStateProviderTestsUtil {
 	 * @since 3.5
 	 */
 	public static class TestMethodsInvokedCheckStateProvider implements ICheckStateProvider {
-		public List isCheckedInvokedOn = new ArrayList();
-		public List isGrayedInvokedOn = new ArrayList();
+		public List<TestElement> isCheckedInvokedOn = new ArrayList<>();
+		public List<TestElement> isGrayedInvokedOn = new ArrayList<>();
 
 		@Override
 		public boolean isChecked(Object element) {
-			isCheckedInvokedOn.add(element);
+			isCheckedInvokedOn.add((TestElement) element);
 			return true;
 		}
 
 		@Override
 		public boolean isGrayed(Object element) {
-			isGrayedInvokedOn.add(element);
+			isGrayedInvokedOn.add((TestElement) element);
 			return true;
 		}
 
 		public void reset() {
-			isCheckedInvokedOn = new ArrayList();
-			isGrayedInvokedOn = new ArrayList();
+			isCheckedInvokedOn = new ArrayList<>();
+			isGrayedInvokedOn = new ArrayList<>();
 		}
 	}
 

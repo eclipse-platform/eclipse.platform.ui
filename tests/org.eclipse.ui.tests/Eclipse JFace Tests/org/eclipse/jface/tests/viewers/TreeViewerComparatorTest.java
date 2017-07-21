@@ -41,7 +41,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof List){
-				List children = new ArrayList();
+				List<Team> children = new ArrayList<>();
 				Iterator iter = ((List)parentElement).iterator();
 				while(iter.hasNext()){
 					Object next = iter.next();

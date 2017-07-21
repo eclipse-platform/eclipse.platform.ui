@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -143,7 +143,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindingManager.addBinding(binding2);
 
 		// Only "parent"
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("parent");
 		contextManager.setActiveContextIds(activeContextIds);
 		assertEquals(
@@ -185,7 +185,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -218,7 +218,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("parent");
 		activeContextIds.add("child");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -259,7 +259,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -296,7 +296,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -334,7 +334,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -366,7 +366,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -403,7 +403,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		parentContext.define(parent, parent, null);
 		final Context childContext = contextManager.getContext(child);
 		childContext.define(child, child, parent);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add(parent);
 		activeContextIds.add(child);
 		contextManager.setActiveContextIds(activeContextIds);
@@ -448,7 +448,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		parentContext.define(parent, parent, null);
 		final Context childContext = contextManager.getContext(child);
 		childContext.define(child, child, parent);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add(parent);
 		activeContextIds.add(child);
 		contextManager.setActiveContextIds(activeContextIds);
@@ -494,7 +494,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -530,7 +530,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -576,7 +576,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		childScheme.define("child", "child scheme", "parent");
 
 		bindingManager.setActiveScheme(childScheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -616,7 +616,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		childScheme.define("child", "child scheme", parent);
 
 		bindingManager.setActiveScheme(childScheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add(parentContext.getId());
 		activeContextIds.add(childContext.getId());
 		contextManager.setActiveContextIds(activeContextIds);
@@ -660,7 +660,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		childScheme.define("child", "child scheme", "parent");
 
 		bindingManager.setActiveScheme(childScheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
@@ -704,7 +704,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		bindingManager.addBinding(binding2);
 
 		// One sibling active
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("sibling1");
 		contextManager.setActiveContextIds(activeContextIds);
 		assertEquals(
@@ -753,7 +753,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		scheme.define("name", "description", null);
 
 		bindingManager.setActiveScheme(scheme);
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 

@@ -91,7 +91,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
     }
 
     private void setup(String propertyName) throws Exception{
-        Class testClass = Class
+		Class<?> testClass = Class
 		        .forName("org.eclipse.ui.tests.datatransfer.ImportArchiveOperationTest");
 		InputStream stream = testClass.getResourceAsStream("tests.ini");
 		Properties properties = new Properties();
@@ -112,8 +112,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 
         ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
 
-        Enumeration zipEntries = zipFile.entries();
-        List entries = new ArrayList();
+		Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		List<ZipEntry> entries = new ArrayList<>();
         while (zipEntries.hasMoreElements()){
         	entries.add(zipEntries.nextElement());
         }
@@ -149,10 +149,10 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         ZipFile zipFile = new ZipFile(zipFileURL.getPath());
         ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
         zipFile = new ZipFile(zipFileURL.getPath());
-	    Enumeration zipEntries = zipFile.entries();
-	    List entries = new ArrayList();
+		Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		List<ZipEntry> entries = new ArrayList<>();
 	    while (zipEntries.hasMoreElements()){
-	    	ZipEntry entry = (ZipEntry)zipEntries.nextElement();
+	    	ZipEntry entry = zipEntries.nextElement();
 	    	if (!entry.isDirectory()) {
 				entries.add(entry);
 			}
@@ -215,10 +215,10 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         ZipFile zipFile = new ZipFile(zipFileURL.getPath());
         ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
         zipFile = new ZipFile(zipFileURL.getPath());
-	    Enumeration zipEntries = zipFile.entries();
-	    List entries = new ArrayList();
+		Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		List<ZipEntry> entries = new ArrayList<>();
 	    while (zipEntries.hasMoreElements()){
-	    	ZipEntry entry = (ZipEntry)zipEntries.nextElement();
+	    	ZipEntry entry = zipEntries.nextElement();
 	    	if (!entry.isDirectory()) {
 				entries.add(entry);
 			}
@@ -240,10 +240,10 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         ZipFile zipFile = new ZipFile(zipFileURL.getPath());
         ZipLeveledStructureProvider structureProvider = new ZipLeveledStructureProvider(zipFile);
         zipFile = new ZipFile(zipFileURL.getPath());
-	    Enumeration zipEntries = zipFile.entries();
-	    List entries = new ArrayList();
+		Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		List<ZipEntry> entries = new ArrayList<>();
 	    while (zipEntries.hasMoreElements()){
-	    	ZipEntry entry = (ZipEntry)zipEntries.nextElement();
+	    	ZipEntry entry = zipEntries.nextElement();
 	    	if (!entry.isDirectory()) {
 				entries.add(entry);
 			}

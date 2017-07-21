@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.keys.model.BindingElement;
@@ -116,14 +115,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(cm.getSelectedElement());
 		assertNotNull(dialog);
 
-		final ArrayList events = new ArrayList();
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
 		// test setup vars
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		controller.addPropertyChangeListener(event -> events.add(event));
 		cm.setSelectedElement(dialog);
 
 		assertTrue(cm.getSelectedElement() == dialog);
@@ -163,13 +157,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(bm.getSelectedElement());
 
 		// test setup vars
-		final ArrayList events = new ArrayList();
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+		controller.addPropertyChangeListener(event -> events.add(event));
 
 		bm.setSelectedElement(activateEditor);
 
@@ -217,13 +206,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(Boolean.FALSE, activateEditor.getConflict());
 
 		// test setup vars
-		final ArrayList events = new ArrayList();
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+		controller.addPropertyChangeListener(event -> events.add(event));
 
 		bm.setSelectedElement(conflict1);
 		assertEquals(conflict1, bm.getSelectedElement());
@@ -275,13 +259,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		final BindingElement conflict3 = getBindingElement(bm, ID_CMD_CONFLICT3);
 
 		// test setup vars
-		final ArrayList events = new ArrayList();
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+		controller.addPropertyChangeListener(event -> events.add(event));
 
 		bm.setSelectedElement(conflict1);
 		assertEquals(conflict1, bm.getSelectedElement());
@@ -419,13 +398,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(dialog, cm.getSelectedElement());
 
 		// test setup vars
-		final ArrayList events = new ArrayList();
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+		controller.addPropertyChangeListener(event -> events.add(event));
 
 		cm.setSelectedElement(window);
 		assertEquals(window, ((BindingElement) bm.getSelectedElement())
@@ -471,13 +445,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(dialog, cm.getSelectedElement());
 
 		// test setup vars
-		final ArrayList events = new ArrayList();
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+		controller.addPropertyChangeListener(event -> events.add(event));
 
 		KeySequence oldKeySequence = (KeySequence) conflict2.getTrigger();
 		KeySequence ctrl5 = KeySequence.getInstance("CTRL+5 N");
@@ -554,13 +523,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(cm.getSelectedElement());
 
 		// test setup vars
-		final ArrayList events = new ArrayList();
-		controller.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				events.add(event);
-			}
-		});
+		final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+		controller.addPropertyChangeListener(event -> events.add(event));
 
 		KeySequence ctrl5 = KeySequence.getInstance("CTRL+5 N");
 		conflict4.setTrigger(ctrl5);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,13 @@ package org.eclipse.ui.tests.session;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.util.Util;
 import org.eclipse.ui.tests.markers.MarkersViewColumnSizeTest;
 import org.eclipse.ui.tests.statushandlers.StatusHandlerConfigurationSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingConfigurationTest;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.1
@@ -54,7 +54,7 @@ public class SessionTests extends TestSuite {
 	private void addWindowlessSessionTest() {
 		// Windowless apps are available only on Cocoa
 		if (Util.isCocoa()) {
-			Map arguments = new HashMap(2);
+			Map<String, String> arguments = new HashMap<>(2);
 			arguments.put("product", null);
 			arguments.put("testApplication",
 					"org.eclipse.ui.tests.windowLessRcpApplication");
@@ -85,7 +85,7 @@ public class SessionTests extends TestSuite {
 	}
 
 	private void addRestoredSessionTest() {
-		Map arguments = new HashMap(2);
+		Map<String, String> arguments = new HashMap<>(2);
 		arguments.put("product", null);
 		arguments.put("testApplication", "org.eclipse.ui.tests.rcpSessionApplication");
 		WorkbenchSessionTest test = new WorkbenchSessionTest("introSessionTests", arguments);

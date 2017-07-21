@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -341,7 +341,7 @@ public class UtilTest extends TestCase {
 		public static final String VARIABLE = "arbitraryVariable";
 		public static final String VALUE = "arbitraryValue";
 
-		private Map sourceState = new HashMap(1);
+		private Map<String, String> sourceState = new HashMap<>(1);
 
 		public TestSourceProvider() {
 			super();
@@ -530,7 +530,7 @@ public class UtilTest extends TestCase {
 	 * Enable all test activities.
 	 */
 	private void enableAll() {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		set.add(ID1);
 		set.add(ID2);
 		set.add(ID4);
