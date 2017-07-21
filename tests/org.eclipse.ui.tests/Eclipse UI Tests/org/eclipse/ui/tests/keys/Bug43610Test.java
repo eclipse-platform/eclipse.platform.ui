@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.keys;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
@@ -48,13 +47,9 @@ public class Bug43610Test extends UITestCase {
 
 		// Set up a working environment.
 		Display display = Display.getCurrent();
-		Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.stateMask == SWT.SHIFT) {
-					assertEquals(
-							"Incorrect key code for 'Shift+Alt+'", SWT.ALT, event.keyCode); //$NON-NLS-1$
-				}
+		Listener listener = event -> {
+			if (event.stateMask == SWT.SHIFT) {
+				assertEquals("Incorrect key code for 'Shift+Alt+'", SWT.ALT, event.keyCode); //$NON-NLS-1$
 			}
 		};
 		display.addFilter(SWT.KeyDown, listener);
@@ -68,7 +63,6 @@ public class Bug43610Test extends UITestCase {
 			AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.ESC);
 
 			while (display.readAndDispatch()) {
-				;
 			}
 
 		} finally {

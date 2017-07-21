@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+
+import junit.framework.TestCase;
 
 public class DialogSettingsTest extends TestCase {
 
@@ -498,16 +498,15 @@ public class DialogSettingsTest extends TestCase {
 		dialogSettingsChecker
 				.prepareAndCheckBeforeSerialization(dialogSettingsToSerialize);
 
-		StringWriter writer = new StringWriter();
-		dialogSettingsToSerialize.save(writer);
-		writer.close();
+		try (StringWriter writer = new StringWriter()) {
+			dialogSettingsToSerialize.save(writer);
+			StringReader reader = new StringReader(writer.getBuffer().toString());
+			DialogSettings deserializedDialogSettings = new DialogSettings("");
+			deserializedDialogSettings.load(reader);
 
-		StringReader reader = new StringReader(writer.getBuffer().toString());
-		DialogSettings deserializedDialogSettings = new DialogSettings("");
-		deserializedDialogSettings.load(reader);
+			dialogSettingsChecker.checkAfterDeserialization(deserializedDialogSettings);
+		}
 
-		dialogSettingsChecker
-				.checkAfterDeserialization(deserializedDialogSettings);
 	}
 
 	public void testSaveWithIOException() {

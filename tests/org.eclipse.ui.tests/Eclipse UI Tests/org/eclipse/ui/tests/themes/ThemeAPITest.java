@@ -575,9 +575,9 @@ public class ThemeAPITest extends ThemeTest {
         ITheme newCurrentTheme = fManager.getCurrentTheme();
         ITheme theme1 = getTheme1();
         assertEquals(theme1, newCurrentTheme);
-        List events = listener.getEvents();
+		List<PropertyChangeEvent> events = listener.getEvents();
         assertEquals(1, events.size());
-        PropertyChangeEvent event = ((PropertyChangeEvent) events.get(0));
+		PropertyChangeEvent event = events.get(0);
         assertEquals(IThemeManager.CHANGE_CURRENT_THEME, event.getProperty());
         assertEquals(currentTheme, event.getOldValue());
         assertEquals(newCurrentTheme, event.getNewValue());

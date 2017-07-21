@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class VirtualTableViewerTest extends TableViewerTest {
 
-	Set visibleItems = new HashSet();
+	Set<TableItem> visibleItems = new HashSet<>();
 
 	/**
 	 * Checks if the virtual tree / table functionality can be tested in the current settings.
@@ -64,7 +64,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 	@Override
 	protected TableViewer createTableViewer(Composite parent) {
-		visibleItems = new HashSet();
+		visibleItems = new HashSet<>();
 		TableViewer viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.MULTI);
 		viewer.setUseHashlookup(true);
 		final Table table = viewer.getTable();
@@ -97,7 +97,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @return TableItem[]
 	 */
 	private TableItem[] getVisibleItems() {
-		return (TableItem[]) visibleItems.toArray(new TableItem[visibleItems.size()]);
+		return visibleItems.toArray(new TableItem[visibleItems.size()]);
 	}
 
 	public void testElementsCreated() {
@@ -119,14 +119,14 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	@Override
 	public void testFilter() {
 		ViewerFilter filter = new TestLabelFilter();
-		visibleItems = new HashSet();
+		visibleItems = new HashSet<>();
 		fViewer.addFilter(filter);
 		if (!updateTable()) {
 			return;
 		}
 		assertEquals("filtered count", 5, getItemCount());
 
-		visibleItems = new HashSet();
+		visibleItems = new HashSet<>();
 		fViewer.removeFilter(filter);
 		if (!updateTable()) {
 			return;
@@ -137,21 +137,21 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	@Override
 	public void testSetFilters() {
 		ViewerFilter filter = new TestLabelFilter();
-		visibleItems = new HashSet();
+		visibleItems = new HashSet<>();
 		fViewer.setFilters(filter, new TestLabelFilter2());
 		if (!updateTable()) {
 			return;
 		}
 		assertEquals("2 filters count",1, getItemCount());
 
-		visibleItems = new HashSet();
+		visibleItems = new HashSet<>();
 		fViewer.setFilters(filter);
 		if (!updateTable()) {
 			return;
 		}
 		assertEquals("1 filtered count",5, getItemCount());
 
-		visibleItems = new HashSet();
+		visibleItems = new HashSet<>();
 		fViewer.setFilters();
 		if (!updateTable()) {
 			return;
@@ -309,8 +309,8 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		assertTrue("Size was " + String.valueOf(result.size()) + " expected "
 				+ String.valueOf(children.length),
 				(result.size() == children.length));
-		Set childrenSet = new HashSet(Arrays.asList(children));
-		Set selectedSet = new HashSet(result.toList());
+		Set<TestElement> childrenSet = new HashSet<>(Arrays.asList(children));
+		Set<?> selectedSet = new HashSet<Object>(result.toList());
 		assertTrue("Elements do not match ", childrenSet.equals(selectedSet));
 	}
 }

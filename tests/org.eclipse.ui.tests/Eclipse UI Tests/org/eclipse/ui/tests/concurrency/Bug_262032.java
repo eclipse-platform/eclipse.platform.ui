@@ -84,7 +84,7 @@ public class Bug_262032 extends TestCase {
 
 				tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 				return Status.OK_STATUS;
-			};
+			}
 		};
 		j.setRule(identityRule);
 		j.schedule();

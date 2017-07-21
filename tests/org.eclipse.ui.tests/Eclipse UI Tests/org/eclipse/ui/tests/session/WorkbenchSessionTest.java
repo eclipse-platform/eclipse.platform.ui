@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 			if (Util.isCocoa()) {
 				String arch = System.getProperty("osgi.arch");
 				if (Constants.ARCH_X86.equals(arch)) {
-					Map vmArguments = new HashMap(1);
+					Map<String, String> vmArguments = new HashMap<>(1);
 					vmArguments.put("d32", null);
 					base.setVMArguments(vmArguments);
 				}

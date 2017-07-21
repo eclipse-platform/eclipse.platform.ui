@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Comparator;
 import org.eclipse.ui.internal.views.markers.MarkerSortUtil;
 import org.eclipse.ui.internal.views.markers.MockMarkerEntry;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * @since 3.5
@@ -50,12 +51,8 @@ public class MarkerSortUtilTest extends UITestCase {
 	private void sortToLimit(int arraySize,int limit) {
 		MockMarkerEntry[] fArray1=generateArray(arraySize);
 		MockMarkerEntry[] fArray2=fArray1.clone();
-		Comparator comparator=new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((MockMarkerEntry)o1).name.compareTo(((MockMarkerEntry)o2).name);
-			}
-		};
+		Comparator<MarkerItem> comparator = (o1, o2) -> ((MockMarkerEntry) o1).name
+				.compareTo(((MockMarkerEntry) o2).name);
 		MarkerSortUtil.sortStartingKElement(fArray1, comparator, 0,fArray1.length-1, limit);
 		Arrays.sort(fArray2,comparator);
 

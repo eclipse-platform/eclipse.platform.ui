@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.keys;
 
+import java.awt.AWTException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -79,7 +80,6 @@ public class Bug53489Test extends UITestCase {
         // Allow the editor to finish opening.
         Display display = Display.getCurrent();
         while (display.readAndDispatch()) {
-			;
 		}
 
         AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.DEL);
@@ -91,7 +91,6 @@ public class Bug53489Test extends UITestCase {
 
         // Spin the event loop.
         while (display.readAndDispatch()) {
-			;
 		}
 
         // Test the text is only one character different.

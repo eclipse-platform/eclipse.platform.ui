@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * The TestLazyModelContentProvider is the lazy version
  * of the model content provider.
  */
-public class TestLazyModelContentProvider extends TestModelContentProvider implements ILazyContentProvider, IContentProvider {
+public class TestLazyModelContentProvider extends TestModelContentProvider implements ILazyContentProvider {
 
 	TableViewerTest test;
 	TestElement input;

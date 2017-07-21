@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 20016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,13 +91,13 @@ public class WorkspaceOperationsTests extends UITestCase {
 	IFile emptyTestFile, testFileWithContent, testLinkedFile,
 			testFileInSubFolder, testFileInProject;
 
-	private final Set storesToDelete = new HashSet();
+	private final Set<IFileStore> storesToDelete = new HashSet<>();
 
 	IOperationHistory history;
 
 	IUndoContext context;
 
-	private static Map initialAttributes = new HashMap();
+	private static Map<String, String> initialAttributes = new HashMap<>();
 	static {
 		initialAttributes.put("Attr1", "Attr1 1.0");
 		initialAttributes.put("Attr2", "Attr2 1.0");
@@ -105,9 +105,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		initialAttributes.put("Attr4", "Attr4 1.0");
 		initialAttributes.put("Attr5", "Attr5 1.0");
 		initialAttributes.put("Attr6", "Attr6 1.0");
-	};
+	}
 
-	private static Map updatedAttributes = new HashMap();
+	private static Map<String, String> updatedAttributes = new HashMap<>();
 	static {
 		updatedAttributes.put("Attr1", "Attr1 1.1");
 		updatedAttributes.put("Attr2", "Attr2 1.1");
@@ -115,9 +115,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		updatedAttributes.put("Attr4", "Attr4 1.1");
 		updatedAttributes.put("Attr5", "Attr5 1.1");
 		updatedAttributes.put("Attr7", "Attr7 1.0");
-	};
+	}
 
-	private static Map mergedUpdatedAttributes = new HashMap();
+	private static Map<String, String> mergedUpdatedAttributes = new HashMap<>();
 	static {
 		mergedUpdatedAttributes.put("Attr1", "Attr1 1.1");
 		mergedUpdatedAttributes.put("Attr2", "Attr2 1.1");
@@ -126,12 +126,12 @@ public class WorkspaceOperationsTests extends UITestCase {
 		mergedUpdatedAttributes.put("Attr5", "Attr5 1.1");
 		mergedUpdatedAttributes.put("Attr6", "Attr6 1.0");
 		mergedUpdatedAttributes.put("Attr7", "Attr7 1.0");
-	};
+	}
 
-	private static List fileNameExcludes = new ArrayList();
+	private static List<String> fileNameExcludes = new ArrayList<>();
 	static {
 		fileNameExcludes.add(".project");
-	};
+	}
 
 	private static String CUSTOM_TYPE = "TestMarkerType";
 
@@ -264,7 +264,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	class MarkerSnapshot {
 		String type;
 
-		Map attributes;
+		Map<String, Object> attributes;
 
 		MarkerSnapshot(IMarker marker) throws CoreException {
 			type = marker.getType();
@@ -440,7 +440,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 			newProject.close(getMonitor());
 			newProject.delete(true, true, getMonitor());
 		}
-		final IFileStore[] toDelete = (IFileStore[]) storesToDelete
+		final IFileStore[] toDelete = storesToDelete
 				.toArray(new IFileStore[storesToDelete.size()]);
 		storesToDelete.clear();
 		for (IFileStore element : toDelete) {
@@ -479,12 +479,10 @@ public class WorkspaceOperationsTests extends UITestCase {
 		if (is == null) {
 			return null;
 		}
-		BufferedReader reader = null;
-		try {
-			StringBuilder buffer = new StringBuilder();
-			char[] part = new char[2048];
-			int read = 0;
-			reader = new BufferedReader(new InputStreamReader(is, encoding));
+		StringBuilder buffer = new StringBuilder();
+		char[] part = new char[2048];
+		int read = 0;
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, encoding));) {
 
 			while ((read = reader.read(part)) != -1) {
 				buffer.append(part, 0, read);
@@ -493,13 +491,6 @@ public class WorkspaceOperationsTests extends UITestCase {
 			return buffer.toString();
 
 		} catch (IOException ex) {
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException ex) {
-				}
-			}
 		}
 		return null;
 	}
@@ -587,14 +578,14 @@ public class WorkspaceOperationsTests extends UITestCase {
 		return new ByteArrayInputStream(text.getBytes());
 	}
 
-	private Map getInitialMarkerAttributes() {
-		HashMap map = new HashMap();
+	private Map<String, String> getInitialMarkerAttributes() {
+		HashMap<String, String> map = new HashMap<>();
 		map.putAll(initialAttributes);
 		return map;
 	}
 
-	private Map getUpdatedMarkerAttributes() {
-		HashMap map = new HashMap();
+	private Map<String, String> getUpdatedMarkerAttributes() {
+		HashMap<String, String> map = new HashMap<>();
 		map.putAll(updatedAttributes);
 		return map;
 	}

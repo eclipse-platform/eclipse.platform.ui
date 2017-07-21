@@ -63,9 +63,6 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         super(testName);
     }
 
-    /*
-     * @see IOverwriteQuery#queryOverwrite(String)
-     */
     @Override
 	public String queryOverwrite(String pathString) {
         //Always return an empty String - we aren't

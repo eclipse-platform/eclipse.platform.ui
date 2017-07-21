@@ -61,7 +61,7 @@ public class TestBug269121 extends TestCase {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
-			};
+			}
 		};
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		final int[] status = new int[] { -1 };

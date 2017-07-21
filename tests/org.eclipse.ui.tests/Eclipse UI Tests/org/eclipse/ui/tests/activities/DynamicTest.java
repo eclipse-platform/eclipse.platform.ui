@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,21 +22,13 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.ActivityEvent;
-import org.eclipse.ui.activities.ActivityManagerEvent;
-import org.eclipse.ui.activities.CategoryEvent;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityListener;
-import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
-import org.eclipse.ui.activities.ICategoryListener;
 import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
@@ -151,20 +143,17 @@ public class DynamicTest extends UITestCase {
         final IIdentifier enabledIdentifier = activityManager
                 .getIdentifier("org.eclipse.pattern3"); //$NON-NLS-1$
         assertTrue(enabledIdentifier.isEnabled());
-        enabledIdentifier.addIdentifierListener(new IIdentifierListener() {
-            @Override
-			public void identifierChanged(IdentifierEvent identifierEvent) {
-                switch (listenerType) {
-                case ACTIVITY_ENABLED_CHANGED:
-                    assertTrue(identifierEvent.hasEnabledChanged());
-                    break;
-                case ACTIVITY_IDS_CHANGED:
-                    assertTrue(identifierEvent.hasActivityIdsChanged());
-                    break;
-                }
-                listenerType = -1;
-            }
-        });
+		enabledIdentifier.addIdentifierListener(identifierEvent -> {
+			switch (listenerType) {
+			case ACTIVITY_ENABLED_CHANGED:
+				assertTrue(identifierEvent.hasEnabledChanged());
+				break;
+			case ACTIVITY_IDS_CHANGED:
+				assertTrue(identifierEvent.hasActivityIdsChanged());
+				break;
+			}
+			listenerType = -1;
+		});
         // Test correcteness of identifier
         IIdentifier activitiesIdentifier = activityManager
                 .getIdentifier("org.eclipse.pattern4"); //$NON-NLS-1$
@@ -207,28 +196,20 @@ public class DynamicTest extends UITestCase {
      *
      */
     public void testActivityManagerListener() {
-        activityManager
-                .addActivityManagerListener(new IActivityManagerListener() {
-                    @Override
-					public void activityManagerChanged(
-                            ActivityManagerEvent activityManagerEvent) {
-                        switch (listenerType) {
-                        case ENABLED_ACTIVITYIDS_CHANGED:
-                            assertTrue(activityManagerEvent
-                                    .haveEnabledActivityIdsChanged());
-                            break;
-                        case DEFINED_CATEGORYIDS_CHANGED:
-                            assertTrue(activityManagerEvent
-                                    .haveDefinedCategoryIdsChanged());
-                            break;
-                        case DEFINED_ACTIVITYIDS_CHANGED:
-                            assertTrue(activityManagerEvent
-                                    .haveDefinedActivityIdsChanged());
-                            break;
-                        }
-                        listenerType = -1;
-                    }
-                });
+		activityManager.addActivityManagerListener(activityManagerEvent -> {
+			switch (listenerType) {
+			case ENABLED_ACTIVITYIDS_CHANGED:
+				assertTrue(activityManagerEvent.haveEnabledActivityIdsChanged());
+				break;
+			case DEFINED_CATEGORYIDS_CHANGED:
+				assertTrue(activityManagerEvent.haveDefinedCategoryIdsChanged());
+				break;
+			case DEFINED_ACTIVITYIDS_CHANGED:
+				assertTrue(activityManagerEvent.haveDefinedActivityIdsChanged());
+				break;
+			}
+			listenerType = -1;
+		});
         // Add an enabled activity
         listenerType = 2;
         Set enabledSet = new HashSet(activityManager.getEnabledActivityIds());
@@ -268,37 +249,32 @@ public class DynamicTest extends UITestCase {
         final String activity_to_listen_name = "Activity 18"; //$NON-NLS-1$
         final IActivity activity_to_listen = activityManager
                 .getActivity("org.eclipse.activity18"); //$NON-NLS-1$
-        activity_to_listen.addActivityListener(new IActivityListener() {
-            @Override
-			public void activityChanged(ActivityEvent activityEvent) {
-                switch (listenerType) {
-                case DEFINED_CHANGED:
-                    assertTrue(activityEvent.hasDefinedChanged());
-                    break;
-                case ENABLED_CHANGED:
-                    assertTrue(activityEvent.hasEnabledChanged());
-                    break;
-                case NAME_CHANGED:
-                    assertTrue(activityEvent.hasNameChanged());
-                    break;
-                case PATTERN_BINDINGS_CHANGED:
-                    assertTrue(activityEvent
-                            .haveActivityPatternBindingsChanged());
-                    break;
-                case ACTIVITY_ACTIVITY_BINDINGS_CHANGED:
-                    assertTrue(activityEvent
-                            .haveActivityRequirementBindingsChanged());
-                    break;
-                case DESCRIPTION_CHANGED:
-                    assertTrue(activityEvent.hasDescriptionChanged());
-                    break;
-                case DEFAULT_ENABLED_CHANGED:
-                    assertTrue(activityEvent.hasDefaultEnabledChanged());
-                    break;
-                }
-                listenerType = -1;
-            }
-        });
+		activity_to_listen.addActivityListener(activityEvent -> {
+			switch (listenerType) {
+			case DEFINED_CHANGED:
+				assertTrue(activityEvent.hasDefinedChanged());
+				break;
+			case ENABLED_CHANGED:
+				assertTrue(activityEvent.hasEnabledChanged());
+				break;
+			case NAME_CHANGED:
+				assertTrue(activityEvent.hasNameChanged());
+				break;
+			case PATTERN_BINDINGS_CHANGED:
+				assertTrue(activityEvent.haveActivityPatternBindingsChanged());
+				break;
+			case ACTIVITY_ACTIVITY_BINDINGS_CHANGED:
+				assertTrue(activityEvent.haveActivityRequirementBindingsChanged());
+				break;
+			case DESCRIPTION_CHANGED:
+				assertTrue(activityEvent.hasDescriptionChanged());
+				break;
+			case DEFAULT_ENABLED_CHANGED:
+				assertTrue(activityEvent.hasDefaultEnabledChanged());
+				break;
+			}
+			listenerType = -1;
+		});
         // Remove activity and change name consequently
         fixedModelRegistry.removeActivity(activity_to_listen.getId(),
                 activity_to_listen_name);
@@ -378,27 +354,23 @@ public class DynamicTest extends UITestCase {
         final ICategory category_to_listen = activityManager
                 .getCategory((String) activityManager.getDefinedCategoryIds()
                         .toArray()[0]);
-        category_to_listen.addCategoryListener(new ICategoryListener() {
-            @Override
-			public void categoryChanged(CategoryEvent categoryEvent) {
-                switch (listenerType) {
-                case DEFINED_CHANGED:
-                    assertTrue(categoryEvent.hasDefinedChanged());
-                    break;
-                case NAME_CHANGED:
-                    assertTrue(categoryEvent.hasNameChanged());
-                    break;
-                case PATTERN_BINDINGS_CHANGED:
-                    assertTrue(categoryEvent
-                            .haveCategoryActivityBindingsChanged());
-                    break;
-                case DESCRIPTION_CHANGED:
-                    //	assertTrue(categoryEvent.hasDescriptionChanged());
-                    break;
-                }
-                listenerType = -1;
-            }
-        });
+		category_to_listen.addCategoryListener(categoryEvent -> {
+			switch (listenerType) {
+			case DEFINED_CHANGED:
+				assertTrue(categoryEvent.hasDefinedChanged());
+				break;
+			case NAME_CHANGED:
+				assertTrue(categoryEvent.hasNameChanged());
+				break;
+			case PATTERN_BINDINGS_CHANGED:
+				assertTrue(categoryEvent.haveCategoryActivityBindingsChanged());
+				break;
+			case DESCRIPTION_CHANGED:
+				// assertTrue(categoryEvent.hasDescriptionChanged());
+				break;
+			}
+			listenerType = -1;
+		});
         // Remove category, and change name
         try {
             fixedModelRegistry.removeCategory(category_to_listen.getId(),
@@ -461,22 +433,11 @@ public class DynamicTest extends UITestCase {
 		// set to true when the activity/category in question have had an event
 		// fired
 		final boolean[] registryChanged = new boolean[] { false, false };
-		activity.addActivityListener(new IActivityListener() {
+		activity.addActivityListener(activityEvent -> registryChanged[0] = true);
+		category.addCategoryListener(categoryEvent -> {
+			System.err.println("categoryChanged");
+			registryChanged[1] = true;
 
-			@Override
-			public void activityChanged(ActivityEvent activityEvent) {
-				registryChanged[0] = true;
-
-			}
-		});
-		category.addCategoryListener(new ICategoryListener() {
-
-			@Override
-			public void categoryChanged(CategoryEvent categoryEvent) {
-				System.err.println("categoryChanged");
-				registryChanged[1] = true;
-
-			}
 		});
 
 		String ACTIVITY = "<plugin><extension point=\"org.eclipse.ui.activities\">"
@@ -504,7 +465,6 @@ public class DynamicTest extends UITestCase {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			if (display != null && !display.isDisposed()) {
 				while (display.readAndDispatch()) {
-					;
 				}
 			}
 			display.sleep();

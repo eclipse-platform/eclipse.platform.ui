@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.eclipse.ui.dialogs.SearchPattern;
+
+import junit.framework.TestCase;
 
 /**
  * Test case for tests SearchPattern match functionality
@@ -27,7 +27,7 @@ import org.eclipse.ui.dialogs.SearchPattern;
  */
 public class SearchPatternAuto extends TestCase {
 
-	private static List<String> resources = new ArrayList();
+	private static List<String> resources = new ArrayList<>();
 
 	static {
 		generateRescourcesTestCases('A', 'C', 8, "");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Versant  and others.
+ * Copyright (c) 2008, 2017 Versant  and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,21 +22,22 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  *
  */
 public class TestPropertySheetPage extends PropertySheetPage implements
-		IPropertySheetPage, IAdapterFactory {
+		IAdapterFactory {
 
 	private ISelection fSelection;
 	private IWorkbenchPart fPart;
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		// singleton cleanup
 		fSelection = null;
 		fPart = null;
-		return this;
+		return (T) this;
 	}
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IPropertySheetPage.class };
 	}
 

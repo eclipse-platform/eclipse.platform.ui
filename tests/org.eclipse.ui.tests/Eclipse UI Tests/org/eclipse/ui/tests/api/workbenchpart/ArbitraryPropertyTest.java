@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
@@ -79,7 +76,7 @@ public class ArbitraryPropertyTest extends UITestCase {
 			firedOV = (String) event.getOldValue();
 			firedNV = (String) event.getNewValue();
 		}
-	};
+	}
 
 	public void testViewProperties() throws Exception {
 		OverriddenTitleView view = (OverriddenTitleView) page.showView(VIEW_ID);
@@ -136,7 +133,7 @@ public class ArbitraryPropertyTest extends UITestCase {
 			}
 
 			@Override
-			public Object getAdapter(Class adapter) {
+			public <T> T getAdapter(Class<T> adapter) {
 				return null;
 			}
 

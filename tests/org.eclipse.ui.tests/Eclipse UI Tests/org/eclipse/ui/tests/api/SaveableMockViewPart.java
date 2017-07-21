@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -148,32 +147,29 @@ public class SaveableMockViewPart extends MockViewPart implements
 	public Saveable[] getSaveables() {
 		Saveable[] result = new Saveable[1];
 		result[0] = new DefaultSaveable(this){
+			@SuppressWarnings("unchecked")
 			@Override
-			public Object getAdapter(Class c) {
+			public <T> T getAdapter(Class<T> c) {
 				final IFile[] someFile = {null};
 				try {
-					ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
-
-						@Override
-						public boolean visit(IResource resource) {
-							if (someFile[0] != null) {
-								return false;
-							}
-							if (resource.getType() == IResource.FILE) {
-								someFile[0] = (IFile) resource;
-								return false;
-							}
-							return true;
+					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+						if (someFile[0] != null) {
+							return false;
 						}
+						if (resource.getType() == IResource.FILE) {
+							someFile[0] = (IFile) resource;
+							return false;
+						}
+						return true;
 					});
 				} catch (CoreException e) {
 					throw new RuntimeException(e);
 				}
 				if (adapt && someFile[0] != null && c.equals(IFile.class)) {
-					return someFile[0];
+					return (T) someFile[0];
 				}
 				return super.getAdapter(c);
-			};
+			}
 		};
 		return result ;
 	}

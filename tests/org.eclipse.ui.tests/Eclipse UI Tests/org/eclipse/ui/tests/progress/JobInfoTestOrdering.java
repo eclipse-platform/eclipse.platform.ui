@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class JobInfoTestOrdering {
 
-	private List jobinfos = new ArrayList();
+	private List<JobInfo> jobinfos = new ArrayList<>();
 
 	@Before
 	public void setUp() throws Exception {
@@ -76,10 +76,10 @@ public class JobInfoTestOrdering {
 	@Test
 	public void testJobStateOrdering() {
 		Collections.sort(jobinfos);
-		assertEquals(Job.RUNNING,  ((JobInfo)jobinfos.get(0)).getJob().getState());
-		assertEquals(Job.WAITING,  ((JobInfo)jobinfos.get(1)).getJob().getState());
-		assertEquals(Job.SLEEPING, ((JobInfo)jobinfos.get(2)).getJob().getState());
-		assertEquals(Job.NONE,     ((JobInfo)jobinfos.get(3)).getJob().getState());
+		assertEquals(Job.RUNNING,  jobinfos.get(0).getJob().getState());
+		assertEquals(Job.WAITING,  jobinfos.get(1).getJob().getState());
+		assertEquals(Job.SLEEPING, jobinfos.get(2).getJob().getState());
+		assertEquals(Job.NONE,     jobinfos.get(3).getJob().getState());
 	}
 
 }

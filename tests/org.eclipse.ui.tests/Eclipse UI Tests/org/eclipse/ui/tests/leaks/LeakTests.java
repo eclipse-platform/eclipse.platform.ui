@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class LeakTests extends UITestCase {
         super(testName);
     }
 
-    public static void checkRef(ReferenceQueue queue, Reference ref)
+	public static void checkRef(ReferenceQueue queue, Reference ref)
             throws IllegalArgumentException, InterruptedException {
         boolean flag = false;
         for (int i = 0; i < 100; i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,7 @@ public class GenericCommandActionDelegate implements
 		// ExecutionEvent application context
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
@@ -102,7 +103,7 @@ public class GenericCommandActionDelegate implements
 		if (data instanceof String) {
 			commandId = (String) data;
 		} else if (data instanceof Map) {
-			parameterMap = (Map) data;
+			parameterMap = (Map<String, String>) data;
 			if (parameterMap.get(PARM_COMMAND_ID) == null) {
 				Status status = new Status(IStatus.ERROR,
 						"org.eclipse.ui.tests", "The '" + id
@@ -141,7 +142,7 @@ public class GenericCommandActionDelegate implements
 				// command not defined? no problem ...
 				return;
 			}
-			ArrayList parameters = new ArrayList();
+			ArrayList<Parameterization> parameters = new ArrayList<>();
 			for (Entry<String, String> entry : parameterMap.entrySet()) {
 				String parmName = entry.getKey();
 				if (PARM_COMMAND_ID.equals(parmName)) {
@@ -155,8 +156,7 @@ public class GenericCommandActionDelegate implements
 				parameters.add(new Parameterization(parm, entry.getValue()));
 			}
 			parameterizedCommand = new ParameterizedCommand(cmd,
-					(Parameterization[]) parameters
-							.toArray(new Parameterization[parameters.size()]));
+					parameters.toArray(new Parameterization[parameters.size()]));
 		} catch (NotDefinedException e) {
 			// command is bogus? No problem, we'll do nothing.
 		}

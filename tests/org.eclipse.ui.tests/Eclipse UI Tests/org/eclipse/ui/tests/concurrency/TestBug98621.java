@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -44,7 +43,7 @@ import junit.framework.TestCase;
  *  @since 3.2
  */
 public class TestBug98621 extends TestCase {
-	class TransferTestOperation extends WorkspaceModifyOperation implements IThreadListener {
+	class TransferTestOperation extends WorkspaceModifyOperation {
 		@Override
 		public void execute(final IProgressMonitor pm) {
 			Display.getDefault().asyncExec(() -> {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,14 +141,14 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		operation.run(new NullProgressMonitor());
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 
-		ZipFile zipFile = new ZipFile(filePath);
-		Enumeration entries = zipFile.entries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-			String name = entry.getName();
-			assertTrue(name, name.startsWith(project.getName() + "/"));
+		try (ZipFile zipFile = new ZipFile(filePath)) {
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = entries.nextElement();
+				String name = entry.getName();
+				assertTrue(name, name.startsWith(project.getName() + "/"));
+			}
 		}
-		zipFile.close();
 
 	}
 
@@ -273,7 +273,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	public void testExportTarCreateSelectedDirectoriesCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
 		for (IResource member : members) {
 			if (isDirectory(member)){
@@ -372,14 +372,14 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		boolean compressed = false;
     	try{
 	    	if (ZIP_FILE_EXT.equals(type)){
-				ZipFile zipFile = new ZipFile(filePath);
-				fileName = zipFile.getName();
-	    		Enumeration entries = zipFile.entries();
-	    		while (entries.hasMoreElements()){
-	    			ZipEntry entry = (ZipEntry)entries.nextElement();
-	    			compressed = entry.getMethod() == ZipEntry.DEFLATED;
-	    		}
-	    		zipFile.close();
+				try (ZipFile zipFile = new ZipFile(filePath)) {
+					fileName = zipFile.getName();
+					Enumeration<? extends ZipEntry> entries = zipFile.entries();
+					while (entries.hasMoreElements()) {
+						ZipEntry entry = entries.nextElement();
+						compressed = entry.getMethod() == ZipEntry.DEFLATED;
+					}
+				}
 	    	}
 	    	else{
 	    		File file = new File(filePath);
@@ -403,15 +403,15 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
     private void verifyFolders(int folderCount, String type){
     	try{
-    		List allEntries = new ArrayList();
+			List<String> allEntries = new ArrayList<>();
 	    	if (ZIP_FILE_EXT.equals(type)){
-	    		ZipFile zipFile = new ZipFile(filePath);
-	    		Enumeration entries = zipFile.entries();
-	    		while (entries.hasMoreElements()){
-	    			ZipEntry entry = (ZipEntry)entries.nextElement();
-	    			allEntries.add(entry.getName());
-	    		}
-	    		zipFile.close();
+				try (ZipFile zipFile = new ZipFile(filePath)) {
+					Enumeration<? extends ZipEntry> entries = zipFile.entries();
+					while (entries.hasMoreElements()) {
+						ZipEntry entry = entries.nextElement();
+						allEntries.add(entry.getName());
+					}
+				}
 	    	}
 	    	else{
 	    		TarFile tarFile = new TarFile(filePath);
@@ -436,13 +436,13 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     	}
     }
 
-    private void verifyArchive(int folderCount, List entries){
+	private void verifyArchive(int folderCount, List<String> entries) {
     	int count = 0;
-    	Set folderNames = new HashSet();
-    	List files = new ArrayList();
-    	Iterator archiveEntries = entries.iterator();
+		Set<String> folderNames = new HashSet<>();
+		List<String> files = new ArrayList<>();
+		Iterator<String> archiveEntries = entries.iterator();
     	while (archiveEntries.hasNext()){
-    		String entryName = (String)archiveEntries.next();
+    		String entryName = archiveEntries.next();
 			int idx = entryName.lastIndexOf("/");
 			String folderPath = entryName.substring(0, idx);
 			String fileName = entryName.substring(idx+1, entryName.length());
@@ -471,10 +471,10 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
     }
 
-    private void verifyFiles(List files){
-    	Iterator iter = files.iterator();
+	private void verifyFiles(List<String> files) {
+		Iterator<String> iter = files.iterator();
     	while (iter.hasNext()){
-    		String file = (String)iter.next();
+			String file = iter.next();
     		verifyFile(file);
     	}
     }
@@ -489,10 +489,10 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     	fail("Could not find file named: " + entryName);
     }
 
-    private void verifyFolders(Set folderNames){
-    	Iterator folders = folderNames.iterator();
+	private void verifyFolders(Set<String> folderNames) {
+		Iterator<String> folders = folderNames.iterator();
     	while (folders.hasNext()){
-    		String folderName = (String)folders.next();
+    		String folderName = folders.next();
     		if (!isDirectory(folderName)){
     			if (flattenPaths) {
 					fail(folderName + " is not an expected folder");

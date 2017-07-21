@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,11 +33,11 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class StaticTest extends UITestCase {
     private IActivityManager activityManager;
 
-    private List categoryIds;
+	private List<String> categoryIds;
 
-    private List activityIds;
+	private List<String> activityIds;
 
-    private List patternActivityIds;
+	private List<Object> patternActivityIds;
 
     /**
      * Constructor.
@@ -58,17 +58,17 @@ public class StaticTest extends UITestCase {
      */
     private void populateIds() {
         int index = 0;
-        categoryIds = new ArrayList();
+		categoryIds = new ArrayList<>();
         for (index = 1; index <= 6; index++)
 		 {
 			categoryIds.add("org.eclipse.category" + Integer.toString(index)); //$NON-NLS-1$
 		}
-        activityIds = new ArrayList();
+		activityIds = new ArrayList<>();
         for (index = 1; index <= 18; index++)
 		 {
 			activityIds.add("org.eclipse.activity" + Integer.toString(index)); //$NON-NLS-1$
 		}
-        patternActivityIds = new ArrayList();
+		patternActivityIds = new ArrayList<>();
         for (index = 0; index < 3; index++) {
 			patternActivityIds.add(activityIds.toArray()[index]);
 		}
@@ -93,7 +93,7 @@ public class StaticTest extends UITestCase {
         // Check identifier
         IIdentifier activityIdentifier = activityManager
                 .getIdentifier("org.eclipse.pattern1");
-        Set activityIds = activityIdentifier.getActivityIds();
+		Set<?> activityIds = activityIdentifier.getActivityIds();
         assertTrue(activityIds.containsAll(patternActivityIds));
         assertTrue(activityIdentifier.getId().equals("org.eclipse.pattern1"));
     }
@@ -106,7 +106,7 @@ public class StaticTest extends UITestCase {
         IActivity first_activity = activityManager
                 .getActivity((String) activityIds.toArray()[0]);
         // Check activity activity bindings for parent activity
-        Set activityRequirementBindings = first_activity
+		Set<?> activityRequirementBindings = first_activity
                 .getActivityRequirementBindings();
         for (int index = 2; index <= 7; index++) {
             assertTrue(activityRequirementBindings
@@ -115,7 +115,7 @@ public class StaticTest extends UITestCase {
                             "org.eclipse.activity1")));
         }
         // Check activity pattern bindings
-        Set activityPatternBindings = first_activity
+		Set<?> activityPatternBindings = first_activity
                 .getActivityPatternBindings();
         assertTrue(activityPatternBindings.size() != 0);
         IActivityPatternBinding activityPatternBinding = (IActivityPatternBinding) activityPatternBindings
@@ -148,7 +148,7 @@ public class StaticTest extends UITestCase {
         ICategory first_category = activityManager
                 .getCategory((String) categoryIds.toArray()[0]);
         // Check category activity bindings
-        Set categoryActivityBindings = first_category
+		Set<?> categoryActivityBindings = first_category
                 .getCategoryActivityBindings();
         for (int index = 1; index <= 4; index++) {
 			assertTrue(categoryActivityBindings

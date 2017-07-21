@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.internal.expressions.TestExpression;
@@ -34,6 +32,8 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.services.IEvaluationService;
+
+import junit.framework.TestCase;
 
 /**
  * Tests various utility methods on WorkbenchActivityHelper as well as other misc. activities functionality.
@@ -383,7 +383,7 @@ public class UtilTest extends TestCase {
 		public void clearVariable() {
 			sourceState.put(VARIABLE, "");
 		}
-	};
+	}
 
 	public void testExpressionEnablement() throws Exception {
 		IPluginContribution filterExp = new IPluginContribution() {

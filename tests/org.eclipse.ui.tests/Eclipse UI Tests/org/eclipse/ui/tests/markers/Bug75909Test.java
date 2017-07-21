@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class Bug75909Test extends TestCase {
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.resetState();
 
-		List allTypes = new ArrayList();
+		List<MarkerType> allTypes = new ArrayList<>();
 		filter.addAllSubTypes(allTypes);
 		int num_types = allTypes.size();
 
@@ -96,7 +96,7 @@ public class Bug75909Test extends TestCase {
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.restoreFilterSettings(getFilterSettings(settings));
 
-		List selected = filter.getSelectedTypes();
+		List<MarkerType> selected = filter.getSelectedTypes();
 		assertEquals(Bug75909Test.OLD_SETTINGS_SELECTED, selected.size());
 
 		MarkerType marker = getType(filter, Bug75909Test.INCLUDED_MARKER_ID);
@@ -122,10 +122,10 @@ public class Bug75909Test extends TestCase {
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.restoreState(settings);
 
-		List included = new ArrayList();
+		List<MarkerType> included = new ArrayList<>();
 		filter.addAllSubTypes(included);
 
-		List selected = filter.getSelectedTypes();
+		List<MarkerType> selected = filter.getSelectedTypes();
 		assertEquals(included.size() - 1, selected.size());
 
 		MarkerType marker = getType(filter, Bug75909Test.INCLUDED_MARKER_ID);
@@ -178,7 +178,7 @@ public class Bug75909Test extends TestCase {
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.resetState();
 
-		List allTypes = new ArrayList();
+		List<MarkerType> allTypes = new ArrayList<>();
 		filter.addAllSubTypes(allTypes);
 
 		MarkerType removed = getType(filter, Bug75909Test.REMOVED_MARKER_ID);
@@ -201,16 +201,9 @@ public class Bug75909Test extends TestCase {
 
 	private void loadSettings(IDialogSettings settings, String resource)
 			throws UnsupportedEncodingException, IOException {
-		InputStream io = null;
-		try {
-			io = getClass().getResourceAsStream(resource);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					io, StandardCharsets.UTF_8));
+		try (InputStream io = getClass().getResourceAsStream(resource)) {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(io, StandardCharsets.UTF_8));
 			settings.load(reader);
-		} finally {
-			if (io != null) {
-				io.close();
-			}
 		}
 	}
 

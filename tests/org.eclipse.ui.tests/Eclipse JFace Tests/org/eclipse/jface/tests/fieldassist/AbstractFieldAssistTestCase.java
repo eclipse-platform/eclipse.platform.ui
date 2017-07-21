@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Remy Chi Jian Suen and others.
+ * Copyright (c) 2009, 2017 Remy Chi Jian Suen and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,14 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import junit.framework.TestCase;
 
 public abstract class AbstractFieldAssistTestCase extends TestCase {
 
@@ -96,7 +96,6 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 
 		Display disp = getDisplay();
 		while (disp.readAndDispatch()) {
-			;
 		}
 	}
 

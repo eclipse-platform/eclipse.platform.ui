@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	 * model object - parent
 	 */
 	protected class Team {
-		Vector fListeners = new Vector();
+		Vector<IComparatorModelListener> fListeners = new Vector<>();
 
 		TeamMember[] members;
 		String name;
@@ -87,11 +87,10 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	     * Fires a model changed event to all listeners.
 	     */
 	    public void fireModelChanged(ComparatorModelChange change) {
-	        for (int i = 0; i < fListeners.size(); ++i) {
-	        	IComparatorModelListener listener = (IComparatorModelListener) fListeners
-	                    .get(i);
-	            listener.modelChanged(change);
-	        }
+			for (int i = 0; i < fListeners.size(); ++i) {
+				IComparatorModelListener listener = fListeners.get(i);
+				listener.modelChanged(change);
+			}
 	    }
 
 	    public void removeListener(IComparatorModelListener listener) {
@@ -146,7 +145,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null){
-				((Team) oldInput).removeListener(this);;
+				((Team) oldInput).removeListener(this);
 			}
 
 	        if (newInput != null){

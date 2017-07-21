@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +25,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.workbenchpart.TitleTestEditor;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * If a view is not activated during a session, it's part is not instantiated.
@@ -104,7 +104,7 @@ public class ArbitraryPropertiesEditorTest extends TestCase {
 		public void propertyChange(PropertyChangeEvent event) {
 			count++;
 		}
-	};
+	}
 
 	/**
 	 * Activate the view and it's state should re-appear.

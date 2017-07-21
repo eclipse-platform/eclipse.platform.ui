@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -777,9 +777,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		BindingModel bm = controller.getBindingModel();
 		BindingElement conflict4 = null;
 		ArrayList activates = new ArrayList();
-		Iterator i = bm.getBindings().iterator();
+		Iterator<BindingElement> i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getId().equals(ID_CMD_CONFLICT4)) {
 				activates.add(be);
 				if (be.getModelObject() instanceof ParameterizedCommand) {
@@ -795,7 +795,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		activates.clear();
 		i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getId().equals(ID_CMD_CONFLICT4)) {
 				activates.add(be);
 			}
@@ -842,9 +842,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(Integer.valueOf(Binding.USER), activeTwo.getUserDelta());
 
 		ArrayList activates = new ArrayList();
-		Iterator i = bm.getBindings().iterator();
+		Iterator<BindingElement> i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 			}
@@ -856,7 +856,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		activates = new ArrayList();
 		i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 				activateEditor = be;

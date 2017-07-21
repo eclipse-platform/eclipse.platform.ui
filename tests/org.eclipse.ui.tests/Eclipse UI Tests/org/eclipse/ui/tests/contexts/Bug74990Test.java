@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,6 @@ public final class Bug74990Test extends UITestCase {
                     .showView("org.eclipse.ui.tests.api.MockViewPart");
             page.activate(openedView);
             while (fWorkbench.getDisplay().readAndDispatch()) {
-				;
 			}
             assertTrue("The MockViewPart context should be enabled",
                     testContext.isEnabled());
@@ -82,7 +81,6 @@ public final class Bug74990Test extends UITestCase {
             // Hide the view, and test that is becomes disabled again.
             page.hideView(openedView);
             while (fWorkbench.getDisplay().readAndDispatch()) {
-				;
 			}
             assertTrue("The MockViewPart context should not be enabled",
                     !testContext.isEnabled());

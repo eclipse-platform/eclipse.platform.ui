@@ -36,7 +36,6 @@ public class ProgressMonitorDialogTest extends TestCase {
 		// process asynchronous runnables, the error will happen here when we
 		// try to do some with a widget that has already been disposed
 		while (Display.getDefault().readAndDispatch()) {
-			;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Tasktop Technologies and others.
+ * Copyright (c) 2015, 2017 Tasktop Technologies and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class WorkbenchPageTest extends UITestCase {
 	}
 
 	private static ArrayList<String> asList(String... ids) {
-		return new ArrayList(Arrays.asList(ids));
+		return new ArrayList<>(Arrays.asList(ids));
 	}
 
 	private void assertOrderAfterPerformedShowIn(List<String> expected, String... showIn) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+
+import junit.framework.TestCase;
 
 /**
  * Testing XMLMemento (see bug 93262). Emphasis is on ensuring that the 3.1
@@ -537,14 +537,14 @@ public class XMLMementoTest extends TestCase {
 
 		mementoChecker.prepareAndCheckBeforeSerialization(mementoToSerialize);
 
-		StringWriter writer = new StringWriter();
-		mementoToSerialize.save(writer);
-		writer.close();
+		try (StringWriter writer = new StringWriter()) {
+			mementoToSerialize.save(writer);
+			StringReader reader = new StringReader(writer.getBuffer().toString());
+			XMLMemento deserializedMemento = XMLMemento.createReadRoot(reader);
+			mementoChecker.checkAfterDeserialization(deserializedMemento);
+		}
 
-		StringReader reader = new StringReader(writer.getBuffer().toString());
-		XMLMemento deserializedMemento = XMLMemento.createReadRoot(reader);
 
-		mementoChecker.checkAfterDeserialization(deserializedMemento);
 	}
 
 	   public void testMementoWithTextContent113659() throws Exception {

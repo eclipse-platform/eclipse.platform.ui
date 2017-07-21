@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.jface.tests.dialogs;
 
 import java.lang.reflect.Field;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 /**
  * Test case to assert proper styles have been set for ProgressIndicator.
@@ -80,7 +80,7 @@ public class ProgressIndicatorStyleTest extends TestCase {
 	 * them.
 	 */
 	private void loader(String field, ProgressBar p) {
-		Class c = progress.getClass();
+		Class<? extends ProgressIndicator> c = progress.getClass();
 		try {
 			Field f = c.getDeclaredField(field);
 			f.setAccessible(true);

@@ -161,7 +161,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 
 		Bundle bundle = getBundle();
 
-		Class clazz = bundle.loadClass(className);
+		Class<?> clazz = bundle.loadClass(className);
 		assertNotNull(clazz);
 		ReferenceQueue myQueue = new ReferenceQueue();
 		WeakReference ref = new WeakReference(clazz.getClassLoader(), myQueue);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IViewPart;
@@ -21,6 +18,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.PlatformUI;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * If a view is not activated during a session, it's part is not instantiated.
@@ -97,7 +97,7 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 		public void propertyChange(PropertyChangeEvent event) {
 			count++;
 		}
-	};
+	}
 
 	/**
 	 * Activate the view and it's state should re-appear.

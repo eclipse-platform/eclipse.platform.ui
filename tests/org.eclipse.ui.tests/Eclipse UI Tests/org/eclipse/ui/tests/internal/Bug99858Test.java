@@ -196,7 +196,6 @@ public class Bug99858Test extends TestCase {
 	private void chewUpEvents() {
 		Display display = Display.getCurrent();
 		while (display.readAndDispatch()) {
-			;
 		}
 	}
 
