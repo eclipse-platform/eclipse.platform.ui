@@ -178,7 +178,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 
 	@Override
 	protected void setInput() {
-		List input = new ArrayList(3);
+		List<Team> input = new ArrayList<>(3);
 		input.add(team1);
 		input.add(team2);
 		input.add(team3);

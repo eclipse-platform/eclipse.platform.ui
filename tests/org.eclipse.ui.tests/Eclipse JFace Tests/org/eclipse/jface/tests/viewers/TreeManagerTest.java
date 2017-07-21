@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,28 +14,28 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.ui.internal.dialogs.cpd.TreeManager;
 import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
 
+import junit.framework.TestCase;
+
 public class TreeManagerTest extends TestCase {
 
-	private static final List STATE_NAMES;
+	private static final List<String> STATE_NAMES;
 
 	private static final int CHECKSTATE_UNCHECKED = 0;
 	private static final int CHECKSTATE_GRAY = 1;
 	private static final int CHECKSTATE_CHECKED = 2;
 
 	static {
-		STATE_NAMES = new ArrayList();
+		STATE_NAMES = new ArrayList<>();
 		STATE_NAMES.add(CHECKSTATE_UNCHECKED, "unchecked");
 		STATE_NAMES.add(CHECKSTATE_GRAY, "gray");
 		STATE_NAMES.add(CHECKSTATE_CHECKED, "checked");
 	}
 
 	private static String getName(int checkstate) {
-		return (String)STATE_NAMES.get(checkstate);
+		return STATE_NAMES.get(checkstate);
 	}
 
 	private static void assertState(TreeItem item, int expectedState) throws Exception {

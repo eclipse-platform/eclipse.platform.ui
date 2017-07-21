@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,9 @@ public class IntroTests extends DynamicTestCase {
         		INTRO_ID);
         workbench.setIntroDescriptor(testDesc);
 
-		ReferenceQueue queue = new ReferenceQueue();
+		ReferenceQueue<IIntroPart> queue = new ReferenceQueue<>();
 		IIntroPart intro = workbench.getIntroManager().showIntro(window, false);
-		WeakReference ref = new WeakReference(intro, queue);
+		WeakReference<IIntroPart> ref = new WeakReference<>(intro, queue);
         assertNotNull(intro);
         intro = null; //null the reference
         removeBundle();

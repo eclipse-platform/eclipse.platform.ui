@@ -158,8 +158,8 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 
     	TestElement[] expected = fRootElement.getChildren();
 
-    	for (Iterator i = provider.isCheckedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = (TestElement) i.next();
+		for (TestElement testElement : provider.isCheckedInvokedOn) {
+			TestElement element = testElement;
 			boolean firstLevelElement = false;
 			for (int j = 0; j < expected.length && !firstLevelElement; j++) {
 				firstLevelElement = element.equals(expected[j]);
@@ -167,8 +167,8 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 			assertTrue("The check provider should only be invoked with visible elements", firstLevelElement);
 		}
 
-    	for (Iterator i = provider.isGrayedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = (TestElement) i.next();
+		for (TestElement testElement : provider.isGrayedInvokedOn) {
+			TestElement element = testElement;
 			boolean firstLevelElement = false;
 			for (int j = 0; j < expected.length && !firstLevelElement; j++) {
 				firstLevelElement = element.equals(expected[j]);
@@ -262,13 +262,11 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
     	checkAllStates("Testing checkbox state with a sorter", ctv, 0);
 
     	//Check that the provider is only invoked on elements which pass the filter
-		for (Iterator<TestElement> i = checkStateProvider.isCheckedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = i.next();
+		for (TestElement element : checkStateProvider.isCheckedInvokedOn) {
 			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
 		}
 
-		for (Iterator<TestElement> i = checkStateProvider.isGrayedInvokedOn.iterator(); i.hasNext();) {
-			TestElement element = i.next();
+		for (TestElement element : checkStateProvider.isGrayedInvokedOn) {
 			assertTrue("The check provider should not be invoked on elements which did not get through the filter", filter.select(ctv, null, element));
 		}
     }

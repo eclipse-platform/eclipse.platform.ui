@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,7 +167,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		}
 		getTreeViewer().getTree().setSelection(treeItems);
 		treeSelection = getTreeViewer().getStructuredSelection();
-		List paths = Arrays.asList(treeSelection.getPaths());
+		List<TreePath> paths = Arrays.asList(treeSelection.getPaths());
 		assertEquals(4, paths.size());
 		assertTrue(paths.contains(treePath_1_2_21_212));
 		assertTrue(paths.contains(treePath_1_21_212));

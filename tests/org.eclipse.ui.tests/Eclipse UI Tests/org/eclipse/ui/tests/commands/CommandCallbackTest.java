@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,7 +215,7 @@ public class CommandCallbackTest extends UITestCase {
 			assertEquals(2, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
-			Map filter = new HashMap();
+			Map<String, String> filter = new HashMap<>();
 			filter.put(PROT_PARAM_ID, "http");
 			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(2, cmd2Handler.callbacks);
@@ -264,7 +264,7 @@ public class CommandCallbackTest extends UITestCase {
 			assertEquals(3, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
-			Map filter = new HashMap();
+			Map<String, String> filter = new HashMap<>();
 			filter.put(PROT_PARAM_ID, "http");
 			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(3, cmd2Handler.callbacks);
@@ -326,7 +326,7 @@ public class CommandCallbackTest extends UITestCase {
 				new MyElement(fWorkbench));
 		try {
 			assertEquals(5, cmd2Handler.callbacks);
-			Map filter = new HashMap();
+			Map<String, String> filter = new HashMap<>();
 
 			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "http");
@@ -379,7 +379,7 @@ public class CommandCallbackTest extends UITestCase {
 		try {
 			assertEquals(2, cmd2Handler.callbacks);
 
-			Map filter = new HashMap();
+			Map<String, Object> filter = new HashMap<>();
 			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "http");
 			commandService.refreshElements(CMD2_ID, filter);

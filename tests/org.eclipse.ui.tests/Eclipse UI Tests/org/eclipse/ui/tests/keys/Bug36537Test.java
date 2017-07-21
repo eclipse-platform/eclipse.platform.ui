@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class Bug36537Test extends UITestCase {
 		final IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		final Binding[] bindings = bindingService.getBindings();
 		final int bindingCount = bindings.length;
-		Map keySequenceBindingsByKeySequence = new HashMap();
+		Map<TriggerSequence, List<Binding>> keySequenceBindingsByKeySequence = new HashMap<>();
 
 		for (int i = 0; i < bindingCount; i++) {
 			// Retrieve the key binding.
@@ -60,17 +60,17 @@ public class Bug36537Test extends UITestCase {
 
 			// Find the point the bindings with matching key sequences.
 			TriggerSequence triggerSequence = binding.getTriggerSequence();
-			List matches = (List) keySequenceBindingsByKeySequence
+			List<Binding> matches = keySequenceBindingsByKeySequence
 					.get(triggerSequence);
 			if (matches == null) {
-				matches = new ArrayList();
+				matches = new ArrayList<>();
 				keySequenceBindingsByKeySequence.put(triggerSequence, matches);
 			}
 
 			// Check that we don't have any redundancy or other wackiness.
-			Iterator matchItr = matches.iterator();
+			Iterator<Binding> matchItr = matches.iterator();
 			while (matchItr.hasNext()) {
-				final Binding matchedBinding = (Binding) matchItr.next();
+				final Binding matchedBinding = matchItr.next();
 				ParameterizedCommand commandA = binding
 						.getParameterizedCommand();
 				ParameterizedCommand commandB = matchedBinding

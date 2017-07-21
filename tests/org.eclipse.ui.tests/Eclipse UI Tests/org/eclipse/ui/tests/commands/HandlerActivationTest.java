@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -125,11 +126,11 @@ public class HandlerActivationTest extends UITestCase {
 
 	private IServiceLocator services;
 
-	private Map testContextActivations = new HashMap();
+	private Map<String, IContextActivation> testContextActivations = new HashMap<>();
 
-	private Map testHandlerActivations = new HashMap();
+	private Map<Object, IHandlerActivation> testHandlerActivations = new HashMap<>();
 
-	private Map testHandlers = new HashMap();
+	private Map<String, IHandler> testHandlers = new HashMap<>();
 
 	/**
 	 * Constructor for <code>HandlerActivationTest</code>.
@@ -248,7 +249,7 @@ public class HandlerActivationTest extends UITestCase {
 			currentHandler = new ActTestHandler(context);
 			testHandlers.put(handler, currentHandler);
 		} else {
-			currentHandler = (IHandler) testHandlers.get(handler);
+			currentHandler = testHandlers.get(handler);
 		}
 
 		testHandlerActivations.put(handler, handlerService.activateHandler(

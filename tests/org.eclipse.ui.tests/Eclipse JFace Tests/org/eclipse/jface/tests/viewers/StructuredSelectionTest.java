@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,11 +91,11 @@ public class StructuredSelectionTest extends TestCase {
     }
 
     public void testEquals5() { // equality is order-dependent
-        List l1 = new ArrayList();
+		List<String> l1 = new ArrayList<>();
         l1.add("element 1");
         l1.add("element 2");
 
-        List l2 = new ArrayList();
+		List<String> l2 = new ArrayList<>();
         l2.add("element 2");
         l2.add("element 1");
 
@@ -106,11 +106,11 @@ public class StructuredSelectionTest extends TestCase {
     }
 
     public void testEquals6() { // different selections
-        List l1 = new ArrayList();
+		List<String> l1 = new ArrayList<>();
         l1.add("element 1");
         l1.add("element 2");
 
-        List l2 = new ArrayList();
+		List<String> l2 = new ArrayList<>();
         l2.add("element 2");
         l2.add("element 3");
         l2.add("element 1");

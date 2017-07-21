@@ -37,11 +37,11 @@ public abstract class DynamicTestCase extends UITestCase implements
 
 	private volatile boolean removedRecieved;
 
-	private WeakReference addedDelta;
+	private WeakReference<IExtensionDelta> addedDelta;
 
-	private WeakReference removedDelta;
+	private WeakReference<IExtensionDelta> removedDelta;
 
-	private ReferenceQueue queue;
+	private ReferenceQueue<IExtensionDelta> queue;
 
 	/**
 	 * @param testName
@@ -71,7 +71,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 		if (newBundle == null) {
 			Platform.getExtensionRegistry().addRegistryChangeListener(this);
 			reset();
-			queue = new ReferenceQueue();
+			queue = new ReferenceQueue<>();
 			// Just try to find the new perspective. Don't actually try to
 			// do anything with it as the class it refers to does not exist.
 			try {
@@ -163,8 +163,8 @@ public abstract class DynamicTestCase extends UITestCase implements
 
 		Class<?> clazz = bundle.loadClass(className);
 		assertNotNull(clazz);
-		ReferenceQueue myQueue = new ReferenceQueue();
-		WeakReference ref = new WeakReference(clazz.getClassLoader(), myQueue);
+		ReferenceQueue<ClassLoader> myQueue = new ReferenceQueue<>();
+		WeakReference<ClassLoader> ref = new WeakReference<>(clazz.getClassLoader(), myQueue);
 		clazz = null; //null our refs
 		bundle = null;
 		removeBundle();
@@ -208,11 +208,11 @@ public abstract class DynamicTestCase extends UITestCase implements
 				getDeclaringNamespace(), getExtensionPoint(), getExtensionId());
 		if (delta != null) {
 			if (delta.getKind() == IExtensionDelta.ADDED) {
-				addedDelta = new WeakReference(delta, queue);
+				addedDelta = new WeakReference<>(delta, queue);
 				setAddedEventPropagated(true);
 			}
 			else if (delta.getKind() == IExtensionDelta.REMOVED) {
-				removedDelta = new WeakReference(delta, queue);
+				removedDelta = new WeakReference<>(delta, queue);
 				setRemovedEventPropagated(true);
 			}
 		}
@@ -224,7 +224,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	protected final void removeBundle() {
 		if (newBundle != null) {
 			Platform.getExtensionRegistry().addRegistryChangeListener(this);
-			queue = new ReferenceQueue();
+			queue = new ReferenceQueue<>();
 			try {
 				DynamicUtils.uninstallPlugin(newBundle);
 				long startTime = System.currentTimeMillis();

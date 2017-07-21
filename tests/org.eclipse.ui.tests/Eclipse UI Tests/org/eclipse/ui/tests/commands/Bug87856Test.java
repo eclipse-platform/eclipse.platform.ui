@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class Bug87856Test extends UITestCase {
 		 */
 		commandSupport.removeHandlerSubmission(submission);
 		submission = null;
-		final WeakReference reference = new WeakReference(handler);
+		final WeakReference<IHandler> reference = new WeakReference<>(handler);
 		handler = null;
 
 		// Attempt to force garbage collection.

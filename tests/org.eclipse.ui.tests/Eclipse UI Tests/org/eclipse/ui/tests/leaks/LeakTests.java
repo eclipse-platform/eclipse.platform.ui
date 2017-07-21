@@ -60,7 +60,7 @@ public class LeakTests extends UITestCase {
         super(testName);
     }
 
-	public static void checkRef(ReferenceQueue queue, Reference ref)
+	public static void checkRef(ReferenceQueue<?> queue, Reference<?> ref)
             throws IllegalArgumentException, InterruptedException {
         boolean flag = false;
         for (int i = 0; i < 100; i++) {
@@ -68,7 +68,7 @@ public class LeakTests extends UITestCase {
             System.gc();
             Thread.yield();
             processEvents();
-            Reference checkRef = queue.remove(100);
+			Reference<?> checkRef = queue.remove(100);
             if (checkRef != null && checkRef.equals(ref)) {
                 flag = true;
                 break;
@@ -84,7 +84,7 @@ public class LeakTests extends UITestCase {
      * @return
      */
     private Reference createReference(ReferenceQueue queue, Object object) {
-        return new PhantomReference(object, queue);
+		return new PhantomReference<Object>(object, queue);
     }
 
     @Override

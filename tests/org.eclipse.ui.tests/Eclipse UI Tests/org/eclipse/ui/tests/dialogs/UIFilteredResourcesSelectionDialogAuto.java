@@ -11,9 +11,13 @@
 
 package org.eclipse.ui.tests.dialogs;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
@@ -39,7 +43,7 @@ public class UIFilteredResourcesSelectionDialogAuto extends
 		Object[] items = dialog.getHistoryItems();
 
 		assertEquals(historyResources.length, items.length);
-		Set itemsSet = new HashSet(historyResources.length);
+		Set<Object> itemsSet = new HashSet<>(historyResources.length);
 		itemsSet.addAll(Arrays.asList(items));
 		for (IResource historyResource : historyResources) {
 			assertEquals(true, itemsSet.contains(historyResource));

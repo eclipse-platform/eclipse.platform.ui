@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Lasse Knudsen and others.
+ * Copyright (c) 2007, 2017 Lasse Knudsen and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ package org.eclipse.jface.tests.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -23,6 +21,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public class Bug205700TreeViewerTest extends TestCase {
 
@@ -141,7 +141,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 
 		private TreeNode parent = null;
 
-		private final List children = new ArrayList();
+		private final List<TreeNode> children = new ArrayList<>();
 
 		public TreeNode(String name) {
 			this.name = name;
@@ -153,7 +153,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 			}
 		}
 
-		public List getChildren() {
+		public List<TreeNode> getChildren() {
 			return children;
 		}
 

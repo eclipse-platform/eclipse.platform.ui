@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,11 +99,11 @@ public class MarkerSupportTests extends DynamicTestCase {
 	}
 
 	private boolean hasMarkerGroup() {
-		Iterator groups = MarkerSupportRegistry.getInstance()
+		Iterator<MarkerGroup> groups = MarkerSupportRegistry.getInstance()
 		.getMarkerGroups().iterator();
 
 		while (groups.hasNext()) {
-			MarkerGroup element = (MarkerGroup) groups.next();
+			MarkerGroup element = groups.next();
 			if(element.getField().getDescription().equals("Dynamic Test Grouping")) {
 				return true;
 			}
@@ -129,10 +129,10 @@ public class MarkerSupportTests extends DynamicTestCase {
 	 * @return
 	 */
 	private boolean hasFilter(String id) {
-		Iterator filters = MarkerSupportRegistry.getInstance()
+		Iterator<ProblemFilter> filters = MarkerSupportRegistry.getInstance()
 				.getRegisteredFilters().iterator();
 		while (filters.hasNext()) {
-			ProblemFilter filter = (ProblemFilter) filters.next();
+			ProblemFilter filter = filters.next();
 			if (id.equals(filter.getId())) {
 				return true;
 			}

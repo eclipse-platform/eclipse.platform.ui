@@ -40,7 +40,7 @@ public class LazySortedCollectionTest extends TestCase {
     // All operations will be done on both collections -- after each operation, the result
     // will be compared
     private LazySortedCollection collection;
-    private TreeSet comparisonCollection;
+	private TreeSet<Object> comparisonCollection;
 
     /**
      * Please don't add or remove from this set -- we rely on the exact insertion order
@@ -127,7 +127,7 @@ public class LazySortedCollectionTest extends TestCase {
         collection.enableDebug = true;
 
         comparisonComparator = new TestComparator();
-        comparisonCollection = new TreeSet(comparisonComparator);
+		comparisonCollection = new TreeSet<>(comparisonComparator);
 
         addAll(elements);
 
@@ -155,7 +155,7 @@ public class LazySortedCollectionTest extends TestCase {
     private Object[] computeExpectedElementsInRange(int start, int length) {
         int counter = 0;
 
-        Iterator iter = comparisonCollection.iterator();
+		Iterator<Object> iter = comparisonCollection.iterator();
         while(iter.hasNext() && counter < start) {
             iter.next();
             counter++;

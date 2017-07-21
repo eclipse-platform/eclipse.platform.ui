@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 CAS Software AG and others.
+ * Copyright (c) 2009, 2017 CAS Software AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 
 	private int rowcounter = 0;
 
-	private List model = new ArrayList();
+	private List<String> model = new ArrayList<>();
 	private Table table;
 	private TableViewer tableViewer;
 
@@ -146,7 +146,7 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 		return approxRecordCount;
 	}
 
-	private List getModel() {
+	private List<String> getModel() {
 		return this.model;
 	}
 

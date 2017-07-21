@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 public class MockSelectionProvider implements ISelectionProvider {
 
-    private List listeners = new ArrayList(3);
+	private List<ISelectionChangedListener> listeners = new ArrayList<>(3);
 
     /**
      * Fires out a selection to all listeners.
@@ -35,40 +35,28 @@ public class MockSelectionProvider implements ISelectionProvider {
      * Fires out a selection to all listeners.
      */
     public void fireSelection(SelectionChangedEvent event) {
-        Iterator iter = listeners.iterator();
+		Iterator<ISelectionChangedListener> iter = listeners.iterator();
         while (iter.hasNext()) {
-            ((ISelectionChangedListener) iter.next()).selectionChanged(event);
+            iter.next().selectionChanged(event);
         }
     }
 
-    /**
-     * @see ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
-     */
     @Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
         listeners.add(listener);
     }
 
-    /**
-     * @see ISelectionProvider#getSelection()
-     */
     @Override
 	public ISelection getSelection() {
         return StructuredSelection.EMPTY;
     }
 
-    /**
-     * @see ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
-     */
     @Override
 	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
         listeners.remove(listener);
     }
 
-    /**
-     * @see ISelectionProvider#setSelection(ISelection)
-     */
     @Override
 	public void setSelection(ISelection selection) {
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,8 +285,8 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
     public void updateCategoryDescription(String categoryId,
             String categoryDescription) {
         CategoryDefinition currentCategory = null;
-        for (Iterator i = categoryDefinitions.iterator(); i.hasNext();) {
-            currentCategory = (CategoryDefinition) i.next();
+		for (Iterator<CategoryDefinition> i = categoryDefinitions.iterator(); i.hasNext();) {
+			currentCategory = i.next();
             if (currentCategory.getId().equals(categoryId)) {
                 categoryDefinitions.remove(currentCategory);
                 categoryDefinitions.add(new CategoryDefinition(categoryId,
@@ -309,8 +309,8 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
     public void updateActivityDescription(String activityId,
             String activityDescription) {
         ActivityDefinition currentActivity = null;
-        for (Iterator i = activityDefinitions.iterator(); i.hasNext();) {
-            currentActivity = (ActivityDefinition) i.next();
+		for (Iterator<ActivityDefinition> i = activityDefinitions.iterator(); i.hasNext();) {
+			currentActivity = i.next();
             if (currentActivity.getId().equals(activityId)) {
                 activityDefinitions.remove(currentActivity);
                 activityDefinitions.add(new ActivityDefinition(activityId,
@@ -332,8 +332,8 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
      */
     public void updateActivityName(String activityId, String activityName) {
         ActivityDefinition currentActivity = null;
-        for (Iterator i = activityDefinitions.iterator(); i.hasNext();) {
-            currentActivity = (ActivityDefinition) i.next();
+		for (Iterator<ActivityDefinition> i = activityDefinitions.iterator(); i.hasNext();) {
+			currentActivity = i.next();
             if (currentActivity.getId().equals(activityId)) {
                 activityDefinitions.remove(currentActivity);
                 activityDefinitions.add(new ActivityDefinition(activityId,
@@ -355,8 +355,8 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
      */
     public void updateCategoryName(String categoryId, String categoryName) {
         CategoryDefinition currentCategory = null;
-        for (Iterator i = categoryDefinitions.iterator(); i.hasNext();) {
-            currentCategory = (CategoryDefinition) i.next();
+		for (Iterator<CategoryDefinition> i = categoryDefinitions.iterator(); i.hasNext();) {
+            currentCategory = i.next();
             if (currentCategory.getId().equals(categoryId)) {
                 categoryDefinitions.remove(currentCategory);
                 categoryDefinitions.add(new CategoryDefinition(categoryId,
@@ -376,9 +376,9 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
      */
     public void removeActivityPatternBinding(String pattern) {
         ActivityPatternBindingDefinition currentDefinition = null;
-        for (Iterator i = activityPatternBindingDefinitions.iterator(); i
+		for (Iterator<ActivityPatternBindingDefinition> i = activityPatternBindingDefinitions.iterator(); i
                 .hasNext();) {
-            currentDefinition = (ActivityPatternBindingDefinition) i.next();
+            currentDefinition = i.next();
             if (currentDefinition.getPattern().equals(pattern)) {
                 activityPatternBindingDefinitions.remove(currentDefinition);
                 fireActivityRegistryChanged();

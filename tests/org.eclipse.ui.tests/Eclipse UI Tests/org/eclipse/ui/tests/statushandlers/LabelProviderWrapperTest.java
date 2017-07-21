@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,13 +37,13 @@ import junit.framework.TestCase;
 public class LabelProviderWrapperTest extends TestCase {
 
 	private LabelProviderWrapper wrapper;
-	private Map dialogState = new HashMap();
+	private Map<Object, Object> dialogState = new HashMap<>();
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		dialogState = new HashMap();
-		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, new HashSet());
+		dialogState = new HashMap<>();
+		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, new HashSet<>());
 		((Collection)dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).add(Status.OK_STATUS);
 		wrapper = new LabelProviderWrapper(dialogState);
 	}

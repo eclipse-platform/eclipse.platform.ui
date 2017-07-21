@@ -65,8 +65,8 @@ public class ActionSetTests extends DynamicTestCase {
         assertTrue("Action set not found", found[0]);
         assertNotNull("Action not found", action[0]);
 
-        ReferenceQueue queue = new ReferenceQueue();
-        WeakReference ref = new WeakReference(action[0], queue);
+		ReferenceQueue<WWinPluginAction> queue = new ReferenceQueue<>();
+		WeakReference<WWinPluginAction> ref = new WeakReference<>(action[0], queue);
 
         action[0] = null;
         found[0] = false;

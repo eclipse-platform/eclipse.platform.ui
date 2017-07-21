@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,11 +63,11 @@ public class StatusHandlerTests extends DynamicTestCase {
 		statusHandler1.handle(new StatusAdapter(new Status(IStatus.ERROR,
 				PLUGIN_PREFIX2, "")), StatusManager.NONE);
 
-		ReferenceQueue queue = new ReferenceQueue();
-		ReferenceQueue queue2 = new ReferenceQueue();
+		ReferenceQueue<StatusHandlerDescriptor> queue = new ReferenceQueue<>();
+		ReferenceQueue<AbstractStatusHandler> queue2 = new ReferenceQueue<>();
 
-		WeakReference ref = new WeakReference(statusHandlerDescriptor1, queue);
-		WeakReference ref2 = new WeakReference(statusHandler1, queue2);
+		WeakReference<StatusHandlerDescriptor> ref = new WeakReference<>(statusHandlerDescriptor1, queue);
+		WeakReference<AbstractStatusHandler> ref2 = new WeakReference<>(statusHandler1, queue2);
 
 		statusHandlerDescriptor1 = null; // null the reference
 		statusHandler1 = null; // null the reference
@@ -92,8 +92,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 	public void testStatusHandlerRemoval2() throws CoreException {
 		getBundle();
 
-		ReferenceQueue queue = new ReferenceQueue();
-		ReferenceQueue queue2 = new ReferenceQueue();
+		ReferenceQueue<StatusHandlerDescriptor> queue = new ReferenceQueue<>();
+		ReferenceQueue<AbstractStatusHandler> queue2 = new ReferenceQueue<>();
 
 		List statusHandlerDescriptors = StatusHandlerRegistry.getDefault()
 				.getHandlerDescriptors(PLUGIN_PREFIX);
@@ -101,8 +101,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 		assertNotNull(statusHandlerDescriptors);
 
 		StatusHandlerDescriptor statusHandlerDescriptor1 = null;
-		for (Iterator it = statusHandlerDescriptors.iterator(); it.hasNext();) {
-			statusHandlerDescriptor1 = (StatusHandlerDescriptor) it.next();
+		for (Iterator<StatusHandlerDescriptor> it = statusHandlerDescriptors.iterator(); it.hasNext();) {
+			statusHandlerDescriptor1 = it.next();
 			if (statusHandlerDescriptor1.getId().equals(STATUS_HANDLER_ID2)) {
 				break;
 			}
@@ -117,8 +117,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 		statusHandler1.handle(new StatusAdapter(new Status(IStatus.ERROR,
 				PLUGIN_PREFIX2, "")), StatusManager.NONE);
 
-		WeakReference ref = new WeakReference(statusHandlerDescriptor1, queue);
-		WeakReference ref2 = new WeakReference(statusHandler1, queue2);
+		WeakReference<StatusHandlerDescriptor> ref = new WeakReference<>(statusHandlerDescriptor1, queue);
+		WeakReference<AbstractStatusHandler> ref2 = new WeakReference<>(statusHandler1, queue2);
 
 		statusHandlerDescriptors = null;
 		statusHandlerDescriptor1 = null; // null the reference
@@ -144,8 +144,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 	public void testProductBindingRemoval() throws CoreException {
 		getBundle();
 
-		ReferenceQueue queue = new ReferenceQueue();
-		ReferenceQueue queue2 = new ReferenceQueue();
+		ReferenceQueue<StatusHandlerDescriptor> queue = new ReferenceQueue<>();
+		ReferenceQueue<AbstractStatusHandler> queue2 = new ReferenceQueue<>();
 
 		StatusHandlerDescriptor productStatusHandlerDescriptor = StatusHandlerRegistry
 				.getDefault().getDefaultHandlerDescriptor();
@@ -157,9 +157,9 @@ public class StatusHandlerTests extends DynamicTestCase {
 		productStatusHandler.handle(new StatusAdapter(new Status(IStatus.ERROR,
 				PLUGIN_PREFIX2, "")), StatusManager.NONE);
 
-		WeakReference ref = new WeakReference(productStatusHandlerDescriptor,
+		WeakReference<StatusHandlerDescriptor> ref = new WeakReference<>(productStatusHandlerDescriptor,
 				queue);
-		WeakReference ref2 = new WeakReference(productStatusHandler, queue2);
+		WeakReference<AbstractStatusHandler> ref2 = new WeakReference<>(productStatusHandler, queue2);
 
 		productStatusHandlerDescriptor = null; // null the reference
 		productStatusHandler = null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Chris Horneck and others.
+ * Copyright (c) 2009, 2017 Chris Horneck and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eclipse.jface.tests.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -26,6 +24,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 /**
  * @since 3.4
@@ -40,7 +40,7 @@ public class Bug287765Test extends TestCase {
 	 */
 	private static class Node {
 		private final Node parent;
-		private final List children = new ArrayList();
+		private final List<Node> children = new ArrayList<>();
 		private final int level;
 
 		private Node(Node parentNode, int nodeLevel) {

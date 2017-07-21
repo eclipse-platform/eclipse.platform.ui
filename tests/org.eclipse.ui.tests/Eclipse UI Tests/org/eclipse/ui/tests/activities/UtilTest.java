@@ -596,7 +596,7 @@ public class UtilTest extends TestCase {
     		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
     			.getActivitySupport();
     		support.setEnabledActivityIds(new HashSet());
-    		Set set = new HashSet(support.getActivityManager().getEnabledActivityIds());
+			Set<String> set = new HashSet<>(support.getActivityManager().getEnabledActivityIds());
     		Set previousSet = new HashSet(support.getActivityManager().getEnabledActivityIds());
     		set.add(EXPRESSION_ACTIVITY_ID_2);
     		support.setEnabledActivityIds(set);

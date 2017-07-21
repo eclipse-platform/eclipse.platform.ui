@@ -13,13 +13,13 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.tests.leaks.LeakTests;
+
+import junit.framework.TestCase;
 
 /**
  * @since 3.1
@@ -49,7 +49,7 @@ public class DynamicSupportTests extends TestCase {
 		e2 = elements[1];
 
 		o1 = new Object();
-		o2 = new WeakReference(o1);
+		o2 = new WeakReference<>(o1);
 	}
 
 	@Override
@@ -68,8 +68,8 @@ public class DynamicSupportTests extends TestCase {
 
 	public void testConfigurationElementTracker2() throws Exception {
 		tracker.registerObject(e1, o1, IExtensionTracker.REF_WEAK);
-		ReferenceQueue queue = new ReferenceQueue();
-		WeakReference ref = new WeakReference(o1, queue);
+		ReferenceQueue<Object> queue = new ReferenceQueue<>();
+		WeakReference<Object> ref = new WeakReference<>(o1, queue);
 		o1 = null;
 		LeakTests.checkRef(queue, ref);
 		Object [] results = tracker.getObjects(e1);
@@ -87,8 +87,8 @@ public class DynamicSupportTests extends TestCase {
 
 	public void testConfigurationElementTracker4() throws Exception {
 		tracker.registerObject(e1, o1, IExtensionTracker.REF_STRONG);
-		ReferenceQueue queue = new ReferenceQueue();
-		WeakReference ref = new WeakReference(o1, queue);
+		ReferenceQueue<Object> queue = new ReferenceQueue<>();
+		WeakReference<Object> ref = new WeakReference<>(o1, queue);
 		o1 = null;
 		try {
 			LeakTests.checkRef(queue, ref);

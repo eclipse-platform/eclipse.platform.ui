@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,11 +44,11 @@ public class ViewTests extends DynamicTestCase {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		getBundle();
 
-		ReferenceQueue queue = new ReferenceQueue();
+		ReferenceQueue<IViewPart> queue = new ReferenceQueue<>();
 		IViewPart part = window.getActivePage().showView(VIEW_ID1);
 		// we need to ensure that the view is closed in all open perspectives but this is not currently possible.
 		// window.getActivePage().setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID2));
-		WeakReference ref = new WeakReference(part, queue);
+		WeakReference<IViewPart> ref = new WeakReference<>(part, queue);
         assertNotNull(part);
         part = null; //null the reference
 

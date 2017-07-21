@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,9 @@ public class EditorTests extends DynamicTestCase {
 		IFile file = getFile();
 		getBundle();
 
-		ReferenceQueue queue = new ReferenceQueue();
+		ReferenceQueue<IEditorPart> queue = new ReferenceQueue<>();
 		IEditorPart part = IDE.openEditor(window.getActivePage(), file, EDITOR_ID);
-		WeakReference ref = new WeakReference(part, queue);
+		WeakReference<IEditorPart> ref = new WeakReference<>(part, queue);
         assertNotNull(part);
         part = null; //null the reference
 
