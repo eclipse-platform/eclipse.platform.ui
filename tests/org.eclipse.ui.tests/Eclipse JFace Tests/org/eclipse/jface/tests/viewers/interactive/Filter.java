@@ -30,7 +30,7 @@ public class Filter extends ViewerFilter {
 		return result.toArray();
 	}
 
-	public boolean isFilterProperty(Object element, Object aspect) {
+	public boolean isFilterProperty() {
 		return false;
 	}
 

@@ -26,8 +26,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.junit.Assert;
 
-import junit.framework.TestCase;
-
 /**
  * An ElementViewPart shows a bunch of elements in a list
  * viewer.
@@ -136,9 +134,6 @@ public class ListView extends MockViewPart implements IMenuListener {
         return menuMgr;
     }
 
-    /**
-     * @see IMenuListener#menuAboutToShow(IMenuManager)
-     */
     @Override
 	public void menuAboutToShow(IMenuManager menuMgr) {
         menuMgr.add(addAction);
@@ -148,7 +143,7 @@ public class ListView extends MockViewPart implements IMenuListener {
     /**
      * Tests that the menu mgr contains the expected actions.
      */
-    public void verifyActions(TestCase test, IMenuManager menuMgr) {
+	public void verifyActions(IMenuManager menuMgr) {
         Assert.assertNotNull(menuMgr.find(ADD_ACTION_ID));
     }
 

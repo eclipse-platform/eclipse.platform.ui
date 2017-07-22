@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
@@ -71,10 +70,6 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
 	public void doSaveAs() {
         throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
 
-    }
-
-    public void gotoMarker(IMarker marker) {
-        // Do nothing.
     }
 
 	@Override

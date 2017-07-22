@@ -67,7 +67,7 @@ public class DragOperations {
         return ref.getPartName();
     }
 
-    public static PartPane getPane(IEditorPart editor) {
+	public static PartPane getPane(IEditorPart editor) {
         return null;
     }
 

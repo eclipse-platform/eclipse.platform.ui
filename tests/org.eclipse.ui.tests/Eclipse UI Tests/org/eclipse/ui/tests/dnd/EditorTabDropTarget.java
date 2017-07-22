@@ -44,7 +44,7 @@ public class EditorTabDropTarget extends WorkbenchWindowDropTarget {
     @Override
 	public Point getLocation() {
         Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
-                .getPane(getPart()));
+				.getPane(getPart()));
 
         return new Point(bounds.x + 8, bounds.y + 8);
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,7 +127,7 @@ public class IActionFilterTest extends UITestCase {
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
         assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
-        view.verifyActions(this, menuMgr);
+		view.verifyActions(menuMgr);
 
         // Select blue, verify popup.
         filter.clearCalled();
@@ -139,7 +139,7 @@ public class IActionFilterTest extends UITestCase {
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
         assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
-        view.verifyActions(this, menuMgr);
+		view.verifyActions(menuMgr);
 
         // Select green, verify popup.
         filter.clearCalled();
@@ -151,7 +151,7 @@ public class IActionFilterTest extends UITestCase {
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
         assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
-        view.verifyActions(this, menuMgr);
+		view.verifyActions(menuMgr);
 
         // Select redTrue, verify popup.
         filter.clearCalled();
@@ -164,7 +164,7 @@ public class IActionFilterTest extends UITestCase {
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
         assertNotNull(ActionUtil
                 .getActionWithLabel(menuMgr, "redTrueAction_v1"));
-        view.verifyActions(this, menuMgr);
+		view.verifyActions(menuMgr);
 
         // Select nothing, verify popup.
         filter.clearCalled();
@@ -176,6 +176,6 @@ public class IActionFilterTest extends UITestCase {
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
-        view.verifyActions(this, menuMgr);
+		view.verifyActions(menuMgr);
     }
 }

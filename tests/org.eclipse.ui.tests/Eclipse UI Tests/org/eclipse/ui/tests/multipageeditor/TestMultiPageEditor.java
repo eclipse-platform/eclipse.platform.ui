@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
@@ -48,11 +47,6 @@ public final class TestMultiPageEditor extends MultiPageEditorPart {
 	@Override
 	public void doSaveAs() {
         throw new UnsupportedOperationException("Not implemented in this test."); //$NON-NLS-1$
-    }
-
-    public void gotoMarker(IMarker marker) {
-        // Do nothing.
-
     }
 
 	@Override
