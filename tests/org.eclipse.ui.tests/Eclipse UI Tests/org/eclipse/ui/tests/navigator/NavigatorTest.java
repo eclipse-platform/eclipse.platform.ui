@@ -38,7 +38,7 @@ public class NavigatorTest extends AbstractNavigatorTest {
         StructuredSelection sel = new StructuredSelection(testFile);
         selProv.setSelection(sel);
         assertEquals(sel.size(), ((IStructuredSelection)selProv.getSelection()).size());
-        assertEquals(sel.getFirstElement(), ((IStructuredSelection)selProv.getSelection()).getFirstElement());
+		assertEquals(sel.getFirstElement(), ((IStructuredSelection) selProv.getSelection()).getFirstElement());
     }
 
     /**

@@ -91,8 +91,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
 		table.showSelection();
 
-		IStructuredSelection result = (IStructuredSelection) fViewer
-				.getSelection();
+		IStructuredSelection result = fViewer.getStructuredSelection();
 		assertEquals(selectionSize, result.size());
 		assertTrue("First elements do not match ",
 				result.getFirstElement() == children[indices[0]]);

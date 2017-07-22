@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,16 +21,10 @@ public class ResourceAction implements IObjectActionDelegate {
 
     Object selectedItem;
 
-    /*
-     * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-     */
     @Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
     }
 
-    /*
-     * @see IActionDelegate#run(IAction)
-     */
     @Override
 	public void run(IAction action) {
 
@@ -40,9 +34,6 @@ public class ResourceAction implements IObjectActionDelegate {
 
     }
 
-    /*
-     * @see IActionDelegate#selectionChanged(IAction, ISelection)
-     */
     @Override
 	public void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
