@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -60,7 +61,7 @@ public class IWorkbenchPartTestableTests extends UITestCase {
 				.openEditor(page, FileUtil.createFile("foo.xml", proj)));
 
 		IEditorPart editors[] = page.getEditors();
-		Set encounteredControls = new HashSet();
+		Set<Composite> encounteredControls = new HashSet<>();
 		testParts(editors, encounteredControls);
 
 		IViewPart views[] = page.getViews();
@@ -77,7 +78,7 @@ public class IWorkbenchPartTestableTests extends UITestCase {
 	 * @param parts
 	 * @param encounteredControls
 	 */
-	private void testParts(Object[] parts, Set encounteredControls) {
+	private void testParts(Object[] parts, Set<Composite> encounteredControls) {
 		for (Object part : parts) {
 			String title = null;
 			IWorkbenchPartTestable testable = null;

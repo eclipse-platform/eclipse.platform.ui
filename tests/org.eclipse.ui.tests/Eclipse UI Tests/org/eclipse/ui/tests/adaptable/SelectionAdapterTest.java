@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.ui.tests.adaptable;
 
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.expressions.ICountable;
 import org.eclipse.core.expressions.IIterable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+
+import junit.framework.TestCase;
 
 /**
  * @since 3.3
@@ -38,7 +38,7 @@ public class SelectionAdapterTest extends TestCase {
 		ICountable countable = Platform.getAdapterManager().getAdapter(empty, ICountable.class);
 		assertEquals(0, countable.count());
 
-		IIterable iterate = Platform.getAdapterManager().getAdapter(empty, IIterable.class);
+		IIterable<?> iterate = Platform.getAdapterManager().getAdapter(empty, IIterable.class);
 		assertFalse(iterate.iterator().hasNext());
 	}
 
@@ -53,8 +53,8 @@ public class SelectionAdapterTest extends TestCase {
 		ICountable countable = Platform.getAdapterManager().getAdapter(selection, ICountable.class);
 		assertEquals(1, countable.count());
 
-		IIterable iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
-		Iterator iterator = iterate.iterator();
+		IIterable<?> iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
+		Iterator<?> iterator = iterate.iterator();
 		assertTrue(iterator.hasNext());
 		Object o = iterator.next();
 		assertTrue(o == selection);
@@ -65,7 +65,7 @@ public class SelectionAdapterTest extends TestCase {
 		ICountable countable = Platform.getAdapterManager().getAdapter(selection, ICountable.class);
 		assertEquals(0, countable.count());
 
-		IIterable iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
+		IIterable<?> iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
 		assertFalse(iterate.iterator().hasNext());
 	}
 
@@ -75,8 +75,8 @@ public class SelectionAdapterTest extends TestCase {
 		ICountable countable = Platform.getAdapterManager().getAdapter(selection, ICountable.class);
 		assertEquals(1, countable.count());
 
-		IIterable iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
-		Iterator iterator = iterate.iterator();
+		IIterable<?> iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
+		Iterator<?> iterator = iterate.iterator();
 		assertTrue(iterator.hasNext());
 		Object o = iterator.next();
 		assertTrue(o == obj);
@@ -90,8 +90,8 @@ public class SelectionAdapterTest extends TestCase {
 		ICountable countable = Platform.getAdapterManager().getAdapter(selection, ICountable.class);
 		assertEquals(2, countable.count());
 
-		IIterable iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
-		Iterator iterator = iterate.iterator();
+		IIterable<?> iterate = Platform.getAdapterManager().getAdapter(selection, IIterable.class);
+		Iterator<?> iterator = iterate.iterator();
 		assertTrue(iterator.hasNext());
 		Object o = iterator.next();
 		assertTrue(o == obj);

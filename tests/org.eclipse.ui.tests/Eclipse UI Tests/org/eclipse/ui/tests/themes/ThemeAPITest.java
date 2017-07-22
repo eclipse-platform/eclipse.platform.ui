@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,9 +159,9 @@ public class ThemeAPITest extends ThemeTest {
     private void checkEvents(ThemePropertyListener listener, Object source,
             Object oldObject, Object newObject) {
         boolean array = oldObject instanceof Object[];
-        List events = listener.getEvents();
+		List<PropertyChangeEvent> events = listener.getEvents();
         assertEquals(2, events.size());
-        PropertyChangeEvent event = (PropertyChangeEvent) events.get(0);
+        PropertyChangeEvent event = events.get(0);
 
         assertEquals(source, event.getSource());
         if (array) {
@@ -174,7 +174,7 @@ public class ThemeAPITest extends ThemeTest {
             assertEquals(newObject, event.getNewValue());
         }
 
-        event = (PropertyChangeEvent) events.get(1);
+        event = events.get(1);
         assertEquals(source, event.getSource());
         if (array) {
             assertArrayEquals((Object[]) oldObject, (Object[]) event
@@ -282,35 +282,35 @@ public class ThemeAPITest extends ThemeTest {
 
     public void testDataKeySet_data1() {
         ITheme defaultTheme = getDefaultTheme();
-        Set themeKeys = defaultTheme.keySet();
+		Set<String> themeKeys = defaultTheme.keySet();
 
         assertTrue(themeKeys.contains(DATA1));
     }
 
     public void testDataKeySet_data2() {
         ITheme defaultTheme = getDefaultTheme();
-        Set themeKeys = defaultTheme.keySet();
+		Set<String> themeKeys = defaultTheme.keySet();
 
         assertTrue(themeKeys.contains(DATA2));
     }
 
     public void testDataKeySet_int1() {
         ITheme defaultTheme = getDefaultTheme();
-        Set themeKeys = defaultTheme.keySet();
+		Set<String> themeKeys = defaultTheme.keySet();
 
         assertTrue(themeKeys.contains(INT1));
     }
 
     public void testDataKeySet_bool1() {
         ITheme defaultTheme = getDefaultTheme();
-        Set themeKeys = defaultTheme.keySet();
+		Set<String> themeKeys = defaultTheme.keySet();
 
         assertTrue(themeKeys.contains(BOOL1));
     }
 
     public void testDataKeySet_BOGUSKEY() {
         ITheme defaultTheme = getDefaultTheme();
-        Set themeKeys = defaultTheme.keySet();
+		Set<String> themeKeys = defaultTheme.keySet();
 
         assertFalse(themeKeys.contains(BOGUSKEY));
     }

@@ -66,9 +66,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		ContextModel cm = controller.getContextModel();
 		boolean foundWindow = false;
 		boolean foundDialog = false;
-		Iterator i = cm.getContexts().iterator();
+		Iterator<ContextElement> i = cm.getContexts().iterator();
 		while (i.hasNext()) {
-			ContextElement elem = (ContextElement) i.next();
+			ContextElement elem = i.next();
 			if (elem.getId().equals(IContextService.CONTEXT_ID_WINDOW)) {
 				foundWindow = true;
 			} else if (elem.getId().equals(IContextService.CONTEXT_ID_DIALOG)) {
@@ -83,9 +83,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		SchemeModel sm = controller.getSchemeModel();
 		boolean foundDefault = false;
-		i = sm.getSchemes().iterator();
-		while (i.hasNext()) {
-			SchemeElement e = (SchemeElement) i.next();
+		Iterator<SchemeElement> i2 = sm.getSchemes().iterator();
+		while (i2.hasNext()) {
+			SchemeElement e = i2.next();
 			if (e.getId().equals(
 					IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID)) {
 				foundDefault = true;
@@ -213,7 +213,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(conflict1, bm.getSelectedElement());
 		assertEquals(conflict1, cf.getSelectedElement());
 
-		final Collection conflicts = cf.getConflicts();
+		final Collection<?> conflicts = cf.getConflicts();
 		assertEquals(3, conflicts.size());
 
 		PropertyChangeEvent[] expected = new PropertyChangeEvent[] {
@@ -453,7 +453,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		Object bindingConflict1 = conflict1.getModelObject();
 		conflict2.setTrigger(ctrl5);
 		ConflictModel conflictModel = controller.getConflictModel();
-		ArrayList oldValue = new ArrayList();
+		ArrayList<BindingElement> oldValue = new ArrayList<>();
 		oldValue.add(conflict3);
 
 		assertEquals(dialog, ((BindingElement) bm.getSelectedElement())
@@ -555,9 +555,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		SchemeModel sm = controller.getSchemeModel();
 		SchemeElement emacsScheme = null;
-		Iterator i = sm.getSchemes().iterator();
+		Iterator<SchemeElement> i = sm.getSchemes().iterator();
 		while (i.hasNext()) {
-			SchemeElement e = (SchemeElement) i.next();
+			SchemeElement e = i.next();
 			if (e.getId().equals(SCHEME_EMACS_ID)) {
 				emacsScheme = e;
 			}
@@ -567,9 +567,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		BindingModel bm = controller.getBindingModel();
 		BindingElement quickSwitch = null;
 		int quickCount = 0;
-		i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement e = (BindingElement) i.next();
+		Iterator<BindingElement> i2 = bm.getBindings().iterator();
+		while (i2.hasNext()) {
+			BindingElement e = i2.next();
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quickSwitch = e;
 				quickCount++;
@@ -580,11 +580,11 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		sm.setSelectedElement(emacsScheme);
 
-		i = bm.getBindings().iterator();
-		ArrayList quick2 = new ArrayList();
+		i2 = bm.getBindings().iterator();
+		ArrayList<BindingElement> quick2 = new ArrayList<>();
 		boolean foundOriginal = false;
-		while (i.hasNext()) {
-			BindingElement e = (BindingElement) i.next();
+		while (i2.hasNext()) {
+			BindingElement e = i2.next();
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quick2.add(e);
 				if (e == quickSwitch) {
@@ -603,9 +603,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		SchemeModel sm = controller.getSchemeModel();
 		SchemeElement emacsScheme = null;
 		SchemeElement defaultScheme = null;
-		Iterator i = sm.getSchemes().iterator();
+		Iterator<SchemeElement> i = sm.getSchemes().iterator();
 		while (i.hasNext()) {
-			SchemeElement e = (SchemeElement) i.next();
+			SchemeElement e = i.next();
 			if (e.getId().equals(SCHEME_EMACS_ID)) {
 				emacsScheme = e;
 			} else if (e.getId().equals(
@@ -619,9 +619,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		BindingModel bm = controller.getBindingModel();
 		BindingElement quickSwitch = null;
 		int quickCount = 0;
-		i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement e = (BindingElement) i.next();
+		Iterator<BindingElement> i2 = bm.getBindings().iterator();
+		while (i2.hasNext()) {
+			BindingElement e = i2.next();
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quickSwitch = e;
 				quickCount++;
@@ -632,11 +632,11 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		sm.setSelectedElement(emacsScheme);
 
-		i = bm.getBindings().iterator();
-		ArrayList quick2 = new ArrayList();
+		i2 = bm.getBindings().iterator();
+		ArrayList<BindingElement> quick2 = new ArrayList<>();
 		boolean foundOriginal = false;
-		while (i.hasNext()) {
-			BindingElement e = (BindingElement) i.next();
+		while (i2.hasNext()) {
+			BindingElement e = i2.next();
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quick2.add(e);
 				if (e == quickSwitch) {
@@ -649,11 +649,11 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		sm.setSelectedElement(defaultScheme);
 
-		i = bm.getBindings().iterator();
+		i2 = bm.getBindings().iterator();
 		quick2.clear();
 		foundOriginal = false;
-		while (i.hasNext()) {
-			BindingElement e = (BindingElement) i.next();
+		while (i2.hasNext()) {
+			BindingElement e = i2.next();
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quick2.add(e);
 				if (e == quickSwitch) {
@@ -672,9 +672,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		final SchemeModel sm = controller.getSchemeModel();
 		SchemeElement emacsScheme = null;
 		SchemeElement defaultScheme = null;
-		Iterator i = sm.getSchemes().iterator();
+		Iterator<SchemeElement> i = sm.getSchemes().iterator();
 		while (i.hasNext()) {
-			SchemeElement e = (SchemeElement) i.next();
+			SchemeElement e = i.next();
 			if (e.getId().equals(SCHEME_EMACS_ID)) {
 				emacsScheme = e;
 			} else if (e.getId().equals(
@@ -707,10 +707,10 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		BindingModel bm = controller.getBindingModel();
 		BindingElement activateEditor = null;
-		ArrayList activates = new ArrayList();
-		Iterator i = bm.getBindings().iterator();
+		ArrayList<BindingElement> activates = new ArrayList<>();
+		Iterator<BindingElement> i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 				if (be.getModelObject() instanceof KeyBinding) {
@@ -726,7 +726,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		activates.clear();
 		i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 			}
@@ -740,7 +740,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		BindingModel bm = controller.getBindingModel();
 		BindingElement conflict4 = null;
-		ArrayList activates = new ArrayList();
+		ArrayList<BindingElement> activates = new ArrayList<>();
 		Iterator<BindingElement> i = bm.getBindings().iterator();
 		while (i.hasNext()) {
 			BindingElement be = i.next();
@@ -805,7 +805,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		activeTwo.setTrigger(KeySequence.getInstance("CTRL+5 M"));
 		assertEquals(Integer.valueOf(Binding.USER), activeTwo.getUserDelta());
 
-		ArrayList activates = new ArrayList();
+		ArrayList<BindingElement> activates = new ArrayList<>();
 		Iterator<BindingElement> i = bm.getBindings().iterator();
 		while (i.hasNext()) {
 			BindingElement be = i.next();
@@ -817,7 +817,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		bm.restoreBinding(controller.getContextModel());
 
-		activates = new ArrayList();
+		activates = new ArrayList<>();
 		i = bm.getBindings().iterator();
 		while (i.hasNext()) {
 			BindingElement be = i.next();
@@ -892,19 +892,19 @@ public class KeysPreferenceModelTest extends UITestCase {
 				.getNewValue());
 	}
 
-	private void assertChanges(PropertyChangeEvent[] expected, List events) {
+	private void assertChanges(PropertyChangeEvent[] expected, List<PropertyChangeEvent> events) {
 		assertEquals("events length", expected.length, events.size());
 		for (int i = 0; i < expected.length; i++) {
-			assertChangeEvent(i, expected[i], (PropertyChangeEvent) events
+			assertChangeEvent(i, expected[i], events
 					.get(i));
 		}
 	}
 
 	private BindingElement getBindingElement(BindingModel bm, String bindingId) {
 		BindingElement quickAccess = null;
-		Iterator i = bm.getBindings().iterator();
+		Iterator<BindingElement> i = bm.getBindings().iterator();
 		while (i.hasNext()) {
-			BindingElement e = (BindingElement) i.next();
+			BindingElement e = i.next();
 			if (e.getId().equals(bindingId)) {
 				quickAccess = e;
 			}

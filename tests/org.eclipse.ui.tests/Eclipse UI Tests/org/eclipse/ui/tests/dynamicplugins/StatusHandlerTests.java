@@ -95,7 +95,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 		ReferenceQueue<StatusHandlerDescriptor> queue = new ReferenceQueue<>();
 		ReferenceQueue<AbstractStatusHandler> queue2 = new ReferenceQueue<>();
 
-		List statusHandlerDescriptors = StatusHandlerRegistry.getDefault()
+		List<StatusHandlerDescriptor> statusHandlerDescriptors = StatusHandlerRegistry.getDefault()
 				.getHandlerDescriptors(PLUGIN_PREFIX);
 
 		assertNotNull(statusHandlerDescriptors);

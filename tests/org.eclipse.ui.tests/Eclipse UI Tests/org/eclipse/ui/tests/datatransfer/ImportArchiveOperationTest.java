@@ -131,8 +131,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
 
-        Enumeration tarEntries = tarFile.entries();
-        List entries = new ArrayList();
+		Enumeration<?> tarEntries = tarFile.entries();
+		List<Object> entries = new ArrayList<>();
         while (tarEntries.hasMoreElements()){
         	entries.add(tarEntries.nextElement());
         }
@@ -174,8 +174,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
 
-	    Enumeration tarEntries = tarFile.entries();
-	    List entries = new ArrayList();
+		Enumeration<?> tarEntries = tarFile.entries();
+		List<Object> entries = new ArrayList<>();
 	    while (tarEntries.hasMoreElements()){
 	    	entries.add(tarEntries.nextElement());
 	    }
@@ -194,8 +194,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
 
-	    Enumeration tarEntries = tarFile.entries();
-	    List entries = new ArrayList();
+		Enumeration<?> tarEntries = tarFile.entries();
+		List<Object> entries = new ArrayList<>();
 	    while (tarEntries.hasMoreElements()){
 	    	entries.add(tarEntries.nextElement());
 	    }
@@ -265,8 +265,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
         TarFile tarFile = new TarFile(tarFileURL.getPath());
         TarLeveledStructureProvider structureProvider = new TarLeveledStructureProvider(tarFile);
 
-	    Enumeration tarEntries = tarFile.entries();
-	    List entries = new ArrayList();
+		Enumeration<?> tarEntries = tarFile.entries();
+		List<Object> entries = new ArrayList<>();
 	    while (tarEntries.hasMoreElements()){
 	    	entries.add(tarEntries.nextElement());
 	    }

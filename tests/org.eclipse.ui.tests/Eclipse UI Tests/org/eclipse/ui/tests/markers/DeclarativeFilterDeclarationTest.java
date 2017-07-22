@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,12 +123,12 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 		ProblemFilter filter = getFilter(filterName);
 		assertTrue(filterName + " not found ", filter != null);
 		assertTrue(filterName + " is enabled ", !filter.isEnabled());
-		List types = filter.getSelectedTypes();
+		List<MarkerType> types = filter.getSelectedTypes();
 		assertTrue(
 				filterName + "should only have one type has " + types.size(),
 				types.size() == 1);
 		assertTrue(filterName + "should be enabled for category test",
-				((MarkerType) types.get(0)).getId().equals(
+				types.get(0).getId().equals(
 						"org.eclipse.ui.tests.categoryTestMarker"));
 	}
 

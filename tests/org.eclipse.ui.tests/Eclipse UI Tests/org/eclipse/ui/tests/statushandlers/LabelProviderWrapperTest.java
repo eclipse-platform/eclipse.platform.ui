@@ -44,7 +44,7 @@ public class LabelProviderWrapperTest extends TestCase {
 		super.setUp();
 		dialogState = new HashMap<>();
 		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, new HashSet<>());
-		((Collection)dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).add(Status.OK_STATUS);
+		((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).add(Status.OK_STATUS);
 		wrapper = new LabelProviderWrapper(dialogState);
 	}
 
@@ -122,7 +122,7 @@ public class LabelProviderWrapperTest extends TestCase {
 		assertEquals(message, wrapper.getSecondaryMessage(saError));
 
 		//pretend to have more statuses
-		((Collection)dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).add(Status.CANCEL_STATUS);
+		((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).add(Status.CANCEL_STATUS);
 
 		assertEquals(message, wrapper.getMainMessage(saError));
 		assertEquals(title, wrapper.getColumnText(saError, 0));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,7 +176,7 @@ public class ConcurrentTableTestView extends ViewPart {
 
 	public void addRandomElements(int amount) {
 
-		ArrayList tempList = new ArrayList();
+		ArrayList<String> tempList = new ArrayList<>();
 
 		for (int counter = 0; counter < amount; counter++) {
 			tempList.add("" + rand.nextLong() + " " + counter);
@@ -191,7 +191,6 @@ public class ConcurrentTableTestView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
 }

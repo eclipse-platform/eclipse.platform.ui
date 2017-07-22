@@ -42,7 +42,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof List){
 				List<Team> children = new ArrayList<>();
-				Iterator iter = ((List)parentElement).iterator();
+				Iterator<?> iter = ((List<?>) parentElement).iterator();
 				while(iter.hasNext()){
 					Object next = iter.next();
 					if (next instanceof Team){
@@ -76,20 +76,21 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest{
 	        return false;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			List oldElement = (List) oldInput;
+			List<Team> oldElement = (List<Team>) oldInput;
 	        if (oldElement != null) {
-	        	Iterator iter = oldElement.iterator();
+				Iterator<Team> iter = oldElement.iterator();
 	        	while (iter.hasNext()){
-	        		((Team)iter.next()).removeListener(this);
+					iter.next().removeListener(this);
 	        	}
 	        }
-	        List newElement = (List) newInput;
+			List<Team> newElement = (List<Team>) newInput;
 	        if (newElement != null) {
-	        	Iterator iter = newElement.iterator();
+				Iterator<Team> iter = newElement.iterator();
 	        	while (iter.hasNext()){
-	        		((Team)iter.next()).addListener(this);
+	        		iter.next().addListener(this);
 	        	}
 	        }
 		}

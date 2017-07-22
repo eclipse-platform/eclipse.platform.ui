@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public final class Bug84763Test extends UITestCase {
 	 * manager event. This value is set to <code>null</code> at the end of
 	 * each test.
 	 */
-	private Set previousContextIds = null;
+	private Set<String> previousContextIds = null;
 
 	/**
 	 * Constructor for <code>Bug84763Test</code>.
@@ -92,7 +92,7 @@ public final class Bug84763Test extends UITestCase {
 				previousContextIds = contextManagerEvent
 						.getPreviouslyActiveContextIds();
 				if (previousContextIds != null) {
-					previousContextIds = new HashSet(previousContextIds);
+					previousContextIds = new HashSet<>(previousContextIds);
 				}
 			}
 
@@ -157,7 +157,7 @@ public final class Bug84763Test extends UITestCase {
 		bindingManager.getActiveBindingsFor((ParameterizedCommand) null);
 
 		// Activate the dialog context and the sibling.
-		final Set activeContextIds = new HashSet();
+		final Set<String> activeContextIds = new HashSet<>();
 		activeContextIds.add(IContextIds.CONTEXT_ID_DIALOG);
 		activeContextIds.add(IContextIds.CONTEXT_ID_DIALOG_AND_WINDOW);
 		activeContextIds.add(windowChildContext.getId());

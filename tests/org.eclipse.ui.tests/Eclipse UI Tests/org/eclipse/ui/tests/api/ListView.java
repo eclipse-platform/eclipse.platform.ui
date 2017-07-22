@@ -36,7 +36,7 @@ public class ListView extends MockViewPart implements IMenuListener {
 
     ListViewer viewer;
 
-    ArrayList input;
+	ArrayList<ListElement> input;
 
     MenuManager menuMgr;
 
@@ -51,7 +51,7 @@ public class ListView extends MockViewPart implements IMenuListener {
      */
     public ListView() {
         super();
-        input = new ArrayList();
+		input = new ArrayList<>();
     }
 
     /**

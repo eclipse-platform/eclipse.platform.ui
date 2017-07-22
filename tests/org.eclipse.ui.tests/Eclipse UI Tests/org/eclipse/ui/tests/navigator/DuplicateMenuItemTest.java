@@ -48,7 +48,7 @@ public class DuplicateMenuItemTest extends AbstractNavigatorTest {
     private void checkMenu(Menu menu, String menuName) {
 
         MenuItem[] items = menu.getItems();
-        HashSet labels = new HashSet();
+		HashSet<String> labels = new HashSet<>();
         for (MenuItem item : items) {
             String label = item.getText();
             System.out.println(label);

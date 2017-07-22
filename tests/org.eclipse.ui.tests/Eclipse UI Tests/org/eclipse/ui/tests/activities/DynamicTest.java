@@ -102,7 +102,7 @@ public class DynamicTest extends UITestCase {
         IActivity first_activity = activityManager
                 .getActivity((String) activityManager.getDefinedActivityIds()
                         .toArray()[0]);
-        Set initialPatternBindings = first_activity
+		Set<IActivityPatternBinding> initialPatternBindings = first_activity
                 .getActivityPatternBindings();
         // Add pattern binding
         String pattern = "org\\.eclipse\\.ui\\.myPattern/.*"; //$NON-NLS-1$
@@ -122,8 +122,8 @@ public class DynamicTest extends UITestCase {
      */
     public void testEnabledActivities() {
         // Add an enabled activity
-        Set compareSet;
-        Set copySet = new HashSet(activityManager.getEnabledActivityIds());
+		Set<String> compareSet;
+		Set copySet = new HashSet(activityManager.getEnabledActivityIds());
         copySet.add(activityManager.getDefinedActivityIds().toArray()[0]);
         activityManager.setEnabledActivityIds(copySet);
         compareSet = activityManager.getEnabledActivityIds();
@@ -157,14 +157,14 @@ public class DynamicTest extends UITestCase {
         // Test correcteness of identifier
         IIdentifier activitiesIdentifier = activityManager
                 .getIdentifier("org.eclipse.pattern4"); //$NON-NLS-1$
-        Set identifiedActivities = activitiesIdentifier.getActivityIds(); //$NON-NLS-1$
+		Set<String> identifiedActivities = activitiesIdentifier.getActivityIds(); // $NON-NLS-1$
         assertTrue(identifiedActivities.size() == 1);
         assertTrue(((String) identifiedActivities.toArray()[0])
                 .equals("org.eclipse.activity4")); //$NON-NLS-1$
         assertFalse(activitiesIdentifier.isEnabled());
         // Disable Enabled activity
         listenerType = 0;
-        Set copySet = new HashSet(activityManager.getEnabledActivityIds());
+		Set<String> copySet = new HashSet<>(activityManager.getEnabledActivityIds());
         copySet.remove(enabledIdentifier.getActivityIds().toArray()[0]);
         activityManager.setEnabledActivityIds(copySet);
         assertTrue(listenerType == -1);
@@ -179,7 +179,7 @@ public class DynamicTest extends UITestCase {
                 "org.eclipse.pattern3"); //$NON-NLS-1$ //$NON-NLS-2$
         assertTrue(listenerType == -1);
         // Test correctenesss of identifier
-        Set manipulatedIdentifiers = activityManager.getIdentifier(
+		Set<String> manipulatedIdentifiers = activityManager.getIdentifier(
                 "org.eclipse.pattern3").getActivityIds(); //$NON-NLS-1$
         assertTrue(manipulatedIdentifiers.size() == 2);
         // Remove pattern binding
@@ -212,7 +212,7 @@ public class DynamicTest extends UITestCase {
 		});
         // Add an enabled activity
         listenerType = 2;
-        Set enabledSet = new HashSet(activityManager.getEnabledActivityIds());
+		Set<String> enabledSet = new HashSet<>(activityManager.getEnabledActivityIds());
         enabledSet.add("org.eclipse.activity19"); //$NON-NLS-1$
         activityManager.setEnabledActivityIds(enabledSet);
         assertTrue(listenerType == -1);
@@ -286,7 +286,7 @@ public class DynamicTest extends UITestCase {
         assertTrue(listenerType == -1);
         // Add to enabled activity
         listenerType = 6;
-        Set enabledSet = new HashSet(activityManager.getEnabledActivityIds());
+		Set<String> enabledSet = new HashSet<>(activityManager.getEnabledActivityIds());
         enabledSet.add(activity_to_listen.getId());
         activityManager.setEnabledActivityIds(enabledSet);
         assertTrue(listenerType == -1);
@@ -475,11 +475,10 @@ public class DynamicTest extends UITestCase {
 		assertTrue("Category Listener not called", registryChanged[1]);
 
 		assertTrue(activity.isDefined());
-		Set patternBindings = activity.getActivityPatternBindings();
+		Set<IActivityPatternBinding> patternBindings = activity.getActivityPatternBindings();
 		assertEquals(1, patternBindings.size());
 
-		IActivityPatternBinding patternBinding = (IActivityPatternBinding) patternBindings
-				.iterator().next();
+		IActivityPatternBinding patternBinding = patternBindings.iterator().next();
 
 		assertEquals("dynamic.activity/.*", patternBinding.getPattern()
 				.pattern());
@@ -491,20 +490,18 @@ public class DynamicTest extends UITestCase {
 			fail(e.getMessage(), e);
 		}
 
-		Set requirementBindings = activity.getActivityRequirementBindings();
+		Set<IActivityRequirementBinding> requirementBindings = activity.getActivityRequirementBindings();
 		assertEquals(1, requirementBindings.size());
 
-		IActivityRequirementBinding requirementBinding = (IActivityRequirementBinding) requirementBindings
-				.iterator().next();
+		IActivityRequirementBinding requirementBinding = requirementBindings.iterator().next();
 		assertEquals("dynamic.parent", requirementBinding
 				.getRequiredActivityId());
 		assertEquals("dynamic.activity", requirementBinding.getActivityId());
 
 		assertTrue(category.isDefined());
-		Set categoryBindings = category.getCategoryActivityBindings();
+		Set<ICategoryActivityBinding> categoryBindings = category.getCategoryActivityBindings();
 		assertEquals(1, categoryBindings.size());
-		ICategoryActivityBinding categoryBinding = (ICategoryActivityBinding) categoryBindings
-				.iterator().next();
+		ICategoryActivityBinding categoryBinding = categoryBindings.iterator().next();
 		assertEquals("dynamic.activity", categoryBinding.getActivityId());
 		assertEquals("dynamic.category", categoryBinding.getCategoryId());
 

@@ -41,12 +41,12 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
      *
      */
     private void load() {
-        categoryDefinitions = new ArrayList();
-        activityDefinitions = new ArrayList();
-        categoryActivityBindingDefinitions = new ArrayList();
-        activityPatternBindingDefinitions = new ArrayList();
-        activityRequirementBindingDefinitions = new ArrayList();
-        defaultEnabledActivities = new ArrayList();
+		categoryDefinitions = new ArrayList<>();
+		activityDefinitions = new ArrayList<>();
+		categoryActivityBindingDefinitions = new ArrayList<>();
+		activityPatternBindingDefinitions = new ArrayList<>();
+		activityRequirementBindingDefinitions = new ArrayList<>();
+		defaultEnabledActivities = new ArrayList<>();
         populateCategoryDefinitions();
         populateActivityDefinitions();
         populateCategoryActivityBindingDefinitions();

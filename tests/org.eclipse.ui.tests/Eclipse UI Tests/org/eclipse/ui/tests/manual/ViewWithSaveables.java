@@ -49,7 +49,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		ISaveablePart {
 
 	WritableList<Saveable> saveables = new WritableList<>();
-	IObservableValue dirty = new ComputedValue() {
+	IObservableValue<?> dirty = new ComputedValue<Object>() {
 		@Override
 		protected Object calculate() {
 			for (Object obj : saveables) {
@@ -62,7 +62,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 		}
 	};
 	private TableViewer viewer;
-	private IObservableValue selection;
+	private IObservableValue<?> selection;
 
 	public ViewWithSaveables() {
 	}
@@ -268,7 +268,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 
 	}
 
-	class DirtyObservableMap extends ComputedObservableMap {
+	class DirtyObservableMap extends ComputedObservableMap<Object, Object> {
 
 		Map<IObservableValue<Boolean>, MySaveable> writableValueToElement = new HashMap<>();
 

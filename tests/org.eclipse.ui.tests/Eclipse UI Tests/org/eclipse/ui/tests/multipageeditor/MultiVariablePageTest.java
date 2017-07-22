@@ -241,7 +241,7 @@ public class MultiVariablePageTest extends UITestCase {
 	 */
 	private void checkActiveContext(IContextService contextService,
 			String contextId, boolean isActive) {
-		Collection activeContexts = contextService.getActiveContextIds();
+		Collection<?> activeContexts = contextService.getActiveContextIds();
 		assertEquals(contextId, isActive, activeContexts.contains(contextId));
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,8 @@ public class PersistanceTest extends UITestCase {
 	        assertTrue(category.isDefined());
 	        assertNotNull(category.getDescription());
 
-	        for (Iterator i = manager.getDefinedCategoryIds().iterator(); i.hasNext(); ) {
-	            if (manager.getCategory((String) i.next()).getName().equals("org.eclipse.ui.PT.C3")) {
+			for (Iterator<String> i = manager.getDefinedCategoryIds().iterator(); i.hasNext();) {
+	            if (manager.getCategory(i.next()).getName().equals("org.eclipse.ui.PT.C3")) {
 					fail("Found category that should not be.");
 				}
 	        }
@@ -82,8 +82,8 @@ public class PersistanceTest extends UITestCase {
 	        assertTrue(activity.isDefined());
 	        assertNotNull(activity.getDescription());
 
-	        for (Iterator i = manager.getDefinedActivityIds().iterator(); i.hasNext(); ) {
-	            if (manager.getActivity((String) i.next()).getName().equals("org.eclipse.ui.PT.A3")) {
+			for (Iterator<String> i = manager.getDefinedActivityIds().iterator(); i.hasNext();) {
+	            if (manager.getActivity(i.next()).getName().equals("org.eclipse.ui.PT.A3")) {
 					fail("Found activity that should not be.");
 				}
 	        }

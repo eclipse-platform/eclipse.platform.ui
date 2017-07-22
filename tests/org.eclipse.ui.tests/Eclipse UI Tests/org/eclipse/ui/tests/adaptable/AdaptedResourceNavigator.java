@@ -124,10 +124,10 @@ public class AdaptedResourceNavigator extends ViewPart {
      * where the elements are resources.
      */
     StructuredSelection convertSelection(ISelection selection) {
-        ArrayList list = new ArrayList();
+		ArrayList<IResource> list = new ArrayList<>();
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ssel = (IStructuredSelection) selection;
-            for (Iterator i = ssel.iterator(); i.hasNext();) {
+			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
                 Object o = i.next();
 				IResource resource = Adapters.adapt(o, IResource.class);
                 if (resource != null) {

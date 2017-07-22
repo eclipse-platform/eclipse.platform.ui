@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,8 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 	private void enableFilterActivity() {
 		IActivity activity = PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager().getActivity(PROBLEM_FILTER_TEST_ACTIVITY);
-		Set enabledActivityIds = new HashSet(PlatformUI.getWorkbench()
+		Set<String> enabledActivityIds = new HashSet<>(
+				PlatformUI.getWorkbench()
 				.getActivitySupport().getActivityManager()
 				.getEnabledActivityIds());
 
@@ -87,7 +88,8 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 	private void disableFilterActivity() {
 		IActivity activity = PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager().getActivity(PROBLEM_FILTER_TEST_ACTIVITY);
-		Set enabledActivityIds = new HashSet(PlatformUI.getWorkbench()
+		Set<String> enabledActivityIds = new HashSet<>(
+				PlatformUI.getWorkbench()
 				.getActivitySupport().getActivityManager()
 				.getEnabledActivityIds());
 

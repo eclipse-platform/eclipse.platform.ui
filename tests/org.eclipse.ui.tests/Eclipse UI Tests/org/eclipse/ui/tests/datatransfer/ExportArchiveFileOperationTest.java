@@ -415,7 +415,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	    	}
 	    	else{
 	    		TarFile tarFile = new TarFile(filePath);
-	    		Enumeration entries = tarFile.entries();
+				Enumeration<?> entries = tarFile.entries();
 	    		while (entries.hasMoreElements()){
 	    			TarEntry entry = (TarEntry)entries.nextElement();
 	    			allEntries.add(entry.getName());

@@ -153,7 +153,7 @@ public class ListViewerRefreshTest extends TestCase {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return ((List) inputElement).toArray();
+			return ((List<?>) inputElement).toArray();
 		}
 
 		@Override

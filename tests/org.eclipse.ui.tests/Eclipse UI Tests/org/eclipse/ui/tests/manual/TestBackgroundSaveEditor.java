@@ -194,9 +194,9 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		final DataBindingContext dbc = new DataBindingContext(realm);
 		parent.addDisposeListener(e -> dbc.dispose());
 
-		final IObservableValue inputObservable = BeansObservables.observeValue(
+		final IObservableValue<?> inputObservable = BeansObservables.observeValue(
 				realm, data, "input");
-		final IObservableValue outputObservable = BeansObservables
+		final IObservableValue<?> outputObservable = BeansObservables
 				.observeValue(realm, data, "output");
 
 		createInputGroup(parent, dbc, inputObservable);
@@ -209,7 +209,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 	private void createOutputGroup(Composite parent,
 			final DataBindingContext dbc,
-			final IObservableValue outputObservable) {
+			final IObservableValue<?> outputObservable) {
 		Group outputGroup = new Group(parent, SWT.NONE);
 		outputGroup.setText("Output");
 		Text outputText = new Text(outputGroup, SWT.BORDER | SWT.READ_ONLY
@@ -227,7 +227,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 		Button dirtyButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE).setText("Editor is dirty");
-		IObservableValue dirtyObservable = BeansObservables.observeValue(realm,
+		IObservableValue<?> dirtyObservable = BeansObservables.observeValue(realm,
 				mySaveable, "dirty");
 		dbc.bindValue(SWTObservables.observeSelection(dirtyButton),
 				dirtyObservable, null, null);
@@ -277,7 +277,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 	}
 
 	private void createInputGroup(Composite parent,
-			final DataBindingContext dbc, final IObservableValue inputObservable) {
+			final DataBindingContext dbc, final IObservableValue<?> inputObservable) {
 		Group inputGroup = new Group(parent, SWT.NONE);
 		inputGroup.setText("Input");
 

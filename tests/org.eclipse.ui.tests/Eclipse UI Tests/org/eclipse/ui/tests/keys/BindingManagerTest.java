@@ -155,7 +155,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @see BindingInteractionsTest
 	 */
 	public final void testGetActiveBindingsDisregardingContext() {
-		final Map activeBindings = bindingManager
+		final Map<?, ?> activeBindings = bindingManager
 				.getActiveBindingsDisregardingContext();
 		assertNotNull("The active bindings should never be null",
 				activeBindings);
@@ -171,7 +171,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @see BindingInteractionsTest
 	 */
 	public final void testGetActiveBindingsDisregardingContextFlat() {
-		final Collection activeBindings = bindingManager
+		final Collection<?> activeBindings = bindingManager
 				.getActiveBindingsDisregardingContextFlat();
 		assertNotNull("The active bindings should never be null",
 				activeBindings);
@@ -343,7 +343,7 @@ public final class BindingManagerTest extends UITestCase {
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
-		Map partialMatches = bindingManager.getPartialMatches(perfectMatch);
+		Map<?, ?> partialMatches = bindingManager.getPartialMatches(perfectMatch);
 		assertTrue("A partial match should override a perfect match",
 				!partialMatches.isEmpty());
 		assertTrue("A partial match should override a perfect match",
@@ -741,14 +741,14 @@ public final class BindingManagerTest extends UITestCase {
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
 
-		Map activeBindingsDisregardingContext = bindingManager
+		Map<?, ?> activeBindingsDisregardingContext = bindingManager
 				.getActiveBindingsDisregardingContext();// force a recompute
 		assertNotNull(activeBindingsDisregardingContext);
 
-		Map currentConflicts = bindingManager.getCurrentConflicts();
+		Map<?, ?> currentConflicts = bindingManager.getCurrentConflicts();
 		assertEquals(1, currentConflicts.size()); // we have only one conflict
 
-		Collection conflictsCollection = bindingManager
+		Collection<?> conflictsCollection = bindingManager
 				.getConflictsFor(noConflict);
 		assertNull(conflictsCollection); // no conflict for this keybinding
 
