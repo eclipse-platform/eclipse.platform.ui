@@ -1,0 +1,91 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2013. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link rel="stylesheet" href="../../../book.css" charset="ISO-8859-1" type="text/css">
+   <title>Undo Example</title>
+</head>
+<body>
+
+<h2>
+<b>Example - Undo</b></h2>
+
+<h3>Introduction</h3>
+<p>
+The Undo Example adds two views to the workbench.  The <b>Box View</b> is a rudimentary
+view that allows the user to create boxes by clicking into empty space and dragging the mouse
+to form a box.  Boxes can be moved by selecting a box and dragging it around.  The user
+may undo and redo any operations performed in the box view.  The <b>Undo History
+View</b> shows the undo history maintained by the workbench operations history.
+</p>
+<h3>Features demonstrated in the example</h3>
+<ul>
+<li>Creating an <tt>IUndoableOperation</tt> inside an action (Delete all boxes) to perform the action's
+work .</li>
+<li>Creating an <tt>IUndoableOperation</tt> based on an operation implied by a gesture (Adding
+and moving boxes).</li>
+<li>Using a local <tt>IUndoContext</tt> to keep undo operations local to a particular view.</li>
+<li>Using the platform undo and redo action handlers to provide undo and redo in a view.</li>
+<li>Providing a user preference for setting the undo limit for a particular undo context.</li>
+<li>Using an <tt>IOperationApprover</tt> to install additional policy (Prompt before undo) in
+the operation history.</li>
+<li>Using <tt>IOperationHistory</tt> protocol to show undo history for different
+undo contexts (Undo History View).</li>
+</ul>
+<h3>Features not demonstrated</h3>
+<ul>
+<li>Since the example is focused on simple undo, the BoxView code is kept
+to a minimum.  Therefore, it does not provide the expected graphical editor features such as
+selection, resize and selection handles, color and line style attributes, etc.  For the same
+reason, advanced features in the undo framework are not shown.</li>
+<li>There is no example of assigning multiple undo contexts in order to share operations between
+views or editors.</li>
+<li>There is no example of using composite undo operations.</li>
+</ul>
+<h3>Running the example</h3>
+<p>
+From Eclipse's <strong>Window</strong> menu select <strong>Show View</strong> &gt; <strong>Other...</strong>.  
+In the <strong>Show View</strong> dialog, expand <strong>Undo Examples</strong> and select
+the view named <strong>Box View</strong>. The box view will appear.
+</p>
+<p>
+Likewise, from the <strong>Window</strong> menu select <strong>Show View</strong> &gt; <strong>Other...</strong>.  
+In the <strong>Show View</strong> dialog, expand <strong>Undo Examples</strong> and select
+the view named <strong>Undo History View</strong>. A view containing the undo history will appear.
+This view can be used alongside the Box View to watch the undo history as boxes are added or moved.  It
+can also be used independently of the Box View to follow the undo history for any view or editor that
+uses the workbench operations history to track undoable operations.
+</p>
+<h3>Details</h3>
+<h4>Box View</h4>
+<p>Click in the box view and drag the mouse to create a box that follows the mouse.  Clicking inside an
+existing box and dragging the mouse will move the box to a new location.  Note the operations that appear
+in the <strong>Undo</strong> and <strong>Redo</strong> menus as boxes are added and moved.  The box view
+can be cleared by selecting <strong>Delete all boxes</strong> from the context menu or the view's local
+menu and toolbar.  This operation can also be undone.
+</p>
+<h4>Undo History View</h4>
+<p>The Undo History View shows the operations available for undo in all undo contexts.  To view the history
+in a particular undo context, select <strong>Filter on...</strong> from the view's context menu.
+This will filter the undo history on a particular undo context.  The view can be used to view the undo history
+for the Box View, for SDK text editors, and for undoable operations that affect the workspace, such as
+refactoring operations.  Undo and redo can be performed from the Undo History View's menus.  <b>Undo selected</b>
+will attempt to undo the selected operation in the undo history, regardless of its position in the operation history.
+Depending on the operation in question, this may or may not be allowed.  For example, the Box View allows all add and
+move operations to be undone or redone even if they aren't the most recently performed operation.  Text editors
+will prompt if an attempt is made to undo a typing operation that is not the most recent.
+</p>
+<h4>Example Preferences</h4>
+<p>Preferences are provided that affect the operation of both views.  
+From Eclipse's <strong>Window</strong> menu select <strong>Preferences</strong> &gt; <strong>Undo Preferences</strong>.  
+<ul>
+<li><strong>Undo history limit</strong> controls how many undoable operations are kept in the history for the Box View.</li>
+<li><strong>Show debug labels in undo history view</strong> controls whether the simple label shown in the undo menu is
+used for displaying operations, or a debug label that includes information such as the assigned undo context(s).</li>
+<li><strong>Confirm all undo operations</strong> controls whether prompting occurs before undoing or redoing an operation.
+This preference is used by the operation approver installed by the example.</li>
+</ul>
+</p>
+</body>
+</html>
