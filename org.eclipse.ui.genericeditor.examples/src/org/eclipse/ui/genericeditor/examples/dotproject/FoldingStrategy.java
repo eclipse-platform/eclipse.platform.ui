@@ -30,8 +30,10 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 public class FoldingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 	private IDocument document;
+	private String oldDocument;
 	private ProjectionViewer projectionViewer;
-	private Annotation[] oldAnnotations;
+	private List<Annotation> oldAnnotations = new ArrayList<>();
+	private List<Position> oldPositions = new ArrayList<>();
 
 	@Override
 	public void setDocument(IDocument document) {
@@ -54,20 +56,32 @@ public class FoldingStrategy implements IReconcilingStrategy, IReconcilingStrate
 
 	@Override
 	public void initialReconcile() {
+		if(document.get().equals(oldDocument)) return;
+		oldDocument = document.get();
+
 		List<Position> positions = getNewPositionsOfAnnotations();
-		Annotation[] annotations = new Annotation[positions.size()];
 
-		HashMap<Annotation, Position> newAnnotations = new HashMap<>();
+		List<Position> positionsToRemove = new ArrayList<>();
+		List<Annotation> annotationToRemove = new ArrayList<>();
 
-		for(int i =0;i<positions.size();i++)
-		{
-			ProjectionAnnotation annotation = new ProjectionAnnotation();
-			newAnnotations.put(annotation,positions.get(i));
-			annotations[i]=annotation;
+		for (Position position : oldPositions) {
+			if(!positions.contains(position)) {
+				projectionViewer.getProjectionAnnotationModel().removeAnnotation(oldAnnotations.get(oldPositions.indexOf(position)));
+				positionsToRemove.add(position);
+				annotationToRemove.add(oldAnnotations.get(oldPositions.indexOf(position)));
+			}else {
+				positions.remove(position);
+			}
 		}
+		oldPositions.removeAll(positionsToRemove);
+		oldAnnotations.removeAll(annotationToRemove);
 
-		projectionViewer.getProjectionAnnotationModel().modifyAnnotations(oldAnnotations,newAnnotations,null);
-		oldAnnotations=annotations;
+		for (Position position : positions) {
+			Annotation annotation = new ProjectionAnnotation();
+			projectionViewer.getProjectionAnnotationModel().addAnnotation(annotation, position);
+			oldPositions.add(position);
+			oldAnnotations.add(annotation);
+		}
 	}
 
 	private static enum SearchingFor {
