@@ -66,7 +66,7 @@ public class PluginDependencyGraphNode {
 	 * and include the list of children and ancestor nodes.
 	 */
 	public String toDeepString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		// write ID
 		writeln(buffer, 0, NLS.bind(Messages.stats_pluginid, descriptor.getSymbolicName()));
@@ -99,7 +99,7 @@ public class PluginDependencyGraphNode {
 	 * Ultility method to write a string and cr to the given buffer. Indent the
 	 * text the given number of tabs.
 	 */
-	private void writeln(StringBuffer buffer, int indent, String text) {
+	private void writeln(StringBuilder buffer, int indent, String text) {
 		for (int i = 0; i < indent; i++)
 			buffer.append('\t');
 		buffer.append(text);
@@ -126,7 +126,7 @@ public class PluginDependencyGraphNode {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("PluginDependencyGraphNode("); //$NON-NLS-1$
 		buffer.append(descriptor.getSymbolicName());
 		buffer.append(')');

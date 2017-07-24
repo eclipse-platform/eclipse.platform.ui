@@ -17,7 +17,7 @@ import org.eclipse.osgi.service.resolver.*;
 public class StateDumper extends AbstractDumper {
 
 	@Override
-	protected void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
+	protected void dumpContents(PushbackInputStream input, StringBuilder contents) throws IOException, Exception, DumpException {
 		PlatformAdmin admin = Platform.getPlatformAdmin();
 		// use the deprecated API to support running against a 3.0 Eclipse
 		State state = admin.getFactory().readState(new DataInputStream(input));
@@ -34,7 +34,7 @@ public class StateDumper extends AbstractDumper {
 			dumpBundle(allBundle, contents);
 	}
 
-	private void dumpBundle(BundleDescription bundle, StringBuffer contents) {
+	private void dumpBundle(BundleDescription bundle, StringBuilder contents) {
 		contents.append("\n"); //$NON-NLS-1$
 		contents.append("Bundle: "); //$NON-NLS-1$
 		contents.append(bundle.getSymbolicName());
@@ -53,7 +53,7 @@ public class StateDumper extends AbstractDumper {
 			dumpRequired(element, contents);
 	}
 
-	private void dumpRequired(BundleSpecification required, StringBuffer contents) {
+	private void dumpRequired(BundleSpecification required, StringBuilder contents) {
 		contents.append("\tRequired: "); //$NON-NLS-1$
 		contents.append(required.getName());
 		contents.append(" - Version: "); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class StateDumper extends AbstractDumper {
 		contents.append('\n');
 	}
 
-	private void dumpHost(HostSpecification host, StringBuffer contents) {
+	private void dumpHost(HostSpecification host, StringBuilder contents) {
 		contents.append("\tHost: "); //$NON-NLS-1$
 		contents.append(host.getName());
 		contents.append(" - Version: "); //$NON-NLS-1$

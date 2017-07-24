@@ -73,7 +73,7 @@ public class PropertyFileConverter {
 	/**
 	 * Appends the text to put at the end of each Java messages file.
 	 */
-	private void appendPostText(StringBuffer buffer, String bundlePath, String typeName) {
+	private void appendPostText(StringBuilder buffer, String bundlePath, String typeName) {
 		buffer.append("\n\tstatic {\n"); //$NON-NLS-1$
 		buffer.append("\t\t// load message values from bundle file\n"); //$NON-NLS-1$
 		buffer.append("\t\tNLS.initializeMessages(BUNDLE_NAME, "); //$NON-NLS-1$
@@ -87,7 +87,7 @@ public class PropertyFileConverter {
 	/**
 	 * Appends the text to put at the beginning of each Java messages file.
 	 */
-	private void appendPreText(StringBuffer buffer, String pkgName, String bundleName, String typeName) {
+	private void appendPreText(StringBuilder buffer, String pkgName, String bundleName, String typeName) {
 		//if this text had typos, would it be a false pretext?
 		buffer.append("/**********************************************************************\n"); //$NON-NLS-1$
 		buffer.append(" * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This\n"); //$NON-NLS-1$
@@ -116,7 +116,7 @@ public class PropertyFileConverter {
 		if (toDelete == null || toDelete.isEmpty())
 			return null;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()));
-		StringBuffer bundle = new StringBuffer();
+		StringBuilder bundle = new StringBuilder();
 
 		try {
 			String line;
@@ -177,11 +177,11 @@ public class PropertyFileConverter {
 		String typeName = accessorFile.getFullPath().removeFileExtension().lastSegment();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()));
 		String bundleName = propertiesFile.getName();
-		StringBuffer clazz = new StringBuffer();
+		StringBuilder clazz = new StringBuilder();
 		// convert the bundle resource (messages.properties) to the simple name (messages)
 		String simpleBundleName = new Path(bundleName).removeFileExtension().toString();
 		appendPreText(clazz, pkgName, simpleBundleName, typeName);
-		StringBuffer bundle = new StringBuffer();
+		StringBuilder bundle = new StringBuilder();
 		int savings = 0;
 		try {
 			String line;
@@ -229,7 +229,7 @@ public class PropertyFileConverter {
 	 * Blank lines are preserved.
 	 */
 	private String convertToComment(String line) {
-		StringBuffer comment = new StringBuffer();
+		StringBuilder comment = new StringBuilder();
 		if (line.trim().length() > 0) {
 			comment.append("\t//"); //$NON-NLS-1$
 		}
@@ -255,7 +255,7 @@ public class PropertyFileConverter {
 		int len = string.length();
 		if (len == 0)
 			return string;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		char c = string.charAt(0);
 		if (Character.isJavaIdentifierStart(c))
 			result.append(c);
@@ -296,7 +296,7 @@ public class PropertyFileConverter {
 	 */
 	private String extractKey(String line) {
 		int len = line.length();
-		StringBuffer key = new StringBuffer();
+		StringBuilder key = new StringBuilder();
 		for (int i = 0; i < len; i++) {
 			char c = line.charAt(i);
 			//whitespace, colon, or equals characters represent key separators

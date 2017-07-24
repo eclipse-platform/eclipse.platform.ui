@@ -43,7 +43,7 @@ public class CopyStructuredSelectionAction extends AbstractCopySelectionAction {
 	public String getContents() {
 		// retrieves the selected contents from the selection provider
 		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		for (Iterator selectionIter = selection.iterator(); selectionIter.hasNext();) {
 			content.append(selectionIter.next());
 			content.append('\n');

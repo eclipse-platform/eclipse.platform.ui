@@ -37,7 +37,7 @@ public abstract class MultiStrategyDumper extends AbstractDumper {
 	 * @see #openInputStream(File)
 	 */
 	@Override
-	protected final void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
+	protected final void dumpContents(PushbackInputStream input, StringBuilder contents) throws IOException, Exception, DumpException {
 		DataInputStream dataInput = new DataInputStream(input);
 		int c;
 		while ((c = input.read()) != -1) {

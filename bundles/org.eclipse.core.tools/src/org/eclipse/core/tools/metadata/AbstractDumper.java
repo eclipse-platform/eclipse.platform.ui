@@ -46,7 +46,7 @@ public abstract class AbstractDumper implements IDumper {
 		MeteredInputStream meteredInput = null;
 		Dump dump = new Dump();
 		dump.setFile(file);
-		StringBuffer contents = new StringBuffer(40);
+		StringBuilder contents = new StringBuilder(40);
 		try {
 			//uses a metered input stream in order to count the number of bytes read
 			meteredInput = new MeteredInputStream(openInputStream(file));
@@ -76,7 +76,7 @@ public abstract class AbstractDumper implements IDumper {
 	 * @throws Exception
 	 * @throws DumpException
 	 */
-	protected abstract void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException;
+	protected abstract void dumpContents(PushbackInputStream input, StringBuilder contents) throws IOException, Exception, DumpException;
 
 	/**
 	 * Opens an input stream connected to the file object provided. Provides an

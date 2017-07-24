@@ -24,7 +24,7 @@ public class ByteUtil {
 	 * @return a byte array string representation
 	 */
 	public static String byteArrayToString(byte[] byteArray, int max) {
-		StringBuffer result = new StringBuffer(byteArray.length * 2 + 2);
+		StringBuilder result = new StringBuilder(byteArray.length * 2 + 2);
 		int bytesToBeShown = (max > 0) ? (Math.min(max, byteArray.length)) : byteArray.length;
 		result.append('[');
 		for (int i = 0; i < bytesToBeShown; i++) {

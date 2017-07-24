@@ -292,7 +292,7 @@ public class PreferenceStatsView extends SpyView {
 		}
 
 		void updateTextView() {
-			final StringBuffer buffer = new StringBuffer();
+			final StringBuilder buffer = new StringBuilder();
 			buffer.append("Size of Eclipse 2.1 preference objects: " + prettyPrint(calculateOldSize()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Total node count: " + prettyPrint(nodeCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Nodes without keys: " + prettyPrint(emptyNodes) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -316,7 +316,7 @@ public class PreferenceStatsView extends SpyView {
 		}
 
 		private String prettyPrint(int i) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			for (;;) {
 				if (i < 1000) {
 					String val = Integer.toString(i);

@@ -108,7 +108,7 @@ public class DumperFactory {
 	}
 
 	private String getListOfDumperClass(Properties cfg) {
-		StringBuffer buf = new StringBuffer("\r\nList of files who have a dumper class");
+		StringBuilder buf = new StringBuilder("\r\nList of files who have a dumper class");
 		for (Enumeration e = cfg.keys(); e.hasMoreElements();) {
 			String element = (String) e.nextElement();
 			buf.append("\r\n");

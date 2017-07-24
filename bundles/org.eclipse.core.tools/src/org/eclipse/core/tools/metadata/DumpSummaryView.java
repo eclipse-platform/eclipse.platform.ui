@@ -82,7 +82,7 @@ public class DumpSummaryView extends SpyView {
 		this.setTitleToolTip("Dump summary for file " + file.getAbsolutePath()); //$NON-NLS-1$
 
 		// generates text to be shown on this view
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		if (dump.isFailed())
 			output.append(dump.getFailureReason().toString());
 		else

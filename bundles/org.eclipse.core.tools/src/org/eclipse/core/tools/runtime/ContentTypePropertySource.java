@@ -75,7 +75,7 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	private Object toString(String[] fileNames) {
 		if (fileNames.length == 0)
 			return ""; //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (String fileName : fileNames) {
 			result.append(fileName);
 			result.append(',');

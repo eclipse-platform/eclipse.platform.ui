@@ -65,7 +65,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 		// constructs a list with the selected elements
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 
-		StringBuffer copyText = new StringBuffer();
+		StringBuilder copyText = new StringBuilder();
 		copyText.append(headerPluginStats());
 		copyText.append('\n');
 		for (Iterator selectionIter = structuredSelection.iterator(); selectionIter.hasNext();) {
