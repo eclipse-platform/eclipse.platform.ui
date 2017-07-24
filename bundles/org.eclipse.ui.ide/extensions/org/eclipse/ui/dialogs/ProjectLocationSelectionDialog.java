@@ -26,11 +26,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -76,6 +78,15 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		setTitle(PROJECT_LOCATION_SELECTION_TITLE);
 		setStatusLineAboveButtons(true);
 		project = existingProject;
+	}
+
+	@Override
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+		if (id == IDialogConstants.OK_ID) {
+			return super.createButton(parent, id, IDEWorkbenchMessages.ProjectLocationSelectionDialog_copyButtonLabel,
+					defaultButton);
+		}
+		return super.createButton(parent, id, label, defaultButton);
 	}
 
 	/**
