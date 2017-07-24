@@ -198,7 +198,7 @@ public class InjectorImpl implements IInjector {
 					if (requestor.isOptional())
 						requestor.setResolvedArgs(null);
 					else if (shouldDebug) {
-						StringBuffer tmp = new StringBuffer();
+						StringBuilder tmp = new StringBuilder();
 						tmp.append("Uninjecting object \""); //$NON-NLS-1$
 						tmp.append(object.toString());
 						tmp.append("\": dependency on \""); //$NON-NLS-1$
@@ -477,7 +477,7 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private String resolutionError(Requestor<?> requestor, int argIndex) {
-		StringBuffer tmp = new StringBuffer();
+		StringBuilder tmp = new StringBuilder();
 		tmp.append("Unable to process \""); //$NON-NLS-1$
 		tmp.append(requestor.toString());
 		tmp.append("\": no actual value was found for the argument \""); //$NON-NLS-1$

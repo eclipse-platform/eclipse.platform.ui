@@ -601,7 +601,7 @@ class DeadlockDetector {
 		for (Thread thread : threads) {
 			Object[] ownedLocks = getOwnedLocks(thread);
 			Object waitLock = getWaitingLock(thread);
-			StringBuffer buf = new StringBuffer("Thread "); //$NON-NLS-1$
+			StringBuilder buf = new StringBuilder("Thread "); //$NON-NLS-1$
 			buf.append(thread.getName());
 			buf.append(" has locks: "); //$NON-NLS-1$
 			for (int j = 0; j < ownedLocks.length; j++) {

@@ -160,7 +160,7 @@ public final class ContentDescription extends BasicDescription {
 
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer("{"); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder("{"); //$NON-NLS-1$
 		if (keys != null)
 			if (keys instanceof QualifiedName) {
 				if (values != null)

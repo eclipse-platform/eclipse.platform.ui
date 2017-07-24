@@ -457,7 +457,7 @@ public class LRUCache implements Cloneable {
 	 * @return a string
 	 */
 	protected String toStringContents() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		int length = fEntryTable.size();
 		Object[] unsortedKeys = new Object[length];
 		String[] unsortedToStrings = new String[length];
@@ -481,7 +481,7 @@ public class LRUCache implements Cloneable {
 	}
 
 	public String toStringFillingRation(String cacheName) {
-		StringBuffer buffer = new StringBuffer(cacheName);
+		StringBuilder buffer = new StringBuilder(cacheName);
 		buffer.append('[');
 		buffer.append(getSpaceLimit());
 		buffer.append("]: "); //$NON-NLS-1$

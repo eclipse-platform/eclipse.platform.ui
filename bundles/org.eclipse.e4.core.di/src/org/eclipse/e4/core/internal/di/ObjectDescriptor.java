@@ -68,7 +68,7 @@ public class ObjectDescriptor implements IObjectDescriptor {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (desiredType instanceof Class<?>)
 			buffer.append(((Class<?>) desiredType).getSimpleName());
 		else if (desiredType != null)

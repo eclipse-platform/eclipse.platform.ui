@@ -362,7 +362,7 @@ public class Expressions {
 	}
 
 	public static String unEscapeString(String str) throws CoreException {
-		StringBuffer result= new StringBuffer();
+		StringBuilder result= new StringBuilder();
 		for (int i= 0; i < str.length(); i++) {
 			char ch= str.charAt(i);
 			if (ch == '\'') {

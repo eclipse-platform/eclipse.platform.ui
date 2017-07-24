@@ -130,7 +130,7 @@ public class TestExpression extends Expression {
 
 	@Override
 	public String toString() {
-		StringBuffer args= new StringBuffer();
+		StringBuilder args= new StringBuilder();
 		for (int i= 0; i < fArgs.length; i++) {
 			Object arg= fArgs[i];
 			if (arg instanceof String) {

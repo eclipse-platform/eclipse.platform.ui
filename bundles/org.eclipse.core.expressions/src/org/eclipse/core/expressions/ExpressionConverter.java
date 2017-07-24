@@ -135,7 +135,7 @@ public final class ExpressionConverter {
 	}
 
 	private String getDebugPath(IConfigurationElement configurationElement) {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		buf.append(configurationElement.getName());
 		Object parent= configurationElement.getParent();
 		while (parent != null) {

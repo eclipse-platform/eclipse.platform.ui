@@ -102,7 +102,7 @@ public class Util {
 	public static String toListString(Object[] list, String separator) {
 		if (list == null || list.length == 0)
 			return null;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (Object element : list) {
 			result.append(element);
 			result.append(separator);

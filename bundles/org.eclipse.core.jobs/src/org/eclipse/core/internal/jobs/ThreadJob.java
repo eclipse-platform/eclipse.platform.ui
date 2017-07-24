@@ -94,7 +94,7 @@ class ThreadJob extends Job {
 	 * @GuardedBy("JobManager.implicitJobs")
 	 */
 	private void illegalPop(ISchedulingRule rule) {
-		StringBuffer buf = new StringBuffer("Attempted to endRule: "); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("Attempted to endRule: "); //$NON-NLS-1$
 		buf.append(rule);
 		if (top >= 0 && top < ruleStack.length) {
 			buf.append(", does not match most recent begin: "); //$NON-NLS-1$
@@ -121,7 +121,7 @@ class ThreadJob extends Job {
 	 * the outer rule.
 	 */
 	private void illegalPush(ISchedulingRule pushRule, ISchedulingRule baseRule) {
-		StringBuffer buf = new StringBuffer("Attempted to beginRule: "); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("Attempted to beginRule: "); //$NON-NLS-1$
 		buf.append(pushRule);
 		buf.append(", does not match outer scope rule: "); //$NON-NLS-1$
 		buf.append(baseRule);
@@ -405,13 +405,13 @@ class ThreadJob extends Job {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("ThreadJob"); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("ThreadJob"); //$NON-NLS-1$
 		buf.append('(').append(realJob).append(',').append(getRuleStack()).append(')');
 		return buf.toString();
 	}
 
 	String getRuleStack() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append('[');
 		for (int i = 0; i <= top && i < ruleStack.length; i++) {
 			buf.append(ruleStack[i]);

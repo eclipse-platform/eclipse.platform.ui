@@ -40,7 +40,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 				ExpressionMessages.PropertyTesterDescriptor_no_namespace,
 				null));
 		}
-		StringBuffer buffer= new StringBuffer(","); //$NON-NLS-1$
+		StringBuilder buffer= new StringBuilder(","); //$NON-NLS-1$
 		String properties= element.getAttribute(PROPERTIES);
 		if (properties == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),

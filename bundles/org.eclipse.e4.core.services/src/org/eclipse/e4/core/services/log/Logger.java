@@ -157,7 +157,7 @@ public abstract class Logger {
 			bufLen += argZero.length() - 3;
 		if (argOne != null)
 			bufLen += argOne.length() - 3;
-		StringBuffer buffer = new StringBuffer(bufLen < 0 ? 0 : bufLen);
+		StringBuilder buffer = new StringBuilder(bufLen < 0 ? 0 : bufLen);
 		for (int i = 0; i < length; i++) {
 			char c = message.charAt(i);
 			switch (c) {

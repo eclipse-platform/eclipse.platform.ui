@@ -170,7 +170,7 @@ public class MultiRule implements ISchedulingRule {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("MultiRule["); //$NON-NLS-1$
 		int last = rules.length - 1;
 		for (int i = 0; i < rules.length; i++) {

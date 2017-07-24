@@ -64,7 +64,7 @@ public class ClassRequestor extends Requestor<Class<?>> {
 
 	@Override
 	public String toString() {
-		StringBuffer tmp = new StringBuffer();
+		StringBuilder tmp = new StringBuilder();
 		if (location != null)
 			tmp.append(location.getSimpleName());
 		tmp.append('.');

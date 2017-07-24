@@ -100,7 +100,7 @@ public class MethodRequestor extends Requestor<Method> {
 
 	@Override
 	public String toString() {
-		StringBuffer tmp = new StringBuffer();
+		StringBuilder tmp = new StringBuilder();
 		Object object = getRequestingObject();
 		if (object != null)
 			tmp.append(object.getClass().getSimpleName());

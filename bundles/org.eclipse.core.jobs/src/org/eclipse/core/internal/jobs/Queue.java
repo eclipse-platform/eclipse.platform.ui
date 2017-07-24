@@ -169,7 +169,7 @@ public class Queue {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("["); //$NON-NLS-1$
 		if (!isEmpty()) {
 			Iterator it = elements();
