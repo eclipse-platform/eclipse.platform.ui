@@ -525,7 +525,7 @@ public class PerformanceStats {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer("PerformanceStats("); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder("PerformanceStats("); //$NON-NLS-1$
 		result.append(event);
 		result.append(',');
 		result.append(blame);
