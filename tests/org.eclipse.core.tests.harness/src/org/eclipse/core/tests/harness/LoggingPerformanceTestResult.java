@@ -121,7 +121,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 	 * Prints the header of the report
 	 */
 	protected void printHTMLHeader(PrintWriter out) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<html>\n<head>\n<title>Eclipse Performance Test Output Page</title>");
 		buf.append("</head>\n<body>\n");
 		out.println(buf.toString());

@@ -104,7 +104,7 @@ public class LogSerializationTest extends RuntimeTest {
 		final char SPACE = ' ';
 		final String LINE_SEPARATORS = "\r\n\f";
 		final String SPACES = "\t ";
-		StringBuffer sb = new StringBuffer(stackTrace.trim());
+		StringBuilder sb = new StringBuilder(stackTrace.trim());
 		sb.append(NEW_LINE);
 		char lastChar = 0;
 		for (int i = 0; i < sb.length();) {

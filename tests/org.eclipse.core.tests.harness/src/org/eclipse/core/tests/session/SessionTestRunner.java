@@ -60,7 +60,7 @@ public class SessionTestRunner {
 		private Map<String, Result> results = new HashMap<>();
 		ServerSocket serverSocket;
 		private boolean shouldRun = true;
-		private StringBuffer stack;
+		private StringBuilder stack;
 		private TestResult testResult;
 		// tests completed during this session
 		private int testsRun;
@@ -153,7 +153,7 @@ public class SessionTestRunner {
 			}
 			if (message.startsWith("%TRACES")) {
 				// just create the string buffer that will hold all the frames of the stack trace
-				stack = new StringBuffer();
+				stack = new StringBuilder();
 				return;
 			}
 			if (message.startsWith("%TRACEE")) {

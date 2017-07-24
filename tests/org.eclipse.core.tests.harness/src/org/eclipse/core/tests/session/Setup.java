@@ -256,7 +256,7 @@ public class Setup implements Cloneable {
 			if (entry.getValue() == null) {
 				continue;
 			}
-			StringBuffer property = new StringBuffer("-D");
+			StringBuilder property = new StringBuilder("-D");
 			property.append(entry.getKey());
 			if (entry.getValue().length() > 0) {
 				property.append('=');
@@ -288,7 +288,7 @@ public class Setup implements Cloneable {
 	public String getEclipseArgsLine() {
 		List<String> eclipseArgs = new ArrayList<>();
 		fillEclipseArgs(eclipseArgs);
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (String string : eclipseArgs) {
 			result.append(string);
 			result.append(' ');
@@ -323,7 +323,7 @@ public class Setup implements Cloneable {
 	public String getSystemPropertiesLine() {
 		List<String> sysProperties = new ArrayList<>();
 		fillSystemProperties(sysProperties);
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (String string : sysProperties) {
 			result.append(string);
 			result.append(' ');
@@ -338,7 +338,7 @@ public class Setup implements Cloneable {
 	public String getVMArgsLine() {
 		List<String> vmArgs = new ArrayList<>();
 		fillVMArgs(vmArgs);
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (String string : vmArgs) {
 			result.append(string);
 			result.append(' ');
@@ -476,7 +476,7 @@ public class Setup implements Cloneable {
 
 	public String toCommandLineString() {
 		String[] commandLine = getCommandLine();
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append("[\n");
 		for (String element : commandLine) {
 			result.append('\t');
@@ -489,7 +489,7 @@ public class Setup implements Cloneable {
 
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (id != null || name != null) {
 			if (id != null) {
 				result.append(id);

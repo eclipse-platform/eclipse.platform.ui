@@ -241,7 +241,7 @@ public class PlatformLogReader {
 		if (currentLine == null || getLineType() != MESSAGE) {
 			return "";
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(currentLine.substring(KEYWORD_MESSAGE.length() + 1, currentLine.length()));
 		currentLine = reader.readLine();
 		buffer.append(readText());
@@ -257,7 +257,7 @@ public class PlatformLogReader {
 	}
 
 	protected String readText() throws IOException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (currentLine == null || getLineType() != UNKNOWN) {
 			return "";
 		}

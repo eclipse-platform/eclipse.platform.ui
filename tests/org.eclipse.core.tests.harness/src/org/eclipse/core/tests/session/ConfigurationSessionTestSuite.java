@@ -99,7 +99,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	private void createConfigINI() throws IOException {
 		Assert.assertTrue("1.0", !bundles.isEmpty());
 		Properties contents = new Properties();
-		StringBuffer osgiBundles = new StringBuffer();
+		StringBuilder osgiBundles = new StringBuilder();
 		for (String string : this.bundles) {
 			osgiBundles.append(string);
 			osgiBundles.append(',');

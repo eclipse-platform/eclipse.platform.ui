@@ -56,7 +56,7 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		String line = null;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		try {
 			while ((line = reader.readLine()) != null)
 				result.append(line);

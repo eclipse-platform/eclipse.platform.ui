@@ -278,7 +278,7 @@ public class SetupManager {
 			// otherwise we have an escaped equals somewhere in this option
 			int valueStart = -1;
 			// strip out the key (first non-escaped equal)
-			StringBuffer key = new StringBuffer();
+			StringBuilder key = new StringBuilder();
 			for (int i = 0; i < option.length(); i++) {
 				char c = option.charAt(i);
 				// if we don't have an equal sign, then just add it to the key

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Preferences;
 public class PreferencesTest extends RuntimeTest {
 
 	class Tracer implements Preferences.IPropertyChangeListener {
-		public StringBuffer log = new StringBuffer();
+		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {
 			if (value == null) {

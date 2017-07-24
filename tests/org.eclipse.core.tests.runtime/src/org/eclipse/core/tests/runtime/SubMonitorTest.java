@@ -597,7 +597,7 @@ public class SubMonitorTest extends TestCase {
 			return "";
 		}
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		boolean isFirst = true;
 		for (String nextValue : value) {
 			if (!isFirst) {

@@ -181,7 +181,7 @@ public class SubProgressTest extends TestCase {
 	}
 
 	private String concatArray(String[] value) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		boolean isFirst = true;
 		for (String nextValue : value) {
 			if (!isFirst)

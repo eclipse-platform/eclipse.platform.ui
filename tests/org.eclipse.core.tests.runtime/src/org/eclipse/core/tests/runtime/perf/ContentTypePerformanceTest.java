@@ -67,7 +67,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	}
 
 	private static String generateContentType(int number, String id, String baseTypeId, String[] fileNames, String[] fileExtensions) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append("<content-type id=\"");
 		result.append(id);
 		result.append("\" name=\"");
@@ -112,7 +112,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 	private static String getSignatureString(int number) {
 		byte[] signature = getSignature(number);
-		StringBuffer result = new StringBuffer(signature.length * 3 - 1);
+		StringBuilder result = new StringBuilder(signature.length * 3 - 1);
 		for (byte element : signature) {
 			result.append(Integer.toHexString(0xFF & element));
 			result.append(' ');

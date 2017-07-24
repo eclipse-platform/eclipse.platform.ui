@@ -32,7 +32,7 @@ import org.osgi.service.prefs.Preferences;
 public class EclipsePreferencesTest extends RuntimeTest {
 
 	class NodeTracer implements IEclipsePreferences.INodeChangeListener {
-		StringBuffer log = new StringBuffer();
+		StringBuilder log = new StringBuilder();
 
 		@Override
 		public void added(IEclipsePreferences.NodeChangeEvent event) {
@@ -54,7 +54,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	class PreferenceTracer implements IEclipsePreferences.IPreferenceChangeListener {
-		public StringBuffer log = new StringBuffer();
+		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {
 			if (value == null)

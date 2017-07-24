@@ -31,7 +31,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class PreferenceForwarderTest extends RuntimeTest {
 
 	class Tracer implements Preferences.IPropertyChangeListener {
-		public StringBuffer log = new StringBuffer();
+		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {
 			if (value == null)

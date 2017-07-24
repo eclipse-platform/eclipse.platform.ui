@@ -417,7 +417,7 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void failNotSame(String message, int expected, int actual) {
-		StringBuffer formatted = new StringBuffer();
+		StringBuilder formatted = new StringBuilder();
 		if (message != null) {
 			formatted.append(message).append(' ');
 		}
@@ -432,7 +432,7 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void failNotSame(String message, boolean expected, boolean actual) {
-		StringBuffer formatted = new StringBuffer();
+		StringBuilder formatted = new StringBuilder();
 		if (message != null) {
 			formatted.append(message).append(' ');
 		}
@@ -447,7 +447,7 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void failNotSame(String message, float expected, float actual) {
-		StringBuffer formatted = new StringBuffer();
+		StringBuilder formatted = new StringBuilder();
 		if (message != null) {
 			formatted.append(message).append(' ');
 		}
@@ -462,7 +462,7 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void failNotSame(String message, double expected, double actual) {
-		StringBuffer formatted = new StringBuffer();
+		StringBuilder formatted = new StringBuilder();
 		if (message != null) {
 			formatted.append(message).append(' ');
 		}
@@ -477,7 +477,7 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void failNotSame(String message, long expected, long actual) {
-		StringBuffer formatted = new StringBuffer();
+		StringBuilder formatted = new StringBuilder();
 		if (message != null) {
 			formatted.append(message).append(' ');
 		}
