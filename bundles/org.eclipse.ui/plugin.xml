@@ -2057,6 +2057,26 @@
         </propertyTester>
      </extension>
    <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition id="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+         <and>
+            <with
+                  variable="activeWorkbenchWindow">
+               <test
+                     property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+               </test>
+            </with>
+            <!-- this is a workaround to evaluate the expression -->
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchPart">
+               </instanceof>
+            </with>
+         </and>
+      </definition>
+   </extension>
+   <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.eclipse.ui.internal.ActivateEditorHandler"
@@ -2210,86 +2230,45 @@
             class="org.eclipse.ui.internal.CyclePerspectiveHandler:true"
             commandId="org.eclipse.ui.window.nextPerspective">
          <enabledWhen>
-            <with
-                  variable="activeWorkbenchWindow">
-               <test
-                     property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-               </test>
-            </with>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.CyclePerspectiveHandler:false"
             commandId="org.eclipse.ui.window.previousPerspective">
          <enabledWhen>
-            <with
-                  variable="activeWorkbenchWindow">
-               <test
-                     property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-               </test>
-            </with>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.handlers.CloseAllPerspectivesHandler"
             commandId="org.eclipse.ui.window.closeAllPerspectives">
          <enabledWhen>
-            <or>
-               <with
-                     variable="activeWorkbenchWindow">
-                  <test
-                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-                  </test>
-               </with>
-               <!-- this is a workaround to evaluate the expression -->
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="org.eclipse.ui.IWorkbenchPart">
-                  </instanceof>
-               </with>
-            </or>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.handlers.EditActionSetsHandler"
             commandId="org.eclipse.ui.window.customizePerspective">
          <enabledWhen>
-            <or>
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="org.eclipse.ui.IWorkbenchPart">
-                  </instanceof>
-               </with>
-               <with
-                     variable="activeWorkbenchWindow">
-                  <test
-                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-                  </test>
-               </with>
-            </or>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.handlers.ClosePerspectiveHandler"
             commandId="org.eclipse.ui.window.closePerspective">
          <enabledWhen>
-            <or>
-               <with
-                     variable="activeWorkbenchWindow">
-                  <test
-                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-                  </test>
-               </with>
-               <!-- this is a workaround to evaluate the expression -->
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="org.eclipse.ui.IWorkbenchPart">
-                  </instanceof>
-               </with>
-            </or>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
@@ -2361,65 +2340,27 @@
             class="org.eclipse.ui.internal.handlers.ResetPerspectiveHandler"
             commandId="org.eclipse.ui.window.resetPerspective">
          <enabledWhen>
-            <or>
-               <with
-                     variable="activeWorkbenchWindow">
-                  <test
-                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-                  </test>
-               </with>
-               <!-- this is a workaround to evaluate the expression -->
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="org.eclipse.ui.IWorkbenchPart">
-                  </instanceof>
-               </with>
-               
-            </or>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.handlers.SavePerspectiveHandler"
             commandId="org.eclipse.ui.window.savePerspective">
          <enabledWhen>
-            <or>
-               <with
-                     variable="activeWorkbenchWindow">
-                  <test
-                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-                  </test>
-               </with>
-               <!-- this is a workaround to evaluate the expression -->
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="org.eclipse.ui.IWorkbenchPart">
-                  </instanceof>
-               </with>
-               
-            </or>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.handlers.IntroHandler"
             commandId="org.eclipse.ui.help.quickStartAction">
          <enabledWhen>
-            <or>
-               <with
-                     variable="activeWorkbenchWindow">
-                  <test
-                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
-                  </test>
-               </with>
-               <!-- this is a workaround to evaluate the expression -->
-               <with
-                     variable="activePart">
-                  <instanceof
-                        value="org.eclipse.ui.IWorkbenchPart">
-                  </instanceof>
-               </with>
-            </or>
+            <reference
+                  definitionId="org.eclipse.ui.workbenchWindow.isPerspectiveOpen.enabledWhen">
+            </reference>
          </enabledWhen>
       </handler>
    </extension>
