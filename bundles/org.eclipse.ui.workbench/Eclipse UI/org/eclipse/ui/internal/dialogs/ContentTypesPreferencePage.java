@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - [91965] associate contenttype with editors
+ *     Lucas Bullen (Red Hat Inc.) - [520156 ] Able to Add Duplicate Associated Editors
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -54,6 +55,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -293,6 +295,22 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		return composite;
 	}
 
+	private IEditorDescriptor[] getAssociatedEditors() {
+		Table editorTable = editorAssociationsViewer.getTable();
+		if (editorTable == null) {
+			return null;
+		}
+		if (editorTable.getItemCount() > 0) {
+			ArrayList<IEditorDescriptor> editorList = new ArrayList<>();
+			for (int i = 0; i < editorTable.getItemCount(); i++) {
+				editorList.add((IEditorDescriptor) editorTable.getItem(i).getData());
+			}
+
+			return editorList.toArray(new IEditorDescriptor[editorList.size()]);
+		}
+		return null;
+	}
+
 	private void createEditors(Composite parent) {
 		final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -338,6 +356,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				if (editorRegistry instanceof EditorRegistry) {
 					EditorSelectionDialog dialog = new EditorSelectionDialog(getShell());
+					dialog.setEditorsToFilter(getAssociatedEditors());
 					EditorRegistry registry = (EditorRegistry) editorRegistry;
 					IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
 					if (dialog.open() == IDialogConstants.OK_ID) {
