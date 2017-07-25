@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.examples.dotproject;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -22,11 +18,13 @@ import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 public class BlueTagsPresentationReconciler extends PresentationReconciler {
 
-    private final TextAttribute tagAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(0,0, 255)));
-    private final TextAttribute headerAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(128,128,128)));
+    private final TextAttribute tagAttribute = new TextAttribute(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+    private final TextAttribute headerAttribute = new TextAttribute(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
 
     public BlueTagsPresentationReconciler() {
         RuleBasedScanner scanner= new RuleBasedScanner();
