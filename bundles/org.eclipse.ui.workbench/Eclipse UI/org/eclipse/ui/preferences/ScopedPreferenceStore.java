@@ -13,6 +13,7 @@
 package org.eclipse.ui.preferences;
 
 import java.io.IOException;
+import java.util.Objects;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
@@ -532,7 +533,7 @@ public class ScopedPreferenceStore extends EventManager implements
 			// removing a non-existing preference is a no-op so call the Core
 			// API directly
 			getStorePreferences().remove(name);
-			if (oldValue != defaultValue){
+			if (!Objects.equals(oldValue, defaultValue)) {
 				dirty = true;
 				firePropertyChangeEvent(name, oldValue, defaultValue);
 			}
