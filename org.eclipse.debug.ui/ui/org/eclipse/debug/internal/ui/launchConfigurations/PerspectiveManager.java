@@ -679,7 +679,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		}
 		LinkedHashMap<String, Integer> buttonLabelToId = new LinkedHashMap<>();
 		buttonLabelToId.put(LaunchConfigurationsMessages.PerspectiveManager_switch, IDialogConstants.YES_ID);
-		buttonLabelToId.put(IDialogConstants.CANCEL_LABEL, IDialogConstants.CANCEL_ID);
+		buttonLabelToId.put(IDialogConstants.NO_LABEL, IDialogConstants.NO_ID);
 		MessageDialogWithToggle dialog = MessageDialogWithToggle.open(MessageDialog.QUESTION, shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, args), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey, SWT.NONE, buttonLabelToId);
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
