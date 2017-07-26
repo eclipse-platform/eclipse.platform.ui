@@ -747,6 +747,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 		for (IMemento childMemento : memento.getChildren(IWorkbenchConstants.TAG_INFO)) {
             List<IEditorDescriptor> editors = getEditorDescriptors(childMemento.getChildren(IWorkbenchConstants.TAG_EDITOR), editorTable);
+			editors.forEach(editor -> {
+				if (!mapIDtoEditor.containsKey(editor.getId())) {
+					mapIDtoEditor.put(editor.getId(), editor);
+				}
+			});
 			String contentTypeId = childMemento.getString(IWorkbenchConstants.TAG_CONTENT_TYPE);
 			if (contentTypeId != null) {
 				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
@@ -1628,6 +1633,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	public void addUserAssociation(IContentType contentType, IEditorDescriptor selectedEditor) {
 		if (!this.contentTypeToEditorMappingsFromUser.containsKey(contentType)) {
 			this.contentTypeToEditorMappingsFromUser.put(contentType, new LinkedHashSet<>());
+		}
+		if (!mapIDtoEditor.containsKey(selectedEditor.getId())) {
+			mapIDtoEditor.put(selectedEditor.getId(), selectedEditor);
 		}
 		this.contentTypeToEditorMappingsFromUser.get(contentType).add(selectedEditor);
 		saveAssociations();
