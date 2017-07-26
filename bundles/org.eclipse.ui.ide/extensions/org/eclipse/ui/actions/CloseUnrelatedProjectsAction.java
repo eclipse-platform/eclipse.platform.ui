@@ -55,7 +55,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseUnrelatedProjectsAction"; //$NON-NLS-1$
 
-	private final List<IResource> projectsToClose = new ArrayList<>();
+	private List<IResource> projectsToClose = new ArrayList<>();
 
 	private boolean selectionDirty = true;
 
@@ -190,7 +190,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	/**
 	 * Computes the related projects of the selection.
 	 */
-	private void computeRelated(List<? extends IResource> selection) {
+	private List<IResource> computeRelated(List<? extends IResource> selection) {
 		//build the connected component set for all projects in the workspace
 		DisjointSet<IProject> set = buildConnectedComponents(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		//remove the connected components that the selected projects are in
@@ -198,8 +198,9 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 			set.removeSet(resource);
 		}
 		//the remainder of the projects in the disjoint set are unrelated to the selection
-		projectsToClose.clear();
-		set.toList(projectsToClose);
+		List<IResource> projects = new ArrayList<>();
+		set.toList(projects);
+		return projects;
 	}
 
 	@Override
@@ -208,7 +209,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 			List<? extends IResource> newSelection = super.getSelectedResources();
 			if (!oldSelection.equals(newSelection)) {
 				oldSelection = newSelection;
-				computeRelated(newSelection);
+				projectsToClose = computeRelated(newSelection);
 			}
 			selectionDirty = false;
 		}
