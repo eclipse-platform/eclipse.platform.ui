@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
  *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
+ *     Lucas Bullen (Red Hat Inc.) - Bug 518652
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -81,6 +82,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_NEXT_THREAD = "IMG_DLCL_NEXT_THREAD"; //$NON-NLS-1$
     public static final String IMG_DLCL_PREVIOUS_THREAD = "IMG_DLCL_PREVIOUS_THREAD"; //$NON-NLS-1$
     public static final String IMG_DLCL_RESTART = "IMG_DLCL_RESTART"; //$NON-NLS-1$
+	public static final String IMG_DLCL_EXPORT_CONFIG = "IMG_DLCL_EXPORT_CONFIG"; //$NON-NLS-1$
 
     //TODO: Move this IDebugUIConstants. Created too late in 3.2 cycle to add API.
     //The enabled icon is already API.
@@ -128,6 +130,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_PREVIOUS_THREAD = "IMG_ELCL_PREVIOUS_THREAD"; //$NON-NLS-1$
     public static final String IMG_ELCL_RESTART = "IMG_ELCL_RESTART"; //$NON-NLS-1$
     public static final String IMG_ELCL_DEBUG_VIEW_COMPACT_LAYOUT = "IMG_ELCL_DEBUG_VIEW_BREADCRUMB_LAYOUT"; //$NON-NLS-1$
+	public static final String IMG_ELCL_EXPORT_CONFIG = "IMG_ELCL_EXPORT_CONFIG"; //$NON-NLS-1$
 
     public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$

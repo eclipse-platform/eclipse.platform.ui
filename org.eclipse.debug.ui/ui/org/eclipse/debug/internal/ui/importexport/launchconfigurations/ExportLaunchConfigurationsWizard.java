@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ian Pun (Red Hat Inc.) - Bug 518652
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
@@ -27,6 +28,7 @@ import org.eclipse.ui.IWorkbench;
 public class ExportLaunchConfigurationsWizard extends Wizard implements IExportWizard {
 
 	private String EXPORT_DIALOG_SETTINGS = "ExportLaunchConfigurations"; //$NON-NLS-1$
+	private IStructuredSelection selectedElements;
 
 	/**
 	 * Constructor
@@ -36,9 +38,15 @@ public class ExportLaunchConfigurationsWizard extends Wizard implements IExportW
 		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
 		IDialogSettings workbenchSettings = plugin.getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection(EXPORT_DIALOG_SETTINGS);
-		if (section == null)
+		if (section == null) {
 			section = workbenchSettings.addNewSection(EXPORT_DIALOG_SETTINGS);
+		}
 		setDialogSettings(section);
+	}
+
+	public ExportLaunchConfigurationsWizard(IStructuredSelection selection) {
+		this();
+		selectedElements = selection;
 	}
 
 	/* (non-Javadoc)
@@ -46,7 +54,12 @@ public class ExportLaunchConfigurationsWizard extends Wizard implements IExportW
 	 */
 	@Override
 	public void addPages() {
-		IWizardPage page = new ExportLaunchConfigurationsWizardPage();
+		IWizardPage page;
+		if (selectedElements == null) {
+			page = new ExportLaunchConfigurationsWizardPage();
+		} else {
+			page = new ExportLaunchConfigurationsWizardPage(selectedElements);
+		}
 		addPage(page);
 	}
 

@@ -516,6 +516,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void createToolbarActions(ToolBarManager tmanager) {
 		tmanager.add(getNewAction());
+		tmanager.add(getExportAction());
 		tmanager.add(getDuplicateAction());
 		tmanager.add(getDeleteAction());
 		tmanager.add(new Separator());
@@ -614,6 +615,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 		};
 		getDuplicateAction().setConfirmationRequestor(requestor);
+		getExportAction().setConfirmationRequestor(requestor);
 		getNewAction().setConfirmationRequestor(requestor);
 		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
@@ -621,6 +623,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				handleLaunchConfigurationSelectionChanged(event);
 				getNewAction().setEnabled(getNewAction().isEnabled());
 				getDeleteAction().setEnabled(getDeleteAction().isEnabled());
+				getExportAction().setEnabled(getExportAction().isEnabled());
 				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			}
 		});
@@ -798,6 +801,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
   	 */
   	protected AbstractLaunchConfigurationAction getDuplicateAction() {
 		return (AbstractLaunchConfigurationAction)fLaunchConfigurationView.getAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION);
+	}
+
+	/**
+	 * Gets the export menu action
+	 *
+	 * @return the export menu action
+	 */
+	protected AbstractLaunchConfigurationAction getExportAction() {
+		return (AbstractLaunchConfigurationAction) fLaunchConfigurationView.getAction(ExportLaunchConfigurationAction.ID_EXPORT_ACTION);
 	}
 
 	/**
@@ -1589,6 +1601,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (!fSettingInput) {
 			// New, Delete, & Duplicate toolbar actions
 	 		getNewAction().setEnabled(getNewAction().isEnabled());
+			getExportAction().setEnabled(getExportAction().isEnabled());
 			getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 			getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			fTabViewer.refresh();

@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *  IBM - Initial API and implementation
+ *  Ian Pun & Lucas Bullen (Red Hat Inc.) - Bug 518652
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -137,6 +138,7 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String DeleteLaunchConfigurationAction_Dele_te_1;
 
 	public static String CreateLaunchConfigurationAction_Ne_w_1;
+	public static String ExportLaunchConfigurationAction_Export_1;
 	public static String CreateLaunchConfigurationAction_New_configuration_2;
 
 	public static String EnvironmentTab_Variable_1;
@@ -188,6 +190,7 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationTabGroupViewer_4;
 	public static String LaunchConfigurationTabGroupViewer_5;
     public static String LaunchConfigurationTabGroupViewer_6;
+	public static String LaunchConfigurationTabGroupViewer_7;
 
 	public static String SaveScopeResourcesHandler_1;
 	public static String SaveScopeResourcesHandler_2;
@@ -199,6 +202,7 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_1;
 	public static String LaunchConfigurationsDialog_4;
 	public static String LaunchConfigurationsDialog_5;
+	public static String LaunchConfigurationsDialog_6;
 	public static String FilterLaunchConfigurationAction_0;
 
 

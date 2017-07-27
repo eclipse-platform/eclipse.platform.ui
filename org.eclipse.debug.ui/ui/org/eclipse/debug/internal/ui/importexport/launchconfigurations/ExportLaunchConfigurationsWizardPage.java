@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
+ *     Lucas Bullen <lbullen@redhat.com> & Ian Pun <ipun@redhat.com> - Bug 518652
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
@@ -46,6 +47,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -119,12 +121,18 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	private Text fFilePath = null;
 	private Button fOverwrite = null;
 	private ConfigContentProvider fContentProvider = null;
+	private IStructuredSelection selectedElements;
 	/**
 	 * Constructor
 	 */
 	protected ExportLaunchConfigurationsWizardPage() {
 		super(WizardMessages.ExportLaunchConfigurationsWizard_0);
 		setTitle(WizardMessages.ExportLaunchConfigurationsWizard_0);
+	}
+
+	protected ExportLaunchConfigurationsWizardPage(IStructuredSelection selection) {
+		this();
+		selectedElements = selection;
 	}
 
 	/* (non-Javadoc)
@@ -142,8 +150,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		setControl(comp);
 		PlatformUI .getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.EXPORT_LAUNCH_CONFIGURATIONS_PAGE);
 		setMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_7);
-		//do not set page complete, Eclipse UI guidelines states wizards cannot start off with an error showing
-		setPageComplete(false);
+		setPageComplete(isComplete());
 	}
 
 	/**
@@ -167,6 +174,14 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		//need to force load the children so that select all works initially
 		fViewer.expandAll();
 		fViewer.collapseAll();
+		if (selectedElements != null) {
+			Object[] checkedElements = selectedElements.toArray();
+			fViewer.setCheckedElements(checkedElements);
+			fViewer.setExpandedElements(checkedElements);
+			for (Object element : checkedElements) {
+				updateCheckedState(element);
+			}
+		}
 		fViewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {

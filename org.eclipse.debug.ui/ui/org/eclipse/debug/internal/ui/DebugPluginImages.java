@@ -11,6 +11,7 @@
  *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
  *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
  *     Lars.Vogel <Lars.Vogel@gmail.com> - Bug 430620
+ *     Lucas Bullen <lbullen@redhat.com> - Bug 518652
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -129,6 +130,7 @@ public class DebugPluginImages {
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_NEXT_THREAD, DLCL+"next_thread_nav.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_PREVIOUS_THREAD, DLCL+"prev_thread_nav.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESTART, DLCL+"restart_co.png"); //$NON-NLS-1$
+        declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_EXPORT_CONFIG, DLCL + "export_config.png"); //$NON-NLS-1$
 
 		// enabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "toggledetailpane_co.png"); //$NON-NLS-1$
@@ -169,6 +171,7 @@ public class DebugPluginImages {
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEXT_THREAD, ELCL+"next_thread_nav.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_PREVIOUS_THREAD, ELCL+"prev_thread_nav.png"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESTART, ELCL+"restart_co.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_EXPORT_CONFIG, ELCL + "export_config.png"); //$NON-NLS-1$
 
 		//Object
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.png"); //$NON-NLS-1$

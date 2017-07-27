@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ian Pun (Red Hat Inc.) - Bug 518652
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -77,6 +78,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private CreateLaunchConfigurationAction fCreateAction;
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
+	private ExportLaunchConfigurationAction fExportAction;
 	private CollapseAllLaunchConfigurationAction fCollapseAllAction;
 
 	/**
@@ -201,6 +203,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fDuplicateAction = new DuplicateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION, fDuplicateAction);
 
+		fExportAction = new ExportLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
+		setAction(ExportLaunchConfigurationAction.ID_EXPORT_ACTION, fExportAction);
+
 		fCollapseAllAction = new CollapseAllLaunchConfigurationAction((TreeViewer)getViewer());
 		setAction(CollapseAllLaunchConfigurationAction.ID_COLLAPSEALL_ACTION, fCollapseAllAction);
 
@@ -223,6 +228,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	@Override
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(fCreateAction);
+		menu.add(fExportAction);
 		menu.add(fDuplicateAction);
 		menu.add(fDeleteAction);
 		menu.add(new Separator());
@@ -251,6 +257,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fCreateAction.dispose();
 		fDeleteAction.dispose();
 		fDuplicateAction.dispose();
+		fExportAction.dispose();
 		fFilterAction = null;
 		fCollapseAllAction = null;
 		getLaunchManager().removeLaunchConfigurationListener(this);
