@@ -1418,7 +1418,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			@Override
 			public Object compute(IEclipseContext context, String contextKey) {
 				if (editorRegistry == null) {
-					editorRegistry = new EditorRegistry();
+					editorRegistry = new EditorRegistry(Platform.getContentTypeManager());
 				}
 				return editorRegistry;
 			}

@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -164,18 +165,28 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 	private RelatedRegistry relatedRegistry;
 
+	private final IContentTypeManager contentTypeManager;
+
 	public static final String EMPTY_EDITOR_ID = "org.eclipse.ui.internal.emptyEditorTab"; //$NON-NLS-1$
 
     /**
      * Return an instance of the receiver. Adds listeners into the extension
      * registry for dynamic UI purposes.
+     * @param contentTypeManager
      */
-    public EditorRegistry() {
+    public EditorRegistry(IContentTypeManager contentTypeManager) {
         super();
+        this.contentTypeManager = contentTypeManager;
         initializeFromStorage();
         IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
         tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
 		relatedRegistry = new RelatedRegistry();
+		contentTypeManager.addContentTypeChangeListener(event -> {
+			if (contentTypeManager.getContentType(event.getContentType().getId()) == null) {
+				contentTypeToEditorMappingsFromUser.remove(event.getContentType());
+				saveAssociations();
+			}
+		});
     }
 
     /**
@@ -250,7 +261,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 		for (String contentTypeId : contentTypeVector) {
 			if (contentTypeId != null && contentTypeId.length() > 0) {
-				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
+				IContentType contentType = contentTypeManager.getContentType(contentTypeId);
 				if (contentType != null) {
 					addContentTypeBindingFromPlugin(contentType, editor, bDefault);
 				}
@@ -340,7 +351,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			return defaultEditor;
 		}
 
-		IContentType[] contentTypes = Platform.getContentTypeManager().findContentTypesFor(filename);
+		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(filename);
 		for (IContentType contentType : contentTypes) {
 			IEditorDescriptor editor = getDefaultEditor(filename, contentType);
 			if (editor != null) {
@@ -358,7 +369,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @since 3.1
 	 */
 	private IContentType guessAtContentType(String filename) {
-		return Platform.getContentTypeManager().findContentTypeFor(filename);
+		return contentTypeManager.findContentTypeFor(filename);
 	}
 
     /**
@@ -754,7 +765,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			});
 			String contentTypeId = childMemento.getString(IWorkbenchConstants.TAG_CONTENT_TYPE);
 			if (contentTypeId != null) {
-				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
+				IContentType contentType = contentTypeManager.getContentType(contentTypeId);
 				if (contentType != null) {
 					contentTypeToEditorMappingsFromUser.put(contentType, new LinkedHashSet<>(editors));
 				}
@@ -1567,7 +1578,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
         List<IFileEditorMapping> allMappings = new ArrayList<>(Arrays.asList(standardMappings));
         // mock-up content type extensions into IFileEditorMappings
-		for (IContentType type : Platform.getContentTypeManager().getAllContentTypes()) {
+		for (IContentType type : contentTypeManager.getAllContentTypes()) {
 			for (String extension : type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)) {
 				boolean found = false;
 				for (IFileEditorMapping mapping : allMappings) {
