@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.core.contenttype" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.core.contenttype" id="contentTypes" name="Content Types"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
 &lt;ul&gt;
@@ -24,9 +24,9 @@ a file association extends an existing content type by associating new file name
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -52,9 +52,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -85,9 +85,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the human-readable name of this content type
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="file-extensions" type="string">
@@ -101,6 +101,13 @@ a file association extends an existing content type by associating new file name
             <annotation>
                <documentation>
                   a comma-separated list of file names to be associated with this content type
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="file-patterns" type="string">
+            <annotation>
+               <documentation>
+                  a comma-separated list of file name patterns to be associated with this content type. Since 3.7
                </documentation>
             </annotation>
          </attribute>
@@ -138,9 +145,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="alias-for" type="string">
@@ -168,9 +175,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.content.IContentDescriber"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="plugin" type="string">
@@ -190,6 +197,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the fully qualified identifier for the content type this file association contributes to
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="file-names" type="string">
@@ -203,6 +213,13 @@ a file association extends an existing content type by associating new file name
             <annotation>
                <documentation>
                   a comma-separated list of file extensions to be associated with the target content type
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="file-patterns" type="string">
+            <annotation>
+               <documentation>
+                  a comma-separated list of file name patterns to be associated with this content type. Since 3.7
                </documentation>
             </annotation>
          </attribute>
@@ -253,18 +270,18 @@ a file association extends an existing content type by associating new file name
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Following is an example of a XML-based content type declaration using &lt;code&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber2&lt;/code&gt;, 
 a built-in describer: 
@@ -315,9 +332,9 @@ Here is an example of a content type that defines properties:
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The value of the class attribute in the describer element must represent an 
 implementor of 
@@ -328,9 +345,9 @@ implementor of
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;The org.eclipse.core.contenttype plug-in provides the following content types:&lt;ul&gt;
 &lt;li&gt;org.eclipse.core.runtime.text&lt;/li&gt;
@@ -348,9 +365,9 @@ Also, the org.eclipse.core.contenttype plug-in provides ready-to-use implementat
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2004, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

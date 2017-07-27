@@ -265,7 +265,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 			throw new IllegalArgumentException("Content-type '" + id + "' already exists.");//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		ContentType contentType = ContentType.createContentType(getCatalog(), id, name, (byte) 0, new String[0],
-				new String[0], baseType != null ? baseType.getId() : null, null, null, null);
+				new String[0], new String[0], baseType != null ? baseType.getId() : null, null, null, null);
 		getCatalog().addContentType(contentType);
 		// Add preferences for this content type.
 		String currentUserDefined = getContext().getNode(ContentType.PREF_USER_DEFINED)

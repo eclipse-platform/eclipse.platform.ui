@@ -28,11 +28,18 @@ public interface IContentTypeSettings {
 	/**
 	 * File spec type constant, indicating a file extension specification.
 	 */
-	public static final int FILE_EXTENSION_SPEC = 0x08;
+	public static final int FILE_EXTENSION_SPEC = 0b1000;
 	/**
 	 * File spec type constant, indicating a file name specification.
 	 */
-	public static final int FILE_NAME_SPEC = 0x04;
+	public static final int FILE_NAME_SPEC = 0b100;
+
+	/**
+	 * File spec type constant, indicating a file pattern specification
+	 * 
+	 * @since 3.7
+	 */
+	public static final int FILE_PATTERN_SPEC = 0b10000;
 
 	/**
 	 * Adds a user-defined file specification to the corresponding content type. Has no
@@ -41,7 +48,8 @@ public interface IContentTypeSettings {
 	 * @param fileSpec the file specification
 	 * @param type the type of the file specification. One of
 	 * <code>FILE_NAME_SPEC</code>,
-	 * <code>FILE_EXTENSION_SPEC</code>.
+	 * <code>FILE_EXTENSION_SPEC</code>,
+	 * <code>FILE_PATTERN_SPEC</code>.
 	 * @throws IllegalArgumentException if the type bit mask is
 	 * incorrect
 	 * @throws CoreException if this method fails. Reasons include:
@@ -50,6 +58,7 @@ public interface IContentTypeSettings {
 	 * </ul>
 	 * @see #FILE_NAME_SPEC
 	 * @see #FILE_EXTENSION_SPEC
+	 * @see #FILE_PATTERN_SPEC
 	 */
 	public void addFileSpec(String fileSpec, int type) throws CoreException;
 

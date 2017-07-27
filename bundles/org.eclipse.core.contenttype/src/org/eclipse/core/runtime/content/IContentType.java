@@ -18,10 +18,8 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 /**
  * Content types represent and provide information on file types, such as
  * associated file names/extensions, default charset, etc.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  *
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.0
  */
 public interface IContentType extends IContentTypeSettings {
@@ -29,20 +27,28 @@ public interface IContentType extends IContentTypeSettings {
 	 * File spec type flag constant, indicating that predefined file
 	 * specifications should not be taken into account.
 	 */
-	public static final int IGNORE_PRE_DEFINED = 0x01;
+	public static final int IGNORE_PRE_DEFINED = 0b1;
 	/**
 	 * File spec type flag constant, indicating that user-defined file
 	 * specifications should not be taken into account.
 	 */
-	public static final int IGNORE_USER_DEFINED = 0x02;
+	public static final int IGNORE_USER_DEFINED = 0b10;
 	/**
 	 * File spec type constant, indicating a file name specification.
 	 */
-	public static final int FILE_NAME_SPEC = 0x04;
+	public static final int FILE_NAME_SPEC = 0b100;
 	/**
 	 * File spec type constant, indicating a file extension specification.
 	 */
-	public static final int FILE_EXTENSION_SPEC = 0x08;
+	public static final int FILE_EXTENSION_SPEC = 0b1000;
+	/**
+	 * File spec type constant, indicating a file name pattern specification.
+	 * <code>?</code> represents any single character, <code>*<code> represent any
+	 * string.
+	 *
+	 * @since 3.7
+	 */
+	public static final int FILE_PATTERN_SPEC = 0b10000;
 
 	/**
 	 * Returns a reference to this content type's base type. If this content type

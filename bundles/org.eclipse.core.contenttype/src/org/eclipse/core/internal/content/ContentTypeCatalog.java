@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [263316] regexp for file association
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
@@ -28,6 +31,9 @@ public final class ContentTypeCatalog {
 	private final Map<String, IContentType> contentTypes = new HashMap<>();
 	private final Map<String, Set<ContentType>> fileExtensions = new HashMap<>();
 	private final Map<String, Set<ContentType>> fileNames = new HashMap<>();
+	private final Map<String, Pattern> compiledRegexps = new HashMap<>();
+	private final Map<Pattern, String> initialPatternForRegexp = new HashMap<>();
+	private final Map<Pattern, Set<ContentType>> fileRegexps = new HashMap<>();
 	private int generation;
 	private ContentTypeManager manager;
 
@@ -127,13 +133,23 @@ public final class ContentTypeCatalog {
 	};
 
 	private static IContentType[] concat(IContentType[][] types) {
-		if (types[0].length == 0)
-			return types[1];
-		if (types[1].length == 0)
-			return types[0];
-		IContentType[] result = new IContentType[types[0].length + types[1].length];
-		System.arraycopy(types[0], 0, result, 0, types[0].length);
-		System.arraycopy(types[1], 0, result, types[0].length, types[1].length);
+		int size = 0;
+		IContentType[] nonEmptyOne = NO_CONTENT_TYPES;
+		for (IContentType[] array : types) {
+			size += array.length;
+			if (array.length > 0) {
+				nonEmptyOne = array;
+			}
+		}
+		if (nonEmptyOne.length == size) { // no other array has content
+			return nonEmptyOne;
+		}
+		IContentType[] result = new IContentType[size];
+		int currentIndex = 0;
+		for (IContentType[] array : types) {
+			System.arraycopy(array, 0, result, currentIndex, array.length);
+			currentIndex += array.length;
+		}
 		return result;
 	}
 
@@ -174,15 +190,40 @@ public final class ContentTypeCatalog {
 		String[] builtInFileExtensions = contentType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC);
 		for (String builtInFileExtension : builtInFileExtensions)
 			associate(contentType, builtInFileExtension, IContentType.FILE_EXTENSION_SPEC);
+		String[] builtInFilePatterns = contentType
+				.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_PATTERN_SPEC);
+		for (String builtInFilePattern : builtInFilePatterns) {
+			associate(contentType, builtInFilePattern, IContentType.FILE_PATTERN_SPEC);
+		}
+	}
+
+	String toRegexp(String filePattern) {
+		return filePattern.replace(".", "\\.").replace('?', '.').replace("*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	synchronized void associate(ContentType contentType, String text, int type) {
-		Map<String, Set<ContentType>> fileSpecMap = ((type & IContentType.FILE_NAME_SPEC) != 0) ? fileNames : fileExtensions;
-		String mappingKey = FileSpec.getMappingKeyFor(text);
-		Set<ContentType> existing = fileSpecMap.get(mappingKey);
-		if (existing == null)
-			fileSpecMap.put(mappingKey, existing = new HashSet<>());
-		existing.add(contentType);
+		Map<String, Set<ContentType>> fileSpecMap = null;
+		if ((type & IContentType.FILE_NAME_SPEC) != 0) {
+			fileSpecMap = fileNames;
+		} else if ((type & IContentType.FILE_EXTENSION_SPEC) != 0) {
+			fileSpecMap = fileExtensions;
+		}
+		if (fileSpecMap != null) {
+			String mappingKey = FileSpec.getMappingKeyFor(text);
+			Set<ContentType> existing = fileSpecMap.get(mappingKey);
+			if (existing == null)
+				fileSpecMap.put(mappingKey, existing = new HashSet<>());
+			existing.add(contentType);
+		} else if ((type & IContentType.FILE_PATTERN_SPEC) != 0) {
+			Pattern compiledPattern = compiledRegexps.get(text);
+			if (compiledPattern == null) {
+				compiledPattern = Pattern.compile(toRegexp(text));
+				compiledRegexps.put(text, compiledPattern);
+				initialPatternForRegexp.put(compiledPattern, text);
+				fileRegexps.put(compiledPattern, new HashSet<>());
+			}
+			fileRegexps.get(compiledPattern).add(contentType);
+		}
 	}
 
 	private int collectMatchingByContents(int valid, IContentType[] subset, List<ContentType> destination, ILazySource contents, Map<String, Object> properties) throws IOException {
@@ -410,15 +451,26 @@ public final class ContentTypeCatalog {
 		final int appropriateFullName = appropriate.size();
 		final int validExtension = collectMatchingByContents(validFullName, subset[1], appropriate, buffer, properties) - validFullName;
 		final int appropriateExtension = appropriate.size() - appropriateFullName;
+		final int validPattern = collectMatchingByContents(validExtension, subset[2], appropriate, buffer, properties)
+				- validExtension;
+		final int appropriatePattern = appropriate.size() - appropriateFullName - appropriateExtension;
 		IContentType[] result = appropriate.toArray(new IContentType[appropriate.size()]);
 		if (validFullName > 1)
 			Arrays.sort(result, 0, validFullName, validPolicy);
 		if (validExtension > 1)
 			Arrays.sort(result, validFullName, validFullName + validExtension, validPolicy);
+		if (validPattern > 1) {
+			Arrays.sort(result, validFullName + validExtension, validFullName + validExtension + validPattern,
+					validPolicy);
+		}
 		if (appropriateFullName - validFullName > 1)
 			Arrays.sort(result, validFullName + validExtension, appropriateFullName + validExtension, indeterminatePolicy);
 		if (appropriateExtension - validExtension > 1)
-			Arrays.sort(result, appropriateFullName + validExtension, appropriate.size(), indeterminatePolicy);
+			Arrays.sort(result, appropriateFullName + validExtension, appropriate.size() - validPattern,
+					indeterminatePolicy);
+		if (appropriatePattern - validPattern > 1) {
+			Arrays.sort(result, appropriate.size() - validPattern, appropriate.size(), indeterminatePolicy);
+		}
 		return result;
 	}
 
@@ -427,8 +479,9 @@ public final class ContentTypeCatalog {
 		final Comparator<IContentType> validPolicy;
 		Comparator<IContentType> indeterminatePolicy;
 		if (fileName == null) {
-			// we only have a single array, by need to provide a two-dimensional, 2-element array
-			subset = new IContentType[][] {getAllContentTypes(), NO_CONTENT_TYPES};
+			// we only have a single array, by need to provide a two-dimensional, 3-element
+			// array
+			subset = new IContentType[][] { getAllContentTypes(), NO_CONTENT_TYPES, NO_CONTENT_TYPES };
 			indeterminatePolicy = policyConstantGeneralIsBetter;
 			validPolicy = policyConstantSpecificIsBetter;
 		} else {
@@ -436,13 +489,13 @@ public final class ContentTypeCatalog {
 			indeterminatePolicy = policyGeneralIsBetter;
 			validPolicy = policySpecificIsBetter;
 		}
-		int total = subset[0].length + subset[1].length;
+		int total = subset[0].length + subset[1].length + subset[2].length;
 		if (total == 0)
 			// don't do further work if subset is empty
 			return NO_CONTENT_TYPES;
 		if (!forceValidation && total == 1) {
 			// do not do validation if not forced and only one was found (caller will validate later)
-			IContentType[] found = subset[0].length == 1 ? subset[0] : subset[1];
+			IContentType[] found = subset[0].length == 1 ? subset[0] : (subset[1].length == 1 ? subset[1] : subset[2]);
 			// bug 100032 - ignore binary content type if contents are text
 			if (!buffer.isText())
 				// binary buffer, caller can call the describer with no risk
@@ -466,10 +519,11 @@ public final class ContentTypeCatalog {
 	 */
 	synchronized private IContentType[][] internalFindContentTypesFor(ContentTypeMatcher matcher, final String fileName, Comparator<IContentType> sortingPolicy) {
 		IScopeContext context = matcher.getContext();
-		IContentType[][] result = {NO_CONTENT_TYPES, NO_CONTENT_TYPES};
+		IContentType[][] result = { NO_CONTENT_TYPES, NO_CONTENT_TYPES, NO_CONTENT_TYPES };
+
+		Set<ContentType> existing = new HashSet<>();
 
 		final Set<ContentType> allByFileName;
-
 		if (context.equals(manager.getContext()))
 			allByFileName = getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC);
 		else {
@@ -478,7 +532,11 @@ public final class ContentTypeCatalog {
 		}
 		Set<ContentType> selectedByName = selectMatchingByName(context, allByFileName, Collections.emptySet(), fileName,
 				IContentType.FILE_NAME_SPEC);
+		existing.addAll(selectedByName);
 		result[0] = selectedByName.toArray(new IContentType[selectedByName.size()]);
+		if (result[0].length > 1)
+			Arrays.sort(result[0], sortingPolicy);
+
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
 			final Set<ContentType> allByFileExtension;
@@ -489,14 +547,42 @@ public final class ContentTypeCatalog {
 				allByFileExtension.addAll(matcher.getDirectlyAssociated(this, fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC));
 			}
 			Set<ContentType> selectedByExtension = selectMatchingByName(context, allByFileExtension, selectedByName, fileExtension, IContentType.FILE_EXTENSION_SPEC);
+			existing.addAll(selectedByExtension);
 			if (!selectedByExtension.isEmpty())
 				result[1] = selectedByExtension.toArray(new IContentType[selectedByExtension.size()]);
 		}
-		if (result[0].length > 1)
-			Arrays.sort(result[0], sortingPolicy);
 		if (result[1].length > 1)
 			Arrays.sort(result[1], sortingPolicy);
+
+		final Set<ContentType> allByFilePattern;
+		if (context.equals(manager.getContext()))
+			allByFilePattern = getMatchingRegexpAssociated(fileName, IContentTypeSettings.FILE_PATTERN_SPEC);
+		else {
+			allByFilePattern = new HashSet<>(getMatchingRegexpAssociated(fileName,
+					IContentTypeSettings.FILE_PATTERN_SPEC | IContentType.IGNORE_USER_DEFINED));
+			allByFilePattern
+					.addAll(matcher.getMatchingRegexpAssociated(this, fileName,
+							IContentTypeSettings.FILE_PATTERN_SPEC));
+		}
+		existing.addAll(allByFilePattern);
+		if (!allByFilePattern.isEmpty())
+			result[2] = allByFilePattern.toArray(new IContentType[allByFilePattern.size()]);
+
 		return result;
+	}
+
+	private Set<ContentType> getMatchingRegexpAssociated(String fileName, int typeMask) {
+		if ((typeMask & IContentType.FILE_PATTERN_SPEC) == 0) {
+			throw new IllegalArgumentException("This method requires FILE_PATTERN_SPEC."); //$NON-NLS-1$
+		}
+		Set<ContentType> res = new HashSet<>();
+		for (Entry<Pattern, Set<ContentType>> spec : this.fileRegexps.entrySet()) {
+			if (spec.getKey().matcher(fileName).matches()) {
+				res.addAll(filterOnDefinitionSource(initialPatternForRegexp.get(spec.getKey()), typeMask,
+						spec.getValue()));
+			}
+		}
+		return res;
 	}
 
 	/**
@@ -513,27 +599,48 @@ public final class ContentTypeCatalog {
 	 * @return a set of content types
 	 */
 	private Set<ContentType> getDirectlyAssociated(String text, int typeMask) {
+		if ((typeMask & IContentType.FILE_PATTERN_SPEC) != 0) {
+			throw new IllegalArgumentException("This method don't allow FILE_REGEXP_SPEC."); //$NON-NLS-1$
+		}
 		Map<String, Set<ContentType>> associations = (typeMask & IContentTypeSettings.FILE_NAME_SPEC) != 0 ? fileNames : fileExtensions;
-		Set<ContentType> result = null;
-		if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) == 0)
-			// no restrictions, get everything
-			result = associations.get(FileSpec.getMappingKeyFor(text));
-		else {
-			// only those specs satisfying the type mask should be included
-			Set<ContentType> initialSet = associations.get(FileSpec.getMappingKeyFor(text));
-			if (initialSet != null && !initialSet.isEmpty()) {
-				// copy so we can modify
-				result = new HashSet<>(initialSet);
-				// invert the last two bits so it is easier to compare
-				typeMask ^= (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED);
-				for (Iterator<ContentType> i = result.iterator(); i.hasNext();) {
-					ContentType contentType = i.next();
-					if (!contentType.hasFileSpec(text, typeMask, true))
-						i.remove();
-				}
-			}
+		Set<ContentType> result = associations.get(FileSpec.getMappingKeyFor(text));
+		if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) != 0) {
+			result = filterOnDefinitionSource(text, typeMask, result);
 		}
 		return result == null ? Collections.EMPTY_SET : result;
+	}
+
+	/**
+	 * Filters a set of content-types on whether they have a mapping that matches
+	 * provided criteria.
+	 *
+	 * @param text
+	 *            file name, file extension or file regexp (depending on value of
+	 *            {@code typeMask}.
+	 * @param typeMask
+	 *            the type mask. Spec type, and definition source (pre-defined or
+	 *            user-defined) will be used
+	 * @param contentTypes
+	 *            content types to filter from (not modified during method
+	 *            execution)
+	 * @return set of filtered content-type
+	 */
+	private Set<ContentType> filterOnDefinitionSource(String text, int typeMask, Set<ContentType> contentTypes) {
+		if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) == 0) {
+			return contentTypes;
+		}
+		if (contentTypes != null && !contentTypes.isEmpty()) {
+			// copy so we can modify
+			contentTypes = new HashSet<>(contentTypes);
+			// invert the last two bits so it is easier to compare
+			typeMask ^= (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED);
+			for (Iterator<ContentType> i = contentTypes.iterator(); i.hasNext();) {
+				ContentType contentType = i.next();
+				if (!contentType.hasFileSpec(text, typeMask, true))
+					i.remove();
+			}
+		}
+		return contentTypes;
 	}
 
 	synchronized ContentType internalGetContentType(String contentTypeIdentifier) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [263316] regexp for file association
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
@@ -77,6 +78,9 @@ public class ContentTypeBuilder {
 		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttribute("file-extensions")); //$NON-NLS-1$
 		for (String fileExtension : fileExtensions)
 			target.internalAddFileSpec(fileExtension, IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
+		String[] filePatterns = Util.parseItems(fileAssociationElement.getAttribute("file-patterns")); //$NON-NLS-1$
+		for (String filePattern : filePatterns)
+			target.internalAddFileSpec(filePattern, IContentType.FILE_PATTERN_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
 
 	/**
@@ -91,7 +95,8 @@ public class ContentTypeBuilder {
 			IEclipsePreferences node = context.getNode(id);
 			catalog.addContentType(ContentType.createContentType(catalog, id,
 					node.get(ContentType.PREF_USER_DEFINED__NAME, ContentType.EMPTY_STRING),
-					(byte) 0, new String[0], new String[0], node.get(ContentType.PREF_USER_DEFINED__BASE_TYPE_ID, null), null, Collections.emptyMap(),
+					(byte) 0, new String[0], new String[0], new String[0],
+					node.get(ContentType.PREF_USER_DEFINED__BASE_TYPE_ID, null), null, Collections.emptyMap(),
 					null));
 		}
 		for (IConfigurationElement allContentTypeCE : allContentTypeCEs)
@@ -145,6 +150,7 @@ public class ContentTypeBuilder {
 		byte priority = parsePriority(contentTypeCE.getAttribute("priority")); //$NON-NLS-1$ );
 		String[] fileNames = Util.parseItems(contentTypeCE.getAttribute("file-names")); //$NON-NLS-1$
 		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttribute("file-extensions")); //$NON-NLS-1$
+		String[] filePatterns = Util.parseItems(contentTypeCE.getAttribute("file-patterns")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttribute("base-type")); //$NON-NLS-1$
 		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttribute("alias-for")); //$NON-NLS-1$
 		IConfigurationElement[] propertyCEs = null;
@@ -174,8 +180,8 @@ public class ContentTypeBuilder {
 				defaultProperties = Collections.singletonMap(IContentDescription.CHARSET, defaultCharset);
 			else if (!defaultProperties.containsKey(IContentDescription.CHARSET))
 				defaultProperties.put(IContentDescription.CHARSET, defaultCharset);
-		return ContentType.createContentType(catalog, uniqueId, name, priority, fileExtensions, fileNames, baseTypeId,
-				aliasTargetTypeId, defaultProperties, contentTypeCE);
+		return ContentType.createContentType(catalog, uniqueId, name, priority, fileExtensions, fileNames, filePatterns,
+				baseTypeId, aliasTargetTypeId, defaultProperties, contentTypeCE);
 	}
 
 	// Store this around for performance

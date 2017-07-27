@@ -51,6 +51,8 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	public final static String PREF_DEFAULT_CHARSET = "charset"; //$NON-NLS-1$
 	public final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
 	public final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
+	/** @since 3.7 */
+	public final static String PREF_FILE_PATTERNS = "file-patterns"; //$NON-NLS-1$
 	/** @since 3.6 */
 	public static final String PREF_USER_DEFINED = "userDefined"; //$NON-NLS-1$
 	/** @since 3.6 */
@@ -89,20 +91,26 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	// -1 means unknown
 	private byte depth = -1;
 
-	public static ContentType createContentType(ContentTypeCatalog catalog, String uniqueId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, Map<QualifiedName, String> defaultProperties, IConfigurationElement contentTypeElement) {
+	public static ContentType createContentType(ContentTypeCatalog catalog, String uniqueId, String name, byte priority,
+			String[] fileExtensions, String[] fileNames, String[] filePatterns, String baseTypeId, String aliasTargetId,
+			Map<QualifiedName, String> defaultProperties, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(catalog.getManager());
 		contentType.catalog = catalog;
 		contentType.defaultDescription = new DefaultDescription(contentType);
 		contentType.id = uniqueId;
 		contentType.name = name;
 		contentType.priority = priority;
-		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
+		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)
+				|| (filePatterns != null && filePatterns.length > 0)) {
 			contentType.builtInAssociations = true;
-			contentType.fileSpecs = new ArrayList<>(fileExtensions.length + fileNames.length);
+			contentType.fileSpecs = new ArrayList<>(fileExtensions.length + fileNames.length + filePatterns.length);
 			for (String fileName : fileNames)
 				contentType.internalAddFileSpec(fileName, FILE_NAME_SPEC | SPEC_PRE_DEFINED);
 			for (String fileExtension : fileExtensions)
 				contentType.internalAddFileSpec(fileExtension, FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED);
+			for (String fileExtension : filePatterns) {
+				contentType.internalAddFileSpec(fileExtension, FILE_PATTERN_SPEC | SPEC_PRE_DEFINED);
+			}
 		}
 		contentType.defaultProperties = defaultProperties;
 		contentType.contentTypeElement = contentTypeElement;
@@ -120,6 +128,8 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			return PREF_FILE_EXTENSIONS;
 		if ((flags & FILE_NAME_SPEC) != 0)
 			return PREF_FILE_NAMES;
+		if ((flags & FILE_PATTERN_SPEC) != 0)
+			return PREF_FILE_PATTERNS;
 		throw new IllegalArgumentException("Unknown type: " + flags); //$NON-NLS-1$
 	}
 
@@ -139,7 +149,8 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 
 	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
-		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
+		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC || type == FILE_PATTERN_SPEC,
+				"Unknown type: " + type); //$NON-NLS-1$
 		String[] userSet;
 		synchronized (this) {
 			if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
@@ -377,8 +388,10 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	/**
 	 * Returns whether this content type has the given file spec.
 	 *
-	 * @param text the file spec string
-	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
+	 * @param text
+	 *            the file spec string
+	 * @param typeMask
+	 *            FILE_NAME_SPEC or FILE_EXTENSION_SPEC or FILE_REGEXP_SPEC
 	 * @param strict
 	 * @return true if this file spec has already been added, false otherwise
 	 */
@@ -542,11 +555,18 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		String[] fileExtensions = Util.parseItems(userSetFileExtensions);
 		for (String fileExtension : fileExtensions)
 			internalAddFileSpec(fileExtension, FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
+		// user set file name regexp
+		String userSetFileRegexp = contentTypeNode.get(PREF_FILE_PATTERNS, null);
+		String[] fileRegexps = Util.parseItems(userSetFileRegexp);
+		for (String fileRegexp : fileRegexps) {
+			internalAddFileSpec(fileRegexp, FILE_PATTERN_SPEC | SPEC_USER_DEFINED);
+		}
 	}
 
 	@Override
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
-		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
+		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC || type == FILE_PATTERN_SPEC,
+				"Unknown type: " + type); //$NON-NLS-1$
 		synchronized (this) {
 			if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 				return;
