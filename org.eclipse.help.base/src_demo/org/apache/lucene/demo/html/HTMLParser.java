@@ -38,8 +38,8 @@ import org.eclipse.help.internal.search.LimitedSizeCharArrayWriter;
 public class HTMLParser implements HTMLParserConstants {
   public static int SUMMARY_LENGTH = 175;
 
-  StringBuffer title = new StringBuffer();
-  StringBuffer summary = new StringBuffer();
+  StringBuilder title = new StringBuilder();
+  StringBuilder summary = new StringBuilder();
   Properties metaTags=new Properties();
   String currentMetaTag=null;
   String currentMetaContent=null;

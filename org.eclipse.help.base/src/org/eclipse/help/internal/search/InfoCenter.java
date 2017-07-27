@@ -253,7 +253,7 @@ public final class InfoCenter implements ISearchEngine {
 		if (scope.url == null) {
 			return null;
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(scope.url);
 		if (!scope.url.endsWith("/")) //$NON-NLS-1$
 			buf.append("/search?phrase="); //$NON-NLS-1$

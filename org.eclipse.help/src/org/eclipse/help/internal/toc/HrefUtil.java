@@ -63,7 +63,7 @@ public class HrefUtil {
 			return href.substring(PLUGINS_ROOT_SLASH.length() - 1);
 		}
 		if (href.length() > 0) {
-			StringBuffer buf = new StringBuffer(2 + pluginID.length()
+			StringBuilder buf = new StringBuilder(2 + pluginID.length()
 					+ href.length());
 			buf.append('/').append(pluginID);
 			buf.append('/').append(href);

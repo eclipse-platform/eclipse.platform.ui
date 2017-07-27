@@ -133,7 +133,7 @@ public final class WebSearch implements ISearchEngine {
 	}
 
 	private static String composeURL(String query, String urlTemplate) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		boolean inSubstitution = false;
 		int varStart = -1;
 		for (int i = 0; i < urlTemplate.length(); i++) {

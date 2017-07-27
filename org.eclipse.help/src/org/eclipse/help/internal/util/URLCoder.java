@@ -28,7 +28,7 @@ public class URLCoder {
 	}
 
 	private static String urlEncode(byte[] data, boolean encodeAllCharacters) {
-		StringBuffer buf = new StringBuffer(data.length);
+		StringBuilder buf = new StringBuilder(data.length);
 		for (int i = 0; i < data.length; i++) {
 			byte nextByte = data[i];
 			if (!encodeAllCharacters && isAlphaNumericOrDot(nextByte)) {

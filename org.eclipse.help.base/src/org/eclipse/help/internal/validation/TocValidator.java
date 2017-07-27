@@ -181,7 +181,7 @@ public class TocValidator {
 
 	// Builds a URL for a given plug-in/href to create a HelpURLConnection
 	private URL createURL(String href, String plugin) throws MalformedURLException {
-		StringBuffer url = new StringBuffer("file:/"); //$NON-NLS-1$
+		StringBuilder url = new StringBuilder("file:/"); //$NON-NLS-1$
 		url.append(plugin);
 		url.append("/"); //$NON-NLS-1$
 		url.append(href);

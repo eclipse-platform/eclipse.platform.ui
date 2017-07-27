@@ -84,8 +84,8 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	}
 
 	private static class ParsedXMLContent implements IParsedXMLContent {
-		private StringBuffer buffer = new StringBuffer();
-		private StringBuffer summary = new StringBuffer();
+		private StringBuilder buffer = new StringBuilder();
+		private StringBuilder summary = new StringBuilder();
 		private String title;
 		private String locale;
 		private static int SUMMARY_LENGTH = 200;
@@ -209,7 +209,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		public void characters(char[] characters, int start, int length) throws SAXException {
 			if (length == 0)
 				return;
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			for (int i = 0; i < length; i++) {
 				buff.append(characters[start + i]);
 			}
@@ -351,7 +351,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	 * @return the path to the current element in the stack.
 	 */
 	protected String getElementStackPath() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < stack.size(); i++) {
 			if (i > 0)
 				buf.append("/"); //$NON-NLS-1$

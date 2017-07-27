@@ -202,7 +202,7 @@ public class PluginIndex {
 
 	@Override
 	public String toString() {
-		StringBuffer ret = new StringBuffer(pluginId);
+		StringBuilder ret = new StringBuilder(pluginId);
 		ret.append(":"); //$NON-NLS-1$
 		ret.append(path);
 		ret.append("="); //$NON-NLS-1$

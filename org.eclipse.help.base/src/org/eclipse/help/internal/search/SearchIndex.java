@@ -1088,7 +1088,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			return null;
 
 		try {
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("?"); //$NON-NLS-1$
 			query.append("lang=" + locale); //$NON-NLS-1$
 			if (id != null)

@@ -289,7 +289,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 				Context context = (Context)element;
 				IUAElement[] children = context.getChildren();
 				if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(((UAElement)children[0]).getElementName())) {
-					StringBuffer buf = new StringBuffer();
+					StringBuilder buf = new StringBuilder();
 					Element description = ((UAElement)children[0]).getElement();
 					Node node = description.getFirstChild();
 					while (node != null) {

@@ -43,7 +43,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 				IIndexContribution toc = parser.parse(indexFile);
 				contributions.add(toc);
 			}  catch (SAXParseException spe) {
-				StringBuffer buffer = new StringBuffer(ERROR_READING_HELP_KEYWORD_INDEX_FILE);
+				StringBuilder buffer = new StringBuilder(ERROR_READING_HELP_KEYWORD_INDEX_FILE);
 				buffer.append(getIndexFilePath(indexFile));
 				buffer.append("\" at line "); //$NON-NLS-1$
 			    buffer.append(spe.getLineNumber());

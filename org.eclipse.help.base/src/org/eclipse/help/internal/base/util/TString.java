@@ -25,7 +25,7 @@ public class TString {
 			return in;
 		int lastIndex = 0;
 		int newIndex = 0;
-		StringBuffer newString = new StringBuffer();
+		StringBuilder newString = new StringBuilder();
 		for (;;) {
 			newIndex = in.indexOf(oldPat, lastIndex);
 			if (newIndex != -1) {

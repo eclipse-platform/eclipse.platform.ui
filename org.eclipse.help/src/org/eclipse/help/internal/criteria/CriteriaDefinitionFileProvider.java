@@ -46,7 +46,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 				ICriteriaDefinitionContribution criteria = parser.parse(criteriaDefinitionFile);
 				contributions.add(criteria);
 			}  catch (SAXParseException spe) {
-				StringBuffer buffer = new StringBuffer(ERROR_READING_HELP_CRITERIA_DEFINITION_FILE);
+				StringBuilder buffer = new StringBuilder(ERROR_READING_HELP_CRITERIA_DEFINITION_FILE);
 				buffer.append(getCriteriaDefinitionFilePath(criteriaDefinitionFile));
 				buffer.append("\" at line "); //$NON-NLS-1$
 			    buffer.append(spe.getLineNumber());

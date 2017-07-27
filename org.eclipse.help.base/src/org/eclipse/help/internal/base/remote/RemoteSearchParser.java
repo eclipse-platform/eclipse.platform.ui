@@ -37,7 +37,7 @@ public class RemoteSearchParser extends DefaultHandler {
 	private SAXParser parser;
 	private Stack<SearchHit> stack;
 	private List<SearchHit> hits;
-	private StringBuffer summary;
+	private StringBuilder summary;
 
 	/*
 	 * Parses the given serialized search hits and returns generated model
@@ -131,8 +131,8 @@ public class RemoteSearchParser extends DefaultHandler {
 	}
 
 	private void handleSummary(Attributes attr) {
-		// prepare the buffer to receive text summary
-		summary = new StringBuffer();
+		// prepare the builder to receive text summary
+		summary = new StringBuilder();
 	}
 
 	/*

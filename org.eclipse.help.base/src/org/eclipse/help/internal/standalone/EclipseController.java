@@ -218,7 +218,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	 */
 	private URL createCommandURL(String command, String[] parameters)
 			throws MalformedURLException {
-		StringBuffer urlStr = new StringBuffer();
+		StringBuilder urlStr = new StringBuilder();
 		urlStr.append("http://"); //$NON-NLS-1$
 		urlStr.append(connection.getHost());
 		urlStr.append(":"); //$NON-NLS-1$

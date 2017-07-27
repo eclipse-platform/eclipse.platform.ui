@@ -447,7 +447,7 @@ public class QueryBuilder {
 	 * word roots.
 	 */
 	public String gethighlightTerms() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator<String> it = highlightWords.iterator(); it.hasNext();) {
 			buf.append('"');
 			buf.append(it.next());
