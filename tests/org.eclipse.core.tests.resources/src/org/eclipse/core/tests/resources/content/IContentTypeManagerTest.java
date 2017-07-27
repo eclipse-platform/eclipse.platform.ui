@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [263316] regexp for file association
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
@@ -883,6 +884,35 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		IContentType[] multiple = finder.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
 		assertTrue("3.0", contains(multiple, xmlContentType));
+	}
+
+	public void testFindContentTypPredefinedRegexp() throws UnsupportedEncodingException, IOException, CoreException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
+
+		IContentType targetContentType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.predefinedContentTypeWithRegexp");
+		assertNotNull("Target content-type not found", targetContentType);
+
+		IContentType single = finder.findContentTypeFor(getInputStream("Just a test"), "somepredefinedContentTypeWithRegexpFile");
+		assertEquals(targetContentType, single);
+		single = finder.findContentTypeFor(getInputStream("Just a test"), "somepredefinedContentTypeWithPatternFile");
+		assertEquals(targetContentType, single);
+		single = finder.findContentTypeFor(getInputStream("Just a test"), "somepredefinedContentTypeWithWildcardsFile");
+		assertEquals(targetContentType, single);
+	}
+
+	public void testFindContentTypeUserRegexp() throws UnsupportedEncodingException, IOException, CoreException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
+
+		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
+
+		IContentType single = finder.findContentTypeFor(getInputStream("Just a test"), "someText.unknown");
+		assertNull("File pattern unknown at that point", single);
+
+		textContentType.addFileSpec("*Text*", IContentType.FILE_PATTERN_SPEC);
+		single = finder.findContentTypeFor(getInputStream("Just a test"), "someText.unknown");
+		assertEquals("Text content should now match *Text* files", textContentType, single);
 	}
 
 	public void testImportFileAssociation() throws CoreException {

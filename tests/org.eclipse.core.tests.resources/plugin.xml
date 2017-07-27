@@ -502,6 +502,16 @@
             name="XML Based with Different Extension and Low Priority"
             priority="low">
       </content-type>
+      <content-type
+            id="org.eclipse.core.tests.resources.predefinedContentTypeWithRegexp"
+            name="Predefined content type with regexp matching *predefinedContentTypeWithRegexp* files"
+            file-patterns="*predefinedContentTypeWithRegexp*,*predefinedContentTypeWithPattern*"
+            priority="low">
+      </content-type>
+      <file-association
+            content-type="org.eclipse.core.tests.resources.predefinedContentTypeWithRegexp"
+            file-patterns="*predefinedContentTypeWithWildcards*,somethingElseToCheckCommaSeparated">
+      </file-association>
    </extension>
 <extension
       id="contentTypeRelated1"
