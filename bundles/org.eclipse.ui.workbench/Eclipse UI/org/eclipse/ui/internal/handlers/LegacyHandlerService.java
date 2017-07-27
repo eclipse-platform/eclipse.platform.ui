@@ -66,6 +66,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
+import org.osgi.service.log.LogService;
 
 /**
  * @since 3.5
@@ -382,6 +383,17 @@ public class LegacyHandlerService implements IHandlerService {
 			throws ExecutionException, NotDefinedException, NotEnabledException,
 			NotHandledException {
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
+
+		if (hs == null) {
+			// If the log shows an IEclipseContext named "Anonymous" this is an
+			// indication that the context is disposed before we try to execute
+			// the command
+			Activator.log(LogService.LOG_ERROR, "IEclipseContext is " + eclipseContext); //$NON-NLS-1$
+			Activator.log(LogService.LOG_ERROR, "EHandlerService is null", //$NON-NLS-1$
+					new IllegalStateException("EHandlerService must not be null")); //$NON-NLS-1$
+			throw new ExecutionException("No handler service available"); //$NON-NLS-1$
+		}
+
 		IEclipseContext staticContext = EclipseContextFactory.create();
 		if (event != null) {
 			staticContext.set(Event.class, event);
