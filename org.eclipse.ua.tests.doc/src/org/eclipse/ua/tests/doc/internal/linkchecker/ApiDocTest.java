@@ -40,10 +40,10 @@ import org.eclipse.help.internal.toc.TocFileParser;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.ua.tests.doc.internal.Activator;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -187,7 +187,7 @@ public class ApiDocTest {
 			@Override
 			public BundleInfo[] call() throws Exception {
 				if (bundleInfos == null) {
-					BundleContext context = Activator.getDefault().getBundle().getBundleContext();
+					BundleContext context = FrameworkUtil.getBundle(ApiDocTest.class).getBundleContext();
 					ServiceReference<SimpleConfiguratorManipulator> serviceReference = context.getServiceReference(SimpleConfiguratorManipulator.class);
 					SimpleConfiguratorManipulator manipulator = context.getService(serviceReference);
 					bundleInfos = manipulator.loadConfiguration(context, SimpleConfiguratorManipulator.SOURCE_INFO);
@@ -275,8 +275,7 @@ public class ApiDocTest {
 
 		exportedPackageIds.add("org.eclipse.core.runtime.adaptor"); // not exported, but makes sense to document since accessible from outside of OSGi framework
 		exportedPackageIds.add("org.eclipse.swt.ole.win32"); // somehow missing from State#getExportedPackages(), maybe because it's declared in the fragment only
-
-		BundleContext context = Activator.getDefault().getBundle().getBundleContext();
+		BundleContext context = FrameworkUtil.getBundle(ApiDocTest.class).getBundleContext();
 		ServiceReference<PlatformAdmin> platformAdminReference = context.getServiceReference(PlatformAdmin.class);
 		PlatformAdmin service = context.getService(platformAdminReference);
 		State state = service.getState(false);
