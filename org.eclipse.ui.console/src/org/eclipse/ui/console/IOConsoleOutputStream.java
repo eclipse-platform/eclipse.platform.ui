@@ -181,6 +181,7 @@ public class IOConsoleOutputStream extends OutputStream {
         console.streamClosed(this);
         closed = true;
         partitioner = null;
+		decoder = null;
     }
 
     /*
