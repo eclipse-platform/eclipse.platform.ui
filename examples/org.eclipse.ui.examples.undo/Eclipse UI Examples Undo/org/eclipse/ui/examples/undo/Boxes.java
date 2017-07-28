@@ -24,7 +24,7 @@ public class Boxes  {
 	/*
 	 * The "model," a list of boxes
 	 */
-	private List<Box> boxes = new ArrayList<Box>();
+	private List<Box> boxes = new ArrayList<>();
 
 	/*
 	 * Constructs a box collection
@@ -51,7 +51,7 @@ public class Boxes  {
 	 * Clear all the boxes from the list of boxes.
 	 */
 	public void clear() {
-		boxes = new ArrayList<Box>();
+		boxes = new ArrayList<>();
 	}
 
 	/*

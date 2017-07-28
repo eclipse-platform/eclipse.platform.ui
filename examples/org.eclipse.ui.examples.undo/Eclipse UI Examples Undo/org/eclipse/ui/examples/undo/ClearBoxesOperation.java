@@ -28,7 +28,7 @@ public class ClearBoxesOperation extends BoxOperation {
 	/*
 	 * The boxes that are saved after clearing
 	 */
-	private List<Box> savedBoxes = new ArrayList<Box>();
+	private List<Box> savedBoxes = new ArrayList<>();
 
 	public ClearBoxesOperation(String label, IUndoContext context, Boxes boxes, Canvas canvas) {
 		super(label, context, boxes, null, canvas);
