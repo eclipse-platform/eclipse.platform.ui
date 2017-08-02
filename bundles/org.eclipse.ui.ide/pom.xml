@@ -20,10 +20,10 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.ide</artifactId>
-  <version>3.13.0-SNAPSHOT</version>
+  <version>3.13.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  
+
   <properties>
     <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
-  </properties> 
+  </properties>
 </project>
