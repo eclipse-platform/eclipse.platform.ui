@@ -9,3 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+/* could show the "selected" image for this page */
+#navigation-links a#overview img {
+        background: url(../graphics/icons/ctool/overview.png) center/contain no-repeat;
+        width : auto;
+        height: 64px;
+        margin-top: 2px;
+}
+
+#navigation-links a#.high-contrast#overview img {
+        display : none;
+}
+
+#navigation-links #overview .link-label {
+        display : none;
+}
+
