@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.IMarkerResolutionRelevance;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
@@ -250,8 +251,26 @@ public class QuickFixPage extends WizardPage {
 		resolutionsList.setInput(this);
 
 		resolutionsList.setComparator(new ViewerComparator() {
+			/**
+			 * This comparator compares the resolutions based on the relevance of the
+			 * resolutions. Any resolution that doesn't implement IMarkerResolutionRelevance
+			 * will be deemed to have relevance 0 (default value for relevance). If both
+			 * resolutions have the same relevance, then marker resolution label string will
+			 * be used for comparing the resolutions.
+			 *
+			 * @see IMarkerResolutionRelevance#getRelevanceForResolution()
+			 */
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
+				int relevanceMarker1 = (e1 instanceof IMarkerResolutionRelevance)
+						? ((IMarkerResolutionRelevance) e1).getRelevanceForResolution()
+						: 0;
+				int relevanceMarker2 = (e2 instanceof IMarkerResolutionRelevance)
+						? ((IMarkerResolutionRelevance) e2).getRelevanceForResolution()
+						: 0;
+				if (relevanceMarker1 != relevanceMarker2) {
+					return Integer.valueOf(relevanceMarker2).compareTo(Integer.valueOf(relevanceMarker1));
+				}
 				return ((IMarkerResolution) e1).getLabel().compareTo(
 						((IMarkerResolution)e2).getLabel());
 			}
