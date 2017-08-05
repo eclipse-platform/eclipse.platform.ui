@@ -114,29 +114,56 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	private Set<Image> disposableEditorIcons = new HashSet<>();
 
 	private class Spec {
-		String name;
+		/**
+		 * the spec text: file name, extension or pattern
+		 */
+		final String text;
 
-		String ext;
+		/**
+		 * one of {@link IContentType#FILE_NAME_SPEC},
+		 * {@link IContentType#FILE_EXTENSION_SPEC},
+		 * {@link IContentType#FILE_PATTERN_SPEC}
+		 */
+		final int type;
 
-		boolean isPredefined;
+		final boolean isPredefined;
 
-		int sortValue;
+		final int sortValue;
+
+		/**
+		 * @param specText
+		 *            the spec text (filename, extension or pattern)
+		 * @param specType
+		 *            one of {@link IContentType#FILE_NAME_SPEC},
+		 *            {@link IContentType#FILE_EXTENSION_SPEC},
+		 *            {@link IContentType#FILE_PATTERN_SPEC}
+		 * @param isPredefined
+		 *            true if predefined, false is user-defined
+		 * @param sortValue
+		 */
+		public Spec(String specText, int specType, boolean isPredefined, int sortValue) {
+			if (specType != IContentType.FILE_NAME_SPEC && specType != IContentType.FILE_EXTENSION_SPEC
+					&& specType != IContentType.FILE_PATTERN_SPEC) {
+				throw new IllegalArgumentException("Invalid specType"); //$NON-NLS-1$
+			}
+			this.type = specType;
+			this.text = specText;
+			this.isPredefined = isPredefined;
+			this.sortValue = sortValue;
+		}
 
 		@Override
 		public String toString() {
-			String toString;
-			if (name != null) {
-				toString = name;
-			} else {
-				toString = "*." + ext; //$NON-NLS-1$
+			if (this.type == IContentType.FILE_EXTENSION_SPEC) {
+				return "*." + this.text; //$NON-NLS-1$
 			}
-
-			return toString;
+			return this.text;
 		}
 
 		public boolean getPredefined() {
 			return isPredefined;
 		}
+
 	}
 
 	private class FileSpecComparator extends ViewerComparator {
@@ -179,48 +206,50 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
 			String[] prenamefileSpecs = contentType
 					.getFileSpecs(IContentType.FILE_NAME_SPEC | IContentType.IGNORE_USER_DEFINED);
+			String[] userPatternFileSpecs = contentType
+					.getFileSpecs(IContentType.FILE_PATTERN_SPEC | IContentType.IGNORE_PRE_DEFINED);
+			String[] prePatternFileSpecs = contentType
+					.getFileSpecs(IContentType.FILE_PATTERN_SPEC | IContentType.IGNORE_USER_DEFINED);
 
-			return createSpecs(userextfileSpecs, usernamefileSpecs,
-					preextfileSpecs, prenamefileSpecs);
+			return createSpecs(userextfileSpecs, usernamefileSpecs, userPatternFileSpecs,
+					preextfileSpecs, prenamefileSpecs, prePatternFileSpecs);
 		}
 
-		private Object[] createSpecs(String[] userextfileSpecs,
-				String[] usernamefileSpecs, String[] preextfileSpecs,
-				String[] prenamefileSpecs) {
-			List returnValues = new ArrayList();
+		private Spec[] createSpecs(String[] userextfileSpecs,
+				String[] usernamefileSpecs, String[] userPatternFileSpecs, String[] preextfileSpecs,
+				String[] prenamefileSpecs, String[] prePatternFileSpecs) {
+			List<Spec> returnValues = new ArrayList<>();
 			for (String usernamefileSpec : usernamefileSpecs) {
-				Spec spec = new Spec();
-				spec.name = usernamefileSpec;
-				spec.isPredefined = false;
-				spec.sortValue = 0;
+				Spec spec = new Spec(usernamefileSpec, IContentType.FILE_NAME_SPEC, false, 0);
 				returnValues.add(spec);
 			}
 
 			for (String prenamefileSpec : prenamefileSpecs) {
-				Spec spec = new Spec();
-				spec.name = prenamefileSpec;
-				spec.isPredefined = true;
-				spec.sortValue = 1;
+				Spec spec = new Spec(prenamefileSpec, IContentType.FILE_NAME_SPEC, true, 1);
 				returnValues.add(spec);
 			}
 
 			for (String userextfileSpec : userextfileSpecs) {
-				Spec spec = new Spec();
-				spec.ext = userextfileSpec;
-				spec.isPredefined = false;
-				spec.sortValue = 2;
+				Spec spec = new Spec(userextfileSpec, IContentType.FILE_EXTENSION_SPEC, false, 2);
 				returnValues.add(spec);
 			}
 
 			for (String preextfileSpec : preextfileSpecs) {
-				Spec spec = new Spec();
-				spec.ext = preextfileSpec;
-				spec.isPredefined = true;
-				spec.sortValue = 3;
+				Spec spec = new Spec(preextfileSpec, IContentType.FILE_EXTENSION_SPEC, true, 3);
 				returnValues.add(spec);
 			}
 
-			return returnValues.toArray();
+			for (String userPatternFileSpec : userPatternFileSpecs) {
+				Spec spec = new Spec(userPatternFileSpec, IContentType.FILE_PATTERN_SPEC, false, 4);
+				returnValues.add(spec);
+			}
+
+			for (String prePatternFileSpec : prePatternFileSpecs) {
+				Spec spec = new Spec(prePatternFileSpec, IContentType.FILE_PATTERN_SPEC, true, 5);
+				returnValues.add(spec);
+			}
+
+			return returnValues.toArray(new Spec[returnValues.size()]);
 		}
 	}
 
@@ -507,20 +536,14 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		addButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			Shell shell = composite.getShell();
 			IContentType selectedContentType = getSelectedContentType();
-			FileExtensionDialog dialog = new FileExtensionDialog(shell, WorkbenchMessages.ContentTypes_addDialog_title,
+			ContentTypeFilenameAssociationDialog dialog = new ContentTypeFilenameAssociationDialog(shell,
+					WorkbenchMessages.ContentTypes_addDialog_title,
 					IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
 					WorkbenchMessages.ContentTypes_addDialog_messageHeader,
 					WorkbenchMessages.ContentTypes_addDialog_message, WorkbenchMessages.ContentTypes_addDialog_label);
 			if (dialog.open() == Window.OK) {
-				String name = dialog.getName();
-				String extension = dialog.getExtension();
 				try {
-					if (name.equals("*")) { //$NON-NLS-1$
-						selectedContentType.addFileSpec(extension, IContentType.FILE_EXTENSION_SPEC);
-					} else {
-						selectedContentType.addFileSpec(name + (extension.length() > 0 ? ('.' + extension) : ""), //$NON-NLS-1$
-								IContentType.FILE_NAME_SPEC);
-					}
+					selectedContentType.addFileSpec(dialog.getSpecText(), dialog.getSpecType());
 				} catch (CoreException ex) {
 					StatusUtil.handleStatus(ex.getStatus(), StatusManager.SHOW, shell);
 					WorkbenchPlugin.log(ex);
@@ -539,33 +562,18 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			Shell shell = composite.getShell();
 			IContentType selectedContentType = getSelectedContentType();
 			Spec spec = getSelectedSpecs()[0];
-			FileExtensionDialog dialog = new FileExtensionDialog(shell, WorkbenchMessages.ContentTypes_editDialog_title,
+			ContentTypeFilenameAssociationDialog dialog = new ContentTypeFilenameAssociationDialog(shell,
+					WorkbenchMessages.ContentTypes_editDialog_title,
 					IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
 					WorkbenchMessages.ContentTypes_editDialog_messageHeader,
 					WorkbenchMessages.ContentTypes_editDialog_message, WorkbenchMessages.ContentTypes_editDialog_label);
-			if (spec.name == null) {
-				dialog.setInitialValue("*." + spec.ext); //$NON-NLS-1$
-			} else {
-				dialog.setInitialValue(spec.name);
-			}
+			dialog.setInitialValue(spec.toString());
 			if (dialog.open() == Window.OK) {
-				String name = dialog.getName();
-				String extension = dialog.getExtension();
 				try {
 					// remove the original spec
-					if (spec.name != null) {
-						selectedContentType.removeFileSpec(spec.name, IContentType.FILE_NAME_SPEC);
-					} else if (spec.ext != null) {
-						selectedContentType.removeFileSpec(spec.ext, IContentType.FILE_EXTENSION_SPEC);
-					}
-
+					selectedContentType.removeFileSpec(spec.text, spec.type);
 					// add the new one
-					if (name.equals("*")) { //$NON-NLS-1$
-						selectedContentType.addFileSpec(extension, IContentType.FILE_EXTENSION_SPEC);
-					} else {
-						selectedContentType.addFileSpec(name + (extension.length() > 0 ? ('.' + extension) : ""), //$NON-NLS-1$
-								IContentType.FILE_NAME_SPEC);
-					}
+					selectedContentType.addFileSpec(dialog.getSpecText(), dialog.getSpecType());
 				} catch (CoreException ex) {
 					StatusUtil.handleStatus(ex.getStatus(), StatusManager.SHOW, shell);
 					WorkbenchPlugin.log(ex);
@@ -586,11 +594,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 					WorkbenchMessages.ContentTypes_errorDialogMessage, null);
 			for (Spec spec : specs) {
 				try {
-					if (spec.name != null) {
-						contentType.removeFileSpec(spec.name, IContentType.FILE_NAME_SPEC);
-					} else if (spec.ext != null) {
-						contentType.removeFileSpec(spec.ext, IContentType.FILE_EXTENSION_SPEC);
-					}
+					contentType.removeFileSpec(spec.text, spec.type);
 				} catch (CoreException e) {
 					result.add(e.getStatus());
 				}
