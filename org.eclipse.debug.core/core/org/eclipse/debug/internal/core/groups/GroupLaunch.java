@@ -46,8 +46,8 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 	private boolean fLaunched = false;
 
 	/**
-	 * A map of all our sub-launches and the current processes that belong
-	 * to each one.
+	 * A map of all our sub-launches and the current processes that belong to
+	 * each one.
 	 */
 	private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
 
@@ -66,21 +66,25 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 	 * @param subLaunch
 	 */
 	public void addSubLaunch(ILaunch subLaunch) {
-		subLaunches.put(subLaunch, new IProcess[] {});
+		synchronized (subLaunches) {
+			subLaunches.put(subLaunch, new IProcess[] {});
+		}
 	}
 
 	private boolean isChild(ILaunch launch) {
-		for (ILaunch subLaunch : subLaunches.keySet()) {
-			if (subLaunch == launch) {
-				return true;
+		synchronized (subLaunches) {
+			for (ILaunch subLaunch : subLaunches.keySet()) {
+				if (subLaunch == launch) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
-	 * Override default behavior by querying all sub-launches to see if they
-	 * are terminated
+	 * Override default behavior by querying all sub-launches to see if they are
+	 * terminated
 	 *
 	 * @see org.eclipse.debug.core.Launch#isTerminated()
 	 */
@@ -90,14 +94,16 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 			return true;
 		}
 
-		if (subLaunches.size() == 0) {
-			return fLaunched; // in case we're done launching and there is
-								// nobody -> terminated
-		}
+		synchronized (subLaunches) {
+			if (subLaunches.size() == 0) {
+				return fLaunched; // in case we're done launching and there is
+									// nobody -> terminated
+			}
 
-		for (ILaunch launch : subLaunches.keySet()) {
-			if (!launch.isTerminated()) {
-				return false;
+			for (ILaunch launch : subLaunches.keySet()) {
+				if (!launch.isTerminated()) {
+					return false;
+				}
 			}
 		}
 		return fLaunched; // we're done only if we're already done launching.
@@ -113,16 +119,18 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 	 */
 	@Override
 	public boolean canTerminate() {
-		if (subLaunches.size() == 0) {
+		synchronized (subLaunches) {
+			if (subLaunches.size() == 0) {
+				return false;
+			}
+
+			for (ILaunch launch : subLaunches.keySet()) {
+				if (launch.canTerminate()) {
+					return true;
+				}
+			}
 			return false;
 		}
-
-		for (ILaunch launch : subLaunches.keySet()) {
-			if (launch.canTerminate()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -139,12 +147,14 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 		// group when children disappear even if launching has not finished yet.
 		markLaunched();
 
-		for (ILaunch launch : subLaunches.keySet()) {
-			if (launch.canTerminate()) {
-				try {
-					launch.terminate();
-				} catch (DebugException e) {
-					status.merge(e.getStatus());
+		synchronized (subLaunches) {
+			for (ILaunch launch : subLaunches.keySet()) {
+				if (launch.canTerminate()) {
+					try {
+						launch.terminate();
+					} catch (DebugException e) {
+						status.merge(e.getStatus());
+					}
 				}
 			}
 		}
@@ -171,13 +181,16 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 			return;
 		}
 
-		// Remove sub launch, keeping the processes of the terminated launch
-		// to show the association and to keep the console content accessible
-		if (subLaunches.remove(launch) != null) {
-			// terminate ourselves if this is the last sub launch
-			if (subLaunches.size() == 0 && fLaunched) {
-				fTerminated = true;
-				fireTerminate();
+		synchronized (subLaunches) {
+			// Remove sub launch, keeping the processes of the terminated launch
+			// to show the association and to keep the console content
+			// accessible
+			if (subLaunches.remove(launch) != null) {
+				// terminate ourselves if this is the last sub launch
+				if (subLaunches.size() == 0 && fLaunched) {
+					fTerminated = true;
+					fireTerminate();
+				}
 			}
 		}
 	}
@@ -188,25 +201,27 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 			return;
 		}
 
-		// add/remove processes
-		if (isChild(launch)) {
-			// Remove old processes
-			IProcess[] oldProcesses = subLaunches.get(launch);
-			IProcess[] newProcesses = launch.getProcesses();
+		synchronized (subLaunches) {
+			// add/remove processes
+			if (isChild(launch)) {
+				// Remove old processes
+				IProcess[] oldProcesses = subLaunches.get(launch);
+				IProcess[] newProcesses = launch.getProcesses();
 
-			// avoid notifications when processes have not changed.
-			if (!Arrays.equals(oldProcesses, newProcesses)) {
-				for (IProcess oldProcess : oldProcesses) {
-					removeProcess(oldProcess);
+				// avoid notifications when processes have not changed.
+				if (!Arrays.equals(oldProcesses, newProcesses)) {
+					for (IProcess oldProcess : oldProcesses) {
+						removeProcess(oldProcess);
+					}
+
+					// Add new processes
+					for (IProcess newProcess : newProcesses) {
+						addProcess(newProcess);
+					}
+
+					// Replace the processes of the changed launch
+					subLaunches.put(launch, newProcesses);
 				}
-
-				// Add new processes
-				for (IProcess newProcess : newProcesses) {
-					addProcess(newProcess);
-				}
-
-				// Replace the processes of the changed launch
-				subLaunches.put(launch, newProcesses);
 			}
 		}
 	}
