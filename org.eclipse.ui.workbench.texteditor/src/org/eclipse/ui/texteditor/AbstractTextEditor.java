@@ -193,6 +193,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -5327,7 +5328,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		for (int i= 0; i < elements.length; i++) {
 			IConfigurationElement element= elements[i];
 			if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
-				if (!getSite().getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
+				IWorkbenchPartSite site = getSite();
+				if (site == null) {
+					return null;
+				}
+				if (!site.getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
 					continue;
 
 				IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
