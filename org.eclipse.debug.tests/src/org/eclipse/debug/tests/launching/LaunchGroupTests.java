@@ -234,16 +234,19 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 
 		final ILaunchConfiguration grp = createLaunchGroup(DEF_GRP_NAME, createLaunchGroupElement(t1, GroupElementPostLaunchAction.NONE, null, false));
 		final ILaunchConfiguration grp2 = createLaunchGroup("Group 2", createLaunchGroupElement(grp, GroupElementPostLaunchAction.NONE, null, false)); //$NON-NLS-1$
-		final ILaunchConfiguration grp3 = createLaunchGroup("Group 3", createLaunchGroupElement(grp2, GroupElementPostLaunchAction.NONE, null, false), createLaunchGroupElement(t1, GroupElementPostLaunchAction.NONE, null, true)); //$NON-NLS-1$
+		final ILaunchConfiguration grp3 = createLaunchGroup("Group 3", createLaunchGroupElement(grp2, GroupElementPostLaunchAction.NONE, null, false), createLaunchGroupElement(t1, GroupElementPostLaunchAction.DELAY, 10, true)); //$NON-NLS-1$
 
 		// attention: need to do this before launching!
 		LaunchHistory runHistory = getRunLaunchHistory();
 
 		lcToCount = t1;
 		getLaunchManager().addLaunchListener(lcListener);
+
+		long startTime = System.currentTimeMillis();
 		grp3.launch(ILaunchManager.RUN_MODE, new NullProgressMonitor());
 
 		ILaunchConfiguration[] history = runHistory.getHistory();
+		assertTrue("post launch should not be run", (System.currentTimeMillis() - startTime) < 9_000); //$NON-NLS-1$
 		assertEquals(4, history.length);
 		assertTrue("history[0] should be Group 3", history[0].contentsEqual(grp3)); //$NON-NLS-1$
 		assertTrue("history[1] should be Group 2", history[1].contentsEqual(grp2)); //$NON-NLS-1$

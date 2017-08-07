@@ -147,8 +147,10 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	private boolean launchChild(SubMonitor monitor, final GroupLaunch group, GroupLaunchElement le, final ILaunchConfiguration child, final String localMode, boolean lastConfig) throws CoreException {
 		final Set<ILaunch> running = le.adoptIfRunning ? findRunningLaunch(le.name) : Collections.emptySet();
 		ILaunch subLaunch = running.stream().findFirst().orElse(null);
+		boolean launched = false;
 		if (subLaunch == null) {
 			subLaunch = child.launch(localMode, monitor);
+			launched = true;
 		}
 
 		group.addSubLaunch(subLaunch);
@@ -159,11 +161,13 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		// So, fake another event now.
 		group.launchChanged(subLaunch);
 
-		// give handler a chance to perform additional actions after
-		// launching each of the members.
-		IStatusHandler postLaunchHandler = DebugPlugin.getDefault().getStatusHandler(GROUP_ELEMENT_STARTED);
-		postLaunchHandler.handleStatus(GROUP_ELEMENT_STARTED, new ILaunch[] {
-				group, subLaunch });
+		if (launched) {
+			// give handler a chance to perform additional actions after
+			// launching each of the members.
+			IStatusHandler postLaunchHandler = DebugPlugin.getDefault().getStatusHandler(GROUP_ELEMENT_STARTED);
+			postLaunchHandler.handleStatus(GROUP_ELEMENT_STARTED, new ILaunch[] {
+					group, subLaunch });
+		}
 
 		// if this is the last child, mark the group as "launching finished", so
 		// that from now on the last terminating child will also terminate the
@@ -172,7 +176,13 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			group.markLaunched();
 		}
 
-		return postLaunchAction(subLaunch, le, monitor);
+		// in case we adopted the launch, and did not launch outselves, don't
+		// execute the post launch action!
+		if (launched) {
+			return postLaunchAction(subLaunch, le, monitor);
+		} else {
+			return true;
+		}
 	}
 
 	private boolean postLaunchAction(ILaunch subLaunch, GroupLaunchElement le, IProgressMonitor monitor) {
