@@ -25,7 +25,8 @@ public class AutoEditTest extends AbstratGenericEditorTest {
 		IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		StyledText control= (StyledText) editor.getAdapter(Control.class);
 		control.setText("");
-		Assert.assertEquals("AutoAddedFirst! AutoAddedSecond! AutoAddedThird!", document.get());
+		// order of auto-edits from most specialized to least specialized
+		Assert.assertEquals("AutoAddedThird!AutoAddedSecond!AutoAddedFirst!", document.get());
 	}
 
 }

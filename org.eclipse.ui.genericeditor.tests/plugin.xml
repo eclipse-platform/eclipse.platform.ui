@@ -36,14 +36,22 @@
 					class="org.eclipse.ui.genericeditor.tests.contributions.TheReconciler"
 					contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</reconciler>
-   </extension>
- <extension
+  </extension>
+	<extension
 			 point="org.eclipse.ui.genericeditor.presentationReconcilers">
 		<presentationReconciler
-					class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconciler"
-					contentType="org.eclipse.ui.genericeditor.tests.content-type">
+			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerBlue"
+			contentType="org.eclipse.core.runtime.text">
 		</presentationReconciler>
-   </extension>
+		<presentationReconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerRed"
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
+		</presentationReconciler>
+		<presentationReconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerGreen"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
+		</presentationReconciler>
+	</extension>
  <extension
        point="org.eclipse.ui.ide.markerResolution">
     <markerResolutionGenerator
@@ -60,6 +68,13 @@
           name="Generic Editor Test content-type"
           priority="normal">
     </content-type>
+    <content-type
+          base-type="org.eclipse.ui.genericeditor.tests.content-type"
+          file-names="foo.txt"
+          id="org.eclipse.ui.genericeditor.tests.specialized-content-type"
+          name="Specialized Generic Editor content-type"
+          priority="normal">
+    </content-type>
  </extension>
  <extension
        point="org.eclipse.ui.genericeditor.autoEditStrategies">
@@ -69,11 +84,11 @@
     </autoEditStrategy>
     <autoEditStrategy
           class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategySecond"
-          contentType="org.eclipse.core.runtime.text">
+          contentType="org.eclipse.ui.genericeditor.tests.content-type">
     </autoEditStrategy>
     <autoEditStrategy
           class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyThird"
-          contentType="org.eclipse.core.runtime.text">
+          contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
     </autoEditStrategy>
  </extension>
 

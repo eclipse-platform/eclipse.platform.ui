@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
@@ -39,35 +38,8 @@ public class AutoEditStrategyRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".autoEditStrategies"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, AutoEditStrategyExtension> extensions = new LinkedHashMap<>();
+	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IAutoEditStrategy>> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
-
-	static class AutoEditStrategyExtension {
-		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
-		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
-
-		private IConfigurationElement extension;
-		private IContentType targetContentType;
-
-		public AutoEditStrategyExtension(IConfigurationElement extension) throws Exception {
-			this.extension = extension;
-			this.targetContentType = Platform.getContentTypeManager()
-					.getContentType(extension.getAttribute(CONTENT_TYPE_ATTRIBUTE));
-		}
-
-		public IAutoEditStrategy createStrategy() {
-			try {
-				return (IAutoEditStrategy) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-			} catch (CoreException e) {
-				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
-				return null;
-			}
-		}
-
-		IConfigurationElement getConfigurationElement() {
-			return this.extension;
-		}
-	}
 
 	/**
 	 * Creates the registry and binds it to the extension point.
@@ -96,16 +68,11 @@ public class AutoEditStrategyRegistry {
 		if (this.outOfSync) {
 			sync();
 		}
-		List<IAutoEditStrategy> res = new ArrayList<>();
-		for (AutoEditStrategyExtension ext : this.extensions.values()) {
-			if (contentTypes.contains(ext.targetContentType)) {
-				IAutoEditStrategy strategy = ext.createStrategy();
-				if (strategy != null) {
-					res.add(strategy);
-				}
-			}
-		}
-		return res;
+		return this.extensions.values().stream()
+			.filter(ext -> contentTypes.contains(ext.targetContentType))
+			.sorted(new ContentTypeSpecializationComparator<IAutoEditStrategy>())
+			.map(GenericContentTypeRelatedExtension<IAutoEditStrategy>::createDelegate)
+			.collect(Collectors.toList());
 	}
 
 	private void sync() {
@@ -115,7 +82,7 @@ public class AutoEditStrategyRegistry {
 			toRemoveExtensions.remove(extension);
 			if (!this.extensions.containsKey(extension)) {
 				try {
-					this.extensions.put(extension, new AutoEditStrategyExtension(extension));
+					this.extensions.put(extension, new GenericContentTypeRelatedExtension<IAutoEditStrategy>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));

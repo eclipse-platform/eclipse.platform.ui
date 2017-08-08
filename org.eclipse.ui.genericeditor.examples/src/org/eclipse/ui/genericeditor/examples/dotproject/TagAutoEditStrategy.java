@@ -18,6 +18,10 @@ import org.eclipse.jface.text.IRegion;
 
 public class TagAutoEditStrategy implements IAutoEditStrategy {
 
+	public TagAutoEditStrategy() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 		if (!">".equals(command.text)) { //$NON-NLS-1$

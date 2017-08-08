@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
@@ -127,39 +126,7 @@ public class ContentAssistProcessorRegistry {
 		}
 	}
 
-	/**
-	 * This class wraps and proxies an {@link IContentAssistProcessor} provided through extensions
-	 * and loads it lazily when it can contribute to the editor, then delegates all operations to
-	 * actual processor.
-	 * When the contribution cannot contribute to the editor, this wrapper will return neutral values
-	 * that don't affect editor behavior.
-	 */
-	private static class ContentAssistProcessorExtension {
-		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
-		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
-
-		private IConfigurationElement extension;
-		private IContentType targetContentType;
-
-		private ContentAssistProcessorExtension(IConfigurationElement element) throws Exception {
-			this.extension = element;
-			this.targetContentType = Platform.getContentTypeManager().getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
-		}
-
-		public ContentAssistProcessorDelegate createDelegate() {
-			try {
-				IContentAssistProcessor delegate = (IContentAssistProcessor) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-				if (delegate != null) {
-					return new ContentAssistProcessorDelegate(delegate, targetContentType);
-				}
-			} catch (CoreException e) {
-				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
-			}
-			return null;
-		}
-	}
-
-	private Map<IConfigurationElement, ContentAssistProcessorExtension> extensions = new HashMap<>();
+	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IContentAssistProcessor>> extensions = new HashMap<>();
 	private boolean outOfSync = true;
 
 	/**
@@ -185,13 +152,11 @@ public class ContentAssistProcessorRegistry {
 		if (this.outOfSync) {
 			sync();
 		}
-		List<IContentAssistProcessor> res = new ArrayList<>();
-		for (ContentAssistProcessorExtension ext : this.extensions.values()) {
-			if (contentTypes.contains(ext.targetContentType)) {
-				res.add(ext.createDelegate());
-			}
-		}
-		return res;
+		return this.extensions.values().stream()
+			.filter(ext -> contentTypes.contains(ext.targetContentType))
+			.sorted(new ContentTypeSpecializationComparator<IContentAssistProcessor>())
+			.map(GenericContentTypeRelatedExtension<IContentAssistProcessor>::createDelegate)
+			.collect(Collectors.toList());
 	}
 
 	private void sync() {
@@ -200,7 +165,7 @@ public class ContentAssistProcessorRegistry {
 			toRemoveExtensions.remove(extension);
 			if (!this.extensions.containsKey(extension)) {
 				try {
-					this.extensions.put(extension, new ContentAssistProcessorExtension(extension));
+					this.extensions.put(extension, new GenericContentTypeRelatedExtension<IContentAssistProcessor>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016-2017 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
@@ -47,34 +45,20 @@ public final class TextHoverRegistry {
 	private SortedSet<TextHoverExtension> extensions;
 	private boolean outOfSync = true;
 
-	static class TextHoverExtension {
-		private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
-		private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+	static class TextHoverExtension extends GenericContentTypeRelatedExtension<ITextHover> {
 		private static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 		private static final String IS_BEFORE_ATTRIBUTE = "isBefore"; //$NON-NLS-1$
 		private static final String IS_AFTER_ATTRIBUTE = "isAfter"; //$NON-NLS-1$
 
-		private IConfigurationElement extension;
-		private IContentType targetContentType;
 		private String id;
 		private String isBefore;
 		private String isAfter;
 
 		public TextHoverExtension(IConfigurationElement extension) throws Exception {
-			this.extension = extension;
-			this.targetContentType = Platform.getContentTypeManager().getContentType(extension.getAttribute(CONTENT_TYPE_ATTRIBUTE));
+			super(extension);
 			this.id = extension.getAttribute(ID_ATTRIBUTE);
 			this.isBefore = extension.getAttribute(IS_BEFORE_ATTRIBUTE);
 			this.isAfter = extension.getAttribute(IS_AFTER_ATTRIBUTE);
-		}
-
-		public ITextHover createDelegate() {
-			try {
-				return (ITextHover) extension.createExecutableExtension(CLASS_ATTRIBUTE);
-			} catch (CoreException e) {
-				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, e.getMessage(), e));
-			}
-			return null;
 		}
 
 		public String getId() {
@@ -110,14 +94,13 @@ public final class TextHoverRegistry {
 		if (this.outOfSync) {
 			sync();
 		}
-		List<TextHoverExtension> hoversToConsider = new ArrayList<>();
-		for (TextHoverExtension ext : this.extensions) {
-			if (contentTypes.contains(ext.targetContentType)) {
-				hoversToConsider.add(ext);
-			}
-		}
+		List<ITextHover> hoversToConsider = this.extensions.stream()
+				.filter(ext -> contentTypes.contains(ext.targetContentType))
+				// don't sort in the stream as the initial structure is already sorted by isAfter/isBefore
+				.map(GenericContentTypeRelatedExtension<ITextHover>::createDelegate)
+				.collect(Collectors.toList());
 		if (!hoversToConsider.isEmpty()) {
-			return new CompositeTextHover(hoversToConsider.stream().map(TextHoverExtension::createDelegate).collect(Collectors.toList()));
+			return new CompositeTextHover(hoversToConsider);
 		}
 		return null;
 	}

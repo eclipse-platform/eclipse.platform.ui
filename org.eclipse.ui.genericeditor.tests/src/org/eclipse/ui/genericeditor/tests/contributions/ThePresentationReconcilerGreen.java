@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016-2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,16 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
-public class ThePresentationReconciler extends PresentationReconciler {
+/**
+ * This presentation reconciler is associated to a more "basic" content-type so it
+ * shouldn't be used.
+ */
+public class ThePresentationReconcilerGreen extends PresentationReconciler {
 
-	public ThePresentationReconciler() {
+	public ThePresentationReconcilerGreen() {
 		RuleBasedScanner scanner= new RuleBasedScanner();
 		IRule[] rules = new IRule[1];
-		rules[0]= new SingleLineRule("'", "'", new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(255, 0, 0))))); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[0]= new SingleLineRule("'", "'", new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 255, 0))))); //$NON-NLS-1$ //$NON-NLS-2$
 		scanner.setRules(rules);
 		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(scanner);
 		this.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);

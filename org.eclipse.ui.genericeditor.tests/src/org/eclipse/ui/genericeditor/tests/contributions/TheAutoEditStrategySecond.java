@@ -18,7 +18,7 @@ public class TheAutoEditStrategySecond implements IAutoEditStrategy {
 
 	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-		command.text = command.text + " AutoAddedSecond!";
+		command.text = command.text + "AutoAddedSecond!";
 	}
 
 }
