@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399094, 402009: Add whole word option to file search
  *     Terry Parker <tparker@google.com> (Google Inc.) - Bug 441016 - Speed up text search by parallelizing it using JobGroups
+ *     Florian Ingerl <imelflorianingerl@gmail.com> - Bug 109481 - [find/replace] replace doesn't work when using a regex with a lookahead or boundary matchers
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.junit.After;
@@ -24,6 +27,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -38,9 +43,14 @@ import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+import org.eclipse.search.internal.ui.text.ReplaceRefactoring;
 import org.eclipse.search.tests.ResourceHelper;
 import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.text.FileTextSearchScope;
+
+import org.eclipse.ltk.core.refactoring.Change;
 
 public class FileSearchTests {
 
@@ -523,5 +533,50 @@ public class FileSearchTests {
 		assertEquals("Number of results in file", expectedCount, k);
 	}
 
+	@Test
+	public void testReplaceWithLookarounds() throws CoreException, IOException {
+		IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+		IFile file1= ResourceHelper.createFile(folder, "file1.txt", "1<2<3<4");
+		IFile file2= ResourceHelper.createFile(folder, "file2.txt", "4<5<6<7");
 
+		FileSearchResult searchResult= performSearch(new String[] { "*.txt" }, "(?<=(\\d)\\<)\\d(?=\\<(\\d))");
+		performReplace(searchResult, "$0=($1+$2)/2");
+
+		assertFileContent(file1, "1<2=(1+3)/2<3=(2+4)/2<4");
+		assertFileContent(file2, "4<5=(4+6)/2<6=(5+7)/2<7");
+	}
+
+	@Test
+	public void testReplaceRetainCase() throws CoreException, IOException {
+		IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+		IFile file1= ResourceHelper.createFile(folder, "file1.txt", "FOO");
+
+		FileSearchResult searchResult= performSearch(new String[] { "*.txt" }, "FOO");
+		performReplace(searchResult, "xyz\\Cbar\\Cfar");
+
+		assertFileContent(file1, "xyzBARFAR");
+	}
+
+	private FileSearchResult performSearch(String[] fileNamePatterns, String pattern) {
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { fProject }, fileNamePatterns, false);
+		FileSearchQuery query= new FileSearchQuery(pattern, true, true, scope);
+		query.run(null);
+		return (FileSearchResult) query.getSearchResult();
+	}
+
+	private void performReplace(FileSearchResult searchResult, String replacementText) throws OperationCanceledException, CoreException {
+		ReplaceRefactoring refactoring= new ReplaceRefactoring(searchResult, null);
+		refactoring.setReplaceString(replacementText);
+		refactoring.checkInitialConditions(null);
+		refactoring.checkFinalConditions(null);
+		Change change= refactoring.createChange(null);
+		change.perform(new NullProgressMonitor());
+	}
+
+	private void assertFileContent(IFile file, String expected) throws CoreException {
+		try (Scanner scanner= new Scanner(file.getContents())) {
+			scanner.useDelimiter("\\A");
+			assertEquals(expected, scanner.next());
+		}
+	}
 }

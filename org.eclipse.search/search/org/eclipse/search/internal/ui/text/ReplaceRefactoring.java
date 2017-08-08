@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Florian Ingerl <imelflorianingerl@gmail.com> - Bug 109481 - [find/replace] replace doesn't work when using a regex with a lookahead or boundary matchers
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -437,7 +438,9 @@ public class ReplaceRefactoring extends Refactoring {
 					continue;
 				}
 
-				String replacementString= computeReplacementString(pattern, originalText, fReplaceString, lineDelimiter);
+				String replacementString= PatternConstructor.interpretReplaceEscapes(fReplaceString, originalText,
+						lineDelimiter);
+				replacementString= computeReplacementString(pattern, document, offset, replacementString);
 				if (replacementString == null) {
 					resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_match_content_changed, file.getName()));
 					continue;
@@ -467,21 +470,18 @@ public class ReplaceRefactoring extends Refactoring {
 		return PatternConstructor.createPattern(query.getSearchString(), true, true, query.isCaseSensitive(), false);
 	}
 
-	private String computeReplacementString(Pattern pattern, String originalText, String replacementText, String lineDelimiter) throws PatternSyntaxException {
+	private String computeReplacementString(Pattern pattern, IDocument document, int offset, String replacementText)
+			throws PatternSyntaxException {
 		if (pattern != null) {
 			try {
-				replacementText= PatternConstructor.interpretReplaceEscapes(replacementText, originalText, lineDelimiter);
-
-				Matcher matcher= pattern.matcher(originalText);
-		        StringBuffer sb = new StringBuffer();
-		        matcher.reset();
-		        if (matcher.find()) {
+				Matcher matcher= pattern.matcher(document.get());
+				if (matcher.find(offset)) {
+					StringBuffer sb= new StringBuffer();
 		        	matcher.appendReplacement(sb, replacementText);
+					return sb.substring(offset);
 		        } else {
 		        	return null;
 		        }
-		        matcher.appendTail(sb);
-		        return sb.toString();
 			} catch (IndexOutOfBoundsException ex) {
 				throw new PatternSyntaxException(ex.getLocalizedMessage(), replacementText, -1);
 			}
