@@ -236,21 +236,21 @@ public final class ContributionsAnalyzer {
 		if (menuContribution.getVisibleWhen() == null) {
 			return true;
 		}
-		return isVisible((MCoreExpression) menuContribution.getVisibleWhen(), eContext);
+		return isVisible(menuContribution.getVisibleWhen(), eContext);
 	}
 
 	public static boolean isVisible(MToolBarContribution contribution, ExpressionContext eContext) {
 		if (contribution.getVisibleWhen() == null) {
 			return true;
 		}
-		return isVisible((MCoreExpression) contribution.getVisibleWhen(), eContext);
+		return isVisible(contribution.getVisibleWhen(), eContext);
 	}
 
 	public static boolean isVisible(MTrimContribution contribution, ExpressionContext eContext) {
 		if (contribution.getVisibleWhen() == null) {
 			return true;
 		}
-		return isVisible((MCoreExpression) contribution.getVisibleWhen(), eContext);
+		return isVisible(contribution.getVisibleWhen(), eContext);
 	}
 
 	public static boolean isVisible(MExpression exp, final ExpressionContext eContext) {
