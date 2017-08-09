@@ -35,7 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import junit.framework.TestCase;
 
 public class LinkTest extends TestCase {
-	
+
 	public void testAllLinks() {
 		ISearchQuery query = new SearchQuery("*", false, Collections.emptyList(), Platform.getNL());
 		final Set<URI> indexedPagesURIs = new HashSet<>();
@@ -44,7 +44,7 @@ public class LinkTest extends TestCase {
 			public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
 				throw exception;
 			}
-			
+
 			@Override
 			public void addHits(List<SearchHit> hits, String wordsSearched) {
 				hits.stream().map(SearchHit::getHref).map(href -> {
@@ -74,35 +74,37 @@ public class LinkTest extends TestCase {
 
 	private Set<String> checkLinks(InputStream stream, URI currentDoc, Set<URI> knownPagesURIs) throws IOException {
 		Set<String> res = new HashSet<>();
-		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
-		String inputLine;
-		while ((inputLine = in.readLine()) != null) {
-			int index = 0;
-			while ((index = inputLine.indexOf("<a href=\"", index)) > 0) {
-				int closeIndex = inputLine.indexOf('"', index + "<a href=\"".length());
-				URI href = URI.create(inputLine.substring(index + "<a href=\"".length(), closeIndex).replace(" ", "%20"));
-				index = closeIndex;
-				if (href.isAbsolute()) {
-					continue;
-				}
-				URI linkURI = URI.create(currentDoc.toString() + "/../" + href).normalize();
-				if (knownPagesURIs.contains(linkURI)) { //page already indexed or successfully visited
-					// we already know this help page exists as it is indexed
-					continue;
-				} else { // page isn't indexed: can be generated navigation page
-					//check whether it's existing anyway
-					HttpURLConnection connection = (HttpURLConnection) linkURI.toURL().openConnection();
-					connection.setRequestMethod("HEAD");
-					connection.connect();
-					if (connection.getResponseCode() != 200) {
-						res.add("Link from " + currentDoc + " to " + href + " is broken: target URI " + linkURI + " doens't exist.");
-					} else {
-						knownPagesURIs.add(linkURI);
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(stream))) {
+			String inputLine;
+			while ((inputLine = in.readLine()) != null) {
+				int index = 0;
+				while ((index = inputLine.indexOf("<a href=\"", index)) > 0) {
+					int closeIndex = inputLine.indexOf('"', index + "<a href=\"".length());
+					URI href = URI
+							.create(inputLine.substring(index + "<a href=\"".length(), closeIndex).replace(" ", "%20"));
+					index = closeIndex;
+					if (href.isAbsolute()) {
+						continue;
+					}
+					URI linkURI = URI.create(currentDoc.toString() + "/../" + href).normalize();
+					if (knownPagesURIs.contains(linkURI)) { // page already indexed or successfully visited
+						// we already know this help page exists as it is indexed
+						continue;
+					} else { // page isn't indexed: can be generated navigation page
+						// check whether it's existing anyway
+						HttpURLConnection connection = (HttpURLConnection) linkURI.toURL().openConnection();
+						connection.setRequestMethod("HEAD");
+						connection.connect();
+						if (connection.getResponseCode() != 200) {
+							res.add("Link from " + currentDoc + " to " + href + " is broken: target URI " + linkURI
+									+ " doens't exist.");
+						} else {
+							knownPagesURIs.add(linkURI);
+						}
 					}
 				}
 			}
 		}
-		in.close();
 		return res;
 	}
 
