@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 	private void createMarkers() {
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			Map attribs = new HashMap();
+			Map<String, Object> attribs = new HashMap<>();
 			for (int i = 0; i < 1000; i++) {
 				attribs.put(IMarker.SEVERITY, Integer.valueOf(
 						IMarker.SEVERITY_ERROR));

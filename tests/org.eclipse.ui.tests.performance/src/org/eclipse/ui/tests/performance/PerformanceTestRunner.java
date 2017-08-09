@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.tests.performance;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -32,9 +32,10 @@ public class PerformanceTestRunner extends TestSuite {
     public PerformanceTestRunner() {
         String className = System.getProperty("org.eclipse.ui.performance.test");
         try {
-            Class clazz = Class.forName(className);
+			@SuppressWarnings("unchecked")
+			Class<? extends TestCase> clazz = (Class<? extends TestCase>) Class.forName(className);
             if (TestSuite.class.isAssignableFrom(clazz))
-                addTest((Test) clazz.newInstance());
+				addTest(clazz.newInstance());
             else
                 addTestSuite(clazz);
         } catch (Exception e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class FastTreeTest extends TreeAddTest {
 				input.createChildren(total);
 				if (preSort)
 					viewer.getSorter().sort(viewer, input.children);
-				Collection batches = new ArrayList();
+				Collection<Object> batches = new ArrayList<>();
 				int blocks = input.children.length / increment;
 				for (int j = 0; j < blocks; j = j + increment) {
 					Object[] batch = new Object[increment];

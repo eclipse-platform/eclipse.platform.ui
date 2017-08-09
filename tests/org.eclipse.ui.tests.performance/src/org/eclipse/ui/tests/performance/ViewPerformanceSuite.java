@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.ui.tests.performance;
 
 import java.util.HashSet;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.views.IViewDescriptor;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.1
@@ -75,7 +75,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	}
 
 	public static String[] getAllTestableViewIds() {
-		HashSet result = new HashSet();
+		HashSet<String> result = new HashSet<>();
 
 		IViewDescriptor[] descriptors = PlatformUI.getWorkbench()
 				.getViewRegistry().getViews();
@@ -99,6 +99,6 @@ public class ViewPerformanceSuite extends TestSuite {
 
 		}
 
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 }

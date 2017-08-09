@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 */
 	private static final void createContext(
 			final ContextManager contextManager, final String parent,
-			final int successors, final List activeContextIds) {
+			final int successors, final List<String> activeContextIds) {
 		final int count = activeContextIds.size();
 		final String contextString = "context" + count;
 		final Context context = contextManager.getContext(contextString);
@@ -110,7 +110,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 *            The list of created schemes; must not be <code>null</code>.
 	 */
 	private static final void createScheme(final BindingManager bindingManager,
-			final String parent, final int successors, final List schemes) {
+			final String parent, final int successors, final List<Scheme> schemes) {
 		final int count = schemes.size();
 		final String schemeString = "scheme" + count;
 		final Scheme scheme = bindingManager.getScheme(schemeString);
@@ -230,16 +230,16 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 		// Initialize the contexts.
 		contextManager = new ContextManager();
-		final List activeContextIds = new ArrayList();
+		final List<String> activeContextIds = new ArrayList<>();
 		createContext(contextManager, null, contextTreeDepth, activeContextIds);
-		contextManager.setActiveContextIds(new HashSet(activeContextIds));
+		contextManager.setActiveContextIds(new HashSet<>(activeContextIds));
 
 		// Initialize the schemes.
 		bindingManager = new BindingManager(contextManager, commandManager);
-		final List schemes = new ArrayList();
+		final List<Scheme> schemes = new ArrayList<>();
 		createScheme(bindingManager, null, schemeDepth, schemes);
 		bindingManager
-				.setActiveScheme((Scheme) schemes.get(schemes.size() - 1));
+				.setActiveScheme(schemes.get(schemes.size() - 1));
 
 		// Create the deletion markers.
 		final Binding[] bindings = new Binding[bindingCount];
@@ -277,9 +277,9 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
 
 			// Build the other parameters.
-			final String schemeId = ((Scheme) schemes.get(i % schemes.size()))
+			final String schemeId = schemes.get(i % schemes.size())
 					.getId();
-			final String contextId = (String) activeContextIds.get(i
+			final String contextId = activeContextIds.get(i
 					% activeContextIds.size());
 			final int type = (i % 2);
 
@@ -330,9 +330,9 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 			// Build the other parameters.
 			final String commandId = "command" + i;
-			final String schemeId = ((Scheme) schemes.get(i % schemes.size()))
+			final String schemeId = schemes.get(i % schemes.size())
 					.getId();
-			final String contextId = (String) activeContextIds.get(i
+			final String contextId = activeContextIds.get(i
 					% activeContextIds.size());
 			final int type = (i % 2);
 

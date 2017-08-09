@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
@@ -40,38 +39,38 @@ public final class ContentDescriberForTestsOnly implements ITextContentDescriber
 	private static final QualifiedName[] SUPPORTED_OPTIONS = {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
 
 	@Override
-	public int describe(InputStream contents, IContentDescription description) throws IOException {
+	public int describe(InputStream contents, IContentDescription description) {
 		int result = IContentDescriber.INDETERMINATE;
 
 		if (description == null) {
-			result = computeValidity(contents);
+			result = computeValidity();
 		}
 		else {
-			calculateSupportedOptions(contents, description);
+			calculateSupportedOptions(description);
 			// assummming we should return same 'validity' value we did
 			// when called before. (technically, could be a performance issue
 			// in future, so might want to check if any 'ol value would
 			// be ok here.
-			result = computeValidity(contents);
+			result = computeValidity();
 		}
 
 		return result;
 	}
 
 	@Override
-	public int describe(Reader contents, IContentDescription description) throws IOException {
+	public int describe(Reader contents, IContentDescription description) {
 		int result = IContentDescriber.INDETERMINATE;
 
 		if (description == null) {
-			result = computeValidity(contents);
+			result = computeValidity();
 		}
 		else {
-			calculateSupportedOptions(contents, description);
+			calculateSupportedOptions(description);
 			// assummming we should return same 'validity' value we did
 			// when called before. (technically, could be a performance issue
 			// in future, so might want to check if hard coded 'valid' would
 			// be ok here.
-			result = computeValidity(contents);
+			result = computeValidity();
 		}
 
 		return result;
@@ -81,12 +80,6 @@ public final class ContentDescriberForTestsOnly implements ITextContentDescriber
 	public QualifiedName[] getSupportedOptions() {
 
 		return SUPPORTED_OPTIONS;
-	}
-
-	private void calculateSupportedOptions(InputStream contents, IContentDescription description) throws IOException {
-		if (isRelevent(description)) {
-			makeBusy();
-		}
 	}
 
 	private void makeBusy() {
@@ -107,20 +100,14 @@ public final class ContentDescriberForTestsOnly implements ITextContentDescriber
 	 * @param description
 	 * @throws IOException
 	 */
-	private void calculateSupportedOptions(Reader contents, IContentDescription description) throws IOException {
+	private void calculateSupportedOptions(IContentDescription description) {
 		if (isRelevent(description)) {
 			makeBusy();
 		}
 	}
 
-	private int computeValidity(InputStream inputStream) {
+	private int computeValidity() {
 		// currently no contents specific check for valid HTML contents
-		// (this may change once we add XHTML content type)
-		return IContentDescriber.INDETERMINATE;
-	}
-
-	private int computeValidity(Reader reader) {
-		// no contents specific check for valid HTML contents
 		// (this may change once we add XHTML content type)
 		return IContentDescriber.INDETERMINATE;
 	}
