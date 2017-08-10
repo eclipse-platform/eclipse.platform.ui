@@ -13,6 +13,7 @@
  *     Robin Stocker - Fix for Bug 193034 (tool tip also on text)
  *     Alena Laskavaia - Bug 481604, Bug 482024
  *     Ralf Petter <ralf.petter@gmail.com> - Bug 183675
+ *     Jens Reimann <jreimann@redhat.com> - Bug 520833
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -336,7 +337,15 @@ public class ExpandableComposite extends Canvas {
 						ty = (tcsize.y - size.y) / 2 + marginHeight
 								+ tvmargin;
 				}
-				textLabelCache.setBounds(x, ty, size.x, size.y);
+
+				int gap = 0;
+				if (size.y < height) {
+					// bug 520833: the text label is smaller in height
+					// than the composite so we align it to the middle
+					gap = (height - size.y) / 2;
+				}
+
+				textLabelCache.setBounds(x, ty + gap, size.x, size.y);
 			}
 
 			if (textClient != null) {
