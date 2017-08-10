@@ -36,6 +36,7 @@ public class GenericContentTypeRelatedExtension<T> {
 		this.targetContentType = Platform.getContentTypeManager().getContentType(element.getAttribute(CONTENT_TYPE_ATTRIBUTE));
 	}
 
+	@SuppressWarnings("unchecked")
 	public T createDelegate() {
 		try {
 			return (T) extension.createExecutableExtension(CLASS_ATTRIBUTE);
