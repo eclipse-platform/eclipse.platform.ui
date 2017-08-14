@@ -140,7 +140,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 
 			@Override
 			protected void handleBrowseExternalLocation() {
-				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
+				final FileDialog file= new FileDialog(getShell(), SWT.OPEN | SWT.SHEET);
 				file.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_browse_destination);
 				file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
 				file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
