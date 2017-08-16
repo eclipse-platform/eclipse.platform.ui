@@ -72,7 +72,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#isReadOnly()
 	 */
 	@Override
@@ -82,20 +82,17 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		final String streamId = getStreamId(event.getProperty());
 		if (streamId != null) {
-			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					IOConsoleOutputStream stream = getConsole().getStream(streamId);
-					if (stream != null) {
-						stream.setColor(getColor(streamId));
-					}
+			AntUIPlugin.getStandardDisplay().asyncExec(() -> {
+				IOConsoleOutputStream stream = getConsole().getStream(streamId);
+				if (stream != null) {
+					stream.setColor(getColor(streamId));
 				}
 			});
 		}

@@ -74,12 +74,7 @@ public class AddBuildFilesAction extends Action {
 							final AntProjectNode project = new AntProjectNodeProxy(buildFileName);
 							project.getName();
 							monitor.worked(1);
-							Display.getDefault().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									view.addProject(project);
-								}
-							});
+							Display.getDefault().asyncExec(() -> view.addProject(project));
 						}
 					}
 				}

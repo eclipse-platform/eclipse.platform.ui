@@ -68,12 +68,7 @@ public class SearchForBuildFilesAction extends Action {
 							project.parseBuildFile();
 							monitor.worked(1);
 							if (includeErrorNodes || !(project.isErrorNode())) {
-								Display.getDefault().asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										view.addProject(project);
-									}
-								});
+								Display.getDefault().asyncExec(() -> view.addProject(project));
 							}
 						}
 					}

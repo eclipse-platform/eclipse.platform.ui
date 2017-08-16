@@ -391,14 +391,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			@Override
 			public void antModelChanged(final AntModelChangeEvent event) {
 				if (event.getModel() == fModel && !getControl().isDisposed()) {
-					getControl().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							Control ctrl = getControl();
-							if (ctrl != null && !ctrl.isDisposed()) {
-								getTreeViewer().refresh();
-								updateTreeExpansion();
-							}
+					getControl().getDisplay().asyncExec(() -> {
+						Control ctrl = getControl();
+						if (ctrl != null && !ctrl.isDisposed()) {
+							getTreeViewer().refresh();
+							updateTreeExpansion();
 						}
 					});
 				}

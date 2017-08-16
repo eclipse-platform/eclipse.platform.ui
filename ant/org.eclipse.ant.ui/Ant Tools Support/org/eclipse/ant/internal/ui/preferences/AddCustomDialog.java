@@ -378,13 +378,7 @@ public class AddCustomDialog extends StatusDialog {
 
 		final MinimizedFileSystemElement[] results = new MinimizedFileSystemElement[1];
 
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				// Create the root element from the supplied file system object
-				results[0] = createRootElement(rootFileSystemObject, structureProvider);
-			}
-		});
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> results[0] = createRootElement(rootFileSystemObject, structureProvider));
 
 		return results[0];
 	}

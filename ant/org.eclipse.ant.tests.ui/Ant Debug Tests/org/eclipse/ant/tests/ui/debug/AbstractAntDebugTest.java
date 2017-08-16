@@ -809,20 +809,17 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		setPreferences();
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbench workbench = PlatformUI.getWorkbench();
-				IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
-				workbench.getActiveWorkbenchWindow().getActivePage().setPerspective(descriptor);
-			}
+		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
+			workbench.getActiveWorkbenchWindow().getActivePage().setPerspective(descriptor);
 		});
 	}
 }

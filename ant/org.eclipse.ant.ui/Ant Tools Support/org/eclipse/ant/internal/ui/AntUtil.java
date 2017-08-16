@@ -573,7 +573,7 @@ public final class AntUtil {
 
 	/**
 	 * Opens an external browser on the provided <code>urlString</code>
-	 * 
+	 *
 	 * @param urlString
 	 *            The url to open
 	 * @param shell
@@ -582,39 +582,36 @@ public final class AntUtil {
 	 *            the title of any error dialog
 	 */
 	public static void openBrowser(final String urlString, final Shell shell, final String errorDialogTitle) {
-		shell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-				try {
-					IWebBrowser browser = support.createBrowser(fgBrowserId);
-					fgBrowserId = browser.getId();
-					browser.openURL(new URL(urlString));
-					return;
-				}
-				catch (PartInitException e) {
-					AntUIPlugin.log(e.getStatus());
-				}
-				catch (MalformedURLException e) {
-					AntUIPlugin.log(e);
-				}
+		shell.getDisplay().syncExec(() -> {
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+			try {
+				IWebBrowser browser = support.createBrowser(fgBrowserId);
+				fgBrowserId = browser.getId();
+				browser.openURL(new URL(urlString));
+				return;
+			}
+			catch (PartInitException e1) {
+				AntUIPlugin.log(e1.getStatus());
+			}
+			catch (MalformedURLException e2) {
+				AntUIPlugin.log(e2);
+			}
 
-				String platform = SWT.getPlatform();
-				boolean succeeded = true;
-				if ("motif".equals(platform) || "gtk".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
-					Program program = Program.findProgram("html"); //$NON-NLS-1$
-					if (program == null) {
-						program = Program.findProgram("htm"); //$NON-NLS-1$
-					}
-					if (program != null) {
-						succeeded = program.execute(urlString.toString());
-					}
-				} else {
-					succeeded = Program.launch(urlString.toString());
+			String platform = SWT.getPlatform();
+			boolean succeeded = true;
+			if ("motif".equals(platform) || "gtk".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
+				Program program = Program.findProgram("html"); //$NON-NLS-1$
+				if (program == null) {
+					program = Program.findProgram("htm"); //$NON-NLS-1$
 				}
-				if (!succeeded) {
-					MessageDialog.openInformation(shell, errorDialogTitle, AntUIModelMessages.AntUtil_1);
+				if (program != null) {
+					succeeded = program.execute(urlString.toString());
 				}
+			} else {
+				succeeded = Program.launch(urlString.toString());
+			}
+			if (!succeeded) {
+				MessageDialog.openInformation(shell, errorDialogTitle, AntUIModelMessages.AntUtil_1);
 			}
 		});
 	}
@@ -625,10 +622,10 @@ public final class AntUtil {
 
 	/**
 	 * Returns if the given extension is a known extension to Ant i.e. a supported content type extension.
-	 * 
+	 *
 	 * @param resource
 	 * @return true if the file extension is supported false otherwise
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static boolean isKnownAntFile(IResource resource) {

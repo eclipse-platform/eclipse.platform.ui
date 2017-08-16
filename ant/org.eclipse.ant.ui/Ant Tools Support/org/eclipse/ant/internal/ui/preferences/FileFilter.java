@@ -72,12 +72,9 @@ public class FileFilter extends ViewerFilter {
 	 * Search for all the matching files in the workspace.
 	 */
 	private void init() {
-		BusyIndicator.showWhile(AntUIPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				fFiles = new HashSet<>();
-				traverse(ResourcesPlugin.getWorkspace().getRoot(), fFiles);
-			}
+		BusyIndicator.showWhile(AntUIPlugin.getStandardDisplay(), () -> {
+			fFiles = new HashSet<>();
+			traverse(ResourcesPlugin.getWorkspace().getRoot(), fFiles);
 		});
 	}
 

@@ -165,13 +165,10 @@ public class RunToLineTests extends AbstractAntDebugTest {
 		final IPerspectiveListener2 listener = new MyListener();
 		try {
 			// close all editors
-			Runnable closeAll = new Runnable() {
-				@Override
-				public void run() {
-					IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					activeWorkbenchWindow.getActivePage().closeAllEditors(false);
-					activeWorkbenchWindow.addPerspectiveListener(listener);
-				}
+			Runnable closeAll = () -> {
+				IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				activeWorkbenchWindow.getActivePage().closeAllEditors(false);
+				activeWorkbenchWindow.addPerspectiveListener(listener);
 			};
 			Display display = DebugUIPlugin.getStandardDisplay();
 			display.syncExec(closeAll);
@@ -191,31 +188,28 @@ public class RunToLineTests extends AbstractAntDebugTest {
 
 			final Exception[] exs = new Exception[1];
 			final IThread suspendee = thread;
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					ITextEditor editor = (ITextEditor) fEditor;
-					IRunToLineTarget adapter = editor.getAdapter(IRunToLineTarget.class);
-					assertNotNull("no run to line adapter", adapter); //$NON-NLS-1$
-					IDocumentProvider documentProvider = editor.getDocumentProvider();
-					assertNotNull("The document provider should not be null for: " + editor.getTitle(), documentProvider); //$NON-NLS-1$
-					try {
-						// position cursor to line
-						documentProvider.connect(this);
-						IDocument document = documentProvider.getDocument(editor.getEditorInput());
-						assertNotNull("The document should be available for: " + editor.getTitle(), document); //$NON-NLS-1$
-						int lineOffset = document.getLineOffset(lineNumber - 1); // document is 0 based!
-						documentProvider.disconnect(this);
-						editor.selectAndReveal(lineOffset, 0);
-						// run to line
-						adapter.runToLine(editor, editor.getSelectionProvider().getSelection(), suspendee);
-					}
-					catch (CoreException e) {
-						exs[0] = e;
-					}
-					catch (BadLocationException e) {
-						exs[0] = e;
-					}
+			Runnable r = () -> {
+				ITextEditor editor = (ITextEditor) fEditor;
+				IRunToLineTarget adapter = editor.getAdapter(IRunToLineTarget.class);
+				assertNotNull("no run to line adapter", adapter); //$NON-NLS-1$
+				IDocumentProvider documentProvider = editor.getDocumentProvider();
+				assertNotNull("The document provider should not be null for: " + editor.getTitle(), documentProvider); //$NON-NLS-1$
+				try {
+					// position cursor to line
+					documentProvider.connect(this);
+					IDocument document = documentProvider.getDocument(editor.getEditorInput());
+					assertNotNull("The document should be available for: " + editor.getTitle(), document); //$NON-NLS-1$
+					int lineOffset = document.getLineOffset(lineNumber - 1); // document is 0 based!
+					documentProvider.disconnect(this);
+					editor.selectAndReveal(lineOffset, 0);
+					// run to line
+					adapter.runToLine(editor, editor.getSelectionProvider().getSelection(), suspendee);
+				}
+				catch (CoreException e) {
+					exs[0] = e;
+				}
+				catch (BadLocationException e) {
+					exs[0] = e;
 				}
 			};
 			DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
@@ -232,12 +226,9 @@ public class RunToLineTests extends AbstractAntDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, restore);
-			Runnable cleanup = new Runnable() {
-				@Override
-				public void run() {
-					IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					activeWorkbenchWindow.removePerspectiveListener(listener);
-				}
+			Runnable cleanup = () -> {
+				IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				activeWorkbenchWindow.removePerspectiveListener(listener);
 			};
 			Display display = DebugUIPlugin.getStandardDisplay();
 			display.asyncExec(cleanup);

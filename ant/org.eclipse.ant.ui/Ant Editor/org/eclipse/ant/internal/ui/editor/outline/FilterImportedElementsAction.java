@@ -32,16 +32,11 @@ public class FilterImportedElementsAction extends Action {
 
 	/**
 	 * Toggles the filtering of imported elements from the Ant outline
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
 	public void run() {
-		BusyIndicator.showWhile(fPage.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				fPage.setFilterImportedElements(isChecked());
-			}
-		});
+		BusyIndicator.showWhile(fPage.getControl().getDisplay(), () -> fPage.setFilterImportedElements(isChecked()));
 	}
 }

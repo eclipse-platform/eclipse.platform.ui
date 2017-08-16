@@ -82,16 +82,6 @@ public class ImageDescriptorRegistry {
 	}
 
 	private void hookDisplay() {
-		fDisplay.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fDisplay.disposeExec(new Runnable() {
-					@Override
-					public void run() {
-						dispose();
-					}
-				});
-			}
-		});
+		fDisplay.asyncExec(() -> fDisplay.disposeExec(() -> dispose()));
 	}
 }

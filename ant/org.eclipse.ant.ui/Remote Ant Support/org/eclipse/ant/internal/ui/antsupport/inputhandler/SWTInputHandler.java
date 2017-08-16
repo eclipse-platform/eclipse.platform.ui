@@ -69,22 +69,19 @@ public class SWTInputHandler extends DefaultInputHandler {
 	}
 
 	protected Runnable getHandleInputRunnable(final BuildException[] problem) {
-		return new Runnable() {
-			@Override
-			public void run() {
-				String prompt;
-				if (fRequest instanceof MultipleChoiceInputRequest) {
-					prompt = fRequest.getPrompt();
-				} else {
-					prompt = getPrompt(fRequest);
-				}
-				String title = RemoteAntMessages.getString("SWTInputHandler.1"); //$NON-NLS-1$
-				boolean[] result = new boolean[1];
-				open(title, prompt, result);
+		return () -> {
+			String prompt;
+			if (fRequest instanceof MultipleChoiceInputRequest) {
+				prompt = fRequest.getPrompt();
+			} else {
+				prompt = getPrompt(fRequest);
+			}
+			String title = RemoteAntMessages.getString("SWTInputHandler.1"); //$NON-NLS-1$
+			boolean[] result = new boolean[1];
+			open(title, prompt, result);
 
-				if (!result[0]) {
-					problem[0] = new BuildException(RemoteAntMessages.getString("SWTInputHandler.2")); //$NON-NLS-1$
-				}
+			if (!result[0]) {
+				problem[0] = new BuildException(RemoteAntMessages.getString("SWTInputHandler.2")); //$NON-NLS-1$
 			}
 		};
 	}

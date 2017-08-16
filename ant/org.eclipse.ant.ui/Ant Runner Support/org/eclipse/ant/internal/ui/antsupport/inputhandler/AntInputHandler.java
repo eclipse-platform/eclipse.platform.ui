@@ -46,48 +46,45 @@ public class AntInputHandler extends DefaultInputHandler {
 	}
 
 	protected Runnable getHandleInputRunnable(final InputRequest request, final BuildException[] problem) {
-		return new Runnable() {
-			@Override
-			public void run() {
-				String prompt = getPrompt(request);
-				String title = AntSupportMessages.AntInputHandler_Ant_Input_Request_1;
-				IInputValidator validator = new IInputValidator() {
-					private boolean fFirstValidation = true;
+		return () -> {
+			String prompt = getPrompt(request);
+			String title = AntSupportMessages.AntInputHandler_Ant_Input_Request_1;
+			IInputValidator validator = new IInputValidator() {
+				private boolean fFirstValidation = true;
 
-					@Override
-					public String isValid(String value) {
-						request.setInput(value);
-						if (request.isInputValid()) {
-							return null;
-						}
-						if (fFirstValidation) {
-							fFirstValidation = false;
-							return IAntCoreConstants.EMPTY_STRING;
-						}
-						return AntSupportMessages.AntInputHandler_Invalid_input_2;
+				@Override
+				public String isValid(String value) {
+					request.setInput(value);
+					if (request.isInputValid()) {
+						return null;
 					}
-				};
+					if (fFirstValidation) {
+						fFirstValidation = false;
+						return IAntCoreConstants.EMPTY_STRING;
+					}
+					return AntSupportMessages.AntInputHandler_Invalid_input_2;
+				}
+			};
 
-				String initialValue = null;
-				try {
-					request.getClass().getMethod("getDefaultValue", new Class[0]); //$NON-NLS-1$
-					initialValue = request.getDefaultValue();
+			String initialValue = null;
+			try {
+				request.getClass().getMethod("getDefaultValue", new Class[0]); //$NON-NLS-1$
+				initialValue = request.getDefaultValue();
+			}
+			catch (SecurityException e1) {
+				// do nothing
+			}
+			catch (NoSuchMethodException e2) {
+				// pre Ant 1.7.0
+			}
+			InputDialog dialog = new InputDialog(null, title, prompt, initialValue, validator) {
+				@Override
+				protected int getShellStyle() {
+					return super.getShellStyle() | SWT.RESIZE;
 				}
-				catch (SecurityException e) {
-					// do nothing
-				}
-				catch (NoSuchMethodException e) {
-					// pre Ant 1.7.0
-				}
-				InputDialog dialog = new InputDialog(null, title, prompt, initialValue, validator) {
-					@Override
-					protected int getShellStyle() {
-						return super.getShellStyle() | SWT.RESIZE;
-					}
-				};
-				if (dialog.open() != Window.OK) {
-					problem[0] = new BuildException(AntSupportMessages.AntInputHandler_Unable_to_respond_to__input__request_4);
-				}
+			};
+			if (dialog.open() != Window.OK) {
+				problem[0] = new BuildException(AntSupportMessages.AntInputHandler_Unable_to_respond_to__input__request_4);
 			}
 		};
 	}

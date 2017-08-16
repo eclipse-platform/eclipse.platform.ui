@@ -1140,17 +1140,14 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private void postImageChange(final AntElementNode node) {
 		Shell shell = getSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
-						return;
-					}
-					Image titleImage = getTitleImage();
-					Image newImage = node.getImage();
-					if (titleImage != newImage) {
-						setTitleImage(newImage);
-					}
+			shell.getDisplay().asyncExec(() -> {
+				if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
+					return;
+				}
+				Image titleImage = getTitleImage();
+				Image newImage = node.getImage();
+				if (titleImage != newImage) {
+					setTitleImage(newImage);
 				}
 			});
 		}
@@ -1225,14 +1222,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 		Shell shell = getSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
-						return;
-					}
-					synchronize(true);
+			shell.getDisplay().asyncExec(() -> {
+				if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
+					return;
 				}
+				synchronize(true);
 			});
 		}
 	}

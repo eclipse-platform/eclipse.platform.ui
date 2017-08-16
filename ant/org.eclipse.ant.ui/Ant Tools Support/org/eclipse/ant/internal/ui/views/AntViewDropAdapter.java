@@ -44,12 +44,9 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		Object data = event.data;
 		if (data instanceof String[]) {
 			final String[] strings = (String[]) data;
-			BusyIndicator.showWhile(null, new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < strings.length; i++) {
-						processString(strings[i]);
-					}
+			BusyIndicator.showWhile(null, () -> {
+				for (int i = 0; i < strings.length; i++) {
+					processString(strings[i]);
 				}
 			});
 		}
@@ -58,7 +55,7 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	/**
 	 * Attempts to process the given string as a path to an XML file. If the string is determined to be a path to an XML file in the workspace, that
 	 * file is added to the Ant view.
-	 * 
+	 *
 	 * @param buildFileName
 	 *            the string to process
 	 */

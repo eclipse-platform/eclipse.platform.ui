@@ -349,13 +349,10 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
 			fConsoleColorList.add(fAppearanceColorListModel[i][0]);
 		}
-		fConsoleColorList.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fConsoleColorList != null && !fConsoleColorList.isDisposed()) {
-					fConsoleColorList.select(0);
-					handleAppearanceColorListSelection();
-				}
+		fConsoleColorList.getDisplay().asyncExec(() -> {
+			if (fConsoleColorList != null && !fConsoleColorList.isDisposed()) {
+				fConsoleColorList.select(0);
+				handleAppearanceColorListSelection();
 			}
 		});
 	}

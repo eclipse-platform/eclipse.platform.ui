@@ -158,20 +158,17 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private void handleBuildFileChanged(AntProjectNode project) {
 		((AntProjectNodeProxy) project).parseBuildFile(true);
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// must do a full refresh to re-sort
-				projectViewer.refresh();
-				// update the status line
-				handleSelectionChanged((IStructuredSelection) projectViewer.getSelection());
-			}
+		Display.getDefault().asyncExec(() -> {
+			// must do a full refresh to re-sort
+			projectViewer.refresh();
+			// update the status line
+			handleSelectionChanged((IStructuredSelection) projectViewer.getSelection());
 		});
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -679,12 +676,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			return;
 		}
 		if (delta.getKind() == IResourceDelta.REMOVED) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					removeProject(project);
-				}
-			});
+			Display.getDefault().asyncExec(() -> removeProject(project));
 		} else if (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
 			handleBuildFileChanged(project);
 		}

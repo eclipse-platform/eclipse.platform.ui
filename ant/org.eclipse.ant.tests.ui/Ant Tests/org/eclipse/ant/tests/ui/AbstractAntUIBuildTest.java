@@ -38,13 +38,10 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 		final Display display = Display.getCurrent();
 		Thread thread = null;
 		try {
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					AbstractAntUIBuildTest.super.run(result);
-					testing = false;
-					display.wake();
-				}
+			Runnable r = () -> {
+				AbstractAntUIBuildTest.super.run(result);
+				testing = false;
+				display.wake();
 			};
 			thread = new Thread(r);
 			thread.start();
@@ -78,7 +75,7 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 
 	/**
 	 * Launches the launch configuration Waits for all of the lines to be appended to the console.
-	 * 
+	 *
 	 * @param config
 	 *            the config to execute
 	 * @return thread in which the first suspend event occurred
@@ -88,17 +85,12 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	}
 
 	protected void activateLink(final IHyperlink link) {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				link.linkActivated();
-			}
-		});
+		Display.getDefault().asyncExec(() -> link.linkActivated());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#launch(java.lang.String, java.lang.String)
 	 */
 	@Override

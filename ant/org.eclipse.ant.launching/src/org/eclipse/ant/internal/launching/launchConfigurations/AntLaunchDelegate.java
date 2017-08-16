@@ -263,17 +263,14 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		boolean debug = fMode.equals(ILaunchManager.DEBUG_MODE);
 		if (debug || AntLaunchingUtil.isLaunchInBackground(configuration)) {
 			final AntRunner finalRunner = runner;
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					try {
-						finalRunner.run(process);
-					}
-					catch (CoreException e) {
-						handleException(e, AntLaunchConfigurationMessages.AntLaunchDelegate_Failure);
-					}
-					process.terminated();
+			Runnable r = () -> {
+				try {
+					finalRunner.run(process);
 				}
+				catch (CoreException e) {
+					handleException(e, AntLaunchConfigurationMessages.AntLaunchDelegate_Failure);
+				}
+				process.terminated();
 			};
 			Thread background = new Thread(r);
 			background.setDaemon(true);
