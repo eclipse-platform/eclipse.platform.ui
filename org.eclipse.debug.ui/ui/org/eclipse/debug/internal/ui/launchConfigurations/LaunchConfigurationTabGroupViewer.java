@@ -590,12 +590,7 @@ public class LaunchConfigurationTabGroupViewer {
 			setInput0(input);
 		}
 		else {
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					setInput0(input);
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> setInput0(input));
 		}
 
 	}
@@ -624,31 +619,27 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected void inputChanged(Object input) {
 		final Object finput = input;
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					fViewform.setRedraw(false);
-					if (finput instanceof ILaunchConfiguration) {
-						ILaunchConfiguration configuration = (ILaunchConfiguration)finput;
-						boolean refreshtabs = !delegatesEqual(fWorkingCopy, configuration);
-						fOriginal = configuration;
-						fWorkingCopy = configuration.getWorkingCopy();
-						displayInstanceTabs(refreshtabs);
-					} else if (finput instanceof ILaunchConfigurationType) {
-						fDescription = getDescription((ILaunchConfigurationType)finput);
-						setNoInput();
-					} else {
-						setNoInput();
-					}
-				} catch (CoreException ce) {
-					errorDialog(ce);
+		Runnable r = () -> {
+			try {
+				fViewform.setRedraw(false);
+				if (finput instanceof ILaunchConfiguration) {
+					ILaunchConfiguration configuration = (ILaunchConfiguration) finput;
+					boolean refreshtabs = !delegatesEqual(fWorkingCopy, configuration);
+					fOriginal = configuration;
+					fWorkingCopy = configuration.getWorkingCopy();
+					displayInstanceTabs(refreshtabs);
+				} else if (finput instanceof ILaunchConfigurationType) {
+					fDescription = getDescription((ILaunchConfigurationType) finput);
+					setNoInput();
+				} else {
 					setNoInput();
 				}
-				finally {
-					refreshStatus();
-					fViewform.setRedraw(true);
-				}
+			} catch (CoreException ce) {
+				errorDialog(ce);
+				setNoInput();
+			} finally {
+				refreshStatus();
+				fViewform.setRedraw(true);
 			}
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
@@ -868,22 +859,19 @@ public class LaunchConfigurationTabGroupViewer {
 		// Use a final Object array to store the tab group and any exception that
 		// results from the Runnable
 		final Object[] finalArray = new Object[2];
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				ILaunchConfigurationTabGroup tabGroup = null;
-				try {
-					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(getWorkingCopy(), getLaunchConfigurationDialog().getMode());
-					finalArray[0] = tabGroup;
-				} catch (CoreException ce) {
-					finalArray[1] = ce;
-					return;
-				}
-				tabGroup.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
-				ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
-				}
+		Runnable runnable = () -> {
+			ILaunchConfigurationTabGroup tabGroup = null;
+			try {
+				tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(getWorkingCopy(), getLaunchConfigurationDialog().getMode());
+				finalArray[0] = tabGroup;
+			} catch (CoreException ce) {
+				finalArray[1] = ce;
+				return;
+			}
+			tabGroup.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
+			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+			for (int i = 0; i < tabs.length; i++) {
+				tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 			}
 		};
 

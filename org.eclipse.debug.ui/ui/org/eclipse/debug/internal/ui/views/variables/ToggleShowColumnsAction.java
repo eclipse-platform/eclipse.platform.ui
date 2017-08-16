@@ -48,12 +48,7 @@ public class ToggleShowColumnsAction extends Action implements IUpdate {
 		if (fViewer.getControl().isDisposed()) {
 			return;
 		}
-		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				fViewer.setShowColumns(isChecked());
-			}
-		});
+		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), () -> fViewer.setShowColumns(isChecked()));
 	}
 
 	/* (non-Javadoc)

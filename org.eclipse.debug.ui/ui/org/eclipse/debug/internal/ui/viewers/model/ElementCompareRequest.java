@@ -65,24 +65,26 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 		fEqual = equal;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	@Override
 	public void done() {
-        ITreeModelViewer viewer = getContentProvider().getViewer();
-        if (viewer == null) return;  // disposed
-        if (viewer.getDisplay().getThread() == Thread.currentThread()) {
-            fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
-        } else {
-            viewer.getDisplay().asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    if (getContentProvider().isDisposed()) return;
-                    fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
-                }
-            });
-        }
+		ITreeModelViewer viewer = getContentProvider().getViewer();
+		if (viewer == null) {
+			return; // disposed
+		}
+		if (viewer.getDisplay().getThread() == Thread.currentThread()) {
+			fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
+		} else {
+			viewer.getDisplay().asyncExec(() -> {
+				if (getContentProvider().isDisposed()) {
+					return;
+				}
+				fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
+			});
+		}
 	}
 
 	public boolean isEqual() {

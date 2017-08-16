@@ -70,12 +70,7 @@ public class ShowTypesAction extends Action {
 				TreeModelViewer treeViewer = (TreeModelViewer) viewer;
 				treeViewer.getPresentationContext().setProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, typesStatus);
 			}
-			BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					viewer.refresh();
-				}
-			});
+			BusyIndicator.showWhile(viewer.getControl().getDisplay(), () -> viewer.refresh());
 		}
 	}
 

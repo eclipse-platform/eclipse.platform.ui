@@ -94,12 +94,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		String value = null;
 		setupDialog(argument);
 
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				prompt();
-			}
-		});
+		DebugUIPlugin.getStandardDisplay().syncExec(() -> prompt());
 		if (dialogResultString != null) {
 			value = dialogResultString;
 			lastValue = dialogResultString;

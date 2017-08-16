@@ -65,17 +65,14 @@ public class Prompter implements IStatusHandler {
 		final Object[] result = new Object[1];
 		final CoreException[] exception = new CoreException[1];
 		final Object lock = this;
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					result[0] = handler.handleStatus(status, source);
-				} catch (CoreException e) {
-					exception[0] = e;
-				}
-				synchronized (lock) {
-					lock.notifyAll();
-				}
+		Runnable r = () -> {
+			try {
+				result[0] = handler.handleStatus(status, source);
+			} catch (CoreException e) {
+				exception[0] = e;
+			}
+			synchronized (lock) {
+				lock.notifyAll();
 			}
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);

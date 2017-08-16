@@ -78,50 +78,43 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 
 	@Override
 	protected synchronized void scheduleViewerUpdate() {
-        // If filtering is enabled perform child update on all children in order to update
-        // viewer filters.
+		// If filtering is enabled perform child update on all children in order
+		// to update
+		// viewer filters.
 		if (fShouldFilter || fFilteredChildren != null) {
-		    if (fChildrenUpdate == null) {
-		        int startIdx;
-		        int count;
-		        if (fShouldFilter) {
-		            startIdx = 0;
-		            count = getCount();
-		        } else {
-		            startIdx =  fFilteredChildren[0];
-		            int endIdx = fFilteredChildren[fFilteredChildren.length - 1];
-		            count = endIdx - startIdx + 1;
-		        }
+			if (fChildrenUpdate == null) {
+				int startIdx;
+				int count;
+				if (fShouldFilter) {
+					startIdx = 0;
+					count = getCount();
+				} else {
+					startIdx = fFilteredChildren[0];
+					int endIdx = fFilteredChildren[fFilteredChildren.length - 1];
+					count = endIdx - startIdx + 1;
+				}
 
-     		    fChildrenUpdate = new ChildrenUpdate(getContentProvider(), getViewerInput(), getElementPath(), getElement(), startIdx, count, getElementContentProvider()) {
-     		    	@Override
+				fChildrenUpdate = new ChildrenUpdate(getContentProvider(), getViewerInput(), getElementPath(), getElement(), startIdx, count, getElementContentProvider()) {
+					@Override
 					protected void performUpdate() {
-     		    		performUpdate(true);
-     		    		ChildrenCountUpdate.super.scheduleViewerUpdate();
-     		    	}
+						performUpdate(true);
+						ChildrenCountUpdate.super.scheduleViewerUpdate();
+					}
 
-     		    	@Override
+					@Override
 					protected void scheduleViewerUpdate() {
-     		    		execInDisplayThread(new Runnable() {
-    	   	    			@Override
-							public void run() {
-    	   	    				if (!getContentProvider().isDisposed() && !isCanceled()) {
-    	   	    					performUpdate();
-    	   	    				}
-    	   	    			}
-    	   	    		});
-     		    	}
-     		    };
-     		    execInDisplayThread(new Runnable() {
-     		    	@Override
-					public void run() {
-     		 		    fChildrenUpdate.startRequest();
-     		    	}
-     		    });
-     		    return;
-    		}
+						execInDisplayThread(() -> {
+							if (!getContentProvider().isDisposed() && !isCanceled()) {
+								performUpdate();
+							}
+						});
+					}
+				};
+				execInDisplayThread(() -> fChildrenUpdate.startRequest());
+				return;
+			}
 		} else {
-		    super.scheduleViewerUpdate();
+			super.scheduleViewerUpdate();
 		}
 	}
 

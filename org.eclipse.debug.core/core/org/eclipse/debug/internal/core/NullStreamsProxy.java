@@ -65,18 +65,15 @@ public class NullStreamsProxy implements IStreamsProxy2 {
         }
 
         private void startReaderThread() {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-				public void run() {
-                    byte[] bytes = new byte[1024];
-                    try {
-                        while(fStream.read(bytes) >= 0) {
-                            //do nothing
-                        }
-                    } catch (IOException e) {
-                    }
-                }
-            }, DebugCoreMessages.NullStreamsProxy_0);
+			Thread thread = new Thread((Runnable) () -> {
+				byte[] bytes = new byte[1024];
+				try {
+					while (fStream.read(bytes) >= 0) {
+						// do nothing
+					}
+				} catch (IOException e) {
+				}
+			}, DebugCoreMessages.NullStreamsProxy_0);
             thread.setDaemon(true);
             thread.start();
 

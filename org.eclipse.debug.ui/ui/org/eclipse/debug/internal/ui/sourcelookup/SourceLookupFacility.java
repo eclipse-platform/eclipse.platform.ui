@@ -551,18 +551,12 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 */
 	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
 		final IEditorPart[] editor = new IEditorPart[] {null};
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
-					try {
-						editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
-					} catch (PartInitException e) {
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-							DebugUIViewsMessages.LaunchView_Error_1,
-							DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2,
-							e);
-					}
+		Runnable r = () -> {
+			if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
+				try {
+					editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
+				} catch (PartInitException e) {
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIViewsMessages.LaunchView_Error_1, DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2, e);
 				}
 			}
 		};

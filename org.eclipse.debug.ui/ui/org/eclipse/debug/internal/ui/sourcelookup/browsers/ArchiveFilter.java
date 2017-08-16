@@ -63,12 +63,9 @@ public class ArchiveFilter extends ViewerFilter {
 	 * Search for all archives in the workspace.
 	 */
 	private void init() {
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				fArchives = new HashSet<IResource>();
-				traverse(ResourcesPlugin.getWorkspace().getRoot(), fArchives);
-			}
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), () -> {
+			fArchives = new HashSet<IResource>();
+			traverse(ResourcesPlugin.getWorkspace().getRoot(), fArchives);
 		});
 	}
 

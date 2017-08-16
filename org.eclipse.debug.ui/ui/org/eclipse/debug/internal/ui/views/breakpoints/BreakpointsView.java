@@ -526,13 +526,10 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 */
 	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IAction action = getAction(ACTION_SKIP_BREAKPOINTS);
-				if (action != null) {
-					((SkipAllBreakpointsAction) action).updateActionCheckedState();
-				}
+		DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
+			IAction action = getAction(ACTION_SKIP_BREAKPOINTS);
+			if (action != null) {
+				((SkipAllBreakpointsAction) action).updateActionCheckedState();
 			}
 		});
 	}

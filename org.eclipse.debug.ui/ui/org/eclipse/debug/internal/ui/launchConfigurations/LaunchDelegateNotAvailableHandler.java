@@ -39,13 +39,10 @@ public class LaunchDelegateNotAvailableHandler implements IStatusHandler {
 				final ILaunchConfiguration config = (ILaunchConfiguration) infos[0];
 				final String mode = (String) infos[1];
 				final Shell shell = DebugUIPlugin.getShell();
-				Runnable runnable = new Runnable() {
-					@Override
-					public void run() {
-						ILaunchGroup group = DebugUITools.getLaunchGroup(config, mode);
-						if (group != null) {
-							DebugUITools.openLaunchConfigurationDialog(shell, config, group.getIdentifier(), null);
-						}
+				Runnable runnable = () -> {
+					ILaunchGroup group = DebugUITools.getLaunchGroup(config, mode);
+					if (group != null) {
+						DebugUITools.openLaunchConfigurationDialog(shell, config, group.getIdentifier(), null);
 					}
 				};
 				DebugUIPlugin.getStandardDisplay().asyncExec(runnable);

@@ -59,12 +59,7 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
         values.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, event.getContext());
 		// make sure fireSourceChanged is called on the UI thread
 		if (Display.getCurrent() == null) {
-			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values);
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().asyncExec(() -> fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values));
 		} else {
 			fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values);
 		}

@@ -27,13 +27,10 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 	@Override
 	public Object handleStatus(IStatus status, Object source) {
 		final boolean[] result = new boolean[1];
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				String title= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
-				String message= DebugUIMessages.WorkingDirectoryStatusHandler_0;
-				result[0]= (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
-			}
+		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
+			String title = DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
+			String message = DebugUIMessages.WorkingDirectoryStatusHandler_0;
+			result[0] = (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
 		});
 		return Boolean.valueOf(result[0]);
 	}

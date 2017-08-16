@@ -186,8 +186,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		fTableCursor.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				if (fTableCursor == null)
+				if (fTableCursor == null) {
 					return;
+				}
 				fTableCursor.removeTraverseListener(fCursorTraverseListener);
 				fTableCursor.removeKeyListener(fCursorKeyAdapter);
 				fTableCursor.removeMouseListener(fCursorMouseListener);
@@ -231,14 +232,16 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		if (e.button == 1)
 		{
 			int col = fTableCursor.getColumn();
-			if (col > 0 && col <= (getNumCol()))
+			if (col > 0 && col <= (getNumCol())) {
 				activateCellEditor(null);
+			}
 		}
 	}
 
 	private void handleCursorTraverseEvt(TraverseEvent e){
-		if (fTableCursor.getRow() == null)
+		if (fTableCursor.getRow() == null) {
 			return;
+		}
 
 		Table table = (Table)fTableCursor.getParent();
 		int row = table.indexOf(fTableCursor.getRow());
@@ -319,8 +322,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 	synchronized private Object doAttemptSetKeySelection(final Object key)
 	{
-		if (getBufferTopKey() == null || getBufferEndKey() == null)
+		if (getBufferTopKey() == null || getBufferEndKey() == null) {
 			return key;
+		}
 
 		// calculate selected row address
 		int[] location = getCoordinatesFromKey(key);
@@ -337,11 +341,13 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
 						DebugUIPlugin.trace(getRendering() + " set cursor selection " + ((BigInteger)key).toString(16)); //$NON-NLS-1$
 					}
-					if (fPendingSelection != null && fPendingSelection != key)
+					if (fPendingSelection != null && fPendingSelection != key) {
 						return Status.OK_STATUS;
+					}
 
-					if (fTableCursor.isDisposed())
+					if (fTableCursor.isDisposed()) {
 						return Status.OK_STATUS;
+					}
 
 					// by the time this is called, the location may not be valid anymore
 					int[] newLocation = getCoordinatesFromKey(key);
@@ -431,8 +437,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	{
 		AbstractVirtualContentTableModel model = getVirtualContentModel();
 
-		if (model != null)
+		if (model != null) {
 			return getKey(model.getElements().length-1);
+		}
 		return null;
 	}
 
@@ -440,8 +447,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	{
 		int idx = -1;
 		AbstractVirtualContentTableModel model = getVirtualContentModel();
-		if (model != null)
+		if (model != null) {
 			idx = model.indexOfKey(key);
+		}
 		return idx;
 	}
 
@@ -470,8 +478,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	public Object getKey(int row, int col)
 	{
 		AbstractVirtualContentTableModel model = getVirtualContentModel();
-		if (model != null)
+		if (model != null) {
 			return model.getKey(row, col);
+		}
 		return null;
 	}
 
@@ -500,10 +509,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 				}
 			}
 
-			if (fPendingSelection != null)
+			if (fPendingSelection != null) {
 				oldSelectionKey = fPendingSelection;
-			else
+			} else {
 				oldSelectionKey = getSelectionKey();
+			}
 
 			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING)
 			{
@@ -576,8 +586,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			if (!fTableCursor.isDisposed())
 			{
-				if (fTableCursor.isVisible() != show)
+				if (fTableCursor.isVisible() != show) {
 					fTableCursor.setVisible(show);
+				}
 			}
 		}
 		else
@@ -588,8 +599,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					if (!fTableCursor.isDisposed())
 					{
-						if (fTableCursor.isVisible() != show)
+						if (fTableCursor.isVisible() != show) {
 							fTableCursor.setVisible(show);
+						}
 					}
 					return Status.OK_STATUS;
 				}};
@@ -622,13 +634,15 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					}
 				}
 			}
-			if (colNum >= 0)
+			if (colNum >= 0) {
 				break;
+			}
 		}
 
 		// if column position cannot be determined, return
-		if (colNum < 1)
+		if (colNum < 1) {
 			return;
+		}
 
 		// handle user mouse click onto table
 		// move cursor to new position
@@ -656,8 +670,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		final int col = fTableCursor.getColumn();
 		final int row = indexOf(fSelectionKey);
 
-		if (row < 0)
+		if (row < 0) {
 			return;
+		}
 
 		// do not allow user to edit address column
 		if (col == 0 || col > getNumCol()) {
@@ -678,8 +693,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			boolean canEdit = cellModifier
 					.canModify(element, (String) property);
 
-			if (!canEdit)
+			if (!canEdit) {
 				return;
+			}
 
 			CellEditor editor = getCellEditors()[col];
 			if (editor != null) {
@@ -754,43 +770,35 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private void handleKeyEventInEditor(KeyEvent event) {
 
 		final KeyEvent e = event;
-		Display.getDefault().asyncExec(new Runnable()
-		{
-			@Override
-			public void run()
+		Display.getDefault().asyncExec(() -> {
+			Object obj = e.getSource();
+			if (obj instanceof Control)
 			{
-				Object obj = e.getSource();
-				if (obj instanceof Control)
+				Control control = (Control) obj;
+				int row = fCellEditorListener.getRow();
+				int col = fCellEditorListener.getCol();
+
+				try
 				{
-					Control control = (Control)obj;
-					int row = fCellEditorListener.getRow();
-					int col = fCellEditorListener.getCol();
-
-					try
+					switch (e.keyCode)
 					{
-						switch (e.keyCode)
-						{
-							case 0:
-								doHandleKeyEvent(row, col);
-								break;
-							case SWT.ESC:
-								cancelEditing(row, col);
-								break;
-							default :
-								doHandleKeyEvent(row, col);
+						case 0:
+							doHandleKeyEvent(row, col);
 							break;
-						}
+						case SWT.ESC:
+							cancelEditing(row, col);
+							break;
+						default:
+							doHandleKeyEvent(row, col);
+							break;
 					}
-					catch (NumberFormatException e1)
-					{
-						MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title,
-							DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
+				} catch (NumberFormatException e1) {
+					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
 
-						fTableCursor.setSelection(row, col);
-						handleCursorMoved();
+					fTableCursor.setSelection(row, col);
+					handleCursorMoved();
 
-						removeListeners(control);
-					}
+					removeListeners(control);
 				}
 			}
 		});
@@ -940,12 +948,13 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 	public void formatViewer()
 	{
-		if (getModel() == null || !hasPendingUpdates())
+		if (getModel() == null || !hasPendingUpdates()) {
 			doFormatViewer();
-		else
+		} else {
 			// do not format in the middle of an update
 			// set pending update and will format when update is completed
 			fPendingFormatViewer = true;
+		}
 	}
 
 	/**
@@ -953,18 +962,14 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	 */
 	private void doFormatViewer() {
 		fPendingFormatViewer = false;
-		preservingSelection(new Runnable() {
-
-			@Override
-			public void run() {
-				// causes the content of the table viewer to be replaced
-				// without asking content adapter for content
-				AbstractVirtualContentTableModel model = getVirtualContentModel();
-				if (model != null)
-				{
-					model.handleViewerChanged();
-				}
-			}});
+		preservingSelection(() -> {
+			// causes the content of the table viewer to be replaced
+			// without asking content adapter for content
+			AbstractVirtualContentTableModel model = getVirtualContentModel();
+			if (model != null) {
+				model.handleViewerChanged();
+			}
+		});
 	}
 
 	private void fireSelectionChanged(Object selectionKey)
@@ -984,22 +989,18 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	@Override
 	public void refresh(boolean getContent)
 	{
-		if (getContent)
+		if (getContent) {
 			refresh();
-		else
+		} else
 		{
-			preservingSelection(new Runnable() {
-
-				@Override
-				public void run() {
-					AbstractVirtualContentTableModel model = getVirtualContentModel();
-					if (model != null)
-					{
-						Object[] elements = model.getElements();
-						model.remove(elements);
-						model.add(elements);
-					}
-				}});
+			preservingSelection(() -> {
+				AbstractVirtualContentTableModel model = getVirtualContentModel();
+				if (model != null) {
+					Object[] elements = model.getElements();
+					model.remove(elements);
+					model.add(elements);
+				}
+			});
 		}
 	}
 
@@ -1011,10 +1012,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			// TODO:  work around swt bug, must force a table cursor redraw after top index is changed
 			// BUG 130130
 			int[] coordinates = getCoordinatesFromKey(getSelectionKey());
-			if (coordinates.length > 0)
+			if (coordinates.length > 0) {
 				fTableCursor.setVisible(true);
-			else
+			} else {
 				fTableCursor.setVisible(false);
+			}
 		}
 	}
 
@@ -1045,17 +1047,14 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			// and the cursor should not be redrawn yet.
 			if (!hasPendingSetTopIndex())
 			{
-				preservingSelection(new Runnable() {
-
-					@Override
-					public void run() {
-
-						int[] coordinates = getCoordinatesFromKey(getSelectionKey());
-						if (coordinates.length > 0)
-							fTableCursor.setVisible(true);
-						else
-							fTableCursor.setVisible(false);
-					}});
+				preservingSelection(() -> {
+					int[] coordinates = getCoordinatesFromKey(getSelectionKey());
+					if (coordinates.length > 0) {
+						fTableCursor.setVisible(true);
+					} else {
+						fTableCursor.setVisible(false);
+					}
+				});
 			}
 		}
 

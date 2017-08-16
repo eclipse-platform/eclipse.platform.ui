@@ -268,14 +268,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			final ILaunchConfiguration from  = getLaunchManager().getMovedFrom(configuration);
 			// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 			Display display = DebugUIPlugin.getStandardDisplay();
-	        display.asyncExec(new Runnable() {
-	            @Override
-				public void run() {
-	            	if(!fTree.isDisposed()) {
-	            		handleConfigurationAdded(configuration, from);
-	            	}
-	            }
-	        });
+			display.asyncExec(() -> {
+				if (!fTree.isDisposed()) {
+					handleConfigurationAdded(configuration, from);
+				}
+			});
 		}
 	}
 
@@ -365,13 +362,10 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		}
 		// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 		Display display = DebugUIPlugin.getStandardDisplay();
-		display.asyncExec(new Runnable() {
-	        @Override
-			public void run() {
-	        	if(!fTree.isDisposed()) {
-	        		handleConfigurationRemoved(configuration);
-	        	}
-	        }
+		display.asyncExec(() -> {
+			if (!fTree.isDisposed()) {
+				handleConfigurationRemoved(configuration);
+			}
 		});
 	}
 

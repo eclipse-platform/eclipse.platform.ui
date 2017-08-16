@@ -196,40 +196,35 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
         return wrapperedMonitor;
     }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.eclipse.jface.operations.IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
-    */
-    @Override
-	public void run(final boolean fork, final boolean cancelable,
-            final IRunnableWithProgress runnable) throws InvocationTargetException,
-            InterruptedException {
-    	final InvocationTargetException[] invokes = new InvocationTargetException[1];
-        final InterruptedException[] interrupt = new InterruptedException[1];
-        Runnable dialogWaitRunnable = new Runnable() {
-    		@Override
-			public void run() {
-    			try {
-    				TimeTriggeredProgressMonitorDialog.super.run(fork, cancelable, runnable);
-    			} catch (InvocationTargetException e) {
-    				invokes[0] = e;
-    			} catch (InterruptedException e) {
-    				interrupt[0]= e;
-    			}
-    		}
-        };
-        final Display display = PlatformUI.getWorkbench().getDisplay();
-        if (display == null) {
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.operations.IRunnableContext#run(boolean, boolean,
+	 * IRunnableWithProgress)
+	 */
+	@Override
+	public void run(final boolean fork, final boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		final InvocationTargetException[] invokes = new InvocationTargetException[1];
+		final InterruptedException[] interrupt = new InterruptedException[1];
+		Runnable dialogWaitRunnable = () -> {
+			try {
+				TimeTriggeredProgressMonitorDialog.super.run(fork, cancelable, runnable);
+			} catch (InvocationTargetException e1) {
+				invokes[0] = e1;
+			} catch (InterruptedException e2) {
+				interrupt[0] = e2;
+			}
+		};
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		if (display == null) {
 			return;
 		}
-        //show a busy cursor until the dialog opens
-        BusyIndicator.showWhile(display, dialogWaitRunnable);
-        if (invokes[0] != null) {
-            throw invokes[0];
-        }
-        if (interrupt[0] != null) {
-            throw interrupt[0];
-        }
-     }
+		// show a busy cursor until the dialog opens
+		BusyIndicator.showWhile(display, dialogWaitRunnable);
+		if (invokes[0] != null) {
+			throw invokes[0];
+		}
+		if (interrupt[0] != null) {
+			throw interrupt[0];
+		}
+	}
 }

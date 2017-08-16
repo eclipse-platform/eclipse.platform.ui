@@ -30,12 +30,10 @@ public class UnsupportedModeHandler implements IStatusHandler {
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if (source instanceof String[]) {
 			final String[] data = (String[]) source;
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.GroupLaunch_Error, NLS.bind(DebugUIMessages.GroupLaunch_Cannot_launch, data[0], data[1]));
-				}
-			});
+			PlatformUI.getWorkbench().getDisplay().asyncExec(
+					() -> MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
+							, DebugUIMessages.GroupLaunch_Error, NLS.bind(DebugUIMessages.GroupLaunch_Cannot_launch, data[0], data[1]))
+			);
 		}
 		return null;
 	}

@@ -145,21 +145,18 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 	}
 
 	private void showConsole(final ConsoleMock console) {
-		executorService.execute(new Runnable() {
-			@Override
-			public void run() {
-				// last one arriving here triggers execution for all at same
-				// time
-				latch.countDown();
-				try {
-					latch.await(1, TimeUnit.MINUTES);
-					System.out.println("Requesting to show: " + console); //$NON-NLS-1$
-					manager.showConsoleView(console);
-					TestUtil.waitForJobs(getName(), 200, 5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					Thread.interrupted();
-				}
+		executorService.execute(() -> {
+			// last one arriving here triggers execution for all at same
+			// time
+			latch.countDown();
+			try {
+				latch.await(1, TimeUnit.MINUTES);
+				System.out.println("Requesting to show: " + console); //$NON-NLS-1$
+				manager.showConsoleView(console);
+				TestUtil.waitForJobs(getName(), 200, 5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				Thread.interrupted();
 			}
 		});
 	}
