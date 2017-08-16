@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc., IBM Corporation and others.
+ * Copyright (c) 2006, 2017 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems) - [painting] Long lines take too long to display when "Show Whitespace Characters" is enabled - https://bugs.eclipse.org/bugs/show_bug.cgi?id=196116
  *     Anton Leherbauer (Wind River Systems) - [painting] Whitespace characters not drawn when scrolling to right slowly - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206633
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
+ *     John Hendrikx - [painting] Performance improvement of space character rendering - https://bugs.eclipse.org/bugs/show_bug.cgi?id=434194
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -39,6 +40,9 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	private static final char TAB_SIGN= '\u00bb';
 	private static final char CARRIAGE_RETURN_SIGN= '\u00a4';
 	private static final char LINE_FEED_SIGN= '\u00b6';
+
+	private static final String SPACE_SIGN_STRING= String.valueOf(SPACE_SIGN);
+	private static final String IDEOGRAPHIC_SPACE_SIGN_STRING= String.valueOf(IDEOGRAPHIC_SPACE_SIGN);
 
 	/** Indicates whether this painter is active. */
 	private boolean fIsActive= false;
@@ -215,6 +219,10 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 */
 	private void drawLineRange(GC gc, int startLine, int endLine, int x, int w) {
 		final int viewPortWidth= fTextWidget.getClientArea().width;
+		int spaceCharWidth= gc.stringExtent(" ").x; //$NON-NLS-1$
+		boolean spaceCharsAreSameWidth= spaceCharWidth == gc.stringExtent(SPACE_SIGN_STRING).x &&
+				spaceCharWidth == gc.stringExtent(IDEOGRAPHIC_SPACE_SIGN_STRING).x;
+
 		for (int line= startLine; line <= endLine; line++) {
 			int lineOffset= fTextWidget.getOffsetAtLine(line);
 			// line end offset including line delimiter
@@ -268,7 +276,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 			// draw character range
 			if (endOffset > startOffset) {
-				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset);
+				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset, spaceCharsAreSameWidth);
 			}
 		}
 	}
@@ -285,8 +293,10 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param endOffset exclusive end index of the drawing range
 	 * @param lineOffset inclusive start index of the line
 	 * @param lineEndOffset exclusive end index of the line
+	 * @param spaceCharsAreSameWidth whether or not all space chars are same width, if <code>true</code>
+	 *            rendering can be optimized
 	 */
-	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset) {
+	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset, boolean spaceCharsAreSameWidth) {
 		StyledTextContent content= fTextWidget.getContent();
 		String lineText= content.getTextRange(lineOffset, lineEndOffset - lineOffset);
 		int startOffsetInLine= startOffset - lineOffset;
@@ -313,11 +323,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		StyleRange styleRange= null;
 		Color fg= null;
 		StringBuilder visibleChar= new StringBuilder(10);
+		int delta= 0;
 		for (int textOffset= startOffsetInLine; textOffset <= endOffsetInLine; ++textOffset) {
-			int delta= 0;
 			boolean eol= false;
+			delta++;
 			if (textOffset < endOffsetInLine) {
-				delta= 1;
 				char c= lineText.charAt(textOffset);
 				switch (c) {
 					case ' ':
@@ -338,8 +348,12 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 								visibleChar.append(SPACE_SIGN);
 							}
 						}
-						// 'continue' would improve performance but may produce drawing errors
-						// for long runs of space if width of space and dot differ
+						// 'continue' improves performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ, therefore
+						// it can be used only for monospace fonts
+						if (spaceCharsAreSameWidth) {
+							continue;
+						}
 						break;
 					case '\u3000': // ideographic whitespace
 						if (isEmptyLine) {
@@ -359,8 +373,12 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
 							}
 						}
-						// 'continue' would improve performance but may produce drawing errors
-						// for long runs of space if width of space and dot differ
+						// 'continue' improves performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ, therefore
+						// it can be used only for monospace fonts
+						if (spaceCharsAreSameWidth) {
+							continue;
+						}
 						break;
 					case '\t':
 						if (isEmptyLine) {
@@ -397,12 +415,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						eol= true;
 						break;
 					default:
-						delta= 0;
 						break;
 				}
 			}
 			if (visibleChar.length() > 0) {
-				int widgetOffset= startOffset + textOffset - startOffsetInLine - visibleChar.length() + delta;
+				int widgetOffset= startOffset + textOffset - startOffsetInLine - delta + 1;
 				if (!eol || !isFoldedLine(content.getLineAtOffset(widgetOffset))) {
 					/*
 					 * Block selection is drawn using alpha and no selection-inverting
@@ -422,6 +439,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 				}
 				visibleChar.delete(0, visibleChar.length());
 			}
+			delta= 0;
 		}
 	}
 
