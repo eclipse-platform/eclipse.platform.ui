@@ -32,7 +32,11 @@ public class ResourceException extends CoreException {
 	private static final long serialVersionUID = 1L;
 
 	public ResourceException(int code, IPath path, String message, Throwable exception) {
-		super(new ResourceStatus(code, path, message, exception));
+		super(new ResourceStatus(code, path, message, provideStackTrace(message, exception)));
+	}
+
+	private static Throwable provideStackTrace(String message, Throwable exception) {
+		return exception != null ? exception : new Exception(message);
 	}
 
 	/**
