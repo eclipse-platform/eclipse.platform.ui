@@ -133,35 +133,29 @@ public class OrderedLockTest extends TestCase {
 		final boolean[] alive = {true};
 
 		//first runnable which is going to hold the created lock
-		Runnable getLock = new Runnable() {
-			@Override
-			public void run() {
-				lock.acquire();
-				status[0] = TestBarrier.STATUS_RUNNING;
-				while (alive[0]) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
+		Runnable getLock = () -> {
+			lock.acquire();
+			status[0] = TestBarrier.STATUS_RUNNING;
+			while (alive[0]) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
 				}
-				lock.release();
-				status[0] = TestBarrier.STATUS_DONE;
 			}
+			lock.release();
+			status[0] = TestBarrier.STATUS_DONE;
 		};
 
 		//second runnable which is going to try and acquire the given lock and then time out
-		Runnable tryForLock = new Runnable() {
-			@Override
-			public void run() {
-				boolean success = false;
-				try {
-					success = lock.acquire(100);
-				} catch (InterruptedException e) {
-				}
-				assertTrue("1.0", !success);
-				assertTrue("1.1", !manager.isLockOwner());
-				status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
+		Runnable tryForLock = () -> {
+			boolean success = false;
+			try {
+				success = lock.acquire(100);
+			} catch (InterruptedException e) {
 			}
+			assertTrue("1.0", !success);
+			assertTrue("1.1", !manager.isLockOwner());
+			status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		};
 
 		Thread first = new Thread(getLock);
@@ -192,39 +186,30 @@ public class OrderedLockTest extends TestCase {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 
 		//first runnable which is going to hold the created lock
-		Runnable getLock = new Runnable() {
-			@Override
-			public void run() {
-				lock.acquire();
-				status[0] = TestBarrier.STATUS_START;
-				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
-				lock.release();
-				status[0] = TestBarrier.STATUS_DONE;
-			}
+		Runnable getLock = () -> {
+			lock.acquire();
+			status[0] = TestBarrier.STATUS_START;
+			TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
+			lock.release();
+			status[0] = TestBarrier.STATUS_DONE;
 		};
 
 		//second runnable which is going to submit a request for this lock and wait until it is available
-		Runnable waitForLock = new Runnable() {
-			@Override
-			public void run() {
-				status[1] = TestBarrier.STATUS_START;
-				lock.acquire();
-				assertTrue("1.0", manager.isLockOwner());
-				lock.release();
-				status[1] = TestBarrier.STATUS_DONE;
+		Runnable waitForLock = () -> {
+			status[1] = TestBarrier.STATUS_START;
+			lock.acquire();
+			assertTrue("1.0", manager.isLockOwner());
+			lock.release();
+			status[1] = TestBarrier.STATUS_DONE;
 
-			}
 		};
 
 		//third runnable which is going to submit a request for this lock but not wait
 		//because the hook is going to force it to be given the lock (implicitly)
-		Runnable forceGetLock = new Runnable() {
-			@Override
-			public void run() {
-				lock.acquire();
-				lock.release();
-				status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
-			}
+		Runnable forceGetLock = () -> {
+			lock.acquire();
+			lock.release();
+			status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		};
 
 		//a locklistener to force lock manager to give the lock to the third runnable (implicitly)

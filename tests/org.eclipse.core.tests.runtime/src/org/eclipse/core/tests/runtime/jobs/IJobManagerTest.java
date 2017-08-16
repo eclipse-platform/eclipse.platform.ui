@@ -409,22 +409,19 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			}
 		};
 		//create and run a thread that will run and finish the asynchronous job
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				job.schedule();
-				//wait for job to start running
-				while (!done[0]) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						//ignore
-					}
+		Runnable r = () -> {
+			job.schedule();
+			// wait for job to start running
+			while (!done[0]) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// ignore
 				}
-				//job should now be finishing asynchronously in this thread
-				success[0] = job == Job.getJobManager().currentJob();
-				job.done(Status.OK_STATUS);
 			}
+			// job should now be finishing asynchronously in this thread
+			success[0] = job == Job.getJobManager().currentJob();
+			job.done(Status.OK_STATUS);
 		};
 		thread[0] = new Thread(r);
 		thread[0].start();
@@ -847,21 +844,18 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					manager.join(first, null);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				manager.join(first, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		//start the thread that will join the first family of jobs and be blocked until they finish execution
@@ -920,21 +914,18 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					manager.join(first, null);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				manager.join(first, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		//start the thread that will join the first family of jobs
@@ -993,21 +984,18 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					manager.join(first, canceller);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				manager.join(first, canceller);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		//start the thread that will join the first family of jobs
@@ -1160,21 +1148,18 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			jobs[i].schedule();
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					manager.join(third, null);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				manager.join(third, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		//try joining the third family of jobs, which is empty

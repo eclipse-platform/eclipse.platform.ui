@@ -57,28 +57,25 @@ public class JobGroupTest extends AbstractJobTest {
 		maxThreadsUsed[0] = 0;
 		// Use a thread to record the maximum number of running jobs and
 		// cancel the running jobs so that the waiting jobs will be scheduled.
-		final Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				barrier.setStatus(TestBarrier.STATUS_RUNNING);
-				while (jobGroup.getState() != JobGroup.NONE) {
-					List<TestJob> runningJobs = new ArrayList<>();
-					for (Job job : jobGroup.getActiveJobs()) {
-						if (job.getState() == Job.RUNNING) {
-							runningJobs.add((TestJob) job);
-						}
-					}
-					int runningJobsSize = runningJobs.size();
-					if (runningJobsSize > maxThreadsUsed[0]) {
-						maxThreadsUsed[0] = runningJobsSize;
-					}
-					for (Job job : runningJobs) {
-						job.cancel();
-						waitForCompletion(job);
+		final Thread t = new Thread(() -> {
+			barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			while (jobGroup.getState() != JobGroup.NONE) {
+				List<TestJob> runningJobs = new ArrayList<>();
+				for (Job activeJob : jobGroup.getActiveJobs()) {
+					if (activeJob.getState() == Job.RUNNING) {
+						runningJobs.add((TestJob) activeJob);
 					}
 				}
-				barrier.setStatus(TestBarrier.STATUS_DONE);
+				int runningJobsSize = runningJobs.size();
+				if (runningJobsSize > maxThreadsUsed[0]) {
+					maxThreadsUsed[0] = runningJobsSize;
+				}
+				for (Job runningJob : runningJobs) {
+					runningJob.cancel();
+					waitForCompletion(runningJob);
+				}
 			}
+			barrier.setStatus(TestBarrier.STATUS_DONE);
 		});
 
 		assertEquals("1.0", JobGroup.ACTIVE, jobGroup.getState());
@@ -434,21 +431,18 @@ public class JobGroupTest extends AbstractJobTest {
 			}
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					firstJobGroup.join(0, null);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				firstJobGroup.join(0, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		// Start the thread that will join the first group of jobs and be blocked until they finish execution.
@@ -511,21 +505,18 @@ public class JobGroupTest extends AbstractJobTest {
 		final long timeout = 1000;
 		final long duration[] = {-1};
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					long start = System.currentTimeMillis();
-					firstJobGroup.join(timeout, null);
-					duration[0] = System.currentTimeMillis() - start;
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				long start = System.currentTimeMillis();
+				firstJobGroup.join(timeout, null);
+				duration[0] = System.currentTimeMillis() - start;
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		// Start the thread that will join the first job group and be blocked until the join call is returned.
@@ -580,21 +571,18 @@ public class JobGroupTest extends AbstractJobTest {
 			jobs[i].schedule();
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					firstJobGroup.join(0, null);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				firstJobGroup.join(0, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		// Start the thread that will join the first job group. It will be blocked
@@ -653,21 +641,18 @@ public class JobGroupTest extends AbstractJobTest {
 			jobs[i].schedule();
 		}
 
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
-					status[0] = TestBarrier.STATUS_RUNNING;
-					firstJobGroup.join(0, canceler);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+				status[0] = TestBarrier.STATUS_RUNNING;
+				firstJobGroup.join(0, canceler);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 
 		// Start the thread that will join the first job group. It will be blocked
@@ -869,19 +854,16 @@ public class JobGroupTest extends AbstractJobTest {
 		final TestJob running = new TestJob("RunningJob", 1000000, 10);
 		running.setJobGroup(jobGroup);
 
-		final Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				barrier.setStatus(TestBarrier.STATUS_RUNNING);
-				try {
-					jobGroup.join(0, null);
-				} catch (OperationCanceledException e) {
-					//ignore
-				} catch (InterruptedException e) {
-					//ignore
-				}
-				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		final Thread t = new Thread(() -> {
+			barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			try {
+				jobGroup.join(0, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 		});
 		Job job = new Job("MainJob") {
 			@Override
@@ -947,19 +929,16 @@ public class JobGroupTest extends AbstractJobTest {
 		final TestJob running = new TestJob("running job", 1000000, 10);
 		running.setJobGroup(jobGroup);
 
-		final Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				barrier.setStatus(TestBarrier.STATUS_RUNNING);
-				try {
-					jobGroup.join(0, null);
-				} catch (OperationCanceledException e) {
-					// ignore
-				} catch (InterruptedException e) {
-					// ignore
-				}
-				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		final Thread t = new Thread(() -> {
+			barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			try {
+				jobGroup.join(0, null);
+			} catch (OperationCanceledException e1) {
+				// ignore
+			} catch (InterruptedException e2) {
+				// ignore
 			}
+			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 		});
 		Job job = new Job("MainJob") {
 			@Override

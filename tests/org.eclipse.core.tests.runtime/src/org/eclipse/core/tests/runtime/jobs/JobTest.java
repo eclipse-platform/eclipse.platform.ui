@@ -854,17 +854,14 @@ public class JobTest extends AbstractJobTest {
 		//create a thread that will join the test job
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					longJob.join();
-				} catch (InterruptedException e) {
-					Assert.fail("0.99");
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				longJob.join();
+			} catch (InterruptedException e) {
+				Assert.fail("0.99");
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 		t.start();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
@@ -891,21 +888,18 @@ public class JobTest extends AbstractJobTest {
 		// Create a thread that will join the test job
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					long start = System.currentTimeMillis();
-					longJob.join(timeout, null);
-					duration[0] = System.currentTimeMillis() - start;
-				} catch (InterruptedException e) {
-					Assert.fail("0.88");
-				} catch (OperationCanceledException e) {
-					Assert.fail("0.99");
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				long start = System.currentTimeMillis();
+				longJob.join(timeout, null);
+				duration[0] = System.currentTimeMillis() - start;
+			} catch (InterruptedException e1) {
+				Assert.fail("0.88");
+			} catch (OperationCanceledException e2) {
+				Assert.fail("0.99");
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 		t.start();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
@@ -935,19 +929,16 @@ public class JobTest extends AbstractJobTest {
 		// Create a thread that will join the test job
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					shortJob.join(0, monitor);
-				} catch (InterruptedException e) {
-					Assert.fail("0.88");
-				} catch (OperationCanceledException e) {
-					Assert.fail("0.99");
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				shortJob.join(0, monitor);
+			} catch (InterruptedException e1) {
+				Assert.fail("0.88");
+			} catch (OperationCanceledException e2) {
+				Assert.fail("0.99");
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 		t.start();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
@@ -965,19 +956,16 @@ public class JobTest extends AbstractJobTest {
 		// Create a thread that will join the test job
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					longJob.join(0, monitor);
-				} catch (InterruptedException e) {
-					Assert.fail("0.88");
-				} catch (OperationCanceledException e) {
-					// expected
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				longJob.join(0, monitor);
+			} catch (InterruptedException e1) {
+				Assert.fail("0.88");
+			} catch (OperationCanceledException e2) {
+				// expected
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 		t.start();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
@@ -996,15 +984,12 @@ public class JobTest extends AbstractJobTest {
 
 	public void testJoinInterruptNonUIThread() throws InterruptedException {
 		final Job job = new TestJob("job", 1000, 100);
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				job.schedule();
-				try {
-					job.join();
-				} catch (InterruptedException e) {
-					job.cancel();
-				}
+		Thread t = new Thread(() -> {
+			job.schedule();
+			try {
+				job.join();
+			} catch (InterruptedException e) {
+				job.cancel();
 			}
 		});
 		t.start();
@@ -1017,15 +1002,12 @@ public class JobTest extends AbstractJobTest {
 
 	public void testJoinInterruptUIThread() throws InterruptedException {
 		final Job job = new TestJob("job", 1000, 100);
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				job.schedule();
-				try {
-					job.join();
-				} catch (InterruptedException e) {
-					job.cancel();
-				}
+		Thread t = new Thread(() -> {
+			job.schedule();
+			try {
+				job.join();
+			} catch (InterruptedException e) {
+				job.cancel();
 			}
 		});
 		try {
@@ -1083,17 +1065,14 @@ public class JobTest extends AbstractJobTest {
 		});
 		final int[] status = new int[1];
 		//create a thread that will join the job
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					shortJob.join();
-				} catch (InterruptedException e) {
-					Assert.fail("0.99");
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				shortJob.join();
+			} catch (InterruptedException e) {
+				Assert.fail("0.99");
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 		//schedule the job and then fork the thread to join it
 		shortJob.schedule();
@@ -1144,17 +1123,14 @@ public class JobTest extends AbstractJobTest {
 		shortJob.addJobChangeListener(listener);
 		final int[] status = new int[1];
 		//create a thread that will join the job
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					shortJob.join();
-				} catch (InterruptedException e) {
-					Assert.fail("0.99");
-				}
-				status[0] = TestBarrier.STATUS_DONE;
+		Thread t = new Thread(() -> {
+			status[0] = TestBarrier.STATUS_START;
+			try {
+				shortJob.join();
+			} catch (InterruptedException e) {
+				Assert.fail("0.99");
 			}
+			status[0] = TestBarrier.STATUS_DONE;
 		});
 		//schedule the job and then fork the thread to join it
 		shortJob.schedule();

@@ -342,12 +342,9 @@ public abstract class Plugin implements BundleActivator {
 		// won't force the PreferenceForwarder class to be loaded (which triggers Preferences plugin
 		// activation).
 		final Preferences[] preferencesCopy = new Preferences[1];
-		Runnable innerCall = new Runnable() {
-			@Override
-			public void run() {
-				preferencesCopy[0] = new org.eclipse.core.internal.preferences.legacy.PreferenceForwarder(this, bundleCopy.getSymbolicName());
-			}
-		};
+		Runnable innerCall = () -> preferencesCopy[0] = new org.eclipse.core.internal.preferences.legacy.PreferenceForwarder(
+				this, bundleCopy.getSymbolicName());
+
 		innerCall.run();
 		preferences = preferencesCopy[0];
 		return preferences;
@@ -382,15 +379,13 @@ public abstract class Plugin implements BundleActivator {
 		// an inner class to avoid class loading (and then activation of the Preferences plugin)
 		// as the Plugin class is loaded.
 		final Preferences preferencesCopy = preferences;
-		Runnable innerCall = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					((org.eclipse.core.internal.preferences.legacy.PreferenceForwarder) preferencesCopy).flush();
-				} catch (org.osgi.service.prefs.BackingStoreException e) {
-					IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.preferences_saveProblems, e);
-					InternalPlatform.getDefault().log(status);
-				}
+		Runnable innerCall = () -> {
+			try {
+				((org.eclipse.core.internal.preferences.legacy.PreferenceForwarder) preferencesCopy).flush();
+			} catch (org.osgi.service.prefs.BackingStoreException e) {
+				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
+						Messages.preferences_saveProblems, e);
+				InternalPlatform.getDefault().log(status);
 			}
 		};
 		innerCall.run();
