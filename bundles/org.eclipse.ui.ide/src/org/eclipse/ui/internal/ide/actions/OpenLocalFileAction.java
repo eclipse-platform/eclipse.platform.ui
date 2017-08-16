@@ -76,7 +76,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 
 	@Override
 	public void run() {
-		FileDialog dialog =  new FileDialog(window.getShell(), SWT.OPEN | SWT.MULTI);
+		FileDialog dialog =  new FileDialog(window.getShell(), SWT.OPEN | SWT.MULTI | SWT.SHEET);
 		dialog.setText(IDEWorkbenchMessages.OpenLocalFileAction_title);
 		dialog.setFilterPath(filterPath);
 		dialog.open();

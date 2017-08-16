@@ -137,7 +137,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		browseButton = SWTUtil.createButton(composite, Messages.browse);
 		browseButton.setFont(font);
 		browseButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+			FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.SHEET);
 			dialog.setText(Messages.browseMessage);
 
 			String fname = browserLocationTextfield.getText();

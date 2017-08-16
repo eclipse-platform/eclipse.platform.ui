@@ -369,7 +369,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			final List<String> existingPaths = WebBrowserUtil.getExternalBrowserPaths();
 
 			// select a target directory for the search
-			DirectoryDialog dialog = new DirectoryDialog(getShell());
+			DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
 			dialog.setMessage(Messages.selectDirectory);
 			dialog.setText(Messages.directoryDialogTitle);
 
