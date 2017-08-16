@@ -16,6 +16,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  *     Mickael Istria (Red Hat Inc.) - Bug 469918
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 487297
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 520926
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -1084,9 +1085,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @return true if the close succeeded, and false otherwise
 	 */
 	private boolean busyClose(final boolean force) {
-		// Fire an E4 lifecycle notification
-		UIEvents.publishEvent(UIEvents.UILifeCycle.APP_SHUTDOWN_STARTED, application);
-
 		// notify the advisor of preShutdown and allow it to veto if not forced
 		isClosing = advisor.preShutdown();
 		if (!force && !isClosing) {
@@ -1170,6 +1168,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 		if (!force && !isClosing) {
 			return false;
 		}
+
+		// Fire an E4 lifecycle notification.
+		// Bug 520926: This event must be fired after all veto chances have passed:
+		UIEvents.publishEvent(UIEvents.UILifeCycle.APP_SHUTDOWN_STARTED, application);
 
 		shutdown();
 
