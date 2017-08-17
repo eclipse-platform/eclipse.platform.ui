@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Dirk Fauth and others.
+ * Copyright (c) 2012, 2017 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class ResourceBundleHelper {
 	 * @return the resource bundle
 	 */
 	public static ResourceBundle getResourceBundleForUri(String contributorURI, Locale locale,
-		BundleLocalization localization) {
+			BundleLocalization localization) {
 		if (contributorURI == null) {
 			return null;
 		}
@@ -151,7 +151,7 @@ public class ResourceBundleHelper {
 						if (logService != null)
 						{
 							logService.log(LogService.LOG_ERROR,
-								"Failed to load specified ResourceBundle: " + contributorURI, e); //$NON-NLS-1$
+									"Failed to load specified ResourceBundle: " + contributorURI, e); //$NON-NLS-1$
 						}
 					}
 				}
@@ -226,7 +226,7 @@ public class ResourceBundleHelper {
 			// to achieve this we first search without a fallback to the default locale
 			try {
 				resourceBundle = ResourceBundle.getBundle(baseName, locale, loader,
-					ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
+						ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
 			} catch (final MissingResourceException e) {
 				// do nothing
 			}
@@ -235,7 +235,7 @@ public class ResourceBundleHelper {
 			if (resourceBundle == null) {
 				try {
 					resourceBundle = ResourceBundle.getBundle(baseName, Locale.getDefault(), loader,
-						ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
+							ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
 				} catch (final MissingResourceException e) {
 					// do nothing
 				}
@@ -302,7 +302,7 @@ public class ResourceBundleHelper {
 	 */
 	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale, Bundle bundle) {
 		return getEquinoxResourceBundle(baseName, locale,
-			new BundleResourceBundleControl(bundle, true), new BundleResourceBundleControl(bundle, false));
+				new BundleResourceBundleControl(bundle, true), new BundleResourceBundleControl(bundle, false));
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class ResourceBundleHelper {
 	 * @see ResourceBundle#getBundle(String, Locale, Control)
 	 */
 	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale, Control withFallback,
-		Control withoutFallback) {
+			Control withoutFallback) {
 		ResourceBundle resourceBundle = null;
 
 		final String equinoxLocale = getEquinoxRootLocale();
@@ -469,7 +469,7 @@ public class ResourceBundleHelper {
 
 		final String[] localeParts = str.split("_"); //$NON-NLS-1$
 		if (localeParts.length == 0 || localeParts.length > 3
-			|| localeParts.length == 1 && localeParts[0].length() == 0) {
+				|| localeParts.length == 1 && localeParts[0].length() == 0) {
 			throw new IllegalArgumentException("Invalid locale format: " + str); //$NON-NLS-1$
 		}
 		if (localeParts[0].length() == 1 || localeParts[0].length() > 2) {
@@ -547,8 +547,8 @@ public class ResourceBundleHelper {
 
 		@Override
 		public ResourceBundle newBundle(String baseName, Locale locale,
-			String format, ClassLoader loader, boolean reload)
-				throws IllegalAccessException, InstantiationException, IOException {
+				String format, ClassLoader loader, boolean reload)
+						throws IllegalAccessException, InstantiationException, IOException {
 
 			final String bundleName = toBundleName(baseName, locale);
 			ResourceBundle bundle = null;
@@ -557,23 +557,23 @@ public class ResourceBundleHelper {
 				InputStream stream = null;
 				try {
 					stream = AccessController.doPrivileged(
-						new PrivilegedExceptionAction<InputStream>() {
-							@Override
-							public InputStream run() throws IOException {
-								InputStream is = null;
-								final URL url = osgiBundle.getEntry(resourceName);
-								if (url != null) {
-									final URLConnection connection = url.openConnection();
-									if (connection != null) {
-										// Disable caches to get fresh data for
-										// reloading.
-										connection.setUseCaches(false);
-										is = connection.getInputStream();
+							new PrivilegedExceptionAction<InputStream>() {
+								@Override
+								public InputStream run() throws IOException {
+									InputStream is = null;
+									final URL url = osgiBundle.getEntry(resourceName);
+									if (url != null) {
+										final URLConnection connection = url.openConnection();
+										if (connection != null) {
+											// Disable caches to get fresh data for
+											// reloading.
+											connection.setUseCaches(false);
+											is = connection.getInputStream();
+										}
 									}
+									return is;
 								}
-								return is;
-							}
-						});
+							});
 				} catch (final PrivilegedActionException e) {
 					throw (IOException) e.getException();
 				}

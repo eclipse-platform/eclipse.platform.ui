@@ -1,6 +1,5 @@
 package org.eclipse.e4.tools.services;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
@@ -28,20 +27,11 @@ public abstract class BasicResourceProvider implements IResourceProviderService 
 		final URL url = FileLocator.find(context.getBundle(), new Path(properties.get(key)), null);
 
 		if (url != null) {
-			InputStream stream = null;
-			try {
-				stream = url.openStream();
+			try (InputStream stream = url.openStream()) {
 				return new Image(display, stream);
 			} catch (final Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (final IOException e) {
-					}
-				}
 			}
 		}
 

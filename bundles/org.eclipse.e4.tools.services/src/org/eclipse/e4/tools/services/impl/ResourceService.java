@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 BestSolution.at and others.
+ * Copyright (c) 2011, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class ResourceService implements IResourceService {
 	}
 
 	static class PooledResource<T extends Resource> implements
-		IPooledResource<T> {
+	IPooledResource<T> {
 		private final Display display;
 		private int count;
 		private T resource;
@@ -54,7 +54,7 @@ public class ResourceService implements IResourceService {
 		private ResourceService resourceService;
 
 		PooledResource(Display display, ResourceService resourceService,
-			String id, T resource) {
+				String id, T resource) {
 			this.display = display;
 			this.id = id;
 			this.count = 1;
@@ -105,9 +105,9 @@ public class ResourceService implements IResourceService {
 		public Image getImage(String key) throws CoreException {
 			if (resourceService == null) {
 				throw new CoreException(
-					new Status(IStatus.ERROR,
-						ToolsServicesActivator.PLUGIN_ID,
-						Messages.ResourceService_PoolDisposed));
+						new Status(IStatus.ERROR,
+								ToolsServicesActivator.PLUGIN_ID,
+								Messages.ResourceService_PoolDisposed));
 			}
 			IPooledResource<Image> image = null;
 
@@ -128,9 +128,9 @@ public class ResourceService implements IResourceService {
 		public Font getFont(String key) throws CoreException {
 			if (resourceService == null) {
 				throw new CoreException(
-					new Status(IStatus.ERROR,
-						ToolsServicesActivator.PLUGIN_ID,
-						Messages.ResourceService_PoolDisposed));
+						new Status(IStatus.ERROR,
+								ToolsServicesActivator.PLUGIN_ID,
+								Messages.ResourceService_PoolDisposed));
 			}
 
 			IPooledResource<Font> font = null;
@@ -150,9 +150,9 @@ public class ResourceService implements IResourceService {
 		public Color getColor(String key) throws CoreException {
 			if (resourceService == null) {
 				throw new CoreException(
-					new Status(IStatus.ERROR,
-						ToolsServicesActivator.PLUGIN_ID,
-						Messages.ResourceService_PoolDisposed));
+						new Status(IStatus.ERROR,
+								ToolsServicesActivator.PLUGIN_ID,
+								Messages.ResourceService_PoolDisposed));
 			}
 			IPooledResource<Color> color = null;
 
@@ -164,7 +164,7 @@ public class ResourceService implements IResourceService {
 
 			if (color == null) {
 				color = resourceService.getColor(display,
-					key);
+						key);
 				pooledColors.add(color);
 			}
 			return color.getResource();
@@ -269,7 +269,7 @@ public class ResourceService implements IResourceService {
 
 	@SuppressWarnings("unchecked")
 	private <R extends Resource> PooledResource<R> loadResource(
-		Display display, String key, Type type) {
+			Display display, String key, Type type) {
 		DisplayPool p = displayPool.get(display);
 		PooledResource<R> resource = null;
 
@@ -287,7 +287,7 @@ public class ResourceService implements IResourceService {
 			resource.count++;
 		} else {
 			resource = new PooledResource<>(display, this, key,
-				(R) lookupResource(display, key, type));
+					(R) lookupResource(display, key, type));
 
 			if (p == null) {
 				p = new DisplayPool();
@@ -328,17 +328,17 @@ public class ResourceService implements IResourceService {
 			}
 		}
 		throw new IllegalArgumentException(Messages.ResourceService_NoProvider + key
-			+ "'."); //$NON-NLS-1$
+				+ "'."); //$NON-NLS-1$
 	}
 
 	private IResourceProviderService lookupOSGI(String key) {
 		try {
 			final Collection<ServiceReference<IResourceProviderService>> refs = context
-				.getServiceReferences(IResourceProviderService.class, "(" //$NON-NLS-1$
-					+ key + "=*)"); //$NON-NLS-1$
+					.getServiceReferences(IResourceProviderService.class, "(" //$NON-NLS-1$
+							+ key + "=*)"); //$NON-NLS-1$
 			if (!refs.isEmpty()) {
 				final ServiceReference<IResourceProviderService> ref = refs
-					.iterator().next();
+						.iterator().next();
 				return context.getService(ref);
 			}
 		} catch (final InvalidSyntaxException e) {
