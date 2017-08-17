@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,8 @@ import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
@@ -194,8 +190,6 @@ import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
@@ -208,12 +202,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -230,8 +220,6 @@ import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -246,7 +234,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
@@ -401,13 +388,7 @@ public class ModelEditor implements IGotoObject {
 				protected void updateResourceBundle() {
 					super.updateResourceBundle();
 					if (viewer != null) {
-						viewer.getControl().getDisplay().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								viewer.refresh();
-							}
-						});
+						viewer.getControl().getDisplay().asyncExec(() -> viewer.refresh());
 					}
 				}
 			};
@@ -418,13 +399,7 @@ public class ModelEditor implements IGotoObject {
 
 		// This is a workaround until Bug 437207 is merged.
 		// @PersistState will not be invoked.
-		composite.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent arg0) {
-				persistState();
-			}
-		});
+		composite.addDisposeListener(arg0 -> persistState());
 	}
 
 	@PersistState
@@ -437,13 +412,9 @@ public class ModelEditor implements IGotoObject {
 	@PostConstruct
 	void postCreate(Composite composite) {
 		if (project == null) {
-			keyListener = new Listener() {
-
-				@Override
-				public void handleEvent(Event event) {
-					if ((event.stateMask & SWT.ALT) == SWT.ALT) {
-						findAndHighlight(context.get(Display.class).getFocusControl());
-					}
+			keyListener = event -> {
+				if ((event.stateMask & SWT.ALT) == SWT.ALT) {
+					findAndHighlight(context.get(Display.class).getFocusControl());
 				}
 			};
 			context.get(Display.class).addFilter(SWT.MouseUp, keyListener);
@@ -619,62 +590,49 @@ public class ModelEditor implements IGotoObject {
 				}
 			}
 		});
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					final IStructuredSelection s = (IStructuredSelection) event.getSelection();
-					if (s.getFirstElement() instanceof EObject) {
-						final EObject obj = (EObject) s.getFirstElement();
-						final AbstractComponentEditor editor = getEditor(obj.eClass());
-						if (editor != null) {
-							currentEditor = editor;
-							sectionHeaderLabel.setText(editor.getLabel(obj));
-							iconLabel.setImage(editor.getImage(obj));
-							obsManager.runAndCollect(new Runnable() {
-
-								@Override
-								public void run() {
-									final Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
-									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
-									layout.topControl = comp;
-									contentContainer.layout(true);
-								}
-							});
-						}
-					} else {
-						final VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
-						final AbstractComponentEditor editor = virtualEditors.get(entry.getId());
-						if (editor != null) {
-							currentEditor = editor;
-							sectionHeaderLabel.setText(editor.getLabel(entry));
-							iconLabel.setImage(editor.getImage(entry));
-							obsManager.runAndCollect(new Runnable() {
-
-								@Override
-								public void run() {
-									final Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
-									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
-									layout.topControl = comp;
-									contentContainer.layout(true);
-								}
-
-							});
-						}
+		viewer.addSelectionChangedListener(event -> {
+			if (!event.getSelection().isEmpty()) {
+				final IStructuredSelection s = (IStructuredSelection) event.getSelection();
+				if (s.getFirstElement() instanceof EObject) {
+					final EObject obj = (EObject) s.getFirstElement();
+					final AbstractComponentEditor editor1 = getEditor(obj.eClass());
+					if (editor1 != null) {
+						currentEditor = editor1;
+						sectionHeaderLabel.setText(editor1.getLabel(obj));
+						iconLabel.setImage(editor1.getImage(obj));
+						obsManager.runAndCollect(() -> {
+							final Composite comp = editor1.getEditor(contentContainer, s.getFirstElement());
+							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
+							layout.topControl = comp;
+							contentContainer.layout(true);
+						});
 					}
-
-					// Rectangle r = scrolling.getClientArea();
-					// scrolling.setMinSize(contentContainer.computeSize(r.width,
-					// SWT.DEFAULT));
-					// scrolling.setOrigin(0, 0);
-					// scrolling.layout(true, true);
-
-					if (selectionService != null) {
-						selectionService.setSelection(s.getFirstElement());
+				} else {
+					final VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
+					final AbstractComponentEditor editor2 = virtualEditors.get(entry.getId());
+					if (editor2 != null) {
+						currentEditor = editor2;
+						sectionHeaderLabel.setText(editor2.getLabel(entry));
+						iconLabel.setImage(editor2.getImage(entry));
+						obsManager.runAndCollect(() -> {
+							final Composite comp = editor2.getEditor(contentContainer, s.getFirstElement());
+							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
+							layout.topControl = comp;
+							contentContainer.layout(true);
+						});
 					}
-
 				}
+
+				// Rectangle r = scrolling.getClientArea();
+				// scrolling.setMinSize(contentContainer.computeSize(r.width,
+				// SWT.DEFAULT));
+				// scrolling.setOrigin(0, 0);
+				// scrolling.layout(true, true);
+
+				if (selectionService != null) {
+					selectionService.setSelection(s.getFirstElement());
+				}
+
 			}
 		});
 
@@ -682,283 +640,279 @@ public class ModelEditor implements IGotoObject {
 
 		final MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
-		mgr.addMenuListener(new IMenuListener() {
+		mgr.addMenuListener(manager -> {
+			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final List<?> listOfSelections = s.toList();
+			final int noSelected = listOfSelections.size();
 
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-				final List<?> listOfSelections = s.toList();
-				final int noSelected = listOfSelections.size();
-
-				boolean addSeparator = false;
-				if (!s.isEmpty() && noSelected == 1) {
-					List<Action> actions;
-					if (s.getFirstElement() instanceof VirtualEntry<?>) {
-						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
-								.getActions(s.getFirstElement());
-						if (actions.size() > 0) {
-							final MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
-							for (final Action a : actions) {
-								addSeparator = true;
-								addMenu.add(a);
-							}
-							manager.add(addMenu);
-						}
-
-						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
-								.getActionsImport(s.getFirstElement());
-						if (actions.size() > 0) {
-							final MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
-							for (final Action a : actions) {
-								addSeparator = true;
-								menu.add(a);
-							}
-							manager.add(menu);
-						}
-
-						if (addSeparator) {
-							manager.add(new Separator());
-						}
-
-					} else {
-
-						final EObject o = (EObject) s.getFirstElement();
-						final AbstractComponentEditor editor = getEditor(o.eClass());
-
-						// Build Add Child menu
-						if (editor != null) {
-							actions = new ArrayList<>(editor.getActions(s.getFirstElement()));
-						} else {
-							actions = new ArrayList<>();
-						}
-
-						if (actions.size() > 0) {
-							final MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
-							for (final Action a : actions) {
-								addSeparator = true;
-								addMenu.add(a);
-							}
-							manager.add(addMenu);
-						}
-
-						// Build import menu
-						if (editor != null) {
-							actions = new ArrayList<>(editor.getActionsImport(s.getFirstElement()));
-						} else {
-							actions = new ArrayList<>();
-						}
-
-						if (actions.size() > 0) {
-							// TODO WIM - extract nls
-							final MenuManager menu = new MenuManager(messages.ModelEditor_Import3x);
-							for (final Action a : actions) {
-								addSeparator = true;
-								menu.add(a);
-							}
-							manager.add(menu);
-						}
-
-						if (o.eContainer() != null) {
+			boolean addSeparator = false;
+			if (!s.isEmpty() && noSelected == 1) {
+				List<Action> actions;
+				if (s.getFirstElement() instanceof VirtualEntry<?>) {
+					actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
+							.getActions(s.getFirstElement());
+					if (actions.size() > 0) {
+						final MenuManager addMenu1 = new MenuManager(messages.ModelEditor_AddChild);
+						for (final Action a1 : actions) {
 							addSeparator = true;
-							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(
-									resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
-								@Override
-								public void run() {
-									final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), o);
-									if (cmd.canExecute()) {
-										modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-									}
-								}
-							});
+							addMenu1.add(a1);
 						}
+						manager.add(addMenu1);
 					}
-				}
-				// multi selection
-				if (noSelected > 0) {
-					if (!isModelFragment() && modelExtractor != null) {
-						manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor
-								.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+
+					actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
+							.getActionsImport(s.getFirstElement());
+					if (actions.size() > 0) {
+						final MenuManager menu1 = new MenuManager(messages.ModelEditor_Import3x);
+						for (final Action a2 : actions) {
+							addSeparator = true;
+							menu1.add(a2);
+						}
+						manager.add(menu1);
+					}
+
+					if (addSeparator) {
+						manager.add(new Separator());
+					}
+
+				} else {
+
+					final EObject o = (EObject) s.getFirstElement();
+					final AbstractComponentEditor editor = getEditor(o.eClass());
+
+					// Build Add Child menu
+					if (editor != null) {
+						actions = new ArrayList<>(editor.getActions(s.getFirstElement()));
+					} else {
+						actions = new ArrayList<>();
+					}
+
+					if (actions.size() > 0) {
+						final MenuManager addMenu2 = new MenuManager(messages.ModelEditor_AddChild);
+						for (final Action a3 : actions) {
+							addSeparator = true;
+							addMenu2.add(a3);
+						}
+						manager.add(addMenu2);
+					}
+
+					// Build import menu
+					if (editor != null) {
+						actions = new ArrayList<>(editor.getActionsImport(s.getFirstElement()));
+					} else {
+						actions = new ArrayList<>();
+					}
+
+					if (actions.size() > 0) {
+						// TODO WIM - extract nls
+						final MenuManager menu2 = new MenuManager(messages.ModelEditor_Import3x);
+						for (final Action a4 : actions) {
+							addSeparator = true;
+							menu2.add(a4);
+						}
+						manager.add(menu2);
+					}
+
+					if (o.eContainer() != null) {
+						addSeparator = true;
+						manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor
+								.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
 							@Override
 							public void run() {
-								final ArrayList<MApplicationElement> maes = new ArrayList<>();
-								for (final Object objSelect : listOfSelections) {
-									EObject container = null;
-									if (objSelect instanceof VirtualEntry<?>) {
+								final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), o);
+								if (cmd.canExecute()) {
+									modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+								}
+							}
+						});
+					}
+				}
+			}
+			// multi selection
+			if (noSelected > 0) {
+				if (!isModelFragment() && modelExtractor != null) {
+					manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor
+							.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
+						@Override
+						public void run() {
+							final ArrayList<MApplicationElement> maes = new ArrayList<>();
+							for (final Object objSelect : listOfSelections) {
+								EObject container = null;
+								if (objSelect instanceof VirtualEntry<?>) {
 
-										final VirtualEntry<?> ve = (VirtualEntry<?>) objSelect;
-										container = (EObject) ve.getOriginalParent();
-										final IObservableList list = ve.getList();
-										final Iterator<?> iterator = list.iterator();
-										while (iterator.hasNext()) {
-											maes.add((MApplicationElement) iterator.next());
-										}
-
-									} else {
-										container = ((EObject) objSelect).eContainer();
-										final MApplicationElement objSelect2 = (MApplicationElement) objSelect;
-										if (!(objSelect2 instanceof MApplication)) {
-											maes.add(objSelect2);
-										} else {
-											// can't extract application
-											return;
-										}
-
+									final VirtualEntry<?> ve = (VirtualEntry<?>) objSelect;
+									container = (EObject) ve.getOriginalParent();
+									final IObservableList list = ve.getList();
+									final Iterator<?> iterator = list.iterator();
+									while (iterator.hasNext()) {
+										maes.add((MApplicationElement) iterator.next());
 									}
 
-									final String containerId = ((MApplicationElement) container).getElementId();
-									if (containerId == null || containerId.length() == 0) {
-										MessageDialog.openError(viewer.getControl().getShell(), null,
-												messages.ModelEditor_ExtractFragment_NoParentId);
-
+								} else {
+									container = ((EObject) objSelect).eContainer();
+									final MApplicationElement objSelect2 = (MApplicationElement) objSelect;
+									if (!(objSelect2 instanceof MApplication)) {
+										maes.add(objSelect2);
+									} else {
+										// can't extract application
 										return;
 									}
 
 								}
 
-								if (modelExtractor.extract(viewer.getControl().getShell(), project, maes)) {
-									final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), maes);
-									if (cmd.canExecute()) {
-										modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-									}
+								final String containerId = ((MApplicationElement) container).getElementId();
+								if (containerId == null || containerId.length() == 0) {
+									MessageDialog.openError(viewer.getControl().getShell(), null,
+											messages.ModelEditor_ExtractFragment_NoParentId);
+
+									return;
 								}
 
 							}
-						});
-					}
 
-				}
-
-				final IExtensionRegistry registry = RegistryFactory.getRegistry();
-				final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
-				final IConfigurationElement[] elements = extPoint.getConfigurationElements();
-
-				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement
-						&& noSelected == 1) {
-					if (addSeparator) {
-						manager.add(new Separator());
-					}
-
-					addSeparator = false;
-
-					final MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
-					manager.add(scriptExecute);
-					for (final IConfigurationElement e : elements) {
-						final IConfigurationElement le = e;
-						scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
-							@Override
-							public void run() {
-								try {
-									final MApplicationElement o = (MApplicationElement) s.getFirstElement();
-									final IScriptingSupport support = (IScriptingSupport) le
-											.createExecutableExtension("class"); //$NON-NLS-1$
-									IEclipseContext ctx = null;
-									if (project == null) {
-										if (o instanceof MContext) {
-											ctx = ((MContext) o).getContext();
-										} else {
-											ctx = ModelUtils.getContainingContext(o);
-										}
-									}
-
-									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ctx);
-								} catch (final CoreException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+							if (modelExtractor.extract(viewer.getControl().getShell(), project, maes)) {
+								final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), maes);
+								if (cmd.canExecute()) {
+									modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 								}
 							}
-						});
-					}
+
+						}
+					});
 				}
 
-				if (project != null) {
+			}
 
-					if (addSeparator) {
-						manager.add(new Separator());
-					}
+			final IExtensionRegistry registry = RegistryFactory.getRegistry();
+			final IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
+			final IConfigurationElement[] elements = extPoint.getConfigurationElements();
 
-					final Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
+			if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement
+					&& noSelected == 1) {
+				if (addSeparator) {
+					manager.add(new Separator());
+				}
+
+				addSeparator = false;
+
+				final MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
+				manager.add(scriptExecute);
+				for (final IConfigurationElement e : elements) {
+					final IConfigurationElement le = e;
+					scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
 						@Override
 						public void run() {
-							final ExternalizeStringHandler h = ContextInjectionFactory
-									.make(ExternalizeStringHandler.class, context);
-							ContextInjectionFactory.invoke(h, Execute.class, context);
-						}
-					};
-
-					final Action extIdAction = new Action(messages.ModelEditor_ExportIds) {
-						@Override
-						public void run() {
-							final ExportIdsHandler h = ContextInjectionFactory.make(ExportIdsHandler.class, context);
-							ContextInjectionFactory.invoke(h, Execute.class, context);
-						}
-					};
-
-					manager.add(nlsAction);
-					manager.add(extIdAction);
-				} else {
-					if (addSeparator) {
-						manager.add(new Separator());
-					}
-
-					if (s.getFirstElement() instanceof MUIElement) {
-						final MUIElement el = (MUIElement) s.getFirstElement();
-						if (el.getWidget() instanceof Control) {
-							manager.add(new Action(messages.ModelEditor_ShowControl) {
-
-								@Override
-								public void run() {
-									ControlHighlighter.show((Control) el.getWidget());
+							try {
+								final MApplicationElement o = (MApplicationElement) s.getFirstElement();
+								final IScriptingSupport support = (IScriptingSupport) le
+										.createExecutableExtension("class"); //$NON-NLS-1$
+								IEclipseContext ctx = null;
+								if (project == null) {
+									if (o instanceof MContext) {
+										ctx = ((MContext) o).getContext();
+									} else {
+										ctx = ModelUtils.getContainingContext(o);
+									}
 								}
-							});
 
+								support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ctx);
+							} catch (final CoreException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
-					}
-
+					});
 				}
+			}
+
+			if (project != null) {
 
 				if (addSeparator) {
 					manager.add(new Separator());
 				}
 
-				final Action expandAction = new Action(messages.ModelEditor_ExpandSubtree) {
+				final Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
 					@Override
 					public void run() {
-						if (!s.isEmpty()) {
-							if (viewer.getExpandedState(s.getFirstElement())) {
-								viewer.collapseToLevel(s.getFirstElement(), AbstractTreeViewer.ALL_LEVELS);
-							} else {
-								viewer.expandToLevel(s.getFirstElement(), AbstractTreeViewer.ALL_LEVELS);
-							}
-						}
+						final ExternalizeStringHandler h = ContextInjectionFactory.make(ExternalizeStringHandler.class,
+								context);
+						ContextInjectionFactory.invoke(h, Execute.class, context);
 					}
 				};
 
-				manager.add(expandAction);
+				final Action extIdAction = new Action(messages.ModelEditor_ExportIds) {
+					@Override
+					public void run() {
+						final ExportIdsHandler h = ContextInjectionFactory.make(ExportIdsHandler.class, context);
+						ContextInjectionFactory.invoke(h, Execute.class, context);
+					}
+				};
 
-				if (s.getFirstElement() instanceof EObject) {
+				manager.add(nlsAction);
+				manager.add(extIdAction);
+			} else {
+				if (addSeparator) {
 					manager.add(new Separator());
-					final EObject el = (EObject) s.getFirstElement();
-					final Action gotoXmiAction = new Action(messages.ModelEditor_goto_xmi) {
-						@Override
-						public void run() {
-							gotoEObject(TAB_XMI, el);
-						}
-					};
-					manager.add(gotoXmiAction);
+				}
 
-					if (listTab != null) {
-						if (EmfUtil.getAttribute(el, "elementId") != null) { //$NON-NLS-1$
-							final Action gotoListAction = new Action(messages.ModelEditor_goto_list) {
-								@Override
-								public void run() {
-									gotoEObject(TAB_LIST, el);
-								}
-							};
-							manager.add(gotoListAction);
+				if (s.getFirstElement() instanceof MUIElement) {
+					final MUIElement el1 = (MUIElement) s.getFirstElement();
+					if (el1.getWidget() instanceof Control) {
+						manager.add(new Action(messages.ModelEditor_ShowControl) {
+
+							@Override
+							public void run() {
+								ControlHighlighter.show((Control) el1.getWidget());
+							}
+						});
+
+					}
+				}
+
+			}
+
+			if (addSeparator) {
+				manager.add(new Separator());
+			}
+
+			final Action expandAction = new Action(messages.ModelEditor_ExpandSubtree) {
+				@Override
+				public void run() {
+					if (!s.isEmpty()) {
+						if (viewer.getExpandedState(s.getFirstElement())) {
+							viewer.collapseToLevel(s.getFirstElement(), AbstractTreeViewer.ALL_LEVELS);
+						} else {
+							viewer.expandToLevel(s.getFirstElement(), AbstractTreeViewer.ALL_LEVELS);
 						}
 					}
-
 				}
+			};
+
+			manager.add(expandAction);
+
+			if (s.getFirstElement() instanceof EObject) {
+				manager.add(new Separator());
+				final EObject el2 = (EObject) s.getFirstElement();
+				final Action gotoXmiAction = new Action(messages.ModelEditor_goto_xmi) {
+					@Override
+					public void run() {
+						gotoEObject(TAB_XMI, el2);
+					}
+				};
+				manager.add(gotoXmiAction);
+
+				if (listTab != null) {
+					if (EmfUtil.getAttribute(el2, "elementId") != null) { //$NON-NLS-1$
+						final Action gotoListAction = new Action(messages.ModelEditor_goto_list) {
+							@Override
+							public void run() {
+								gotoEObject(TAB_LIST, el2);
+							}
+						};
+						manager.add(gotoListAction);
+					}
+				}
+
 			}
 		});
 
@@ -983,24 +937,16 @@ public class ModelEditor implements IGotoObject {
 			@Override
 			public void treeExpanded(final TreeExpansionEvent event) {
 				if (mod1Down) {
-					viewer.getTree().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							viewer.expandToLevel(event.getElement(), AbstractTreeViewer.ALL_LEVELS);
-						}
-					});
+					viewer.getTree().getDisplay()
+					.asyncExec(() -> viewer.expandToLevel(event.getElement(), AbstractTreeViewer.ALL_LEVELS));
 				}
 			}
 
 			@Override
 			public void treeCollapsed(final TreeExpansionEvent event) {
 				if (mod1Down) {
-					viewer.getTree().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							viewer.collapseToLevel(event.getElement(), AbstractTreeViewer.ALL_LEVELS);
-						}
-					});
+					viewer.getTree().getDisplay()
+					.asyncExec(() -> viewer.collapseToLevel(event.getElement(), AbstractTreeViewer.ALL_LEVELS));
 				}
 			}
 		});
@@ -1126,56 +1072,42 @@ public class ModelEditor implements IGotoObject {
 
 		final WritableSet clearedSet = new WritableSet();
 
-		contentProvider.getKnownElements().addSetChangeListener(new ISetChangeListener() {
-
-			@Override
-			public void handleSetChange(SetChangeEvent event) {
-				for (final Object o : event.diff.getAdditions()) {
-					if (o instanceof EObject) {
-						clearedSet.add(o);
-					}
+		contentProvider.getKnownElements().addSetChangeListener(event -> {
+			for (final Object o1 : event.diff.getAdditions()) {
+				if (o1 instanceof EObject) {
+					clearedSet.add(o1);
 				}
+			}
 
-				for (final Object o : event.diff.getRemovals()) {
-					if (o instanceof EObject) {
-						clearedSet.remove(o);
-					}
+			for (final Object o2 : event.diff.getRemovals()) {
+				if (o2 instanceof EObject) {
+					clearedSet.remove(o2);
 				}
 			}
 		});
 
 		for (final FeaturePath p : labelFeaturePaths) {
 			final IObservableMap map = EMFProperties.value(p).observeDetail(clearedSet);
-			map.addMapChangeListener(new IMapChangeListener() {
-
-				@Override
-				public void handleMapChange(MapChangeEvent event) {
-					viewer.update(event.diff.getChangedKeys().toArray(), null);
-				}
-			});
+			map.addMapChangeListener(event -> viewer.update(event.diff.getChangedKeys().toArray(), null));
 		}
 
 		viewer.setInput(modelProvider.getRoot());
 		viewer.setAutoExpandLevel(2);
 		viewer.expandToLevel(viewer.getAutoExpandLevel());
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				final TreeViewer viewer = (TreeViewer) event.getViewer();
-				final IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
-				final Object selectedNode = thisSelection.getFirstElement();
-				if (mod1Down) {
-					if (viewer.getExpandedState(selectedNode)) {
-						viewer.setExpandedState(selectedNode, false);
-					} else {
-						viewer.expandToLevel(selectedNode, AbstractTreeViewer.ALL_LEVELS);
-					}
+		viewer.addDoubleClickListener(event -> {
+			final TreeViewer viewer1 = (TreeViewer) event.getViewer();
+			final IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
+			final Object selectedNode = thisSelection.getFirstElement();
+			if (mod1Down) {
+				if (viewer1.getExpandedState(selectedNode)) {
+					viewer1.setExpandedState(selectedNode, false);
 				} else {
-					viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
+					viewer1.expandToLevel(selectedNode, AbstractTreeViewer.ALL_LEVELS);
 				}
-
+			} else {
+				viewer1.setExpandedState(selectedNode, !viewer1.getExpandedState(selectedNode));
 			}
+
 		});
 
 		// Effect of filtered tree implementation (bug 391086)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,8 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.widgets.Control;
 
@@ -84,40 +81,26 @@ public class IdGenerator {
 				}
 			});
 
-			control.addDisposeListener(new DisposeListener() {
-
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					stopGenerating();
-				}
-			});
+			control.addDisposeListener(e -> stopGenerating());
 		}
 
 		observableValue2 = evpId.observe(master.getValue());
-		observableValue2.addValueChangeListener(listener2 = new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (!ignore) {
-					stopGenerating();
-				}
+		observableValue2.addValueChangeListener(listener2 = event -> {
+			if (!ignore) {
+				stopGenerating();
 			}
 		});
 
 		observableValue = ebpLabel.observe(master.getValue());
-		observableValue.addValueChangeListener(listener = new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				String labelValue = (String) ebpLabel.getValue(master.getValue());
-				if (labelValue == null) {
-					labelValue = ""; //$NON-NLS-1$
-				}
-				final String trimmedIdEnding = trimToLowercase(labelValue);
-				ignore = true;
-				evpId.setValue(master.getValue(), baseId + trimmedIdEnding);
-				ignore = false;
+		observableValue.addValueChangeListener(listener = event -> {
+			String labelValue = (String) ebpLabel.getValue(master.getValue());
+			if (labelValue == null) {
+				labelValue = ""; //$NON-NLS-1$
 			}
+			final String trimmedIdEnding = trimToLowercase(labelValue);
+			ignore = true;
+			evpId.setValue(master.getValue(), baseId + trimmedIdEnding);
+			ignore = false;
 		});
 
 	}

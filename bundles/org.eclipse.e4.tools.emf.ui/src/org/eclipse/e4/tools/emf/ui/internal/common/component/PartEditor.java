@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
@@ -62,8 +60,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -250,14 +246,10 @@ public class PartEditor extends AbstractComponentEditor {
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.addModifyListener(new ModifyListener() {
-
-				@Override
-				public void modifyText(ModifyEvent e) {
-					// lnk might be disposed if else branch above taken
-					if (lnk != null) {
-						lnk.setToolTipText(((Text) e.getSource()).getText());
-					}
+			t.addModifyListener(e -> {
+				// lnk might be disposed if else branch above taken
+				if (lnk != null) {
+					lnk.setToolTipText(((Text) e.getSource()).getText());
 				}
 			});
 			final Binding binding = context.bindValue(
@@ -433,23 +425,19 @@ public class PartEditor extends AbstractComponentEditor {
 			list.add(0, window.getToolbar());
 		}
 
-		PART__TOOLBAR.observe(element).addValueChangeListener(new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (event.diff.getOldValue() != null) {
-					list.remove(event.diff.getOldValue());
-					if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {
-						createRemoveToolBar.setSelection(false);
-					}
-
+		PART__TOOLBAR.observe(element).addValueChangeListener(event -> {
+			if (event.diff.getOldValue() != null) {
+				list.remove(event.diff.getOldValue());
+				if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {
+					createRemoveToolBar.setSelection(false);
 				}
 
-				if (event.diff.getNewValue() != null) {
-					list.add(0, event.diff.getNewValue());
-					if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {
-						createRemoveToolBar.setSelection(true);
-					}
+			}
+
+			if (event.diff.getNewValue() != null) {
+				list.add(0, event.diff.getNewValue());
+				if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {
+					createRemoveToolBar.setSelection(true);
 				}
 			}
 		});

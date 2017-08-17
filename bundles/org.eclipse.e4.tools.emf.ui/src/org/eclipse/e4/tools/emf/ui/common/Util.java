@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -398,34 +396,30 @@ public class Util {
 
 	public static final void addDecoration(Control control, Binding binding) {
 		final ControlDecoration dec = new ControlDecoration(control, SWT.BOTTOM);
-		binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {
+		binding.getValidationStatus().addValueChangeListener(event -> {
+			final IStatus s = (IStatus) event.getObservableValue().getValue();
+			if (s.isOK()) {
+				dec.setDescriptionText(null);
+				dec.setImage(null);
+			} else {
+				dec.setDescriptionText(s.getMessage());
 
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				final IStatus s = (IStatus) event.getObservableValue().getValue();
-				if (s.isOK()) {
-					dec.setDescriptionText(null);
-					dec.setImage(null);
-				} else {
-					dec.setDescriptionText(s.getMessage());
-
-					String fieldDecorationID = null;
-					switch (s.getSeverity()) {
-					case IStatus.INFO:
-						fieldDecorationID = FieldDecorationRegistry.DEC_INFORMATION;
-						break;
-					case IStatus.WARNING:
-						fieldDecorationID = FieldDecorationRegistry.DEC_WARNING;
-						break;
-					case IStatus.ERROR:
-					case IStatus.CANCEL:
-						fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
-						break;
-					}
-					final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
-							.getFieldDecoration(fieldDecorationID);
-					dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
+				String fieldDecorationID = null;
+				switch (s.getSeverity()) {
+				case IStatus.INFO:
+					fieldDecorationID = FieldDecorationRegistry.DEC_INFORMATION;
+					break;
+				case IStatus.WARNING:
+					fieldDecorationID = FieldDecorationRegistry.DEC_WARNING;
+					break;
+				case IStatus.ERROR:
+				case IStatus.CANCEL:
+					fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
+					break;
 				}
+				final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
+						.getFieldDecoration(fieldDecorationID);
+				dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
 			}
 		});
 	}

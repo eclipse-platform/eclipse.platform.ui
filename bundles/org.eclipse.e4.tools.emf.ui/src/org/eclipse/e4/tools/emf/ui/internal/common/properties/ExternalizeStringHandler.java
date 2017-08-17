@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import javax.inject.Named;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -226,15 +228,14 @@ public class ExternalizeStringHandler {
 						b.append(e.key + " = " + e.value + System.getProperty("line.separator")); //$NON-NLS-1$//$NON-NLS-2$
 					}
 
-					ByteArrayInputStream stream = new ByteArrayInputStream(b.toString().getBytes());
-					if (f.exists()) {
-						f.appendContents(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
-					} else {
-						createParent(f.getParent());
-						f.create(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
+					try (ByteArrayInputStream stream = new ByteArrayInputStream(b.toString().getBytes())) {
+						if (f.exists()) {
+							f.appendContents(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
+						} else {
+							createParent(f.getParent());
+							f.create(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
+						}
 					}
-
-					stream.close();
 
 					for (Object o : els) {
 						Entry e = (Entry) o;
@@ -280,9 +281,9 @@ public class ExternalizeStringHandler {
 				IFile f = getBasePropertyFile();
 				if (f.exists()) {
 
-					InputStream in = f.getContents();
-					prop.load(in);
-					in.close();
+					try (InputStream in = f.getContents()) {
+						prop.load(in);
+					}
 				}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block

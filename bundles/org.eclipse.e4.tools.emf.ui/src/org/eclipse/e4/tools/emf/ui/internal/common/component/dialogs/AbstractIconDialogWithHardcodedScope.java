@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.resources.IFile;
@@ -167,23 +168,12 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 				Image img = icons.get(file);
 				if (img == null) {
-					InputStream in = null;
-					try {
-						in = file.getContents();
+					try (InputStream in = file.getContents()) {
 						img = new Image(cell.getControl().getDisplay(), in);
 						icons.put(file, img);
-					} catch (CoreException e) {
+					} catch (CoreException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} finally {
-						if (in != null) {
-							try {
-								in.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
 					}
 				}
 
@@ -274,10 +264,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 		IFile f = project.getFile("/META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (f != null && f.exists()) {
-			BufferedReader r = null;
-			try {
-				InputStream s = f.getContents();
-				r = new BufferedReader(new InputStreamReader(s));
+			try (InputStream s = f.getContents(); BufferedReader r = new BufferedReader(new InputStreamReader(s));) {
 				String line;
 				while ((line = r.readLine()) != null) {
 					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
@@ -295,15 +282,6 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				if (r != null) {
-					try {
-						r.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
 			}
 		}
 		return null;
@@ -375,9 +353,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 					// Only search target bundle if specified
 					String bundle = (String) context.get("bundle"); //$NON-NLS-1$
 					if (E.notEmpty(bundle)) {
-						InputStream inputStream = null;
-						try {
-							inputStream = iFile.getContents();
+						try (InputStream inputStream = iFile.getContents();) {
 							Properties props = new Properties();
 							props.load(inputStream);
 							String name = props.getProperty("Bundle-SymbolicName"); //$NON-NLS-1$
@@ -388,11 +364,6 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						} finally {
-							try {
-								inputStream.close();
-							} catch (Exception ex) {
-							}
 						}
 					}
 					project.accept(new IResourceVisitor() {

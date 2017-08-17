@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
@@ -367,22 +365,18 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 			list.add(0, item.getMenu());
 		}
 
-		TOOL_ITEM__MENU.observe(element).addValueChangeListener(new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (event.diff.getOldValue() != null) {
-					list.remove(event.diff.getOldValue());
-					if (getMaster().getValue() == element && !createRemoveMenu.isDisposed()) {
-						createRemoveMenu.setSelection(false);
-					}
+		TOOL_ITEM__MENU.observe(element).addValueChangeListener(event -> {
+			if (event.diff.getOldValue() != null) {
+				list.remove(event.diff.getOldValue());
+				if (getMaster().getValue() == element && !createRemoveMenu.isDisposed()) {
+					createRemoveMenu.setSelection(false);
 				}
+			}
 
-				if (event.diff.getNewValue() != null) {
-					list.add(0, event.diff.getNewValue());
-					if (getMaster().getValue() == element && !createRemoveMenu.isDisposed()) {
-						createRemoveMenu.setSelection(true);
-					}
+			if (event.diff.getNewValue() != null) {
+				list.add(0, event.diff.getNewValue());
+				if (getMaster().getValue() == element && !createRemoveMenu.isDisposed()) {
+					createRemoveMenu.setSelection(true);
 				}
 			}
 		});

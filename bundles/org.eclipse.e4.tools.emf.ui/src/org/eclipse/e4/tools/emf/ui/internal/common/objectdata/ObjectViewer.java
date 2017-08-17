@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -22,8 +20,6 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -45,23 +41,19 @@ import org.eclipse.swt.widgets.Label;
 
 public class ObjectViewer {
 	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue master,
-		IResourcePool resourcePool, final Messages messages) {
+			IResourcePool resourcePool, final Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new ContentProviderImpl());
 		viewer.setLabelProvider(new LabelProviderImpl(resourcePool));
 		viewer.setComparator(new ViewerComparatorImpl());
 		final IEMFValueProperty property = EMFProperties.value(feature);
 		final IObservableValue value = property.observeDetail(master);
-		value.addValueChangeListener(new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (event.diff.getNewValue() != null) {
-					viewer.setInput(Collections.singleton(new JavaObject(event.diff.getNewValue())));
-					viewer.expandToLevel(2);
-				} else {
-					viewer.setInput(Collections.emptyList());
-				}
+		value.addValueChangeListener(event -> {
+			if (event.diff.getNewValue() != null) {
+				viewer.setInput(Collections.singleton(new JavaObject(event.diff.getNewValue())));
+				viewer.expandToLevel(2);
+			} else {
+				viewer.setInput(Collections.emptyList());
 			}
 		});
 
@@ -72,45 +64,40 @@ public class ObjectViewer {
 		if (elements.length > 0) {
 			final MenuManager mgr = new MenuManager();
 			mgr.setRemoveAllWhenShown(true);
-			mgr.addMenuListener(new IMenuListener() {
+			mgr.addMenuListener(manager -> {
+				if (viewer.getSelection().isEmpty()) {
+					return;
+				}
 
-				@Override
-				public void menuAboutToShow(IMenuManager manager) {
-					if (viewer.getSelection().isEmpty()) {
-						return;
-					}
-
-					final MenuManager scriptExecute = new MenuManager(messages.ObjectViewer_Script);
-					mgr.add(scriptExecute);
-					for (final IConfigurationElement e : elements) {
-						final IConfigurationElement le = e;
-						scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
-							@Override
-							public void run() {
-								try {
-									final IScriptingSupport support = (IScriptingSupport) le
+				final MenuManager scriptExecute = new MenuManager(messages.ObjectViewer_Script);
+				mgr.add(scriptExecute);
+				for (final IConfigurationElement e : elements) {
+					final IConfigurationElement le = e;
+					scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
+						@Override
+						public void run() {
+							try {
+								final IScriptingSupport support = (IScriptingSupport) le
 										.createExecutableExtension("class"); //$NON-NLS-1$
-									final Object o = ((IStructuredSelection) viewer.getSelection())
-										.getFirstElement();
-									Object mainObject = null;
-									if (o instanceof JavaObject) {
-										mainObject = ((JavaObject) o).getInstance();
-									} else if (o instanceof JavaAttribute) {
-										mainObject = ((JavaAttribute) o).getFieldValue();
-									}
-
-									if (mainObject != null) {
-										final MApplicationElement value = (MApplicationElement) master.getValue();
-										support.openEditor(viewer.getControl().getShell(), mainObject,
-											ModelUtils.getContainingContext(value));
-									}
-								} catch (final CoreException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+								final Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+								Object mainObject = null;
+								if (o instanceof JavaObject) {
+									mainObject = ((JavaObject) o).getInstance();
+								} else if (o instanceof JavaAttribute) {
+									mainObject = ((JavaAttribute) o).getFieldValue();
 								}
+
+								if (mainObject != null) {
+									final MApplicationElement value = (MApplicationElement) master.getValue();
+									support.openEditor(viewer.getControl().getShell(), mainObject,
+											ModelUtils.getContainingContext(value));
+								}
+							} catch (final CoreException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-						});
-					}
+						}
+					});
 				}
 			});
 
@@ -126,7 +113,7 @@ public class ObjectViewer {
 		private final Messages messages;
 
 		protected TooltipSupportImpl(ColumnViewer viewer, int style, boolean manualActivation,
-			IResourcePool resourcePool, Messages messages) {
+				IResourcePool resourcePool, Messages messages) {
 			super(viewer, style, manualActivation);
 			this.resourcePool = resourcePool;
 			this.messages = messages;

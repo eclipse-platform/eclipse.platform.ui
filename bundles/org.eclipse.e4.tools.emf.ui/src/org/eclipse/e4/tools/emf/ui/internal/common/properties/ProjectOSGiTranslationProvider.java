@@ -213,18 +213,18 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 * @see IFile#getContents()
 	 */
 	public static String extractBasenameFromManifest(IFile file) throws CoreException, IOException {
-		final InputStream in = file.getContents();
-		final BufferedReader r = new BufferedReader(new InputStreamReader(in));
-		String line;
 		String newValue = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
-		while ((line = r.readLine()) != null) {
-			if (line.startsWith(Constants.BUNDLE_LOCALIZATION)) {
-				newValue = line.substring(Constants.BUNDLE_LOCALIZATION.length() + 1).trim();
-				break;
+		try (final InputStream in = file.getContents();
+				final BufferedReader r = new BufferedReader(new InputStreamReader(in))) {
+			String line;
+			while ((line = r.readLine()) != null) {
+				if (line.startsWith(Constants.BUNDLE_LOCALIZATION)) {
+					newValue = line.substring(Constants.BUNDLE_LOCALIZATION.length() + 1).trim();
+					break;
+				}
 			}
-		}
 
-		r.close();
+		}
 		return newValue;
 	}
 
@@ -233,7 +233,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 */
 	protected void updateResourceBundle() {
 		setResourceBundle(ResourceBundleHelper.getEquinoxResourceBundle(basename, locale,
-			new ProjectResourceBundleControl(true), new ProjectResourceBundleControl(false)));
+				new ProjectResourceBundleControl(true), new ProjectResourceBundleControl(false)));
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 
 		@Override
 		public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
-			boolean reload) throws IllegalAccessException, InstantiationException, IOException {
+				boolean reload) throws IllegalAccessException, InstantiationException, IOException {
 
 			final String bundleName = toBundleName(baseName, locale);
 			ResourceBundle bundle = null;

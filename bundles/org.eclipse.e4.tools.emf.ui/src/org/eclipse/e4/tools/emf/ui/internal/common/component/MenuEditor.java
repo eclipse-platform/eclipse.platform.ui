@@ -1,5 +1,5 @@
 /*******************************************************************************
- * f * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * f * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,13 +21,9 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
@@ -402,48 +398,38 @@ public class MenuEditor extends AbstractComponentEditor {
 			list.add(0, ((MUIElement) element).getVisibleWhen());
 		}
 
-		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
+		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(event -> {
+			if (event.diff.getOldValue() != null) {
+				list.remove(event.diff.getOldValue());
+			}
 
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (event.diff.getOldValue() != null) {
-					list.remove(event.diff.getOldValue());
-				}
-
-				if (event.diff.getNewValue() != null) {
-					list.add(0, event.diff.getNewValue());
-				}
+			if (event.diff.getNewValue() != null) {
+				list.add(0, event.diff.getNewValue());
 			}
 		});
 
 		final IObservableList l = ELEMENT_CONTAINER__CHILDREN.observe(element);
-		l.addListChangeListener(new IListChangeListener() {
+		l.addListChangeListener(event -> event.diff.accept(new ListDiffVisitor() {
 
 			@Override
-			public void handleListChange(ListChangeEvent event) {
-				event.diff.accept(new ListDiffVisitor() {
-
-					@Override
-					public void handleRemove(int index, Object element) {
-						list.remove(element);
-					}
-
-					@Override
-					public void handleMove(int oldIndex, int newIndex, Object element) {
-						if (list.get(0) instanceof MExpression) {
-							oldIndex += 1;
-							newIndex += 1;
-						}
-						list.move(oldIndex, newIndex);
-					}
-
-					@Override
-					public void handleAdd(int index, Object element) {
-						list.add(element);
-					}
-				});
+			public void handleRemove(int index, Object element) {
+				list.remove(element);
 			}
-		});
+
+			@Override
+			public void handleMove(int oldIndex, int newIndex, Object element) {
+				if (list.get(0) instanceof MExpression) {
+					oldIndex += 1;
+					newIndex += 1;
+				}
+				list.move(oldIndex, newIndex);
+			}
+
+			@Override
+			public void handleAdd(int index, Object element) {
+				list.add(element);
+			}
+		}));
 		list.addAll(l);
 
 		return list;

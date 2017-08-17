@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1033,15 +1033,12 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	public BundleModel loadBundleModel(IProject currentProject) throws CoreException {
 		final Document document = new Document();
-		final Scanner scanner = new Scanner(PDEProject.getManifest(currentProject).getContents());
-		try {
+		try (final Scanner scanner = new Scanner(PDEProject.getManifest(currentProject).getContents())) {
 			final String content = scanner.useDelimiter("\\Z").next(); //$NON-NLS-1$
 			document.set(content);
 			final BundleModel model = new BundleModel(document, false);
 			model.load();
 			return model;
-		} finally {
-			scanner.close();
 		}
 	}
 
@@ -1088,10 +1085,8 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		final IFile f = project.getFile("/META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (f != null && f.exists()) {
-			BufferedReader r = null;
-			try {
-				final InputStream s = f.getContents();
-				r = new BufferedReader(new InputStreamReader(s));
+			try (final InputStream s = f.getContents();
+					BufferedReader r = new BufferedReader(new InputStreamReader(s));) {
 				String line;
 				while ((line = r.readLine()) != null) {
 					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
@@ -1107,13 +1102,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				e.printStackTrace();
 			} catch (final IOException e) {
 				e.printStackTrace();
-			} finally {
-				if (r != null) {
-					try {
-						r.close();
-					} catch (final IOException e) {
-					}
-				}
 			}
 		}
 		return null;
@@ -1129,10 +1117,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		final File f = new File(new File(rootDirectory), "/META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (f.exists()) {
-			BufferedReader r = null;
-			try {
-				final InputStream s = new FileInputStream(f);
-				r = new BufferedReader(new InputStreamReader(s));
+			try (final InputStream s = new FileInputStream(f);
+					BufferedReader r = new BufferedReader(new InputStreamReader(s))) {
+
 				String line;
 				while ((line = r.readLine()) != null) {
 					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
@@ -1146,13 +1133,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				}
 			} catch (final IOException e) {
 				e.printStackTrace();
-			} finally {
-				if (r != null) {
-					try {
-						r.close();
-					} catch (final IOException e) {
-					}
-				}
 			}
 		}
 		return null;

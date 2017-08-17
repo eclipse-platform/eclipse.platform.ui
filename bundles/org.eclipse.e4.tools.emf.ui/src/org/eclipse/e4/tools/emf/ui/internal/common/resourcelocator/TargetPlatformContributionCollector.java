@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 							break;
 						}
 						monitor.subTask(Messages.TargetPlatformContributionCollector_Searching
-							+ " " + e.installLocation); //$NON-NLS-1$
+								+ " " + e.installLocation); //$NON-NLS-1$
 					}
 
 					if (E.notEmpty(filter.getBundles())) {
@@ -298,7 +298,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					final IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
 					final int total = projects.length + models.length;
 					monitor.beginTask(Messages.TargetPlatformContributionCollector_updatingTargetPlatformCache
-						+ cacheName + ")", total); //$NON-NLS-1$
+							+ cacheName + ")", total); //$NON-NLS-1$
 
 					for (final IProject pj : projects) {
 						if (monitor.isCanceled()) {
@@ -309,7 +309,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						monitor.worked(1);
 						TargetPlatformContributionCollector.this
 						.visit(monitor, FilteredContributionDialog.getBundle(rootDirectory), rootDirectory,
-							new File(rootDirectory));
+								new File(rootDirectory));
 					}
 
 					// load target platform bundles
@@ -428,7 +428,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						@Override
 						protected void createButtonsForButtonBar(Composite parent) {
 							final Button button = createButton(parent, 101,
-								Messages.TargetPlatformContributionCollector_RunInBackground, false);
+									Messages.TargetPlatformContributionCollector_RunInBackground, false);
 							// TODO JA
 							button.addSelectionListener(new SelectionAdapter() {
 								@Override
@@ -457,8 +457,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 							InterruptedException {
 								monitor
 								.beginTask(
-									Messages.TargetPlatformContributionCollector_WaitingForTargetPlatformIndexingToComplete,
-									IProgressMonitor.UNKNOWN);
+										Messages.TargetPlatformContributionCollector_WaitingForTargetPlatformIndexingToComplete,
+										IProgressMonitor.UNKNOWN);
 								while (job.getState() == Job.RUNNING && !runInBackground) {
 									Thread.sleep(100);
 								}
@@ -487,10 +487,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		final File f = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (f.exists() && f.isFile()) {
-			BufferedReader r = null;
-			try {
-				final InputStream s = new FileInputStream(f);
-				r = new BufferedReader(new InputStreamReader(s));
+			try (final InputStream s = new FileInputStream(f);
+					BufferedReader r = new BufferedReader(new InputStreamReader(s))) {
 				String line;
 				while ((line = r.readLine()) != null) {
 					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
@@ -504,13 +502,6 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 				}
 			} catch (final IOException e) {
 				e.printStackTrace();
-			} finally {
-				if (r != null) {
-					try {
-						r.close();
-					} catch (final IOException e) {
-					}
-				}
 			}
 		}
 		return null;
@@ -554,7 +545,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						e.path = ""; //$NON-NLS-1$
 					}
 					e.relativePath = Path
-						.fromOSString(file.getAbsolutePath().replace(e.installLocation, "")).makeRelative().toOSString(); //$NON-NLS-1$
+							.fromOSString(file.getAbsolutePath().replace(e.installLocation, "")).makeRelative().toOSString(); //$NON-NLS-1$
 
 					e.bundleSymName = bundleName;
 					// TODO we need project to strip source paths.
@@ -599,10 +590,10 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			outputDirectories.put(installLocation, ret);
 			try {
 				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(new File(installLocation + File.separator + ".classpath")); //$NON-NLS-1$
+						.parse(new File(installLocation + File.separator + ".classpath")); //$NON-NLS-1$
 				final XPath xp = XPathFactory.newInstance().newXPath();
 				final NodeList list = (NodeList) xp.evaluate(
-					"//classpathentry[@kind='output']/@path", doc, XPathConstants.NODESET); //$NON-NLS-1$
+						"//classpathentry[@kind='output']/@path", doc, XPathConstants.NODESET); //$NON-NLS-1$
 				for (int i = 0; i < list.getLength(); i++) {
 					final String value = list.item(i).getNodeValue();
 					ret.add(value);

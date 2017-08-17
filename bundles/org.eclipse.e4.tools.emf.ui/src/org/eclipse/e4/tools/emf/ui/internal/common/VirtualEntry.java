@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -36,15 +36,11 @@ public abstract class VirtualEntry<M> {
 		final IObservableList origList = property.observe(originalParent);
 		list.addAll(cleanedList(origList));
 
-		final IListChangeListener listener = new IListChangeListener() {
-
-			@Override
-			public void handleListChange(ListChangeEvent event) {
-				if (!VirtualEntry.this.list.isDisposed()) {
-					List<Object> clean = cleanedList(event.getObservableList());
-					ListDiff diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
-					diff.applyTo(VirtualEntry.this.list);
-				}
+		final IListChangeListener listener = event -> {
+			if (!VirtualEntry.this.list.isDisposed()) {
+				List<Object> clean = cleanedList(event.getObservableList());
+				ListDiff diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
+				diff.applyTo(VirtualEntry.this.list);
 			}
 		};
 

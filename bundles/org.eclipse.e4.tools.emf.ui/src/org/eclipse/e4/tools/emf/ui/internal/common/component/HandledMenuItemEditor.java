@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -119,17 +117,13 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			list.add(0, ((MHandledMenuItem) element).getVisibleWhen());
 		}
 
-		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
+		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(event -> {
+			if (event.diff.getOldValue() != null) {
+				list.remove(event.diff.getOldValue());
+			}
 
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (event.diff.getOldValue() != null) {
-					list.remove(event.diff.getOldValue());
-				}
-
-				if (event.diff.getNewValue() != null) {
-					list.add(0, event.diff.getNewValue());
-				}
+			if (event.diff.getNewValue() != null) {
+				list.add(0, event.diff.getNewValue());
 			}
 		});
 

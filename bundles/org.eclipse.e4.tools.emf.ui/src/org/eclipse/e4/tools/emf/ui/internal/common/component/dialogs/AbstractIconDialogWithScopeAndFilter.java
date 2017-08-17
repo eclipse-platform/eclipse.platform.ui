@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -176,23 +175,12 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 				Image img = icons.get(file);
 				if (img == null) {
-					InputStream in = null;
-					try {
-						in = file.getContents();
+					try (InputStream in = file.getContents()) {
 						img = new Image(cell.getControl().getDisplay(), in);
 						icons.put(file, img);
 					} catch (final Exception e) {
 						// e.printStackTrace();
 						return;
-					} finally {
-						if (in != null) {
-							try {
-								in.close();
-							} catch (final IOException e) {
-								// TODO Auto-generated catch block
-								// e.printStackTrace();
-							}
-						}
 					}
 				}
 
@@ -219,7 +207,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 					icons.put(file, img);
 				}
 				final int width = AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0)
-					.getWidth();
+						.getWidth();
 				if (img.getImageData().width > width) {
 					AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0)
 					.setWidth(img.getImageData().width);
@@ -435,7 +423,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 								if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
 									if (E.notEmpty(filter.getPackages())) {
 										if (!filter.getPackages().contains(
-											resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
+												resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
 											return false;
 										}
 									}

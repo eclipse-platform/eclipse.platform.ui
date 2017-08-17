@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 MEDEVIT, FHV and others.
+ * Copyright (c) 2014, 2017 MEDEVIT, FHV and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,16 +259,16 @@ public class ExportIdsHandler {
 					IResource resource = unit.getResource();
 					IFile file = (IFile) resource;
 
-					ByteArrayInputStream stream = new ByteArrayInputStream(content.toString().getBytes());
-					if (file.exists()) {
-						file.delete(true, new NullProgressMonitor());
+					try (ByteArrayInputStream stream = new ByteArrayInputStream(content.toString().getBytes())) {
+						if (file.exists()) {
+							file.delete(true, new NullProgressMonitor());
+						}
+
+						createParent(file.getParent());
+						// NPE
+						file.create(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
+
 					}
-
-					createParent(file.getParent());
-					// NPE
-					file.create(stream, IResource.KEEP_HISTORY, new NullProgressMonitor());
-
-					stream.close();
 					super.okPressed();
 				} catch (CoreException e) {
 					e.printStackTrace();

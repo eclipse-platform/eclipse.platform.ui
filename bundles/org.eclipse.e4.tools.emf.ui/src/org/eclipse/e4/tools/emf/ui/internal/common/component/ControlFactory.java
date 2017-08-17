@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,17 +19,12 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -80,10 +75,8 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -93,12 +86,8 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -163,18 +152,14 @@ public class ControlFactory {
 
 		TextPasteHandler.createFor(t);
 
-		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				final Object val = event.diff.getNewValue();
-				if (val != null && val instanceof EObject && !t.isDisposed()) {
-					final Resource res = ((EObject) val).eResource();
-					if (res instanceof E4XMIResource) {
-						final String v = ((E4XMIResource) res).getID((EObject) val);
-						if (v != null && v.trim().length() > 0) {
-							t.setText(v);
-						}
+		editor.getMaster().addValueChangeListener(event -> {
+			final Object val = event.diff.getNewValue();
+			if (val != null && val instanceof EObject && !t.isDisposed()) {
+				final Resource res = ((EObject) val).eResource();
+				if (res instanceof E4XMIResource) {
+					final String v = ((E4XMIResource) res).getID((EObject) val);
+					if (v != null && v.trim().length() > 0) {
+						t.setText(v);
 					}
 				}
 			}
@@ -355,13 +340,7 @@ public class ControlFactory {
 		final IEMFEditListProperty prop = EMFEditProperties.list(editor.getEditingDomain(), feature);
 		final IObservableList observableList = prop.observeDetail(editor.getMaster());
 		tableviewer.setInput(observableList);
-		observableList.addListChangeListener(new IListChangeListener() {
-
-			@Override
-			public void handleListChange(ListChangeEvent event) {
-				tableviewer.getTable().getColumn(0).pack();
-			}
-		});
+		observableList.addListChangeListener(event -> tableviewer.getTable().getColumn(0).pack());
 
 		return pickList;
 	}
@@ -415,25 +394,21 @@ public class ControlFactory {
 			final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
 					FieldDecorationRegistry.DEC_WARNING);
 			controlDecoration.setImage(fieldDecoration.getImage());
-			final IValidator iv = new IValidator() {
-
-				@Override
-				public IStatus validate(Object value) {
-					if (value == null) {
+			final IValidator iv = value -> {
+				if (value == null) {
+					controlDecoration.show();
+					return ValidationStatus.warning(warningText);
+				}
+				if (value instanceof String) {
+					final String text = (String) value;
+					if (text.trim().length() == 0) {
 						controlDecoration.show();
 						return ValidationStatus.warning(warningText);
 					}
-					if (value instanceof String) {
-						final String text = (String) value;
-						if (text.trim().length() == 0) {
-							controlDecoration.show();
-							return ValidationStatus.warning(warningText);
-						}
-					}
-
-					controlDecoration.hide();
-					return Status.OK_STATUS;
 				}
+
+				controlDecoration.hide();
+				return Status.OK_STATUS;
 			};
 			final UpdateValueStrategy acv = new UpdateValueStrategy().setAfterConvertValidator(iv);
 			context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master), acv, acv);
@@ -532,15 +507,11 @@ public class ControlFactory {
 		final IObservableValue uiObs = vProp.observe(viewer);
 		final IObservableValue mObs = EMFEditProperties.value(editor.getEditingDomain(),
 				UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT).observeDetail(editor.getMaster());
-		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				if (binding[0] != null) {
-					binding[0].dispose();
-				}
-
+		editor.getMaster().addValueChangeListener(event -> {
+			if (binding[0] != null) {
+				binding[0].dispose();
 			}
+
 		});
 
 		final IObservableList list = listProp.observeDetail(editor.getMaster());
@@ -574,13 +545,7 @@ public class ControlFactory {
 		});
 		viewer.setInput(list);
 
-		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
-
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				binding[0] = context.bindValue(uiObs, mObs);
-			}
-		});
+		editor.getMaster().addValueChangeListener(event -> binding[0] = context.bindValue(uiObs, mObs));
 	}
 
 	public static void createBindingContextWiget(Composite parent, final Messages Messages,
@@ -657,13 +622,9 @@ public class ControlFactory {
 		final IEMFListProperty prop = EMFProperties.list(feature);
 		viewer.setInput(prop.observeDetail(editor.getMaster()));
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				final String strSelected = (String) ((StructuredSelection) event.getSelection()).getFirstElement();
-				t.setText(strSelected != null ? strSelected : ""); //$NON-NLS-1$
-			}
+		viewer.addSelectionChangedListener(event -> {
+			final String strSelected = (String) ((StructuredSelection) event.getSelection()).getFirstElement();
+			t.setText(strSelected != null ? strSelected : ""); //$NON-NLS-1$
 		});
 
 		//
@@ -795,24 +756,17 @@ public class ControlFactory {
 	}
 
 	public static void attachFiltering(Text searchText, final TableViewer viewer, final PatternFilter filter) {
-		searchText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				filter.setPattern(((Text) e.widget).getText());
-				viewer.refresh();
-				if (viewer.getTable().getItemCount() > 0) {
-					final Object data = viewer.getTable().getItem(0).getData();
-					viewer.setSelection(new StructuredSelection(data));
-				}
+		searchText.addModifyListener(e -> {
+			filter.setPattern(((Text) e.widget).getText());
+			viewer.refresh();
+			if (viewer.getTable().getItemCount() > 0) {
+				final Object data = viewer.getTable().getItem(0).getData();
+				viewer.setSelection(new StructuredSelection(data));
 			}
 		});
-		searchText.addTraverseListener(new TraverseListener() {
-
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN && viewer.getTable().getItemCount() > 0) {
-					viewer.getControl().setFocus();
-				}
+		searchText.addTraverseListener(e -> {
+			if (e.keyCode == SWT.ARROW_DOWN && viewer.getTable().getItemCount() > 0) {
+				viewer.getControl().setFocus();
 			}
 		});
 	}
