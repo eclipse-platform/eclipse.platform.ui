@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011-2015 EclipseSource Muenchen GmbH and others.
+ * Copyright (c) 2011, 2017 EclipseSource Muenchen GmbH and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -77,7 +77,7 @@ public class FragmentExtractHelperTest {
 	@Test
 	public void testExtractSinglePart() {
 		createWindowWithPart();
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(part1);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
 		assertEquals(1, initialModel.getFragments().size());
@@ -108,7 +108,7 @@ public class FragmentExtractHelperTest {
 	 */
 	public void testExtractPlaceHolder() {
 		createWindowWithPlaceHolder();
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(placeholder);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
 		assertEquals(1, initialModel.getFragments().size());
@@ -140,7 +140,7 @@ public class FragmentExtractHelperTest {
 	public void testExtractCommandWithCategory() {
 		final MCommand command = createCommand();
 		final MCategory category = createCategoryForCommand(command);
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(command);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
 		assertEquals(1, initialModel.getFragments().size());
@@ -183,7 +183,7 @@ public class FragmentExtractHelperTest {
 	public void testExtractTwoPartsSameLocation() {
 		createWindowWithPart();
 		addSecondPart();
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(part1);
 		elementsToExtract.add(part2);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
@@ -198,7 +198,7 @@ public class FragmentExtractHelperTest {
 	@Test
 	public void testExtractHandlerWithoutCommand() {
 		createHandler();
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(handler1);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
 		assertEquals(1, initialModel.getFragments().size());
@@ -218,7 +218,7 @@ public class FragmentExtractHelperTest {
 	public void testExtractHandlerWithCommand() {
 		createHandler();
 		final MCommand command = createCommandLinkedWithHandler(handler1);
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(handler1);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
 		assertEquals(1, initialModel.getFragments().size());
@@ -262,7 +262,7 @@ public class FragmentExtractHelperTest {
 		createHandler2();
 		final MCommand command = createCommandLinkedWithHandler(handler1);
 		final MCommand command2 = createCommandLinkedWithHandler(handler2);
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(handler1);
 		elementsToExtract.add(handler2);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
@@ -296,7 +296,7 @@ public class FragmentExtractHelperTest {
 		createHandler2();
 		final MCommand command = createCommandLinkedWithHandler(handler1);
 		handler2.setCommand(command);
-		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<>();
 
 		FragmentExtractHelper.resolveImports(handler1, importCommands);
 		FragmentExtractHelper.resolveImports(handler2, importCommands);
@@ -317,7 +317,7 @@ public class FragmentExtractHelperTest {
 		final MCommand command = createCommand();
 		handledItem1.setCommand(command);
 		handledItem2.setCommand(command);
-		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<>();
 
 		FragmentExtractHelper.resolveImports(handledItem1, importCommands);
 		FragmentExtractHelper.resolveImports(handledItem2, importCommands);
@@ -344,7 +344,7 @@ public class FragmentExtractHelperTest {
 		part2.getBindingContexts().add(bindingContext1);
 
 
-		final HashMap<MApplicationElement, MApplicationElement> importCommands = new LinkedHashMap<MApplicationElement, MApplicationElement>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new LinkedHashMap<>();
 
 		FragmentExtractHelper.resolveImports(part, importCommands);
 		FragmentExtractHelper.resolveImports(part2, importCommands);
@@ -379,7 +379,7 @@ public class FragmentExtractHelperTest {
 		createHandler2();
 		final MCommand command = createCommandLinkedWithHandler(handler1);
 		handler2.setCommand(command);
-		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<MApplicationElement>();
+		final ArrayList<MApplicationElement> elementsToExtract = new ArrayList<>();
 		elementsToExtract.add(handler1);
 		elementsToExtract.add(handler2);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
