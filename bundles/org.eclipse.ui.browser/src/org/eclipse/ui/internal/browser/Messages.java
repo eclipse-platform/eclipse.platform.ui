@@ -34,6 +34,7 @@ public class Messages extends NLS {
 	public static String actionWebBrowserForward;
 	public static String actionWebBrowserStop;
 	public static String actionWebBrowserRefresh;
+	public static String actionWebBrowserAutoRefresh;
 	public static String dialogResourceDeletedTitle;
 	public static String dialogResourceDeletedMessage;
 	public static String dialogResourceDeletedIgnore;
