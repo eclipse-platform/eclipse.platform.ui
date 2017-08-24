@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,12 +79,7 @@ public class DecoratingObservableSet<E> extends
 	@Override
 	protected void firstListenerAdded() {
 		if (setChangeListener == null) {
-			setChangeListener = new ISetChangeListener<E>() {
-				@Override
-				public void handleSetChange(SetChangeEvent<? extends E> event) {
-					DecoratingObservableSet.this.handleSetChange(event);
-				}
-			};
+			setChangeListener = event -> DecoratingObservableSet.this.handleSetChange(event);
 		}
 		decorated.addSetChangeListener(setChangeListener);
 		super.firstListenerAdded();

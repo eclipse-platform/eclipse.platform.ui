@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,12 +87,7 @@ public class DecoratingObservableMap<K, V> extends DecoratingObservable
 	@Override
 	protected void firstListenerAdded() {
 		if (mapChangeListener == null) {
-			mapChangeListener = new IMapChangeListener<K, V>() {
-				@Override
-				public void handleMapChange(MapChangeEvent<? extends K, ? extends V> event) {
-					DecoratingObservableMap.this.handleMapChange(event);
-				}
-			};
+			mapChangeListener = event -> DecoratingObservableMap.this.handleMapChange(event);
 		}
 		decorated.addMapChangeListener(mapChangeListener);
 		super.firstListenerAdded();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,17 +21,14 @@ import java.util.ListIterator;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
@@ -51,30 +48,27 @@ public class ValidatedObservableList extends ObservableList {
 
 	private boolean updatingTarget = false;
 
-	private IListChangeListener targetChangeListener = new IListChangeListener() {
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			if (updatingTarget)
-				return;
-			IStatus status = (IStatus) validationStatus.getValue();
-			if (isValid(status)) {
-				if (stale) {
-					// this.stale means we are out of sync with target,
-					// so reset wrapped list to exactly mirror target
-					stale = false;
-					updateWrappedList(new ArrayList(target));
-				} else {
-					ListDiff diff = event.diff;
-					if (computeNextDiff) {
-						diff = Diffs.computeListDiff(wrappedList, target);
-						computeNextDiff = false;
-					}
-					applyDiff(diff, wrappedList);
-					fireListChange(diff);
-				}
+	private IListChangeListener targetChangeListener = event -> {
+		if (updatingTarget)
+			return;
+		IStatus status = (IStatus) validationStatus.getValue();
+		if (isValid(status)) {
+			if (stale) {
+				// this.stale means we are out of sync with target,
+				// so reset wrapped list to exactly mirror target
+				stale = false;
+				updateWrappedList(new ArrayList(target));
 			} else {
-				makeStale();
+				ListDiff diff = event.diff;
+				if (computeNextDiff) {
+					diff = Diffs.computeListDiff(wrappedList, target);
+					computeNextDiff = false;
+				}
+				applyDiff(diff, wrappedList);
+				fireListChange(diff);
 			}
+		} else {
+			makeStale();
 		}
 	};
 
@@ -82,28 +76,20 @@ public class ValidatedObservableList extends ObservableList {
 		return status.isOK() || status.matches(IStatus.INFO | IStatus.WARNING);
 	}
 
-	private IStaleListener targetStaleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
+	private IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener validationStatusChangeListener = new IValueChangeListener() {
-		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			IStatus oldStatus = (IStatus) event.diff.getOldValue();
-			IStatus newStatus = (IStatus) event.diff.getNewValue();
-			if (stale && !isValid(oldStatus) && isValid(newStatus)) {
-				// this.stale means we are out of sync with target,
-				// reset wrapped list to exactly mirror target
-				stale = false;
-				updateWrappedList(new ArrayList(target));
+	private IValueChangeListener validationStatusChangeListener = event -> {
+		IStatus oldStatus = (IStatus) event.diff.getOldValue();
+		IStatus newStatus = (IStatus) event.diff.getNewValue();
+		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
+			// this.stale means we are out of sync with target,
+			// reset wrapped list to exactly mirror target
+			stale = false;
+			updateWrappedList(new ArrayList(target));
 
-				// If the validation status becomes valid because of a change in
-				// target observable
-				computeNextDiff = true;
-			}
+			// If the validation status becomes valid because of a change in
+			// target observable
+			computeNextDiff = true;
 		}
 	};
 

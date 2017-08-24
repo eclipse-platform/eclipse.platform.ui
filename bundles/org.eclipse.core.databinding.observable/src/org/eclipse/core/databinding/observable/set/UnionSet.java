@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,21 +95,14 @@ public final class UnionSet<E> extends ObservableSet<E> {
 		this.stalenessTracker = new StalenessTracker(childSets.toArray(new IObservableSet[0]), stalenessConsumer);
 	}
 
-	private ISetChangeListener<E> childSetChangeListener = new ISetChangeListener<E>() {
-		@Override
-		public void handleSetChange(SetChangeEvent<? extends E> event) {
-			processAddsAndRemoves(event.diff.getAdditions(), event.diff.getRemovals());
-		}
-	};
+	private ISetChangeListener<E> childSetChangeListener = event -> processAddsAndRemoves(event.diff.getAdditions(),
+			event.diff.getRemovals());
 
-	private IStalenessConsumer stalenessConsumer = new IStalenessConsumer() {
-		@Override
-		public void setStale(boolean stale) {
-			boolean oldStale = UnionSet.this.stale;
-			UnionSet.this.stale = stale;
-			if (stale && !oldStale) {
-				fireStale();
-			}
+	private IStalenessConsumer stalenessConsumer = stale -> {
+		boolean oldStale = UnionSet.this.stale;
+		UnionSet.this.stale = stale;
+		if (stale && !oldStale) {
+			fireStale();
 		}
 	};
 

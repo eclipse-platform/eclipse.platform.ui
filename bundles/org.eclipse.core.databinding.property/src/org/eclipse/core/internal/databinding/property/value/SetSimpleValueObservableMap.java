@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,8 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.identity.IdentityMap;
@@ -60,29 +58,23 @@ public class SetSimpleValueObservableMap<S, K extends S, V> extends ComputedObse
 		this.detailProperty = valueProperty;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void firstListenerAdded() {
 		if (listener == null) {
-			listener = detailProperty.adaptListener(new ISimplePropertyListener<S, ValueDiff<? extends V>>() {
-				@Override
-				public void handleEvent(final SimplePropertyEvent<S, ValueDiff<? extends V>> event) {
-					if (!isDisposed() && !updating) {
-						getRealm().exec(new Runnable() {
-							@Override
-							public void run() {
-								@SuppressWarnings("unchecked")
-								K source = (K) event.getSource();
-								if (event.type == SimplePropertyEvent.CHANGE) {
-									notifyIfChanged(source);
-								} else if (event.type == SimplePropertyEvent.STALE) {
-									boolean wasStale = !staleKeys.isEmpty();
-									staleKeys.add(source);
-									if (!wasStale)
-										fireStale();
-								}
-							}
-						});
-					}
+			listener = detailProperty.adaptListener(event -> {
+				if (!isDisposed() && !updating) {
+					getRealm().exec(() -> {
+						K source = (K) event.getSource();
+						if (event.type == SimplePropertyEvent.CHANGE) {
+							notifyIfChanged(source);
+						} else if (event.type == SimplePropertyEvent.STALE) {
+							boolean wasStale = !staleKeys.isEmpty();
+							staleKeys.add(source);
+							if (!wasStale)
+								fireStale();
+						}
+					});
 				}
 			});
 		}

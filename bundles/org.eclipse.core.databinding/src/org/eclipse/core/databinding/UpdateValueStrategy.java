@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,13 +213,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 */
 	protected IValidator createValidator(Object fromType, Object toType) {
 		if (fromType == null || toType == null) {
-			return new IValidator() {
-
-				@Override
-				public IStatus validate(Object value) {
-					return Status.OK_STATUS;
-				}
-			};
+			return value -> Status.OK_STATUS;
 		}
 
 		return findValidator(fromType, toType);
@@ -546,19 +540,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 			if (result != null)
 				return result;
 			if (fromClass != null && toClass != null && fromClass == toClass) {
-				return new IValidator() {
-					@Override
-					public IStatus validate(Object value) {
-						return Status.OK_STATUS;
-					}
-				};
+				return value -> Status.OK_STATUS;
 			}
-			return new IValidator() {
-				@Override
-				public IStatus validate(Object value) {
-					return Status.OK_STATUS;
-				}
-			};
+			return value -> Status.OK_STATUS;
 		}
 	}
 

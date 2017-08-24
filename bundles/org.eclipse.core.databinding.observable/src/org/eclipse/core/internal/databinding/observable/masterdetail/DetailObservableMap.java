@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,18 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.DisposeEvent;
-import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -55,28 +51,22 @@ public class DetailObservableMap<M, K, V> extends ObservableMap<K, V>implements 
 	private Object detailKeyType;
 	private Object detailValueType;
 
-	private IValueChangeListener<M> masterChangeListener = new IValueChangeListener<M>() {
-		@Override
-		public void handleValueChange(ValueChangeEvent<? extends M> event) {
-			if (isDisposed())
-				return;
-			ObservableTracker.setIgnore(true);
-			try {
-				Map<K, V> oldMap = new HashMap<K, V>(wrappedMap);
-				updateDetailMap();
-				fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
-			} finally {
-				ObservableTracker.setIgnore(false);
-			}
+	private IValueChangeListener<M> masterChangeListener = event -> {
+		if (isDisposed())
+			return;
+		ObservableTracker.setIgnore(true);
+		try {
+			Map<K, V> oldMap = new HashMap<K, V>(wrappedMap);
+			updateDetailMap();
+			fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
+		} finally {
+			ObservableTracker.setIgnore(false);
 		}
 	};
 
-	private IMapChangeListener<K, V> detailChangeListener = new IMapChangeListener<K, V>() {
-		@Override
-		public void handleMapChange(MapChangeEvent<? extends K, ? extends V> event) {
-			if (!updating) {
-				fireMapChange(Diffs.unmodifiableDiff(event.diff));
-			}
+	private IMapChangeListener<K, V> detailChangeListener = event -> {
+		if (!updating) {
+			fireMapChange(Diffs.unmodifiableDiff(event.diff));
 		}
 	};
 
@@ -102,12 +92,7 @@ public class DetailObservableMap<M, K, V> extends ObservableMap<K, V>implements 
 		this.detailKeyType = keyType;
 		this.detailValueType = valueType;
 
-		master.addDisposeListener(new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent staleEvent) {
-				dispose();
-			}
-		});
+		master.addDisposeListener(staleEvent -> dispose());
 
 		ObservableTracker.setIgnore(true);
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ package org.eclipse.core.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -45,6 +44,7 @@ import org.eclipse.core.runtime.Status;
  *
  * @deprecated use <code>BeanProperties</code> instead
  */
+@Deprecated
 final public class BeansObservables {
 
 	/**
@@ -65,6 +65,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeValue(Object bean, String propertyName) {
 		return observeValue(Realm.getDefault(), bean, propertyName);
 	}
@@ -84,6 +85,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeValue(Realm realm, Object bean,
 			String propertyName) {
 		return BeanProperties.value(bean.getClass(), propertyName).observe(
@@ -107,6 +109,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(IObservableSet domain,
 			String propertyName) {
 		return BeanProperties.value(propertyName).observeDetail(domain);
@@ -127,6 +130,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class beanClass, String propertyName) {
 		return BeanProperties.value(beanClass, propertyName).observeDetail(
@@ -149,6 +153,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Realm realm, Object bean,
 			String propertyName) {
 		return observeMap(realm, bean, propertyName, null, null);
@@ -176,6 +181,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Realm realm, Object bean,
 			String propertyName, Class keyType, Class valueType) {
 		return BeanProperties.map(bean.getClass(), propertyName, keyType,
@@ -196,6 +202,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Object bean, String propertyName) {
 		return observeMap(Realm.getDefault(), bean, propertyName, null, null);
 	}
@@ -220,6 +227,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Object bean, String propertyName,
 			Class keyType, Class valueType) {
 		return observeMap(Realm.getDefault(), bean, propertyName, keyType,
@@ -244,6 +252,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap[] observeMaps(IObservableSet domain,
 			String[] propertyNames) {
 		IObservableMap[] result = new IObservableMap[propertyNames.length];
@@ -269,6 +278,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap[] observeMaps(IObservableSet domain,
 			Class beanClass, String[] propertyNames) {
 		IObservableMap[] result = new IObservableMap[propertyNames.length];
@@ -295,6 +305,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeList(Realm realm, Object bean,
 			String propertyName) {
 		return observeList(realm, bean, propertyName, null);
@@ -343,6 +354,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeList(Realm realm, Object bean,
 			String propertyName, Class elementType) {
 		return BeanProperties.list(bean.getClass(), propertyName, elementType)
@@ -391,6 +403,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Realm realm, Object bean,
 			String propertyName) {
 		return observeSet(realm, bean, propertyName, null);
@@ -410,6 +423,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Object bean, String propertyName) {
 		return observeSet(Realm.getDefault(), bean, propertyName);
 	}
@@ -426,6 +440,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory valueFactory(final Realm realm,
 			final String propertyName) {
 		return BeanProperties.value(propertyName).valueFactory(realm);
@@ -442,6 +457,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory valueFactory(String propertyName) {
 		return valueFactory(Realm.getDefault(), propertyName);
 	}
@@ -459,6 +475,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory listFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
 		return BeanProperties.list(propertyName, elementType)
@@ -477,6 +494,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory listFactory(String propertyName,
 			Class elementType) {
 		return listFactory(Realm.getDefault(), propertyName, elementType);
@@ -494,6 +512,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName) {
 		return BeanProperties.set(propertyName).setFactory(realm);
@@ -510,6 +529,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(String propertyName) {
 		return setFactory(Realm.getDefault(), propertyName);
 	}
@@ -579,6 +599,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			String propertyName, Class propertyType) {
 		Class beanClass = null;
@@ -652,6 +673,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			Class masterType, String propertyName, Class propertyType) {
 		return BeanProperties.value(masterType, propertyName, propertyType)
@@ -704,6 +726,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeDetailList(IObservableValue master,
 			String propertyName, Class propertyType) {
 		Class beanClass = null;
@@ -760,6 +783,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeDetailSet(IObservableValue master,
 			String propertyName, Class propertyType) {
 		Class beanClass = null;
@@ -806,6 +830,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeDetailMap(IObservableValue master,
 			String propertyName) {
 		Class beanClass = null;
@@ -840,6 +865,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Realm realm, Object bean,
 			String propertyName, Class elementType) {
 		return BeanProperties.set(bean.getClass(), propertyName, elementType)
@@ -870,6 +896,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Object bean, String propertyName,
 			Class elementType) {
 		return observeSet(Realm.getDefault(), bean, propertyName, elementType);
@@ -893,6 +920,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
 		return BeanProperties.set(propertyName, elementType).setFactory(realm);
@@ -935,15 +963,10 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setToMapFactory(final Class beanClass,
 			final String propertyName) {
-		return new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				return observeMap((IObservableSet) target, beanClass,
-						propertyName);
-			}
-		};
+		return target -> observeMap((IObservableSet) target, beanClass, propertyName);
 	}
 
 	/**
@@ -962,6 +985,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory mapPropertyFactory(final Realm realm,
 			final String propertyName) {
 		return BeanProperties.map(propertyName).mapFactory(realm);
@@ -980,6 +1004,7 @@ final public class BeansObservables {
 	 *
 	 * @deprecated use <code>BeanProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory mapPropertyFactory(String propertyName) {
 		return mapPropertyFactory(Realm.getDefault(), propertyName);
 	}

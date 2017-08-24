@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Cerner Corporation and others.
+ * Copyright (c) 2006, 2017 Cerner Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,7 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.value.DecoratingObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
 import org.eclipse.core.internal.databinding.observable.DelayedObservableValue;
@@ -724,12 +722,7 @@ public class Observables {
 	 */
 	public static <K, V> IObservableFactory<K, IObservableValue<V>> mapEntryValueFactory(
 			final IObservableMap<K, V> map, final Object valueType) {
-		return new IObservableFactory<K, IObservableValue<V>>() {
-			@Override
-			public IObservableValue<V> createObservable(K key) {
-				return observeMapEntry(map, key, valueType);
-			}
-		};
+		return key -> observeMapEntry(map, key, valueType);
 	}
 
 	/**
@@ -780,11 +773,6 @@ public class Observables {
 	public static <T> void pipe(IObservableValue<T> source,
 			final IObservableValue<? super T> destination) {
 		destination.setValue(source.getValue());
-		source.addValueChangeListener(new IValueChangeListener<T>() {
-			@Override
-			public void handleValueChange(ValueChangeEvent<? extends T> event) {
-				destination.setValue(event.diff.getNewValue());
-			}
-		});
+		source.addValueChangeListener(event -> destination.setValue(event.diff.getNewValue()));
 	}
 }

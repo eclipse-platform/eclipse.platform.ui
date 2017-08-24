@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -166,33 +165,15 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	@Override
 	protected void firstListenerAdded() {
 		if (listChangeListener == null) {
-			listChangeListener = new IListChangeListener<E>() {
-				@Override
-				public void handleListChange(final ListChangeEvent<? extends E> event) {
-					getRealm().exec(new Runnable() {
-						@Override
-						public void run() {
-							stale = null;
-							listChanged(event);
-							if (isStale())
-								fireStale();
-						}
-					});
-				}
-			};
+			listChangeListener = event -> getRealm().exec(() -> {
+				stale = null;
+				listChanged(event);
+				if (isStale())
+					fireStale();
+			});
 		}
 		if (staleListener == null) {
-			staleListener = new IStaleListener() {
-				@Override
-				public void handleStale(StaleEvent staleEvent) {
-					getRealm().exec(new Runnable() {
-						@Override
-						public void run() {
-							makeStale();
-						}
-					});
-				}
-			};
+			staleListener = staleEvent -> getRealm().exec(() -> makeStale());
 		}
 
 		for (IObservableList<E> list : lists) {

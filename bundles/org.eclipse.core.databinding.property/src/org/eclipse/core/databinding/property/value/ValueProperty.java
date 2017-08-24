@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,22 +116,12 @@ public abstract class ValueProperty<S, T> implements IValueProperty<S, T> {
 
 	@Override
 	public IObservableFactory<S, IObservableValue<T>> valueFactory() {
-		return new IObservableFactory<S, IObservableValue<T>>() {
-			@Override
-			public IObservableValue<T> createObservable(S target) {
-				return observe(target);
-			}
-		};
+		return target -> observe(target);
 	}
 
 	@Override
 	public IObservableFactory<S, IObservableValue<T>> valueFactory(final Realm realm) {
-		return new IObservableFactory<S, IObservableValue<T>>() {
-			@Override
-			public IObservableValue<T> createObservable(S target) {
-				return observe(realm, target);
-			}
-		};
+		return target -> observe(realm, target);
 	}
 
 	@Override

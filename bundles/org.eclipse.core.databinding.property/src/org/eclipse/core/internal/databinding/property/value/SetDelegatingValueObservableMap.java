@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -167,12 +166,7 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		}
 	};
 
-	private IStaleListener staleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
+	private IStaleListener staleListener = staleEvent -> fireStale();
 
 	/**
 	 * @param keySet

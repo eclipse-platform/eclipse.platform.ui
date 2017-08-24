@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Marko Topolnik and others.
+ * Copyright (c) 2008, 2017 Marko Topolnik and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,8 @@ package org.eclipse.core.internal.databinding.observable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 
@@ -39,33 +37,23 @@ public class MapEntryObservableValue<K, V> extends AbstractObservableValue<V> {
 	private K key;
 	private Object valueType;
 
-	private IMapChangeListener<K, V> changeListener = new IMapChangeListener<K, V>() {
-		@Override
-		public void handleMapChange(final MapChangeEvent<? extends K, ? extends V> event) {
-			if (event.diff.getAddedKeys().contains(key)) {
-				final V newValue = event.diff.getNewValue(key);
-				if (newValue != null) {
-					fireValueChange(Diffs.createValueDiff(null, newValue));
-				}
-			} else if (event.diff.getChangedKeys().contains(key)) {
-				fireValueChange(Diffs.createValueDiff(
-						event.diff.getOldValue(key),
-						event.diff.getNewValue(key)));
-			} else if (event.diff.getRemovedKeys().contains(key)) {
-				final V oldValue = event.diff.getOldValue(key);
-				if (oldValue != null) {
-					fireValueChange(Diffs.createValueDiff(oldValue, null));
-				}
+	private IMapChangeListener<K, V> changeListener = event -> {
+		if (event.diff.getAddedKeys().contains(key)) {
+			final V newValue = event.diff.getNewValue(key);
+			if (newValue != null) {
+				fireValueChange(Diffs.createValueDiff(null, newValue));
+			}
+		} else if (event.diff.getChangedKeys().contains(key)) {
+			fireValueChange(Diffs.createValueDiff(event.diff.getOldValue(key), event.diff.getNewValue(key)));
+		} else if (event.diff.getRemovedKeys().contains(key)) {
+			final V oldValue = event.diff.getOldValue(key);
+			if (oldValue != null) {
+				fireValueChange(Diffs.createValueDiff(oldValue, null));
 			}
 		}
 	};
 
-	private IStaleListener staleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
+	private IStaleListener staleListener = staleEvent -> fireStale();
 
 	/**
 	 * Creates a map entry observable.

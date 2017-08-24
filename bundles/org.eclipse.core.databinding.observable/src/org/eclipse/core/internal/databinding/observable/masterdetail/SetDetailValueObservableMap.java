@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Ovidio Mallo and others.
+ * Copyright (c) 2010, 2017 Ovidio Mallo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,10 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
 
 /**
@@ -43,13 +40,8 @@ public class SetDetailValueObservableMap<M, E> extends
 
 	private IdentitySet<IObservableValue<?>> staleDetailObservables = new IdentitySet<>();
 
-	private IStaleListener detailStaleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			addStaleDetailObservable((IObservableValue<?>) staleEvent
-					.getObservable());
-		}
-	};
+	private IStaleListener detailStaleListener = staleEvent -> addStaleDetailObservable(
+			(IObservableValue<?>) staleEvent.getObservable());
 
 	/**
 	 * @param masterKeySet
@@ -68,16 +60,12 @@ public class SetDetailValueObservableMap<M, E> extends
 	protected void hookListener(final M addedKey) {
 		final IObservableValue<E> detailValue = getDetailObservableValue(addedKey);
 
-		detailValue.addValueChangeListener(new IValueChangeListener<E>() {
-			@Override
-			public void handleValueChange(ValueChangeEvent<? extends E> event) {
-				if (!event.getObservableValue().isStale()) {
-					staleDetailObservables.remove(detailValue);
-				}
-
-				fireSingleChange(addedKey, event.diff.getOldValue(),
-						event.diff.getNewValue());
+		detailValue.addValueChangeListener(event -> {
+			if (!event.getObservableValue().isStale()) {
+				staleDetailObservables.remove(detailValue);
 			}
+
+			fireSingleChange(addedKey, event.diff.getOldValue(), event.diff.getNewValue());
 		});
 
 		detailValue.addStaleListener(detailStaleListener);

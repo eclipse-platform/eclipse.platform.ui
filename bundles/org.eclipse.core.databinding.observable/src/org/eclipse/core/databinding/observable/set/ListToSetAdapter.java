@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 
 /**
@@ -41,29 +40,25 @@ public class ListToSetAdapter<E> extends ObservableSet<E> {
 
 	private final IObservableList<E> list;
 
-	private IListChangeListener<E> listener = new IListChangeListener<E>() {
-
-		@Override
-		public void handleListChange(ListChangeEvent<? extends E> event) {
-			Set<E> added = new HashSet<>();
-			Set<E> removed = new HashSet<>();
-			ListDiffEntry<? extends E>[] differences = event.diff.getDifferences();
-			for (ListDiffEntry<? extends E> entry : differences) {
-				E element = entry.getElement();
-				if (entry.isAddition()) {
-					if (wrappedSet.add(element)) {
-						if (!removed.remove(element))
-							added.add(element);
-					}
-				} else {
-					if (wrappedSet.remove(element)) {
-						removed.add(element);
-						added.remove(element);
-					}
+	private IListChangeListener<E> listener = event -> {
+		Set<E> added = new HashSet<>();
+		Set<E> removed = new HashSet<>();
+		ListDiffEntry<? extends E>[] differences = event.diff.getDifferences();
+		for (ListDiffEntry<? extends E> entry : differences) {
+			E element = entry.getElement();
+			if (entry.isAddition()) {
+				if (wrappedSet.add(element)) {
+					if (!removed.remove(element))
+						added.add(element);
+				}
+			} else {
+				if (wrappedSet.remove(element)) {
+					removed.add(element);
+					added.remove(element);
 				}
 			}
-			fireSetChange(Diffs.createSetDiff(added, removed));
 		}
+		fireSetChange(Diffs.createSetDiff(added, removed));
 	};
 
 	/**

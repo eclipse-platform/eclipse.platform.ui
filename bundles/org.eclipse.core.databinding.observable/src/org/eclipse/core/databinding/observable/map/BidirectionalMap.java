@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,12 +36,7 @@ import org.eclipse.core.databinding.observable.Realm;
 @Deprecated
 // OK to ignore warnings in deprecated class
 public class BidirectionalMap<K, V> extends ObservableMap<K, V> {
-	private IMapChangeListener<K, V> mapListener = new IMapChangeListener<K, V>() {
-		@Override
-		public void handleMapChange(MapChangeEvent<? extends K, ? extends V> event) {
-			fireMapChange(Diffs.unmodifiableDiff(event.diff));
-		}
-	};
+	private IMapChangeListener<K, V> mapListener = event -> fireMapChange(Diffs.unmodifiableDiff(event.diff));
 
 	/**
 	 * @param wrappedMap

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,16 +324,13 @@ privateInterface, privateInterface, null);
 		// they may receive change notifications before the runnable below has
 		// been executed. It is their job to figure out what to do with those
 		// notifications.
-		getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				if (dependencies == null) {
-					// We are not currently listening.
-					// But someone is listening for changes. Call getValue()
-					// to make sure we start listening to the observables we
-					// depend on.
-					getSet();
-				}
+		getRealm().exec(() -> {
+			if (dependencies == null) {
+				// We are not currently listening.
+				// But someone is listening for changes. Call getValue()
+				// to make sure we start listening to the observables we
+				// depend on.
+				getSet();
 			}
 		});
 	}

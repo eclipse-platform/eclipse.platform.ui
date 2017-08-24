@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,22 +142,12 @@ public abstract class MapProperty<S, K, V> implements IMapProperty<S, K, V> {
 
 	@Override
 	public IObservableFactory<S, IObservableMap<K, V>> mapFactory() {
-		return new IObservableFactory<S, IObservableMap<K, V>>() {
-			@Override
-			public IObservableMap<K, V> createObservable(S target) {
-				return observe(target);
-			}
-		};
+		return target -> observe(target);
 	}
 
 	@Override
 	public IObservableFactory<S, IObservableMap<K, V>> mapFactory(final Realm realm) {
-		return new IObservableFactory<S, IObservableMap<K, V>>() {
-			@Override
-			public IObservableMap<K, V> createObservable(S target) {
-				return observe(realm, target);
-			}
-		};
+		return target -> observe(realm, target);
 	}
 
 	@Override

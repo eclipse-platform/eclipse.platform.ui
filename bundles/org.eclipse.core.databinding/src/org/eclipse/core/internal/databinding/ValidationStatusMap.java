@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.Realm;
@@ -43,12 +42,7 @@ public class ValidationStatusMap extends ObservableMap {
 
 	private List dependencies = new ArrayList();
 
-	private IChangeListener markDirtyChangeListener = new IChangeListener() {
-		@Override
-		public void handleChange(ChangeEvent event) {
-			markDirty();
-		}
-	};
+	private IChangeListener markDirtyChangeListener = event -> markDirty();
 
 	/**
 	 * @param realm

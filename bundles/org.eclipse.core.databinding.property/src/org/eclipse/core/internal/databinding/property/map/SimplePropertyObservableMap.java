@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
@@ -86,36 +85,27 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed() && listener == null) {
-			listener = property.adaptListener(new ISimplePropertyListener<S, MapDiff<K, V>>() {
-				@Override
-				public void handleEvent(final SimplePropertyEvent<S, MapDiff<K, V>> event) {
-					if (!isDisposed() && !updating) {
-						getRealm().exec(new Runnable() {
-							@Override
-							public void run() {
-								if (event.type == SimplePropertyEvent.CHANGE) {
-									modCount++;
-									notifyIfChanged(event.diff);
-								} else if (event.type == SimplePropertyEvent.STALE && !stale) {
-									stale = true;
-									fireStale();
-								}
-							}
-						});
-					}
+			listener = property.adaptListener(event -> {
+				if (!isDisposed() && !updating) {
+					getRealm().exec(() -> {
+						if (event.type == SimplePropertyEvent.CHANGE) {
+							modCount++;
+							notifyIfChanged(event.diff);
+						} else if (event.type == SimplePropertyEvent.STALE && !stale) {
+							stale = true;
+							fireStale();
+						}
+					});
 				}
 			});
 		}
 
-		getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				cachedMap = new HashMap<>(getMap());
-				stale = false;
+		getRealm().exec(() -> {
+			cachedMap = new HashMap<>(getMap());
+			stale = false;
 
-				if (listener != null)
-					listener.addTo(source);
-			}
+			if (listener != null)
+				listener.addTo(source);
 		});
 	}
 

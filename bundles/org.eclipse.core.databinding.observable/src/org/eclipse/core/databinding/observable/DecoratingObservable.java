@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,12 +44,7 @@ public class DecoratingObservable extends AbstractObservable implements
 		super(decorated.getRealm());
 		this.decorated = decorated;
 		this.disposedDecoratedOnDispose = disposeDecoratedOnDispose;
-		decorated.addDisposeListener(new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent staleEvent) {
-				dispose();
-			}
-		});
+		decorated.addDisposeListener(staleEvent -> dispose());
 	}
 
 	@Override
@@ -70,12 +65,7 @@ public class DecoratingObservable extends AbstractObservable implements
 	@Override
 	protected void firstListenerAdded() {
 		if (staleListener == null) {
-			staleListener = new IStaleListener() {
-				@Override
-				public void handleStale(StaleEvent staleEvent) {
-					DecoratingObservable.this.handleStaleEvent(staleEvent);
-				}
-			};
+			staleListener = staleEvent -> DecoratingObservable.this.handleStaleEvent(staleEvent);
 		}
 		decorated.addStaleListener(staleListener);
 	}

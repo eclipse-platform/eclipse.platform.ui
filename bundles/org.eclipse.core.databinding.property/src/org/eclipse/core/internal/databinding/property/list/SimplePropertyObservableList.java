@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
@@ -69,36 +68,27 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed() && listener == null) {
-			listener = property.adaptListener(new ISimplePropertyListener<S, ListDiff<E>>() {
-				@Override
-				public void handleEvent(final SimplePropertyEvent<S, ListDiff<E>> event) {
-					if (!isDisposed() && !updating) {
-						getRealm().exec(new Runnable() {
-							@Override
-							public void run() {
-								if (event.type == SimplePropertyEvent.CHANGE) {
-									simplePropertyModCount++;
-									notifyIfChanged(event.diff);
-								} else if (event.type == SimplePropertyEvent.STALE && !stale) {
-									stale = true;
-									fireStale();
-								}
-							}
-						});
-					}
+			listener = property.adaptListener(event -> {
+				if (!isDisposed() && !updating) {
+					getRealm().exec(() -> {
+						if (event.type == SimplePropertyEvent.CHANGE) {
+							simplePropertyModCount++;
+							notifyIfChanged(event.diff);
+						} else if (event.type == SimplePropertyEvent.STALE && !stale) {
+							stale = true;
+							fireStale();
+						}
+					});
 				}
 			});
 		}
 
-		getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				cachedList = new ArrayList<>(getList());
-				stale = false;
+		getRealm().exec(() -> {
+			cachedList = new ArrayList<>(getList());
+			stale = false;
 
-				if (listener != null)
-					listener.addTo(source);
-			}
+			if (listener != null)
+				listener.addTo(source);
 		});
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,15 +52,11 @@ public class SelectObservableValue<T> extends AbstractObservableValue<T> {
 
 	private boolean updating = false;
 
-	private IValueChangeListener<Boolean> listener = new IValueChangeListener<Boolean>() {
-		@Override
-		public void handleValueChange(ValueChangeEvent<? extends Boolean> event) {
-			if (!updating) {
-				IObservableValue<? extends Boolean> observable = event
-						.getObservableValue();
-				if (Boolean.TRUE.equals(observable.getValue())) {
-					notifyIfChanged(indexOfObservable(observable));
-				}
+	private IValueChangeListener<Boolean> listener = event -> {
+		if (!updating) {
+			IObservableValue<? extends Boolean> observable = event.getObservableValue();
+			if (Boolean.TRUE.equals(observable.getValue())) {
+				notifyIfChanged(indexOfObservable(observable));
 			}
 		}
 	};

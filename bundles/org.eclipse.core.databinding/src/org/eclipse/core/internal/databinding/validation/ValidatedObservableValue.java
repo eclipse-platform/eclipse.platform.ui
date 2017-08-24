@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,10 @@ package org.eclipse.core.internal.databinding.validation;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.runtime.Assert;
@@ -61,38 +59,27 @@ public class ValidatedObservableValue extends AbstractObservableValue {
 	private boolean stale;
 	private boolean updatingTarget = false;
 
-	private IValueChangeListener targetChangeListener = new IValueChangeListener() {
-		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			if (updatingTarget)
-				return;
-			IStatus status = (IStatus) validationStatus.getValue();
-			if (isValid(status))
-				internalSetValue(event.diff.getNewValue(), false);
-			else
-				makeStale();
-		}
+	private IValueChangeListener targetChangeListener = event -> {
+		if (updatingTarget)
+			return;
+		IStatus status = (IStatus) validationStatus.getValue();
+		if (isValid(status))
+			internalSetValue(event.diff.getNewValue(), false);
+		else
+			makeStale();
 	};
 
 	private static boolean isValid(IStatus status) {
 		return status.isOK() || status.matches(IStatus.INFO | IStatus.WARNING);
 	}
 
-	private IStaleListener targetStaleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
+	private IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener validationStatusChangeListener = new IValueChangeListener() {
-		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			IStatus oldStatus = (IStatus) event.diff.getOldValue();
-			IStatus newStatus = (IStatus) event.diff.getNewValue();
-			if (stale && !isValid(oldStatus) && isValid(newStatus)) {
-				internalSetValue(target.getValue(), false);
-			}
+	private IValueChangeListener validationStatusChangeListener = event -> {
+		IStatus oldStatus = (IStatus) event.diff.getOldValue();
+		IStatus newStatus = (IStatus) event.diff.getNewValue();
+		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
+			internalSetValue(target.getValue(), false);
 		}
 	};
 

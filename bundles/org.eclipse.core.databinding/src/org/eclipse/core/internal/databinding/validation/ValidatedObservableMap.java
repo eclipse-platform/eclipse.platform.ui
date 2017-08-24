@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,15 +19,12 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
@@ -47,55 +44,44 @@ public class ValidatedObservableMap extends ObservableMap {
 
 	private boolean updatingTarget = false;
 
-	private IMapChangeListener targetChangeListener = new IMapChangeListener() {
-		@Override
-		public void handleMapChange(MapChangeEvent event) {
-			if (updatingTarget)
-				return;
-			IStatus status = (IStatus) validationStatus.getValue();
-			if (isValid(status)) {
-				if (stale) {
-					// this.stale means we are out of sync with target,
-					// so reset wrapped list to exactly mirror target
-					stale = false;
-					updateWrappedMap(new HashMap(target));
-				} else {
-					MapDiff diff = event.diff;
-					if (computeNextDiff) {
-						diff = Diffs.computeMapDiff(wrappedMap, target);
-						computeNextDiff = false;
-					}
-					applyDiff(diff, wrappedMap);
-					fireMapChange(diff);
-				}
-			} else {
-				makeStale();
-			}
-		}
-	};
-
-	private IStaleListener targetStaleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
-
-	private IValueChangeListener validationStatusChangeListener = new IValueChangeListener() {
-		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			IStatus oldStatus = (IStatus) event.diff.getOldValue();
-			IStatus newStatus = (IStatus) event.diff.getNewValue();
-			if (stale && !isValid(oldStatus) && isValid(newStatus)) {
+	private IMapChangeListener targetChangeListener = event -> {
+		if (updatingTarget)
+			return;
+		IStatus status = (IStatus) validationStatus.getValue();
+		if (isValid(status)) {
+			if (stale) {
 				// this.stale means we are out of sync with target,
-				// reset wrapped map to exactly mirror target
+				// so reset wrapped list to exactly mirror target
 				stale = false;
 				updateWrappedMap(new HashMap(target));
-
-				// If the validation status becomes valid because of a change in
-				// target observable
-				computeNextDiff = true;
+			} else {
+				MapDiff diff = event.diff;
+				if (computeNextDiff) {
+					diff = Diffs.computeMapDiff(wrappedMap, target);
+					computeNextDiff = false;
+				}
+				applyDiff(diff, wrappedMap);
+				fireMapChange(diff);
 			}
+		} else {
+			makeStale();
+		}
+	};
+
+	private IStaleListener targetStaleListener = staleEvent -> fireStale();
+
+	private IValueChangeListener validationStatusChangeListener = event -> {
+		IStatus oldStatus = (IStatus) event.diff.getOldValue();
+		IStatus newStatus = (IStatus) event.diff.getNewValue();
+		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
+			// this.stale means we are out of sync with target,
+			// reset wrapped map to exactly mirror target
+			stale = false;
+			updateWrappedMap(new HashMap(target));
+
+			// If the validation status becomes valid because of a change in
+			// target observable
+			computeNextDiff = true;
 		}
 	};
 

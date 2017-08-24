@@ -159,82 +159,68 @@ class ValueBinding extends Binding {
 		if (policy == UpdateValueStrategy.POLICY_ON_REQUEST && !explicit)
 			return;
 
-		source.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				boolean destinationRealmReached = false;
-				final MultiStatus multiStatus = BindingStatus.ok();
-				try {
-					// Get value
-					Object value = source.getValue();
+		source.getRealm().exec(() -> {
+			boolean destinationRealmReached = false;
+			final MultiStatus multiStatus = BindingStatus.ok();
+			try {
+				// Get value
+				Object value = source.getValue();
 
-					// Validate after get
-					IStatus status = updateValueStrategy
-							.validateAfterGet(value);
-					if (!mergeStatus(multiStatus, status))
-						return;
+				// Validate after get
+				IStatus status = updateValueStrategy.validateAfterGet(value);
+				if (!mergeStatus(multiStatus, status))
+					return;
 
-					// Convert value
-					final Object convertedValue = updateValueStrategy
-							.convert(value);
+				// Convert value
+				final Object convertedValue = updateValueStrategy.convert(value);
 
-					// Validate after convert
-					status = updateValueStrategy
-							.validateAfterConvert(convertedValue);
-					if (!mergeStatus(multiStatus, status))
-						return;
-					if (policy == UpdateValueStrategy.POLICY_CONVERT
-							&& !explicit)
-						return;
+				// Validate after convert
+				status = updateValueStrategy.validateAfterConvert(convertedValue);
+				if (!mergeStatus(multiStatus, status))
+					return;
+				if (policy == UpdateValueStrategy.POLICY_CONVERT && !explicit)
+					return;
 
-					// Validate before set
-					status = updateValueStrategy
-							.validateBeforeSet(convertedValue);
-					if (!mergeStatus(multiStatus, status))
-						return;
-					if (validateOnly)
-						return;
+				// Validate before set
+				status = updateValueStrategy.validateBeforeSet(convertedValue);
+				if (!mergeStatus(multiStatus, status))
+					return;
+				if (validateOnly)
+					return;
 
-					// Set value
-					destinationRealmReached = true;
-					destination.getRealm().exec(new Runnable() {
-						@Override
-						public void run() {
-							if (destination == target) {
-								updatingTarget = true;
-							} else {
-								updatingModel = true;
-							}
-							try {
-								IStatus setterStatus = updateValueStrategy
-										.doSet(destination, convertedValue);
+				// Set value
+				destinationRealmReached = true;
+				destination.getRealm().exec(() -> {
+					if (destination == target) {
+						updatingTarget = true;
+					} else {
+						updatingModel = true;
+					}
+					try {
+						IStatus setterStatus = updateValueStrategy.doSet(destination, convertedValue);
 
-								mergeStatus(multiStatus, setterStatus);
-							} finally {
-								if (destination == target) {
-									updatingTarget = false;
-								} else {
-									updatingModel = false;
-								}
-								setValidationStatus(multiStatus);
-							}
+						mergeStatus(multiStatus, setterStatus);
+					} finally {
+						if (destination == target) {
+							updatingTarget = false;
+						} else {
+							updatingModel = false;
 						}
-					});
-				} catch (Exception ex) {
-					// This check is necessary as in 3.2.2 Status
-					// doesn't accept a null message (bug 177264).
-					String message = (ex.getMessage() != null) ? ex
-							.getMessage() : ""; //$NON-NLS-1$
-
-					mergeStatus(multiStatus, new Status(IStatus.ERROR,
-							Policy.JFACE_DATABINDING, IStatus.ERROR, message,
-							ex));
-				} finally {
-					if (!destinationRealmReached) {
 						setValidationStatus(multiStatus);
 					}
+				});
+			} catch (Exception ex) {
+				// This check is necessary as in 3.2.2 Status
+				// doesn't accept a null message (bug 177264).
+				String message = (ex.getMessage() != null) ? ex.getMessage() : ""; //$NON-NLS-1$
 
+				mergeStatus(multiStatus,
+						new Status(IStatus.ERROR, Policy.JFACE_DATABINDING, IStatus.ERROR, message, ex));
+			} finally {
+				if (!destinationRealmReached) {
+					setValidationStatus(multiStatus);
 				}
+
 			}
 		});
 	}
@@ -250,12 +236,7 @@ class ValueBinding extends Binding {
 	}
 
 	private void setValidationStatus(final IStatus status) {
-		validationStatusObservable.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				validationStatusObservable.setValue(status);
-			}
-		});
+		validationStatusObservable.getRealm().exec(() -> validationStatusObservable.setValue(status));
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
@@ -66,36 +65,27 @@ public class SimplePropertyObservableSet<S, E> extends AbstractObservableSet<E>
 	@Override
 	protected void firstListenerAdded() {
 		if (!isDisposed() && listener == null) {
-			listener = property.adaptListener(new ISimplePropertyListener<S, SetDiff<E>>() {
-				@Override
-				public void handleEvent(final SimplePropertyEvent<S, SetDiff<E>> event) {
-					if (!isDisposed() && !updating) {
-						getRealm().exec(new Runnable() {
-							@Override
-							public void run() {
-								if (event.type == SimplePropertyEvent.CHANGE) {
-									modCount++;
-									notifyIfChanged(event.diff);
-								} else if (event.type == SimplePropertyEvent.STALE && !stale) {
-									stale = true;
-									fireStale();
-								}
-							}
-						});
-					}
+			listener = property.adaptListener(event -> {
+				if (!isDisposed() && !updating) {
+					getRealm().exec(() -> {
+						if (event.type == SimplePropertyEvent.CHANGE) {
+							modCount++;
+							notifyIfChanged(event.diff);
+						} else if (event.type == SimplePropertyEvent.STALE && !stale) {
+							stale = true;
+							fireStale();
+						}
+					});
 				}
 			});
 		}
 
-		getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				cachedSet = new HashSet<>(getSet());
-				stale = false;
+		getRealm().exec(() -> {
+			cachedSet = new HashSet<>(getSet());
+			stale = false;
 
-				if (listener != null)
-					listener.addTo(source);
-			}
+			if (listener != null)
+				listener.addTo(source);
 		});
 	}
 

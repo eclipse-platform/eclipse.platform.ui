@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -46,12 +45,9 @@ public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObser
 
 	private boolean updating = false;
 
-	private ISetChangeListener<E> innerChangeListener = new ISetChangeListener<E>() {
-		@Override
-		public void handleSetChange(SetChangeEvent<? extends E> event) {
-			if (!updating) {
-				fireSetChange(Diffs.<E> unmodifiableDiff(event.diff));
-			}
+	private ISetChangeListener<E> innerChangeListener = event -> {
+		if (!updating) {
+			fireSetChange(Diffs.<E> unmodifiableDiff(event.diff));
 		}
 	};
 

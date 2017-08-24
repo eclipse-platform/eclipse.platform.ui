@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Matthew Hall and others.
+ * Copyright (c) 2009, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.identity.IdentityMap;
@@ -133,16 +131,13 @@ abstract class DelegatingCache<S, K extends S, V> {
 
 		this.delegateCaches = new IdentityMap<>();
 
-		elements.addSetChangeListener(new ISetChangeListener<K>() {
-			@Override
-			public void handleSetChange(SetChangeEvent<? extends K> event) {
-				for (K element : event.diff.getRemovals()) {
-					getCache(element).remove(element);
+		elements.addSetChangeListener(event -> {
+			for (K element1 : event.diff.getRemovals()) {
+				getCache(element1).remove(element1);
 
-				}
-				for (K element : event.diff.getAdditions()) {
-					getCache(element).add(element);
-				}
+			}
+			for (K element2 : event.diff.getAdditions()) {
+				getCache(element2).add(element2);
 			}
 		});
 	}

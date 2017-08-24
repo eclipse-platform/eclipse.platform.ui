@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -130,26 +129,21 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	private IObservableList unmodifiableTargets;
 	private IObservableList models;
 
-	IListChangeListener targetsListener = new IListChangeListener() {
+	IListChangeListener targetsListener = event -> event.diff.accept(new ListDiffVisitor() {
 		@Override
-		public void handleListChange(ListChangeEvent event) {
-			event.diff.accept(new ListDiffVisitor() {
-				@Override
-				public void handleAdd(int index, Object element) {
-					IObservable dependency = (IObservable) element;
-					dependency.addChangeListener(dependencyListener);
-					dependency.addStaleListener(dependencyListener);
-				}
-
-				@Override
-				public void handleRemove(int index, Object element) {
-					IObservable dependency = (IObservable) element;
-					dependency.removeChangeListener(dependencyListener);
-					dependency.removeStaleListener(dependencyListener);
-				}
-			});
+		public void handleAdd(int index, Object element) {
+			IObservable dependency = (IObservable) element;
+			dependency.addChangeListener(dependencyListener);
+			dependency.addStaleListener(dependencyListener);
 		}
-	};
+
+		@Override
+		public void handleRemove(int index, Object element) {
+			IObservable dependency = (IObservable) element;
+			dependency.removeChangeListener(dependencyListener);
+			dependency.removeStaleListener(dependencyListener);
+		}
+	});
 
 	private class DependencyListener implements IChangeListener, IStaleListener {
 		@Override

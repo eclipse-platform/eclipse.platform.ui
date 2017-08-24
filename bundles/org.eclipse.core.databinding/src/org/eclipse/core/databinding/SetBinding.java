@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -41,25 +40,17 @@ public class SetBinding extends Binding {
 	private boolean updatingTarget;
 	private boolean updatingModel;
 
-	private ISetChangeListener targetChangeListener = new ISetChangeListener() {
-		@Override
-		public void handleSetChange(SetChangeEvent event) {
-			if (!updatingTarget) {
-				doUpdate((IObservableSet) getTarget(),
-						(IObservableSet) getModel(), event.diff, targetToModel,
-						false, false);
-			}
+	private ISetChangeListener targetChangeListener = event -> {
+		if (!updatingTarget) {
+			doUpdate((IObservableSet) getTarget(), (IObservableSet) getModel(), event.diff, targetToModel, false,
+					false);
 		}
 	};
 
-	private ISetChangeListener modelChangeListener = new ISetChangeListener() {
-		@Override
-		public void handleSetChange(SetChangeEvent event) {
-			if (!updatingModel) {
-				doUpdate((IObservableSet) getModel(),
-						(IObservableSet) getTarget(), event.diff,
-						modelToTarget, false, false);
-			}
+	private ISetChangeListener modelChangeListener = event -> {
+		if (!updatingModel) {
+			doUpdate((IObservableSet) getModel(), (IObservableSet) getTarget(), event.diff, modelToTarget, false,
+					false);
 		}
 	};
 
@@ -96,29 +87,23 @@ public class SetBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			getModel().getRealm().exec(new Runnable() {
-				@Override
-				public void run() {
-					((IObservableSet) getModel()).addSetChangeListener(modelChangeListener);
-					updateModelToTarget();
-				}
+			getModel().getRealm().exec(() -> {
+				((IObservableSet) getModel()).addSetChangeListener(modelChangeListener);
+				updateModelToTarget();
 			});
 		} else {
 			modelChangeListener = null;
 		}
 
 		if (targetToModel.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			getTarget().getRealm().exec(new Runnable() {
-				@Override
-				public void run() {
-					((IObservableSet) getTarget()).addSetChangeListener(targetChangeListener);
-					if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_NEVER) {
-						// we have to sync from target to model, if the other
-						// way round (model to target) is forbidden (POLICY_NEVER)
-						updateTargetToModel();
-					} else {
-						validateTargetToModel();
-					}
+			getTarget().getRealm().exec(() -> {
+				((IObservableSet) getTarget()).addSetChangeListener(targetChangeListener);
+				if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_NEVER) {
+					// we have to sync from target to model, if the other
+					// way round (model to target) is forbidden (POLICY_NEVER)
+					updateTargetToModel();
+				} else {
+					validateTargetToModel();
 				}
 			});
 		} else {
@@ -129,28 +114,18 @@ public class SetBinding extends Binding {
 	@Override
 	public void updateModelToTarget() {
 		final IObservableSet modelSet = (IObservableSet) getModel();
-		modelSet.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET,
-						modelSet);
-				doUpdate(modelSet, (IObservableSet) getTarget(), diff,
-						modelToTarget, true, true);
-			}
+		modelSet.getRealm().exec(() -> {
+			SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET, modelSet);
+			doUpdate(modelSet, (IObservableSet) getTarget(), diff, modelToTarget, true, true);
 		});
 	}
 
 	@Override
 	public void updateTargetToModel() {
 		final IObservableSet targetSet = (IObservableSet) getTarget();
-		targetSet.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET,
-						targetSet);
-				doUpdate(targetSet, (IObservableSet) getModel(), diff,
-						targetToModel, true, true);
-			}
+		targetSet.getRealm().exec(() -> {
+			SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET, targetSet);
+			doUpdate(targetSet, (IObservableSet) getModel(), diff, targetToModel, true, true);
 		});
 	}
 
@@ -177,64 +152,52 @@ public class SetBinding extends Binding {
 			return;
 		if (policy == UpdateSetStrategy.POLICY_ON_REQUEST && !explicit)
 			return;
-		destination.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				if (destination == getTarget()) {
-					updatingTarget = true;
-				} else {
-					updatingModel = true;
+		destination.getRealm().exec(() -> {
+			if (destination == getTarget()) {
+				updatingTarget = true;
+			} else {
+				updatingModel = true;
+			}
+			MultiStatus multiStatus = BindingStatus.ok();
+
+			try {
+				if (clearDestination) {
+					destination.clear();
 				}
-				MultiStatus multiStatus = BindingStatus.ok();
 
-				try {
-					if (clearDestination) {
-						destination.clear();
-					}
+				for (Iterator iterator1 = diff.getRemovals().iterator(); iterator1.hasNext();) {
+					IStatus setterStatus1 = updateSetStrategy.doRemove(destination,
+							updateSetStrategy.convert(iterator1.next()));
 
-					for (Iterator iterator = diff.getRemovals().iterator(); iterator
-							.hasNext();) {
-						IStatus setterStatus = updateSetStrategy.doRemove(
-								destination,
-								updateSetStrategy.convert(iterator.next()));
+					mergeStatus(multiStatus, setterStatus1);
+					// TODO - at this point, the two sets
+					// will be out of sync if an error
+					// occurred...
+				}
 
-						mergeStatus(multiStatus, setterStatus);
-						// TODO - at this point, the two sets
-						// will be out of sync if an error
-						// occurred...
-					}
+				for (Iterator iterator2 = diff.getAdditions().iterator(); iterator2.hasNext();) {
+					IStatus setterStatus2 = updateSetStrategy.doAdd(destination,
+							updateSetStrategy.convert(iterator2.next()));
 
-					for (Iterator iterator = diff.getAdditions().iterator(); iterator
-							.hasNext();) {
-						IStatus setterStatus = updateSetStrategy.doAdd(
-								destination,
-								updateSetStrategy.convert(iterator.next()));
+					mergeStatus(multiStatus, setterStatus2);
+					// TODO - at this point, the two sets
+					// will be out of sync if an error
+					// occurred...
+				}
+			} finally {
+				setValidationStatus(multiStatus);
 
-						mergeStatus(multiStatus, setterStatus);
-						// TODO - at this point, the two sets
-						// will be out of sync if an error
-						// occurred...
-					}
-				} finally {
-					setValidationStatus(multiStatus);
-
-					if (destination == getTarget()) {
-						updatingTarget = false;
-					} else {
-						updatingModel = false;
-					}
+				if (destination == getTarget()) {
+					updatingTarget = false;
+				} else {
+					updatingModel = false;
 				}
 			}
 		});
 	}
 
 	private void setValidationStatus(final IStatus status) {
-		validationStatusObservable.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				validationStatusObservable.setValue(status);
-			}
-		});
+		validationStatusObservable.getRealm().exec(() -> validationStatusObservable.setValue(status));
 	}
 
 	/**

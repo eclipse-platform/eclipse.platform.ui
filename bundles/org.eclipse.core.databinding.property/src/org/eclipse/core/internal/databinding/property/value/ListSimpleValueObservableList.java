@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2017 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -33,8 +32,6 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
@@ -97,12 +94,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		}
 	};
 
-	private IStaleListener staleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
+	private IStaleListener staleListener = staleEvent -> fireStale();
 
 	private INativePropertyListener<S> detailListener;
 
@@ -115,26 +107,20 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		this.masterList = masterList;
 		this.detailProperty = valueProperty;
 
-		ISimplePropertyListener<S, ValueDiff<? extends T>> listener = new ISimplePropertyListener<S, ValueDiff<? extends T>>() {
-			@Override
-			public void handleEvent(final SimplePropertyEvent<S, ValueDiff<? extends T>> event) {
-				if (!isDisposed() && !updating) {
-					getRealm().exec(new Runnable() {
-						@Override
-						public void run() {
-							@SuppressWarnings("unchecked")
-							M source = (M) event.getSource();
-							if (event.type == SimplePropertyEvent.CHANGE) {
-								notifyIfChanged(source);
-							} else if (event.type == SimplePropertyEvent.STALE) {
-								boolean wasStale = !staleElements.isEmpty();
-								staleElements.add(source);
-								if (!wasStale)
-									fireStale();
-							}
-						}
-					});
-				}
+		ISimplePropertyListener<S, ValueDiff<? extends T>> listener = event -> {
+			if (!isDisposed() && !updating) {
+				getRealm().exec(() -> {
+					@SuppressWarnings("unchecked")
+					M source = (M) event.getSource();
+					if (event.type == SimplePropertyEvent.CHANGE) {
+						notifyIfChanged(source);
+					} else if (event.type == SimplePropertyEvent.STALE) {
+						boolean wasStale = !staleElements.isEmpty();
+						staleElements.add(source);
+						if (!wasStale)
+							fireStale();
+					}
+				});
 			}
 		};
 		this.detailListener = detailProperty.adaptListener(listener);
@@ -151,30 +137,24 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 
 		cachedValues = new IdentityMap<>();
 		staleElements = new IdentitySet<>();
-		knownMasterElements.addSetChangeListener(new ISetChangeListener<M>() {
-			@Override
-			public void handleSetChange(SetChangeEvent<? extends M> event) {
-				for (M key : event.diff.getRemovals()) {
-					if (detailListener != null)
-						detailListener.removeFrom(key);
-					cachedValues.remove(key);
-					staleElements.remove(key);
-				}
-				for (M key : event.diff.getAdditions()) {
-					cachedValues.put(key, detailProperty.getValue(key));
-					if (detailListener != null)
-						detailListener.addTo(key);
-				}
+		knownMasterElements.addSetChangeListener(event -> {
+			for (M key1 : event.diff.getRemovals()) {
+				if (detailListener != null)
+					detailListener.removeFrom(key1);
+				cachedValues.remove(key1);
+				staleElements.remove(key1);
+			}
+			for (M key2 : event.diff.getAdditions()) {
+				cachedValues.put(key2, detailProperty.getValue(key2));
+				if (detailListener != null)
+					detailListener.addTo(key2);
 			}
 		});
-		getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				knownMasterElements.addAll(masterList);
+		getRealm().exec(() -> {
+			knownMasterElements.addAll(masterList);
 
-				masterList.addListChangeListener(masterListener);
-				masterList.addStaleListener(staleListener);
-			}
+			masterList.addListChangeListener(masterListener);
+			masterList.addStaleListener(staleListener);
 		});
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -40,24 +39,16 @@ public class ListBinding extends Binding {
 	private boolean updatingTarget;
 	private boolean updatingModel;
 
-	private IListChangeListener targetChangeListener = new IListChangeListener() {
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			if (!updatingTarget) {
-				doUpdate((IObservableList) getTarget(),
-						(IObservableList) getModel(), event.diff,
-						targetToModel, false, false);
-			}
+	private IListChangeListener targetChangeListener = event -> {
+		if (!updatingTarget) {
+			doUpdate((IObservableList) getTarget(), (IObservableList) getModel(), event.diff, targetToModel, false,
+					false);
 		}
 	};
-	private IListChangeListener modelChangeListener = new IListChangeListener() {
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			if (!updatingModel) {
-				doUpdate((IObservableList) getModel(),
-						(IObservableList) getTarget(), event.diff,
-						modelToTarget, false, false);
-			}
+	private IListChangeListener modelChangeListener = event -> {
+		if (!updatingModel) {
+			doUpdate((IObservableList) getModel(), (IObservableList) getTarget(), event.diff, modelToTarget, false,
+					false);
 		}
 	};
 
@@ -94,30 +85,24 @@ public class ListBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			getModel().getRealm().exec(new Runnable() {
-				@Override
-				public void run() {
-					((IObservableList) getModel()).addListChangeListener(modelChangeListener);
-					updateModelToTarget();
-				}
+			getModel().getRealm().exec(() -> {
+				((IObservableList) getModel()).addListChangeListener(modelChangeListener);
+				updateModelToTarget();
 			});
 		} else {
 			modelChangeListener = null;
 		}
 
 		if (targetToModel.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			getTarget().getRealm().exec(new Runnable() {
-				@Override
-				public void run() {
-					((IObservableList) getTarget()).addListChangeListener(targetChangeListener);
-					if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_NEVER) {
-						// we have to sync from target to model, if the other
-						// way round (model to target) is forbidden
-						// (POLICY_NEVER)
-						updateTargetToModel();
-					} else {
-						validateTargetToModel();
-					}
+			getTarget().getRealm().exec(() -> {
+				((IObservableList) getTarget()).addListChangeListener(targetChangeListener);
+				if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_NEVER) {
+					// we have to sync from target to model, if the other
+					// way round (model to target) is forbidden
+					// (POLICY_NEVER)
+					updateTargetToModel();
+				} else {
+					validateTargetToModel();
 				}
 			});
 		} else {
@@ -128,28 +113,18 @@ public class ListBinding extends Binding {
 	@Override
 	public void updateModelToTarget() {
 		final IObservableList modelList = (IObservableList) getModel();
-		modelList.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				ListDiff diff = Diffs.computeListDiff(Collections.EMPTY_LIST,
-						modelList);
-				doUpdate(modelList, (IObservableList) getTarget(), diff,
-						modelToTarget, true, true);
-			}
+		modelList.getRealm().exec(() -> {
+			ListDiff diff = Diffs.computeListDiff(Collections.EMPTY_LIST, modelList);
+			doUpdate(modelList, (IObservableList) getTarget(), diff, modelToTarget, true, true);
 		});
 	}
 
 	@Override
 	public void updateTargetToModel() {
 		final IObservableList targetList = (IObservableList) getTarget();
-		targetList.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				ListDiff diff = Diffs.computeListDiff(Collections.EMPTY_LIST,
-						targetList);
-				doUpdate(targetList, (IObservableList) getModel(), diff,
-						targetToModel, true, true);
-			}
+		targetList.getRealm().exec(() -> {
+			ListDiff diff = Diffs.computeListDiff(Collections.EMPTY_LIST, targetList);
+			doUpdate(targetList, (IObservableList) getModel(), diff, targetToModel, true, true);
 		});
 	}
 
@@ -174,84 +149,69 @@ public class ListBinding extends Binding {
 		final int policy = updateListStrategy.getUpdatePolicy();
 		if (policy != UpdateListStrategy.POLICY_NEVER) {
 			if (policy != UpdateListStrategy.POLICY_ON_REQUEST || explicit) {
-				destination.getRealm().exec(new Runnable() {
-					@Override
-					public void run() {
-						if (destination == getTarget()) {
-							updatingTarget = true;
-						} else {
-							updatingModel = true;
+				destination.getRealm().exec(() -> {
+					if (destination == getTarget()) {
+						updatingTarget = true;
+					} else {
+						updatingModel = true;
+					}
+					final MultiStatus multiStatus = BindingStatus.ok();
+
+					try {
+						if (clearDestination) {
+							destination.clear();
 						}
-						final MultiStatus multiStatus = BindingStatus.ok();
+						diff.accept(new ListDiffVisitor() {
+							boolean useMoveAndReplace = updateListStrategy.useMoveAndReplace();
 
-						try {
-							if (clearDestination) {
-								destination.clear();
+							@Override
+							public void handleAdd(int index, Object element) {
+								IStatus setterStatus = updateListStrategy.doAdd(destination,
+										updateListStrategy.convert(element), index);
+
+								mergeStatus(multiStatus, setterStatus);
 							}
-							diff.accept(new ListDiffVisitor() {
-								boolean useMoveAndReplace = updateListStrategy
-										.useMoveAndReplace();
 
-								@Override
-								public void handleAdd(int index, Object element) {
+							@Override
+							public void handleRemove(int index, Object element) {
+								IStatus setterStatus = updateListStrategy.doRemove(destination, index);
+
+								mergeStatus(multiStatus, setterStatus);
+							}
+
+							@Override
+							public void handleMove(int oldIndex, int newIndex, Object element) {
+								if (useMoveAndReplace) {
 									IStatus setterStatus = updateListStrategy
-											.doAdd(destination,
-													updateListStrategy
-															.convert(element),
-													index);
+											.doMove(destination, oldIndex, newIndex);
 
 									mergeStatus(multiStatus, setterStatus);
+								} else {
+									super.handleMove(oldIndex, newIndex, element);
 								}
+							}
 
-								@Override
-								public void handleRemove(int index,
-										Object element) {
+							@Override
+							public void handleReplace(int index, Object oldElement, Object newElement) {
+								if (useMoveAndReplace) {
 									IStatus setterStatus = updateListStrategy
-											.doRemove(destination, index);
+											.doReplace(destination, index, newElement);
 
 									mergeStatus(multiStatus, setterStatus);
+								} else {
+									super.handleReplace(index, oldElement, newElement);
 								}
-
-								@Override
-								public void handleMove(int oldIndex,
-										int newIndex, Object element) {
-									if (useMoveAndReplace) {
-										IStatus setterStatus = updateListStrategy
-												.doMove(destination, oldIndex,
-														newIndex);
-
-										mergeStatus(multiStatus, setterStatus);
-									} else {
-										super.handleMove(oldIndex, newIndex,
-												element);
-									}
-								}
-
-								@Override
-								public void handleReplace(int index,
-										Object oldElement, Object newElement) {
-									if (useMoveAndReplace) {
-										IStatus setterStatus = updateListStrategy
-												.doReplace(destination, index,
-														newElement);
-
-										mergeStatus(multiStatus, setterStatus);
-									} else {
-										super.handleReplace(index, oldElement,
-												newElement);
-									}
-								}
-							});
-							// TODO - at this point, the two lists will be out
-							// of sync if an error occurred...
-						} finally {
-							setValidationStatus(multiStatus);
-
-							if (destination == getTarget()) {
-								updatingTarget = false;
-							} else {
-								updatingModel = false;
 							}
+						});
+						// TODO - at this point, the two lists will be out
+						// of sync if an error occurred...
+					} finally {
+						setValidationStatus(multiStatus);
+
+						if (destination == getTarget()) {
+							updatingTarget = false;
+						} else {
+							updatingModel = false;
 						}
 					}
 				});
@@ -260,12 +220,7 @@ public class ListBinding extends Binding {
 	}
 
 	private void setValidationStatus(final IStatus status) {
-		validationStatusObservable.getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				validationStatusObservable.setValue(status);
-			}
-		});
+		validationStatusObservable.getRealm().exec(() -> validationStatusObservable.setValue(status));
 	}
 
 	/**
