@@ -5,7 +5,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
  */
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -55,7 +54,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 	void init() {
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddArea,
-			createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
+				createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.AREA);
@@ -70,15 +69,15 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		});
 
 		actions
-			.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-				@Override
-				public void run() {
-					handleAdd(BasicPackageImpl.Literals.PART);
-				}
-			});
+		.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleAdd(BasicPackageImpl.Literals.PART);
+			}
+		});
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer,
-			createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
+				createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
@@ -86,7 +85,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddPartStack,
-			createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+				createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_STACK);
@@ -94,14 +93,14 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack,
-			createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
+				createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
 			}
 		});
 		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective,
-			createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+				createImageDescriptor(ResourceProvider.IMG_Perspective)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE);
@@ -109,7 +108,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.VTrimContributionsEditor_AddTrimContribution,
-			createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
+				createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIM_ELEMENT);
@@ -117,7 +116,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow,
-			createImageDescriptor(ResourceProvider.IMG_Window)) {
+				createImageDescriptor(ResourceProvider.IMG_Window)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIMMED_WINDOW);
@@ -130,26 +129,21 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 			}
 		});
 		actions.add(new Action(Messages.VWindowTrimEditor_AddWindowTrim,
-			createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
+				createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIM_BAR);
 			}
 		});
 		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog,
-			createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
+				createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.WIZARD_DIALOG);
 			}
 		});
 
-		Collections.sort(actions, new Comparator<Action>() {
-			@Override
-			public int compare(Action o1, Action o2) {
-				return o1.getText().compareTo(o2.getText());
-			}
-		});
+		Collections.sort(actions, (o1, o2) -> o1.getText().compareTo(o2.getText()));
 
 	}
 
@@ -206,10 +200,10 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 
 		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
 		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
-			AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE,
-			AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-			BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
-			BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
+				AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE,
+				AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER,
+				BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
+				BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
 		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
 		folder.setSelection(0);

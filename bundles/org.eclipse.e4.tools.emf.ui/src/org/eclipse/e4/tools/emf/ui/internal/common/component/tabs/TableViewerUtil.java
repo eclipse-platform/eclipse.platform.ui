@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -43,7 +42,7 @@ public class TableViewerUtil {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			final TableViewer tableViewer = (TableViewer) viewer;
 			final ColumnLabelProvider labelProvider = (ColumnLabelProvider) tableViewer.getLabelProvider(Arrays.asList(
-				tableViewer.getTable().getColumns()).indexOf(col));
+					tableViewer.getTable().getColumns()).indexOf(col));
 			return labelProvider.getText(e1).compareTo(labelProvider.getText(e2));
 		}
 	}
@@ -113,7 +112,7 @@ public class TableViewerUtil {
 		 *            default sorting direction
 		 */
 		public TableSortSelectionListener(TableViewer viewer, TableColumn column, AbstractInvertableTableSorter sorter,
-			int defaultDirection, boolean keepDirection) {
+				int defaultDirection, boolean keepDirection) {
 			this.viewer = viewer;
 			this.column = column;
 			this.keepDirection = keepDirection;
@@ -207,13 +206,7 @@ public class TableViewerUtil {
 	static public ArrayList<TableColumn> getColumnsInDisplayOrder(TableViewer viewer) {
 		final ArrayList<TableColumn> allCols = new ArrayList<>(Arrays.asList(viewer.getTable().getColumns()));
 		final int[] order = viewer.getTable().getColumnOrder();
-		Collections.sort(allCols, new Comparator<TableColumn>() {
-
-			@Override
-			public int compare(TableColumn o1, TableColumn o2) {
-				return order[allCols.indexOf(o1)] - order[allCols.indexOf(o2)];
-			}
-		});
+		Collections.sort(allCols, (o1, o2) -> order[allCols.indexOf(o1)] - order[allCols.indexOf(o2)]);
 		return allCols;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,8 +81,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -312,12 +309,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			// Add a modify listener to control the change of the ID -> Must
 			// force the computation of selectedContainer.
-			t.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					selectedContainer = null;
-				}
-			});
+			t.addModifyListener(e -> selectedContainer = null);
 
 			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -374,15 +366,12 @@ public class StringModelFragment extends AbstractComponentEditor {
 			deco.setShowOnlyOnFocus(false);
 
 			// hide the decoration if the text component has content
-			t.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					Text text = (Text) e.getSource();
-					if (!text.getText().isEmpty()) {
-						deco.hide();
-					} else {
-						deco.show();
-					}
+			t.addModifyListener(e -> {
+				Text text = (Text) e.getSource();
+				if (!text.getText().isEmpty()) {
+					deco.hide();
+				} else {
+					deco.show();
 				}
 			});
 
@@ -395,12 +384,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			t.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					updateChildrenChoice();
-				}
-			});
+			t.addModifyListener(e -> updateChildrenChoice());
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -512,14 +496,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			}
 
-			Collections.sort(contents, new Comparator<String[]>() {
-
-				@Override
-				public int compare(String[] o1, String[] o2) {
-					// compare
-					return o1[0].compareTo(o2[0]);
-				}
-			});
+			Collections.sort(contents, (o1, o2) -> o1[0].compareTo(o2[0]));
 
 			IContentProposal[] contentProposals = new IContentProposal[contents.size()];
 			for (int i = 0; i < contents.size(); i++) {
@@ -595,13 +572,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
-		Collections.sort(l, new Comparator<Action>() {
-			@Override
-			public int compare(Action o1, Action o2) {
-
-				return o1.getText().compareTo(o2.getText());
-			}
-		});
+		Collections.sort(l, (o1, o2) -> o1.getText().compareTo(o2.getText()));
 		return l;
 	}
 

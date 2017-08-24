@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -65,7 +64,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 	void init() {
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack,
-			createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
+				createImageDescriptor(ResourceProvider.IMG_PerspectiveStack)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
@@ -73,7 +72,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer,
-			createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
+				createImageDescriptor(ResourceProvider.IMG_PartSashContainer_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
@@ -81,7 +80,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.VWindowControlEditor_AddPartStack,
-			createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+				createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_STACK);
@@ -89,26 +88,21 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		});
 
 		actions
-			.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
-				@Override
-				public void run() {
-					handleAdd(BasicPackageImpl.Literals.PART);
-				}
-			});
+		.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleAdd(BasicPackageImpl.Literals.PART);
+			}
+		});
 		actions.add(new Action(Messages.VWindowControlEditor_AddArea,
-			createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
+				createImageDescriptor(ResourceProvider.IMG_Area_vertical)) {
 			@Override
 			public void run() {
 				handleAdd(AdvancedPackageImpl.Literals.AREA);
 			}
 		});
 
-		Collections.sort(actions, new Comparator<Action>() {
-			@Override
-			public int compare(Action o1, Action o2) {
-				return o1.getText().compareTo(o2.getText());
-			}
-		});
+		Collections.sort(actions, (o1, o2) -> o1.getText().compareTo(o2.getText()));
 	}
 
 	@Override
@@ -149,7 +143,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
@@ -168,7 +162,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			});
 
 			pickList
-				.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
+			.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
 					BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
 					BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
 					AdvancedPackageImpl.Literals.AREA });
@@ -191,7 +185,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		setElementId(eObject);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
