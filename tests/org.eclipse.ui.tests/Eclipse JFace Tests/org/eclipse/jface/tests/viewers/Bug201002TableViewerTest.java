@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  ******************************************************************************/
 
 package org.eclipse.jface.tests.viewers;
+
+import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -32,7 +34,6 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 	 */
 	public Bug201002TableViewerTest(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -93,6 +94,6 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 
 		}
 
-		assertEquals(true, getTableViewer().getTable().getTopIndex() != 0);
+		assertNotEquals("TableViewer top index shouldn't be 0", 0, getTableViewer().getTable().getTopIndex());
 	}
 }
