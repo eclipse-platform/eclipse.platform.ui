@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -187,18 +186,6 @@ public class SourceViewerDecorationSupport {
 	private static ITextStyleStrategy fgProblemUnderlineStrategy= new AnnotationPainter.UnderlineStrategy(SWT.UNDERLINE_ERROR);
 
 
-	/*
-	 * @see IPropertyChangeListener
-	 */
-	private class FontPropertyChangeListener implements IPropertyChangeListener {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (fMarginPainter != null && fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
-				fMarginPainter.initialize();
-		}
-	}
-
-
 	/** The viewer */
 	private ISourceViewer fSourceViewer;
 	/** The viewer's overview ruler */
@@ -243,10 +230,6 @@ public class SourceViewerDecorationSupport {
 	private IPropertyChangeListener fPropertyChangeListener;
 	/** The preference store */
 	private IPreferenceStore fPreferenceStore;
-	/** The symbolic font name */
-	private String fSymbolicFontName;
-	/** The font change listener */
-	private FontPropertyChangeListener fFontPropertyChangeListener;
 
 
 	/**
@@ -388,11 +371,6 @@ public class SourceViewerDecorationSupport {
 		updateTextDecorations();
 		updateOverviewDecorations();
 
-		if (fFontPropertyChangeListener != null) {
-			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
-			fFontPropertyChangeListener= null;
-		}
-
 		fOverviewRuler= null;
 
 		// Painters got disposed in updateTextDecorations() or by the PaintManager
@@ -497,10 +475,12 @@ public class SourceViewerDecorationSupport {
 	/**
 	 * Sets the symbolic font name that is used for computing the margin width.
 	 *
-	 * @param symbolicFontName the symbolic font name
+	 * @param symbolicFontName
+	 *            the symbolic font name
+	 * @deprecated As of 4.8, this is no longer used
 	 */
+	@Deprecated
 	public void setSymbolicFontName(String symbolicFontName) {
-		fSymbolicFontName= symbolicFontName;
 	}
 
 	/**
@@ -801,9 +781,6 @@ public class SourceViewerDecorationSupport {
 					fMarginPainter.setMarginRulerColumn(fPreferenceStore.getInt(fMarginPainterColumnKey));
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fMarginPainter);
-
-				fFontPropertyChangeListener= new FontPropertyChangeListener();
-				JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 			}
 		}
 	}
@@ -814,9 +791,6 @@ public class SourceViewerDecorationSupport {
 	private void hideMargin() {
 		if (fMarginPainter != null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
-				JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
-				fFontPropertyChangeListener= null;
-
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.removePainter(fMarginPainter);
 				fMarginPainter.deactivate(true);
