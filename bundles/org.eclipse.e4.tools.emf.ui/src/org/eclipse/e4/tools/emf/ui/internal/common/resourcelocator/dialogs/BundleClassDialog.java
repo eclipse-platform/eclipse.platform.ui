@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others. All rights reserved. This
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
@@ -22,7 +23,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -93,39 +93,31 @@ public class BundleClassDialog extends Dialog implements UriDialog {
 			txtUri.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			txtUri.setText("bundleclass://"); //$NON-NLS-1$
 
-			txtUri.addModifyListener(new ModifyListener() {
-
-				@Override
-				public void modifyText(ModifyEvent e) {
-					if (ignoreModify) {
-						return;
-					}
-					ignoreModify = true;
-					setUri(txtUri.getText());
-					txtBundle.setText(bundle);
-					txtPackage.setText(pakage);
-					txtClass.setText(clazz);
-					ignoreModify = false;
-					parent.pack();
-				}
-			});
-		}
-
-		// common listener for text boxes
-		ModifyListener listener = new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
+			txtUri.addModifyListener(e -> {
 				if (ignoreModify) {
 					return;
 				}
 				ignoreModify = true;
-				String prefix;
-				prefix = "bundleclass://"; //$NON-NLS-1$
-				setUri(prefix + txtBundle.getText() + "/" + txtPackage.getText() + "." + txtClass.getText()); //$NON-NLS-1$//$NON-NLS-2$
-				txtUri.setText(getUri());
+				setUri(txtUri.getText());
+				txtBundle.setText(bundle);
+				txtPackage.setText(pakage);
+				txtClass.setText(clazz);
 				ignoreModify = false;
+				parent.pack();
+			});
+		}
+
+		// common listener for text boxes
+		ModifyListener listener = e -> {
+			if (ignoreModify) {
+				return;
 			}
+			ignoreModify = true;
+			String prefix;
+			prefix = "bundleclass://"; //$NON-NLS-1$
+			setUri(prefix + txtBundle.getText() + "/" + txtPackage.getText() + "." + txtClass.getText()); //$NON-NLS-1$//$NON-NLS-2$
+			txtUri.setText(getUri());
+			ignoreModify = false;
 		};
 
 		{

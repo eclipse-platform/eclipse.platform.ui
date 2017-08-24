@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -78,12 +76,7 @@ public class NewModelFilePage extends WizardPage {
 		containerText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
-		containerText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		containerText.addModifyListener(e -> dialogChanged());
 
 		final Button button = new Button(container, SWT.PUSH);
 		button.setText(Messages.NewModelFilePage_Browse);
@@ -99,12 +92,7 @@ public class NewModelFilePage extends WizardPage {
 		fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fileText.setLayoutData(gd);
-		fileText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		fileText.addModifyListener(e -> dialogChanged());
 
 		new Label(container, SWT.NONE);
 
@@ -124,7 +112,7 @@ public class NewModelFilePage extends WizardPage {
 
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
-			&& selection instanceof IStructuredSelection) {
+				&& selection instanceof IStructuredSelection) {
 			final IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() > 1) {
 				return;
@@ -158,8 +146,8 @@ public class NewModelFilePage extends WizardPage {
 
 	private void handleBrowse() {
 		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-			getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-			Messages.NewModelFilePage_SelectTheNewContainer);
+				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
+				Messages.NewModelFilePage_SelectTheNewContainer);
 		if (dialog.open() == Window.OK) {
 			final Object[] result = dialog.getResult();
 			if (result.length == 1) {
@@ -174,7 +162,7 @@ public class NewModelFilePage extends WizardPage {
 
 	private void dialogChanged() {
 		final IResource container = ResourcesPlugin.getWorkspace().getRoot()
-			.findMember(new Path(getContainerName()));
+				.findMember(new Path(getContainerName()));
 		final String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {
@@ -182,7 +170,7 @@ public class NewModelFilePage extends WizardPage {
 			return;
 		}
 		if (container == null
-			|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
+				|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
 			updateStatus(Messages.NewModelFilePage_FileContainerMustExists);
 			return;
 		}

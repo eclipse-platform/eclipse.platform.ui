@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,8 @@ import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -52,10 +48,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -120,13 +112,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		final Image titleImage = new Image(parent.getDisplay(),
 				getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				titleImage.dispose();
-			}
-		});
+		getShell().addDisposeListener(e -> titleImage.dispose());
 
 		getShell().setText(Messages.FindParentReferenceElementDialog_ShellTitle);
 		setTitle(Messages.FindParentReferenceElementDialog_Title);
@@ -164,13 +150,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		});
 		eClassViewer.setInput(eClassList);
 		eClassViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		eClassViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSearch();
-			}
-		});
+		eClassViewer.addSelectionChangedListener(event -> updateSearch());
 
 		final ArrayList<String> vals = new ArrayList<>();
 		for (final EClass item : eClassList) {
@@ -232,24 +212,12 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 		viewer.setContentProvider(new ObservableListContentProvider());
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		list = new WritableList();
 		viewer.setInput(list);
 
-		searchText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateSearch();
-			}
-		});
+		searchText.addModifyListener(e -> updateSearch());
 
 		final Button button = new Button(container, SWT.PUSH);
 		button.setText(Messages.FindParentReferenceElementDialog_ClearCache);

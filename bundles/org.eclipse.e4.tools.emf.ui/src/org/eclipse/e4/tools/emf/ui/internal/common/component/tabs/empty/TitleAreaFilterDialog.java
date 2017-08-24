@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,12 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.Messages;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -80,22 +76,12 @@ public class TitleAreaFilterDialog extends TitleAreaDialog {
 			}
 		} });
 
-		text.addModifyListener(new ModifyListener() {
+		text.addModifyListener(e -> viewer.refresh());
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				viewer.refresh();
-			}
-		});
-
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				result = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-				if (result != null) {
-					okPressed();
-				}
+		viewer.addDoubleClickListener(event -> {
+			result = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+			if (result != null) {
+				okPressed();
 			}
 		});
 

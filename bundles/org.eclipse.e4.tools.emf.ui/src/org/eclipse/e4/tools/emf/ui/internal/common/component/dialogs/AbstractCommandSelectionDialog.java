@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -37,8 +35,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -73,15 +69,9 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 		setMessage(getDialogMessage());
 
 		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
+				"/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				titleImage.dispose();
-			}
-		});
+		getShell().addDisposeListener(e -> titleImage.dispose());
 
 		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -98,13 +88,7 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(new LabelProviderImpl());
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		final List<EObject> commands = new ArrayList<>();
 		final TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);

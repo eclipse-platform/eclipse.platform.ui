@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,9 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -49,10 +45,6 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -104,15 +96,11 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 
 		setTitleImage(newTitleImage);
 
-		composite.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				packageImage.dispose();
-				classImage.dispose();
-				featureImage.dispose();
-				newTitleImage.dispose();
-			}
+		composite.addDisposeListener(e -> {
+			packageImage.dispose();
+			classImage.dispose();
+			featureImage.dispose();
+			newTitleImage.dispose();
 		});
 
 		final Composite container = new Composite(composite, SWT.NONE);
@@ -125,19 +113,15 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		searchText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (filter != null) {
-					filter.setPattern(searchText.getText());
-					if (viewer != null) {
-						viewer.refresh();
-						if (searchText.getText().length() > 0) {
-							viewer.expandAll();
-						} else {
-							viewer.collapseAll();
-						}
+		searchText.addModifyListener(e -> {
+			if (filter != null) {
+				filter.setPattern(searchText.getText());
+				if (viewer != null) {
+					viewer.refresh();
+					if (searchText.getText().length() > 0) {
+						viewer.expandAll();
+					} else {
+						viewer.collapseAll();
 					}
 				}
 			}
@@ -149,13 +133,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ContentProviderImpl());
 		viewer.setLabelProvider(new LabelProviderImpl(packageImage, classImage, featureImage));
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 		viewer.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -170,16 +148,13 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 				return super.compare(viewer, e1, e2);
 			}
 		});
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				final Button buttonOk = getButton(IDialogConstants.OK_ID);
-				if (!selection.isEmpty() && selection.getFirstElement().getClass() == InternalFeature.class) {
-					buttonOk.setEnabled(true);
-				} else {
-					buttonOk.setEnabled(false);
-				}
+		viewer.addSelectionChangedListener(event -> {
+			final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			final Button buttonOk = getButton(IDialogConstants.OK_ID);
+			if (!selection.isEmpty() && selection.getFirstElement().getClass() == InternalFeature.class) {
+				buttonOk.setEnabled(true);
+			} else {
+				buttonOk.setEnabled(false);
 			}
 		});
 

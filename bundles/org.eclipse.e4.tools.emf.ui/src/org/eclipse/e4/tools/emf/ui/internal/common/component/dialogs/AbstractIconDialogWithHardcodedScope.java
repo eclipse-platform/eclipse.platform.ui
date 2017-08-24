@@ -30,7 +30,6 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
@@ -38,16 +37,12 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -190,13 +185,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 		final WritableList list = new WritableList();
 		viewer.setInput(list);
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		textSearch.addModifyListener(new ModifyListener() {
 			private IconMatchCallback callback;
@@ -221,13 +210,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 			}
 		});
 
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				clearImages();
-			}
-		});
+		getShell().addDisposeListener(e -> clearImages());
 
 		textSearch.notifyListeners(SWT.Modify, new Event());
 
@@ -301,13 +284,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 		public void match(final IFile file) {
 			if (!cancel) {
-				list.getRealm().exec(new Runnable() {
-
-					@Override
-					public void run() {
-						list.add(file);
-					}
-				});
+				list.getRealm().exec(() -> list.add(file));
 			}
 		}
 	}
@@ -366,25 +343,20 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 							e.printStackTrace();
 						}
 					}
-					project.accept(new IResourceVisitor() {
-
-						@Override
-						public boolean visit(IResource resource) throws CoreException {
-							if (callback.cancel) {
-								return false;
-							}
-
-							if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
-								return true;
-							} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
-								String path = resource.getProjectRelativePath().toString();
-								if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
-									callback.match((IFile) resource);
-								}
-							}
+					project.accept(resource -> {
+						if (callback.cancel) {
 							return false;
 						}
 
+						if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
+							return true;
+						} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
+							String path = resource.getProjectRelativePath().toString();
+							if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
+								callback.match((IFile) resource);
+							}
+						}
+						return false;
 					});
 				}
 			} catch (CoreException e) {

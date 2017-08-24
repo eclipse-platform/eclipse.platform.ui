@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,8 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -117,13 +113,7 @@ public abstract class AbstractPickList extends Composite {
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		toolBar.setFont(group.getFont());
 
-		picker.addOpenListener(new IOpenListener() {
-
-			@Override
-			public void open(OpenEvent event) {
-				addPressed();
-			}
-		});
+		picker.addOpenListener(event -> addPressed());
 
 		tiAdd = new Button(toolBar, SWT.PUSH);
 		tiAdd.setToolTipText(messages.ModelTooling_Common_AddEllipsis);
@@ -177,13 +167,7 @@ public abstract class AbstractPickList extends Composite {
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateUiState();
-			}
-		});
+		viewer.addSelectionChangedListener(event -> updateUiState());
 
 		updateUiState();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -35,7 +33,7 @@ public class NonReferencedResourceWizard extends DynamicWizard {
 	BundleImageCache imageCache;
 
 	public NonReferencedResourceWizard(Shell parentShell, IProject project, String bundle, IFile file,
-		String installLocation, IEclipseContext context) {
+			String installLocation, IEclipseContext context) {
 		this.project = project;
 
 		wizContext = context.createChild();
@@ -45,13 +43,7 @@ public class NonReferencedResourceWizard extends DynamicWizard {
 		wizContext.set("resolvedFile", null); //$NON-NLS-1$
 
 		imageCache = new BundleImageCache(parentShell.getDisplay(), getClass().getClassLoader(), context);
-		parentShell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				imageCache.dispose();
-			}
-		});
+		parentShell.addDisposeListener(e -> imageCache.dispose());
 		wizContext.set(BundleImageCache.class, imageCache);
 
 		nonReferencedActionPage = new NonReferencedActionPage(project, bundle, file, installLocation, wizContext);

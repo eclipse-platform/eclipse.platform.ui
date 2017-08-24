@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Remain BV, Industrial-TSI BV and others.
+ * Copyright (c) 2013, 2017 Remain BV, Industrial-TSI BV and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,20 +13,17 @@
 package org.eclipse.e4.tools.emf.ui.internal.imp;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizard;
@@ -143,27 +140,20 @@ public class ModelImportPage1 extends WizardPage {
 
 		comboViewer.setInput(Messages.ModelImportPage1_Go);
 
-		comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		comboViewer.addSelectionChangedListener(event -> {
+			String bundle = ((IStructuredSelection) event.getSelection()).getFirstElement().toString();
+			RegistryStruct struct = RegistryUtil.getStruct(wizard.getApplicationElement(), wizard.getHint());
+			struct.setBundle(bundle);
+			checkboxTableViewer.setInput(struct);
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				String bundle = ((IStructuredSelection) event.getSelection()).getFirstElement().toString();
-				RegistryStruct struct = RegistryUtil.getStruct(wizard.getApplicationElement(), wizard.getHint());
-				struct.setBundle(bundle);
-				checkboxTableViewer.setInput(struct);
-
-			}
 		});
 
-		checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				checkedElements = checkboxTableViewer.getCheckedElements();
-				if (checkedElements.length > 0) {
-					setPageComplete(true);
-				} else {
-					setPageComplete(false);
-				}
+		checkboxTableViewer.addCheckStateListener(event -> {
+			checkedElements = checkboxTableViewer.getCheckedElements();
+			if (checkedElements.length > 0) {
+				setPageComplete(true);
+			} else {
+				setPageComplete(false);
 			}
 		});
 	}

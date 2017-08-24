@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,16 +22,12 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -70,13 +66,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
 				"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				titleImage.dispose();
-			}
-		});
+		getShell().addDisposeListener(e -> titleImage.dispose());
 
 		getShell().setText(Messages.FindImportElementDialog_ShellTitle);
 		setTitle(Messages.FindImportElementDialog_Title);
@@ -120,13 +110,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 			}
 		});
 		viewer.setContentProvider(new ObservableListContentProvider());
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		final WritableList list = new WritableList();
 		viewer.setInput(list);

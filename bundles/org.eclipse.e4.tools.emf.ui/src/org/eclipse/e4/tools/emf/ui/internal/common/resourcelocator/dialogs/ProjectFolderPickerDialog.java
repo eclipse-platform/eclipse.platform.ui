@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
 import java.net.URL;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -23,8 +23,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -83,17 +81,13 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 			}
 			final IResource resource = (IResource) parentElement;
 			final ArrayList<Object> list = new ArrayList<>();
-			IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
-
-				@Override
-				public boolean visit(IResourceProxy proxy) throws CoreException {
-					if (proxy.getType() == IResource.FOLDER && proxy.requestResource().getParent() == resource) {
-						if (proxy.requestResource().equals(resource) == false) {
-							list.add(proxy.requestResource());
-						}
+			IResourceProxyVisitor visitor = proxy -> {
+				if (proxy.getType() == IResource.FOLDER && proxy.requestResource().getParent() == resource) {
+					if (proxy.requestResource().equals(resource) == false) {
+						list.add(proxy.requestResource());
 					}
-					return true;
 				}
+				return true;
 			};
 			try {
 				resource.accept(visitor, IResource.DEPTH_ONE);
@@ -119,16 +113,12 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 			final IResource resource = (IResource) element;
 			try {
 				found = false;
-				resource.accept(new IResourceProxyVisitor() {
-
-					@Override
-					public boolean visit(IResourceProxy proxy) throws CoreException {
-						if (proxy.getType() == IResource.FOLDER && proxy.requestResource().equals(resource) == false) {
-							found = true;
-							return false;
-						}
-						return true;
+				resource.accept(proxy -> {
+					if (proxy.getType() == IResource.FOLDER && proxy.requestResource().equals(resource) == false) {
+						found = true;
+						return false;
 					}
+					return true;
 				}, IResource.DEPTH_ONE);
 			} catch (CoreException e) {
 				e.printStackTrace();
@@ -209,13 +199,7 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 		viewer.setInput(project);
 		viewer.expandToLevel(2);
 
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		if (srcPath != null) {
 

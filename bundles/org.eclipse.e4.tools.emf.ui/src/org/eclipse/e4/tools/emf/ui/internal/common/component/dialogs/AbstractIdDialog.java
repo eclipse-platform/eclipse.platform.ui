@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 - 2015 fhv.at and others.
+ * Copyright (c) 2013, 2017 fhv.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
@@ -48,7 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends
-	SaveDialogBoundsSettingsDialog {
+SaveDialogBoundsSettingsDialog {
 
 	protected EModelService modelService;
 
@@ -59,7 +57,7 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 	protected Messages messages;
 
 	public AbstractIdDialog(Shell parentShell, IModelResource resource, ContributionClass toolbarContribution,
-		EditingDomain domain, EModelService modelService, Messages Messages) {
+			EditingDomain domain, EModelService modelService, Messages Messages) {
 		super(parentShell);
 		this.resource = resource;
 		this.modelService = modelService;
@@ -120,12 +118,7 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.addFilter(filter);
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		ControlFactory.attachFiltering(idField, viewer, filter);
 

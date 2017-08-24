@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others. All rights reserved. This
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,13 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithHardcodedScope;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithScopeAndFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -89,41 +89,33 @@ public class IconDialog extends Dialog implements UriDialog {
 			txtUri.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			txtUri.setText("platform://plugin/"); //$NON-NLS-1$
 
-			txtUri.addModifyListener(new ModifyListener() {
-
-				@Override
-				public void modifyText(ModifyEvent e) {
-					if (ignoreModify) {
-						return;
-					}
-					ignoreModify = true;
-					setUri(txtUri.getText());
-					txtBundle.setText(bundle);
-					txtPath.setText(path);
-					txtIcon.setText(icon);
-					ignoreModify = false;
-					parent.pack();
-				}
-			});
-		}
-
-		// common listener for text boxes
-		ModifyListener listener = new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
+			txtUri.addModifyListener(e -> {
 				if (ignoreModify) {
 					return;
 				}
 				ignoreModify = true;
-				String prefix;
-
-				prefix = "platform:/plugin/"; //$NON-NLS-1$
-				setUri(prefix + txtBundle.getText() + "/" + txtPath.getText() + "/" + txtIcon.getText()); //$NON-NLS-1$//$NON-NLS-2$
-
-				txtUri.setText(getUri());
+				setUri(txtUri.getText());
+				txtBundle.setText(bundle);
+				txtPath.setText(path);
+				txtIcon.setText(icon);
 				ignoreModify = false;
+				parent.pack();
+			});
+		}
+
+		// common listener for text boxes
+		ModifyListener listener = e -> {
+			if (ignoreModify) {
+				return;
 			}
+			ignoreModify = true;
+			String prefix;
+
+			prefix = "platform:/plugin/"; //$NON-NLS-1$
+			setUri(prefix + txtBundle.getText() + "/" + txtPath.getText() + "/" + txtIcon.getText()); //$NON-NLS-1$//$NON-NLS-2$
+
+			txtUri.setText(getUri());
+			ignoreModify = false;
 		};
 
 		{

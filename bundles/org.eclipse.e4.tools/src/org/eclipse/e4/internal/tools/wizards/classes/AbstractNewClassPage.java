@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,8 +61,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -193,13 +191,9 @@ public abstract class AbstractNewClassPage extends WizardPage {
 				"/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
 		setImageDescriptor(ImageDescriptor.createFromImage(img));
 
-		parent.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				img.dispose();
-				setImageDescriptor(null);
-			}
+		parent.addDisposeListener(e -> {
+			img.dispose();
+			setImageDescriptor(null);
 		});
 
 		parent = new Composite(parent, SWT.NULL);

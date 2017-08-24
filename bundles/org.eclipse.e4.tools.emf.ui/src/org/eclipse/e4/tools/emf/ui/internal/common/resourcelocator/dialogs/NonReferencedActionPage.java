@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,13 +219,7 @@ public class NonReferencedActionPage extends WizardPage {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnRequire.getSelection()) {
-						final Runnable okAction = new Runnable() {
-
-							@Override
-							public void run() {
-								doRequireBundle(bundle, installLocation);
-							}
-						};
+						final Runnable okAction = () -> doRequireBundle(bundle, installLocation);
 						setAction(NonReferencedAction.REQUIRE, okAction);
 					}
 				}
@@ -243,33 +237,30 @@ public class NonReferencedActionPage extends WizardPage {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnImport.getSelection()) {
-						final Runnable okAction = new Runnable() {
-							@Override
-							public void run() {
-								final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-								Manifest manifest;
-								try {
-									manifest = new Manifest(fileManifest.getContents());
-									String value = manifest.getMainAttributes().getValue("Import-Package"); //$NON-NLS-1$
+						final Runnable okAction = () -> {
+							final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+							Manifest manifest;
+							try {
+								manifest = new Manifest(fileManifest.getContents());
+								String value = manifest.getMainAttributes().getValue("Import-Package"); //$NON-NLS-1$
 
-									final String packageName = getPackageFromClassName(className);
-									// TODO ensure the packageName is not
-									// already in the manifest (although it
-									// should not be if we are here)
-									if (value == null) {
-										value = packageName;
-									} else {
-										value += "," + packageName; //$NON-NLS-1$
-									}
-									manifest.getMainAttributes().putValue("Import-Package", value); //$NON-NLS-1$
-									final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-									manifest.write(bos);
-									final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-									fileManifest.setContents(bis, true, true, null);
-									context.set("resolvedFile", file); //$NON-NLS-1$
-								} catch (final Exception e) {
-									e.printStackTrace();
+								final String packageName = getPackageFromClassName(className);
+								// TODO ensure the packageName is not
+								// already in the manifest (although it
+								// should not be if we are here)
+								if (value == null) {
+									value = packageName;
+								} else {
+									value += "," + packageName; //$NON-NLS-1$
 								}
+								manifest.getMainAttributes().putValue("Import-Package", value); //$NON-NLS-1$
+								final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+								manifest.write(bos);
+								final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+								fileManifest.setContents(bis, true, true, null);
+								context.set("resolvedFile", file); //$NON-NLS-1$
+							} catch (final Exception e1) {
+								e1.printStackTrace();
 							}
 						};
 						setAction(NonReferencedAction.IMPORT, okAction);
@@ -287,12 +278,7 @@ public class NonReferencedActionPage extends WizardPage {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnUseAnyway.getSelection()) {
-						setAction(NonReferencedAction.USE_ANYWAY, new Runnable() {
-							@Override
-							public void run() {
-								context.set("resolvedFile", file); //$NON-NLS-1$
-							}
-						});
+						setAction(NonReferencedAction.USE_ANYWAY, () -> context.set("resolvedFile", file));
 					}
 				}
 			});
@@ -309,31 +295,26 @@ public class NonReferencedActionPage extends WizardPage {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						if (btnConvertToBundle.getSelection()) {
-							final Runnable okAction = new Runnable() {
+							final Runnable okAction = () -> {
+								String bundleId;
+								try {
+									final ContributionData contributionData = cdf.getContributionData();
+									bundleId = BundleConverter.convertProjectToBundle(contributionData.installLocation,
+											project.getWorkspace());
+									if (bundleId != null) {
 
-								@Override
-								public void run() {
-									String bundleId;
-									try {
-										final ContributionData contributionData = cdf.getContributionData();
-										bundleId = BundleConverter.convertProjectToBundle(
-												contributionData.installLocation, project.getWorkspace());
-										if (bundleId != null) {
-
-											final ContributionData cdConverted = new ContributionData(bundleId,
-													contributionData.className, contributionData.sourceType,
-													contributionData.iconPath);
-											cdConverted.installLocation = installLocation;
-											cdConverted.resourceRelativePath = Path
-													.fromOSString(contributionData.iconPath).removeFirstSegments(1)
-													.toOSString();
-											doRequireBundle(bundleId, installLocation);
-											context.set("resolvedFile", new ContributionDataFile(cdConverted)); //$NON-NLS-1$
-										}
-									} catch (final Exception e1) {
-										MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
-												e1.getMessage());
+										final ContributionData cdConverted = new ContributionData(bundleId,
+												contributionData.className, contributionData.sourceType,
+												contributionData.iconPath);
+										cdConverted.installLocation = installLocation;
+										cdConverted.resourceRelativePath = Path.fromOSString(contributionData.iconPath)
+												.removeFirstSegments(1).toOSString();
+										doRequireBundle(bundleId, installLocation);
+										context.set("resolvedFile", new ContributionDataFile(cdConverted)); //$NON-NLS-1$
 									}
+								} catch (final Exception e1) {
+									MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
+											e1.getMessage());
 								}
 							};
 							setAction(NonReferencedAction.CONVERT_AND_REQUIRE, okAction);
@@ -353,13 +334,7 @@ public class NonReferencedActionPage extends WizardPage {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnCopy.getSelection()) {
-						final Runnable okAction = new Runnable() {
-
-							@Override
-							public void run() {
-								copyResourceToProject();
-							}
-						};
+						final Runnable okAction = () -> copyResourceToProject();
 						context.set("projectToCopyTo", project); //$NON-NLS-1$
 						setAction(NonReferencedAction.COPY, okAction);
 					}
@@ -377,13 +352,7 @@ public class NonReferencedActionPage extends WizardPage {
 				public void widgetSelected(SelectionEvent e) {
 					if (btnCopy2.getSelection()) {
 
-						final Runnable okAction = new Runnable() {
-
-							@Override
-							public void run() {
-								copyResourceToProject();
-							}
-						};
+						final Runnable okAction = () -> copyResourceToProject();
 						setAction(NonReferencedAction.COPY_TO_OTHER, okAction);
 					}
 				}

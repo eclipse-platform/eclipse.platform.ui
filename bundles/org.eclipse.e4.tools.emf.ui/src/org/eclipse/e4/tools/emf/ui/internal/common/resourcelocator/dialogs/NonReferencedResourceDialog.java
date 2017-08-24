@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -217,13 +215,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnRequire.getSelection()) {
-						okAction = new Runnable() {
-
-							@Override
-							public void run() {
-								doRequireBundle(bundle, installLocation);
-							}
-						};
+						okAction = () -> doRequireBundle(bundle, installLocation);
 					}
 				}
 			});
@@ -240,33 +232,30 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnImport.getSelection()) {
-						okAction = new Runnable() {
-							@Override
-							public void run() {
-								final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-								Manifest manifest;
-								try {
-									manifest = new Manifest(fileManifest.getContents());
-									String value = manifest.getMainAttributes().getValue("Import-Package"); //$NON-NLS-1$
+						okAction = () -> {
+							final IFile fileManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+							Manifest manifest;
+							try {
+								manifest = new Manifest(fileManifest.getContents());
+								String value = manifest.getMainAttributes().getValue("Import-Package"); //$NON-NLS-1$
 
-									final String packageName = getPackageFromClassName(className);
-									// TODO ensure the packageName is not
-									// already in the manifest (although it
-									// should not be if we are here)
-									if (value == null) {
-										value = packageName;
-									} else {
-										value += "," + packageName; //$NON-NLS-1$
-									}
-									manifest.getMainAttributes().putValue("Import-Package", value); //$NON-NLS-1$
-									final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-									manifest.write(bos);
-									final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-									fileManifest.setContents(bis, true, true, null);
-									result = file;
-								} catch (final Exception e) {
-									e.printStackTrace();
+								final String packageName = getPackageFromClassName(className);
+								// TODO ensure the packageName is not
+								// already in the manifest (although it
+								// should not be if we are here)
+								if (value == null) {
+									value = packageName;
+								} else {
+									value += "," + packageName; //$NON-NLS-1$
 								}
+								manifest.getMainAttributes().putValue("Import-Package", value); //$NON-NLS-1$
+								final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+								manifest.write(bos);
+								final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+								fileManifest.setContents(bis, true, true, null);
+								result = file;
+							} catch (final Exception e1) {
+								e1.printStackTrace();
 							}
 						};
 					}
@@ -300,31 +289,26 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						if (btnConvertToBundle.getSelection()) {
-							okAction = new Runnable() {
+							okAction = () -> {
+								String bundleId;
+								try {
+									final ContributionData contributionData = cdf.getContributionData();
+									bundleId = BundleConverter.convertProjectToBundle(contributionData.installLocation,
+											project.getWorkspace());
+									if (bundleId != null) {
 
-								@Override
-								public void run() {
-									String bundleId;
-									try {
-										final ContributionData contributionData = cdf.getContributionData();
-										bundleId = BundleConverter.convertProjectToBundle(
-												contributionData.installLocation, project.getWorkspace());
-										if (bundleId != null) {
-
-											final ContributionData cdConverted = new ContributionData(bundleId,
-													contributionData.className, contributionData.sourceType,
-													contributionData.iconPath);
-											cdConverted.installLocation = installLocation;
-											cdConverted.resourceRelativePath = Path
-													.fromOSString(contributionData.iconPath).removeFirstSegments(1)
-													.toOSString();
-											doRequireBundle(bundleId, installLocation);
-											result = new ContributionDataFile(cdConverted);
-										}
-									} catch (final Exception e1) {
-										MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
-												e1.getMessage());
+										final ContributionData cdConverted = new ContributionData(bundleId,
+												contributionData.className, contributionData.sourceType,
+												contributionData.iconPath);
+										cdConverted.installLocation = installLocation;
+										cdConverted.resourceRelativePath = Path.fromOSString(contributionData.iconPath)
+												.removeFirstSegments(1).toOSString();
+										doRequireBundle(bundleId, installLocation);
+										result = new ContributionDataFile(cdConverted);
 									}
+								} catch (final Exception e1) {
+									MessageDialog.openError(getShell(), Messages.NonReferencedResourceDialog_error,
+											e1.getMessage());
 								}
 							};
 						}
@@ -343,13 +327,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnCopy.getSelection()) {
-						okAction = new Runnable() {
-
-							@Override
-							public void run() {
-								copyResourceToProject(project);
-							}
-						};
+						okAction = () -> copyResourceToProject(project);
 					}
 				}
 			});
@@ -364,24 +342,20 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnCopy2.getSelection()) {
-						okAction = new Runnable() {
+						okAction = () -> {
+							final ReferencedProjectPickerDialog dlg = new ReferencedProjectPickerDialog(getShell(),
+									project) {
+								@Override
+								protected Control createContents(Composite parent) {
+									final Control ret = super.createContents(parent);
+									setMessage(Messages.NonReferencedResourceDialog_selectProjectToReceiveCopy);
+									setTitleImage(imageCache.create("/icons/full/wizban/plugin_wiz.gif")); //$NON-NLS-1$
 
-							@Override
-							public void run() {
-								final ReferencedProjectPickerDialog dlg = new ReferencedProjectPickerDialog(getShell(),
-										project) {
-									@Override
-									protected Control createContents(Composite parent) {
-										final Control ret = super.createContents(parent);
-										setMessage(Messages.NonReferencedResourceDialog_selectProjectToReceiveCopy);
-										setTitleImage(imageCache.create("/icons/full/wizban/plugin_wiz.gif")); //$NON-NLS-1$
-
-										return ret;
-									}
-								};
-								if (dlg.open() == IDialogConstants.OK_ID) {
-									copyResourceToProject((IProject) dlg.getFirstElement());
+									return ret;
 								}
+							};
+							if (dlg.open() == IDialogConstants.OK_ID) {
+								copyResourceToProject((IProject) dlg.getFirstElement());
 							}
 						};
 					}
@@ -408,13 +382,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 	@Override
 	protected Control createContents(Composite parent) {
 		imageCache = new BundleImageCache(parent.getDisplay(), getClass().getClassLoader(), context);
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				imageCache.dispose();
-			}
-		});
+		getShell().addDisposeListener(e -> imageCache.dispose());
 
 		final Control ret = super.createContents(parent);
 		setMessage(Messages.NonReferencedResourceDialog_resourceNotReferenced);

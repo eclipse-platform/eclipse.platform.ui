@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
 
 
  * All rights reserved. This program and the accompanying materials
@@ -129,13 +129,7 @@ public class ApplicationModelEditor extends ModelEditor {
 
 
 		private void hidePart(final boolean force) {
-			sync.asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					partService.hidePart(part, force);
-				}
-			});
+			sync.asyncExec(() -> partService.hidePart(part, force));
 		}
 	};
 
@@ -147,14 +141,11 @@ public class ApplicationModelEditor extends ModelEditor {
 	 */
 	protected void statusDialog(final Exception exc) {
 		try {
-			sync.syncExec(new Runnable() {
-				@Override
-				public void run() {
-					String bundle = FrameworkUtil.getBundle(getClass()).getSymbolicName();
-					Status status = new Status(IStatus.ERROR, bundle, exc.getMessage());
-					ErrorDialog.openError(shell, exc.getMessage(), exc.getMessage(), status);
-					exc.printStackTrace(System.err);
-				}
+			sync.syncExec(() -> {
+				String bundle = FrameworkUtil.getBundle(getClass()).getSymbolicName();
+				Status status = new Status(IStatus.ERROR, bundle, exc.getMessage());
+				ErrorDialog.openError(shell, exc.getMessage(), exc.getMessage(), status);
+				exc.printStackTrace(System.err);
 			});
 		} catch (Exception e) {
 		}
@@ -164,17 +155,14 @@ public class ApplicationModelEditor extends ModelEditor {
 	 * Reload the model.
 	 */
 	protected void reloadModel() {
-		getModelProvider().getRoot().getRealm().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					resource.unload();
-					resource.load(null);
-					getModelProvider().replaceRoot(resource.getContents().get(0));
-					doSave(new NullProgressMonitor());
-				} catch (IOException e) {
-					statusDialog(e);
-				}
+		getModelProvider().getRoot().getRealm().asyncExec(() -> {
+			try {
+				resource.unload();
+				resource.load(null);
+				getModelProvider().replaceRoot(resource.getContents().get(0));
+				doSave(new NullProgressMonitor());
+			} catch (IOException e) {
+				statusDialog(e);
 			}
 		});
 	}

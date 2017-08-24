@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 - 2016 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,12 +168,8 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			final IWorkbenchPart activePart = page.getActivePart();
 			if (activePart instanceof ISetSelectionTarget) {
 				final ISelection targetSelection = new StructuredSelection(modelFile);
-				getShell().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						((ISetSelectionTarget) activePart).selectReveal(targetSelection);
-					}
-				});
+				getShell().getDisplay()
+				.asyncExec(() -> ((ISetSelectionTarget) activePart).selectReveal(targetSelection));
 			}
 
 			// Open an editor on the new file.

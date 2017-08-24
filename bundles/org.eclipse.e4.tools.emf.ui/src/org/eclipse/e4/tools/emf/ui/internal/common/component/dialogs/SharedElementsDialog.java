@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -100,13 +98,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 		viewer.setLabelProvider(new LabelProviderImpl());
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		if (resource.getRoot().get(0) instanceof MApplication) {
 			final List<MUIElement> list = new ArrayList<>();

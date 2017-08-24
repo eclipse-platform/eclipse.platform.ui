@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImage
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -48,13 +46,9 @@ public class ReferencedProjectPickerDialog extends TitleAreaFilterDialog {
 	@Override
 	protected Control createContents(Composite parent) {
 		imageCache = new BundleImageCache(parent.getDisplay(), getClass().getClassLoader());
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				imageCache.dispose();
-				imgProject = null;
-			}
+		getShell().addDisposeListener(e -> {
+			imageCache.dispose();
+			imgProject = null;
 		});
 		imgProject = imageCache.create("/icons/full/obj16/projects.png"); //$NON-NLS-1$
 

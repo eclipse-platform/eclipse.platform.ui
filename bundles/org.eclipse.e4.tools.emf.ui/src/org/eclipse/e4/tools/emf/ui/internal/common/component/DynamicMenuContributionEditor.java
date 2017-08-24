@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 MEDEVIT, FHV and others.
+ * Copyright (c) 2013, 2017 MEDEVIT, FHV and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -182,21 +180,17 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.addModifyListener(new ModifyListener() {
-
-				@Override
-				public void modifyText(ModifyEvent e) {
-					if (lnk != null) {
-						lnk.setToolTipText(((Text) e.getSource()).getText());
-					}
+			t.addModifyListener(e -> {
+				if (lnk != null) {
+					lnk.setToolTipText(((Text) e.getSource()).getText());
 				}
 			});
 			final Binding binding = context.bindValue(
 					textProp.observeDelayed(200, t),
 					EMFEditProperties.value(getEditingDomain(),
 							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()),
-							new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-							new UpdateValueStrategy());
+					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+					new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

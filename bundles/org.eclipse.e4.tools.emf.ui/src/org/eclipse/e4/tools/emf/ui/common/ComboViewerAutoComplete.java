@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.e4.tools.emf.ui.common;
 import java.util.Arrays;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -88,18 +89,11 @@ public class ComboViewerAutoComplete {
 				// need to delay the call
 				// THIS IS A WORKAROUND
 				final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-				executor.schedule(new Runnable() {
-					@Override
-					public void run() {
-						dropDown.getCombo().getDisplay().syncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								dropDown.getCombo().setSelection(new Point(0, dropDown.getCombo().getText().length()));
-							}
-						});
-					}
-				}, 200, TimeUnit.MILLISECONDS);
+				executor.schedule(
+						() -> dropDown.getCombo().getDisplay()
+						.syncExec(() -> dropDown.getCombo()
+								.setSelection(new Point(0, dropDown.getCombo().getText().length()))),
+						200, TimeUnit.MILLISECONDS);
 			}
 		});
 	}

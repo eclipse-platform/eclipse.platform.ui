@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.ProjectFolderPickerDialog.ProjectContentProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.ProjectFolderPickerDialog.ProjectLabelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -76,21 +72,9 @@ public class PickProjectFolderPage extends WizardPage {
 		viewer.setLabelProvider(new ProjectLabelProvider());
 		viewer.expandToLevel(2);
 
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
+		viewer.addDoubleClickListener(event -> onChanged());
 
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				onChanged();
-			}
-		});
-
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				onChanged();
-			}
-		});
+		viewer.addSelectionChangedListener(event -> onChanged());
 
 		Composite compPath = new Composite(ret, SWT.NONE);
 		compPath.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

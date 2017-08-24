@@ -3,8 +3,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class ControlHighlighter {
@@ -21,13 +19,7 @@ public class ControlHighlighter {
 		s.setBackground(s.getDisplay().getSystemColor(SWT.COLOR_RED));
 		s.setAlpha(100);
 		s.open();
-		s.addListener(SWT.MouseDown, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				hide();
-			}
-		});
+		s.addListener(SWT.MouseDown, event -> hide());
 	}
 
 	public static void hide() {

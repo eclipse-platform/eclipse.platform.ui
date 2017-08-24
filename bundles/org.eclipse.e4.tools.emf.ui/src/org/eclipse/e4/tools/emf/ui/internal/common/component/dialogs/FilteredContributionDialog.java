@@ -40,7 +40,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
-import org.eclipse.e4.tools.emf.ui.common.IProviderStatusCallback;
 import org.eclipse.e4.tools.emf.ui.common.ProviderStatus;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -57,8 +56,6 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -73,12 +70,8 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -192,28 +185,18 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		@Override
 		public void result(final ContributionData data) {
 			if (!cancled) {
-				getShell().getDisplay().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						list.add(data);
-					}
-				});
+				getShell().getDisplay().syncExec(() -> list.add(data));
 			}
 		}
 
 		@Override
 		public void moreResults(final int hint, final Filter filter) {
 			if (!cancled) {
-				getShell().getDisplay().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						final FilteredContributionDialog dlg = (FilteredContributionDialog) filter.userData;
-						dlg.hint = hint;
-						dlg.maxResults = filter.maxResults;
-						dlg.updateStatusMessage();
-					}
+				getShell().getDisplay().syncExec(() -> {
+					final FilteredContributionDialog dlg = (FilteredContributionDialog) filter.userData;
+					dlg.hint = hint;
+					dlg.maxResults = filter.maxResults;
+					dlg.updateStatusMessage();
 				});
 			}
 		}
@@ -258,13 +241,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	}
 
 	public void setStatus(final String message) {
-		getShell().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				lblStatus.setText(message);
-			}
-		});
+		getShell().getDisplay().asyncExec(() -> lblStatus.setText(message));
 	}
 
 	@Override
@@ -300,18 +277,14 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
-		getShell().addDisposeListener(new DisposeListener() {
+		getShell().addDisposeListener(e -> {
+			imageCache.dispose();
 
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				imageCache.dispose();
-
-				if (contributionTypeImage.isDisposed() == false) {
-					contributionTypeImage.dispose();
-				}
-				if (getTitleImageLabel().getImage() != null && getTitleImage().isDisposed() == false) {
-					getTitleImageLabel().getImage().dispose();
-				}
+			if (contributionTypeImage.isDisposed() == false) {
+				contributionTypeImage.dispose();
+			}
+			if (getTitleImageLabel().getImage() != null && getTitleImage().isDisposed() == false) {
+				getTitleImageLabel().getImage().dispose();
 			}
 		});
 
@@ -366,103 +339,80 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		});
 
-		textBox.addModifyListener(new ModifyListener() {
+		textBox.addModifyListener(e -> {
+			stopSearchThread(true);
+			setMessage(""); //$NON-NLS-1$
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				stopSearchThread(true);
-				setMessage(""); //$NON-NLS-1$
-
-				viewerList.clear();
-				if (doSearch() == true) {
-					return;
-				}
-				searching = true;
-				updateStatusMessage();
-
-				currentSearchThread = new Job(Messages.FilteredContributionDialog_ContributionSearch) {
-
-					Filter filter;
-
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask(Messages.FilteredContributionDialog_ContributionSearch,
-								IProgressMonitor.UNKNOWN);
-						currentResultHandler = new ContributionResultHandlerImpl(viewerList);
-						getShell().getDisplay().syncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								if (searchScopes.contains(ResourceSearchScope.PROJECT)) {
-									filter = new Filter(context.get(IProject.class), textBox.getText());
-								} else {
-									// filter = new Filter(null,
-									// textBox.getText());
-									filter = new Filter(context.get(IProject.class), textBox.getText());
-								}
-							}
-						});
-						filter.maxResults = MAX_RESULTS;
-						filter.userData = FilteredContributionDialog.this;
-						filter.setBundles(filterBundles);
-						filter.setPackages(filterPackages);
-						filter.setLocations(filterLocations);
-						filter.setSearchScope(searchScopes);
-						filter.setIncludeNonBundles(includeNonBundles);
-						filter.setProgressMonitor(monitor);
-						filter.setProviderStatusCallback(new IProviderStatusCallback() {
-
-							@Override
-							public void onStatusChanged(final ProviderStatus status) {
-								providerStatus = status;
-								try {
-									getShell().getDisplay().syncExec(new Runnable() {
-
-										@Override
-										public void run() {
-											updateStatusMessage();
-											switch (status) {
-											case READY:
-												// This will deadlock if
-												// currentSearchThread is not
-												// null
-												currentSearchThread = null;
-												if (currentResultHandler != null) {
-													currentResultHandler.cancled = true;
-												}
-												refreshSearch();
-												break;
-											case CANCELLED:
-											case INITIALIZING:
-												break;
-											}
-										}
-									});
-								} catch (final Exception e2) {
-									// Dialog may have been closed while
-									// provider was still indexing
-								}
-							}
-						});
-						collector.findContributions(filter, currentResultHandler);
-
-						monitor.done();
-						searching = false;
-						currentSearchThread = null;
-						getShell().getDisplay().syncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								updateStatusMessage();
-							}
-						});
-						return Status.OK_STATUS;
-					}
-
-				};
-				currentSearchThread.schedule();
-
+			viewerList.clear();
+			if (doSearch() == true) {
+				return;
 			}
+			searching = true;
+			updateStatusMessage();
+
+			currentSearchThread = new Job(Messages.FilteredContributionDialog_ContributionSearch) {
+
+				Filter filter;
+
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask(Messages.FilteredContributionDialog_ContributionSearch, IProgressMonitor.UNKNOWN);
+					currentResultHandler = new ContributionResultHandlerImpl(viewerList);
+					getShell().getDisplay().syncExec(() -> {
+						if (searchScopes.contains(ResourceSearchScope.PROJECT)) {
+							filter = new Filter(context.get(IProject.class), textBox.getText());
+						} else {
+							// filter = new Filter(null,
+							// textBox.getText());
+							filter = new Filter(context.get(IProject.class), textBox.getText());
+						}
+					});
+					filter.maxResults = MAX_RESULTS;
+					filter.userData = FilteredContributionDialog.this;
+					filter.setBundles(filterBundles);
+					filter.setPackages(filterPackages);
+					filter.setLocations(filterLocations);
+					filter.setSearchScope(searchScopes);
+					filter.setIncludeNonBundles(includeNonBundles);
+					filter.setProgressMonitor(monitor);
+					filter.setProviderStatusCallback(status -> {
+						providerStatus = status;
+						try {
+							getShell().getDisplay().syncExec(() -> {
+								updateStatusMessage();
+								switch (status) {
+								case READY:
+									// This will deadlock if
+									// currentSearchThread is not
+									// null
+									currentSearchThread = null;
+									if (currentResultHandler != null) {
+										currentResultHandler.cancled = true;
+									}
+									refreshSearch();
+									break;
+								case CANCELLED:
+								case INITIALIZING:
+									break;
+								}
+							});
+						} catch (final Exception e2) {
+							// Dialog may have been closed while
+							// provider was still indexing
+						}
+					});
+					collector.findContributions(filter, currentResultHandler);
+
+					monitor.done();
+					searching = false;
+					currentSearchThread = null;
+					getShell().getDisplay().syncExec(() -> updateStatusMessage());
+					return Status.OK_STATUS;
+				}
+
+			};
+			currentSearchThread.schedule();
+
 		});
 
 		return comp;
@@ -887,13 +837,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				cell.setStyleRanges(styledString.getStyleRanges());
 			}
 		});
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		viewer.setInput(viewerList);
 

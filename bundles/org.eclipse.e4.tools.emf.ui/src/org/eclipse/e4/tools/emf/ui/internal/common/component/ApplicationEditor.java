@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -75,8 +73,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -505,13 +501,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 				nameField = new Text(group, SWT.BORDER);
 				nameField.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
-				nameField.addModifyListener(new ModifyListener() {
-
-					@Override
-					public void modifyText(ModifyEvent e) {
-						setPageComplete(nameField.getText().trim().length() > 0);
-					}
-				});
+				nameField.addModifyListener(e -> setPageComplete(nameField.getText().trim().length() > 0));
 			}
 
 			{
@@ -560,13 +550,9 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 				keyField = new Text(group, SWT.BORDER);
 				keyField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				keyField.addModifyListener(new ModifyListener() {
-
-					@Override
-					public void modifyText(ModifyEvent e) {
-						bindtableViewer.getControl().setEnabled(isPageComplete());
-						setPageComplete(isPageComplete());
-					}
+				keyField.addModifyListener(e -> {
+					bindtableViewer.getControl().setEnabled(isPageComplete());
+					setPageComplete(isPageComplete());
 				});
 			}
 
@@ -583,13 +569,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 						new ComponentLabelProvider(getEditor(), Messages, italicFontDescriptor)));
 				bindtableViewer.setContentProvider(new ArrayContentProvider());
 				bindtableViewer.setInput(application.getBindingTables());
-				bindtableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						setPageComplete(isPageComplete());
-					}
-				});
+				bindtableViewer.addSelectionChangedListener(event -> setPageComplete(isPageComplete()));
 				bindtableViewer.setSelection(new StructuredSelection(application.getBindingTables().get(0)));
 				final GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = bindtableViewer.getTable().getItemHeight() * 5;
@@ -674,13 +654,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 					}
 				}
 				menuViewer.setInput(menuList);
-				menuViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						setPageComplete(isPageComplete());
-					}
-				});
+				menuViewer.addSelectionChangedListener(event -> setPageComplete(isPageComplete()));
 				final GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = menuViewer.getTable().getItemHeight() * 5;
 				menuViewer.getControl().setLayoutData(gd);
@@ -764,13 +738,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 					}
 				}
 				toolbarViewer.setInput(toolbarList);
-				toolbarViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						setPageComplete(isPageComplete());
-					}
-				});
+				toolbarViewer.addSelectionChangedListener(event -> setPageComplete(isPageComplete()));
 				final GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = toolbarViewer.getTable().getItemHeight() * 5;
 				toolbarViewer.getControl().setLayoutData(gd);

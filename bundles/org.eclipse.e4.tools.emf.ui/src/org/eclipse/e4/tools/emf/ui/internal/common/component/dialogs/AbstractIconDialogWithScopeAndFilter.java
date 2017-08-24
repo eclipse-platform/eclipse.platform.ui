@@ -26,7 +26,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
@@ -38,24 +37,18 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformIconContributionCollector;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -127,16 +120,12 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		maxDisplayedImageSize = 30;
 		cv.setSelection(new StructuredSelection(maxDisplayedImageSize));
 
-		cv.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				maxDisplayedImageSize = (Integer) ((IStructuredSelection) cv.getSelection()).getFirstElement();
-				rebuildViewer();
-				refreshSearch();
-				// combo viewer cannot make rows smaller, so we will need to
-				// rebuild it in that case.
-			}
+		cv.addSelectionChangedListener(event -> {
+			maxDisplayedImageSize = (Integer) ((IStructuredSelection) cv.getSelection()).getFirstElement();
+			rebuildViewer();
+			refreshSearch();
+			// combo viewer cannot make rows smaller, so we will need to
+			// rebuild it in that case.
 		});
 	}
 
@@ -153,13 +142,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		colText.getColumn().setText(Messages.AbstractIconDialogWithScopeAndFilter_details);
 
 		// resize the row height using a MeasureItem listener
-		getViewer().getTable().addListener(SWT.MeasureItem, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				// height cannot be per row so simply set
-				event.height = maxDisplayedImageSize;
-			}
-		});
+		getViewer().getTable().addListener(SWT.MeasureItem, event -> event.height = maxDisplayedImageSize);
 
 		colIcon.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
@@ -251,13 +234,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		});
 		colText.getColumn().setWidth(400);
 
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				clearImages();
-			}
-		});
+		getShell().addDisposeListener(e -> clearImages());
 	}
 
 	@Override
@@ -345,15 +322,11 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 		public void match(final IFile file, final String installLocation) {
 			if (!cancel) {
-				list.getRealm().exec(new Runnable() {
-
-					@Override
-					public void run() {
-						final Entry entry = new Entry();
-						entry.file = file;
-						entry.installLocation = installLocation;
-						list.add(entry);
-					}
+				list.getRealm().exec(() -> {
+					final Entry entry = new Entry();
+					entry.file = file;
+					entry.installLocation = installLocation;
+					list.add(entry);
 				});
 			}
 		}
@@ -408,49 +381,44 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 					if (includeNonBundles == false && filter.project.getFile("/META-INF/MANIFEST.MF").exists() == false) { //$NON-NLS-1$
 						continue;
 					}
-					project.accept(new IResourceVisitor() {
-
-						@Override
-						public boolean visit(IResource resource) throws CoreException {
-							if (callback.cancel) {
-								return false;
-							}
-
-							if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
-								return true;
-							} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
-								final String path = resource.getProjectRelativePath().toString();
-								if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
-									if (E.notEmpty(filter.getPackages())) {
-										if (!filter.getPackages().contains(
-												resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
-											return false;
-										}
-									}
-									if (E.notEmpty(filter.getLocations())) {
-										if (!filter.getLocations().contains(project.getLocation().toOSString())) {
-											return false;
-										}
-									}
-									if (E.notEmpty(filter.getBundles())) {
-										final String bundle = getBundle(project);
-										if (bundle == null || !filter.getBundles().contains(bundle)) {
-											return false;
-										}
-									}
-									if (!filter.isIncludeNonBundles()) {
-										final String bundle = getBundle(project);
-										if (bundle == null) {
-											return false;
-										}
-
-									}
-									callback.match((IFile) resource, project.getLocation().toOSString());
-								}
-							}
+					project.accept(resource -> {
+						if (callback.cancel) {
 							return false;
 						}
 
+						if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
+							return true;
+						} else if (resource.getType() == IResource.FILE && !resource.isLinked()) {
+							final String path = resource.getProjectRelativePath().toString();
+							if (matcherGif.match(path) || matcherPng.match(path) || matcherJpg.match(path)) {
+								if (E.notEmpty(filter.getPackages())) {
+									if (!filter.getPackages().contains(
+											resource.getProjectRelativePath().removeLastSegments(1).toOSString())) {
+										return false;
+									}
+								}
+								if (E.notEmpty(filter.getLocations())) {
+									if (!filter.getLocations().contains(project.getLocation().toOSString())) {
+										return false;
+									}
+								}
+								if (E.notEmpty(filter.getBundles())) {
+									final String bundle1 = getBundle(project);
+									if (bundle1 == null || !filter.getBundles().contains(bundle1)) {
+										return false;
+									}
+								}
+								if (!filter.isIncludeNonBundles()) {
+									final String bundle2 = getBundle(project);
+									if (bundle2 == null) {
+										return false;
+									}
+
+								}
+								callback.match((IFile) resource, project.getLocation().toOSString());
+							}
+						}
+						return false;
 					});
 				}
 			} catch (final CoreException e) {

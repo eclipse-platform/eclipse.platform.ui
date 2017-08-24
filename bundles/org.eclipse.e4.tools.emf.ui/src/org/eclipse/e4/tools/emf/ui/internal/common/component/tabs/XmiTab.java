@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * Copyright (c) 2010-2014 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -113,21 +113,18 @@ public class XmiTab extends Composite {
 		sourceViewer.setDocument(document);
 		verticalRuler.setModel(model);
 
-		emfDocumentProvider.setValidationChangedCallback(new Runnable() {
-			@Override
-			public void run() {
-				model.removeAllAnnotations();
+		emfDocumentProvider.setValidationChangedCallback(() -> {
+			model.removeAllAnnotations();
 
-				for (final Diagnostic d : emfDocumentProvider.getErrorList()) {
-					final Annotation a = new Annotation("e4xmi.error", false, d.getMessage()); //$NON-NLS-1$
-					int l;
-					try {
-						l = document.getLineOffset(d.getLine() - 1);
-						model.addAnnotation(a, new Position(l));
-					} catch (final BadLocationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			for (final Diagnostic d : emfDocumentProvider.getErrorList()) {
+				final Annotation a = new Annotation("e4xmi.error", false, d.getMessage()); //$NON-NLS-1$
+				int l;
+				try {
+					l = document.getLineOffset(d.getLine() - 1);
+					model.addAnnotation(a, new Position(l));
+				} catch (final BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});

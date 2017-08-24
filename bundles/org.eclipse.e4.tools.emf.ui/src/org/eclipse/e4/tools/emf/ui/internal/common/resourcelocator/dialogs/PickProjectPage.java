@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,10 @@ import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -62,13 +58,9 @@ public class PickProjectPage extends WizardPage {
 	public void createControl(Composite parent) {
 
 		imageCache = new BundleImageCache(parent.getDisplay(), getClass().getClassLoader());
-		getShell().addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				imageCache.dispose();
-				imgProject = null;
-			}
+		getShell().addDisposeListener(e -> {
+			imageCache.dispose();
+			imgProject = null;
 		});
 		imgProject = imageCache.create("/icons/full/obj16/projects.png"); //$NON-NLS-1$
 
@@ -94,15 +86,11 @@ public class PickProjectPage extends WizardPage {
 
 		viewer.setInput(projects);
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				final Object firstElement = ((StructuredSelection) event.getSelection()).getFirstElement();
-				context.set("projectToCopyTo", firstElement); //$NON-NLS-1$
-				setPageComplete(firstElement != null);
-				getContainer().updateButtons();
-			}
+		viewer.addSelectionChangedListener(event -> {
+			final Object firstElement = ((StructuredSelection) event.getSelection()).getFirstElement();
+			context.set("projectToCopyTo", firstElement); //$NON-NLS-1$
+			setPageComplete(firstElement != null);
+			getContainer().updateButtons();
 		});
 
 		final String message = Messages.ReferencedProjectPickerDialog_selectReferencedProject;

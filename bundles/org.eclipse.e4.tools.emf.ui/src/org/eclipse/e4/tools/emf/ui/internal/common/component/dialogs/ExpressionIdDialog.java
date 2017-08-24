@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2017 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -55,7 +53,7 @@ public class ExpressionIdDialog extends SaveDialogBoundsSettingsDialog {
 	private final Messages Messages;
 
 	public ExpressionIdDialog(Shell parentShell, IExtensionLookup lookup, MCoreExpression expression,
-		EditingDomain domain, boolean liveModel, Messages Messages) {
+			EditingDomain domain, boolean liveModel, Messages Messages) {
 		super(parentShell);
 		this.lookup = lookup;
 		this.expression = expression;
@@ -94,13 +92,7 @@ public class ExpressionIdDialog extends SaveDialogBoundsSettingsDialog {
 		viewer.setLabelProvider(new LabelProviderImpl());
 		viewer.addFilter(filter);
 		viewer.setInput(getElements(lookup));
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		viewer.addDoubleClickListener(event -> okPressed());
 
 		ControlFactory.attachFiltering(idField, viewer, filter);
 
@@ -111,9 +103,9 @@ public class ExpressionIdDialog extends SaveDialogBoundsSettingsDialog {
 	protected void okPressed() {
 		if (!viewer.getSelection().isEmpty()) {
 			final IConfigurationElement el = (IConfigurationElement) ((IStructuredSelection) viewer.getSelection())
-				.getFirstElement();
+					.getFirstElement();
 			final Command cmd = SetCommand.create(domain, expression,
-				UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID, el.getAttribute("id")); //$NON-NLS-1$
+					UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID, el.getAttribute("id")); //$NON-NLS-1$
 			if (cmd.canExecute()) {
 				domain.getCommandStack().execute(cmd);
 				super.okPressed();

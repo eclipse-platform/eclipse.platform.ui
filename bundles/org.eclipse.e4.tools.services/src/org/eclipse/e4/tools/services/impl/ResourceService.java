@@ -26,8 +26,6 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.IResourceProviderService;
 import org.eclipse.e4.tools.services.IResourceService;
 import org.eclipse.e4.tools.services.ToolsServicesActivator;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -397,13 +395,7 @@ public class ResourceService implements IResourceService {
 	@Override
 	public IResourcePool getControlPool(Control control) {
 		final ResourcePool pool = new ResourcePool(this, control.getDisplay());
-		control.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				pool.dispose();
-			}
-		});
+		control.addDisposeListener(e -> pool.dispose());
 		return pool;
 	}
 

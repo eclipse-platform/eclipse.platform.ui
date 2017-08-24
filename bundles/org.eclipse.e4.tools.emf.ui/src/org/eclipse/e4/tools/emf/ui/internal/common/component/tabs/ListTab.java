@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2017 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,8 +80,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -94,8 +92,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -253,7 +249,7 @@ public class ListTab implements IViewEObjects {
 		if (E.notEmpty(xml)) {
 			try {
 				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(new InputSource(new StringReader(xml)));
+						.parse(new InputSource(new StringReader(xml)));
 				final XPath xpath = XPathFactory.newInstance().newXPath();
 				NodeList list;
 				if (restoreColumns) {
@@ -350,13 +346,7 @@ public class ListTab implements IViewEObjects {
 	@PostConstruct
 	public void postConstruct(final CTabFolder tabFolder) {
 		imageCache = new BundleImageCache(context.get(Display.class), getClass().getClassLoader());
-		tabFolder.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				imageCache.dispose();
-			}
-		});
+		tabFolder.addDisposeListener(e -> imageCache.dispose());
 		try {
 			imgMarkedItem = imageCache.create(Plugin.ID, "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$
 		} catch (final Exception e2) {
@@ -590,40 +580,36 @@ public class ListTab implements IViewEObjects {
 		app.getContext().set("org.eclipse.e4.tools.active-object-viewer", this); //$NON-NLS-1$
 
 		final EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults,
-			"elementId", "elementId", context); //$NON-NLS-1$//$NON-NLS-2$
+				"elementId", "elementId", context); //$NON-NLS-1$//$NON-NLS-2$
 		defaultColumns.put("elementId", colId); //$NON-NLS-1$
 
 		final EAttributeTableViewerColumn colLabel = new EAttributeTableViewerColumn_Markable(tvResults,
-			"label", "label", context); //$NON-NLS-1$//$NON-NLS-2$
+				"label", "label", context); //$NON-NLS-1$//$NON-NLS-2$
 		defaultColumns.put("label", colLabel); //$NON-NLS-1$
 
 		// Custom selection for marked items
-		tvResults.getTable().addListener(SWT.EraseItem, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				event.detail &= ~SWT.HOT;
-				if ((event.detail & SWT.SELECTED) == 0)
-				{
-					return; // / item not selected
-				}
+		tvResults.getTable().addListener(SWT.EraseItem, event -> {
+			event.detail &= ~SWT.HOT;
+			if ((event.detail & SWT.SELECTED) == 0) {
+				return; // / item not selected
+			}
 
-				final TableItem item = (TableItem) event.item;
-				if (isHighlighted(item.getData())) {
+			final TableItem item = (TableItem) event.item;
+			if (isHighlighted(item.getData())) {
 
-					final Table table = (Table) event.widget;
-					final int clientWidth = table.getClientArea().width;
-					final GC gc = event.gc;
-					// Color oldForeground = gc.getForeground();
-					// Color oldBackground = gc.getBackground();
+				final Table table = (Table) event.widget;
+				final int clientWidth = table.getClientArea().width;
+				final GC gc = event.gc;
+				// Color oldForeground = gc.getForeground();
+				// Color oldBackground = gc.getBackground();
 
-					// gc.setBackground(item.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
-					gc.setForeground(item.getDisplay().getSystemColor(SWT.COLOR_RED));
-					gc.fillRectangle(0, event.y, clientWidth, event.height);
+				// gc.setBackground(item.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+				gc.setForeground(item.getDisplay().getSystemColor(SWT.COLOR_RED));
+				gc.fillRectangle(0, event.y, clientWidth, event.height);
 
-					// gc.setForeground(oldForeground);
-					// gc.setBackground(oldBackground);
-					event.detail &= ~SWT.SELECTED;
-				}
+				// gc.setForeground(oldForeground);
+				// gc.setBackground(oldBackground);
+				event.detail &= ~SWT.SELECTED;
 			}
 		});
 
@@ -637,9 +623,9 @@ public class ListTab implements IViewEObjects {
 		}
 
 		makeSortable(colId.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colId
-			.getTableViewerColumn().getColumn(), "elementId")); //$NON-NLS-1$
+				.getTableViewerColumn().getColumn(), "elementId")); //$NON-NLS-1$
 		makeSortable(colLabel.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colLabel
-			.getTableViewerColumn().getColumn(), "label")); //$NON-NLS-1$
+				.getTableViewerColumn().getColumn(), "label")); //$NON-NLS-1$
 		makeSortable(colItem.getColumn(), new TableViewerUtil.ColumnLabelSorter(colItem.getColumn()));
 		makeSortable(colMarked.getColumn(), new TableViewerUtil.AbstractInvertableTableSorter() {
 
@@ -746,7 +732,7 @@ public class ListTab implements IViewEObjects {
 			}
 		};
 		final TitleAreaFilterDialogWithEmptyOptions dlg = new TitleAreaFilterDialogWithEmptyOptions(
-			context.get(Shell.class), renderer) {
+				context.get(Shell.class), renderer) {
 			@Override
 			protected Control createContents(Composite parent) {
 				final Control ret = super.createContents(parent);
@@ -810,7 +796,7 @@ public class ListTab implements IViewEObjects {
 				optionalColumns.put(attName, colName);
 				colName.getTableViewerColumn().getColumn().setMoveable(true);
 				makeSortable(colName.getTableViewerColumn().getColumn(), new AttributeColumnLabelSorter(colName
-					.getTableViewerColumn().getColumn(), attName));
+						.getTableViewerColumn().getColumn(), attName));
 				tvResults.refresh();
 			}
 		}
@@ -848,7 +834,7 @@ public class ListTab implements IViewEObjects {
 
 	private class EAttributeTableViewerColumn_Markable extends EAttributeTableViewerColumn {
 		public EAttributeTableViewerColumn_Markable(TableViewer tvResults, String label, String attName,
-			IEclipseContext context) {
+				IEclipseContext context) {
 			super(tvResults, label, attName, context);
 		}
 
