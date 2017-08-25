@@ -26,6 +26,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.genericeditor.tests.contributions.ReconcilerStrategyFirst;
+import org.eclipse.ui.genericeditor.tests.contributions.ReconcilerStrategySecond;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -37,7 +39,7 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testReconciler() throws Exception {
-		performTestOnEditor();
+		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, editor, ReconcilerStrategyFirst.REPLACEMENT);
 	}
 
 	@Test
@@ -49,26 +51,35 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 		secondFile.create(new ByteArrayInputStream("bar 'bar'".getBytes()), true, null);
 		secondEditor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
-		performTestOnEditor();
+		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, editor, ReconcilerStrategyFirst.REPLACEMENT);
+	}
+	
+	@Test
+	public void testMultipleReconcilers() throws Exception {
+		IFile secondFile = project.getFile("bar.txt");
+		secondFile.create(new ByteArrayInputStream("".getBytes()), true, null);
+		secondEditor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
+		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, secondEditor, ReconcilerStrategySecond.REPLACEMENT);
 	}
 
-	private void performTestOnEditor() throws Exception {
-		IDocumentProvider dp = editor.getDocumentProvider();
-		IDocument doc = dp.getDocument(editor.getEditorInput());
+	private void performTestOnEditor(String startingText, ExtensionBasedTextEditor textEditor, String expectedText) throws Exception {
+		IDocumentProvider dp = textEditor.getDocumentProvider();
+		IDocument doc = dp.getDocument(textEditor.getEditorInput());
 
-		doc.set("foo");
+		doc.set(startingText);
 
 		new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 					try {
-						return !doc.get(0, doc.getLineLength(0)).contains("foo");
+						return doc.get(0, doc.getLineLength(0)).contains(expectedText);
 					} catch (BadLocationException e) {
 						return false;
 					}
 			}
 		}.waitForCondition(Display.getDefault().getActiveShell().getDisplay(), 2000);
-		Assert.assertTrue("file was not affected by reconciler", doc.get().contains("BAR"));
+		Assert.assertTrue("file was not affected by reconciler", doc.get().contains(expectedText));
 	}
 
 }

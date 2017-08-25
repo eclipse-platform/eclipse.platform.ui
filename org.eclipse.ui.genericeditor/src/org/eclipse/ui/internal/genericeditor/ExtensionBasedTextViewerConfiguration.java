@@ -192,7 +192,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
 		List<IReconciler> reconciliers = registry.getReconcilers(sourceViewer, getContentTypes());
 		if (!reconciliers.isEmpty()) {
-			return reconciliers.get(0);
+			return new CompositeReconciler(reconciliers);
 		}
 		return null;
 	}

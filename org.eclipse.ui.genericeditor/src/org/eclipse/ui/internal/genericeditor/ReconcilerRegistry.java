@@ -57,17 +57,19 @@ public class ReconcilerRegistry {
 	 * to document content types. 
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param contentTypes the content types of the document we're editing.
-	 * @return the list of {@link IReconciler} contributed for at least one of the content types.
+	 * @return the list of {@link IReconciler} contributed for at least one of the content types,
+	 * sorted by most generic content type to most specific.
 	 */
 	public List<IReconciler> getReconcilers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
-		return this.extensions.values().stream()
+		List<IReconciler> reconcilers = this.extensions.values().stream()
 				.filter(ext -> contentTypes.contains(ext.targetContentType))
-				.sorted(new ContentTypeSpecializationComparator<IReconciler>())
+				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
 				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate)
 				.collect(Collectors.toList());
+		return reconcilers;
 	}
 
 	private void sync() {

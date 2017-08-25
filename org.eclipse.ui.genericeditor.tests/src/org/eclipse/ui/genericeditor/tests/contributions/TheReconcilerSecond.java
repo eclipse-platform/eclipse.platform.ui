@@ -13,9 +13,8 @@ package org.eclipse.ui.genericeditor.tests.contributions;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.reconciler.Reconciler;
 
-public class TheReconciler extends Reconciler{
-	public TheReconciler() {
-		ReconcilerStrategy signStrategy = new ReconcilerStrategy();
-        this.setReconcilingStrategy(signStrategy, IDocument.DEFAULT_CONTENT_TYPE);
+public class TheReconcilerSecond extends Reconciler{
+	public TheReconcilerSecond() {
+        this.setReconcilingStrategy(new ReconcilerStrategySecond(), IDocument.DEFAULT_CONTENT_TYPE);
 	}
 }

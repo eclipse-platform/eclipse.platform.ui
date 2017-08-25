@@ -20,11 +20,11 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 
-public class ReconcilerStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension{
+public class ReconcilerStrategyFirst implements IReconcilingStrategy, IReconcilingStrategyExtension{
 
 	IDocument document;
-	static final String SEARCH_TERM = "foo";
-	static final String REPLACEMENT = "BAR";
+	public static final String SEARCH_TERM = "foo";
+	public static final String REPLACEMENT = "BAR";
 
 	@Override
 	public void setDocument(IDocument document) {
