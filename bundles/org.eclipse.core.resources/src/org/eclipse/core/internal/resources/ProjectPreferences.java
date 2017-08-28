@@ -14,6 +14,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.internal.utils.*;
@@ -166,9 +167,14 @@ public class ProjectPreferences extends EclipsePreferences {
 			input = new BufferedInputStream(file.getContents(true));
 			result.load(input);
 		} catch (CoreException e) {
-			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+				if (Policy.DEBUG_PREFERENCES)
+					Policy.debug(MessageFormat.format("Preference file {0} does not exist.", file.getFullPath())); //$NON-NLS-1$
+			} else {
+				String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
+				log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+				throw new BackingStoreException(message);
+			}
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
@@ -509,6 +515,11 @@ public class ProjectPreferences extends EclipsePreferences {
 			convertFromProperties(this, fromDisk, true);
 			loadedNodes.add(absolutePath());
 		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+				if (Policy.DEBUG_PREFERENCES)
+					Policy.debug("Preference file does not exist for node: " + absolutePath()); //$NON-NLS-1$
+				return;
+			}
 			if (reportProblems) {
 				String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
 				log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));

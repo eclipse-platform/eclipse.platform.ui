@@ -16,6 +16,7 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.resources.ProjectPreferences;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
@@ -1561,4 +1562,32 @@ public class ProjectPreferencesTest extends ResourceTest {
 		project1.delete(true, getMonitor());
 		project2.delete(true, getMonitor());
 	}
+
+	public void testDeleteOnFilesystemAndLoad() throws CoreException, BackingStoreException {
+		String nodeA = "nodeA";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA);
+		prefs1.put(key, value);
+		prefs1.flush();
+
+		IFile prefsFile = project1.getFile(".settings/nodeA.prefs");
+		File settingsFile = new File(prefsFile.getLocationURI());
+		assertTrue(settingsFile.exists());
+
+		ProjectPreferences.updatePreferences(prefsFile);
+
+		settingsFile.delete(); // delete the preference file on file system
+		assertFalse(settingsFile.exists());
+
+		// will cause a FNFE in FileSystemResourceManager#read, see bug 521490
+		// but it should be handled silently
+		ProjectPreferences.updatePreferences(prefsFile);
+	}
+
 }
