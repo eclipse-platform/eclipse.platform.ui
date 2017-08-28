@@ -37,4 +37,13 @@ public class FormTextModelTest {
 		assertEquals("FormTextModel does not preserve whitespace correctly according to the rules",
 				"   line with        whitespace  Test " + System.lineSeparator(), formTextModel.getAccessibleText());
 	}
+
+	@Test
+	public void testTextWithAmpersand() {
+		FormTextModel formTextModel = new FormTextModel();
+		formTextModel.parseTaggedText("<form>Foo &Bar</form>", false);
+		assertEquals("Foo &Bar" + System.lineSeparator(),
+				formTextModel.getAccessibleText());
+	}
+
 }

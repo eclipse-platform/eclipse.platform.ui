@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ralf M Petter<ralf.petter@gmail.com> - Bug 259846
+ *     Karsten Thoms<karsten.thoms@itemis.de> - Bug 521493
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -109,6 +110,7 @@ public class FormTextModel {
 			reset();
 			return;
 		}
+		taggedText = taggedText.replace("&", "&amp;"); //$NON-NLS-1$//$NON-NLS-2$
 		InputStream stream = new ByteArrayInputStream(taggedText.getBytes(StandardCharsets.UTF_8));
 		parseInputStream(stream, expandURLs);
 	}
