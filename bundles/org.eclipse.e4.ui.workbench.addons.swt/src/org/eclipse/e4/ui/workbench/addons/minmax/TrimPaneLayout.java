@@ -28,12 +28,13 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class TrimPaneLayout extends Layout {
 	private static int BORDER_WIDTH = 4;
+	private static final Rectangle EMPTY_RECT = new Rectangle(0, 0, 0, 0);
 	private int fixedCorner;
 
-	public Rectangle hSizingRect;
-	public Rectangle vSizingRect;
-	public Rectangle cornerRect;
-	private Rectangle clientRect;
+	public Rectangle hSizingRect = EMPTY_RECT;
+	public Rectangle vSizingRect = EMPTY_RECT;
+	public Rectangle cornerRect = EMPTY_RECT;
+	private Rectangle clientRect = EMPTY_RECT;
 	private boolean resizeInstalled = false;
 
 	private static int NOT_SIZING = 0;
