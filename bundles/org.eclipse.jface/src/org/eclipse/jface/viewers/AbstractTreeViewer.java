@@ -2948,7 +2948,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (selection instanceof ITreeSelection) {
 			return (ITreeSelection) selection;
 		}
-		throw new ClassCastException("AbstractTreeViewer should return an instance of ITreeSelection from its getSelection() method."); //$NON-NLS-1$
+		throw new ClassCastException(
+				getClass().getName() + " should return an instance of ITreeSelection from its getSelection() method."); //$NON-NLS-1$
 	}
 
 	@Override
