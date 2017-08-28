@@ -50,6 +50,7 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
 import org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
+import org.eclipse.ui.genericeditor.tests.contributions.WorldHoverProvider;
 
 import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
@@ -73,6 +74,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
+		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 	}
 
 	/**
@@ -84,7 +86,8 @@ public class HoverTest extends AbstratGenericEditorTest {
 		cleanFileAndEditor();
 		createAndOpenFile("bar.txt", "Hi");
 		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
-		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
+		assertNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
+		assertNotNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 		assertNotNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
 	}
 

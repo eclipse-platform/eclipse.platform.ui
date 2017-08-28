@@ -45,7 +45,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 	@Test
 	public void testContextInfo() throws Exception {
 		cleanFileAndEditor();
-		createAndOpenFile("bar.txt", BarContentAssistProcessor.PROPOSAL);
+		createAndOpenFile("foobar.txt", BarContentAssistProcessor.PROPOSAL);
 
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION);
@@ -68,7 +68,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 	@Test
 	public void testContextInfo_hide_Bug512251() throws Exception {
 		cleanFileAndEditor();
-		createAndOpenFile("bar.txt", BarContentAssistProcessor.PROPOSAL);
+		createAndOpenFile("foobar.txt", BarContentAssistProcessor.PROPOSAL);
 
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION);

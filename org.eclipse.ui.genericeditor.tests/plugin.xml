@@ -12,99 +12,127 @@
 <!--     Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support -->
 <!-- ====================================================================== -->
 <plugin>
- <extension
-			 point="org.eclipse.ui.genericeditor.contentAssistProcessors">
+	<extension
+			point="org.eclipse.ui.genericeditor.contentAssistProcessors">
 		<contentAssistProcessor
-					class="org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor"
-					contentType="org.eclipse.ui.genericeditor.tests.content-type">
+			class="org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</contentAssistProcessor>
-  <contentAssistProcessor
-        class="org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor"
-        contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
-  </contentAssistProcessor>
- </extension>
- <extension
-			 point="org.eclipse.ui.genericeditor.hoverProviders">
+		<contentAssistProcessor
+			class="org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor"
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
+		</contentAssistProcessor>
+	</extension>
+	<extension
+			point="org.eclipse.ui.genericeditor.hoverProviders">
 		<hoverProvider
-					class="org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider"
-					contentType="org.eclipse.ui.genericeditor.tests.content-type">
+			class="org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</hoverProvider>
 		<hoverProvider
-					class="org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider"
-					contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type-bartxt">
+			class="org.eclipse.ui.genericeditor.tests.contributions.WorldHoverProvider"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type-bar">
 		</hoverProvider>
- </extension>
-  <extension
-			 point="org.eclipse.ui.genericeditor.reconcilers">
+		<hoverProvider
+			class="org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider"
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type-bar">
+		</hoverProvider>
+	</extension>
+	<extension
+			point="org.eclipse.ui.genericeditor.reconcilers">
 		<reconciler
-					class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerFirst"
-					contentType="org.eclipse.core.runtime.text">
+			class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerFirst"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type-bar">
 		</reconciler>
 		<reconciler
 			class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerSecond"
-			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type-bartxt">
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type-bar">
+		</reconciler>
+		<reconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.TheReconcilerFirst"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</reconciler>
 	</extension>
 	<extension
-			 point="org.eclipse.ui.genericeditor.presentationReconcilers">
+			point="org.eclipse.ui.genericeditor.presentationReconcilers">
 		<presentationReconciler
 			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerBlue"
-			contentType="org.eclipse.core.runtime.text">
-		</presentationReconciler>
-		<presentationReconciler
-			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerRed"
-			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
 		</presentationReconciler>
 		<presentationReconciler
 			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerGreen"
-			contentType="org.eclipse.ui.genericeditor.tests.content-type">
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
+		</presentationReconciler>
+		<presentationReconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.ThePresentationReconcilerRed"
+			contentType="org.eclipse.ui.genericeditor.tests.sub-specialized-content-type">
 		</presentationReconciler>
 	</extension>
- <extension
-       point="org.eclipse.ui.ide.markerResolution">
-    <markerResolutionGenerator
-          class="org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator"
-          markerType="org.eclipse.core.resources.problemmarker">
-    </markerResolutionGenerator>
- </extension>
- <extension
-       point="org.eclipse.core.contenttype.contentTypes">
-    <content-type
-          base-type="org.eclipse.core.runtime.text"
-          file-names="foo.txt"
-          id="org.eclipse.ui.genericeditor.tests.content-type"
-          name="Generic Editor Test content-type"
-          priority="normal">
-    </content-type>
-    <content-type
-          base-type="org.eclipse.ui.genericeditor.tests.content-type"
-          file-names="foo.txt"
-          id="org.eclipse.ui.genericeditor.tests.specialized-content-type"
-          name="Specialized Generic Editor content-type"
-          priority="normal">
-    </content-type>
-    <content-type
-          base-type="org.eclipse.ui.genericeditor.tests.content-type"
-          file-names="bar.txt"
-          id="org.eclipse.ui.genericeditor.tests.specialized-content-type-bartxt"
-          name="Specialized Generic Editor content-type for &apos;bar.txt&apos;"
-          priority="normal">
-    </content-type>
- </extension>
- <extension
-       point="org.eclipse.ui.genericeditor.autoEditStrategies">
-    <autoEditStrategy
-          class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyFirst"
-          contentType="org.eclipse.core.runtime.text">
-    </autoEditStrategy>
-    <autoEditStrategy
-          class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategySecond"
-          contentType="org.eclipse.ui.genericeditor.tests.content-type">
-    </autoEditStrategy>
-    <autoEditStrategy
-          class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyThird"
-          contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
-    </autoEditStrategy>
- </extension>
-
+	<extension
+			point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator
+			class="org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator"
+			markerType="org.eclipse.core.resources.problemmarker">
+		</markerResolutionGenerator>
+	</extension>
+	<extension
+			point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-names="foo.txt"
+			id="org.eclipse.ui.genericeditor.tests.content-type"
+			name="Generic Editor Test content-type"
+			priority="normal">
+		</content-type>
+		<content-type
+			base-type="org.eclipse.ui.genericeditor.tests.content-type"
+			file-names="foo.txt"
+			id="org.eclipse.ui.genericeditor.tests.specialized-content-type"
+			name="Specialized Generic Editor content-type"
+			priority="normal">
+		</content-type>
+		<content-type
+			base-type="org.eclipse.ui.genericeditor.tests.specialized-content-type"
+			file-names="foo.txt"
+			id="org.eclipse.ui.genericeditor.tests.sub-specialized-content-type"
+			name="Sub-Specialized Generic Editor content-type"
+			priority="normal">
+		</content-type>
+		<content-type
+			base-type="org.eclipse.ui.genericeditor.tests.content-type"
+			file-names="foobar.txt"
+			id="org.eclipse.ui.genericeditor.tests.specialized-content-type-foobartxt"
+			name="Specialized Generic Editor content-type for &apos;foobar.txt&apos;"
+			priority="normal">
+		</content-type>
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-names="bar.txt"
+			id="org.eclipse.ui.genericeditor.tests.content-type-bar"
+			name="Generic Editor Test content-type for &apos;bar.txt&apos;"
+			priority="normal">
+		</content-type>
+		<content-type
+			base-type="org.eclipse.ui.genericeditor.tests.content-type-bar"
+			file-names="bar.txt"
+			id="org.eclipse.ui.genericeditor.tests.specialized-content-type-bar"
+			name="Specialized Generic Editor content-type for &apos;bar.txt&apos;"
+			priority="normal">
+		</content-type>
+	</extension>
+	<extension
+			point="org.eclipse.ui.genericeditor.autoEditStrategies">
+		<autoEditStrategy
+			class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyFirst"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
+		</autoEditStrategy>
+		<autoEditStrategy
+			class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategySecond"
+			contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
+		</autoEditStrategy>
+		<autoEditStrategy
+			class="org.eclipse.ui.genericeditor.tests.contributions.TheAutoEditStrategyThird"
+			contentType="org.eclipse.ui.genericeditor.tests.sub-specialized-content-type">
+		</autoEditStrategy>
+	</extension>
 </plugin>
