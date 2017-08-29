@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *                              - [462440] IFile#getContents methods should specify the status codes for its exceptions
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Karsten Thoms <karsten.thoms@itemis.de> - Bug 521500
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -846,7 +847,15 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				}
 			}
 		}
-		return store.openInputStream(EFS.NONE, monitor);
+		try {
+			return store.openInputStream(EFS.NONE, monitor);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == EFS.ERROR_NOT_EXISTS) {
+				String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
+				throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, target.getFullPath(), message, e);
+			}
+			throw e;
+		}
 	}
 
 	/**
