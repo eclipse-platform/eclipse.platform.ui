@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,5 +235,15 @@ public interface ILaunchConfigurationTab {
 	 * @since 3.0
 	 */
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy);
+
+	/**
+	 * Checks if it is OK to leave the Tab.
+	 *
+	 * @return <code>true</code> if OK to leave the tab or <code>false</code>
+	 * @since 3.12
+	 */
+	public default boolean OkToLeaveTab() {
+		return true;
+	}
 }
 
