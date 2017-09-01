@@ -105,7 +105,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * The old configuration
 	 */
-	private boolean sameInput = false;
+	private boolean fRefreshTabs = false;
 
 	/**
 	 * This view's control, which contains a composite area of controls
@@ -324,6 +324,10 @@ public class LaunchConfigurationTabGroupViewer {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
+				ILaunchConfigurationTab[] tabs = getTabs();
+				for (ILaunchConfigurationTab tab : tabs) {
+					tab.postApply();
+				}
 			}
 		});
         Dialog.applyDialogFont(parent);
@@ -392,16 +396,11 @@ public class LaunchConfigurationTabGroupViewer {
 						public void handleEvent(Event newEvent) {
 							if (newEvent.detail == SWT.Selection) { //
 								display.removeListener(SWT.PostEvent, this);
-								if (sameInput) {
-									displayInstanceTabs(true);
+								if (fRefreshTabs) {
+									refreshTabs(true);
 									fTabFolder.setSelection(selectedIndex);
 									refreshStatus();
 								}
-								if (canChangeTab) {
-									handleTabSelected();
-									refresh();
-								}
-
 							}
 						}
 					});
@@ -410,8 +409,6 @@ public class LaunchConfigurationTabGroupViewer {
 			});
 		}
 	}
-
-	private boolean canChangeTab = true;
 
 	private void handleTabChange(int newPageIndex) {
 		if (fCurrentTabIndex == newPageIndex) {
@@ -422,13 +419,10 @@ public class LaunchConfigurationTabGroupViewer {
 			if (fCurrentTabIndex != -1) {
 				ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
 				fTabFolder.setSelection(fCurrentTabIndex);
-				if (!tab.OkToLeaveTab()) {
-					canChangeTab = false;
-
-				}
-				else {
-					canChangeTab = true;
+				if (tab.OkToLeaveTab()) {
 					fTabFolder.setSelection(newPageIndex);
+					handleTabSelected();
+					refresh();
 				}
 			}
 		} else {
@@ -667,9 +661,46 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 			inputChanged(input);
 		} else {
-			// Input needs to be changed even if same for Tab initializations
-			inputChanged(input);
+			if (!input.equals(getConfiguration())) {
+				inputChanged(input);
+			}
 		}
+	}
+	/*
+	 * Refresh tabs for same input
+	 */
+
+	public void refreshTabs(boolean refresh) {
+		if (DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			refreshTabs0(refresh);
+		} else {
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					refreshTabs0(refresh);
+				}
+			});
+		}
+	}
+
+	/**
+	 * The input has changed to the given object, possibly <code>null</code>.
+	 *
+	 * @param input the new input, possibly <code>null</code>
+	 */
+	protected void refreshTabs0(boolean refreshTabs) {
+		final boolean refresh = refreshTabs;
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				fViewform.setRedraw(false);
+				fRefreshTabs = !refresh;
+				displayInstanceTabs(refresh);
+				refreshStatus();
+				fViewform.setRedraw(true);
+			}
+		};
+		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 
 	/**
@@ -688,10 +719,7 @@ public class LaunchConfigurationTabGroupViewer {
 						ILaunchConfiguration configuration = (ILaunchConfiguration)finput;
 						boolean refreshTabs = true;
 						if (fWorkingCopy != null && fWorkingCopy.getOriginal().equals(configuration.getWorkingCopy().getOriginal())) {
-							sameInput = true;
 							refreshTabs = false;
-						} else {
-							sameInput = false;
 						}
 						fOriginal = configuration;
 						fWorkingCopy = configuration.getWorkingCopy();
@@ -1449,13 +1477,6 @@ public class LaunchConfigurationTabGroupViewer {
 		if(fOriginal != null && fOriginal.isReadOnly()) {
 			IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {fOriginal.getFile()}, fViewerControl.getShell());
 			if(!status.isOK()) {
-				return null;
-			}
-		}
-		ILaunchConfigurationTab[] tabs = getTabs();
-		if (fCurrentTabIndex != -1) {
-			ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
-			if (!tab.OkToLeaveTab()) {
 				return null;
 			}
 		}

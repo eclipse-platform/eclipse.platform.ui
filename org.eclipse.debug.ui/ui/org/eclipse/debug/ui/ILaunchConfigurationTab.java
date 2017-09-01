@@ -245,5 +245,13 @@ public interface ILaunchConfigurationTab {
 	public default boolean OkToLeaveTab() {
 		return true;
 	}
+
+	/**
+	 * Perform the changes after apply.
+	 *
+	 * @since 3.12
+	 */
+	public default void postApply() {
+	}
 }
 
