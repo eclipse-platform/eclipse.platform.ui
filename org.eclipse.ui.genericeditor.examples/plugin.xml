@@ -50,6 +50,10 @@
             class="org.eclipse.ui.genericeditor.examples.dotproject.FoldingReconciler"
             contentType="org.eclipse.ui.genericeditor.examples.dotproject">
       </reconciler>
+      <reconciler
+            class="org.eclipse.ui.genericeditor.examples.dotproject.BracketMatchingReconciler"
+            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+      </reconciler>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

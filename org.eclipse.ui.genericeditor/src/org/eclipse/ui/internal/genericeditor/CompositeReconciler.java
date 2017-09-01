@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ITextViewer;
@@ -23,7 +25,7 @@ public class CompositeReconciler implements IReconciler, IReconcilerExtension {
 	private List<IReconciler> fReconcilers;
 
 	public CompositeReconciler(List<IReconciler> reconcilers) {
-		fReconcilers = reconcilers;
+		fReconcilers = reconcilers.stream().filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override
@@ -61,7 +63,19 @@ public class CompositeReconciler implements IReconciler, IReconcilerExtension {
 
 	@Override
 	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
-		return new CompositeReconcilerStrategy(fReconcilers, contentType);
+		List<IReconcilingStrategy> strategies = new ArrayList<>();
+		for (IReconciler iReconciler : fReconcilers) {
+			IReconcilingStrategy strategy = iReconciler.getReconcilingStrategy(contentType);
+			if(strategy != null) {
+				strategies.add(strategy);
+			}
+		}
+
+		if(strategies.size() == 1) {
+			return strategies.get(0);
+		}
+
+		return new CompositeReconcilerStrategy(strategies);
 
 	}
 }
