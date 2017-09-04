@@ -20,7 +20,7 @@
   </parent>
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.databinding.property</artifactId>
-  <version>1.6.100-SNAPSHOT</version>
+  <version>1.6.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   
 </project>
