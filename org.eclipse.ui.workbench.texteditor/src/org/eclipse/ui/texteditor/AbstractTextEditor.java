@@ -6566,9 +6566,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	private void updateCaret() {
-
-		if (fSourceViewer == null)
+		if (fSourceViewer == null || fSourceViewer.getTextWidget() == null) {
 			return;
+		}
 
 		StyledText styledText= fSourceViewer.getTextWidget();
 
