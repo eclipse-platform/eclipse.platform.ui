@@ -747,8 +747,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
 
 		if (buttonLabelToIdMap != null && buttonLabelToIdMap.containsKey(buttonLabel)) {
-			@SuppressWarnings("boxing")
-			int id = buttonLabelToIdMap.get(buttonLabel);
+			int id = buttonLabelToIdMap.get(buttonLabel).intValue();
 			return id;
 		}
 

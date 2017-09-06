@@ -30,7 +30,6 @@ class MissingImageDescriptor extends ImageDescriptor {
         super();
     }
 
-    @SuppressWarnings("deprecation")
 	@Override
 	public ImageData getImageData() {
         return DEFAULT_IMAGE_DATA;
