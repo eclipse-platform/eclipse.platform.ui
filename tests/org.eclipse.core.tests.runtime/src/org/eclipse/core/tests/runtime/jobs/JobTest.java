@@ -82,8 +82,9 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	private void cancel(Job[] jobs) {
-		for (Job job : jobs)
+		for (Job job : jobs) {
 			job.cancel();
+		}
 	}
 
 	@Override
@@ -205,8 +206,9 @@ public class JobTest extends AbstractJobTest {
 			status[i] = TestBarrier.STATUS_START;
 		}
 
-		for (int i = 0; i < status.length; i++)
+		for (int i = 0; i < status.length; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_WAIT_FOR_START);
+		}
 
 		//every job should now be waiting for the STATUS_WAIT_FOR_RUN flag
 		for (int i = 0; i < status.length; i++) {
@@ -215,8 +217,9 @@ public class JobTest extends AbstractJobTest {
 		}
 
 		//wait until all jobs are in the running state
-		for (int i = 0; i < status.length; i++)
+		for (int i = 0; i < status.length; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
+		}
 
 		//let the jobs execute
 		for (int i = 0; i < status.length; i++) {
@@ -224,8 +227,9 @@ public class JobTest extends AbstractJobTest {
 			status[i] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		}
 
-		for (int i = 0; i < status.length; i++)
+		for (int i = 0; i < status.length; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_DONE);
+		}
 
 		//the status for every job should be STATUS_OK
 		//the threads should have been reset to null
@@ -269,8 +273,9 @@ public class JobTest extends AbstractJobTest {
 		}
 
 		//the first 3 jobs should be running at the same time
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_WAIT_FOR_START);
+		}
 
 		//the 3 jobs should now be waiting for the STATUS_WAIT_FOR_RUN flag
 		for (int i = 0; i < 3; i++) {
@@ -279,8 +284,9 @@ public class JobTest extends AbstractJobTest {
 		}
 
 		//wait until jobs block on running state
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
+		}
 
 		//schedule the 2 remaining jobs
 		jobs[3].schedule();
@@ -466,15 +472,17 @@ public class JobTest extends AbstractJobTest {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				if (++runningCount > 1)
+				if (++runningCount > 1) {
 					failure[0] = "Multiple running at once!";
+				}
 				try {
 					Thread.sleep(500);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
-					if (--runningCount != 0)
+					if (--runningCount != 0) {
 						failure[0] = "Multiple were running at once!";
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -591,15 +599,17 @@ public class JobTest extends AbstractJobTest {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				if (++runningCount > 1)
+				if (++runningCount > 1) {
 					failure[0] = true;
+				}
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} finally {
-					if (--runningCount != 0)
+					if (--runningCount != 0) {
 						failure[0] = true;
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -801,8 +811,9 @@ public class JobTest extends AbstractJobTest {
 		try {
 			manager.beginRule(rule, null);
 			thread.start();
-			while (thread.getState() != Thread.State.WAITING)
+			while (thread.getState() != Thread.State.WAITING) {
 				Thread.sleep(50);
+			}
 			assertTrue(manager.currentJob().isBlocking());
 		} finally {
 			manager.endRule(rule);
@@ -1459,8 +1470,9 @@ public class JobTest extends AbstractJobTest {
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
+				}
 				return Status.OK_STATUS;
 			}
 		};
@@ -1597,8 +1609,9 @@ public class JobTest extends AbstractJobTest {
 	 * Pause this thread until all the jobs start running.
 	 */
 	private void waitForStart(Job[] jobs, int[] status) {
-		for (int i = 0; i < jobs.length; i++)
+		for (int i = 0; i < jobs.length; i++) {
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
+		}
 	}
 
 	/**
@@ -1621,8 +1634,9 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	private void waitForState(Job[] jobs, int state) {
-		for (Job job : jobs)
+		for (Job job : jobs) {
 			waitForState(job, state);
+		}
 	}
 
 	/**
