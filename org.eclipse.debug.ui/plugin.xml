@@ -3277,4 +3277,11 @@ M4 = Platform-specific fourth key
             description="%GroupLaunch.description">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.hoverProviders">
+      <hoverProvider
+            class="org.eclipse.debug.internal.ui.hover.DebugTextHover"
+            contentType="org.eclipse.core.runtime.text">
+      </hoverProvider>
+   </extension>
 </plugin>
