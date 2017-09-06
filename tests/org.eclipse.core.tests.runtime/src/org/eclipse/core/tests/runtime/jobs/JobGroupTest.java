@@ -437,9 +437,7 @@ public class JobGroupTest extends AbstractJobTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				firstJobGroup.join(0, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -511,9 +509,7 @@ public class JobGroupTest extends AbstractJobTest {
 				long start = System.currentTimeMillis();
 				firstJobGroup.join(timeout, null);
 				duration[0] = System.currentTimeMillis() - start;
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -577,9 +573,7 @@ public class JobGroupTest extends AbstractJobTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				firstJobGroup.join(0, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -647,9 +641,7 @@ public class JobGroupTest extends AbstractJobTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				firstJobGroup.join(0, canceler);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -764,9 +756,7 @@ public class JobGroupTest extends AbstractJobTest {
 		barrier.setStatus(TestBarrier.STATUS_START);
 		try {
 			jobGroup.join(0, monitor);
-		} catch (OperationCanceledException e) {
-			// ignore
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			// ignore
 		}
 		// Check the progress reporting on monitor.
@@ -858,9 +848,7 @@ public class JobGroupTest extends AbstractJobTest {
 			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			try {
 				jobGroup.join(0, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
@@ -933,9 +921,7 @@ public class JobGroupTest extends AbstractJobTest {
 			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			try {
 				jobGroup.join(0, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);

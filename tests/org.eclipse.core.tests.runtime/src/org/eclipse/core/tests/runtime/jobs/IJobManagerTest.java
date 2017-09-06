@@ -850,9 +850,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				manager.join(first, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -920,9 +918,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				manager.join(first, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -990,9 +986,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				manager.join(first, canceller);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
@@ -1049,9 +1043,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		try {
 			manager.setLockListener(lockListener);
 			manager.join(family, new FussyProgressMonitor());
-		} catch (OperationCanceledException e) {
-			fail("4.99", e);
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			fail("4.99", e);
 		} finally {
 			manager.setLockListener(null);
@@ -1067,9 +1059,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.join(new Object(), monitor);
 			monitor.sanityCheck();
 			monitor.assertUsedUp();
-		} catch (OperationCanceledException e) {
-			fail("4.99", e);
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			fail("4.99", e);
 		}
 	}
@@ -1154,9 +1144,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 				status[0] = TestBarrier.STATUS_RUNNING;
 				manager.join(third, null);
-			} catch (OperationCanceledException e1) {
-				// ignore
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				// ignore
 			}
 			status[0] = TestBarrier.STATUS_DONE;
