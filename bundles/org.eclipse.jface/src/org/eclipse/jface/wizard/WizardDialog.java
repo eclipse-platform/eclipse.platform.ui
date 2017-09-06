@@ -324,7 +324,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 *            and <code>false</code> if it should be disabled
 	 * @return the saved UI state
 	 */
-	private Object aboutToStart(boolean enableCancelButton) {
+	private Map<String, Object> aboutToStart(boolean enableCancelButton) {
 		Map<String, Object> savedState = null;
 		if (getShell() != null) {
 			// Save focus control
@@ -965,7 +965,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 		// The operation can only be canceled if it is executed in a separate
 		// thread.
 		// Otherwise the UI is blocked anyway.
-		Object state = null;
+		Map<String, Object> state = null;
 		if (activeRunningOperations++ == 0) {
 			state = aboutToStart(fork && cancelable);
 		}
@@ -1237,16 +1237,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 *            the saved UI state as returned by <code>aboutToStart</code>
 	 * @see #aboutToStart
 	 */
-	private void stopped(Object savedState) {
+	private void stopped(Map<String, Object> savedState) {
 		if (getShell() != null && !getShell().isDisposed()) {
 			if (wizard.needsProgressMonitor()) {
 				progressMonitorPart.setVisible(false);
 				progressMonitorPart.removeFromCancelComponent(cancelButton);
 			}
 
-			@SuppressWarnings("unchecked")
-			Map<String,Object> state = (Map<String,Object>) savedState;
-			restoreUIState(state);
+			restoreUIState(savedState);
 			setDisplayCursor(null);
 			if (useCustomProgressMonitorPart) {
 				cancelButton.addSelectionListener(cancelListener);
@@ -1256,7 +1254,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			}
 			waitCursor.dispose();
 			waitCursor = null;
-			Control focusControl = (Control) state.get(FOCUS_CONTROL);
+			Control focusControl = (Control) savedState.get(FOCUS_CONTROL);
 			if (focusControl != null && !focusControl.isDisposed()) {
 				focusControl.setFocus();
 			}
