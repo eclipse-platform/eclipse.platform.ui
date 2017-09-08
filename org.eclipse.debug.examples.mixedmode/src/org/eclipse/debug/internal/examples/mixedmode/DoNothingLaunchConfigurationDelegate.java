@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 public class DoNothingLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
 	/**
-	 * 
+	 *
 	 */
 	public DoNothingLaunchConfigurationDelegate() {
 	}
