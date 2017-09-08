@@ -330,7 +330,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * Name of a preference for configuring the marker severity in case project
 	 * description references an unknown nature.
 	 *
-	 * @since 3.12
+	 * @since 3.13
 	 */
 	public static final String PREF_MISSING_NATURE_MARKER_SEVERITY = "missingNatureMarkerSeverity"; //$NON-NLS-1$
 
