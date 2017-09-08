@@ -28,12 +28,12 @@ public class PatternMatchEvent extends EventObject {
      * required by EventObject for ObjectSerialization.
      */
     private static final long serialVersionUID = 876890383326854537L;
-    
+
     /**
-     * The offset of the match within the console's document. 
+     * The offset of the match within the console's document.
      */
     private int offset;
-    
+
     /**
      * The length of the matched string
      */
@@ -41,7 +41,7 @@ public class PatternMatchEvent extends EventObject {
 
     /**
      * Constructs a new pattern match event.
-     * 
+     *
      * @param console the console in which the match was found
      * @param matchOffset the offset at which the match was found
      * @param matchLength the length of the text that matched
@@ -54,7 +54,7 @@ public class PatternMatchEvent extends EventObject {
 
     /**
      * Returns the length of the matched string.
-     * 
+     *
      * @return the length of the matched string
      */
     public int getLength() {
@@ -63,11 +63,11 @@ public class PatternMatchEvent extends EventObject {
 
     /**
      * Returns the offset of the match within the document.
-     * 
+     *
      * @return the offset of the match within the document
      */
     public int getOffset() {
         return offset;
     }
-    
+
 }

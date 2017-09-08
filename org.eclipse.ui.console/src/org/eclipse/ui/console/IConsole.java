@@ -31,32 +31,32 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.0
  */
 public interface IConsole {
-		
+
 	/**
 	 * Returns the name of this console.
-	 * 
+	 *
 	 * @return the name of this console
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns an image descriptor for this console, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return an image descriptor for this console, or <code>null</code>
 	 *  if none
 	 */
 	public ImageDescriptor getImageDescriptor();
-		
+
 	/**
 	 * Creates and returns a new page for this console. The page is displayed
 	 * for this console in the console given view.
-	 * 
+	 *
 	 * @param view the view in which the page is to be created
 	 * @return a page book view page representation of this console
 	 */
 	public IPageBookViewPage createPage(IConsoleView view);
-	
+
 	/**
 	 * Adds a listener for changes to properties of this console.
 	 * Has no effect if an identical listener is already registered.
@@ -76,19 +76,19 @@ public interface IConsole {
 	 * @param listener a property change listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
-	
+
 	/**
 	 * Removes the given property listener from this console page.
 	 * Has no effect if an identical listener is not already registered.
-	 * 
+	 *
 	 * @param listener a property listener
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener);	
-	
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
+
 	/**
 	 * Returns a unique identifier for this console's type, or <code>null</code>
 	 * if unspecified.
-	 * 
+	 *
 	 * @return a unique identifier for this console's type, or <code>null</code>
 	 * @since 3.1
 	 */
