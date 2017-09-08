@@ -15,6 +15,7 @@ package org.eclipse.e4.ui.progress.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
@@ -90,10 +91,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	@Override
 	public void beginTask(String name, int totalWork) {
-		if (name == null)
-			name = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-		else
-			taskName = name;
+		taskName = name != null && !name.isEmpty() ? name : ProgressMessages.SubTaskInfo_UndefinedTaskName;
 		total = totalWork;
 		synchronized (lock) {
 			isActive = true;

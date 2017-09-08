@@ -71,11 +71,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	@Override
 	public void beginTask(String name, int totalWork) {
-		if (name == null) {
-			name = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-		} else {
-			taskName = name;
-		}
+		taskName = name != null && !name.isEmpty() ? name : ProgressMessages.SubTaskInfo_UndefinedTaskName;
 		total = totalWork;
 		synchronized (lock) {
 			isActive = true;
