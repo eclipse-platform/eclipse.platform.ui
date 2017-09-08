@@ -552,7 +552,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param offset the offset
 	 * @return the completion proposals available at this offset, never null
 	 */
-	private List<ICompletionProposal> computeProposals(int offset) {
+	List<ICompletionProposal> computeProposals(int offset) {
 		ICompletionProposal[] completionProposals;
 		if (fContentAssistSubjectControl != null) {
 			completionProposals= fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
@@ -1460,7 +1460,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Filters the displayed proposal based on the given cursor position and the
 	 * offset of the original invocation of the content assistant.
 	 */
-	private void filterProposals() {
+	void filterProposals() {
 		if (!fIsFilterPending) {
 			fIsFilterPending= true;
 			Control control= fContentAssistSubjectControlAdapter.getControl();
@@ -1477,7 +1477,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return the set of filtered proposals
 	 * @since 3.0
 	 */
-	private List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
+	List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
 
 		if (offset == fInvocationOffset && event == null) {
 			fIsFilteredSubset= false;

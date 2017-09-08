@@ -19,8 +19,13 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -80,10 +85,53 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		TableItem otherProposalItem = completionProposalList.getItem(1);
 		assertEquals(LongRunningBarContentAssistProcessor.PROPOSAL, ((ICompletionProposal)otherProposalItem.getData()).getDisplayString());
 		assertEquals("Addition of completion proposal should keep selection", completionProposal, completionProposalList.getSelection()[0].getData());
-		
+
 		// TODO find a way to actually trigger completion and verify result against Editor content
 		// Assert.assertEquals("Completion didn't complete", "bars are good for a beer.", ((StyledText)editor.getAdapter(Control.class)).getText());
 		completionShell.close();
+	}
+
+	@Test
+	public void testCompletionFreeze_bug521484() throws Exception {
+		Set<Shell> beforeShell = new HashSet<>(Arrays.asList(Display.getDefault().getShells()));
+		editor.selectAndReveal(3, 0);
+		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
+		action.update();
+		action.run();
+		waitAndDispatch(100);
+		Set<Shell> afterShell = new HashSet<>(Arrays.asList(Display.getDefault().getShells()));
+		afterShell.removeAll(beforeShell);
+		assertEquals("No completion", 1, afterShell.size());
+		Shell completionShell= afterShell.iterator().next();
+		final Table completionProposalList = findCompletionSelectionControl(completionShell);
+		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return completionProposalList.getItemCount() == 2;
+			}
+		}.waitForCondition(completionShell.getDisplay(), 200);
+		assertEquals(2, completionProposalList.getItemCount());
+		final TableItem computingItem = completionProposalList.getItem(0);
+		assertTrue("Missing computing info entry", computingItem.getText().contains("Computing")); //$NON-NLS-1$ //$NON-NLS-2$
+		// Some processors are long running, moving cursor can cause freeze (bug 521484)
+		// asynchronous
+		StyledText styledText = (StyledText) editor.getAdapter(Control.class);
+		styledText.setSelection(styledText.getSelectionRange().x - 1);
+		Event e = new Event();
+		e.type = ST.VerifyKey;
+		e.widget = styledText;
+		e.keyCode = SWT.ARROW_LEFT;
+		e.display = styledText.getDisplay();
+		long timestamp = System.currentTimeMillis();
+		styledText.notifyListeners(ST.VerifyKey, e);
+		DisplayHelper.sleep(styledText.getDisplay(), 200); //give time to process events
+		long processingDuration = System.currentTimeMillis() - timestamp;
+		assertTrue("UI Thread frozen for " + processingDuration + "ms", processingDuration < LongRunningBarContentAssistProcessor.DELAY);		
+
+		if (!completionShell.isDisposed()) {
+			completionShell.close();
+		}
 	}
 
 	private Table findCompletionSelectionControl(Widget control) {

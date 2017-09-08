@@ -24,7 +24,7 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		String text = viewer.getDocument().get();
-		if (text.length() >= 3 && text.substring(offset - 3, offset).equals("bar")) {
+		if (text.length() >= 3 && offset >= 3 && text.substring(offset - 3, offset).equals("bar")) {
 			String message = PROPOSAL;
 			CompletionProposal proposal = new CompletionProposal(message, offset, 0, message.length());
 			return new ICompletionProposal[] { proposal };

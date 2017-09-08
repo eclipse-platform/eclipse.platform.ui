@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
@@ -215,7 +216,37 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		return getErrorMessage();
 	}
-	
+
+	@Override
+	List<ICompletionProposal> computeProposals(int offset) {
+		fProposalShell.dispose();
+		showProposals(true);
+		return fComputedProposals;
+	}
+
+	@Override
+	void createProposalSelector() {
+		super.createProposalSelector();
+		fProposalShell.addDisposeListener(e -> hide());
+	}
+
+	@Override
+	protected List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
+		if(fComputedProposals.size() > 0 && fComputedProposals.get(0) instanceof ComputingProposal) {
+			Set<CompletableFuture<List<ICompletionProposal>>> remaining = Collections.synchronizedSet(new HashSet<>(fFutures));
+			for (CompletableFuture<List<ICompletionProposal>> future : fFutures) {
+				future.thenRun(() -> {
+					remaining.removeIf(CompletableFuture::isDone);
+					if (remaining.isEmpty()) {
+						filterProposals();
+					}
+				});
+			}
+			return fComputedProposals;
+		}
+		return super.computeFilteredProposals(offset, event);
+	}
+
 	@Override
 	public void hide() {
 		super.hide();

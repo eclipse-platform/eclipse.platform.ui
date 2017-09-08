@@ -20,7 +20,7 @@
 		</contentAssistProcessor>
   <contentAssistProcessor
         class="org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor"
-        contentType="org.eclipse.ui.genericeditor.tests.content-type">
+        contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type">
   </contentAssistProcessor>
  </extension>
  <extension
