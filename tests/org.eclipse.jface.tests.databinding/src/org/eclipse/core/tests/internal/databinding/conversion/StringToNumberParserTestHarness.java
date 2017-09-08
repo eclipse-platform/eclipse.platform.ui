@@ -37,20 +37,20 @@ public abstract class StringToNumberParserTestHarness extends TestCase {
 		double maxDouble = max.doubleValue();
 
 		//test bytes
-		assertTrue("valid byte", assertValid(new Byte((byte) 1)));
-		assertTrue("valid byte min", assertValid(new Byte(Byte.MIN_VALUE)));
-		assertTrue("valid byte max", assertValid(new Byte(Byte.MAX_VALUE)));
+		assertTrue("valid byte", assertValid(Byte.valueOf((byte) 1)));
+		assertTrue("valid byte min", assertValid(Byte.MIN_VALUE));
+		assertTrue("valid byte max", assertValid(Byte.MAX_VALUE));
 
 		// test shorts
-		assertTrue("valid short", assertValid(new Short((short) 1)));
-		boolean result = assertValid(new Short(Short.MIN_VALUE));
+		assertTrue("valid short", assertValid(Short.valueOf((short) 1)));
+		boolean result = assertValid(Short.MIN_VALUE);
 		if (minDouble > Short.MIN_VALUE) {
 			assertFalse("invalid short min", result);
 		} else {
 			assertTrue("valid short min", result);
 		}
 
-		result = assertValid(new Short(Short.MAX_VALUE));
+		result = assertValid(Short.MAX_VALUE);
 		if (maxDouble < Short.MAX_VALUE) {
 			assertFalse("invalid short max", result);
 		} else {
@@ -75,15 +75,15 @@ public abstract class StringToNumberParserTestHarness extends TestCase {
 		}
 
 		// test longs
-		assertTrue("valid long", assertValid(new Long(1)));
-		result = assertValid(new Long(Long.MIN_VALUE));
+		assertTrue("valid long", assertValid(Long.valueOf(1)));
+		result = assertValid(Long.MIN_VALUE);
 		if (minDouble > Long.MIN_VALUE) {
 			assertFalse("invalid long min", result);
 		} else {
 			assertTrue("valid long min", result);
 		}
 
-		result = assertValid(new Long(Long.MAX_VALUE));
+		result = assertValid(Long.MAX_VALUE);
 		if (maxDouble < Long.MAX_VALUE) {
 			assertFalse("invalid long max", result);
 		} else {

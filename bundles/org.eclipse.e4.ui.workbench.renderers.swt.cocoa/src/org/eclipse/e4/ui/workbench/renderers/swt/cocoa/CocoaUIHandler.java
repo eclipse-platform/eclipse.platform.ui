@@ -172,7 +172,7 @@ public class CocoaUIHandler {
 		long cls = convertToLong(object);
 
 		invokeMethod(OS.class, "class_addIvar", new Object[] { //$NON-NLS-1$
-				wrapPointer(cls), SWT_OBJECT, wrapPointer(size), new Byte((byte) align), types });
+				wrapPointer(cls), SWT_OBJECT, wrapPointer(size), Byte.valueOf((byte) align), types });
 
 		// Add the action callback
 		invokeMethod(OS.class, "class_addMethod", //$NON-NLS-1$
@@ -763,7 +763,7 @@ public class CocoaUIHandler {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] { //$NON-NLS-1$
 					long.class, byte[].class, long[].class });
 			long[] resultPtr = new long[1];
-			method.invoke(null, new Object[] { new Long(delegateId), name, resultPtr });
+			method.invoke(null, new Object[] { Long.valueOf(delegateId), name, resultPtr });
 			return resultPtr;
 		} else {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] { //$NON-NLS-1$
@@ -815,7 +815,7 @@ public class CocoaUIHandler {
 	private static Object wrapPointer(long value) {
 		Class<?> PTR_CLASS = C.PTR_SIZEOF == 8 ? long.class : int.class;
 		if (PTR_CLASS == long.class)
-			return new Long(value);
+			return Long.valueOf(value);
 		else
 			return Integer.valueOf((int) value);
 	}
