@@ -119,6 +119,10 @@ public class ModelServiceImpl implements EModelService {
 
 		this.appContext = appContext;
 		IEventBroker eventBroker = appContext.get(IEventBroker.class);
+		if (eventBroker == null) {
+			throw new IllegalStateException(
+					"Could not get an IEventBroker instance. Please check your configuration that a providing bundle is present and active."); //$NON-NLS-1$
+		}
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, hostedElementHandler);
 
 		mApplicationElementFactory = new GenericMApplicationElementFactoryImpl(
