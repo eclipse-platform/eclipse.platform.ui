@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collections;
-import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -47,8 +46,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
-import org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider;
-import org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider;
+import org.eclipse.ui.genericeditor.tests.contributions.MagicHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
 
 import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
@@ -69,23 +67,9 @@ public class HoverTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
-	public void testSingleHover() throws Exception {
+	public void testHover() throws Exception {
 		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
-		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
-		assertNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
-	}
-
-	/**
-	 * @throws Exception ex
-	 * @since 1.1
-	 */
-	@Test
-	public void testMultipleHover() throws Exception {
-		cleanFileAndEditor();
-		createAndOpenFile("bar.txt", "Hi");
-		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
-		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
-		assertNotNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
+		assertNotNull(findControl(shell, StyledText.class, MagicHoverProvider.LABEL));
 	}
 
 	@Test
@@ -101,17 +85,10 @@ public class HoverTest extends AbstratGenericEditorTest {
 			marker.setAttribute(IMarker.MESSAGE, problemMessage);
 			marker.setAttribute(MarkerResolutionGenerator.FIXME, true);
 			AbstractInformationControlManager manager = triggerCompletionAndRetrieveInformationControlManager();
-			Object hoverData = getHoverData(manager);
-			assertTrue(hoverData instanceof Map);
-			assertTrue(((Map<?,?>)hoverData).containsValue(Collections.singletonList(marker)));
-			assertTrue(((Map<?,?>)hoverData).containsValue(AlrightyHoverProvider.LABEL));
-			assertFalse(((Map<?,?>)hoverData).containsValue(HelloHoverProvider.LABEL));
+			assertEquals(Collections.singletonList(marker), getHoverData(manager));
 			// check dialog content
 			Shell shell= getHoverShell(manager);
 			assertNotNull(findControl(shell, Label.class, marker.getAttribute(IMarker.MESSAGE, "NONE")));
-			assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
-			assertNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
-			// check quick-fix works
 			Link link = findControl(shell, Link.class, MarkerResolutionGenerator.FIXME);
 			assertNotNull(link);
 			Event event = new Event();
@@ -149,12 +126,6 @@ public class HoverTest extends AbstratGenericEditorTest {
 			fail();
 		}
 		Shell shell = (Shell)new Accessor(control[0], AbstractInformationControl.class).get("fShell");
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return shell.isVisible();
-			}
-		}.waitForCondition(this.editor.getSite().getShell().getDisplay(), 2000);
 		assertTrue(shell.isVisible());
 		return shell;
 	}

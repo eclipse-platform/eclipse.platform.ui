@@ -17,29 +17,19 @@ import org.eclipse.swt.widgets.Shell;
 
 public class MarkerHoverControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension {
 
-	private final boolean showAffordanceString;
-
-	public MarkerHoverControlCreator() {
-		this(true);
-	}
-
-	public MarkerHoverControlCreator(boolean showAffordanceString) {
-		this.showAffordanceString = showAffordanceString;
-	}
-
 	@Override
 	public boolean canReuse(IInformationControl control) {
-		return control instanceof MarkerInformationControl;
+		return false;
 	}
 
 	@Override
 	public boolean canReplace(IInformationControlCreator creator) {
-		return creator instanceof MarkerHoverControlCreator;
+		return false;
 	}
 
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
-		return new MarkerInformationControl(parent, showAffordanceString);
+		return new MarkerInformationControl(parent,this);
 	}
 
 }

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.genericeditor.markers;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -20,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.AbstractInformationControl;
+import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -46,10 +46,11 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 
 public class MarkerInformationControl extends AbstractInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2 {
 
-	private final LinkedHashMap<IMarker, Composite> composites = new LinkedHashMap<>();
+	private IInformationControlCreator creator;
 
-	public MarkerInformationControl(Shell parentShell, boolean showAffordanceString) {
-		super(parentShell, showAffordanceString ? EditorsUI.getTooltipAffordanceString() : null);
+	public MarkerInformationControl(Shell parentShell, IInformationControlCreator creator) {
+		super(parentShell, EditorsUI.getTooltipAffordanceString());
+		this.creator = creator;
 		create();
 	}
 
@@ -83,11 +84,9 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setInput(Object input) {
-		this.composites.values().forEach(Composite::dispose);
 		this.markers = (List<IMarker>)input;
 		for (IMarker marker : this.markers) {
 			Composite markerComposite = new Composite(parent, SWT.NONE);
-			this.composites.put(marker, markerComposite);
 			GridLayout gridLayout = new GridLayout(1, false);
 			gridLayout.verticalSpacing = 0;
 			markerComposite.setLayout(gridLayout);
@@ -136,12 +135,17 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 				});
 			}
 		}
-		parent.layout(true);
+		parent.pack(true);
 	}
 	
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		return new MarkerHoverControlCreator(false);
+		return new AbstractReusableInformationControlCreator() {
+			@Override
+			protected IInformationControl doCreateInformationControl(Shell parent) {
+				return creator.createInformationControl(parent);
+			}
+		};
 	}
 	
 	@Override
