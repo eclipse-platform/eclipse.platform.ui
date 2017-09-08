@@ -44,7 +44,7 @@ public class DuplicateLaunchDelegatesStatusHandler implements IStatusHandler {
 				ILaunchConfiguration config = (ILaunchConfiguration) infos[0];
 				String mode = (String) infos[1];
 				Shell shell = DebugUIPlugin.getShell();
-				HashSet<String> modes = new HashSet<String>();
+				HashSet<String> modes = new HashSet<>();
 				modes.add(mode);
 				modes.addAll(config.getModes());
 				SelectLaunchersDialog sldd = new SelectLaunchersDialog(shell,

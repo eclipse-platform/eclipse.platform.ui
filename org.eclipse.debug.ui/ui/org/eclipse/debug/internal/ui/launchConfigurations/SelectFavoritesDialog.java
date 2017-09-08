@@ -49,7 +49,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 				DebugUIPlugin.log(e);
 				return new ILaunchConfiguration[0];
 			}
-			List<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>(all.length);
+			List<ILaunchConfiguration> list = new ArrayList<>(all.length);
 			ViewerFilter filter = new LaunchGroupFilter(fHistory.getLaunchGroup());
 			for (int i = 0; i < all.length; i++) {
 				if (filter.select(null, null, all[i])) {

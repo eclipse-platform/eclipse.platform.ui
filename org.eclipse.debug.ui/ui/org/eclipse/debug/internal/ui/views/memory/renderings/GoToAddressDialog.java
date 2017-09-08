@@ -36,7 +36,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 
-	private static Vector<String> history = new Vector<String>();
+	private static Vector<String> history = new Vector<>();
 	private Combo expressionInput;
 	private String expression;
 

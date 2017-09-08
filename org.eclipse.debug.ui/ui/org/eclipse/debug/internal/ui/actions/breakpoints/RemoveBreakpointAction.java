@@ -60,8 +60,8 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) {
-				ArrayList<IBreakpoint> breakpointsToDelete = new ArrayList<IBreakpoint>();
-				ArrayList<IWorkingSet> groupsToDelete = new ArrayList<IWorkingSet>();
+				ArrayList<IBreakpoint> breakpointsToDelete = new ArrayList<>();
+				ArrayList<IWorkingSet> groupsToDelete = new ArrayList<>();
 				boolean deleteAll = false;
 				boolean deleteContainer = false;
 				boolean prompted = false;

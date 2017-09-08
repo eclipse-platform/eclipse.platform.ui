@@ -38,7 +38,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Listing of the complete launch history, which includes favorites in the launched ordering
 	 */
-	private Vector<ILaunchConfiguration> fCompleteHistory = new Vector<ILaunchConfiguration>();
+	private Vector<ILaunchConfiguration> fCompleteHistory = new Vector<>();
 
 	/**
 	 * The launch group this history is provided for
@@ -48,7 +48,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Ordered listing of the favorites of this history
 	 */
-	private Vector<ILaunchConfiguration> fFavorites = new Vector<ILaunchConfiguration>();
+	private Vector<ILaunchConfiguration> fFavorites = new Vector<>();
 
 	/**
 	 * A new saved flag to prevent save participants from serializing unchanged launch histories.
@@ -59,7 +59,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * List of instances of this launch history
 	 */
-	private static List<LaunchHistory> fgLaunchHistoryInstances = new ArrayList<LaunchHistory>();
+	private static List<LaunchHistory> fgLaunchHistoryInstances = new ArrayList<>();
 
 	/**
 	 * Creates a new launch history for the given launch group
@@ -200,7 +200,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @return launch history
 	 */
 	public synchronized ILaunchConfiguration[] getHistory() {
-		Vector<ILaunchConfiguration> history = new Vector<ILaunchConfiguration>();
+		Vector<ILaunchConfiguration> history = new Vector<>();
 		try {
 			for (ILaunchConfiguration config : fCompleteHistory) {
 				if(config.exists() && !fFavorites.contains(config) &&
@@ -227,7 +227,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @since 3.3
 	 */
 	public synchronized ILaunchConfiguration[] getCompleteLaunchHistory() {
-		Vector<ILaunchConfiguration> history = new Vector<ILaunchConfiguration>();
+		Vector<ILaunchConfiguration> history = new Vector<>();
 		try {
 			for (ILaunchConfiguration config : fCompleteHistory) {
 				if(config.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(config) &&
@@ -256,7 +256,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param favorites
 	 */
 	public synchronized void setFavorites(ILaunchConfiguration[] favorites) {
-		fFavorites = new Vector<ILaunchConfiguration>(Arrays.asList(favorites));
+		fFavorites = new Vector<>(Arrays.asList(favorites));
 		setSaved(false);
 		fireLaunchHistoryChanged();
 	}

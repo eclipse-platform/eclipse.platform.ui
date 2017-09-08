@@ -48,9 +48,9 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		private ArrayList<LaunchConfigurationTabExtension> extList = null;
 
 		public TabCollector(List<ILaunchConfigurationTab> tabs, List<LaunchConfigurationTabExtension> exts) {
-			tabList = new ArrayList<ILaunchConfigurationTab>(tabs);
-			extList = new ArrayList<LaunchConfigurationTabExtension>(exts);
-			idSet = new HashSet<String>(tabList.size() + extList.size());
+			tabList = new ArrayList<>(tabs);
+			extList = new ArrayList<>(exts);
+			idSet = new HashSet<>(tabList.size() + extList.size());
 		}
 
 		/**
@@ -169,7 +169,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	public ILaunchConfigurationTab[] getTabs() {
 		if(fTabs == null) {
 			try {
-				fTabs = new ArrayList<ILaunchConfigurationTab>();
+				fTabs = new ArrayList<>();
 				LaunchConfigurationTabExtension[] ext = LaunchConfigurationPresentationManager.getDefault().getTabExtensions(fGroupId, fConfig, fMode);
 				//if there are no extensions bypass and do a raw copy into
 				if(ext.length > 0) {

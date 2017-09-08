@@ -215,7 +215,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
      *
      * @since 3.3
      */
-	private Set<ISaveParticipant> fSaveParticipants = new HashSet<ISaveParticipant>();
+	private Set<ISaveParticipant> fSaveParticipants = new HashSet<>();
 
 	/**
 	 * Theme listener.
@@ -507,7 +507,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(),

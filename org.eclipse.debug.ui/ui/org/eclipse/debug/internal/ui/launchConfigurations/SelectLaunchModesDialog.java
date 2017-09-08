@@ -46,7 +46,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 		@Override
 		public String getText(Object element) {
 			Set<?> vals = (Set<?>) element;
-			Set<String> modes = new HashSet<String>(vals.size());
+			Set<String> modes = new HashSet<>(vals.size());
 			for (Object o : vals) {
 				modes.add((String) o);
 			}
@@ -77,7 +77,7 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 		super(parentShell);
 		super.setTitle(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_3);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fValidModes = new ArrayList<Set<String>>();
+		fValidModes = new ArrayList<>();
 		Set<Set<String>> modes = configuration.getType().getSupportedModeCombinations();
 		for (Set<String> modeset : modes) {
 			if(modeset.contains(mode)) {

@@ -68,7 +68,7 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
     /**
      * List of posted deltas ready to be fired.
      */
-	private List<DeltaInfo> fPendingDeltas = new LinkedList<DeltaInfo>();
+	private List<DeltaInfo> fPendingDeltas = new LinkedList<>();
 
 
 	/**

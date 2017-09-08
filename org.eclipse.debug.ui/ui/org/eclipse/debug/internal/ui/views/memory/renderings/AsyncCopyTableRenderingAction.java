@@ -39,7 +39,7 @@ public class AsyncCopyTableRenderingAction extends CopyTableRenderingToClipboard
 			int itemCount = table.getItemCount();
 			int numVisibleLines = Math.min((table.getBounds().height / table.getItemHeight()) + 2, itemCount - topIndex);
 
-			ArrayList<TableItem> items = new ArrayList<TableItem>();
+			ArrayList<TableItem> items = new ArrayList<>();
 
 			// start at top index until there is no more data in the table
 			for (int i = topIndex; i < topIndex + numVisibleLines; i++) {

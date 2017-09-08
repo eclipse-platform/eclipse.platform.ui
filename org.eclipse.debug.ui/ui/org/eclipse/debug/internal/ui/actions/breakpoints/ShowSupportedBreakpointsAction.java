@@ -58,7 +58,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	/**
 	 * The list of identifiers for the current state
 	 */
-	private List<IDebugTarget> fDebugTargets= new ArrayList<IDebugTarget>(2);
+	private List<IDebugTarget> fDebugTargets= new ArrayList<>(2);
 
 	/**
 	 * A viewer filter that selects breakpoints that have
@@ -146,7 +146,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			}
 
 			if (debugTargets.size() == fDebugTargets.size()) {
-				List<IDebugTarget> copy= new ArrayList<IDebugTarget>(debugTargets.size());
+				List<IDebugTarget> copy= new ArrayList<>(debugTargets.size());
 				for (IDebugTarget target : fDebugTargets) {
 					Iterator<IDebugTarget> newDebugTargets= debugTargets.iterator();
 					while (newDebugTargets.hasNext()) {
@@ -186,7 +186,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	}
 
 	protected List<IDebugTarget> getDebugTargets(IStructuredSelection ss) {
-		List<IDebugTarget> debugTargets= new ArrayList<IDebugTarget>(2);
+		List<IDebugTarget> debugTargets= new ArrayList<>(2);
 		Iterator<?> i= ss.iterator();
 		while (i.hasNext()) {
 			Object next= i.next();

@@ -92,12 +92,12 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 		if (fStamp == LocalSelectionTransfer.getTransfer().getSelectionSetTime()) {
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 			if (selection instanceof IStructuredSelection) {
-				Set<IBreakpoint> removed = new HashSet<IBreakpoint>();
+				Set<IBreakpoint> removed = new HashSet<>();
 				for (int i = 0; i < breakpoints.length; i++) {
 					removed.add(breakpoints[i]);
 				}
 				boolean modified = false;
-				List<Object> remain = new ArrayList<Object>();
+				List<Object> remain = new ArrayList<>();
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				Iterator<?> iterator = ss.iterator();
 				while (iterator.hasNext()) {

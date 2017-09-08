@@ -384,7 +384,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @return whether the drop was successful
      */
     private boolean performVariableOrWatchAdaptableDrop(IStructuredSelection selection) {
-		List<IExpression> expressions = new ArrayList<IExpression>(selection.size());
+		List<IExpression> expressions = new ArrayList<>(selection.size());
 		for (Iterator<?> itr = selection.iterator(); itr.hasNext();) {
             Object element = itr.next();
         	String expressionText = createExpressionString(element);

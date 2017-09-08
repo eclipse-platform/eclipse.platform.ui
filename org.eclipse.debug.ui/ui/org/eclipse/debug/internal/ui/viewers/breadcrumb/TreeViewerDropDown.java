@@ -114,7 +114,7 @@ public abstract class TreeViewerDropDown {
 					return;
 				}
 
-				List<Object> pathElements = new LinkedList<Object>();
+				List<Object> pathElements = new LinkedList<>();
                 while(item != null) {
                     Object data = item.getData();
                     if (data == null) {

@@ -68,7 +68,7 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 		if(!fIsVisible) {
 			return null;
 		}
-		List<IMarker> markers = new ArrayList<IMarker>();
+		List<IMarker> markers = new ArrayList<>();
 		List<IBreakpoint> breakpoints = fTView.getCheckedElements().toList();
 		for(int i = 0; i < breakpoints.size(); i++) {
 			markers.add(breakpoints.get(i).getMarker());

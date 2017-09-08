@@ -79,7 +79,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 	private IMemoryRenderingType[] getBindings() {
 		if (fRenderingTypes == null) {
 			String ids = fConfigurationElement.getAttribute(ATTR_RENDERING_IDS);
-			List<IMemoryRenderingType> list = new ArrayList<IMemoryRenderingType>();
+			List<IMemoryRenderingType> list = new ArrayList<>();
 			IMemoryRenderingManager manager = getManager();
 			if (ids != null) {
 				String[] strings = ids.split(","); //$NON-NLS-1$
@@ -109,7 +109,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 	private IMemoryRenderingType[] getDefaultBindings() {
 		if (fDefaultTypes == null) {
 			String ids = fConfigurationElement.getAttribute(ATTR_DEFAULT_IDS);
-			List<IMemoryRenderingType> list = new ArrayList<IMemoryRenderingType>();
+			List<IMemoryRenderingType> list = new ArrayList<>();
 			IMemoryRenderingManager manager = getManager();
 			if (ids != null) {
 				String[] strings = ids.split(","); //$NON-NLS-1$

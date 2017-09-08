@@ -87,7 +87,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 				return true;
 			} else if (getElementContentProvider().equals(request.getElementContentProvider())) {
 				if (fBatchedRequests == null) {
-					fBatchedRequests = new ArrayList<ViewerUpdateMonitor>();
+					fBatchedRequests = new ArrayList<>();
 					fBatchedRequests.add(this);
 				}
 				fBatchedRequests.add(request);

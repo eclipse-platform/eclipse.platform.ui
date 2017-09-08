@@ -59,11 +59,11 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * A mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
 	 */
-	private HashMap<String, Object> fAttributes = new HashMap<String, Object>(3);
+	private HashMap<String, Object> fAttributes = new HashMap<>(3);
 	/**
 	 * A table of label providers keyed by debug model identifiers.
 	 */
-	private HashMap<String, IDebugModelPresentation> fLabelProviders = new HashMap<String, IDebugModelPresentation>(5);
+	private HashMap<String, IDebugModelPresentation> fLabelProviders = new HashMap<>(5);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
@@ -328,7 +328,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * @since 3.0
 	 */
 	public Map<String, Object> getAttributeMap() {
-		return new HashMap<String, Object>(fAttributes);
+		return new HashMap<>(fAttributes);
 	}
 
 	/**

@@ -55,7 +55,7 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
 
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
-		final Map<String, ISelection> values = new HashMap<String, ISelection>(1);
+		final Map<String, ISelection> values = new HashMap<>(1);
         values.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, event.getContext());
 		// make sure fireSourceChanged is called on the UI thread
 		if (Display.getCurrent() == null) {
@@ -83,7 +83,7 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
 
 	@Override
 	public Map getCurrentState() {
-		Map<String, ISelection> currentState = new HashMap<String, ISelection>(1);
+		Map<String, ISelection> currentState = new HashMap<>(1);
 	    currentState.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, fDebugContextService.getActiveContext());
 	    return currentState;
 	}

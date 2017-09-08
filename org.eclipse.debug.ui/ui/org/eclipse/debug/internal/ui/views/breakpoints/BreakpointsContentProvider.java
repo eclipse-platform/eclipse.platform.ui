@@ -154,7 +154,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      */
     public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
         if (isShowingGroups()) {
-			List<BreakpointContainer> list = new ArrayList<BreakpointContainer>();
+			List<BreakpointContainer> list = new ArrayList<>();
             for (int i = 0; i < fElements.length; i++) {
                 BreakpointContainer container = (BreakpointContainer) fElements[i];
                 if (container.contains(breakpoint)) {
@@ -186,7 +186,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
             fElements = breakpoints;
         } else {
             IBreakpointOrganizer organizer = fOrganizers[0];
-			Map<IAdaptable, BreakpointContainer> categoriesToContainers = new HashMap<IAdaptable, BreakpointContainer>();
+			Map<IAdaptable, BreakpointContainer> categoriesToContainers = new HashMap<>();
             for (int i = 0; i < breakpoints.length; i++) {
                 IBreakpoint breakpoint = breakpoints[i];
                 IAdaptable[] categories = organizer.getCategories(breakpoint);

@@ -93,12 +93,12 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * The map of ToolBars that have mouse tracker listeners associated with them:
 	 * stored as Map<IWorkbenchWindow, ToolBar>
 	 */
-	private HashMap<IWorkbenchWindow, ToolBar> fToolbars = new HashMap<IWorkbenchWindow, ToolBar>();
+	private HashMap<IWorkbenchWindow, ToolBar> fToolbars = new HashMap<>();
 
 	/**
 	 * the map of current labels
 	 */
-	private HashMap<ILaunchGroup, String> fCurrentLabels = new HashMap<ILaunchGroup, String>();
+	private HashMap<ILaunchGroup, String> fCurrentLabels = new HashMap<>();
 
 	/**
 	 * The selection has changed and we need to update the labels
@@ -108,19 +108,19 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Set of windows that have been opened and that we have registered selection listeners with
 	 */
-	private HashSet<IWorkbenchWindow> fWindows = new HashSet<IWorkbenchWindow>();
+	private HashSet<IWorkbenchWindow> fWindows = new HashSet<>();
 
 	/**
 	 * Cache of IResource -> ILaunchConfiguration[] used during a tooltip update job.
 	 * The cache is cleared after each tooltip update job is complete.
 	 */
-	private HashMap<IResource, ILaunchConfiguration[]> fConfigCache = new HashMap<IResource, ILaunchConfiguration[]>();
+	private HashMap<IResource, ILaunchConfiguration[]> fConfigCache = new HashMap<>();
 
 	/**
 	 * Cache of IResource -> LaunchShortcutExtension used during a tooltip update job.
 	 * The cache is cleared after each tooltip update job is complete.
 	 */
-	private HashMap<IResource, List<LaunchShortcutExtension>> fExtCache = new HashMap<IResource, List<LaunchShortcutExtension>>();
+	private HashMap<IResource, List<LaunchShortcutExtension>> fExtCache = new HashMap<>();
 
 	/**
 	 * Constant denoting the empty string;
@@ -379,7 +379,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @since 3.4
 	 */
 	protected List<LaunchShortcutExtension> pruneShortcuts(List<LaunchShortcutExtension> shortcuts, IResource resource, String mode) {
-		List<LaunchShortcutExtension> list = new ArrayList<LaunchShortcutExtension>(shortcuts);
+		List<LaunchShortcutExtension> list = new ArrayList<>(shortcuts);
 		if(resource == null) {
 			LaunchShortcutExtension ext = null;
 			for (ListIterator<LaunchShortcutExtension> iter = list.listIterator(); iter.hasNext();) {
@@ -406,7 +406,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 */
 	public IResource getLaunchableResource(List<LaunchShortcutExtension> shortcuts, IStructuredSelection selection) {
 		if(selection != null && !selection.isEmpty()) {
-			ArrayList<IResource> resources = new ArrayList<IResource>();
+			ArrayList<IResource> resources = new ArrayList<>();
 			IResource resource = null;
 			Object o = selection.getFirstElement();
 			for (LaunchShortcutExtension ext : shortcuts) {
@@ -437,9 +437,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @since 3.4
 	 */
 	public List<LaunchShortcutExtension> getShortcutsForSelection(IStructuredSelection selection, String mode) {
-		ArrayList<LaunchShortcutExtension> list = new ArrayList<LaunchShortcutExtension>();
+		ArrayList<LaunchShortcutExtension> list = new ArrayList<>();
 		List<LaunchShortcutExtension> sc = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts();
-		List<IEditorInput> ctxt = new ArrayList<IEditorInput>();
+		List<IEditorInput> ctxt = new ArrayList<>();
 		// work around to bug in Structured Selection that returns actual underlying array in selection
 		// @see bug 211646
 		ctxt.addAll(selection.toList());
@@ -475,7 +475,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @since 3.4
 	 */
 	public List<ILaunchConfiguration> getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List<LaunchShortcutExtension> shortcuts, String mode) {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		int voteDefault = 0;
 		if(selection != null) {
 			Object o = selection.getFirstElement();

@@ -406,7 +406,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 			} else {
 				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(groupid);
 			}
-			ArrayList<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>(1);
+			ArrayList<ILaunchConfiguration> configs = new ArrayList<>(1);
 			if (configuration != null){
 				configs.add(configuration);
 			}

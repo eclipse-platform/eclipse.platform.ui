@@ -59,7 +59,7 @@ public class SourceLookupUIUtils {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), CONTAINER_PRESENTATION_EXTENSION);
 		//read in SourceContainer presentation extensions
 		IConfigurationElement[] sourceContainerPresentationExtensions =extensionPoint.getConfigurationElements();
-		fSourceContainerPresentationHashtable = new Hashtable<String, IConfigurationElement>();
+		fSourceContainerPresentationHashtable = new Hashtable<>();
 		for (int i = 0; i < sourceContainerPresentationExtensions.length; i++) {
 			fSourceContainerPresentationHashtable.put(
 					sourceContainerPresentationExtensions[i].getAttribute(CONTAINER_ID_ATTRIBUTE),

@@ -315,7 +315,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			}
 			// collect breakpoints
 			Object[] elements = fTView.getCheckedElements().toArray();
-			List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
+			List<IBreakpoint> breakpoints = new ArrayList<>();
 			for (int i = 0; i < elements.length; i++) {
 				Object object = elements[i];
 				if (object instanceof IBreakpoint) {

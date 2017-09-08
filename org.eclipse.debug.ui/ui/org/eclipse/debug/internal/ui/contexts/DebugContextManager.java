@@ -34,7 +34,7 @@ import org.eclipse.ui.services.IEvaluationService;
 public class DebugContextManager implements IDebugContextManager {
 
 	private static DebugContextManager fgDefault;
-	private Map<IWorkbenchWindow, DebugWindowContextService> fServices = new HashMap<IWorkbenchWindow, DebugWindowContextService>();
+	private Map<IWorkbenchWindow, DebugWindowContextService> fServices = new HashMap<>();
 	private ListenerList<IDebugContextListener> fGlobalListeners = new ListenerList<>();
 
 	/**

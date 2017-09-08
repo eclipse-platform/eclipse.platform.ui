@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
  *
  */
 public class ViewPaneSelectionProvider implements ISelectionProvider {
-	ArrayList<ISelectionChangedListener> fListeners = new ArrayList<ISelectionChangedListener>();
+	ArrayList<ISelectionChangedListener> fListeners = new ArrayList<>();
 	ISelection fSelection;
 
 	/*

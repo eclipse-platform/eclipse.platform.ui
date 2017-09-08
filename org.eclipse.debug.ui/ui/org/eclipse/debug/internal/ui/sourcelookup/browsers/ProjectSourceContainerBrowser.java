@@ -47,7 +47,7 @@ public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowse
 				SourceLookupUIMessages.projectSelection_chooseLabel);
 		if(dialog.open() == Window.OK){
 			Object[] elements= ((ListSelectionDialog)dialog).getResult();
-			ArrayList<ISourceContainer> res = new ArrayList<ISourceContainer>();
+			ArrayList<ISourceContainer> res = new ArrayList<>();
 			for (int i= 0; i < elements.length; i++) {
 				if(!(elements[i] instanceof IProject)) {
 					continue;

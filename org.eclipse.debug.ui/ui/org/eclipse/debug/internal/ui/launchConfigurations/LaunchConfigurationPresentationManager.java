@@ -75,7 +75,7 @@ public class LaunchConfigurationPresentationManager {
 	 */
 	private Hashtable<String, Hashtable<String, LaunchConfigurationTabExtension>> fContributedTabs;
 
-	private static Set<String> ALL_MODES = new HashSet<String>(1);
+	private static Set<String> ALL_MODES = new HashSet<>(1);
 
 	static {
 		ALL_MODES.add("*"); //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class LaunchConfigurationPresentationManager {
 	 */
 	private void initializeTabGroupExtensions() {
 		if(fTabGroupExtensions == null) {
-			fTabGroupExtensions = new Hashtable<String, Map<Set<String>, LaunchConfigurationTabGroupExtension>>();
+			fTabGroupExtensions = new Hashtable<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS);
 			IConfigurationElement[] groups = extensionPoint.getConfigurationElements();
 			LaunchConfigurationTabGroupExtension group = null;
@@ -117,7 +117,7 @@ public class LaunchConfigurationPresentationManager {
 				typeId = group.getTypeIdentifier();
 				map = fTabGroupExtensions.get(typeId);
 				if (map == null) {
-					map = new Hashtable<Set<String>, LaunchConfigurationTabGroupExtension>();
+					map = new Hashtable<>();
 					fTabGroupExtensions.put(typeId, map);
 				}
 				modes = group.getModes();
@@ -156,7 +156,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @since 3.3
 	 */
 	private void initializeContributedTabExtensions() {
-		fContributedTabs = new Hashtable<String, Hashtable<String, LaunchConfigurationTabExtension>>();
+		fContributedTabs = new Hashtable<>();
 		IExtensionPoint epoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_TABS);
 		IConfigurationElement[] elements = epoint.getConfigurationElements();
 		LaunchConfigurationTabExtension tab = null;
@@ -165,7 +165,7 @@ public class LaunchConfigurationPresentationManager {
 			tab = new LaunchConfigurationTabExtension(elements[i]);
 			element = fContributedTabs.get(tab.getTabGroupId());
 			if(element == null) {
-				element = new Hashtable<String, LaunchConfigurationTabExtension>();
+				element = new Hashtable<>();
 				element.put(tab.getIdentifier(), tab);
 				fContributedTabs.put(tab.getTabGroupId(), element);
 			}
@@ -182,7 +182,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @exception CoreException if an exception occurs creating the group
 	 */
 	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfigurationType type, String mode) throws CoreException {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
@@ -201,7 +201,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @throws CoreException
 	 */
 	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfiguration config, String mode) throws CoreException {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension ext = getExtension(config.getType().getIdentifier(), modes);
 		if (ext == null) {
@@ -250,7 +250,7 @@ public class LaunchConfigurationPresentationManager {
 		if(as == null || config == null) {
 			return tabs;
 		}
-		HashSet<LaunchConfigurationTabExtension> set = new HashSet<LaunchConfigurationTabExtension>();
+		HashSet<LaunchConfigurationTabExtension> set = new HashSet<>();
 		for(int i = 0; i < tabs.length; i ++) {
 		//filter capabilities
 			if(!WorkbenchActivityHelper.filterItem(new LaunchTabContribution(tabs[i]))) {
@@ -316,7 +316,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @since 2.1
 	 */
 	public String getHelpContext(ILaunchConfigurationType type, String mode) throws CoreException {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
@@ -335,7 +335,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @return the description of the given configuration type, possible <code>null</code>
 	 */
 	public String getDescription(ILaunchConfigurationType configType, String mode) {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension extension = getExtension(configType.getAttribute(IConfigurationElementConstants.ID), modes);
 		return (extension != null ? extension.getDescription(modes) : null);
@@ -348,7 +348,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @return sorted list of launch mode names
 	 */
 	public List<String> getLaunchModeNames(Set<String> modes) {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		for (String id : modes) {
 			ILaunchMode mode = manager.getLaunchMode(id);

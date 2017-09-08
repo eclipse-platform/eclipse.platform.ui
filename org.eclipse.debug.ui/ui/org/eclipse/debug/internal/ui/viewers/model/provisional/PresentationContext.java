@@ -45,7 +45,7 @@ public class PresentationContext implements IPresentationContext {
 
     final private String fId;
 	final private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
-	final private Map<String, Object> fProperties = new HashMap<String, Object>();
+	final private Map<String, Object> fProperties = new HashMap<>();
     private IWorkbenchWindow fWindow;
     private IWorkbenchPart fPart;
 

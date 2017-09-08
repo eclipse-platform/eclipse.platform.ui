@@ -354,7 +354,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 
 		// if debug adapter did not return enough memory, create dummy memory
 		if (memoryBuffer.length < reqNumBytes) {
-			ArrayList<MemoryByte> newBuffer = new ArrayList<MemoryByte>();
+			ArrayList<MemoryByte> newBuffer = new ArrayList<>();
 
 			for (int i = 0; i < memoryBuffer.length; i++) {
 				newBuffer.add(memoryBuffer[i]);
@@ -391,7 +391,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 	}
 
 	private Object[] organizeLines(long numberOfLines, MemoryByte[] memoryBuffer, BigInteger address, boolean manageDelta, MemoryViewPresentationContext context) {
-		Vector<MemorySegment> lineCache = new Vector<MemorySegment>();
+		Vector<MemorySegment> lineCache = new Vector<>();
 		IMemoryRendering rendering = context.getRendering();
 		if (!(rendering instanceof AbstractAsyncTableRendering)) {
 			return lineCache.toArray();

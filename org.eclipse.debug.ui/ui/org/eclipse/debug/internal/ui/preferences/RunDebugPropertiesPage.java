@@ -77,7 +77,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/**
 	 * Set of configurations to be deleted
 	 */
-	private Set<ILaunchConfigurationWorkingCopy> fDeletedConfigurations = new HashSet<ILaunchConfigurationWorkingCopy>();
+	private Set<ILaunchConfigurationWorkingCopy> fDeletedConfigurations = new HashSet<>();
 
 	/**
 	 * Set of original default candidates for the resource
@@ -87,7 +87,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	/**
 	 * Holds configurations that need to be saved when the page closes
 	 */
-	private Set<ILaunchConfigurationWorkingCopy> fChangedConfigurations = new HashSet<ILaunchConfigurationWorkingCopy>();
+	private Set<ILaunchConfigurationWorkingCopy> fChangedConfigurations = new HashSet<>();
 
 	/**
 	 * List of the applicable launch config types for the backing resource
@@ -253,7 +253,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	protected ILaunchConfigurationType[] collectTypeCandidates() {
 		if(fTypeCandidates == null) {
 			String[] types = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableConfigurationTypes(getResource());
-			fTypeCandidates = new ArrayList<ILaunchConfigurationType>(types.length);
+			fTypeCandidates = new ArrayList<>(types.length);
 			for(int i = 0; i < types.length; i++) {
 				fTypeCandidates.add(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(types[i]));
 			}
@@ -279,7 +279,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 */
 	protected Set<ILaunchConfiguration> collectConfigCandidates(IResource resource) {
 		if(fOriginalCandidates == null) {
-			fOriginalCandidates = new HashSet<ILaunchConfiguration>();
+			fOriginalCandidates = new HashSet<>();
 			try {
 				ILaunchConfiguration[] configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource);
 				for(int i = 0; i < configs.length; i++) {
@@ -357,7 +357,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @return the names of the original launch configurations
 	 */
 	private Set<String> getConfigurationNames() {
-		Set<String> names = new HashSet<String>();
+		Set<String> names = new HashSet<>();
 		for(ILaunchConfiguration config : fOriginalCandidates) {
 			names.add(config.getName());
 		}

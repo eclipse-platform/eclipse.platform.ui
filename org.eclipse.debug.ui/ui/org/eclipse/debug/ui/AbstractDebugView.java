@@ -158,7 +158,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 	private static Set<String> fgGlobalActionIds;
 	static {
-		fgGlobalActionIds = new HashSet<String>();
+		fgGlobalActionIds = new HashSet<>();
 		fgGlobalActionIds.add(SELECT_ALL_ACTION);
 		fgGlobalActionIds.add(COPY_ACTION);
 		fgGlobalActionIds.add(CUT_ACTION);
@@ -245,8 +245,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Constructs a new debug view.
 	 */
 	public AbstractDebugView() {
-		fActionMap = new HashMap<String, IAction>(5);
-		fUpdateables = new ArrayList<IUpdate>(3);
+		fActionMap = new HashMap<>(5);
+		fUpdateables = new ArrayList<>(3);
 	}
 
 	/**
@@ -966,7 +966,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void addContextMenuManager(IMenuManager contextMenuManager) {
 		if (fContextMenuManagers == null) {
-			fContextMenuManagers = new ArrayList<IMenuManager>();
+			fContextMenuManagers = new ArrayList<>();
 		}
 		fContextMenuManagers.add(contextMenuManager);
 	}

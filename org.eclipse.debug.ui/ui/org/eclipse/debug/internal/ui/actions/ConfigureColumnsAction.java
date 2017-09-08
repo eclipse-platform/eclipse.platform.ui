@@ -67,7 +67,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 
 	class ColumnLabelProvider extends LabelProvider {
 
-		private Map<ImageDescriptor, Image> fImages = new HashMap<ImageDescriptor, Image>();
+		private Map<ImageDescriptor, Image> fImages = new HashMap<>();
 
 		@Override
 		public Image getImage(Object element) {
@@ -129,7 +129,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 				ActionMessages.ConfigureColumnsAction_1);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG);
 		String[] visibleColumns = fViewer.getVisibleColumns();
-		List<String> initialSelection = new ArrayList<String>(visibleColumns.length);
+		List<String> initialSelection = new ArrayList<>(visibleColumns.length);
 		for (int i = 0; i < visibleColumns.length; i++) {
 			initialSelection.add(visibleColumns[i]);
 		}

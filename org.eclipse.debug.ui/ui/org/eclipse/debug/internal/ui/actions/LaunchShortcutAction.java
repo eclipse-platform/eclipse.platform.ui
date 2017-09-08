@@ -97,7 +97,7 @@ public class LaunchShortcutAction extends Action {
 			if(!types.isEmpty()) {
 				LaunchingResourceManager lrm = DebugUIPlugin.getDefault().getLaunchingResourceManager();
 				IStructuredSelection selection = SelectedResourceManager.getDefault().getCurrentSelection();
-				ArrayList<LaunchShortcutExtension> shortcuts = new ArrayList<LaunchShortcutExtension>();
+				ArrayList<LaunchShortcutExtension> shortcuts = new ArrayList<>();
 				shortcuts.add(fShortcut);
 				IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 				if(resource == null) {

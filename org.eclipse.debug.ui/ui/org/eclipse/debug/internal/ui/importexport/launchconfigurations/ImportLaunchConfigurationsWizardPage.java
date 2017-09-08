@@ -172,7 +172,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		File config, newconfig = null;
 		boolean owall = false, nowall = false;
 		MessageDialog dialog = null;
-		final List<File> filesToImport = new ArrayList<File>();
+		final List<File> filesToImport = new ArrayList<>();
 		for (Iterator<?> iter = items.iterator(); iter.hasNext();) {
 			config = (File) ((DebugFileSystemElement) iter.next()).getFileSystemObject();
 			newconfig = new File(new Path(LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(config.getName()).toOSString());

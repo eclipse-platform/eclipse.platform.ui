@@ -133,7 +133,7 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
 		Set<String> enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(part, selection);
         String preferredId = manager.getPreferredToggleBreakpointsTargetID(part, selection);
 
-		List<Action> actions = new ArrayList<Action>(enabledIDs.size());
+		List<Action> actions = new ArrayList<>(enabledIDs.size());
 		for (String id : enabledIDs) {
             Action action = new SelectTargetAction(manager.getToggleBreakpointsTargetName(id), enabledIDs, id);
             if (id.equals(preferredId)) {

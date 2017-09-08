@@ -82,7 +82,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	public ContextualLaunchAction(String mode) {
 		fMode = mode;
 		ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
-		fGroupsByCategory = new HashMap<String, ILaunchGroup>(3);
+		fGroupsByCategory = new HashMap<>(3);
 		for (int i = 0; i < groups.length; i++) {
 			ILaunchGroup group = groups[i];
 			if (group.getMode().equals(mode)) {
@@ -210,7 +210,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", selection); //$NON-NLS-1$
 		List<LaunchShortcutExtension> allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
-		List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<LaunchShortcutExtension>();
+		List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<>();
 		Iterator<LaunchShortcutExtension> iter = allShortCuts.iterator();
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = iter.next();
@@ -230,7 +230,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		if(menu.getItemCount() > 0 && filteredShortCuts.size() > 0) {
 			 new MenuItem(menu, SWT.SEPARATOR);
 		}
-		List<String> categories = new ArrayList<String>();
+		List<String> categories = new ArrayList<>();
 		for(LaunchShortcutExtension ext : filteredShortCuts) {
 			for(String mode : ext.getModes()) {
 				if (mode.equals(fMode)) {

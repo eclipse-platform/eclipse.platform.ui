@@ -62,8 +62,8 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 
 	public TableRenderingModel(AsynchronousTableViewer viewer) {
 		super(viewer);
-		fCache = new Hashtable<Object, Object>();
-		fOrderedCache = new Vector<Object>();
+		fCache = new Hashtable<>();
+		fOrderedCache = new Vector<>();
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 			return;
 		}
 
-		ArrayList<Object> segments = new ArrayList<Object>();
+		ArrayList<Object> segments = new ArrayList<>();
 		Enumeration<Object> enumeration = fOrderedCache.elements();
 
 		BigInteger address = ((MemorySegment) fOrderedCache.get(0)).getAddress();
@@ -284,7 +284,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 			return;
 		}
 
-		ArrayList<Object> segments = new ArrayList<Object>();
+		ArrayList<Object> segments = new ArrayList<>();
 		Object[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
@@ -317,7 +317,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 	}
 
 	private MemoryByte[] convertSegmentsToBytes(MemorySegment[] segments) {
-		ArrayList<MemoryByte> toReturn = new ArrayList<MemoryByte>();
+		ArrayList<MemoryByte> toReturn = new ArrayList<>();
 		for (int i = 0; i < segments.length; i++) {
 			MemoryByte[] temp = segments[i].getBytes();
 			for (int j = 0; j < temp.length; j++) {
@@ -332,7 +332,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 		Assert.isTrue(bytesPerLine > 0);
 		Assert.isTrue(numAddressableUnitPerLine > 0);
 
-		ArrayList<MemorySegment> segments = new ArrayList<MemorySegment>();
+		ArrayList<MemorySegment> segments = new ArrayList<>();
 		MemoryByte[] temp = bytes;
 
 		if (alignAddress) {
@@ -401,7 +401,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 
 		if (computeChanges()) {
 			Object[] newContent = compare(kids.toArray());
-			ArrayList<Object> newList = new ArrayList<Object>();
+			ArrayList<Object> newList = new ArrayList<>();
 			for (int i = 0; i < newContent.length; i++) {
 				newList.add(newContent[i]);
 			}

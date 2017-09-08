@@ -70,8 +70,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	public TableRenderingContentProvider()
 	{
-		lineCache = new Vector<TableRenderingLine>();
-		contentCache = new Hashtable<String, TableRenderingLine>();
+		lineCache = new Vector<>();
+		contentCache = new Hashtable<>();
 		initializeDynamicLoad();
 
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -449,7 +449,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// if debug adapter did not return enough memory, create dummy memory
 		if (memoryBuffer.length < reqNumBytes)
 		{
-			ArrayList<MemoryByte> newBuffer = new ArrayList<MemoryByte>();
+			ArrayList<MemoryByte> newBuffer = new ArrayList<>();
 
 			for (int i=0; i<memoryBuffer.length; i++)
 			{
@@ -974,7 +974,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			DebugUIPlugin.log(e);
 			addressLength = 4 * IInternalDebugUIConstants.CHAR_PER_BYTE;
 		}
-		ArrayList<TableRenderingLine> lines = new ArrayList<TableRenderingLine>();
+		ArrayList<TableRenderingLine> lines = new ArrayList<>();
 		String paddedString = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 
 		for (int i=0; i<numOfLines; i++)

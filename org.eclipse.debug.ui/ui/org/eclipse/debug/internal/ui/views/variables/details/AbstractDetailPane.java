@@ -40,12 +40,12 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private Map<String, IAction> fActionMap = new HashMap<String, IAction>();
+	private Map<String, IAction> fActionMap = new HashMap<>();
 
 	/**
 	 * Collection to track actions that should be updated when selection occurs.
 	 */
-	private List<String> fSelectionActions = new ArrayList<String>();
+	private List<String> fSelectionActions = new ArrayList<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)

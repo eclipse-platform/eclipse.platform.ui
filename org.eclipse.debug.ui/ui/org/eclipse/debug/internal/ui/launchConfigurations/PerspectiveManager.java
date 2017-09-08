@@ -111,7 +111,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		public PerspectiveContext(ILaunchConfigurationType type, ILaunchDelegate delegate, Set<String> modes) {
 			fType = type;
 			fDelegate = delegate;
-			fPerspectives = new HashMap<Set<String>, String>();
+			fPerspectives = new HashMap<>();
 			fPerspectives.put(modes, null);
 		}
 
@@ -178,7 +178,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		 */
 		public void setPerspective(Set<String> modes, String pid) {
 			if(fPerspectives == null) {
-				fPerspectives = new HashMap<Set<String>, String>();
+				fPerspectives = new HashMap<>();
 			}
 			fPerspectives.put(modes, pid);
 		}
@@ -276,7 +276,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
      * Maps each launch to its perspective context activation. These
      * are disabled when a launch terminates.
      */
-	private Map<ILaunch, IContextActivation[]> fLaunchToContextActivations = new HashMap<ILaunch, IContextActivation[]>();
+	private Map<ILaunch, IContextActivation[]> fLaunchToContextActivations = new HashMap<>();
 
 	/**
 	 * Called by the debug ui plug-in on startup.
@@ -815,7 +815,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.0
 	 */
 	public String getLaunchPerspective(ILaunchConfigurationType type, String mode) {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		return getLaunchPerspective(type, modes, null);
 	}
@@ -837,7 +837,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.0
 	 */
 	public void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		setLaunchPerspective(type, modes, null, perspective);
 	}
@@ -995,7 +995,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private void initPerspectives() {
 		if(fPerspectiveContexts == null) {
-			fPerspectiveContexts = new HashSet<PerspectiveContext>();
+			fPerspectiveContexts = new HashSet<>();
 			String xml = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES);
 			if (xml != null && xml.length() > 0) {
 				try {
@@ -1040,7 +1040,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.3
 	 */
 	private Set<String> parseModes(String modes) {
-		HashSet<String> modeset = new HashSet<String>();
+		HashSet<String> modeset = new HashSet<>();
 		String[] ms = modes.split(","); //$NON-NLS-1$
 		for(int i = 0; i < ms.length; i++) {
 			modeset.add(ms[i].trim());

@@ -93,7 +93,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 */
 	public BreadcrumbViewer(Composite parent, int style) {
 	    fStyle = style;
-		fBreadcrumbItems = new ArrayList<BreadcrumbItem>();
+		fBreadcrumbItems = new ArrayList<>();
 		fMenuListeners= new ListenerList<>();
 
 		fContainer= new Composite(parent, SWT.NONE);
@@ -362,7 +362,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
     }
 
     protected TreePath getTreePathFromItem(BreadcrumbItem item) {
-		List<Object> elements = new ArrayList<Object>(fBreadcrumbItems.size());
+		List<Object> elements = new ArrayList<>(fBreadcrumbItems.size());
         for (int i = 0; i < fBreadcrumbItems.size(); i++) {
             elements.add( fBreadcrumbItems.get(i).getData() );
             if (fBreadcrumbItems.get(i).equals(item)) {
@@ -385,7 +385,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			return Collections.EMPTY_LIST;
 		}
 
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		result.add(fSelectedItem.getData());
 		return result;
 	}

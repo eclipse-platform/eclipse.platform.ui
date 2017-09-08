@@ -43,7 +43,7 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	}
 
 	public static void removeTerminatedLaunches(ILaunch[] elements) {
-		List<ILaunch> removed = new ArrayList<ILaunch>();
+		List<ILaunch> removed = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
 			ILaunch launch = elements[i];
 			if (launch.isTerminated()) {

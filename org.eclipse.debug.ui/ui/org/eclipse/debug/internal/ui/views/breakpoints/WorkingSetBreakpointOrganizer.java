@@ -46,8 +46,8 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
      */
     @Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-		List<IAdaptable> result = new ArrayList<IAdaptable>();
-		List<IResource> parents = new ArrayList<IResource>();
+		List<IAdaptable> result = new ArrayList<>();
+		List<IResource> parents = new ArrayList<>();
         IResource res = breakpoint.getMarker().getResource();
         parents.add(res);
         while (res != null) {

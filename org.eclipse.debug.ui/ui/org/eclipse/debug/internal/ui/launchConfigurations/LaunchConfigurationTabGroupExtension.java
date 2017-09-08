@@ -95,8 +95,8 @@ public class LaunchConfigurationTabGroupExtension {
 	 */
 	protected List<Set<String>> getModes() {
 		if (fModes == null) {
-			fModes = new ArrayList<Set<String>>();
-			fPerspectives = new Hashtable<Set<String>, String>();
+			fModes = new ArrayList<>();
+			fPerspectives = new Hashtable<>();
 			IConfigurationElement[] modes = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			if (modes.length > 0) {
 				IConfigurationElement element = null;
@@ -105,7 +105,7 @@ public class LaunchConfigurationTabGroupExtension {
 				for (int i = 0; i < modes.length; i++) {
 					element = modes[i];
 					mode = element.getAttribute(IConfigurationElementConstants.MODE);
-					mset = new HashSet<String>();
+					mset = new HashSet<>();
 					mset.add(mode);
 					fModes.add(mset);
 					perspective = element.getAttribute(IConfigurationElementConstants.PERSPECTIVE);
@@ -184,7 +184,7 @@ public class LaunchConfigurationTabGroupExtension {
 	public String getDescription(Set<String> modes) {
 		String description = null;
 		if(fDescriptions == null) {
-			fDescriptions = new HashMap<Set<String>, String>();
+			fDescriptions = new HashMap<>();
 			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			IConfigurationElement child = null;
 			String mode = null;
@@ -193,7 +193,7 @@ public class LaunchConfigurationTabGroupExtension {
 				child = children[i];
 				mode = child.getAttribute(IConfigurationElementConstants.MODE);
 				if(mode != null) {
-					set = new HashSet<String>();
+					set = new HashSet<>();
 					set.add(mode);
 				}
 				description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);

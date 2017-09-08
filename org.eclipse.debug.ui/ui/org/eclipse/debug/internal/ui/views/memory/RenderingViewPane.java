@@ -73,14 +73,14 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 
 	public static final String RENDERING_VIEW_PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.RenderingViewPane"; //$NON-NLS-1$
 
-	private Hashtable<IMemoryBlock, CTabFolder> fTabFolderForMemoryBlock = new Hashtable<IMemoryBlock, CTabFolder>();
-	private Hashtable<CTabFolder, IMemoryBlock> fMemoryBlockFromTabFolder = new Hashtable<CTabFolder, IMemoryBlock>();
+	private Hashtable<IMemoryBlock, CTabFolder> fTabFolderForMemoryBlock = new Hashtable<>();
+	private Hashtable<CTabFolder, IMemoryBlock> fMemoryBlockFromTabFolder = new Hashtable<>();
 
 	private ViewPaneRenderingMgr fRenderingMgr;
 
 	private IMemoryRenderingSite fRenderingSite;
-	private Set<IMemoryRendering> fAddedRenderings = new HashSet<IMemoryRendering>();
-	private Set<IMemoryBlock> fAddedMemoryBlocks = new HashSet<IMemoryBlock>();
+	private Set<IMemoryRendering> fAddedRenderings = new HashSet<>();
+	private Set<IMemoryBlock> fAddedMemoryBlocks = new HashSet<>();
 
 	private boolean fCanAddRendering = true;
 	private boolean fCanRemoveRendering = true;

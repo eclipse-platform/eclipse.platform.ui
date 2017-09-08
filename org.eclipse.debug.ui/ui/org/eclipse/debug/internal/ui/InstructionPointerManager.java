@@ -50,12 +50,12 @@ public class InstructionPointerManager{
 	/**
 	 * Set containing all instruction pointer contexts this class manages
 	 */
-	private Set<InstructionPointerContext> fIPCSet = new HashSet<InstructionPointerContext>();
+	private Set<InstructionPointerContext> fIPCSet = new HashSet<>();
 
 	/**
 	 * Maps ITextEditors to the set of instruction pointer contexts that are displayed in the editor
 	 */
-	private Map<ITextEditor, Set<InstructionPointerContext>> fEditorMap = new HashMap<ITextEditor, Set<InstructionPointerContext>>();
+	private Map<ITextEditor, Set<InstructionPointerContext>> fEditorMap = new HashMap<>();
 
 	/**
 	 * Part listener added to editors that contain annotations.  Allows instruction pointer contexts to
@@ -144,7 +144,7 @@ public class InstructionPointerManager{
 			// Add the IPC to the set and map
 			Set<InstructionPointerContext> editorIPCs = fEditorMap.get(textEditor);
 			if (editorIPCs == null){
-				editorIPCs = new HashSet<InstructionPointerContext>();
+				editorIPCs = new HashSet<>();
 				fEditorMap.put(textEditor, editorIPCs);
 			} else {
 				editorIPCs.remove(ipc);

@@ -147,7 +147,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 			prefillExp = input;
 			prefillLength = dialog.getLength();
 
-			ArrayList<String> expressions = new ArrayList<String>();
+			ArrayList<String> expressions = new ArrayList<>();
 
 			if (input.length() == 0) {
 				expressions.add(IInternalDebugCoreConstants.EMPTY_STRING);

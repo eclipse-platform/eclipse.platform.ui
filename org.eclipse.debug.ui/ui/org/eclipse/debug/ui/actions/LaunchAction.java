@@ -158,7 +158,7 @@ public class LaunchAction extends Action {
 	 * @since 3.4
 	 */
 	private ILaunchGroup[] getAllGroupsForConfiguration(ILaunchConfiguration config) {
-		ArrayList<ILaunchGroup> list = new ArrayList<ILaunchGroup>();
+		ArrayList<ILaunchGroup> list = new ArrayList<>();
 		try {
 			ILaunchConfigurationType type = config.getType();
 			Set<Set<String>> modes = type.getSupportedModeCombinations();

@@ -61,7 +61,7 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
     }
 
 	protected IWatchExpression[] getSelectedExpressions() {
-	    List<Object> list = new LinkedList<Object>();
+	    List<Object> list = new LinkedList<>();
 	    IStructuredSelection currentSelection = getCurrentSelection();
 	    if (currentSelection == null) {
 	        return EMPTY_EXPRESSION_ARRAY;

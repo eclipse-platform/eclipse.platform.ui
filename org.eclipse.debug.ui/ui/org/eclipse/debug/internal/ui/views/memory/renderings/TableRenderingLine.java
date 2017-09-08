@@ -67,7 +67,7 @@ public class TableRenderingLine extends PlatformObject {
 
 	public MemoryByte[] getBytes(int start, int end)
 	{
-		ArrayList<MemoryByte> ret = new ArrayList<MemoryByte>();
+		ArrayList<MemoryByte> ret = new ArrayList<>();
 
 		for (int i=start; i<end; i++)
 		{

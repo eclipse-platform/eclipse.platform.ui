@@ -402,7 +402,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
                 if (value != null) {
                     String[] ids = value.split(","); //$NON-NLS-1$
     				BreakpointOrganizerManager manager = BreakpointOrganizerManager.getDefault();
-					List<IBreakpointOrganizer> organziers = new ArrayList<IBreakpointOrganizer>();
+					List<IBreakpointOrganizer> organziers = new ArrayList<>();
                     for (int i = 0; i < ids.length; i++) {
                         IBreakpointOrganizer organizer = manager.getOrganizer(ids[i]);
                         if (organizer != null) {
@@ -756,7 +756,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     	if (paths == null) {
     		return;
     	}
-		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<IBreakpointContainer, List<IBreakpoint>>();
+		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<>();
     	for (int i = 0; i < paths.length; i++) {
             IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(paths[i].getLastSegment(), IBreakpoint.class);
     		if (breakpoint != null) {
@@ -764,7 +764,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	    		if(container != null) {
 					List<IBreakpoint> list = containersToBreakpoints.get(container);
 	    			if (list == null) {
-						list = new ArrayList<IBreakpoint>();
+						list = new ArrayList<>();
 	    				containersToBreakpoints.put(container, list);
 	    			}
 	    			list.add(breakpoint);
@@ -804,7 +804,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		}
 
     	IBreakpointOrganizer organizer = container.getOrganizer();
-		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>(selection.size());
+		List<IBreakpoint> breakpoints = new ArrayList<>(selection.size());
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
             IBreakpoint breakpoint = (IBreakpoint) DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
             if (breakpoint != null) {

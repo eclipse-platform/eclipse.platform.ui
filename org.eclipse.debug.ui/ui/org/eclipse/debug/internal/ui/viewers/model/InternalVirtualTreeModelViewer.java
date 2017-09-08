@@ -128,7 +128,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * tree may contain the same element in several places, so the map values
      * are lists.
      */
-	private Map<Object, List<VirtualItem>> fItemsMap = new HashMap<Object, List<VirtualItem>>();
+	private Map<Object, List<VirtualItem>> fItemsMap = new HashMap<>();
 
     /**
      * Whether to notify the content provider when an element is unmapped.
@@ -173,14 +173,14 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
-	private Map<String, String[]> fVisibleColumns = new HashMap<String, String[]>();
+	private Map<String, String[]> fVisibleColumns = new HashMap<>();
 
     /**
      * Map of column presentation id to whether columns should be displayed
      * for that presentation (the user can toggle columns on/off when a
      * presentation is optional.
      */
-	private Map<String, Boolean> fShowColumns = new HashMap<String, Boolean>();
+	private Map<String, Boolean> fShowColumns = new HashMap<>();
 
     /**
      * Runnable for validating the virtual tree.  It is scheduled to run in the
@@ -305,7 +305,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
     @Override
 	public void remove(final Object parentOrTreePath, final int index) {
-		final List<TreePath> oldSelection = new LinkedList<TreePath>(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
+		final List<TreePath> oldSelection = new LinkedList<>(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
         preservingSelection(new Runnable() {
             @Override
 			public void run() {
@@ -716,7 +716,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
 
     private TreePath getTreePathFromItem(VirtualItem item) {
-		List<Object> segments = new LinkedList<Object>();
+		List<Object> segments = new LinkedList<>();
         while (item.getParent() != null) {
             segments.add(0, item.getData());
             item = item.getParent();
@@ -750,7 +750,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         // one.
 		List<VirtualItem> itemsList = fItemsMap.remove(element);
         if (itemsList == null) {
-			itemsList = new ArrayList<VirtualItem>(1);
+			itemsList = new ArrayList<>(1);
         }
 
         if (!itemsList.contains(item)) {
@@ -879,7 +879,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     private void internalSetSelection(ISelection selection, boolean reveal) {
         if (selection instanceof ITreeSelection) {
             TreePath[] paths = ((ITreeSelection) selection).getPaths();
-			List<VirtualItem> newSelection = new ArrayList<VirtualItem>(paths.length);
+			List<VirtualItem> newSelection = new ArrayList<>(paths.length);
             for (int i = 0; i < paths.length; ++i) {
                 // Use internalExpand since item may not yet be created. See
                 // 1G6B1AR.
@@ -928,8 +928,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
             return TreeSelection.EMPTY;
         }
         VirtualItem[] items = fTree.getSelection();
-		ArrayList<TreePath> list = new ArrayList<TreePath>(items.length);
-		Map<VirtualItem, TreePath> map = new LinkedHashMap<VirtualItem, TreePath>(items.length * 4 / 3);
+		ArrayList<TreePath> list = new ArrayList<>(items.length);
+		Map<VirtualItem, TreePath> map = new LinkedHashMap<>(items.length * 4 / 3);
         for (int i = 0; i < items.length; i++) {
             TreePath path = null;
             if (items[i].getData() != null) {
@@ -1464,7 +1464,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 	public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         VirtualTree tree = getTree();
         VirtualItem[] selection = tree.getSelection();
-		Set<VirtualItem> set = new HashSet<VirtualItem>();
+		Set<VirtualItem> set = new HashSet<>();
         for (int i = 0; i < selection.length; i++) {
             set.add(selection[i]);
         }

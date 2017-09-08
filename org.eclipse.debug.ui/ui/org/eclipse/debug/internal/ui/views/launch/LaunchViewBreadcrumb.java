@@ -456,7 +456,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                         }
 
                         private TreePath getViewerTreePath(IModelDelta node) {
-							ArrayList<Object> list = new ArrayList<Object>();
+							ArrayList<Object> list = new ArrayList<>();
                             IModelDelta parentDelta = node.getParentDelta();
                             while (parentDelta != null) {
                                 list.add(0, node.getElement());

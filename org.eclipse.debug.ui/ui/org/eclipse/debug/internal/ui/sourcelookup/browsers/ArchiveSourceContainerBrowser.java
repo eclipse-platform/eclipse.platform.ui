@@ -65,7 +65,7 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 	 */
 	protected List<ISourceContainer> getSelectedJars(ISourceLookupDirector director) {
 		ISourceContainer[] containers = director.getSourceContainers();
-		List<ISourceContainer> jars = new ArrayList<ISourceContainer>();
+		List<ISourceContainer> jars = new ArrayList<>();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
 			if (container.getType().getId().equals(ArchiveSourceContainer.TYPE_ID)) {

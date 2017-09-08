@@ -97,7 +97,7 @@ public class VirtualItem {
      * keeps the items sorted while allowing indexes (keys) to be modified as
      * child items are inserted and removed.
      */
-	private Map<Index, VirtualItem> fItems = new TreeMap<Index, VirtualItem>();
+	private Map<Index, VirtualItem> fItems = new TreeMap<>();
 
     /**
      * Flag indicating whether this item has child items.
@@ -120,7 +120,7 @@ public class VirtualItem {
      * The data held by this item.  It includes the element as well as the item
      * display attributes.
      */
-	private Map<String, Object> fData = new HashMap<String, Object>(1);
+	private Map<String, Object> fData = new HashMap<>(1);
 
     /**
      * Flag indicating that the item needs to have it's label updated.
@@ -513,7 +513,7 @@ public class VirtualItem {
 
     private void ensureItems() {
         if (fItems == null) {
-			fItems = new HashMap<Index, VirtualItem>(Math.max(1, Math.min(fItemCount, 16)));
+			fItems = new HashMap<>(Math.max(1, Math.min(fItemCount, 16)));
         }
     }
 

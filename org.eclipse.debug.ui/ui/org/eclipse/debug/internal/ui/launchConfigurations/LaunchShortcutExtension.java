@@ -197,7 +197,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 				return null;
 			}
 			IConfigurationElement[] labels = context.getChildren(IConfigurationElementConstants.CONTEXT_LABEL);
-			fContextLabels = new ArrayList<Pair>(labels.length);
+			fContextLabels = new ArrayList<>(labels.length);
 			for (int i = 0; i < labels.length; i++) {
 				fContextLabels.add(new Pair(labels[i].getAttribute(IConfigurationElementConstants.MODE),
 						labels[i].getAttribute(IConfigurationElementConstants.LABEL)));
@@ -220,7 +220,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	 */
 	public Set<String> getAssociatedConfigurationTypes() {
 		if(fAssociatedTypes == null) {
-			fAssociatedTypes = new HashSet<String>();
+			fAssociatedTypes = new HashSet<>();
 			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.CONFIGURATION_TYPES);
 			String id = null;
 			for (int i = 0; i < children.length; i++) {
@@ -246,7 +246,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 			return null;
 		}
 		if(fDescriptions == null) {
-			fDescriptions = new HashMap<String, String>();
+			fDescriptions = new HashMap<>();
 			//get the description for the main element first
 			String descr = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 			if(descr != null) {
@@ -386,7 +386,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	public List<String> getPerspectives() {
 		if (fPerspectives == null) {
 			IConfigurationElement[] perspectives = getConfigurationElement().getChildren(IConfigurationElementConstants.PERSPECTIVE);
-			fPerspectives = new ArrayList<String>(perspectives.length);
+			fPerspectives = new ArrayList<>(perspectives.length);
 			for (int i = 0; i < perspectives.length; i++) {
 				fPerspectives.add(perspectives[i].getAttribute(IConfigurationElementConstants.ID));
 			}
@@ -445,7 +445,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 				return Collections.EMPTY_SET;
 			}
 			StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
-			fModes = new HashSet<String>(tokenizer.countTokens());
+			fModes = new HashSet<>(tokenizer.countTokens());
 			while (tokenizer.hasMoreTokens()) {
 				fModes.add(tokenizer.nextToken().trim());
 			}

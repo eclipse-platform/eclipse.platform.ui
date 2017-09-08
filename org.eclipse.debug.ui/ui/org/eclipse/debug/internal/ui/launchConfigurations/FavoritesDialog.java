@@ -304,7 +304,7 @@ public class FavoritesDialog extends TrayDialog {
 	protected List<ILaunchConfiguration> getFavorites() {
 		if (fFavorites == null) {
 			ILaunchConfiguration[] favs = getInitialFavorites();
-			fFavorites = new ArrayList<ILaunchConfiguration>(favs.length);
+			fFavorites = new ArrayList<>(favs.length);
 			addAll(favs, fFavorites);
 		}
 		return fFavorites;
@@ -421,7 +421,7 @@ public class FavoritesDialog extends TrayDialog {
 					try {
 						List<String> groups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 						if (groups == null) {
-							groups = new ArrayList<String>();
+							groups = new ArrayList<>();
 						}
 						if (!groups.contains(groupId)) {
 							groups.add(groupId);

@@ -39,7 +39,7 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Maps command types to actions to update
 	 */
-	private Map<Class<?>, List<IEnabledTarget>> fCommandUpdates = new HashMap<Class<?>, List<IEnabledTarget>>();
+	private Map<Class<?>, List<IEnabledTarget>> fCommandUpdates = new HashMap<>();
 
 	/**
 	 * Window this service is for.
@@ -54,7 +54,7 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Service per window
 	 */
-	private static Map<IWorkbenchWindow, DebugCommandService> fgServices = new HashMap<IWorkbenchWindow, DebugCommandService>();
+	private static Map<IWorkbenchWindow, DebugCommandService> fgServices = new HashMap<>();
 
 	/**
 	 * Returns the service for a window.
@@ -117,7 +117,7 @@ public class DebugCommandService implements IDebugContextListener {
 			Job.getJobManager().cancel(commandType);
 			List<IEnabledTarget> actions = fCommandUpdates.get(commandType);
 			if (actions == null) {
-				actions = new ArrayList<IEnabledTarget>();
+				actions = new ArrayList<>();
 				fCommandUpdates.put(commandType, actions);
 			}
 			actions.add(action);
@@ -144,7 +144,7 @@ public class DebugCommandService implements IDebugContextListener {
 		Map<Class<?>, List<IEnabledTarget>> commands = null;
 		synchronized (fCommandUpdates) {
 			commands = fCommandUpdates;
-			fCommandUpdates = new HashMap<Class<?>, List<IEnabledTarget>>(commands.size());
+			fCommandUpdates = new HashMap<>(commands.size());
 		}
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
@@ -243,7 +243,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @return map of command handlers to associated elements or <code>null</code>
 	 */
 	private Map<IDebugCommandHandler, List<Object>> collate(Object[] elements, Class<?> handlerType) {
-		Map<IDebugCommandHandler, List<Object>> map = new HashMap<IDebugCommandHandler, List<Object>>();
+		Map<IDebugCommandHandler, List<Object>> map = new HashMap<>();
  		for (int i = 0; i < elements.length; i++) {
  			Object element = elements[i];
  			IDebugCommandHandler handler = getHandler(element, handlerType);
@@ -252,7 +252,7 @@ public class DebugCommandService implements IDebugContextListener {
 			} else {
 				List<Object> list = map.get(handler);
 				if (list == null) {
-					list = new ArrayList<Object>();
+					list = new ArrayList<>();
 					map.put(handler, list);
 	 				}
 				list.add(element);

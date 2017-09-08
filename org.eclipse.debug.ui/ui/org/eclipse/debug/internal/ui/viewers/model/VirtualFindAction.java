@@ -127,7 +127,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 
 	private static class FindLabelProvider extends LabelProvider {
 		private VirtualTreeModelViewer fVirtualViewer;
-		private Map<VirtualItem, String> fTextCache = new HashMap<VirtualItem, String>();
+		private Map<VirtualItem, String> fTextCache = new HashMap<>();
 
 		public FindLabelProvider(VirtualTreeModelViewer viewer, List<VirtualItem> items) {
 		    fVirtualViewer = viewer;
@@ -217,7 +217,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 
 		VirtualItem root = virtualViewer.getTree();
 		if (!monitor.isCanceled()) {
-			List<VirtualItem> list = new ArrayList<VirtualItem>();
+			List<VirtualItem> list = new ArrayList<>();
 			collectAllChildren(root, list);
 			FindLabelProvider labelProvider = new FindLabelProvider(virtualViewer, list);
 			VirtualItem result = performFind(list, labelProvider);

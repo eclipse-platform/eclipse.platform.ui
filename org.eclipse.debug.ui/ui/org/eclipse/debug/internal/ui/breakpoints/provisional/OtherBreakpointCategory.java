@@ -33,7 +33,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class OtherBreakpointCategory extends PlatformObject implements IWorkbenchAdapter {
 
-	private static Map<IBreakpointOrganizer, IAdaptable[]> fOthers = new HashMap<IBreakpointOrganizer, IAdaptable[]>();
+	private static Map<IBreakpointOrganizer, IAdaptable[]> fOthers = new HashMap<>();
     private IBreakpointOrganizer fOrganizer;
 
 

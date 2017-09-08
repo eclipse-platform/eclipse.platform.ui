@@ -48,7 +48,7 @@ public class MemoryViewUtil {
 			SWT.CAPS_LOCK, SWT.NUM_LOCK, SWT.SCROLL_LOCK, SWT.PAUSE, SWT.BREAK,
 			SWT.PRINT_SCREEN, SWT.ESC, SWT.CTRL, SWT.ALT, SWT.SHIFT };
 
-	public static ArrayList<String> MEMORY_BLOCKS_HISTORY = new ArrayList<String>();
+	public static ArrayList<String> MEMORY_BLOCKS_HISTORY = new ArrayList<>();
 
 	/**
 	 * @param selection

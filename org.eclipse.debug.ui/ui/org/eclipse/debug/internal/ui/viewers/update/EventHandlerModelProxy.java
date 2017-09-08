@@ -29,7 +29,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     /**
      * Map of elements to timer tasks
      */
-	private Map<Object, PendingSuspendTask> fTimerTasks = new HashMap<Object, PendingSuspendTask>();
+	private Map<Object, PendingSuspendTask> fTimerTasks = new HashMap<>();
 
     /**
      * Timer for timer tasks
@@ -40,7 +40,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
      * Map of event source to resume events with a pending suspend that timed
      * out.
      */
-	private Map<Object, DebugEvent> fPendingSuspends = new HashMap<Object, DebugEvent>();
+	private Map<Object, DebugEvent> fPendingSuspends = new HashMap<>();
 
     /**
      * Event handlers for specific elements

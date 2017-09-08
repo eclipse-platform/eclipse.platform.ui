@@ -40,7 +40,7 @@ import org.eclipse.ui.progress.UIJob;
 abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
 
 	private Object fPendingTopIndexKey;
-	private ArrayList<Object> fTopIndexQueue = new ArrayList<Object>();
+	private ArrayList<Object> fTopIndexQueue = new ArrayList<>();
 
 	private boolean fPendingResizeColumns;
 	private ListenerList<IVirtualContentListener> fVirtualContentListeners;

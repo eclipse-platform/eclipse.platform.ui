@@ -139,7 +139,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     /**
      * Map of enabled targets keyed by workbench window.
      */
-    private Map<IWorkbenchWindow, EnabledTarget> fEnabledTargetsMap = new WeakHashMap<IWorkbenchWindow, EnabledTarget>();
+    private Map<IWorkbenchWindow, EnabledTarget> fEnabledTargetsMap = new WeakHashMap<>();
 
     /**
      * The current enabled target, based on the active

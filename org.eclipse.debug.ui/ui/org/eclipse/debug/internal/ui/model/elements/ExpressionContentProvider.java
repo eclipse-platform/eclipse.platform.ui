@@ -89,8 +89,8 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	@Override
 	public void update(IChildrenCountUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
-		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
-		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
+		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<>();
+		List<IViewerUpdate> notDelegated = new ArrayList<>();
 		findDelegates(delegateMap, notDelegated, updates);
 
 		// Batch the updates and send them to the delegates
@@ -109,8 +109,8 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	@Override
 	public void update(IHasChildrenUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
-		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
-		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
+		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<>();
+		List<IViewerUpdate> notDelegated = new ArrayList<>();
 		findDelegates(delegateMap, notDelegated, updates);
 
 		// Batch the updates and send them to the delegates
@@ -129,8 +129,8 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	@Override
 	public void update(IChildrenUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
-		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<IElementContentProvider, List<IViewerUpdate>>();
-		List<IViewerUpdate> notDelegated = new ArrayList<IViewerUpdate>();
+		Map<IElementContentProvider, List<IViewerUpdate>> delegateMap = new HashMap<>();
+		List<IViewerUpdate> notDelegated = new ArrayList<>();
 		findDelegates(delegateMap, notDelegated, updates);
 
 		// Batch the updates and send them to the delegates
@@ -160,7 +160,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
 				if (delegate != null){
 					List<IViewerUpdate> updateList = delegateMap.get(delegate);
 					if (updateList == null){
-						updateList = new ArrayList<IViewerUpdate>();
+						updateList = new ArrayList<>();
 						delegateMap.put(delegate, updateList);
 					}
 					((ViewerUpdateMonitor)updates[i]).setDelegated(true);
@@ -179,7 +179,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
             IErrorReportingExpression expression = (IErrorReportingExpression) parent;
             if (expression.hasErrors()) {
                 String[] messages = expression.getErrorMessages();
-				LinkedHashSet<ErrorMessageElement> set = new LinkedHashSet<ErrorMessageElement>(messages.length);
+				LinkedHashSet<ErrorMessageElement> set = new LinkedHashSet<>(messages.length);
                 for (int i = 0; i < messages.length; i++) {
 					set.add(new ErrorMessageElement(messages[i]));
 				}

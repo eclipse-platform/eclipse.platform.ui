@@ -82,7 +82,7 @@ public class FilterTransform {
 			}
 
 			if (children == null) {
-				children = new HashMap<Object, Node>();
+				children = new HashMap<>();
 			}
 			Object element = path.getSegment(pathIndex);
 			Node node = children.get(element);

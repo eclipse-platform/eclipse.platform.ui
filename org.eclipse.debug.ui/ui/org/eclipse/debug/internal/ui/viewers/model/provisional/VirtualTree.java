@@ -58,7 +58,7 @@ public class VirtualTree extends VirtualItem {
     /**
      * Set of listeners of the virtual tree.
      */
-	private Set<IVirtualItemListener> fVirtualItemListeners = new HashSet<IVirtualItemListener>(1);
+	private Set<IVirtualItemListener> fVirtualItemListeners = new HashSet<>(1);
 
     /**
      * The currently selected items.  This array contains only

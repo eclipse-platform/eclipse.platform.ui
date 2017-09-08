@@ -93,7 +93,7 @@ public class ModelNode {
 	 * @return
 	 */
 	public synchronized TreePath getTreePath() {
-		List<Object> path = new ArrayList<Object>();
+		List<Object> path = new ArrayList<>();
 		ModelNode node = this;
 		while (node != null) {
 			path.add(0, node.getElement());

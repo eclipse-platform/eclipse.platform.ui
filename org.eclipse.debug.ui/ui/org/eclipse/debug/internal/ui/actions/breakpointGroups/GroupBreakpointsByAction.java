@@ -132,7 +132,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	}
 
 	public List<IAction> getActions(int accel) {
-		List<IAction> actions = new ArrayList<IAction>();
+		List<IAction> actions = new ArrayList<>();
         IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
         for (int i = 0; i < organizers.length; i++) {
         	IBreakpointOrganizer organizer = organizers[i];

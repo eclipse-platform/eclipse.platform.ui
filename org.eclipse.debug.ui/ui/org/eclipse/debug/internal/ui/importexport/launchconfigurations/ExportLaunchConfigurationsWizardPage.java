@@ -340,7 +340,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 								file = launchConfig.getFileStore();
 								if (file == null) {
 									if (errors == null) {
-										errors = new ArrayList<IStatus>(configs.length);
+										errors = new ArrayList<>(configs.length);
 									}
 									errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new Object[] { launchConfig.getName() }), null));
 								} else {
@@ -390,14 +390,14 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 							}
 							catch (IOException e ) {
 								if (errors == null) {
-									errors = new ArrayList<IStatus>(configs.length);
+									errors = new ArrayList<>(configs.length);
 								}
 								errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
 										e.getMessage(), e));
 							}
 							catch (CoreException e) {
 								if (errors == null) {
-									errors = new ArrayList<IStatus>(configs.length);
+									errors = new ArrayList<>(configs.length);
 								}
 								errors.add(e.getStatus());
 							}

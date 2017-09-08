@@ -141,7 +141,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 * @return the given types minus any types that should not be visible.
 	 */
 	private List<ILaunchConfigurationType> filterTypes(ILaunchConfigurationType[] allTypes) {
-		List<ILaunchConfigurationType> filteredTypes = new ArrayList<ILaunchConfigurationType>();
+		List<ILaunchConfigurationType> filteredTypes = new ArrayList<>();
 		String mode = getMode();
 		LaunchConfigurationTypeContribution contribution;
 		for (int i = 0; i < allTypes.length; i++) {

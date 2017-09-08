@@ -90,25 +90,25 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
      * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
-	private final Map<String, String[]> fVisibleColumns = new HashMap<String, String[]>();
+	private final Map<String, String[]> fVisibleColumns = new HashMap<>();
 
     /**
      * Map of column id's to persisted sizes
      */
-	private final Map<Object, Integer> fColumnSizes = new HashMap<Object, Integer>();
+	private final Map<Object, Integer> fColumnSizes = new HashMap<>();
 
     /**
      * Map of column presentation id's to an array of integers representing the column order
      * for that presentation, or <code>null</code> if default.
      */
-	private final Map<String, int[]> fColumnOrder = new HashMap<String, int[]>();
+	private final Map<String, int[]> fColumnOrder = new HashMap<>();
 
     /**
      * Map of column presentation id to whether columns should be displayed
      * for that presentation (the user can toggle columns on/off when a
      * presentation is optional.
      */
-	private final Map<String, Boolean> fShowColumns = new HashMap<String, Boolean>();
+	private final Map<String, Boolean> fShowColumns = new HashMap<>();
 
     /**
      * Item's tree path cache
@@ -1647,7 +1647,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         Tree tree = (Tree) getControl();
         TreeItem[] selection = tree.getSelection();
-		Set<TreeItem> set = new HashSet<TreeItem>();
+		Set<TreeItem> set = new HashSet<>();
         for (int i = 0; i < selection.length; i++) {
             set.add(selection[i]);
         }

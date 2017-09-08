@@ -52,7 +52,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	protected StackLayout fStackLayout;
 	protected ViewTabEnablementManager fViewTabEnablementManager;
 	protected CTabFolder fEmptyTabFolder;
-	protected Hashtable<Integer, CTabFolder> fTabFolderForDebugView = new Hashtable<Integer, CTabFolder>();
+	protected Hashtable<Integer, CTabFolder> fTabFolderForDebugView = new Hashtable<>();
 	protected boolean fVisible;
 	protected IMemoryBlockRetrieval fKey; // store the key for current tab
 											// folder

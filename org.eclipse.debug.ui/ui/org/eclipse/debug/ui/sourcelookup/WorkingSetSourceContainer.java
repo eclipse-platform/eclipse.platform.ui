@@ -94,7 +94,7 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 			return new ISourceContainer[0];
 		}
 
-		ArrayList<ISourceContainer> locationList = new ArrayList<ISourceContainer>();
+		ArrayList<ISourceContainer> locationList = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
 			IResource resource = elements[i].getAdapter(IResource.class);
 

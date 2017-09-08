@@ -75,7 +75,7 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
 	protected Object determineTarget(DropTargetEvent event) {
 		fTarget = (Item) event.item;
 		if (fTarget instanceof TreeItem) {
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			TreeItem item = (TreeItem)fTarget;
 			while (item != null) {
 				list.add(item.getData());

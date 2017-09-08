@@ -93,7 +93,7 @@ public class StringVariablePresentationManager {
 	 * Load extensions
 	 */
 	private void initialize() {
-		fConfigurations = new HashMap<String, IConfigurationElement>();
+		fConfigurations = new HashMap<>();
 		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS);
 		IConfigurationElement elements[]= point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {

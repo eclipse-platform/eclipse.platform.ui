@@ -61,7 +61,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
         ISelection context = super.getContext();
         if (context instanceof IStructuredSelection && !context.isEmpty()) {
             IStructuredSelection ss = (IStructuredSelection)context;
-			Set<ILaunch> launches = new HashSet<ILaunch>(ss.size());
+			Set<ILaunch> launches = new HashSet<>(ss.size());
 			for (Iterator<Object> itr = ss.iterator(); itr.hasNext();) {
                 ILaunch launch = DebugUIPlugin.getLaunch(itr.next());
                 if (launch != null) {

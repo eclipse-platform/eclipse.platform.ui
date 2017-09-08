@@ -87,7 +87,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	}
 
 	//no filtering by default
-	private ArrayList<VariableFilter> fFilters = new ArrayList<VariableFilter>();
+	private ArrayList<VariableFilter> fFilters = new ArrayList<>();
 	//when filtering is on, do not show all by default
 	private boolean fShowAllSelected = false;
 
@@ -185,7 +185,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	@Override
 	protected void setListElements(Object[] elements) {
-		ArrayList<Object> filtered = new ArrayList<Object>();
+		ArrayList<Object> filtered = new ArrayList<>();
 		filtered.addAll(Arrays.asList(elements));
 		if(!fFilters.isEmpty() && !fShowAllSelected) {
 			for (int i = 0; i < elements.length; i++) {

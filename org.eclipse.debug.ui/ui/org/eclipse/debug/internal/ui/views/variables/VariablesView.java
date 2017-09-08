@@ -296,7 +296,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	private ViewerInputService fInputService;
 
-	private Map<String, IAction> fGlobalActionMap = new HashMap<String, IAction>();
+	private Map<String, IAction> fGlobalActionMap = new HashMap<>();
 
 	/**
 	 * Viewer input requester used to update the viewer once the viewer input has been

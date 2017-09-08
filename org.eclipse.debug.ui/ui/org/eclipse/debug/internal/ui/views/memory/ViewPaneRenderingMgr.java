@@ -55,7 +55,7 @@ import org.w3c.dom.NodeList;
  */
 public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 
-	private final ArrayList<IMemoryRendering> fRenderings = new ArrayList<IMemoryRendering>();
+	private final ArrayList<IMemoryRendering> fRenderings = new ArrayList<>();
 	private final IMemoryRenderingContainer fViewPane;
 
 	private static final String RENDERINGS_TAG = "persistedMemoryRenderings"; //$NON-NLS-1$
@@ -128,7 +128,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 			return getRenderingsFromMemoryBlock(mem);
 		}
 
-		ArrayList<IMemoryRendering> ret = new ArrayList<IMemoryRendering>();
+		ArrayList<IMemoryRendering> ret = new ArrayList<>();
 		for (int i = 0; i < fRenderings.size(); i++) {
 			if (fRenderings.get(i) != null) {
 				IMemoryRendering rendering = fRenderings.get(i);
@@ -146,7 +146,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 	}
 
 	public IMemoryRendering[] getRenderingsFromDebugTarget(IDebugTarget target) {
-		ArrayList<IMemoryRendering> ret = new ArrayList<IMemoryRendering>();
+		ArrayList<IMemoryRendering> ret = new ArrayList<>();
 		for (int i = 0; i < fRenderings.size(); i++) {
 			if (fRenderings.get(i) != null) {
 				IMemoryRendering rendering = fRenderings.get(i);
@@ -160,7 +160,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 	}
 
 	public IMemoryRendering[] getRenderingsFromMemoryBlock(IMemoryBlock block) {
-		ArrayList<IMemoryRendering> ret = new ArrayList<IMemoryRendering>();
+		ArrayList<IMemoryRendering> ret = new ArrayList<>();
 		for (int i = 0; i < fRenderings.size(); i++) {
 			if (fRenderings.get(i) != null) {
 				IMemoryRendering rendering = fRenderings.get(i);

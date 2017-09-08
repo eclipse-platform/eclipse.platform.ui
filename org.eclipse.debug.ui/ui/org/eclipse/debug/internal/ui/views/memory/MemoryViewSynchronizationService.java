@@ -46,8 +46,8 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 	private static final boolean DEBUG_SYNC_SERVICE = false;
 
 	public MemoryViewSynchronizationService() {
-		fSynchronizeInfo = new Hashtable<IMemoryBlock, SynchronizeInfo>();
-		fPropertyListeners = new Hashtable<IPropertyChangeListener, PropertyListener>();
+		fSynchronizeInfo = new Hashtable<>();
+		fPropertyListeners = new Hashtable<>();
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 	}
 

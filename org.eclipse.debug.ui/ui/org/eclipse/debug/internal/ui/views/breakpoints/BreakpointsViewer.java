@@ -85,7 +85,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     public IBreakpoint[] getVisibleBreakpoints() {
         IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
         Object[] elements= ((ITreeContentProvider)getContentProvider()).getElements(manager);
-		List<IBreakpoint> list = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> list = new ArrayList<>();
         for (int i = 0; i < elements.length; i++) {
             TreeItem item = (TreeItem) searchItem(elements[i]);
             if (item != null) {
@@ -213,7 +213,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	if(items == null) {
     		return;
     	}
-		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<IBreakpointContainer, List<IBreakpoint>>();
+		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<>();
 		IBreakpointContainer container = null;
     	IBreakpoint breakpoint = null;
     	for(int i = 0; i < items.length; i++) {
@@ -223,7 +223,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	    		if(container != null) {
 					List<IBreakpoint> list = containersToBreakpoints.get(container);
 	    			if (list == null) {
-						list = new ArrayList<IBreakpoint>();
+						list = new ArrayList<>();
 	    				containersToBreakpoints.put(container, list);
 	    			}
 	    			list.add(breakpoint);
@@ -375,7 +375,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	 * @return a list of widget occurrences to update or an empty list
 	 */
     private Widget[] searchItems(Object element) {
-		ArrayList<TreeItem> list = new ArrayList<TreeItem>();
+		ArrayList<TreeItem> list = new ArrayList<>();
         TreeItem[] items = getTree().getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);

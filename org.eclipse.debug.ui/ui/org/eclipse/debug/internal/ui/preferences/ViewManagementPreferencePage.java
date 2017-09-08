@@ -191,7 +191,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	@Override
 	public boolean performOk() {
 		Object[] descriptors = fPerspectiveViewer.getCheckedElements();
-		Set<String> perspectives = new HashSet<String>();
+		Set<String> perspectives = new HashSet<>();
 		for (int i = 0; i < descriptors.length; i++) {
 		    perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
 		}

@@ -38,12 +38,12 @@ public class ThreadEventHandler extends DebugEventHandler {
 	 * to select a thread when another is resumed. Threads
 	 * are added in the order they suspend.
 	 */
-	private Set<IThread> fThreadQueue = new LinkedHashSet<IThread>();
+	private Set<IThread> fThreadQueue = new LinkedHashSet<>();
 
 	/**
 	 * Map of previous TOS per thread
 	 */
-	private Map<IThread, IStackFrame> fLastTopFrame = new HashMap<IThread, IStackFrame>();
+	private Map<IThread, IStackFrame> fLastTopFrame = new HashMap<>();
 	/**
 	 * Constructs and event handler for a threads in the given viewer.
 	 *

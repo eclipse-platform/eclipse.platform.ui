@@ -61,7 +61,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 					return true;
 				}
 				//remove breakpoint working sets
-				ArrayList<IWorkingSet> ws = new ArrayList<IWorkingSet>();
+				ArrayList<IWorkingSet> ws = new ArrayList<>();
 				for (int i = 0; i < wsets.length; i++) {
 					if(!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(wsets[i].getId())) {
 						ws.add(wsets[i]);
@@ -89,7 +89,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 	 * @since 3.2
 	 */
 	public static boolean workingSetContains(IWorkingSet[] wsets, IResource res) {
-		ArrayList<IResource> parents = new ArrayList<IResource>();
+		ArrayList<IResource> parents = new ArrayList<>();
 		parents.add(res);
 		while(res != null) {
 			res = res.getParent();

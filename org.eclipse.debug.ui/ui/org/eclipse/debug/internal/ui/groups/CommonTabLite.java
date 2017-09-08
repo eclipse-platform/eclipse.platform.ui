@@ -318,7 +318,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 				}
 			}
 			if (!groups.isEmpty()) {
-				List<LaunchGroupExtension> list = new ArrayList<LaunchGroupExtension>();
+				List<LaunchGroupExtension> list = new ArrayList<>();
 				Iterator<String> iterator = groups.iterator();
 				while (iterator.hasNext()) {
 					String id = iterator.next();
@@ -375,7 +375,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			boolean run = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 			if (debug || run) {
 				// old attributes
-				List<LaunchGroupExtension> groups = new ArrayList<LaunchGroupExtension>();
+				List<LaunchGroupExtension> groups = new ArrayList<>();
 				int num = 0;
 				if (debug) {
 					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
@@ -405,7 +405,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			for (int i = 0; i < checked.length; i++) {
 				LaunchGroupExtension group = (LaunchGroupExtension)checked[i];
 				if (groups == null) {
-					groups = new ArrayList<String>();
+					groups = new ArrayList<>();
 				}
 				groups.add(group.getIdentifier());
 			}
@@ -524,7 +524,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
-			List<ILaunchGroup> possibleGroups = new ArrayList<ILaunchGroup>();
+			List<ILaunchGroup> possibleGroups = new ArrayList<>();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
 			for (int i = 0; i < groups.length; i++) {
 				ILaunchGroup extension = groups[i];
@@ -550,7 +550,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 */
 	class FavoritesLabelProvider implements ITableLabelProvider {
 
-		private Map<Object, Image> fImages = new HashMap<Object, Image>();
+		private Map<Object, Image> fImages = new HashMap<>();
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {

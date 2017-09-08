@@ -53,7 +53,7 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
         } else {
         	// Return tree selection plus children.
     	    TreeItem[] selection = clientViewer.getTree().getSelection();
-			Set<Widget> set = new HashSet<Widget>();
+			Set<Widget> set = new HashSet<>();
     	    collectChildItems(set, selection);
             return set.toArray(new TreeItem[set.size()]);
         }
@@ -68,7 +68,7 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
      */
     private TreeItem[] getSelectedItemsInTreeViewer(TreeModelViewer viewer, TreePath path) {
         Widget item = viewer.findItem(path);
-		Set<Widget> set = new HashSet<Widget>();
+		Set<Widget> set = new HashSet<>();
         if (item instanceof TreeItem) {
         	set.add(item);
         	if (((TreeItem) item).getExpanded()) {

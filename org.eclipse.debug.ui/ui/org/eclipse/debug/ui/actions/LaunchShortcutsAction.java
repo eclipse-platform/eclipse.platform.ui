@@ -142,7 +142,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	private IEvaluationContext createContext() {
 		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		Object o = ss.getFirstElement();
-		List<IEditorInput> list = new ArrayList<IEditorInput>(0);
+		List<IEditorInput> list = new ArrayList<>(0);
 		if(o instanceof IEditorPart) {
 			list.add(((IEditorPart)o).getEditorInput());
 		}
@@ -163,7 +163,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		int accelerator = 1;
 		List<LaunchShortcutExtension> allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
 		Iterator<LaunchShortcutExtension> iter = allShortCuts.iterator();
-		List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<LaunchShortcutExtension>(10);
+		List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<>(10);
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = iter.next();
 			try {

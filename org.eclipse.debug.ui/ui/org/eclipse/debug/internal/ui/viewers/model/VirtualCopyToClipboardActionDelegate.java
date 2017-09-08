@@ -169,7 +169,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 
 		void setItemsToCopy(Set<VirtualItem> itemsToCopy) {
 	        fItemsToCopy = itemsToCopy;
-			fItemsToValidate = new HashSet<VirtualItem>();
+			fItemsToValidate = new HashSet<>();
 			for (VirtualItem itemToCopy : itemsToCopy) {
 	            while (itemToCopy != null) {
 	                fItemsToValidate.add(itemToCopy);
@@ -202,7 +202,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
         // Parse selected items from client viewer and add them to the virtual viewer selection.
         listener.fSelectionRootDepth = Integer.MAX_VALUE;
         TreeItem[] selection = getSelectedItems(clientViewer);
-		Set<VirtualItem> vSelection = new HashSet<VirtualItem>(selection.length * 4 / 3);
+		Set<VirtualItem> vSelection = new HashSet<>(selection.length * 4 / 3);
         for (int i = 0; i < selection.length; i++) {
             TreePath parentPath = fClientViewer.getTreePathFromItem(selection[i].getParentItem());
             listener.fSelectionRootDepth = Math.min(parentPath.getSegmentCount() + 1, listener.fSelectionRootDepth);
@@ -221,7 +221,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
             }
         }
         validator.setItemsToCopy(vSelection);
-		listener.fItemsToUpdate = new HashSet<VirtualItem>(vSelection);
+		listener.fItemsToUpdate = new HashSet<>(vSelection);
         virtualViewer.getTree().validate();
         return virtualViewer;
 	}

@@ -402,7 +402,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	public void compareElements(IElementCompareRequest[] requests) {
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
-			List<IElementCompareRequest> others = new ArrayList<IElementCompareRequest>(requests.length);
+			List<IElementCompareRequest> others = new ArrayList<>(requests.length);
 			for (int i = 0; i < requests.length; i++) {
 				IElementCompareRequest request = requests[i];
 				if (request.getElement().equals(this)) {
@@ -432,7 +432,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	public void encodeElements(IElementMementoRequest[] requests) {
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
-			List<IElementMementoRequest> others = new ArrayList<IElementMementoRequest>(requests.length);
+			List<IElementMementoRequest> others = new ArrayList<>(requests.length);
 			for (int i = 0; i < requests.length; i++) {
 				IElementMementoRequest request = requests[i];
 				if (request.getElement().equals(this)) {

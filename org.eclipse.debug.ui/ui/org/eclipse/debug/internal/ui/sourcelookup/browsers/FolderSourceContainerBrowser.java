@@ -39,7 +39,7 @@ public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser
 
 		if (dialog.open() == Window.OK) {
 			Object[] selection= ((ElementTreeSelectionDialog)dialog).getResult();
-			ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>();
+			ArrayList<ISourceContainer> containers = new ArrayList<>();
 			for (int i= 0; i < selection.length; i++) {
 				if(selection[i] instanceof IFolder) {
 					containers.add(new FolderSourceContainer((IFolder)selection[i], dialog.isSearchSubfolders()));
@@ -70,7 +70,7 @@ public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser
 		if (dialog.open() == Window.OK) {
 			container.dispose();
 			Object[] selection= ((ElementTreeSelectionDialog)dialog).getResult();
-			ArrayList<ISourceContainer> list = new ArrayList<ISourceContainer>();
+			ArrayList<ISourceContainer> list = new ArrayList<>();
 			for (int i= 0; i < selection.length; i++) {
 				if(selection[i] instanceof IFolder) {
 					list.add(new FolderSourceContainer((IFolder)selection[i], dialog.isSearchSubfolders()));

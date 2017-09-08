@@ -148,7 +148,7 @@ class ViewerStateTracker {
     /**
      * Map of viewer states keyed by viewer input mementos
      */
-	private Map<String, ModelDelta> fViewerStates = new LRUMap<String, ModelDelta>(20);
+	private Map<String, ModelDelta> fViewerStates = new LRUMap<>(20);
 
     /**
      * Pending viewer state to be restored
@@ -175,7 +175,7 @@ class ViewerStateTracker {
     /**
      * Set of IMementoManager's that are currently saving state
      */
-	private Set<IElementMementoCollector> fPendingStateSaves = new HashSet<IElementMementoCollector>();
+	private Set<IElementMementoCollector> fPendingStateSaves = new HashSet<>();
 
     /**
      * Used to queue a viewer input for state restore
@@ -213,7 +213,7 @@ class ViewerStateTracker {
     /**
      * Compare requests that are currently running.
      */
-	private Map<CompareRequestKey, ElementCompareRequest> fCompareRequestsInProgress = new LinkedHashMap<CompareRequestKey, ElementCompareRequest>();
+	private Map<CompareRequestKey, ElementCompareRequest> fCompareRequestsInProgress = new LinkedHashMap<>();
 
 
     /**
@@ -641,7 +641,7 @@ class ViewerStateTracker {
 
     private ModelDelta findSubDeltaParent(ModelDelta destinationDeltaRoot, IModelDelta subDelta) {
         // Create a path of elements to the sub-delta.
-		LinkedList<IModelDelta> deltaPath = new LinkedList<IModelDelta>();
+		LinkedList<IModelDelta> deltaPath = new LinkedList<>();
         IModelDelta delta = subDelta;
         while (delta.getParentDelta() != null) {
             delta = delta.getParentDelta();
@@ -699,7 +699,7 @@ class ViewerStateTracker {
             /**
              * list of memento fRequests
              */
-			private List<IElementMementoRequest> fRequests = new ArrayList<IElementMementoRequest>();
+			private List<IElementMementoRequest> fRequests = new ArrayList<>();
 
             /**
              * Flag indicating whether the encoding of delta has been canceled.
@@ -779,7 +779,7 @@ class ViewerStateTracker {
 			public void processReqeusts() {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
 
-				Map<IElementMementoProvider, List<IElementMementoRequest>> providers = new HashMap<IElementMementoProvider, List<IElementMementoRequest>>();
+				Map<IElementMementoProvider, List<IElementMementoRequest>> providers = new HashMap<>();
 				for (IElementMementoRequest request : fRequests) {
                     notifyStateUpdate(input, TreeModelContentProvider.UPDATE_BEGINS, request);
                     IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(request.getElement());
@@ -788,7 +788,7 @@ class ViewerStateTracker {
                     }
 					List<IElementMementoRequest> reqs = providers.get(provider);
                     if (reqs == null) {
-						reqs = new ArrayList<IElementMementoRequest>();
+						reqs = new ArrayList<>();
                         providers.put(provider, reqs);
                     }
                     reqs.add(request);

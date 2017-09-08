@@ -39,7 +39,7 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		ILaunchConfiguration config = null;
-		List<Object> projects = new ArrayList<Object>();
+		List<Object> projects = new ArrayList<>();
 		if (source instanceof List) {
 			List<?> args = (List<?>) source;
 			Iterator<?> iterator = args.iterator();

@@ -65,7 +65,7 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 	 * @return the filtered list, may be empty
 	 */
 	private List<Object> removeSourceNotFoundEditors(List<?> sources) {
-		List<Object> filteredList = new ArrayList<Object>();
+		List<Object> filteredList = new ArrayList<>();
 		for (Object obj : sources) {
 			if (!(obj instanceof CommonSourceNotFoundEditor)) {
 				filteredList.add(obj);

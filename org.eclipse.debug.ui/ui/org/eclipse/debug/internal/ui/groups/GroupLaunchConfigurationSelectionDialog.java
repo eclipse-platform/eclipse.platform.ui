@@ -317,7 +317,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 	}
 
 	public ILaunchConfiguration[] getSelectedLaunchConfigurations() {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		if (fSelection != null && !fSelection.isEmpty()) {
 			for (Iterator<?> iter = ((IStructuredSelection) fSelection).iterator(); iter.hasNext();) {
 				Object selection = iter.next();

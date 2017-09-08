@@ -176,7 +176,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 				return true;
 			} else if (getElementContentProvider().equals(request.getElementContentProvider())) {
 				if (fBatchedRequests == null) {
-					fBatchedRequests = new ArrayList<ViewerUpdateMonitor>(4);
+					fBatchedRequests = new ArrayList<>(4);
 					fBatchedRequests.add(this);
 				}
 				fBatchedRequests.add(request);

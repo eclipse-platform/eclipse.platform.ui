@@ -285,8 +285,8 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 			LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType[] types = lm.getLaunchConfigurationTypes();
-			fDuplicates = new HashMap<ILaunchConfigurationType, Set<DuplicateDelegate>>();
-			fDupeSelections = new HashMap<DuplicateDelegate, ILaunchDelegate>();
+			fDuplicates = new HashMap<>();
+			fDupeSelections = new HashMap<>();
 			ILaunchDelegate[] delegates = null;
 			Set<Set<String>> modes = null;
 			Set<String> modeset = null;
@@ -301,7 +301,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 					if(delegates.length > 1) {
 						tmp = fDuplicates.get(types[i]);
 						if(tmp == null) {
-							tmp = new HashSet<DuplicateDelegate>();
+							tmp = new HashSet<>();
 						}
 						dd = new DuplicateDelegate(types[i], delegates, modeset);
 						tmp.add(dd);

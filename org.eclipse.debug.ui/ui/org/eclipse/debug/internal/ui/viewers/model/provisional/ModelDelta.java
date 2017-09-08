@@ -175,11 +175,11 @@ public class ModelDelta implements IModelDelta {
 
 	private void mapNodes() {
 	    if (fNodesList == null) {
-			fNodesMap = new HashMap<Object, Object>(1);
+			fNodesMap = new HashMap<>(1);
 	        return;
 	    }
 	    // Create a map with capacity for all child nodes.
-		fNodesMap = new HashMap<Object, Object>(fNodesList.size() * 4 / 3);
+		fNodesMap = new HashMap<>(fNodesList.size() * 4 / 3);
 	    for (int i = 0; i < fNodesList.size(); i++) {
 	        mapNode( fNodesList.get(i) );
 	    }
@@ -298,7 +298,7 @@ public class ModelDelta implements IModelDelta {
 
 	private void addDelta(ModelDelta delta) {
 		if (fNodesList == null) {
-			fNodesList = new ArrayList<ModelDelta>(4);
+			fNodesList = new ArrayList<>(4);
 		}
 	    fNodesList.add(delta);
 	    fNodes = null;

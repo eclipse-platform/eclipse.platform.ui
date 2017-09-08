@@ -81,7 +81,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 */
 	@Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
-		List<IAdaptable> result = new ArrayList<IAdaptable>();
+		List<IAdaptable> result = new ArrayList<>();
 		IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
 		for (int i = 0; i < workingSets.length; i++) {
 			IWorkingSet set = workingSets[i];
@@ -174,7 +174,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 */
 	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
-		Map<IWorkingSet, List<IBreakpoint>> setToBreakpoints = new HashMap<IWorkingSet, List<IBreakpoint>>();
+		Map<IWorkingSet, List<IBreakpoint>> setToBreakpoints = new HashMap<>();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IMarker marker = breakpoints[i].getMarker();
 			String[] names = getWorkingsetAttributeFromMarker(marker, IInternalDebugUIConstants.WORKING_SET_NAME);
@@ -202,7 +202,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	private void queueToSet(IBreakpoint breakpoint, IWorkingSet set, Map<IWorkingSet, List<IBreakpoint>> queue) {
 		List<IBreakpoint> list = queue.get(set);
 		if (list == null) {
-			list = new ArrayList<IBreakpoint>();
+			list = new ArrayList<>();
 			queue.put(set, list);
 		}
 		list.add(breakpoint);
@@ -218,8 +218,8 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	private void addBreakpointsToSet(IBreakpoint[] breakpoints, IWorkingSet set) {
 		if (set != null) {
 			IAdaptable[] elements = set.getElements();
-			Set<IAdaptable> collection = new HashSet<IAdaptable>(elements.length);
-			List<IAdaptable> list = new ArrayList<IAdaptable>(elements.length + breakpoints.length);
+			Set<IAdaptable> collection = new HashSet<>(elements.length);
+			List<IAdaptable> list = new ArrayList<>(elements.length + breakpoints.length);
 			for(int i = 0; i < elements.length; i++) {
 				collection.add(elements[i]);
 				list.add(elements[i]);
@@ -276,7 +276,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			}
 		}
 		if (update) {
-			List<IAdaptable> newElements = new ArrayList<IAdaptable>(elements.length);
+			List<IAdaptable> newElements = new ArrayList<>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				IAdaptable adaptable = elements[i];
 				if (adaptable != null) {
@@ -411,7 +411,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		if (category instanceof WorkingSetCategory) {
 			IWorkingSet set = ((WorkingSetCategory) category).getWorkingSet();
 			IAdaptable[] elements = set.getElements();
-			List<IAdaptable> list = new ArrayList<IAdaptable>();
+			List<IAdaptable> list = new ArrayList<>();
 			for (int i = 0; i < elements.length; i++) {
 				IAdaptable adaptable = elements[i];
 				if (!adaptable.equals(breakpoint)) {
@@ -432,7 +432,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	@Override
 	public IAdaptable[] getCategories() {
 		IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
-		List<IAdaptable> all = new ArrayList<IAdaptable>();
+		List<IAdaptable> all = new ArrayList<>();
 		for (int i = 0; i < workingSets.length; i++) {
 			IWorkingSet set = workingSets[i];
 			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set
@@ -462,7 +462,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		if (category instanceof WorkingSetCategory) {
 			IWorkingSet set = ((WorkingSetCategory) category).getWorkingSet();
 			IAdaptable[] elements = set.getElements();
-			List<IAdaptable> list = new ArrayList<IAdaptable>(elements.length);
+			List<IAdaptable> list = new ArrayList<>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				list.add(elements[i]);
 			}

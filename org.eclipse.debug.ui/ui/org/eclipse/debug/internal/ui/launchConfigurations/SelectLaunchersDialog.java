@@ -257,7 +257,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 	 * @return the complete set of modes that the associated launch configuration is concerned with
 	 */
 	protected Set<String> getCurrentModeSet() {
-		Set<String> modes = new HashSet<String>();
+		Set<String> modes = new HashSet<>();
 		try {
 			modes = fConfiguration.getModes();
 			modes.add(fLaunchMode);

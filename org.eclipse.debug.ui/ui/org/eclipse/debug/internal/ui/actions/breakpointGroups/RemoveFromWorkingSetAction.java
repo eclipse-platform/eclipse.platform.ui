@@ -69,7 +69,7 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
      * @return
      */
     protected BreakpointSetElement[] getRemovableBreakpoints(IStructuredSelection selection) {
-		List<BreakpointSetElement> res = new ArrayList<BreakpointSetElement>();
+		List<BreakpointSetElement> res = new ArrayList<>();
     	if (selection instanceof ITreeSelection) {
     		ITreeSelection tSel = (ITreeSelection)selection;
 

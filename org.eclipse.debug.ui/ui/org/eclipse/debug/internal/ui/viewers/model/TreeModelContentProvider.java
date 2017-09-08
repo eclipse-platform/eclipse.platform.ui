@@ -78,7 +78,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * Used to install different model proxy instances for one element depending
      * on the tree path.
      */
-	private Map<TreePath, IModelProxy> fTreeModelProxies = new HashMap<TreePath, IModelProxy>(); // tree
+	private Map<TreePath, IModelProxy> fTreeModelProxies = new HashMap<>(); // tree
 																									// model
 																									// proxy
 																									// by
@@ -90,7 +90,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * Used to install a single model proxy which is responsible for all
      * instances of an element in the model tree.
      */
-	private Map<Object, IModelProxy> fModelProxies = new HashMap<Object, IModelProxy>(); // model
+	private Map<Object, IModelProxy> fModelProxies = new HashMap<>(); // model
 																							// proxy
 																							// by
 																							// element
@@ -119,15 +119,15 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     /**
      * Map of updates in progress: element path -> list of requests
      */
-	private Map<TreePath, List<ViewerUpdateMonitor>> fRequestsInProgress = new HashMap<TreePath, List<ViewerUpdateMonitor>>();
+	private Map<TreePath, List<ViewerUpdateMonitor>> fRequestsInProgress = new HashMap<>();
 
     /**
      * Map of dependent requests waiting for parent requests to complete:
      * element path -> list of requests
      */
-	private Map<TreePath, List<ViewerUpdateMonitor>> fWaitingRequests = new HashMap<TreePath, List<ViewerUpdateMonitor>>();
+	private Map<TreePath, List<ViewerUpdateMonitor>> fWaitingRequests = new HashMap<>();
 
-	private List<ViewerUpdateMonitor> fCompletedUpdates = new ArrayList<ViewerUpdateMonitor>();
+	private List<ViewerUpdateMonitor> fCompletedUpdates = new ArrayList<>();
 
     private Runnable fCompletedUpdatesRunnable;
 
@@ -552,7 +552,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @return corresponding tree path
      */
     TreePath getFullTreePath(IModelDelta node) {
-		ArrayList<Object> list = new ArrayList<Object>();
+		ArrayList<Object> list = new ArrayList<>();
         while (node.getParentDelta() != null) {
             list.add(0, node.getElement());
             node = node.getParentDelta();
@@ -568,7 +568,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @return corresponding tree path
      */
     TreePath getViewerTreePath(IModelDelta node) {
-		ArrayList<Object> list = new ArrayList<Object>();
+		ArrayList<Object> list = new ArrayList<>();
         IModelDelta parentDelta = node.getParentDelta();
         while (parentDelta != null) {
             list.add(0, node.getElement());
@@ -707,7 +707,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
 		List<ViewerUpdateMonitor> requests = fRequestsInProgress.get(update.getSchedulingPath());
         if (requests == null) {
-			requests = new ArrayList<ViewerUpdateMonitor>();
+			requests = new ArrayList<>();
             fRequestsInProgress.put(update.getSchedulingPath(), requests);
         }
         requests.add(update);
@@ -866,7 +866,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 }
             }
         }
-		List<TreePath> purge = new ArrayList<TreePath>();
+		List<TreePath> purge = new ArrayList<>();
 		for (TreePath entryPath : fWaitingRequests.keySet()) {
             if (entryPath.startsWith(path, null)) {
                 purge.add(entryPath);
@@ -891,7 +891,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         TreePath schedulingPath = update.getSchedulingPath();
 		List<ViewerUpdateMonitor> requests = fWaitingRequests.get(schedulingPath);
         if (requests == null) {
-			requests = new LinkedList<ViewerUpdateMonitor>();
+			requests = new LinkedList<>();
             requests.add(update);
             fWaitingRequests.put(schedulingPath, requests);
 
@@ -1102,7 +1102,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                         childrenUpdate.cancel();
                         iterator.remove();
                         if (reCreate == null) {
-							reCreate = new ArrayList<IChildrenUpdate>();
+							reCreate = new ArrayList<>();
                         }
                         reCreate.add(childrenUpdate);
                         if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
@@ -1811,7 +1811,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             }
             jobCompletedUpdates = fCompletedUpdates;
             fCompletedUpdatesRunnable = null;
-			fCompletedUpdates = new ArrayList<ViewerUpdateMonitor>();
+			fCompletedUpdates = new ArrayList<>();
         }
         // necessary to check if viewer is disposed
         try {

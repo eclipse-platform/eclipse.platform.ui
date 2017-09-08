@@ -263,7 +263,7 @@ public class DetailPaneManager {
     public static final String PREF_DETAIL_AREAS = "preferredDetailPanes"; //$NON-NLS-1$
 
 	private DetailPaneManager(){
-		fFactoriesByPaneID = new HashMap<String, IDetailPaneFactory>();
+		fFactoriesByPaneID = new HashMap<>();
 		fFactoriesByPaneID.put(MessageDetailPane.ID, new DefaultDetailPaneFactory());
 	}
 
@@ -357,7 +357,7 @@ public class DetailPaneManager {
 	 * @return The factories enabled for the selection or an empty collection.
 	 */
 	private List<IDetailPaneFactory> getEnabledFactories(IStructuredSelection selection) {
-		List<IDetailPaneFactory> factoriesForSelection = new ArrayList<IDetailPaneFactory>();
+		List<IDetailPaneFactory> factoriesForSelection = new ArrayList<>();
 		if (fKnownFactories == null) {
 			initializeDetailFactories();
 		}
@@ -380,7 +380,7 @@ public class DetailPaneManager {
 	 * @return Set of pane IDs or an empty set
 	 */
 	private Set<String> getPossiblePaneIDs(List<IDetailPaneFactory> factoriesToQuery, IStructuredSelection selection) {
-		Set<String> idsForSelection = new LinkedHashSet<String>();
+		Set<String> idsForSelection = new LinkedHashSet<>();
 		for (IDetailPaneFactory currentFactory : factoriesToQuery) {
 			for (String currentAreaTypeID : currentFactory.getDetailPaneTypes(selection)) {
 				fFactoriesByPaneID.put(currentAreaTypeID, currentFactory);
@@ -438,7 +438,7 @@ public class DetailPaneManager {
 	 */
 	private synchronized void initializeDetailFactories(){
 		if (fKnownFactories == null){
-			fKnownFactories = new ArrayList<DetailPaneFactoryExtension>();
+			fKnownFactories = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_DETAIL_FACTORIES);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 			DetailPaneFactoryExtension delegate = null;
@@ -522,7 +522,7 @@ public class DetailPaneManager {
      * @see #storePreferredDetailsAreas()
      */
     private void loadPreferredDetailsAreas() {
-		fPreferredDetailPanes = new HashMap<Set<String>, String>();
+		fPreferredDetailPanes = new HashMap<>();
     	String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(),
     			PREF_DETAIL_AREAS,
     			"",  //$NON-NLS-1$
@@ -532,7 +532,7 @@ public class DetailPaneManager {
     		String token = entryTokenizer.nextToken();
     		int valueStart = token.indexOf(':');
     		StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
-			Set<String> keys = new LinkedHashSet<String>();
+			Set<String> keys = new LinkedHashSet<>();
     		while (keyTokenizer.hasMoreTokens()){
     			keys.add(keyTokenizer.nextToken());
     		}

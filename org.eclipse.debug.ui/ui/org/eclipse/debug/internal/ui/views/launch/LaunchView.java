@@ -254,11 +254,11 @@ public class LaunchView extends AbstractDebugView
      *
      * @since 3.6
      */
-	private Map<String, IHandler2> fHandlers = new HashMap<String, IHandler2>();
+	private Map<String, IHandler2> fHandlers = new HashMap<>();
 
     private boolean fDebugToolbarInView = true;
 
-	private Set<String> fDebugToolbarPerspectives = new TreeSet<String>();
+	private Set<String> fDebugToolbarPerspectives = new TreeSet<>();
 
 	/**
 	 * Page-book page for the breadcrumb viewer.  This page is activated in
@@ -343,7 +343,7 @@ public class LaunchView extends AbstractDebugView
 		 * @return corresponding tree path
 		 */
 		private TreePath getViewerTreePath(IModelDelta node) {
-			ArrayList<Object> list = new ArrayList<Object>();
+			ArrayList<Object> list = new ArrayList<>();
 			IModelDelta parentDelta = node.getParentDelta();
 			while (parentDelta != null) {
 				list.add(0, node.getElement());

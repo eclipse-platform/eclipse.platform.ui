@@ -33,7 +33,7 @@ public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 	protected IExpression[] getExpressions() {
 		TreeSelection selection = (TreeSelection) getSelection();
 		TreePath[] paths = selection.getPaths();
-		List<IExpression> expressions = new ArrayList<IExpression>();
+		List<IExpression> expressions = new ArrayList<>();
 		for (int i = paths.length-1; i >=0; i--) {
 			TreePath path = paths[i];
 			Object segment = path.getFirstSegment();

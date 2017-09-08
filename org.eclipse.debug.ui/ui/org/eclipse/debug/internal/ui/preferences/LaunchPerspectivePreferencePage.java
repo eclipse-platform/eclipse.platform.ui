@@ -176,7 +176,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				children[i].dispose();
 			}
 			if(fgCurrentWorkingContext == null) {
-				fgCurrentWorkingContext = new HashSet<Object>();
+				fgCurrentWorkingContext = new HashSet<>();
 			}
 			fgCurrentWorkingContext.clear();
 			if(!selection.isEmpty()) {
@@ -404,7 +404,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		IStructuredSelection ss = (IStructuredSelection) fTreeViewer.getSelection();
 		if(ss != null && !ss.isEmpty()) {
 			Object o = null;
-			Set<String> tmp = new HashSet<String>();
+			Set<String> tmp = new HashSet<>();
 			String id = null;
 			ILaunchConfigurationType type = null;
 			LaunchDelegate delegate = null;
@@ -473,7 +473,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	protected Set<Set<String>> collectCommonModeSets(Object[] selection) {
 
 	//prep selection context, remove types from the equation
-		HashSet<ILaunchDelegate> delegates = new HashSet<ILaunchDelegate>();
+		HashSet<ILaunchDelegate> delegates = new HashSet<>();
 		Object o = null;
 		for(int i = 0; i < selection.length; i++) {
 			o = selection[i];
@@ -489,9 +489,9 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			}
 		}
 	//compare the listing of delegates to find common mode sets
-		HashSet<Set<String>> common = new HashSet<Set<String>>();
+		HashSet<Set<String>> common = new HashSet<>();
 		List<Set<String>> modes = null;
-		HashSet<Set<String>> pruned = new HashSet<Set<String>>();
+		HashSet<Set<String>> pruned = new HashSet<>();
 		for (ILaunchDelegate delegate : delegates) {
 			modes = delegate.getModes();
 			for (Set<String> fmodes : modes) {
@@ -566,7 +566,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			}
 			for(int j = 0; j < delegates.length; j++) {
 				ILaunchDelegate delegate = (ILaunchDelegate) delegates[j];
-				modes = new HashSet<Set<String>>(delegate.getModes());
+				modes = new HashSet<>(delegate.getModes());
 				for (Set<String> modeset : modes) {
 					fgChangeSet.add(new PerspectiveChange(type, delegate, modeset, pm.getDefaultLaunchPerspective(type, delegate, modeset)));
 				}
@@ -586,10 +586,10 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
-		fgChangeSet = new HashSet<PerspectiveChange>();
+		fgChangeSet = new HashSet<>();
 	//init the labels mapping and the list of labels
-		fgPerspectiveIdMap = new HashMap<String, String>();
-		ArrayList<String> labels = new ArrayList<String>();
+		fgPerspectiveIdMap = new HashMap<>();
+		ArrayList<String> labels = new ArrayList<>();
 		labels.add(DebugPreferencesMessages.PerspectivePreferencePage_4);
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();

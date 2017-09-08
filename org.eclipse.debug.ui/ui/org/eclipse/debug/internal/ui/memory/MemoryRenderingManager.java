@@ -39,10 +39,10 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvider implements IMemoryRenderingManager {
 
 	// map of rendering type ids to valid rendering types
-	private Map<String, MemoryRenderingType> fRenderingTypes = new HashMap<String, MemoryRenderingType>();
+	private Map<String, MemoryRenderingType> fRenderingTypes = new HashMap<>();
 
 	// list of renderingBindings
-	private List<RenderingBindings> fBindings = new ArrayList<RenderingBindings>();
+	private List<RenderingBindings> fBindings = new ArrayList<>();
 
 	// singleton manager
 	private static MemoryRenderingManager fgDefault;
@@ -114,7 +114,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 	 */
 	@Override
 	public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
-		List<IMemoryRenderingType> allTypes = new ArrayList<IMemoryRenderingType>();
+		List<IMemoryRenderingType> allTypes = new ArrayList<>();
 		Iterator<RenderingBindings> iterator = fBindings.iterator();
 		while (iterator.hasNext()) {
 			RenderingBindings binding = iterator.next();
@@ -152,7 +152,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 	 */
 	@Override
 	public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
-		List<IMemoryRenderingType> allTypes = new ArrayList<IMemoryRenderingType>();
+		List<IMemoryRenderingType> allTypes = new ArrayList<>();
 		for (RenderingBindings binding : fBindings) {
 			IMemoryRenderingType[] renderingTypes = binding.getRenderingTypes(block);
 			for (int i = 0; i < renderingTypes.length; i++) {

@@ -59,7 +59,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		if(!selection.isEmpty()) {
 			int[] indices = collectIndices(selection.getFirstElement());
 			updateCode.run();
-			ArrayList<Object> set = new ArrayList<Object>();
+			ArrayList<Object> set = new ArrayList<>();
 			Object o = null;
 			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				o = iter.next();

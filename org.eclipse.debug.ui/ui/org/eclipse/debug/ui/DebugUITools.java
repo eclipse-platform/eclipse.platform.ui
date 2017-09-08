@@ -877,7 +877,7 @@ public class DebugUITools {
 								Object toggleValue = getToggleTerminateValue(key);
 								if (toggleValue instanceof TerminateToggleValue) {
 									LaunchingResourceManager lrm = DebugUIPlugin.getDefault().getLaunchingResourceManager();
-									ArrayList<LaunchShortcutExtension> shortcuts = new ArrayList<LaunchShortcutExtension>();
+									ArrayList<LaunchShortcutExtension> shortcuts = new ArrayList<>();
 									LaunchShortcutExtension shortcut = ((TerminateToggleValue) toggleValue).getShortcut();
 									shortcuts.add(shortcut);
 									IResource resource = SelectedResourceManager.getDefault().getSelectedResource();

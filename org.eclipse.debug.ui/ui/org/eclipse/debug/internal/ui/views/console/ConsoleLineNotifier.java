@@ -36,7 +36,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	/**
 	 * Console listeners
 	 */
-	private List<IConsoleLineTracker> fListeners = new ArrayList<IConsoleLineTracker>(2);
+	private List<IConsoleLineTracker> fListeners = new ArrayList<>(2);
 
 	/**
 	 * The console this notifier is tracking

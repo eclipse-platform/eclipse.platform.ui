@@ -42,7 +42,7 @@ public class SynchronizeInfo {
 	 */
 	public SynchronizeInfo(IMemoryBlock block) {
 		fBlock = block;
-		fProperties = new Hashtable<String, Object>();
+		fProperties = new Hashtable<>();
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class SynchronizeInfo {
 			return new String[0];
 
 		Enumeration<String> enumeration = fProperties.keys();
-		ArrayList<String> ids = new ArrayList<String>();
+		ArrayList<String> ids = new ArrayList<>();
 
 		while (enumeration.hasMoreElements()) {
 			ids.add(enumeration.nextElement());

@@ -57,9 +57,9 @@ public class AsynchronousTableModel extends AsynchronousModel {
     	synchronized (this) {
     		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
     		if (childrenNodes == null) {
-				kids = new ArrayList<Object>(elements.length);
+				kids = new ArrayList<>(elements.length);
     		} else {
-				kids = new ArrayList<Object>(elements.length + childrenNodes.length);
+				kids = new ArrayList<>(elements.length + childrenNodes.length);
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
@@ -100,9 +100,9 @@ public class AsynchronousTableModel extends AsynchronousModel {
     	synchronized (this) {
     		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
     		if (childrenNodes == null) {
-				kids = new ArrayList<Object>(elements.length);
+				kids = new ArrayList<>(elements.length);
     		} else {
-				kids = new ArrayList<Object>(elements.length + childrenNodes.length);
+				kids = new ArrayList<>(elements.length + childrenNodes.length);
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
@@ -142,7 +142,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
     	synchronized (this) {
     		ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
     		if (childrenNodes != null) {
-				kids = new ArrayList<Object>(childrenNodes.length);
+				kids = new ArrayList<>(childrenNodes.length);
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
@@ -180,7 +180,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
             remove(new Object[]{element});
             return;
         }
-		List<ModelNode> list = new ArrayList<ModelNode>();
+		List<ModelNode> list = new ArrayList<>();
     	synchronized (this) {
     		ModelNode[] nodes = getNodes(element);
     		for (int i = 0; i < nodes.length; i++) {

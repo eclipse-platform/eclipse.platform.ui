@@ -419,7 +419,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private NextPageAction fNextAction;
 	private PrevPageAction fPrevAction;
 
-	private ArrayList<IContextActivation> fContext = new ArrayList<IContextActivation>();
+	private ArrayList<IContextActivation> fContext = new ArrayList<>();
 	private AbstractHandler fGoToAddressHandler;
 
 	private AbstractHandler fNextPageHandler;
@@ -822,7 +822,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 	private void addMenuListener(IMenuListener menuListener) {
 		if (fMenuListeners == null) {
-			fMenuListeners = new ArrayList<IMenuListener>();
+			fMenuListeners = new ArrayList<>();
 		}
 
 		if (!fMenuListeners.contains(menuListener)) {

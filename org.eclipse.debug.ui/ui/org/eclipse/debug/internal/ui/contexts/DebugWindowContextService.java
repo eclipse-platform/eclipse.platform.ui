@@ -46,11 +46,11 @@ import org.eclipse.ui.services.IEvaluationService;
 public class DebugWindowContextService implements IDebugContextService, IPartListener2, IDebugContextListener {
 
 	private Map<String, ListenerList<IDebugContextListener>> fListenersByPartId = new HashMap<>();
-	private Map<String, IDebugContextProvider> fProvidersByPartId = new HashMap<String, IDebugContextProvider>();
+	private Map<String, IDebugContextProvider> fProvidersByPartId = new HashMap<>();
 	private Map<String, ListenerList<IDebugContextListener>> fPostListenersByPartId = new HashMap<>();
 
 	private IWorkbenchWindow fWindow;
-	private List<IDebugContextProvider> fProviders = new ArrayList<IDebugContextProvider>();
+	private List<IDebugContextProvider> fProviders = new ArrayList<>();
 
 	private DebugContextSourceProvider fSourceProvider;
 
@@ -243,7 +243,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
         if (part != null) {
             id = getCombinedPartId(part);
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(id);
-			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
+			return listenerList != null ? listenerList : new ListenerList<>();
         } else {
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(null);
 			ListenerList<IDebugContextListener> retVal = new ListenerList<>();
@@ -280,11 +280,11 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		if (part != null) {
 			id = getCombinedPartId(part);
 			ListenerList<IDebugContextListener> listenerList = fPostListenersByPartId.get(id);
-			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
+			return listenerList != null ? listenerList : new ListenerList<>();
 		} else {
 			ListenerList<IDebugContextListener> retVal = fPostListenersByPartId.get(null);
 			if (retVal == null) {
-				retVal = new ListenerList<IDebugContextListener>();
+				retVal = new ListenerList<>();
 			}
 
 			outer: for (Iterator<String> itr = fPostListenersByPartId.keySet().iterator(); itr.hasNext();) {

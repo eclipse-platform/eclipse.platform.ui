@@ -96,7 +96,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		 */
 		LRU(int size) {
 			fSize = size;
-			fEntryStack = new ArrayList<Object>();
+			fEntryStack = new ArrayList<>();
 		}
 
 		/*
@@ -201,7 +201,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 * Constructs a source lookup facility.
 	 */
 	private SourceLookupFacility() {
-		fEditorsByPage = new HashMap<IWorkbenchPage, IEditorPart>();
+		fEditorsByPage = new HashMap<>();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}

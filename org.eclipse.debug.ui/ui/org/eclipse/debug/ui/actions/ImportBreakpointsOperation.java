@@ -68,7 +68,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	private boolean fCreateWorkingSets = false;
 
-	private ArrayList<IBreakpoint> fAdded = new ArrayList<IBreakpoint>();
+	private ArrayList<IBreakpoint> fAdded = new ArrayList<>();
 
 	private String fCurrentWorkingSetProperty = null;
 
@@ -274,7 +274,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @since 3.5
 	 */
 	protected Map<String, Object> collectBreakpointProperties(IMemento memento) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 
 		//collect attributes from the 'breakpoint' node
 		map.put(IImportExportConstants.IE_BP_ENABLED, memento.getBoolean(IImportExportConstants.IE_BP_ENABLED));
@@ -377,7 +377,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private void updateWorkingSets(String[] wsnames, IBreakpoint breakpoint) {
 		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
-		ArrayList<IWorkingSet> sets = new ArrayList<IWorkingSet>();
+		ArrayList<IWorkingSet> sets = new ArrayList<>();
 		collectContainingWorkingsets(breakpoint, sets);
 		for (int i = 0; i < wsnames.length; i++) {
 			if("".equals(wsnames[i])) { //$NON-NLS-1$
@@ -401,7 +401,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		}
 		ArrayList<IAdaptable> items = null;
 		for (IWorkingSet set : sets) {
-			items = new ArrayList<IAdaptable>(Arrays.asList(set.getElements()));
+			items = new ArrayList<>(Arrays.asList(set.getElements()));
 			if(items.remove(breakpoint)) {
 				set.setElements(items.toArray(new IAdaptable[items.size()]));
 			}

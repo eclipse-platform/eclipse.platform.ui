@@ -72,7 +72,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		if (s.isEmpty()) {
 			return s;
 		}
-		Set<ILaunch> dups = new LinkedHashSet<ILaunch>();
+		Set<ILaunch> dups = new LinkedHashSet<>();
 		Iterator<?> iterator = s.iterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();

@@ -61,21 +61,21 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * use the method <code>getImage(...)</code> to cache images for
 	 * image descriptors. The images are disposed with this label provider.
 	 */
-	private Map<ImageDescriptor, Image> fImageCache = new HashMap<ImageDescriptor, Image>();
+	private Map<ImageDescriptor, Image> fImageCache = new HashMap<>();
 
 	/**
 	 * Cache of the fonts used for elements in this label provider. Label updates
 	 * use the method <code>getFont(...)</code> to cache fonts for
 	 * FontData objects. The fonts are disposed with this label provider.
 	 */
-	private Map<FontData, Font> fFontCache = new HashMap<FontData, Font>();
+	private Map<FontData, Font> fFontCache = new HashMap<>();
 
 	/**
 	 * Cache of the colors used for elements in this label provider. Label updates
 	 * use the method <code>getColor(...)</code> to cache colors for
 	 * RGB values. The colors are disposed with this label provider.
 	 */
-	private Map<RGB, Color> fColorCache = new HashMap<RGB, Color>();
+	private Map<RGB, Color> fColorCache = new HashMap<>();
 
 	/**
 	 * Label listeners
@@ -86,7 +86,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * Updates waiting to be sent to the label provider.  The map contains
 	 * lists of updates, keyed using the provider.
 	 */
-	private Map<IElementLabelProvider, List<ILabelUpdate>> fPendingUpdates = new HashMap<IElementLabelProvider, List<ILabelUpdate>>();
+	private Map<IElementLabelProvider, List<ILabelUpdate>> fPendingUpdates = new HashMap<>();
 
 	/**
 	 * A runnable that will send the label update requests.
@@ -98,7 +98,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/**
 	 * List of updates in progress
 	 */
-	private List<ILabelUpdate> fUpdatesInProgress = new ArrayList<ILabelUpdate>();
+	private List<ILabelUpdate> fUpdatesInProgress = new ArrayList<>();
 
     /**
      * Delta visitor actively cancels the outstanding label updates for
@@ -273,7 +273,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		if (presentation != null) {
 			List<ILabelUpdate> updates = fPendingUpdates.get(presentation);
 		    if (updates == null) {
-				updates = new LinkedList<ILabelUpdate>();
+				updates = new LinkedList<>();
 		        fPendingUpdates.put(presentation, updates);
 		    }
 		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
@@ -398,7 +398,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		}
 
 		if (fComplete == null) {
-			fComplete = new LinkedList<ILabelUpdate>();
+			fComplete = new LinkedList<>();
 			fViewer.getDisplay().asyncExec(new Runnable() {
 			    @Override
 				public void run() {

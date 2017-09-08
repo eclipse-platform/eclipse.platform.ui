@@ -43,7 +43,7 @@ public class BreakpointWorkingSetCache {
 	 * Default constructor
 	 */
 	public BreakpointWorkingSetCache() {
-		fCache = new HashMap<IMarker, Vector<Object>>(15);
+		fCache = new HashMap<>(15);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class BreakpointWorkingSetCache {
 	public void addEntry(IMarker marker, Object entry) {
 		Vector<Object> list = fCache.get(marker);
 		if (list == null) {
-			list = new Vector<Object>();
+			list = new Vector<>();
 			list.addElement(entry);
 			fCache.put(marker, list);
 		}

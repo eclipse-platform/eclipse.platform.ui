@@ -421,7 +421,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	private Map<String, EnvironmentVariable> getNativeEnvironment() {
 		Map<String, String> stringVars = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
-		HashMap<String, EnvironmentVariable> vars = new HashMap<String, EnvironmentVariable>();
+		HashMap<String, EnvironmentVariable> vars = new HashMap<>();
 		for (Entry<String, String> entry : stringVars.entrySet()) {
 			vars.put(entry.getKey(), new EnvironmentVariable(entry.getKey(), entry.getValue()));
 		}
@@ -529,7 +529,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Convert the table's items into a Map so that this can be saved in the
 		// configuration's attributes.
 		TableItem[] items = environmentTable.getTable().getItems();
-		Map<String, String> map = new HashMap<String, String>(items.length);
+		Map<String, String> map = new HashMap<>(items.length);
 		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 			map.put(var.getName(), var.getValue());
@@ -699,7 +699,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 								return s1.compareTo(s2);
 							}
 						};
-						TreeMap<Object, Object> envVars = new TreeMap<Object, Object>(comparator);
+						TreeMap<Object, Object> envVars = new TreeMap<>(comparator);
 						envVars.putAll((Map<?, ?>) inputElement);
 						elements = new EnvironmentVariable[envVars.size()];
 						int index = 0;

@@ -483,7 +483,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		/**
 		 * The content provider stores variable wrappers for use during editing.
 		 */
-		private List<VariableWrapper> fWorkingSet = new ArrayList<VariableWrapper>();
+		private List<VariableWrapper> fWorkingSet = new ArrayList<>();
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -517,8 +517,8 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		public void saveChanges() {
 			IStringVariableManager manager = getVariableManager();
 			Iterator<VariableWrapper> iterator = fWorkingSet.iterator();
-			List<IValueVariable> remove = new ArrayList<IValueVariable>();
-			List<IValueVariable> add = new ArrayList<IValueVariable>();
+			List<IValueVariable> remove = new ArrayList<>();
+			List<IValueVariable> add = new ArrayList<>();
 			while (iterator.hasNext()) {
 				VariableWrapper variable = iterator.next();
 				if (!variable.isReadOnly()) {

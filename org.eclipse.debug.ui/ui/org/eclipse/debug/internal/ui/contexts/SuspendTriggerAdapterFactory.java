@@ -24,7 +24,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  */
 public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 
-	private Map<Object, LaunchSuspendTrigger> fSuspendTriggers = new HashMap<Object, LaunchSuspendTrigger>();
+	private Map<Object, LaunchSuspendTrigger> fSuspendTriggers = new HashMap<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)

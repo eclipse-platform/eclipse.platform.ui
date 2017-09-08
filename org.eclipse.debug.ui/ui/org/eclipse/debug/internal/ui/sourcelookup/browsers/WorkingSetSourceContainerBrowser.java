@@ -37,7 +37,7 @@ public class WorkingSetSourceContainerBrowser extends AbstractSourceContainerBro
 	 */
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>();
+		ArrayList<ISourceContainer> containers = new ArrayList<>();
 		IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(shell, true);
 
 		if (dialog.open() == Window.OK) {

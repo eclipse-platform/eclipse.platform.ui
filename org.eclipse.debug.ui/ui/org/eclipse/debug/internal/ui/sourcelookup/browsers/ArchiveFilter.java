@@ -66,7 +66,7 @@ public class ArchiveFilter extends ViewerFilter {
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
 			@Override
 			public void run() {
-				fArchives = new HashSet<IResource>();
+				fArchives = new HashSet<>();
 				traverse(ResourcesPlugin.getWorkspace().getRoot(), fArchives);
 			}
 		});

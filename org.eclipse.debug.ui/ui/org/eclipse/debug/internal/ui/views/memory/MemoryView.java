@@ -79,12 +79,12 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	private MemoryViewPartListener fPartListener;
 
 	private SashForm fSashForm;
-	private Hashtable<String, IMemoryViewPane> fViewPanes = new Hashtable<String, IMemoryViewPane>();
-	private Hashtable<String, ViewForm> fViewPaneControls = new Hashtable<String, ViewForm>();
-	private ArrayList<String> fVisibleViewPanes = new ArrayList<String>();
+	private Hashtable<String, IMemoryViewPane> fViewPanes = new Hashtable<>();
+	private Hashtable<String, ViewForm> fViewPaneControls = new Hashtable<>();
+	private ArrayList<String> fVisibleViewPanes = new ArrayList<>();
 	private boolean fVisible;
 
-	private ArrayList<Integer> fWeights = new ArrayList<Integer>();
+	private ArrayList<Integer> fWeights = new ArrayList<>();
 
 	private static final String VISIBILITY_PREF = IDebugUIConstants.ID_MEMORY_VIEW + ".viewPanesVisibility"; //$NON-NLS-1$
 	private static final String ID_MEMORY_VIEW_CONTEXT = "org.eclipse.debug.ui.memoryview"; //$NON-NLS-1$
@@ -122,7 +122,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	private String fActivePaneId;
 
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener {
-		ArrayList<ISelectionChangedListener> fListeners = new ArrayList<ISelectionChangedListener>();
+		ArrayList<ISelectionChangedListener> fListeners = new ArrayList<>();
 
 		IStructuredSelection fSelections = new StructuredSelection();
 
@@ -808,7 +808,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	@Override
 	public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
 		Enumeration<IMemoryViewPane> enumeration = fViewPanes.elements();
-		ArrayList<Object> containers = new ArrayList<Object>();
+		ArrayList<Object> containers = new ArrayList<>();
 		while (enumeration.hasMoreElements()) {
 			Object obj = enumeration.nextElement();
 			if (obj instanceof IMemoryRenderingContainer)

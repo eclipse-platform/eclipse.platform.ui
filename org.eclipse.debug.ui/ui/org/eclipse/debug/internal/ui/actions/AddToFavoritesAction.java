@@ -175,7 +175,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 				try {
 					List<String> list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 					if (list == null) {
-						list = new ArrayList<String>();
+						list = new ArrayList<>();
 					}
 					list.add(getGroup().getIdentifier());
 					ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();

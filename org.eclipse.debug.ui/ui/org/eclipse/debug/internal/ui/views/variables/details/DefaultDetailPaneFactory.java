@@ -48,7 +48,7 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 	 */
 	@Override
 	public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
-		Set<String> possibleIDs = new HashSet<String>(1);
+		Set<String> possibleIDs = new HashSet<>(1);
 		possibleIDs.add(DefaultDetailPane.ID);
 		return possibleIDs;
 	}

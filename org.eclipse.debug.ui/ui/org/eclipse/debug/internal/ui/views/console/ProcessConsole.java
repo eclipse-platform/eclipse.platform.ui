@@ -94,7 +94,7 @@ import com.ibm.icu.text.MessageFormat;
 public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSetListener, IPropertyChangeListener {
     private IProcess fProcess = null;
 
-	private List<StreamListener> fStreamListeners = new ArrayList<StreamListener>();
+	private List<StreamListener> fStreamListeners = new ArrayList<>();
 
     private IConsoleColorProvider fColorProvider;
 

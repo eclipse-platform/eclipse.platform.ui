@@ -26,7 +26,7 @@ import org.eclipse.debug.core.model.IThread;
 public class DecorationManager {
 
 	// map of targets to lists of active decorations
-	private static Map<IDebugTarget, List<Decoration>> fDecorations = new HashMap<IDebugTarget, List<Decoration>>(10);
+	private static Map<IDebugTarget, List<Decoration>> fDecorations = new HashMap<>(10);
 
 	/**
 	 * Adds the given decoration for the given stack frame.
@@ -39,7 +39,7 @@ public class DecorationManager {
 			IDebugTarget target = decoration.getThread().getDebugTarget();
 			List<Decoration> list = fDecorations.get(target);
 			if (list == null) {
-				list = new ArrayList<Decoration>();
+				list = new ArrayList<>();
 				fDecorations.put(target, list);
 			}
 			list.add(decoration);
@@ -65,7 +65,7 @@ public class DecorationManager {
 	}
 
 	private static void doRemoveDecorations(IDebugTarget target, IThread thread) {
-		ArrayList<Decoration> decorationsToRemove = new ArrayList<Decoration>();
+		ArrayList<Decoration> decorationsToRemove = new ArrayList<>();
 		synchronized (fDecorations) {
 			List<Decoration> list = fDecorations.get(target);
 			if (list != null) {

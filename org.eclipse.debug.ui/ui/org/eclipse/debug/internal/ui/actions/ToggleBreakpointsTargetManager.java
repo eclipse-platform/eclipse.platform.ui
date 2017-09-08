@@ -80,7 +80,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      */
     public static String DEFAULT_TOGGLE_TARGET_ID = "default"; //$NON-NLS-1$
 
-	private static Set<String> DEFAULT_TOGGLE_TARGET_ID_SET = new TreeSet<String>();
+	private static Set<String> DEFAULT_TOGGLE_TARGET_ID_SET = new TreeSet<>();
     static {
         DEFAULT_TOGGLE_TARGET_ID_SET.add(DEFAULT_TOGGLE_TARGET_ID);
     }
@@ -442,7 +442,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * Maps the IDs of toggle targets to the factory that can create them.
      * There can currently only be one factory for a given toggle target.
      */
-	private Map<String, IToggleBreakpointsTargetFactory> fFactoriesByTargetID = new HashMap<String, IToggleBreakpointsTargetFactory>();
+	private Map<String, IToggleBreakpointsTargetFactory> fFactoriesByTargetID = new HashMap<>();
 
     /**
      * List of listeners to changes in the preferred toggle targets list.
@@ -453,7 +453,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * Initializes the collection of known factories from extension point contributions.
      */
     private void initializeFactories() {
-		fKnownFactories = new LinkedHashMap<String, IToggleBreakpointsTargetFactory>();
+		fKnownFactories = new LinkedHashMap<>();
         fKnownFactories.put(DEFAULT_TOGGLE_TARGET_ID, new ToggleBreakpointsTargetAdapterFactory());
         IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES);
         IConfigurationElement[] elements = ep.getConfigurationElements();
@@ -492,7 +492,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         if (fKnownFactories == null) {
 			initializeFactories();
 		}
-		Set<IToggleBreakpointsTargetFactory> set = new HashSet<IToggleBreakpointsTargetFactory>();
+		Set<IToggleBreakpointsTargetFactory> set = new HashSet<>();
 		for (Entry<String, IToggleBreakpointsTargetFactory> entry : fKnownFactories.entrySet()) {
 			IToggleBreakpointsTargetFactory factory = entry.getValue();
             if (factory instanceof ToggleTargetFactory &&
@@ -516,7 +516,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @return Set of toggle target IDs or an empty set
      */
 	private Set<String> getEnabledTargetIDs(Set<IToggleBreakpointsTargetFactory> factoriesToQuery, IWorkbenchPart part, ISelection selection) {
-		Set<String> idsForSelection = new TreeSet<String>();
+		Set<String> idsForSelection = new TreeSet<>();
 		for (IToggleBreakpointsTargetFactory factory : factoriesToQuery) {
 			for(String targetID : factory.getToggleTargets(part, selection)) {
                 fFactoriesByTargetID.put(targetID, factory);
@@ -618,7 +618,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * @see #storePreferredTargets()
      */
     private void loadPreferredTargets() {
-		fPreferredTargets = new HashMap<Set<String>, String>();
+		fPreferredTargets = new HashMap<>();
         String preferenceValue = Platform.getPreferencesService().getString(
         		DebugUIPlugin.getUniqueIdentifier(),
         		PREF_TARGETS,
@@ -632,7 +632,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
             String token = entryTokenizer.nextToken();
             int valueStart = token.indexOf(':');
             StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
-			Set<String> keys = new TreeSet<String>();
+			Set<String> keys = new TreeSet<>();
             while (keyTokenizer.hasMoreTokens()){
                 keys.add(keyTokenizer.nextToken());
             }

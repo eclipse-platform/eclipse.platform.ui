@@ -169,7 +169,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	public void finish() {
 		String workingSetName = fWorkingSetName.getText();
 		Object[] adaptable = fTViewer.getCheckedElements().toArray();
-		ArrayList<IBreakpoint> elements = new ArrayList<IBreakpoint>();
+		ArrayList<IBreakpoint> elements = new ArrayList<>();
 		//weed out non-breakpoint elements since 3.2
 		for(int i = 0; i < adaptable.length; i++) {
             IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(adaptable[i], IBreakpoint.class);

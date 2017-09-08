@@ -61,7 +61,7 @@ public class LaunchConfigurationComparator extends WorkbenchViewerComparator {
 	 */
 	private Map<ILaunchConfigurationType, Integer> getCategories() {
 		if (fgCategories == null) {
-			fgCategories = new HashMap<ILaunchConfigurationType, Integer>();
+			fgCategories = new HashMap<>();
 			List<ILaunchConfigurationType> types = Arrays.asList(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
 			Collections.sort(types, new Comparator<ILaunchConfigurationType>() {
 				@Override

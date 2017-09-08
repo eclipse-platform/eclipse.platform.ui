@@ -228,7 +228,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 * @return the list of dirty editors for this launch to save, never null
 	 */
 	protected IResource[] getScopedDirtyResources(IProject[] projects) {
-		HashSet<IResource> dirtyres = new HashSet<IResource>();
+		HashSet<IResource> dirtyres = new HashSet<>();
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for(int l = 0; l < windows.length; l++) {
 			IWorkbenchPage[] pages = windows[l].getPages();

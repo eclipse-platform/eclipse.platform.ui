@@ -199,7 +199,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		fFieldEditors = new ArrayList<FieldEditor>();
+		fFieldEditors = new ArrayList<>();
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		//filtering options
 		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_32, 1, 1, GridData.FILL_HORIZONTAL);
@@ -301,7 +301,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			ILaunchManager lmanager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfiguration[] configurations = lmanager.getMigrationCandidates();
 			//separate the private from the public
-			List<ILaunchConfiguration> pub = new ArrayList<ILaunchConfiguration>();
+			List<ILaunchConfiguration> pub = new ArrayList<>();
 			for(int i = 0; i < configurations.length; i++) {
 				if(DebugUITools.isPrivate(configurations[i])) {
 					//auto-migrate private ones

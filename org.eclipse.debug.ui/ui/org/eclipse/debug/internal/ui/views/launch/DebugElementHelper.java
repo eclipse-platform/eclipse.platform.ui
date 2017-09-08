@@ -36,7 +36,7 @@ public class DebugElementHelper {
 	private static DelegatingModelPresentation fgPresenetation;
 
 	// map of images to image descriptors
-	private static Map<Image, ImageDescriptor> fgImages = new HashMap<Image, ImageDescriptor>();
+	private static Map<Image, ImageDescriptor> fgImages = new HashMap<>();
 
 	/**
 	 * Disposes this adapter

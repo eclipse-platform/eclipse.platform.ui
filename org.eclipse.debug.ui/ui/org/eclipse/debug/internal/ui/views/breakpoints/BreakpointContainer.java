@@ -39,12 +39,12 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 	/**
 	 * Child breakpoints - inserting new element into this collection should use the insertBreakpoint method
 	 */
-	final private List<IBreakpoint> fBreakpoints = new ArrayList<IBreakpoint>();
+	final private List<IBreakpoint> fBreakpoints = new ArrayList<>();
 
     /**
      * Child containers - inserting new element into this container should use the insertChildContainer method
      */
-	final private List<BreakpointContainer> fChildContainers = new ArrayList<BreakpointContainer>();
+	final private List<BreakpointContainer> fChildContainers = new ArrayList<>();
 
     /**
      * The category for this container
@@ -452,7 +452,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      */
     static public void removeBreakpoint(BreakpointContainer container, IBreakpoint breakpoint, ModelDelta containerDelta) {
     	container.removeBreakpoint(breakpoint, containerDelta);
-		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> breakpoints = new ArrayList<>();
     	breakpoints.add(breakpoint);
     	updateSelfAndAncestorsBreakpointCache(container.getParent(), breakpoints, false);
     }
@@ -471,7 +471,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     	}
 
     	if (container.fChildContainers.size() == 0) {
-			List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
+			List<IBreakpoint> breakpoints = new ArrayList<>();
 			Iterator<IBreakpoint> iterator = container.fBreakpoints.iterator();
     		while (iterator.hasNext()) {
 				IBreakpoint obj = iterator.next();
@@ -590,7 +590,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
             if (containers.length == 0) {
                 return new BreakpointContainer[]{this};
             }
-			ArrayList<BreakpointContainer> list = new ArrayList<BreakpointContainer>();
+			ArrayList<BreakpointContainer> list = new ArrayList<>();
             for (int i = 0; i < containers.length; i++) {
             	BreakpointContainer container = containers[i];
             	BreakpointContainer[] subcontainers = container.getContainers(breakpoint);

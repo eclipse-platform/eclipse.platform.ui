@@ -57,7 +57,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * A temporary mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
 	 */
-	protected HashMap<String, Object> fAttributes = new HashMap<String, Object>(3);
+	protected HashMap<String, Object> fAttributes = new HashMap<>(3);
 
 	/**
 	 * The config element that defines the extension
@@ -385,7 +385,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * @since 3.0
 	 */
 	public Map<String, Object> getAttributeMap() {
-		return new HashMap<String, Object>(fAttributes);
+		return new HashMap<>(fAttributes);
 	}
 
 	/**

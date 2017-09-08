@@ -634,7 +634,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @since 3.2
 	 */
 	private ViewerFilter[] createViewerFilters() {
-		ArrayList<ViewerFilter> filters = new ArrayList<ViewerFilter>();
+		ArrayList<ViewerFilter> filters = new ArrayList<>();
 		fClosedProjectFilter = new ClosedProjectFilter();
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
 			filters.add(fClosedProjectFilter);
@@ -1215,7 +1215,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if(value == null) {
 				value = IInternalDebugCoreConstants.EMPTY_STRING;
 			}
-			ArrayList<String> list = new ArrayList<String>();
+			ArrayList<String> list = new ArrayList<>();
 			String[] persisted = value.split(DELIMITER);
 			for(int i = 0; i < persisted.length; i++) {
 				list.add(persisted[i]);
@@ -1252,7 +1252,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if(value != null) {
 				String[] nodes = value.split(DELIMITER);
 				TreeItem[] items = fLaunchConfigurationView.getTreeViewer().getTree().getItems();
-				HashSet<Object> toexpand = new HashSet<Object>();
+				HashSet<Object> toexpand = new HashSet<>();
 				// if we have a selection make sure it is expanded
 				if(fInitialSelection != null && !fInitialSelection.isEmpty()) {
 					Object obj = fInitialSelection.getFirstElement();

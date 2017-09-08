@@ -214,7 +214,7 @@ public class ProcessConsoleManager implements ILaunchListener {
      */
     public IConsoleColorProvider getColorProvider(String type) {
         if (fColorProviders == null) {
-			fColorProviders = new HashMap<String, IConfigurationElement>();
+			fColorProviders = new HashMap<>();
             IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
             IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
             for (int i = 0; i < elements.length; i++) {
@@ -253,7 +253,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 
         if (fLineTrackers == null) {
 			synchronized (fLineTrackersLock) { // can't use fLineTrackers as lock as it is null here
-				fLineTrackers = new HashMap<String, List<IConfigurationElement>>();
+				fLineTrackers = new HashMap<>();
 				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
 				IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 				for (int i = 0; i < elements.length; i++) {
@@ -261,7 +261,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 					String processType = extension.getAttribute("processType"); //$NON-NLS-1$
 					List<IConfigurationElement> list = fLineTrackers.get(processType);
 					if (list == null) {
-						list = new ArrayList<IConfigurationElement>();
+						list = new ArrayList<>();
 						fLineTrackers.put(processType, list);
 					}
 					list.add(extension);
@@ -269,7 +269,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 			}
         }
 
-		ArrayList<IConsoleLineTracker> trackers = new ArrayList<IConsoleLineTracker>();
+		ArrayList<IConsoleLineTracker> trackers = new ArrayList<>();
         if (type != null) {
 			List<IConfigurationElement> lineTrackerExtensions;
 			synchronized (fLineTrackers) {// need to synchronize as the update to list might be still happening
@@ -298,7 +298,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 	private List<IProcess> getRemovedProcesses(ILaunch launch) {
 		List<IProcess> removed = null;
         if (fProcesses == null) {
-			fProcesses = new HashMap<ILaunch, IProcess[]>();
+			fProcesses = new HashMap<>();
         }
         IProcess[] old = fProcesses.get(launch);
         IProcess[] curr = launch.getProcesses();
@@ -307,7 +307,7 @@ public class ProcessConsoleManager implements ILaunchListener {
                 IProcess process = old[i];
                 if (!contains(curr, process)) {
                     if (removed == null) {
-						removed = new ArrayList<IProcess>();
+						removed = new ArrayList<>();
                     }
                     removed.add(process);
                 }

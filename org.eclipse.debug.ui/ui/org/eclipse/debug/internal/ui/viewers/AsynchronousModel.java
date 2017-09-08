@@ -45,7 +45,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 public abstract class AsynchronousModel {
 
 	private ModelNode fRoot; // root node
-	private Map<Object, ModelNode[]> fElementToNodes = new HashMap<Object, ModelNode[]>(); // map
+	private Map<Object, ModelNode[]> fElementToNodes = new HashMap<>(); // map
 																							// of
 																							// element
 																							// to
@@ -53,7 +53,7 @@ public abstract class AsynchronousModel {
 																							// tree
 																							// nodes
 																							// (list)
-	private Map<Object, IModelProxy> fModelProxies = new HashMap<Object, IModelProxy>(); // map
+	private Map<Object, IModelProxy> fModelProxies = new HashMap<>(); // map
 																							// of
 																							// installed
 																							// model
@@ -95,12 +95,12 @@ public abstract class AsynchronousModel {
 	/**
 	 * List of requests currently being performed.
 	 */
-	private List<IStatusMonitor> fPendingUpdates = new ArrayList<IStatusMonitor>();
+	private List<IStatusMonitor> fPendingUpdates = new ArrayList<>();
 
 	/**
 	 * List of pending viewer updates
 	 */
-	private List<IStatusMonitor> fViewerUpdates = new ArrayList<IStatusMonitor>();
+	private List<IStatusMonitor> fViewerUpdates = new ArrayList<>();
 
 	/**
 	 * Constructs a new empty tree model
@@ -393,7 +393,7 @@ public abstract class AsynchronousModel {
 	protected Object[] filter(Object parent, Object[] elements) {
 		ViewerFilter[] filters = getViewer().getFilters();
 		if (filters != null) {
-			ArrayList<Object> filtered = new ArrayList<Object>(elements.length);
+			ArrayList<Object> filtered = new ArrayList<>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				boolean add = true;
 				for (int j = 0; j < filters.length; j++) {

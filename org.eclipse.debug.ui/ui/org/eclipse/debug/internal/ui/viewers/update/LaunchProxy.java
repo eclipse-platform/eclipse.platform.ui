@@ -39,7 +39,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 	 * Set of launch's previous children. When a child is added,
 	 * its model proxy is installed.
 	 */
-	private Set<Object> fPrevChildren = new HashSet<Object>();
+	private Set<Object> fPrevChildren = new HashSet<>();
 
 	/**
 	 * Constructs a new model proxy for the given launch.

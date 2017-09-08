@@ -68,7 +68,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	private TreeViewer fSelectedViewer;
 	private SelectedOrganizerProvider fSelectedOrganizersProvider= new SelectedOrganizerProvider();
 
-	private List<Object> fResult = new ArrayList<Object>();
+	private List<Object> fResult = new ArrayList<>();
 
 	private Button fAddButton;
 	private Button fRemoveButton;
@@ -411,7 +411,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
      * that are available but not currently selected.
 	 */
 	private class AvailableOrganizersProvider implements IStructuredContentProvider {
-		protected List<IBreakpointOrganizer> availableOrganziers = new ArrayList<IBreakpointOrganizer>();
+		protected List<IBreakpointOrganizer> availableOrganziers = new ArrayList<>();
 
 		public void addAvailable(IBreakpointOrganizer organizer) {
             availableOrganziers.add(organizer);
@@ -437,7 +437,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * appear in the breakpoints view.
 	 */
 	private class SelectedOrganizerProvider implements ITreeContentProvider {
-		protected List<Object> selectedOrganizers = new ArrayList<Object>();
+		protected List<Object> selectedOrganizers = new ArrayList<>();
 
 		public void addSelected(IBreakpointOrganizer organizer) {
             selectedOrganizers.add(organizer);
@@ -501,7 +501,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * Label provider which provides text and images for breakpoint container factories
 	 */
 	private class BreakpointOrganzierLabelProvider extends LabelProvider {
-		private HashMap<ImageDescriptor, Image> fImageCache = new HashMap<ImageDescriptor, Image>();
+		private HashMap<ImageDescriptor, Image> fImageCache = new HashMap<>();
 
 		@Override
 		public String getText(Object element) {

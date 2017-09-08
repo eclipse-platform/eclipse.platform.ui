@@ -49,7 +49,7 @@ public class MemoryViewIdRegistry {
 
 	private static ArrayList<String> getRegistry() {
 		if (fgRegistry == null)
-			fgRegistry = new ArrayList<String>();
+			fgRegistry = new ArrayList<>();
 
 		return fgRegistry;
 	}

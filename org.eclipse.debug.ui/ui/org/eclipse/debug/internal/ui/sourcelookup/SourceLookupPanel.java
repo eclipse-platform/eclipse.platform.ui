@@ -50,7 +50,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	//the duplicates checkbox
 	protected Button fDuplicatesButton;
 	//the source actions - up, down, add, remove, restore
-	protected List<SourceContainerAction> fActions = new ArrayList<SourceContainerAction>(6);
+	protected List<SourceContainerAction> fActions = new ArrayList<>(6);
 	//the director that will be used by the tab to manage/store the containers
 	protected ISourceLookupDirector fLocator;
 

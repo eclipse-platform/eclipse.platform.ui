@@ -35,7 +35,7 @@ public class LogicalStructureCache {
 	/**
 	 * Maps a ILogicalStructureType to the cache for that type
 	 */
-	private Map<ILogicalStructureType, LogicalStructureTypeCache> fCacheForType = new HashMap<ILogicalStructureType, LogicalStructureTypeCache>();
+	private Map<ILogicalStructureType, LogicalStructureTypeCache> fCacheForType = new HashMap<>();
 
 	/**
 	 * Returns the logical value to replace the given value using the specified logical structure.
@@ -88,12 +88,12 @@ public class LogicalStructureCache {
 		/**
 		 * Maps a raw IValue to its calculated logical IValue
 		 */
-		private Map<IValue, IValue> fKnownValues = new HashMap<IValue, IValue>();
+		private Map<IValue, IValue> fKnownValues = new HashMap<>();
 
 		/**
 		 * Set of raw IValues that logical values are currently being evaluated for.
 		 */
-		private Set<IValue> fPendingValues = new HashSet<IValue>();
+		private Set<IValue> fPendingValues = new HashSet<>();
 
 		public LogicalStructureTypeCache(ILogicalStructureType type){
 			fType = type;

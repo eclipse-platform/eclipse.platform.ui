@@ -76,7 +76,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 * @return targets for an action
 	 */
 	protected List<ISourceContainer> getOrderedSelection() {
-		List<ISourceContainer> targets = new ArrayList<ISourceContainer>();
+		List<ISourceContainer> targets = new ArrayList<>();
 		List<Object> selection = ((IStructuredSelection) getViewer().getSelection()).toList();
 		ISourceContainer[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -93,7 +93,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 */
 	protected List<ISourceContainer> getEntriesAsList() {
 		ISourceContainer[] entries = getViewer().getEntries();
-		List<ISourceContainer> list = new ArrayList<ISourceContainer>(entries.length);
+		List<ISourceContainer> list = new ArrayList<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}

@@ -136,7 +136,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * Queue of label updates
 	 */
 	class LabelUpdater implements Runnable {
-		LinkedList<ILabelUpdate> fQueue = new LinkedList<ILabelUpdate>();
+		LinkedList<ILabelUpdate> fQueue = new LinkedList<>();
 
 		public synchronized boolean queue(ILabelUpdate[] updates) {
 			if (fQueue == null) {

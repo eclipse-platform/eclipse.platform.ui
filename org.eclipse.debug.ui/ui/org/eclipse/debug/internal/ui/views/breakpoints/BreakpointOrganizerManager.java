@@ -42,7 +42,7 @@ public class BreakpointOrganizerManager {
 	private static BreakpointOrganizerManager fgManager;
 
 	// map for lookup by id
-	private Map<String, IBreakpointOrganizer> fOrganizers = new HashMap<String, IBreakpointOrganizer>();
+	private Map<String, IBreakpointOrganizer> fOrganizers = new HashMap<>();
     // cached sorted list by label
 	private List<IBreakpointOrganizer> fSorted = null;
 
@@ -119,7 +119,7 @@ public class BreakpointOrganizerManager {
     public IBreakpointOrganizer[] getOrganizers() {
     	if (fSorted == null) {
 			Collection<IBreakpointOrganizer> collection = fOrganizers.values();
-			fSorted = new ArrayList<IBreakpointOrganizer>();
+			fSorted = new ArrayList<>();
 	        fSorted.addAll(collection);
 			Collections.sort(fSorted, new Comparator<Object>() {
 				@Override

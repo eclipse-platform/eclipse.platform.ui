@@ -549,7 +549,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 * @since 3.3
 	 */
 	private Set<String> getCurrentModeSet() {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		ILaunchConfigurationWorkingCopy config = getWorkingCopy();
 		if(config != null) {
 			try {
