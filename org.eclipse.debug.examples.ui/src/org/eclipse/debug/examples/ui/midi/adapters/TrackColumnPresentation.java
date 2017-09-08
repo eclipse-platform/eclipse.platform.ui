@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractColumnPresentat
 
 /**
  * Columns for sequencer in the variables view.
- * 
+ *
  * @since 1.0
  */
 public class TrackColumnPresentation extends AbstractColumnPresentation {
@@ -31,7 +31,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	 * All columns
 	 */
 	public static final String[] COLUMN_IDS = new String[]{COL_TICK, COL_BYTES, COL_COMMAND, COL_CHANNEL};
-	
+
 	/**
 	 * Initial columns
 	 */
@@ -41,7 +41,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	 * Column presentation ID.
 	 */
 	public static final String ID = "org.eclipse.debug.examples.ui.midi.trackColumns"; //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getAvailableColumns()
 	 */

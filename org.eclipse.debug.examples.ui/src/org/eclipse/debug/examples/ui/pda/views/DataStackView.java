@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -37,12 +37,12 @@ import org.eclipse.ui.progress.UIJob;
 
 
 /**
- * View of the PDA VM data stack 
+ * View of the PDA VM data stack
  */
 public class DataStackView extends AbstractDebugView implements IDebugContextListener {
-    
+
     private PDAThread fThread;
-	
+
 	class StackViewContentProvider implements ITreeContentProvider {
 
 		/* (non-Javadoc)
@@ -100,9 +100,9 @@ public class DataStackView extends AbstractDebugView implements IDebugContextLis
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
@@ -149,14 +149,14 @@ public class DataStackView extends AbstractDebugView implements IDebugContextLis
         DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		super.dispose();
 	}
-	
+
 	@Override
 	public void debugContextChanged(final DebugContextEvent event) {
 		new UIJob(getSite().getShell().getDisplay(), "DataStackView update") { //$NON-NLS-1$
 	        {
 	            setSystem(true);
 	        }
-	        
+
 	        @Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 	        	if (getViewer() != null) { // runs asynchronously, view may be disposed
@@ -166,13 +166,13 @@ public class DataStackView extends AbstractDebugView implements IDebugContextLis
 	        }
 	    }.schedule();
 	}
-    
+
     /**
      * Updates the view for the selected thread (if suspended)
      */
     private void update(ISelection context) {
         fThread = null;
-        
+
         if (context instanceof IStructuredSelection) {
             Object element = ((IStructuredSelection)context).getFirstElement();
             if (element instanceof PDAThread) {

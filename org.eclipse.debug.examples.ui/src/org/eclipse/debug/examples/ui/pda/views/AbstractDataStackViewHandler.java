@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -32,22 +32,22 @@ abstract public class AbstractDataStackViewHandler extends AbstractHandler {
         IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
         if (part instanceof DataStackView) {
             DataStackView view = (DataStackView)part;
-            
+
             ISelection selection = DebugUITools.getDebugContextForEventChecked(event);
             if (selection instanceof IStructuredSelection) {
                 Object element = ((IStructuredSelection)selection).getFirstElement();
-                
+
                 PDAThread thread = null;
                 if (element instanceof PDAThread) {
                     thread = (PDAThread)element;
                 } else if (element instanceof PDAStackFrame) {
                     thread = (PDAThread)((PDAStackFrame)element).getThread();
-                } 
+                }
 
                 if (element != null) {
                     doExecute(
-                        view, 
-                        thread, 
+                        view,
+                        thread,
                         HandlerUtil.getCurrentSelectionChecked(event));
                 }
             }
@@ -56,10 +56,10 @@ abstract public class AbstractDataStackViewHandler extends AbstractHandler {
         }
         return null;
     }
-    
+
     /**
-     * Performs the actual handler operation. 
-     * 
+     * Performs the actual handler operation.
+     *
      * @param view The view that the handler was invoked in.
      * @param target The current active debug target.
      * @param selection The current selection in view.

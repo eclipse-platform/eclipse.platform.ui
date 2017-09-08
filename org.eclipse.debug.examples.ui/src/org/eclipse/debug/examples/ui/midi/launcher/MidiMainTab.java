@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,25 +42,25 @@ import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 
 /**
  * Tab to specify the MIDI file to play.
- * 
+ *
  * @since 1.0
  */
 public class MidiMainTab extends AbstractLaunchConfigurationTab {
-	
+
 	private Text fFileText;
 	private Button fFileButton;
-	
+
 	private Button fExceptions;
 	private Button fHandled;
 	private Button fUnhandled;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
@@ -68,15 +68,15 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		topLayout.numColumns = 3;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
-		
+
 		createVerticalSpacer(comp, 3);
-		
+
 		Label programLabel = new Label(comp, SWT.NONE);
 		programLabel.setText("&Midi File:"); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.BEGINNING);
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
-		
+
 		fFileText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fFileText.setLayoutData(gd);
@@ -87,7 +87,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fFileButton = createPushButton(comp, "&Browse...", null); //$NON-NLS-1$
 		fFileButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -95,11 +95,11 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 				browseMidiFiles();
 			}
 		});
-		
+
 		new Label(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
-		
+
 		Group test = new Group(comp, SWT.NONE);
 		test.setText("Exceptions"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -132,7 +132,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		fUnhandled.setText("Throw an &unhandled exception during launch to open error dialog"); //$NON-NLS-1$
 		fUnhandled.addSelectionListener(sa);
 	}
-	
+
 	/**
 	 * Open a resource chooser to select a MIDI file
 	 */
@@ -145,7 +145,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 			IFile file = (IFile) files[0];
 			fFileText.setText(file.getFullPath().toString());
 		}
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -197,7 +197,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		}
 		configuration.setAttribute(MidiLaunchDelegate.ATTR_MIDI_FILE, file);
 		configuration.setMappedResources(resources);
-		
+
 		// exception handling
 		if (fExceptions.getSelection()) {
 			if (fHandled.getSelection()) {
@@ -209,7 +209,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 			configuration.removeAttribute(MidiLaunchDelegate.ATTR_THROW_EXCEPTION);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
@@ -217,7 +217,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return "Main"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

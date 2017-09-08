@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ import org.eclipse.debug.internal.ui.viewers.update.LaunchProxy;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
- * Factory to create a model proxy for sequencer controls in 
+ * Factory to create a model proxy for sequencer controls in
  * the variables view.
- * 
+ *
  * @since 1.0
  */
 public class SequencerModelProxyFactory implements IModelProxyFactory {

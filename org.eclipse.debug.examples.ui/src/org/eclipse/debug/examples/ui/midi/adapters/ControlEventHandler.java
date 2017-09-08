@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 /**
  * Listens to events from sequencer controls and fires corresponding
  * deltas to update the viewer.
- * 
+ *
  * @since 1.0
  */
 public class ControlEventHandler extends DebugEventHandler {
@@ -32,12 +32,12 @@ public class ControlEventHandler extends DebugEventHandler {
 	 * Associated launch
 	 */
 	private MidiLaunch fLaunch;
-	
+
 	/**
 	 * Timer used to update clock
 	 */
 	private Timer fTimer;
-	
+
 	/**
 	 * @param proxy
 	 */
@@ -45,7 +45,7 @@ public class ControlEventHandler extends DebugEventHandler {
 		super(proxy);
 		fLaunch = proxy.getMidiLaunch();
 	}
-	
+
 	protected void init() {
 		if (!fLaunch.isSuspended() && !fLaunch.isTerminated() && !fLaunch.isDisconnected()) {
 			startTimer();
@@ -59,7 +59,7 @@ public class ControlEventHandler extends DebugEventHandler {
 	protected boolean handlesEvent(DebugEvent event) {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
 	 */
@@ -115,8 +115,8 @@ public class ControlEventHandler extends DebugEventHandler {
 			fTimer = null;
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 }

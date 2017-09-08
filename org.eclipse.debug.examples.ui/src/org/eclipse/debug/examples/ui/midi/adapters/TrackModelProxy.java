@@ -20,23 +20,23 @@ import org.eclipse.jface.viewers.Viewer;
 
 public class TrackModelProxy extends AbstractModelProxy {
 	protected Track fTrack;
-	
+
 	public TrackModelProxy(Track track) {
 		fTrack = track;
 	}
-	
+
 	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
-		
+
 		ModelDelta delta = new ModelDelta(fTrack, IModelDelta.NO_CHANGE);
 		for (int i = 0; i < fTrack.size(); ++i) {
 			delta.addNode(fTrack.get(i), IModelDelta.INSTALL);
 		}
-		
+
 		fireModelChanged(delta);
 	}
-	
+
 	@Override
 	public synchronized void dispose() {
 		super.dispose();

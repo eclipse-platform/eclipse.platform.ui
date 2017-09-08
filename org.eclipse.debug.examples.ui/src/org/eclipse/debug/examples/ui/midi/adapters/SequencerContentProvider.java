@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Provides content for a MIDI sequencer element (MIDI launch).
- *  
+ *
  * @since 1.0
  */
 public class SequencerContentProvider extends ElementContentProvider {
@@ -59,10 +59,10 @@ public class SequencerContentProvider extends ElementContentProvider {
 		}
 		return EMPTY;
 	}
-	
+
 	/**
 	 * Returns the controls for this sequencer.
-	 * 
+	 *
 	 * @param launch midi launch
 	 * @return controls
 	 */
@@ -73,10 +73,10 @@ public class SequencerContentProvider extends ElementContentProvider {
 				new LengthControl(launch)
 		};
 	}
-	
+
 	/**
 	 * Returns all tracks in the sequence.
-	 * 
+	 *
 	 * @param launch MIDI launch
 	 *@return tracks
 	 */

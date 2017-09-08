@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -68,11 +68,11 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return getEditor(part) != null;
 	}
-	
+
 	/**
 	 * Returns the editor being used to edit a PDA file, associated with the
 	 * given part, or <code>null</code> if none.
-	 *  
+	 *
 	 * @param part workbench part
 	 * @return the editor being used to edit a PDA file, associated with the
 	 * given part, or <code>null</code> if none
@@ -88,9 +88,9 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -126,8 +126,8 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
 		return getVariableAndFunctionName(part, selection) != null;
 	}
-	
-	protected void toggleWatchpoint(IResource resource, int lineNumber, String fcn, String var, boolean access, 
+
+	protected void toggleWatchpoint(IResource resource, int lineNumber, String fcn, String var, boolean access,
 	    boolean modification) throws CoreException
 	{
         // look for existing watchpoint to delete
@@ -151,7 +151,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 
 	/**
 	 * Returns the variable and function names at the current line, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param part text editor
 	 * @param selection text selection
 	 * @return the variable and function names at the current line, or <code>null</code> if none.
@@ -168,7 +168,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	            IRegion region = document.getLineInformationOfOffset(textSelection.getOffset());
 	            String string = document.get(region.getOffset(), region.getLength()).trim();
 				if (string.startsWith("var ")) { //$NON-NLS-1$
-	                String varName = string.substring(4).trim(); 
+	                String varName = string.substring(4).trim();
 	                String fcnName = getFunctionName(document, varName, document.getLineOfOffset(textSelection.getOffset()));
 	                return new String[] {varName, fcnName};
 	            }
@@ -177,14 +177,14 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	        } finally {
 	            documentProvider.disconnect(this);
 	        }
-	    }	    
+	    }
 	    return null;
 	}
-	
+
 	/**
 	 * Returns the name of the function containing the given variable defined at the given
 	 * line number in the specified document.
-	 * 
+	 *
 	 * @param document PDA source file
 	 * @param varName variable name
 	 * @param line line numbner at which the variable is defined
@@ -212,7 +212,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	    }
 		return "_main_"; //$NON-NLS-1$
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
@@ -222,9 +222,9 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
             toggleWatchpoints(part, selection);
         } else {
             toggleLineBreakpoints(part, selection);
-        }    
+        }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */

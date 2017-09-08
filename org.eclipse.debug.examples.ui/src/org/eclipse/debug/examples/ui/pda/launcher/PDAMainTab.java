@@ -45,17 +45,17 @@ import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
  * Tab to specify the PDA program to run/debug.
  */
 public class PDAMainTab extends AbstractLaunchConfigurationTab {
-	
+
 	private Text fProgramText;
 	private Button fProgramButton;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
@@ -63,15 +63,15 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		topLayout.numColumns = 3;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
-		
+
 		createVerticalSpacer(comp, 3);
-		
+
 		Label programLabel = new Label(comp, SWT.NONE);
 		programLabel.setText("&Program:"); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.BEGINNING);
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
-		
+
 		fProgramText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgramText.setLayoutData(gd);
@@ -82,7 +82,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fProgramButton = createPushButton(comp, "&Browse...", null); //$NON-NLS-1$
 		fProgramButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -91,9 +91,9 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
-	
+
 	/**
-	 * Open a resource chooser to select a PDA program 
+	 * Open a resource chooser to select a PDA program
 	 */
 	protected void browsePDAFiles() {
 		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
@@ -104,7 +104,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			IFile file = (IFile) files[0];
 			fProgramText.setText(file.getFullPath().toString());
 		}
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -118,7 +118,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		//#ifdef ex1
-//#		// TODO: Exercise 1 - retrieve the program path attribute from the launch configuration		
+//#		// TODO: Exercise 1 - retrieve the program path attribute from the launch configuration
 //#		String program = null;
 //#		if (program != null) {
 //#			fProgramText.setText(program);
@@ -146,11 +146,11 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		}
 		//#ifdef ex1
 //#		// TODO: Exercise 1 - update the launch configuration with the path to
-//#		//   currently specified program		
+//#		//   currently specified program
 		//#else
 		configuration.setAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, program);
 		//#endif
-		
+
 		// perform resource mapping for contextual launch
 		IResource[] resources = null;
 		if (program!= null) {
@@ -162,7 +162,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		}
 		configuration.setMappedResources(resources);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
@@ -170,7 +170,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return "Main"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -182,7 +182,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		String text = fProgramText.getText();
 		//#ifdef ex1
 //#		// TODO: Exercise 1 - validate the currently specified program exists and is not
-//#		//	empty, providing the user with feedback.		
+//#		//	empty, providing the user with feedback.
 		//#else
 		if (text.length() > 0) {
 			IPath path = new Path(text);

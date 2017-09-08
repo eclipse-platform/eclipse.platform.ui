@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,11 +17,11 @@ import org.eclipse.jface.viewers.ICellModifier;
  * A cell modifier for a sequencer control. Provides current
  * values of controls and updates control values in the sequencer
  * as they are changed in the UI.
- * 
+ *
  * @since 1.0
  */
 public class ControlCellModifier implements ICellModifier {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 	 */
@@ -60,7 +60,7 @@ public class ControlCellModifier implements ICellModifier {
 				if (element instanceof SequencerControl) {
 					if (value instanceof String) {
 						SequencerControl control = (SequencerControl) element;
-						control.setValue((String) value);						
+						control.setValue((String) value);
 					}
 				}
 	        }

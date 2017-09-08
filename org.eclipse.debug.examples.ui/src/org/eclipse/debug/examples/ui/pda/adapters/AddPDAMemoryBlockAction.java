@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Action to add a memory block when a PDA debug target is selected
  */
 public class AddPDAMemoryBlockAction implements IActionDelegate2{
-	
+
 	public AddPDAMemoryBlockAction() {
 	}
 
@@ -49,12 +49,12 @@ public class AddPDAMemoryBlockAction implements IActionDelegate2{
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns the selected debug target or <code>null</code>.
-	 * 
+	 *
 	 * @param selection selection
 	 * @return debug target from the selection or <code>null</code>
 	 */
@@ -102,5 +102,5 @@ public class AddPDAMemoryBlockAction implements IActionDelegate2{
 		run(action);
 	}
 
-	
+
 }

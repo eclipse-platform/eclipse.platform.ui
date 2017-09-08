@@ -41,7 +41,7 @@ public class PDALaunchShortcut implements ILaunchShortcut {
         IFile file = (IFile) ((IStructuredSelection)selection).getFirstElement();
 
         // check for an existing launch config for the pda file
-        String path = file.getFullPath().toString(); 
+        String path = file.getFullPath().toString();
         ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
         ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(DebugCorePlugin.ID_PDA_LAUNCH_CONFIGURATION_TYPE);
         try {
@@ -57,7 +57,7 @@ public class PDALaunchShortcut implements ILaunchShortcut {
         } catch (CoreException e) {
             return;
         }
-        
+
         try {
             // create a new configuration for the pda file
             ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, file.getName());

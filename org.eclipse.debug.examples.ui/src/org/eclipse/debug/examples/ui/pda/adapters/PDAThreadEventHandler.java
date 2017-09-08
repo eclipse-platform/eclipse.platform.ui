@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,12 +29,12 @@ import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
  * @since 3.2
  */
 public class PDAThreadEventHandler extends DebugEventHandler {
-	
+
 	private IStackFrame fPrev = null;
-	
+
 	/**
 	 * Constructs and event handler for a threads in the given viewer.
-	 * 
+	 *
 	 * @param viewer
 	 */
 	public PDAThreadEventHandler(AbstractModelProxy proxy) {
@@ -50,7 +50,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
         }
     	fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE | extras);
 	}
-	
+
 	private boolean isEqual(Object o1, Object o2) {
 		if (o1 == o2) {
 			return true;
@@ -93,7 +93,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 		IThread thread = (IThread) event.getSource();
 		fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
 	}
-	
+
 	private ModelDelta buildRootDelta() {
 		return new ModelDelta(getLaunchManager(), IModelDelta.NO_CHANGE);
 	}
@@ -101,7 +101,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	protected ModelDelta addTarget(ModelDelta delta, IThread thread) {
 		ILaunch launch = thread.getLaunch();
 		Object[] children = launch.getChildren();
@@ -127,7 +127,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 		}
 		fireDelta(delta);
 	}
-	
+
 	private void fireDeltaUpdatingTopFrame(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addTarget(delta, thread);
@@ -149,8 +149,8 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 	    	fPrev = frame;
 		}
     	fireDelta(delta);
-	}	
-	
+	}
+
 	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof PDAThread;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Checkbox support for Flexible Hierachy view (Bug 286310)
@@ -24,7 +24,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * Content provider for track in the variables view. Returns MIDI events
  * in the track.
- * 
+ *
  * @since 1.0
  */
 public class TrackContentProvider extends ElementContentProvider {
@@ -50,7 +50,7 @@ public class TrackContentProvider extends ElementContentProvider {
 			Track track = (Track) parent;
 			MidiEvent[] events= new MidiEvent[length];
 			for (int i = 0; i < length; i++) {
-				events[i] = track.get(i+index); 
+				events[i] = track.get(i+index);
 			}
 			return events;
 		}

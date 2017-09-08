@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Checkbox support for Flexible Hierachy view (Bug 286310)
@@ -19,7 +19,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Column presentation factory for a track.
- * 
+ *
  * @since 1.0
  */
 public class TrackColumnFactory implements IColumnPresentationFactory {

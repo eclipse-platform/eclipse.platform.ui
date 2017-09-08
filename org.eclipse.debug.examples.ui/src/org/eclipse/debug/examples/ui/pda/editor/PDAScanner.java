@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -24,7 +24,7 @@ import org.eclipse.jface.text.rules.WordRule;
  * PDA editor keyword scanner.
  */
 public class PDAScanner extends BufferedRuleBasedScanner {
-    
+
     /**
      * PDA keywods
      */
@@ -32,7 +32,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
  "add", "branch_not_zero", "call", "dec", "dup", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	"halt", "output", "pop", "push", "return", "var" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     };
-    
+
     /**
      * Detects potential keywords
      */
@@ -54,12 +54,12 @@ public class PDAScanner extends BufferedRuleBasedScanner {
             return Character.isLetter(c) || c == '_';
         }
     }
-    
+
     /**
      * Detects PDA branch labels
      */
     class PDALabelDetector extends PDAWordDetector {
-        
+
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
          */
@@ -67,7 +67,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
 		public boolean isWordStart(char c) {
             return c == ':';
         }
-        
+
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
          */
@@ -90,7 +90,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
         }
         // labels
         token = new Token(new TextAttribute(DebugUIPlugin.getDefault().getColor(DebugUIPlugin.LABEL)));
-        WordRule labels = new WordRule(new PDALabelDetector(), token); 
+        WordRule labels = new WordRule(new PDALabelDetector(), token);
         setRules(new IRule[]{keywords, labels});
     }
 }

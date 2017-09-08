@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -41,7 +41,7 @@ public class PDASourceViewerConfiguration extends TextSourceViewerConfiguration 
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new AnnotationHover();
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
      */
@@ -62,6 +62,6 @@ public class PDASourceViewerConfiguration extends TextSourceViewerConfiguration 
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
         return new PDAContentAssistant();
     }
-    
-    
+
+
 }

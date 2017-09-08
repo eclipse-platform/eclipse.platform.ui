@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 
 public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
-	
+
 	private PDAThread fThread = null;
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	@Override
 	public void run(IAction action) {
 		//#ifdef ex5
-//#		// TODO: Exercise 5 - pop the top frame		
+//#		// TODO: Exercise 5 - pop the top frame
 		//#else
 		try {
 			fThread.popFrame();
@@ -61,7 +61,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 			if (element instanceof PDAStackFrame) {
 				PDAStackFrame frame = (PDAStackFrame) element;
 				//#ifdef ex5
-//#				// TODO: Exercise 5 - enable the action if the frame's thread supports it				
+//#				// TODO: Exercise 5 - enable the action if the frame's thread supports it
 				//#else
 				fThread = (PDAThread) frame.getThread();
 				try {
@@ -71,7 +71,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 				return;
 				//#endif
 			}
-			
+
 		}
 		action.setEnabled(false);
 	}

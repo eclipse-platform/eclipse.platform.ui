@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
  * Model proxy for a sequencer in the variables view. Listens
  * to events from controls to update the viewer when the user
  * changes a control's value.
- * 
+ *
  * @since 1.0
  */
 public class SequencerControlsModelProxy extends EventHandlerModelProxy {
@@ -32,22 +32,22 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 	 * Associated launch
 	 */
 	private MidiLaunch fLaunch;
-	
+
 	/**
 	 * Event handler
 	 */
 	private ControlEventHandler fHandler;
-	
+
 	/**
 	 * Constructs a model proxy to update based on changes in controls
 	 * for the associated sequencer.
-	 * 
+	 *
 	 * @param launch MIDI launch
 	 */
 	public SequencerControlsModelProxy(MidiLaunch launch) {
 		fLaunch = launch;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
@@ -59,13 +59,13 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 
 	/**
 	 * Returns the launch assocaited with this proxy.
-	 * 
+	 *
 	 * @return MIDI launch
 	 */
 	protected MidiLaunch getMidiLaunch() {
 		return fLaunch;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
@@ -91,9 +91,9 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		}
 		return false;
 	}
-	
-	
-	
-	
+
+
+
+
 
 }

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -59,10 +59,10 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	    }
 		return null;
 	}
-	
+
 	/**
 	 * Returns a label for the given watchpoint.
-	 * 
+	 *
      * @param watchpoint
      * @return a label for the given watchpoint
      */
@@ -78,11 +78,11 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	        return label;
         } catch (CoreException e) {
             return null;
-        } 
+        }
     }
     /**
 	 * Returns a label for the given debug target
-	 * 
+	 *
 	 * @param target debug target
 	 * @return a label for the given debug target
 	 */
@@ -100,14 +100,14 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 		} catch (CoreException e) {
 		}
 		return "PDA"; //$NON-NLS-1$
-		
+
 	}
-	
+
 	/**
 	 * Returns a label for the given stack frame
-	 * 
+	 *
 	 * @param frame a stack frame
-	 * @return a label for the given stack frame 
+	 * @return a label for the given stack frame
 	 */
 	private String getStackFrameText(PDAStackFrame frame) {
 	    try {
@@ -117,10 +117,10 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	    return null;
 
 	}
-	
+
 	/**
 	 * Returns a label for the given thread
-	 * 
+	 *
 	 * @param thread a thread
 	 * @return a label for the given thread
 	 */
@@ -158,7 +158,7 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	    }
 	    return label;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */

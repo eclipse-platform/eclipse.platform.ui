@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -41,12 +41,12 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 
     final private boolean fAccessModeEnabled;
     final private boolean fModificationModeEnabled;
-    
+
     PDAToggleWatchpointsTarget(boolean access, boolean modification) {
         fAccessModeEnabled = access;
         fModificationModeEnabled = modification;
     }
-    
+
     @Override
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
         if (super.canToggleWatchpoints(part, selection)) {
@@ -59,16 +59,16 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
         }
         return false;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	    String[] variableAndFunctionName = getVariableAndFunctionName(part, selection);
-	    
+
 	    if (variableAndFunctionName != null && part instanceof ITextEditor && selection instanceof ITextSelection) {
-	    	// Selection inside text editor.  Create a watchpoint based on 
+	    	// Selection inside text editor.  Create a watchpoint based on
 	    	// current source line.
 	        ITextEditor editorPart = (ITextEditor)part;
 	        int lineNumber = ((ITextSelection)selection).getStartLine();
@@ -76,34 +76,34 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	        String var = variableAndFunctionName[0];
 	        String fcn = variableAndFunctionName[1];
 	        toggleWatchpoint(resource, lineNumber, fcn, var, fAccessModeEnabled, fModificationModeEnabled);
-	    } else if (selection instanceof IStructuredSelection && 
-	               ((IStructuredSelection)selection).getFirstElement() instanceof PDAVariable ) 
+	    } else if (selection instanceof IStructuredSelection &&
+	               ((IStructuredSelection)selection).getFirstElement() instanceof PDAVariable )
 	    {
-	        // Selection is inside a variables view.  Create a watchpoint 
+	        // Selection is inside a variables view.  Create a watchpoint
 	        // using information from  the variable.  Retrieving information
-	        // from the model requires performing source lookup which should be 
+	        // from the model requires performing source lookup which should be
 	        // done on a background thread.
 	        final PDAVariable var = (PDAVariable)((IStructuredSelection)selection).getFirstElement();
 	        final PDAStackFrame frame = var.getStackFrame();
-	        final Shell shell = part.getSite().getShell(); 
-	        
+	        final Shell shell = part.getSite().getShell();
+
 			new Job("Toggle PDA Watchpoint") { //$NON-NLS-1$
 	            { setSystem(true); }
-	            
+
 	            @Override
 				protected IStatus run(IProgressMonitor monitor) {
 	                try {
     	                IFile file = getResource(var.getStackFrame());
     	                String varName = var.getName();
     	                int line = findLine(file, varName);
-    	                toggleWatchpoint(file, line, frame.getName(), varName, 
+    	                toggleWatchpoint(file, line, frame.getName(), varName,
     	                    fAccessModeEnabled, fModificationModeEnabled);
 	                } catch (final CoreException e) {
 	                    // Need to switch back to the UI thread to show the error
 	                    // dialog.
 						new WorkbenchJob(shell.getDisplay(), "Toggle PDA Watchpoint") { //$NON-NLS-1$
 	                        { setSystem(true); }
-	                        
+
 	                        @Override
 							public IStatus runInUIThread(IProgressMonitor submonitor) {
 								ErrorDialog.openError(shell, "Failed to create PDA watchpoint", "Failed to create PDA watchpoint.\n", e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -125,7 +125,7 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	    }
 	    return null;
 	}
-	
+
 	private int findLine(IFile file, String var) throws CoreException {
 	    int lineNum = 0;
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()))) {
@@ -145,7 +145,7 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 		}
 		return lineNum;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
@@ -155,9 +155,9 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
             toggleWatchpoints(part, selection);
         } else {
             toggleLineBreakpoints(part, selection);
-        }    
+        }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
