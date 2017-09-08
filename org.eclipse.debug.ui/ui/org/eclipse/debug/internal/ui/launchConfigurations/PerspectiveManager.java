@@ -219,25 +219,31 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	        if (asyncDisplay == null || asyncDisplay.isDisposed()) {
 	            return Status.CANCEL_STATUS;
 	        }
-			asyncDisplay.asyncExec(() -> {
-				IStatus result = null;
-				Throwable throwable = null;
-				try {
-					if (monitor.isCanceled()) {
-						result = Status.CANCEL_STATUS;
-					} else {
-						result = runInUIThread(monitor);
-					}
+	        asyncDisplay.asyncExec(new Runnable() {
+	            @Override
+				public void run() {
+	                IStatus result = null;
+	                Throwable throwable = null;
+	                try {
+	                    if (monitor.isCanceled()) {
+							result = Status.CANCEL_STATUS;
+						} else {
+	                        result = runInUIThread(monitor);
+	                    }
 
-				} catch (Throwable t) {
-					throwable = t;
-				} finally {
-					if (result == null) {
-						result = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, LaunchConfigurationsMessages.PerspectiveManager_Error_1, throwable);
-					}
-					done(result);
-				}
-			});
+	                } catch(Throwable t){
+	                	throwable = t;
+	                } finally {
+	                    if (result == null) {
+							result = new Status(IStatus.ERROR,
+	                                PlatformUI.PLUGIN_ID, IStatus.ERROR,
+	                                LaunchConfigurationsMessages.PerspectiveManager_Error_1,
+	                                throwable);
+						}
+	                    done(result);
+	                }
+	            }
+	        });
 	        return Job.ASYNC_FINISH;
 		}
 
@@ -300,17 +306,20 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	@Override
 	public synchronized void launchRemoved(final ILaunch launch) {
-		ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
-		if (trigger != null) {
-			trigger.removeSuspendTriggerListener(this);
-		}
-		Runnable r = () -> {
-			IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
-			if (activations != null) {
-				for (int i = 0; i < activations.length; i++) {
-					IContextActivation activation = activations[i];
-					activation.getContextService().deactivateContext(activation);
-				}
+        ISuspendTrigger trigger = launch.getAdapter(ISuspendTrigger.class);
+        if (trigger != null) {
+            trigger.removeSuspendTriggerListener(this);
+        }
+        Runnable r= new Runnable() {
+			@Override
+			public void run() {
+		        IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
+		        if (activations != null) {
+		        	for (int i = 0; i < activations.length; i++) {
+						IContextActivation activation = activations[i];
+						activation.getContextService().deactivateContext(activation);
+					}
+		        }
 			}
 		};
 		async(r);
@@ -420,9 +429,13 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 *  failure is associated with
 	 */
 	protected void switchFailed(final Throwable t, final String launchName) {
-		sync(() -> DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.PerspectiveManager_Error_1,
+		sync(new Runnable() {
+			@Override
+			public void run() {
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.PerspectiveManager_Error_1,
  MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4, new Object[] { launchName }),
-				t));
+				 t);
+			}});
 	}
 
 	/**

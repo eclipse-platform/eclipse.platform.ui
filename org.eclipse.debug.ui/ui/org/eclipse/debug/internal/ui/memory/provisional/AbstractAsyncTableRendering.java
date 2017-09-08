@@ -22,12 +22,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -63,6 +65,7 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentDescriptor;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -74,6 +77,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.debug.ui.memory.MemoryRenderingElement;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -83,8 +87,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -98,6 +104,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -129,6 +136,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
@@ -1143,12 +1151,15 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	private void topVisibleAddressChanged(final BigInteger address) {
-		final Runnable runnable = () -> {
-			if (fTableViewer.getTable().isDisposed()) {
-				return;
-			}
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				if (fTableViewer.getTable().isDisposed()) {
+					return;
+				}
 
-			doTopVisibleAddressChanged(address);
+				doTopVisibleAddressChanged(address);
+			}
 		};
 		runOnUIThread(runnable);
 	}
@@ -1219,23 +1230,27 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	private void selectedAddressChanged(final BigInteger address) {
-		Runnable runnable = () -> {
+		Runnable runnable = new Runnable() {
 
-			if (fTableViewer.getTable().isDisposed()) {
-				return;
-			}
+			@Override
+			public void run() {
 
-			// call this to make the table viewer to reload when needed
-			int i = fTableViewer.indexOf(address);
-			if (i < 0) {
-				// the model may not have been populated yet,
-				// try to predict if the address will be in the buffer
-				boolean contained = isAddressBufferred(address);
-				if (!contained) {
-					topVisibleAddressChanged(address);
+				if (fTableViewer.getTable().isDisposed()) {
+					return;
 				}
+
+				// call this to make the table viewer to reload when needed
+				int i = fTableViewer.indexOf(address);
+				if (i < 0) {
+					// the model may not have been populated yet,
+					// try to predict if the address will be in the buffer
+					boolean contained = isAddressBufferred(address);
+					if (!contained) {
+						topVisibleAddressChanged(address);
+					}
+				}
+				fTableViewer.setSelection(address);
 			}
-			fTableViewer.setSelection(address);
 		};
 
 		runOnUIThread(runnable);
@@ -2135,23 +2150,26 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 		}
 
-		Runnable runnable = () -> {
-			showTable();
-			if (keyIndex >= 0) {
-				// address is within range, set cursor and reveal
-				fTableViewer.setSelection(address);
-				updateSyncTopAddress(getTopVisibleAddress());
-				updateSyncSelectedAddress(address);
-			} else {
-				// load at the address
-				fTableViewer.setSelection(address);
-				reloadTable(address);
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				showTable();
+				if (keyIndex >= 0) {
+					// address is within range, set cursor and reveal
+					fTableViewer.setSelection(address);
+					updateSyncTopAddress(getTopVisibleAddress());
+					updateSyncSelectedAddress(address);
+				} else {
+					// load at the address
+					fTableViewer.setSelection(address);
+					reloadTable(address);
 
-				updateSyncSelectedAddress(address);
-				if (!isDynamicLoad()) {
-					updateSyncPageStartAddress(address);
+					updateSyncSelectedAddress(address);
+					if (!isDynamicLoad()) {
+						updateSyncPageStartAddress(address);
+					}
+					updateSyncTopAddress(address);
 				}
-				updateSyncTopAddress(address);
 			}
 		};
 		runOnUIThread(runnable);
@@ -2384,13 +2402,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 		fContentDescriptor.setLoadAddress(address);
 		final BigInteger finaladdress = address;
-		Runnable runnable = () -> {
-			if (fTableViewer.getTable().isDisposed()) {
-				return;
-			}
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				if (fTableViewer.getTable().isDisposed()) {
+					return;
+				}
 
-			fTableViewer.setTopIndex(finaladdress);
-			refresh();
+				fTableViewer.setTopIndex(finaladdress);
+				refresh();
+			}
 		};
 
 		runOnUIThread(runnable);
@@ -2545,13 +2566,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return;
 		}
 
-		Display.getDefault().asyncExec(() -> {
-			int rowSize = getBytesPerLine();
-			if (rowSize < newColumnSize) {
-				rowSize = newColumnSize;
-			}
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				int rowSize = getBytesPerLine();
+				if (rowSize < newColumnSize) {
+					rowSize = newColumnSize;
+				}
 
-			format(rowSize, newColumnSize);
+				format(rowSize, newColumnSize);
+			}
 		});
 	}
 
@@ -2564,13 +2588,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return;
 		}
 
-		Display.getDefault().asyncExec(() -> {
-			int colSize = getBytesPerColumn();
-			if (newRowSize < colSize) {
-				colSize = newRowSize;
-			}
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				int colSize = getBytesPerColumn();
+				if (newRowSize < colSize) {
+					colSize = newRowSize;
+				}
 
-			format(newRowSize, colSize);
+				format(newRowSize, colSize);
+			}
 		});
 	}
 

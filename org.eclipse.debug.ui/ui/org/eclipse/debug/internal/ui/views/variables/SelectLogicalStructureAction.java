@@ -54,19 +54,21 @@ public class SelectLogicalStructureAction extends Action {
 		if (!getView().isAvailable()) {
 			return;
 		}
-		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), () -> {
-			// Checking this action sets the type to fType, unchecking it sets
-			// the type
-			// to null ("none selected")
-			ILogicalStructureType type = null;
-			IAction action = getView().getAction("ToggleContentProviders"); //$NON-NLS-1$
-			if (isChecked()) {
-				type = fType;
-				action.setChecked(true);
+		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+			@Override
+			public void run() {
+                // Checking this action sets the type to fType, unchecking it sets the type
+                // to null ("none selected")
+                ILogicalStructureType type= null;
+				IAction action = getView().getAction("ToggleContentProviders"); //$NON-NLS-1$
+                if (isChecked()) {
+                    type= fType;
+					action.setChecked(true);
+                }
+				action.run();
+                DebugPlugin.setDefaultStructureType(fAvailableTypes, type);
+				getView().getViewer().refresh();
 			}
-			action.run();
-			DebugPlugin.setDefaultStructureType(fAvailableTypes, type);
-			getView().getViewer().refresh();
 		});
 	}
 

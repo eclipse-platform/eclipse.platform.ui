@@ -59,9 +59,12 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		fWindow.getPartService().addPartListener(this);
 
 		// need to register source provider on the UI thread (bug 438396)
-		window.getShell().getDisplay().asyncExec(() -> {
-			if (fWindow != null) {
-				fSourceProvider = new DebugContextSourceProvider(DebugWindowContextService.this, evaluationService);
+		window.getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (fWindow != null) {
+					fSourceProvider = new DebugContextSourceProvider(DebugWindowContextService.this, evaluationService);
+				}
 			}
 		});
 	}

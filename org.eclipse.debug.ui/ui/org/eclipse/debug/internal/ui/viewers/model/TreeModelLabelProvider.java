@@ -100,17 +100,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 */
 	private List<ILabelUpdate> fUpdatesInProgress = new ArrayList<ILabelUpdate>();
 
-    private final class RunnableImplementation implements Runnable {
-		@Override
-		public void run() {
-		    if (isDisposed()) {
-				return;
-			}
-		    startRequests(this);
-		}
-	}
-
-	/**
+    /**
      * Delta visitor actively cancels the outstanding label updates for
      * elements that are changed and are about to be updated.
      */
@@ -273,25 +263,33 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 
 	@Override
 	public boolean update(TreePath elementPath) {
-		Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
 
-		cancelPathUpdates(elementPath);
+	    cancelPathUpdates(elementPath);
 
 		String[] visibleColumns = fViewer.getVisibleColumns();
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
 		if (presentation != null) {
 			List<ILabelUpdate> updates = fPendingUpdates.get(presentation);
-			if (updates == null) {
+		    if (updates == null) {
 				updates = new LinkedList<ILabelUpdate>();
-				fPendingUpdates.put(presentation, updates);
-			}
-			updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
-			fPendingUpdatesRunnable = new RunnableImplementation();
-			fViewer.getDisplay().asyncExec(fPendingUpdatesRunnable);
+		        fPendingUpdates.put(presentation, updates);
+		    }
+		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
+		    fPendingUpdatesRunnable = new Runnable() {
+		        @Override
+				public void run() {
+		            if (isDisposed()) {
+						return;
+					}
+                    startRequests(this);
+		        }
+		    };
+		    fViewer.getDisplay().asyncExec(fPendingUpdatesRunnable);
 			return true;
 		} else {
-			return false;
+		    return false;
 		}
 	}
 
@@ -389,38 +387,41 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		return fViewer.getPresentationContext();
 	}
 
-	/**
-	 * A label update is complete.
-	 *
-	 * @param update Update that is to be completed.
-	 */
-	synchronized void complete(ILabelUpdate update) {
-		if (fViewer == null) {
+    /**
+     * A label update is complete.
+     *
+     * @param update Update that is to be completed.
+     */
+    synchronized void complete(ILabelUpdate update) {
+        if (fViewer == null) {
 			return;
 		}
 
 		if (fComplete == null) {
 			fComplete = new LinkedList<ILabelUpdate>();
-			fViewer.getDisplay().asyncExec(() -> {
-				if (isDisposed()) {
-					return;
-				}
-				List<ILabelUpdate> updates = null;
-				synchronized (TreeModelLabelProvider.this) {
-					updates = fComplete;
-					fComplete = null;
-				}
-				for (ILabelUpdate itrUpdate : updates) {
-					if (itrUpdate.isCanceled()) {
-						updateComplete(itrUpdate);
-					} else {
-						((LabelUpdate) itrUpdate).performUpdate();
+			fViewer.getDisplay().asyncExec(new Runnable() {
+			    @Override
+				public void run() {
+			        if (isDisposed()) {
+						return;
 					}
-				}
+					List<ILabelUpdate> updates = null;
+                    synchronized (TreeModelLabelProvider.this) {
+                        updates = fComplete;
+                        fComplete = null;
+                    }
+					for (ILabelUpdate itrUpdate : updates) {
+                        if (itrUpdate.isCanceled()) {
+                            updateComplete(itrUpdate);
+                        } else {
+							((LabelUpdate) itrUpdate).performUpdate();
+                        }
+                    }
+			    }
 			});
 		}
 		fComplete.add(update);
-	}
+    }
 
 	@Override
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {

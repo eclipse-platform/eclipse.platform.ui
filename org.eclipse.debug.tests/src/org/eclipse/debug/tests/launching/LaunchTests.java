@@ -64,34 +64,50 @@ public class LaunchTests extends AbstractLaunchTest {
 			}
 		};
 
-		readIsTerminatedTask = () -> launch.isTerminated();
-
-		readIsDisconnectedTask = () -> launch.isDisconnected();
-
-		writeProcessesTask = () -> {
-			IProcess process = createProcessProxy();
-			launch.addProcess(process);
-			launch.removeProcess(process);
-			try {
-				Thread.sleep(0, 1);
-			} catch (InterruptedException e) {
-				//
+		readIsTerminatedTask = new Runnable() {
+			@Override
+			public void run() {
+				launch.isTerminated();
 			}
-			launch.addProcess(process);
-			launch.removeProcess(process);
 		};
 
-		writeDebugTargetsTask = () -> {
-			IDebugTarget target2 = createDebugTargetProxy();
-			launch.addDebugTarget(target2);
-			launch.removeDebugTarget(target2);
-			try {
-				Thread.sleep(0, 1);
-			} catch (InterruptedException e) {
-				//
+		readIsDisconnectedTask = new Runnable() {
+			@Override
+			public void run() {
+				launch.isDisconnected();
 			}
-			launch.addDebugTarget(target2);
-			launch.removeDebugTarget(target2);
+		};
+
+		writeProcessesTask = new Runnable() {
+			@Override
+			public void run() {
+				IProcess process = createProcessProxy();
+				launch.addProcess(process);
+				launch.removeProcess(process);
+				try {
+					Thread.sleep(0, 1);
+				} catch (InterruptedException e) {
+					//
+				}
+				launch.addProcess(process);
+				launch.removeProcess(process);
+			}
+		};
+
+		writeDebugTargetsTask = new Runnable() {
+			@Override
+			public void run() {
+				IDebugTarget target2 = createDebugTargetProxy();
+				launch.addDebugTarget(target2);
+				launch.removeDebugTarget(target2);
+				try {
+					Thread.sleep(0, 1);
+				} catch (InterruptedException e) {
+					//
+				}
+				launch.addDebugTarget(target2);
+				launch.removeDebugTarget(target2);
+			}
 		};
 	}
 

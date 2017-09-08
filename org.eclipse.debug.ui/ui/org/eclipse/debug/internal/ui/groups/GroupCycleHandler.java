@@ -27,10 +27,12 @@ public class GroupCycleHandler implements IStatusHandler {
 
 	@Override
 	public Object handleStatus(IStatus status, final Object source) throws CoreException {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(
-				() -> MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
-						, DebugUIMessages.GroupLaunch_Error, NLS.bind(DebugUIMessages.GroupLaunch_Cycle, source.toString()))
-		);
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.GroupLaunch_Error, NLS.bind(DebugUIMessages.GroupLaunch_Cycle, source.toString()));
+			}
+		});
 		return null;
 	}
 

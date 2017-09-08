@@ -44,24 +44,27 @@ public abstract class ToggleFilterAction extends Action {
 		if (getViewer().getControl().isDisposed()) {
 			return;
 		}
-		BusyIndicator.showWhile(getViewer().getControl().getDisplay(), () -> {
-			if (on) {
-				ViewerFilter filter = getViewerFilter();
-				ViewerFilter[] filters = getViewer().getFilters();
-				boolean alreadyAdded = false;
-				for (int i = 0; i < filters.length; i++) {
-					ViewerFilter addedFilter = filters[i];
-					if (addedFilter.equals(filter)) {
-						alreadyAdded = true;
-						break;
+		BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				if (on) {
+					ViewerFilter filter= getViewerFilter();
+					ViewerFilter[] filters= getViewer().getFilters();
+					boolean alreadyAdded= false;
+					for (int i= 0; i < filters.length; i++) {
+						ViewerFilter addedFilter= filters[i];
+						if (addedFilter.equals(filter)) {
+							alreadyAdded= true;
+							break;
+						}
 					}
-				}
-				if (!alreadyAdded) {
-					getViewer().addFilter(filter);
-				}
+					if (!alreadyAdded) {
+						getViewer().addFilter(filter);
+					}
 
-			} else {
-				getViewer().removeFilter(getViewerFilter());
+				} else {
+					getViewer().removeFilter(getViewerFilter());
+				}
 			}
 		});
 	}

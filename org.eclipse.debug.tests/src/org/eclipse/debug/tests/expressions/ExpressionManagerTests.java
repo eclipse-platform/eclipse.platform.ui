@@ -538,23 +538,29 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 	public void testConcurrentAccess() throws InterruptedException {
 		final boolean[] done = new boolean[]{false};
 		final Exception[] ex = new Exception[]{null};
-		Runnable add = () -> {
-			try {
-				for (int i = 0; i < 1000; i++) {
-					getManager().addExpression(getManager().newWatchExpression(Integer.toHexString(i)));
+		Runnable add = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					for (int i = 0; i < 1000; i++) {
+						getManager().addExpression(getManager().newWatchExpression(Integer.toHexString(i)));
+					}
+					done[0] = true;
+				} catch (Exception e) {
+					ex[0] = e;
 				}
-				done[0] = true;
-			} catch (Exception e) {
-				ex[0] = e;
 			}
 		};
-		Runnable remove = () -> {
-			try {
-				do {
-					getManager().removeExpressions(getManager().getExpressions());
-				} while (!done[0] || getManager().getExpressions().length > 0);
-			} catch (Exception e) {
-				ex[0] = e;
+		Runnable remove = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					do {
+						getManager().removeExpressions(getManager().getExpressions());
+					} while (!done[0] || getManager().getExpressions().length > 0);
+				} catch (Exception e) {
+					ex[0] = e;
+				}
 			}
 		};
 		Thread t1 = new Thread(add);

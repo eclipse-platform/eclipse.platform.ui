@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -24,14 +25,17 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -214,26 +218,27 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         return new String[] {IDebugUIConstants.ID_DEBUG_VIEW};
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.
-	 * eclipse.debug.core.DebugEvent[])
-	 */
-	@Override
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+     */
+    @Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getSource().equals(getProcess())) {
-				Runnable r = () -> {
-					if (fTerminate != null) {
-						fTerminate.update();
-					}
-				};
+        for (int i = 0; i < events.length; i++) {
+            DebugEvent event = events[i];
+            if (event.getSource().equals(getProcess())) {
+                Runnable r = new Runnable() {
+                    @Override
+					public void run() {
+                        if (fTerminate != null) {
+                            fTerminate.update();
+                        }
+                    }
+                };
 
-				DebugUIPlugin.getStandardDisplay().asyncExec(r);
-			}
-		}
-	}
+                DebugUIPlugin.getStandardDisplay().asyncExec(r);
+            }
+        }
+    }
 
     protected IProcess getProcess() {
         return fConsole != null ? fConsole.getProcess() : null;

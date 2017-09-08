@@ -266,7 +266,12 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 		disableRedraw();
 		try {
-			preservingSelection(() -> buildItemChain(input));
+		    preservingSelection(new Runnable() {
+		        @Override
+				public void run() {
+		            buildItemChain(input);
+		        }
+		    });
 		} finally {
 			enableRedraw();
 		}

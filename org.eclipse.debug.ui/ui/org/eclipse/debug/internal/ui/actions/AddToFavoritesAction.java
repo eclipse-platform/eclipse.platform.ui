@@ -169,19 +169,22 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	@Override
 	public void run() {
 		final CoreException[] ex = new CoreException[1];
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), () -> {
-			try {
-				List<String> list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
-				if (list == null) {
-					list = new ArrayList<String>();
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				try {
+					List<String> list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
+					if (list == null) {
+						list = new ArrayList<String>();
+					}
+					list.add(getGroup().getIdentifier());
+					ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();
+					copy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);
+					copy.doSave();
+					setEnabled(false);
+				} catch (CoreException e) {
+					ex[0] = e;
 				}
-				list.add(getGroup().getIdentifier());
-				ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();
-				copy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);
-				copy.doSave();
-				setEnabled(false);
-			} catch (CoreException e) {
-				ex[0] = e;
 			}
 		});
 		if (ex[0] != null) {

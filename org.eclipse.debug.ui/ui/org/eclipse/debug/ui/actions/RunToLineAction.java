@@ -170,7 +170,13 @@ public class RunToLineAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void update() {
-		DebugUIPlugin.getStandardDisplay().asyncExec(() -> setEnabled(isTargetEnabled()));
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				setEnabled(isTargetEnabled());
+			}
+		};
+		DebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 
 	private boolean isTargetEnabled() {

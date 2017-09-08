@@ -47,21 +47,24 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	 */
 	@Override
 	public void done() {
+
 		ITreeModelViewer viewer = getContentProvider().getViewer();
-		if (viewer == null) {
-			return; // disposed
-		}
+		if (viewer == null) return;  // disposed
 		if (viewer.getDisplay().getThread() == Thread.currentThread()) {
-			doComplete();
+		    doComplete();
 		} else {
-			viewer.getDisplay().asyncExec(() -> doComplete());
+		    viewer.getDisplay().asyncExec(new Runnable() {
+		        @Override
+				public void run() {
+		            doComplete();
+		        }
+		    });
 		}
+
 	}
 
 	private void doComplete() {
-        if (getContentProvider().isDisposed()) {
-			return;
-		}
+        if (getContentProvider().isDisposed()) return;
 
         if (!isCanceled() && (getStatus() == null || getStatus().isOK())) {
             // replace the element with a memento

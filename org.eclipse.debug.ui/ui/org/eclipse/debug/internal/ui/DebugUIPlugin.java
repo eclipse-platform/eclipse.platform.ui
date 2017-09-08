@@ -398,11 +398,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
-		BusyIndicator.showWhile(null, () -> {
-			try {
-				ret[0] = element.createExecutableExtension(classAttribute);
-			} catch (CoreException e) {
-				exc[0] = e;
+		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					ret[0] = element.createExecutableExtension(classAttribute);
+				} catch (CoreException e) {
+					exc[0] = e;
+				}
 			}
 		});
 		if (exc[0] != null) {
@@ -581,12 +584,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
 		// do the asynchronous exec last - see bug 209920
 		getStandardDisplay().asyncExec(
-				() -> {
-					// initialize the selected resource `
-					SelectedResourceManager.getDefault();
-					// forces launch shortcuts to be initialized so their
-					// key-bindings work
-					getLaunchConfigurationManager().getLaunchShortcuts();
+				new Runnable() {
+					@Override
+					public void run() {
+						//initialize the selected resource `
+						SelectedResourceManager.getDefault();
+						// forces launch shortcuts to be initialized so their key-bindings work
+						getLaunchConfigurationManager().getLaunchShortcuts();
+					}
 				});
 	}
 
@@ -1260,7 +1265,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 					if (group == null) {
 						return status;
 					}
-					Runnable r = () -> DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
+					Runnable r = new Runnable() {
+						@Override
+						public void run() {
+							DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
+						}
+					};
 					DebugUIPlugin.getStandardDisplay().asyncExec(r);
 				}
 				finally	{

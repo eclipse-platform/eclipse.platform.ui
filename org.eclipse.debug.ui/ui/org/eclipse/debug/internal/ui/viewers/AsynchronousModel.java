@@ -608,14 +608,17 @@ public abstract class AsynchronousModel {
 
         //update viewer outside the lock
     	final ModelNode[] finalUnmap = unmap;
-		preservingSelection(() -> {
-			if (finalUnmap != null) {
-				for (int i = 0; i < finalUnmap.length; i++) {
-					viewer.unmapNode(finalUnmap[i]);
-				}
-			}
-			viewer.nodeChildrenChanged(parentNode);
-		});
+        preservingSelection(new Runnable() {
+            @Override
+			public void run() {
+            	if (finalUnmap != null) {
+	            	for (int i = 0; i < finalUnmap.length; i++) {
+						viewer.unmapNode(finalUnmap[i]);
+					}
+            	}
+            	viewer.nodeChildrenChanged(parentNode);
+            }
+        });
 
 	}
 

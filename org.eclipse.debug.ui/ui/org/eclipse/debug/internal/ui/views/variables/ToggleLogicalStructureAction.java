@@ -51,7 +51,12 @@ public class ToggleLogicalStructureAction extends Action {
 			return;
 		}
 		getView().setShowLogicalStructure(isChecked());
-		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), () -> getView().getViewer().refresh());
+		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				getView().getViewer().refresh();
+			}
+		});
 	}
 
 	/* (non-Javadoc)

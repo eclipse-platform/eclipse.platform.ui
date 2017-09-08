@@ -306,49 +306,53 @@ public class InternalVirtualTreeModelViewer extends Viewer
     @Override
 	public void remove(final Object parentOrTreePath, final int index) {
 		final List<TreePath> oldSelection = new LinkedList<TreePath>(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
-		preservingSelection(() -> {
-			TreePath removedPath = null;
-			VirtualItem[] parentItems = findItems(parentOrTreePath);
-			for (int i = 0; i < parentItems.length; i++) {
-				VirtualItem parentItem = parentItems[i];
-				if (parentItem.isDisposed()) {
-					continue;
-				}
-
-				// Parent item is not expanded so just update its contents so
-				// that
-				// the plus sign gets refreshed.
-				if (!parentItem.getExpanded()) {
-					parentItem.setNeedsCountUpdate();
-					parentItem.setItemCount(-1);
-					virtualLazyUpdateHasChildren(parentItem);
-				}
-
-				if (index < parentItem.getItemCount()) {
-					VirtualItem item = parentItem.getItem(new VirtualItem.Index(index));
-
-					if (item.getData() != null) {
-						removedPath = getTreePathFromItem(item);
-						disassociate(item);
+        preservingSelection(new Runnable() {
+            @Override
+			public void run() {
+                TreePath removedPath = null;
+                VirtualItem[] parentItems = findItems(parentOrTreePath);
+                for (int i = 0; i < parentItems.length; i++) {
+                    VirtualItem parentItem = parentItems[i];
+                    if (parentItem.isDisposed()) {
+						continue;
 					}
-					parentItem.remove(item.getIndex());
-				}
-			}
 
-			if (removedPath != null) {
-				boolean removed = false;
-				for (Iterator<TreePath> it = oldSelection.iterator(); it.hasNext();) {
-					TreePath path = it.next();
-					if (path.startsWith(removedPath, null)) {
-						it.remove();
-						removed = true;
-					}
-				}
-				if (removed) {
-					setSelection(new TreeSelection(oldSelection.toArray(new TreePath[oldSelection.size()])), false);
-				}
-			}
-		});
+                    // Parent item is not expanded so just update its contents so that
+                    // the plus sign gets refreshed.
+                    if (!parentItem.getExpanded()) {
+                        parentItem.setNeedsCountUpdate();
+                        parentItem.setItemCount(-1);
+                        virtualLazyUpdateHasChildren(parentItem);
+                    }
+
+                    if (index < parentItem.getItemCount()) {
+                        VirtualItem item =parentItem.getItem(new VirtualItem.Index(index));
+
+                        if (item.getData() != null) {
+                            removedPath = getTreePathFromItem(item);
+                            disassociate(item);
+                        }
+                        parentItem.remove(item.getIndex());
+                    }
+                }
+
+                if (removedPath != null) {
+                    boolean removed = false;
+					for (Iterator<TreePath> it = oldSelection.iterator(); it.hasNext();) {
+                        TreePath path = it.next();
+                        if (path.startsWith(removedPath, null)) {
+                            it.remove();
+                            removed = true;
+                        }
+                    }
+                    if (removed) {
+                        setSelection(
+                            new TreeSelection(oldSelection.toArray(new TreePath[oldSelection.size()])),
+                            false);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -545,17 +549,20 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-	private void validate() {
-		if (fValidateRunnable == null) {
-			fValidateRunnable = () -> {
-				if (!fTree.isDisposed()) {
-					fValidateRunnable = null;
-					fTree.validate();
-				}
-			};
-			getDisplay().asyncExec(fValidateRunnable);
-		}
-	}
+    private void validate() {
+        if (fValidateRunnable == null) {
+            fValidateRunnable = new Runnable() {
+                @Override
+				public void run() {
+                    if (!fTree.isDisposed()) {
+                        fValidateRunnable = null;
+                        fTree.validate();
+                    }
+                }
+            };
+            getDisplay().asyncExec(fValidateRunnable);
+        }
+    }
 
     @Override
 	protected void inputChanged(Object input, Object oldInput) {
@@ -621,51 +628,57 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
 
-	@Override
+    @Override
 	public void setChildCount(final Object elementOrTreePath, final int count) {
-		preservingSelection(() -> {
-			VirtualItem[] items = findItems(elementOrTreePath);
-			for (int i = 0; i < items.length; i++) {
-				VirtualItem[] children = items[i].getItems();
-				for (int j = 0; j < children.length; j++) {
-					if (children[j].getData() != null && children[j].getIndex().intValue() >= count) {
-						disassociate(children[j]);
-					}
-				}
+        preservingSelection(new Runnable() {
+            @Override
+			public void run() {
+                VirtualItem[] items = findItems(elementOrTreePath);
+                for (int i = 0; i < items.length; i++) {
+                    VirtualItem[] children = items[i].getItems();
+                    for (int j = 0; j < children.length; j++) {
+                        if (children[j].getData() != null && children[j].getIndex().intValue() >= count) {
+                            disassociate(children[j]);
+                        }
+                    }
 
-				items[i].setItemCount(count);
-			}
-		});
-		validate();
-	}
+                    items[i].setItemCount(count);
+                }
+            }
+        });
+        validate();
+    }
 
-	@Override
+    @Override
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
-		preservingSelection(() -> {
-			VirtualItem[] items = findItems(elementOrTreePath);
-			for (int i = 0; i < items.length; i++) {
-				VirtualItem item = items[i];
+        preservingSelection(new Runnable() {
+            @Override
+			public void run() {
+                VirtualItem[] items = findItems(elementOrTreePath);
+                for (int i = 0; i < items.length; i++) {
+                    VirtualItem item = items[i];
 
-				if (!hasChildren) {
-					VirtualItem[] children = item.getItems();
-					for (int j = 0; j < children.length; j++) {
-						if (children[j].getData() != null) {
-							disassociate(children[j]);
-						}
-					}
-				}
+                    if (!hasChildren) {
+                        VirtualItem[] children = item.getItems();
+                        for (int j = 0; j < children.length; j++) {
+                            if (children[j].getData() != null) {
+                                disassociate(children[j]);
+                            }
+                        }
+                    }
 
-				item.setHasItems(hasChildren);
-				if (hasChildren) {
-					if (!item.getExpanded()) {
-						item.setItemCount(-1);
-					} else {
-						virtualLazyUpdateChildCount(item);
-					}
-				}
-			}
-		});
-	}
+                    item.setHasItems(hasChildren);
+                    if (hasChildren) {
+                        if (!item.getExpanded()) {
+                            item.setItemCount(-1);
+                        } else {
+                            virtualLazyUpdateChildCount(item);
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     @Override
 	public boolean getHasChildren(Object elementOrTreePath) {

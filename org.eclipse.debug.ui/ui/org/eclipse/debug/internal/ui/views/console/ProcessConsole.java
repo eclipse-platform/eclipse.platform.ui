@@ -456,10 +456,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             setWaterMarks(lowWater, highWater);
         }
 
-		DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
-			setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
-			setBackground(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
-		});
+        DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+            @Override
+			public void run() {
+                setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
+                setBackground(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
+            }
+        });
     }
 
     /**

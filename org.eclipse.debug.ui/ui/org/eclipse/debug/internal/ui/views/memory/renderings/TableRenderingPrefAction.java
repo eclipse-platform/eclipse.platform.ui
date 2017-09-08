@@ -50,10 +50,13 @@ public class TableRenderingPrefAction extends ActionDelegate implements IViewAct
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
 		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), () -> {
-			dialog.create();
-			dialog.setMessage(targetNode.getLabelText());
-			result[0] = (dialog.open() == Window.OK);
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				result[0]= (dialog.open() == Window.OK);
+			}
 		});
 	}
 

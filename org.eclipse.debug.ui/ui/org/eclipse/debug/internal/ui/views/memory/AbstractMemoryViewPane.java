@@ -269,19 +269,22 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				// tab folders should be removed from our map.
 				final IMemoryBlockRetrieval ret = (IMemoryBlockRetrieval) source;
 				if (ret != null) {
-					Display.getDefault().asyncExec(() -> {
-						if (isDisposed()) {
-							return;
-						}
+					Display.getDefault().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							if (isDisposed()) {
+								return;
+							}
 
-						Integer key = MemoryViewUtil.getHashCode(ret);
-						Object folder = fTabFolderForDebugView.get(key);
+							Integer key = MemoryViewUtil.getHashCode(ret);
+							Object folder = fTabFolderForDebugView.get(key);
 
-						if (folder != null && folder != fEmptyTabFolder) {
-							// remove the tab folder , and all contained tab
-							// items
-							disposeOfFolder((CTabFolder) folder);
-							fTabFolderForDebugView.remove(key);
+							if (folder != null && folder != fEmptyTabFolder) {
+								// remove the tab folder , and all contained tab
+								// items
+								disposeOfFolder((CTabFolder) folder);
+								fTabFolderForDebugView.remove(key);
+							}
 						}
 					});
 				}

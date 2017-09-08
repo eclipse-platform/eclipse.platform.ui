@@ -101,19 +101,22 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		fIsShift = isShift;
 	    final MultiStatus status=
 			new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
-		BusyIndicator.showWhile(Display.getCurrent(), () -> {
-			Iterator<?> selectionIter = selection.iterator();
-			while (selectionIter.hasNext()) {
-				Object element = selectionIter.next();
-				try {
-					// Action's enablement could have been changed since
-					// it was last enabled. Check that the action is still
-					// enabled before running the action.
-					if (isEnabledFor(element)) {
-						doAction(element);
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			@Override
+			public void run() {
+				Iterator<?> selectionIter = selection.iterator();
+				while (selectionIter.hasNext()) {
+					Object element= selectionIter.next();
+					try {
+						// Action's enablement could have been changed since
+						// it was last enabled.  Check that the action is still
+						// enabled before running the action.
+						if (isEnabledFor(element)) {
+							doAction(element);
+						}
+					} catch (DebugException e) {
+						status.merge(e.getStatus());
 					}
-				} catch (DebugException e) {
-					status.merge(e.getStatus());
 				}
 			}
 		});

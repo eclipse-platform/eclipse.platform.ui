@@ -307,15 +307,20 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
      * @param path the path from the text widget
      */
     protected void resetSelection(final IPath path) {
-		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
-			File file = new File(path.toOSString());
-			DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING, null, true);
-			dummyparent.setPopulated();
-			DebugFileSystemElement element = new DebugFileSystemElement(FileSystemStructureProvider.INSTANCE.getLabel(file), dummyparent, file.isDirectory());
-			element.setFileSystemObject(file);
-			element.getFiles();
-			selectionGroup.setRoot(dummyparent);
-		});
+    	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				File file = new File(path.toOSString());
+				DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING, null, true);
+				dummyparent.setPopulated();
+				DebugFileSystemElement element = new DebugFileSystemElement(FileSystemStructureProvider.INSTANCE.getLabel(file),
+						dummyparent,
+						file.isDirectory());
+				element.setFileSystemObject(file);
+				element.getFiles();
+				selectionGroup.setRoot(dummyparent);
+			}
+    	});
     }
 
 	/* (non-Javadoc)

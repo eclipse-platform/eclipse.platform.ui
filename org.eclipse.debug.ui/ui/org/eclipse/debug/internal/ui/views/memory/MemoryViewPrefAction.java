@@ -48,9 +48,12 @@ public class MemoryViewPrefAction implements IViewActionDelegate {
 
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), prefManager);
 
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), () -> {
-			dialog.create();
-			dialog.open();
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
+			public void run() {
+				dialog.create();
+				dialog.open();
+			}
 		});
 
 	}

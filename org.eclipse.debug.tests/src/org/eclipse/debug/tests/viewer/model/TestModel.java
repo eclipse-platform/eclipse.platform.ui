@@ -274,7 +274,12 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         if (fQueueingUpdates) {
             fQueuedUpdates.addAll(Arrays.asList(updates));
         } else if (fDelayUpdates) {
-			Display.getDefault().asyncExec(() -> processUpdates(updates));
+        	Display.getDefault().asyncExec(new Runnable() {
+        		@Override
+				public void run() {
+        			processUpdates(updates);
+        		}
+        	});
         } else {
 			processUpdates(updates);
         }

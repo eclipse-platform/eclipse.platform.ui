@@ -285,25 +285,28 @@ class ViewerStateTracker {
 
                                 // Process start of restore in an async cycle because we may still be inside inputChanged()
                                 // call. I.e. the "input.equals(fContentProvider.getViewer().getInput())" test may fail.
-								fContentProvider.getViewer().getDisplay().asyncExec(() -> {
-									if (!fContentProvider.isDisposed() && input.equals(fContentProvider.getViewer().getInput())) {
-										ModelDelta stateDelta2 = fViewerStates.remove(keyMementoString);
-										if (stateDelta2 != null) {
-											if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-												DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
-												DebugUIPlugin.trace("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
-												notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
-											}
-											stateDelta2.setElement(input);
-											fPendingState = stateDelta2;
-											doInitialRestore(fPendingState);
-										}
-									} else {
-										if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-											DebugUIPlugin.trace("STATE RESTORE CANCELED."); //$NON-NLS-1$
-										}
-									}
-								});
+                                fContentProvider.getViewer().getDisplay().asyncExec(new Runnable() {
+                                    @Override
+									public void run() {
+                                        if (!fContentProvider.isDisposed() && input.equals(fContentProvider.getViewer().getInput())) {
+                                            ModelDelta stateDelta2 = fViewerStates.remove(keyMementoString);
+                                            if (stateDelta2 != null) {
+                                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+                                                	DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
+                                                	DebugUIPlugin.trace("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
+                                                    notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
+                                                }
+                                                stateDelta2.setElement(input);
+                                                fPendingState = stateDelta2;
+                                                doInitialRestore(fPendingState);
+                                            }
+                                        } else {
+                                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+                                            	DebugUIPlugin.trace("STATE RESTORE CANCELED."); //$NON-NLS-1$
+                                            }
+                                        }
+                                    }
+                                });
                             } else {
                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                 	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$

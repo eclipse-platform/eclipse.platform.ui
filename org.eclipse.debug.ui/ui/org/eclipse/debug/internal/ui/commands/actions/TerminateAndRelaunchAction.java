@@ -36,21 +36,24 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 
-	@Override
+    @Override
 	public void postExecute(IRequest request, final Object[] targets) {
-		if (request.getStatus() == null || request.getStatus().isOK()) {
-			DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
-				// Must be run in the UI thread since the launch can require
-				// prompting to proceed
-				for (int i = 0; i < targets.length; i++) {
-					ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
-					if (launch != null) {
-						RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
-					}
-				}
-			});
-		}
-	}
+        if (request.getStatus() == null || request.getStatus().isOK()) {
+            DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                @Override
+				public void run() {
+                    // Must be run in the UI thread since the launch can require
+                    // prompting to proceed
+                    for (int i = 0; i < targets.length; i++) {
+                        ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
+                        if (launch != null) {
+                            RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     @Override
 	protected ISelection getContext() {

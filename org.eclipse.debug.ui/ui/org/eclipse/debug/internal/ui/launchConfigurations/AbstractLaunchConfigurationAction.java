@@ -98,7 +98,15 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 				return;
 			}
 		}
-		Runnable r = () -> performAction();
+		Runnable r = new Runnable() {
+			/**
+			 * @see java.lang.Runnable#run()
+			 */
+			@Override
+			public void run() {
+				performAction();
+			}
+		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 

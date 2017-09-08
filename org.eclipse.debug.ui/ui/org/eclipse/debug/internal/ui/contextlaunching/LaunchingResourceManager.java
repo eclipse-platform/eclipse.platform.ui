@@ -579,7 +579,13 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			final ToolBar bar = entry.getValue();
 			if(bar != null && !bar.isDisposed()) {
 				final MouseTrackAdapter listener = fMouseListener;
-				DebugUIPlugin.getStandardDisplay().asyncExec(() -> bar.removeMouseTrackListener(listener));
+				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						bar.removeMouseTrackListener(listener);
+					}
+				});
+
 			}
 		}
 		fWindows.clear();
