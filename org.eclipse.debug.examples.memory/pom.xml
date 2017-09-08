@@ -18,6 +18,6 @@
   </parent>
   <groupId>org.eclipse.debug</groupId>
   <artifactId>org.eclipse.debug.examples.memory</artifactId>
-  <version>1.101.0-SNAPSHOT</version>
+  <version>1.101.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
