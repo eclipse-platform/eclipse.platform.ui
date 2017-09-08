@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 /**
  * For testing addressable size > 1. Group each addressable unit in a MemoryByte
  * array.
- * 
+ *
  */
 public class SampleMemoryUnit {
 

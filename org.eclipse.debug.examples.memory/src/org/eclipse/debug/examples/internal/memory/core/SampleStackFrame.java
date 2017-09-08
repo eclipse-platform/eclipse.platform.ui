@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * 
+ *
  *
  */
 public class SampleStackFrame extends DebugElement implements IStackFrame {
@@ -33,7 +33,7 @@ public class SampleStackFrame extends DebugElement implements IStackFrame {
 
 	/**
 	 * Constructs a SampleStackFrame
-	 * 
+	 *
 	 * @param thread
 	 * @param name
 	 */

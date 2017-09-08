@@ -41,7 +41,7 @@ public class SampleEngine {
 
 	/**
 	 * Allow debug adapters to get memory from an address
-	 * 
+	 *
 	 * @param address
 	 * @param length
 	 * @return memory byte from an address
@@ -182,7 +182,7 @@ public class SampleEngine {
 	/**
 	 * Simulates evaluation of an expression. Given an expression, return ad
 	 * address
-	 * 
+	 *
 	 * @param expression
 	 * @param evalContext
 	 * @return the address the expression is evaluated to
@@ -205,7 +205,7 @@ public class SampleEngine {
 
 	/**
 	 * Simulates checking if storage retrieval is supported
-	 * 
+	 *
 	 * @return if the engine supports storage retrieval
 	 */
 	public boolean supportsStorageRetrieval() {
@@ -214,7 +214,7 @@ public class SampleEngine {
 
 	/**
 	 * Simulates modifying memory using BigInteger as the address
-	 * 
+	 *
 	 * @param address
 	 * @param bytes
 	 * @throws RuntimeException
@@ -319,7 +319,7 @@ public class SampleEngine {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private SampleStackFrame[] createStackframes(SampleThread thread) {
 		SampleStackFrame[] stackframes = new SampleStackFrame[2];
@@ -339,7 +339,7 @@ public class SampleEngine {
 
 	/**
 	 * Sets the base address of this memory block
-	 * 
+	 *
 	 * @param mb the memory block to change base address
 	 * @param address the new base address of the memory block
 	 * @throws CoreException

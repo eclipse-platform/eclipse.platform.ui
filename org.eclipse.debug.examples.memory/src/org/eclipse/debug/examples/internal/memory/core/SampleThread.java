@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IThread;
 
 /**
  * Abstract Sample Thread
- * 
+ *
  */
 public class SampleThread extends DebugElement implements IThread {
 
@@ -29,7 +29,7 @@ public class SampleThread extends DebugElement implements IThread {
 
 	/**
 	 * Constructs SampleThread
-	 * 
+	 *
 	 * @param target
 	 */
 	public SampleThread(SampleDebugTarget target) {
