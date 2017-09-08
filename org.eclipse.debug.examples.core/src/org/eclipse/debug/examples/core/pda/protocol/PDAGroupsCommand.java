@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -13,8 +13,8 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 
 /**
- * Retrieves register groups information 
- * 
+ * Retrieves register groups information
+ *
  * <pre>
  *    C: groups
  *    R: {group 1}|{group 2}|{group 3}|...|
@@ -26,7 +26,7 @@ public class PDAGroupsCommand extends PDACommand {
     public PDAGroupsCommand() {
         super("groups"); //$NON-NLS-1$
     }
-    
+
 
     @Override
 	public PDACommandResult createResult(String resultText) {

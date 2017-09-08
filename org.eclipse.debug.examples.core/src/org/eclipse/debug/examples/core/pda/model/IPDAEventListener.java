@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -17,7 +17,7 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
 /**
  * Listeners are notified of events occurring in a PDA program
  * being interpreted.
- * 
+ *
  * @see org.eclipse.debug.examples.core.protocol.PDAVMStarted
  * @see org.eclipse.debug.examples.core.protocol.PDAVMTerminated
  * @see org.eclipse.debug.examples.core.protocol.PDAVMSuspneded
@@ -32,11 +32,11 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
  * @see org.eclipse.debug.examples.core.pda.protocol.PDAEvalResultEvent
  */
 public interface IPDAEventListener {
-	
+
 	/**
 	 * Notification the given event occurred in the target program
 	 * being interpreted.
-	 * 
+	 *
 	 * @param event the event
 	 */
 	public void handleEvent(PDAEvent event);

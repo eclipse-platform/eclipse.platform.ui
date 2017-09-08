@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -14,7 +14,7 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 /**
  * Sets a breakpoint at given line
- * 
+ *
  * <pre>
  * Suspend a single thread:
  *    C: set {line_number} 0
@@ -22,7 +22,7 @@ package org.eclipse.debug.examples.core.pda.protocol;
  *    C: resume {thread_id}
  *    E: resumed {thread_id} client
  *    E: suspended {thread_id} breakpoint line_number
- *    
+ *
  * Suspend the VM:
  *    C: set {line_number} 1
  *    R: ok
@@ -39,7 +39,7 @@ public class PDASetBreakpointCommand extends PDACommand {
               line + " " +  //$NON-NLS-1$
               (stopVM ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
 
     @Override
 	public PDACommandResult createResult(String resultText) {

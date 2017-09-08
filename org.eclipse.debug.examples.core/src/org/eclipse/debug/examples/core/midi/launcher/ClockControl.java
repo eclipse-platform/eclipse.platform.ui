@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 
 /**
  * Controls the location of the sequencer in microseconds.
- * 
+ *
  * @since 1.0
  */
 public class ClockControl extends TimeControl {
@@ -29,7 +29,7 @@ public class ClockControl extends TimeControl {
 	public ClockControl(MidiLaunch launch) {
 		super("Time" , launch); //$NON-NLS-1$
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.TimeControl#getTimeValue()
 	 */
@@ -73,13 +73,13 @@ public class ClockControl extends TimeControl {
 			return e.getStatus();
 		}
 	}
-	
+
 	/**
 	 * Returns a float for the string.
-	 * 
+	 *
 	 * @param value string
 	 * @return float
-	 * @throws CoreException if not a valid value 
+	 * @throws CoreException if not a valid value
 	 */
 	protected long getLong(String value) throws CoreException {
 		try {
@@ -92,6 +92,6 @@ public class ClockControl extends TimeControl {
 		}
 		return 0L;
 	}
-	
+
 
 }

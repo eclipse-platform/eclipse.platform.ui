@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -13,14 +13,14 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 
 /**
- * Return the contents of variable <code>variable_name</code> in the control 
- * stack frame <code>frame_number</code> (stack frames are indexed from 0, 0 
- * being the oldest). 
- * 
+ * Return the contents of variable <code>variable_name</code> in the control
+ * stack frame <code>frame_number</code> (stack frames are indexed from 0, 0
+ * being the oldest).
+ *
  * <pre>
  *    C: var  {thread_id} {frame_number} {variable_name}
  *    R: {variable_value}
- *    
+ *
  * Errors:
  *    error: invalid thread
  *    error: variable undefined
@@ -32,7 +32,7 @@ public class PDAVarCommand extends PDACommand {
     public PDAVarCommand(int threadId, int frameId, String name) {
         super("var " + threadId + " " + frameId + " " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
-    
+
 
     @Override
 	public PDACommandResult createResult(String resultText) {

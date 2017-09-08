@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -16,16 +16,16 @@ package org.eclipse.debug.examples.core.pda.protocol;
  * Base class for run-control events.
  */
 public class PDARunControlEvent extends PDAEvent {
-    
+
     public final int fThreadId;
     public final String fReason;
-    
+
     public PDARunControlEvent(String message) {
         super(message);
         fThreadId = getThreadId(message);
         fReason = getStateChangeReason(message);
     }
-    
+
     protected int getThreadId(String message) {
         int nameEnd = getName(message).length();
         if ( Character.isDigit(message.charAt(nameEnd + 1)) ) {
@@ -57,7 +57,7 @@ public class PDARunControlEvent extends PDAEvent {
         endIdx = endIdx == -1 ? message.length() : endIdx;
         return message.substring(idx, endIdx);
     }
-    
+
     @Override
 	protected String getName(String message) {
         int nameEnd = message.indexOf(' ');

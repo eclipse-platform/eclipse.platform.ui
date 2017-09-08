@@ -35,10 +35,10 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendedEvent;
  * PDA line breakpoint
  */
 public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListener {
-	
+
 	// target currently installed in
 	private PDADebugTarget fTarget;
-	
+
 	/**
 	 * Default constructor is required for the breakpoint manager
 	 * to re-create persisted breakpoints. After instantiating a breakpoint,
@@ -47,13 +47,13 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	 */
 	public PDALineBreakpoint() {
 	}
-	
+
 	/**
 	 * Constructs a line breakpoint on the given resource at the given
 	 * line number. The line number is 1-based (i.e. the first line of a
 	 * file is line number 1). The PDA VM uses 0-based line numbers,
 	 * so this line number translation is done at breakpoint install time.
-	 * 
+	 *
 	 * @param resource file on which to set the breakpoint
 	 * @param lineNumber 1-based line number of the breakpoint
 	 * @throws CoreException if unable to create the breakpoint
@@ -72,7 +72,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 		};
 		run(getMarkerRule(resource), runnable);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IBreakpoint#getModelIdentifier()
 	 */
@@ -80,21 +80,21 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	public String getModelIdentifier() {
 		return DebugCorePlugin.ID_PDA_DEBUG_MODEL;
 	}
-	
+
 	/**
 	 * Returns whether this breakpoint is a run-to-line breakpoint
-	 * 
+	 *
 	 * @return whether this breakpoint is a run-to-line breakpoint
 	 */
 	public boolean isRunToLineBreakpoint() {
 		return false;
 	}
-    
+
     /**
      * Installs this breakpoint in the given interprettor.
      * Registeres this breakpoint as an event listener in the
      * given target and creates the breakpoint specific request.
-     * 
+     *
      * @param target PDA interprettor
      * @throws CoreException if installation fails
      */
@@ -103,26 +103,26 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
     	target.addEventListener(this);
     	createRequest(target);
     }
-    
+
     /**
      * Create the breakpoint specific request in the target. Subclasses
      * should override.
-     * 
+     *
      * @param target PDA interprettor
      * @throws CoreException if request creation fails
      */
     protected void createRequest(PDADebugTarget target) throws CoreException {
 		//#ifdef ex3
-//#		// TODO: Exercise 3 - create breakpoint request in interpreter 		
+//#		// TODO: Exercise 3 - create breakpoint request in interpreter
 		//#else
     	target.sendCommand(new PDASetBreakpointCommand((getLineNumber() - 1), false));
 		//#endif
     }
-    
+
     /**
      * Removes this breakpoint's event request from the target. Subclasses
      * should override.
-     * 
+     *
      * @param target PDA interprettor
      * @throws CoreException if clearing the request fails
      */
@@ -133,12 +133,12 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
         target.sendCommand(new PDAClearBreakpointCommand((getLineNumber() - 1)));
 		//#endif
     }
-    
+
     /**
      * Removes this breakpoint from the given interprettor.
      * Removes this breakpoint as an event listener and clears
      * the request for the interprettor.
-     * 
+     *
      * @param target PDA interprettor
      * @throws CoreException if removal fails
      */
@@ -146,18 +146,18 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
     	target.removeEventListener(this);
     	clearRequest(target);
     	fTarget = null;
-    	
+
     }
-    
+
     /**
      * Returns the target this breakpoint is installed in or <code>null</code>.
-     * 
+     *
      * @return the target this breakpoint is installed in or <code>null</code>
      */
     protected PDADebugTarget getDebugTarget() {
     	return fTarget;
     }
-    
+
     /**
      * Notify's the PDA interprettor that this breakpoint has been hit.
      */
@@ -171,9 +171,9 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
     }
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Subclasses should override to handle their breakpoint specific event.
-	 * 
+	 *
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
 	@Override
@@ -185,10 +185,10 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 		    }
 		}
 	}
-    
+
 	/**
      * Determines if this breakpoint was hit and notifies the thread.
-     * 
+     *
      * @param event breakpoint event
      */
     private void handleHit(PDARunControlEvent event) {
@@ -205,5 +205,5 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
     		} catch (CoreException e) {
     		}
     	}
-    }		
+    }
 }

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -29,13 +29,13 @@ import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 
 /**
  * Computes the default source lookup path for a PDA launch configuration.
- * The default source lookup path is the folder or project containing 
+ * The default source lookup path is the folder or project containing
  * the PDA program being launched. If the program is not specified, the workspace
  * is searched by default.
  */
 public class PDASourcePathComputerDelegate implements ISourcePathComputerDelegate {
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */

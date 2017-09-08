@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,16 +22,16 @@ import org.eclipse.debug.core.model.ISuspendResume;
 
 /**
  * A launch containing a MIDI sequencer.
- * 
+ *
  * @since 1.0
  */
 public class MidiLaunch extends Launch implements ISuspendResume {
-	
+
 	/**
 	 * MIDI Sequencer
 	 */
 	private Sequencer fSequencer;
-	
+
 	/**
 	 * MIDI file format
 	 */
@@ -39,24 +39,24 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 
 	/**
 	 * Constructs a new MIDI launch.
-	 * 
+	 *
 	 * @param launchConfiguration configuration to play
 	 * @param mode mode to play in
 	 */
 	public MidiLaunch(ILaunchConfiguration launchConfiguration, String mode) {
 		super(launchConfiguration, mode, null);
 	}
-	
+
 	/**
 	 * Sets the sequencer used to play MIDI files.
-	 * 
+	 *
 	 * @param sequencer
 	 */
 	public void setSequencer(Sequencer sequencer) {
 		fSequencer = sequencer;
 		fireChanged();
 	}
-	
+
 	/**
 	 * Sets the format of the sequence
 	 * @param format
@@ -67,7 +67,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 
 	/**
 	 * Returns the file format of the sequence.
-	 * 
+	 *
 	 * @return file format
 	 */
 	public MidiFileFormat getFormat() {
@@ -75,7 +75,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	}
 	/**
 	 * Returns the sequencer used to play MIDI files.
-	 * 
+	 *
 	 * @return the sequencer used to play MIDI files
 	 */
 	public Sequencer getSequencer() {
@@ -161,13 +161,13 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 		fireChanged();
 		fireEvent(new DebugEvent(getSequencer(), DebugEvent.SUSPEND, DebugEvent.CLIENT_REQUEST));
 	}
-	
+
 	/**
 	 * Fires a debug event.
-	 * 
+	 *
 	 * @param event debug event to fire
 	 */
 	protected void fireEvent(DebugEvent event) {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
-	} 
+	}
 }

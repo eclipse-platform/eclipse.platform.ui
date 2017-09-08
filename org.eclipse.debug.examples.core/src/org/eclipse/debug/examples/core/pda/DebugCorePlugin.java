@@ -30,13 +30,13 @@ public class DebugCorePlugin extends Plugin {
 	private static DebugCorePlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
-	 * Unique identifier for the PDA debug model (value 
+	 * Unique identifier for the PDA debug model (value
 	 * <code>pda.debugModel</code>).
 	 */
 	public static final String ID_PDA_DEBUG_MODEL = "pda.debugModel"; //$NON-NLS-1$
-	
+
 	/**
 	 * Name of the string substitution variable that resolves to the
 	 * location of a local Perl executable (value <code>perlExecutable</code>).
@@ -45,21 +45,21 @@ public class DebugCorePlugin extends Plugin {
 	/**
 	 * Launch configuration attribute key. Value is a path to a Perl
 	 * program. The path is a string representing a full path
-	 * to a Perl program in the workspace. 
+	 * to a Perl program in the workspace.
 	 */
 	public static final String ATTR_PDA_PROGRAM = ID_PDA_DEBUG_MODEL + ".ATTR_PDA_PROGRAM"; //$NON-NLS-1$
-	
+
 	/**
 	 * Identifier for the PDA launch configuration type
 	 * (value <code>pda.launchType</code>)
 	 */
 	public static final String ID_PDA_LAUNCH_CONFIGURATION_TYPE = "pda.launchType";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Plug-in identifier.
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.debug.examples.core"; //$NON-NLS-1$
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -118,7 +118,7 @@ public class DebugCorePlugin extends Plugin {
 		}
 		return resourceBundle;
 	}
-	
+
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
 	 * <code>IPath</code> in the plug-in directory, or <code>null</code> if none.
@@ -131,5 +131,5 @@ public class DebugCorePlugin extends Plugin {
 		} catch (IOException ioe) {
 			return null;
 		}
-	}	
+	}
 }

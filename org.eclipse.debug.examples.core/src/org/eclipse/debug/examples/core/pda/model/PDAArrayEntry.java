@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2013 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -17,13 +17,13 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 public class PDAArrayEntry extends PDADebugElement implements IVariable {
-	
+
 	private IValue fValue;
 	private int fIndex;
 
 	/**
 	 * Constructs a new array entry
-	 * 
+	 *
 	 * @param target debug target
 	 * @param index index in the array
 	 * @param value value of the entry

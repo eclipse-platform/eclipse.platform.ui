@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 
 /**
  * Creates and starts a MIDI sequencer.
- * 
+ *
  * @since 1.0
  */
 public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
@@ -45,25 +45,25 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	 * (value <code>midi.launchType</code>)
 	 */
 	public static final String ID_MIDI_LAUNCH_CONFIGURATION_TYPE = "midi.launchType"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute for the MIDI file to play
 	 * (value <code>midi.file</code>)
 	 */
 	public static final String ATTR_MIDI_FILE = "midi.file"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute for the MIDI launcher. Specifies whether to throw
 	 * an exception when present. Value is one of <code>HANDLED</code> or <code>UNHANDLED</code>.
 	 */
 	public static final String ATTR_THROW_EXCEPTION = "throw.exception"; //$NON-NLS-1$
-	
+
 	/**
 	 * Possible values for the <code>ATTR_THROW_EXCEPTION</code>.
 	 */
 	public static final String HANDLED = "HANDLED"; //$NON-NLS-1$
 	public static final String UNHANDLED = "UNHANDLED"; //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -124,7 +124,7 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	/**
 	 * Throws an exception with a new status containing the given
 	 * message and optional exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param e underlying exception
 	 * @throws CoreException
@@ -132,7 +132,7 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	private void abort(String message, Throwable e) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 0, message, e));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
@@ -148,7 +148,7 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return false;
 	}
-	
-	
+
+
 
 }

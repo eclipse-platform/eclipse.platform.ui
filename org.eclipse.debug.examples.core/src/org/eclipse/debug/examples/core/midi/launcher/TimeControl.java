@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Displays a time value based on underlying microsecond value
- * 
+ *
  * @since 1.0
  */
 public abstract class TimeControl extends SequencerControl {
@@ -22,14 +22,14 @@ public abstract class TimeControl extends SequencerControl {
 	/**
 	 * Constructs a time control with the given name for the
 	 * given launch.
-	 * 
+	 *
 	 * @param name
 	 * @param launch
 	 */
 	public TimeControl(String name, MidiLaunch launch) {
 		super(name, launch);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#getValue()
 	 */
@@ -57,10 +57,10 @@ public abstract class TimeControl extends SequencerControl {
 		}
 		return clock.toString();
 	}
-	
+
 	/**
 	 * Provided by subclasses for the control.
-	 * 
+	 *
 	 * @return time in microseconds
 	 */
 	protected abstract long getTimeValue();

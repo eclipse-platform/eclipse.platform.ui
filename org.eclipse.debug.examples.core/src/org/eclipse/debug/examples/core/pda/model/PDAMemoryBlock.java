@@ -18,13 +18,13 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * Example memory block
  */
 public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
-	
+
 	/**
 	 * The bytes
 	 */
 	private byte[] fBytes = null;
 	private long fStart, fLength;
-	
+
 	/**
 	 * Constructs a new memory block
 	 */

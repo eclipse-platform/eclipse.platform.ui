@@ -24,12 +24,12 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * A run to line breakpoint.
  */
 public class PDARunToLineBreakpoint extends PDALineBreakpoint {
-	
+
 	private IFile fSourceFile;
-	
+
 	/**
 	 * Constructs a run-to-line breakpoint in the given PDA program.
-	 * 
+	 *
 	 * @param resource PDA source file
 	 * @param lineNumber line to run to
 	 * @exception DebugException if unable to create the breakpoint
@@ -48,22 +48,22 @@ public class PDARunToLineBreakpoint extends PDALineBreakpoint {
 				fSourceFile = resource;
 			}
 		};
-		run(getMarkerRule(resource), runnable);		
+		run(getMarkerRule(resource), runnable);
 	}
-	
+
 	/**
 	 * Returns whether this breakpoint is a run-to-line breakpoint
-	 * 
+	 *
 	 * @return whether this breakpoint is a run-to-line breakpoint
 	 */
 	@Override
 	public boolean isRunToLineBreakpoint() {
 		return true;
 	}
-	
+
 	/**
 	 * Returns the source file this breakpoint is contained in.
-	 * 
+	 *
 	 * @return the source file this breakpoint is contained in
 	 */
 	public IFile getSourceFile() {

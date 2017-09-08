@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -24,10 +24,10 @@ public class PDAStackValue extends PDADebugElement implements IValue {
     final private PDAThread fThread;
     final private String fValue;
     final private int fIndex;
-    
+
     /**
      * Constructs a value that appears on the data stack
-     * 
+     *
      * @param target debug target
      * @param value value on the stack
      * @param index index on the stack
@@ -38,11 +38,11 @@ public class PDAStackValue extends PDADebugElement implements IValue {
 		fValue = value;
 		fIndex = index;
 	}
-	
+
 	public PDAThread getThread() {
 	    return fThread;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getValueString()
      */
@@ -84,8 +84,8 @@ public class PDAStackValue extends PDADebugElement implements IValue {
 	 */
     @Override
 	public boolean equals(Object obj) {
-        return obj instanceof PDAStackValue && 
-            ((PDAStackValue)obj).fValue.equals(fValue) && 
+        return obj instanceof PDAStackValue &&
+            ((PDAStackValue)obj).fValue.equals(fValue) &&
             ((PDAStackValue)obj).fIndex == fIndex;
     }
     /*

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -24,17 +24,17 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAFrameData;
  * PDA stack frame.
  */
 public class PDAStackFrame extends PDADebugElement implements IStackFrame {
-	
+
 	private PDAThread fThread;
 	private String fName;
 	private int fPC;
 	private IPath fFilePath;
 	private int fId;
-	
+
 	/**
 	 * Constructs a stack frame in the given thread with the given
 	 * frame data.
-	 * 
+	 *
 	 * @param thread
 	 * @param data frame data
 	 * @param id stack frame id (0 is the bottom of the stack)
@@ -45,10 +45,10 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 		fThread = thread;
 		init(data);
 	}
-	
+
 	/**
 	 * Initializes this frame based on its data
-	 * 
+	 *
 	 * @param data
 	 */
 	private void init(PDAFrameData data) {
@@ -61,7 +61,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 		}
 		fThread.setVariables(this, vars);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
@@ -97,7 +97,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	public int getCharStart() throws DebugException {
 		return -1;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
 	 */
@@ -231,11 +231,11 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	public void terminate() throws DebugException {
 		getThread().terminate();
 	}
-	
+
 	/**
 	 * Returns the name of the source file this stack frame is associated
 	 * with.
-	 * 
+	 *
 	 * @return the name of the source file this stack frame is associated
 	 * with
 	 */
@@ -249,7 +249,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	public boolean equals(Object obj) {
 		if (obj instanceof PDAStackFrame) {
 			PDAStackFrame sf = (PDAStackFrame)obj;
-			return sf.getThread().equals(getThread()) && 
+			return sf.getThread().equals(getThread()) &&
 				sf.getSourceName().equals(getSourceName()) &&
 				sf.fId == fId;
 		}
@@ -262,25 +262,25 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	public int hashCode() {
 		return getSourceName().hashCode() + fId;
 	}
-	
+
 	/**
 	 * Returns this stack frame's unique identifier within its thread
-	 * 
+	 *
 	 * @return this stack frame's unique identifier within its thread
 	 */
 	protected int getIdentifier() {
 		return fId;
 	}
-	
+
     /**
      * Returns the stack frame's thread's unique identifier
-     * 
+     *
      * @return this stack frame's thread's unique identifier
-     * 
+     *
      * @since 3.5
      */
 	protected int getThreadIdentifier() {
 	    return fThread.getIdentifier();
 	}
-	
+
 }

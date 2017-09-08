@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 
 /**
  * Controls the tempo of a sequencer.
- * 
+ *
  * @since 1.0
  */
 public class TempoControl extends SequencerControl {
@@ -77,14 +77,14 @@ public class TempoControl extends SequencerControl {
 
 	/**
 	 * Returns a float for the string.
-	 * 
+	 *
 	 * @param value string
 	 * @return float
-	 * @throws CoreException if not a valid value 
+	 * @throws CoreException if not a valid value
 	 */
 	protected float getFloat(String value) throws CoreException {
 		try {
-			return Float.parseFloat(value); 
+			return Float.parseFloat(value);
 		} catch (NumberFormatException e) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Tempo must be a number", e)); //$NON-NLS-1$
 		}

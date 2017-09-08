@@ -31,10 +31,10 @@ import org.eclipse.debug.examples.core.pda.protocol.PDAWatchCommand;
  * A watchpoint.
  */
 public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
-    
+
     // 'read' or 'write' depending on what caused the last suspend for this watchpoint
     private String fLastSuspendType;
-    
+
     // marker attributes
     public static final String ACCESS = "ACCESS"; //$NON-NLS-1$
     public static final String MODIFICATION = "MODIFICATION"; //$NON-NLS-1$
@@ -54,7 +54,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 * line number. The line number is 1-based (i.e. the first line of a
 	 * file is line number 1). The PDA VM uses 0-based line numbers,
 	 * so this line number translation is done at breakpoint install time.
-	 * 
+	 *
 	 * @param resource file on which to set the breakpoint
 	 * @param lineNumber 1-based line number of the breakpoint
 	 * @param functionName function name the variable is defined in
@@ -79,7 +79,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 			}
 		};
 		run(getMarkerRule(resource), runnable);
-	}    
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
@@ -110,7 +110,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
      */
     @Override
 	public void setModification(boolean modification) throws CoreException {
-        setAttribute(MODIFICATION, modification); 
+        setAttribute(MODIFICATION, modification);
     }
 
     /* (non-Javadoc)
@@ -128,10 +128,10 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	public boolean supportsModification() {
         return true;
     }
-    
+
     /**
      * Sets the variable and function names the watchpoint is set on.
-     * 
+     *
      * @param functionName function name
      * @param variableName variable name
      * @throws CoreException if an exception occurrs setting marker attribtues
@@ -140,10 +140,10 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
         setAttribute(VAR_NAME, variableName);
         setAttribute(FUNCTION_NAME, functionName);
     }
-    
+
     /**
      * Returns the name of the variable this watchpoint is set on.
-     * 
+     *
      * @return the name of the variable this watchpoint is set on
      * @throws CoreException if unable to access the attribute
      */
@@ -153,32 +153,32 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
     /**
      * Returns the name of the function the variable associted with this watchpoint is defined in.
-     * 
+     *
      * @return the name of the function the variable associted with this watchpoint is defined in
      * @throws CoreException if unable to access the attribute
      */
     public String getFunctionName() throws CoreException {
         return getMarker().getAttribute(FUNCTION_NAME, (String)null);
-    }    
-    
+    }
+
     /**
      * Sets the type of event that causes the last suspend event.
-     * 
+     *
      * @param description one of 'read' or 'write'
      */
     public void setSuspendType(String description) {
         fLastSuspendType = description;
     }
-    
+
     /**
      * Returns the type of event that caused the last suspend.
-     * 
+     *
      * @return 'read', 'write', or <code>null</code> if undefined
      */
     public String getSuspendType() {
         return fLastSuspendType;
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#createRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
 	 */
@@ -190,10 +190,10 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
         }
         if (isModification()) {
             flag = flag | 2;
-        }		
+        }
 		target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), flag));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#clearRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
 	 */
@@ -201,7 +201,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	protected void clearRequest(PDADebugTarget target) throws CoreException {
 	    target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), 0));
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
@@ -214,10 +214,10 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
             }
         }
 	}
-    
+
 	/**
      * Determines if this breakpoint was hit and notifies the thread.
-     * 
+     *
      * @param event breakpoint event
      */
     private void handleHit(PDARunControlEvent event) {
@@ -237,5 +237,5 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 				}
             }
     	}
-    }    
+    }
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     IBM Corporation - bug fixing
@@ -13,13 +13,13 @@ package org.eclipse.debug.examples.core.pda.protocol;
 
 /**
  * VM Suspended event generated when the virtual machine is suspended.  If the VM
- * is suspended as a result of a thread event (e.g. thread hitting a breakpoint), 
+ * is suspended as a result of a thread event (e.g. thread hitting a breakpoint),
  * then the thread_id is included in the event.
- * 
+ *
  * <pre>
  *    E: vmsuspended [thread_id] {reason}
  * </pre>
- * 
+ *
  * <code>{reason}</code> is the cause of the suspension:
  * <ul>
  *   <li><code>breakpoint N</code> - a breakpoint at line <code>N</code> was hit</li>
@@ -34,11 +34,11 @@ package org.eclipse.debug.examples.core.pda.protocol;
  * </ul>
  */
 public class PDAVMSuspendedEvent extends PDARunControlEvent {
-    
+
     public PDAVMSuspendedEvent(String message) {
         super(message);
     }
-    
+
     public static boolean isEventMessage(String message) {
         return message.startsWith("vmsuspended"); //$NON-NLS-1$
     }
