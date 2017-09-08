@@ -11,6 +11,7 @@
  *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Clicking in line number ruler should not trigger annotation ruler - https://bugs.eclipse.org/bugs/show_bug.cgi?id=40889
  *     Florian Weßling <flo@cdhq.de> - [rulers] Line numbering was wrong when word wrap was active - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *     Rüdiger Herrmann - Insufficient is-disposed check in LineNumberRulerColumn::redraw - https://bugs.eclipse.org/bugs/show_bug.cgi?id=506427
+ *     Angelo ZERR <angelo.zerr@gmail.com> - Compute line height by taking care of line spacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=481968
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -867,7 +868,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				continue;
 
 			final int offsetAtLine= fCachedTextWidget.getOffsetAtLine(widgetLine);
-			int lineHeight= fCachedTextWidget.getLineHeight(offsetAtLine);
+			int lineHeight = JFaceTextUtil.computeLineHeight(fCachedTextWidget, widgetLine, widgetLine + 1, 1);
 			paintLine(line, y, lineHeight, gc, display);
 
 			// increment y position
