@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
-import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -273,7 +272,7 @@ public abstract class AbstractIntroElement implements Cloneable {
         if (element.hasAttribute(att)) {
             String value = element.getAttribute(att);
             if (value!=null) {
-            	String[] splitValues = StringUtil.split(value, ",");  //$NON-NLS-1$
+            	String[] splitValues = value.split(",");  //$NON-NLS-1$
 				IntroModelRoot root = getModelRoot();
             	if (root!=null) {
             		for (int i = 0; i < splitValues.length; i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.intro.config.IntroConfigurer;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -548,7 +547,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             IntroExtensionContent extensionContent) {
         String path = extensionContent.getPath();
         // path must be pageId/anchorID in the case of anchors in XHTML pages.
-        String[] pathSegments = StringUtil.split(path, "/"); //$NON-NLS-1$
+        String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (pathSegments.length != 2)
             // path does not have correct format.
             return false;

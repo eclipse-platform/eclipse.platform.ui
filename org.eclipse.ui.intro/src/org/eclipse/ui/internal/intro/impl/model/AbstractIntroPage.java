@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -764,7 +763,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         Object[] results = new Object[2];
         // path must be pageId/anchorID in the case of of XHTML pages.
         // pages.
-        String[] pathSegments = StringUtil.split(path, "/"); //$NON-NLS-1$
+        String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (pathSegments.length != 2)
             // path does not have correct format. Return empty results.
             return results;

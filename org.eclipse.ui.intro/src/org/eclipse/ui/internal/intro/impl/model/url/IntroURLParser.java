@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 
 /**
  * A parser that knows how to parser OOBE action URLs. If URL is a valid intro
@@ -165,12 +164,12 @@ public class IntroURLParser {
             return properties;
 
         // now extract the key/value pairs from the query.
-        String[] params = StringUtil.split(query, "&"); //$NON-NLS-1$
+        String[] params = query.split("&"); //$NON-NLS-1$
         for (int i = 0; i < params.length; i++) {
             // for every parameter, ie: key=value pair, create a property
             // entry. we know we have the key as the first string in the array,
             // and the value as the second array.
-            String[] keyValuePair = StringUtil.split(params[i], "="); //$NON-NLS-1$
+            String[] keyValuePair = params[i].split("="); //$NON-NLS-1$
             if (keyValuePair.length != 2) {
                 Log.warning("Ignoring the following Intro URL parameter: " //$NON-NLS-1$
                         + params[i]);
