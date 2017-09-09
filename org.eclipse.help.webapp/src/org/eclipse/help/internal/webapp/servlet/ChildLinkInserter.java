@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class ChildLinkInserter {
 	    if (subtopics.length == 0) {
 	    	return;
 	    }
-	    StringBuffer links = new StringBuffer("\n<ul class=\"childlinks\">\n"); //$NON-NLS-1$
+	    StringBuilder links = new StringBuilder("\n<ul class=\"childlinks\">\n"); //$NON-NLS-1$
 		for (int i=0;i<subtopics.length;++i) {
 			if (ScopeUtils.showInTree(subtopics[i], scope)) {
 				links.append("\n<li><a href=\""); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class ChildLinkInserter {
 
 	private String getBackpath(String path) {
 		int num = new Path(path).segmentCount() - 1;
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i=0; i < num; ++i) {
 			if (i > 0) {
 				buf.append('/');

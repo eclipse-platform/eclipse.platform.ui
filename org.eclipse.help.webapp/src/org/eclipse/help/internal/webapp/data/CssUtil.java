@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import org.eclipse.help.internal.util.ProductPreferences;
 /**
  * Utility class for parsing the CSS preferences
  */
-
 public class CssUtil {
 
 	private final static String cssLink1 = "<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
@@ -62,7 +60,7 @@ public class CssUtil {
 	}
 
 	public static String createCssIncludes(List<String> cssFiles, String backPath) {
-		StringBuffer script = new StringBuffer();
+		StringBuilder script = new StringBuilder();
 		for (String cssPath : cssFiles) {
 			script.append(cssLink1);
 			script.append(fixCssPath(cssPath, backPath));

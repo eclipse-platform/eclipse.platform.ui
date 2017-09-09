@@ -362,7 +362,7 @@ public class PrintData extends RequestData {
 	 * topics we're printing.
 	 */
 	private String normalizeHrefs(String content, String baseHref) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		Matcher matcher = PATTERN_LINK.matcher(content);
 		int prev = 0;
 		while (matcher.find()) {
@@ -380,7 +380,7 @@ public class PrintData extends RequestData {
 	 */
 	private String getContent(String href, String locale) {
 		InputStream in = HelpSystem.getHelpContent(href, locale);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		InputStream rawInput=null;
 		if (in != null) {
 			try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class EclipseConnector {
 			// Redirect if the request includes PLUGINS_ROOT and is not a content request
 			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
 			if (index!= -1 && url.indexOf("content/" + HelpURLConnection.PLUGINS_ROOT) == -1) {  //$NON-NLS-1$
-				StringBuffer redirectURL = new StringBuffer();
+				StringBuilder redirectURL = new StringBuilder();
 
 				redirectURL.append(req.getContextPath());
 				redirectURL.append(req.getServletPath());
@@ -167,7 +167,7 @@ public class EclipseConnector {
 					t = t.getCause();
 				}
 
-				StringBuffer message = new StringBuffer();
+				StringBuilder message = new StringBuilder();
 				message.append(errorPageBegin);
 				message.append("<p>"); //$NON-NLS-1$
 				message.append(ServletResources.getString(

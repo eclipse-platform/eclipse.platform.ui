@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.ByteArrayInputStream;
@@ -44,7 +43,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	private final String[] keywords = { INSERT_CHILD_LINKS, INSERT_CHILD_LINK_STYLE };
 	private boolean[] possibleKeywordMatches;
 	private String pathPrefix;
-	private StringBuffer tag;
+	private StringBuilder tag;
 	private ByteArrayOutputStream metaTagBuffer;
     private boolean tagRead;
 	private HttpServletRequest req;
@@ -63,7 +62,7 @@ public class PluginsRootResolvingStream extends OutputStream {
 	    	if (b == '<') {
 	    		state = IN_TAG;
 	    		charsMatched = 0;
-	    		tag = new StringBuffer();
+	    		tag = new StringBuilder();
 	    		tagRead = false;
 	    	} else {
 	    	    out.write(b);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 					int loc = value.indexOf("ACTIVITY_EDITOR"); //$NON-NLS-1$
 					if (loc!= -1 && className!=null) {
 						needsLiveHelp=true;
-						StringBuffer buffer = new StringBuffer();
+						StringBuilder buffer = new StringBuilder();
 						buffer.append(value.substring(0, loc));
 						buffer.append(getActivityEditorValue(pluginId, className, embedded));
 						buffer.append(value.substring(loc+15));

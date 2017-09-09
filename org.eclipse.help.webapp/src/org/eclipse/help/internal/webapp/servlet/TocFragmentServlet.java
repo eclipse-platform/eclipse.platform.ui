@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class TocFragmentServlet extends HttpServlet {
 	private class Serializer {
 
 		private TocData tocData;
-		private StringBuffer buf;
+		private StringBuilder buf;
 		private int requestKind;
 		private Locale locale;
 		private AbstractHelpScope scope;
@@ -93,7 +93,7 @@ public class TocFragmentServlet extends HttpServlet {
 
 		public Serializer(TocData data, Locale locale, AbstractHelpScope scope) {
 			tocData = data;
-			buf = new StringBuffer();
+			buf = new StringBuilder();
 			this.locale = locale;
 			this.scope = scope;
 			if (tocData.isExpandPath()) {

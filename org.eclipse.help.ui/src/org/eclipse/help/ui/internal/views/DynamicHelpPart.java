@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,14 +263,14 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		BaseHelpSystem.getSearchManager().search(searchQuery, localResults,
 				monitor);
 		SearchHit[] hits = localResults.getSearchHits();
-		updateResults(phrase, excludeContext, new StringBuffer(), hits);
+		updateResults(phrase, excludeContext, new StringBuilder(), hits);
 	}
 
 	void scheduleSearch(Job job) {
 		if (runningJob != null) {
 			runningJob.cancel();
 		}
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p><span color=\""); //$NON-NLS-1$
 		buff.append(IFormColors.TITLE);
@@ -290,14 +290,15 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateResults(final String phrase,
-			final IContext excludeContext, final StringBuffer buffer,
+			final IContext excludeContext, final StringBuilder buffer,
 			final SearchHit[] hits) {
 		if (getSection().isDisposed())
 			return;
 		getSection().getDisplay().asyncExec(() -> doUpdateResults(phrase, excludeContext, buffer, hits));
 	}
 
-	private void doUpdateResults(String phrase, IContext excludeContext, StringBuffer buff, SearchHit[] hits) {
+	private void doUpdateResults(String phrase, IContext excludeContext, StringBuilder buff,
+			SearchHit[] hits) {
 		if (runningJob != null) {
 			runningJob.cancel();
 		}

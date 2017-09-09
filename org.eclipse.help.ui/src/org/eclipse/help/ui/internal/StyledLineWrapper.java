@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,17 +63,11 @@ public class StyledLineWrapper implements StyledTextContent {
 		setText(text);
 	}
 
-	/**
-	 * @see StyledTextContent#addTextChangeListener(TextChangeListener)
-	 */
 	@Override
 	public void addTextChangeListener(TextChangeListener l) {
 		// do nothing
 	}
 
-	/**
-	 * @see StyledTextContent#getCharCount()
-	 */
 	@Override
 	public int getCharCount() {
 		if (charCount != -1)
@@ -84,9 +78,6 @@ public class StyledLineWrapper implements StyledTextContent {
 		return charCount;
 	}
 
-	/**
-	 * @see StyledTextContent#getLine(int)
-	 */
 	@Override
 	public String getLine(int i) {
 		if ((i >= lines.size()) || (i < 0))
@@ -94,9 +85,6 @@ public class StyledLineWrapper implements StyledTextContent {
 		return lines.get(i);
 	}
 
-	/**
-	 * @see StyledTextContent#getLineAtOffset(int)
-	 */
 	@Override
 	public int getLineAtOffset(int offset) {
 		if (offset >= getCharCount())
@@ -109,9 +97,6 @@ public class StyledLineWrapper implements StyledTextContent {
 		return line;
 	}
 
-	/**
-	 * @see StyledTextContent#getLineCount()
-	 */
 	@Override
 	public int getLineCount() {
 		if (lines.size() == 0)
@@ -119,17 +104,11 @@ public class StyledLineWrapper implements StyledTextContent {
 		return lines.size();
 	}
 
-	/**
-	 * @see StyledTextContent#getLineDelimiter()
-	 */
 	@Override
 	public String getLineDelimiter() {
 		return null;
 	}
 
-	/**
-	 * @see StyledTextContent#getOffsetAtLine(int)
-	 */
 	@Override
 	public int getOffsetAtLine(int line) {
 		if (lines.size() == 0)
@@ -140,9 +119,6 @@ public class StyledLineWrapper implements StyledTextContent {
 		return offset;
 	}
 
-	/**
-	 * @see StyledTextContent#getTextRange(int, int)
-	 */
 	@Override
 	public String getTextRange(int start, int end) {
 		int l1 = getLineAtOffset(start);
@@ -150,7 +126,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		if (l1 == l2)
 			return getLine(l1).substring(start - getOffsetAtLine(l1),
 					end - start);
-		StringBuffer range = new StringBuffer(getLine(l1).substring(
+		StringBuilder range = new StringBuilder(getLine(l1).substring(
 				start - getOffsetAtLine(l1)));
 		for (int i = l1 + 1; i < l2; i++)
 			range.append(getLine(i));
@@ -158,25 +134,16 @@ public class StyledLineWrapper implements StyledTextContent {
 		return range.toString();
 	}
 
-	/**
-	 * @see StyledTextContent#removeTextChangeListener(TextChangeListener)
-	 */
 	@Override
 	public void removeTextChangeListener(TextChangeListener arg0) {
 		// do nothing
 	}
 
-	/**
-	 * @see StyledTextContent#replaceTextRange(int, int, String)
-	 */
 	@Override
 	public void replaceTextRange(int arg0, int arg1, String arg2) {
 		// do nothing
 	}
 
-	/**
-	 * @see StyledTextContent#setText(String)
-	 */
 	@Override
 	public void setText(String text) {
 		if (text == null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
-
 
 	public class ScopeObserver implements Observer {
 
@@ -98,8 +97,8 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 	}
 
 	private void setScopeLink(String name) {
-		StringBuffer buff = new StringBuffer();
-		StringBuffer nameBuff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
+		StringBuilder nameBuff = new StringBuilder();
 		nameBuff.append("</b> <a href=\"rescope\" "); //$NON-NLS-1$
 		if (!Platform.getWS().equals(Platform.WS_GTK)) {
 			nameBuff.append(" alt=\""); //$NON-NLS-1$

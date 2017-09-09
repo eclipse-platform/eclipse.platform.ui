@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,7 +252,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	private void saveContents() throws IOException {
 
-		StringBuffer data = new StringBuffer();
+		StringBuilder data = new StringBuilder();
 		data.append(URLCoder.compactEncode(currentWorkingSet /* , "UTF8" */
 		));
 
@@ -301,7 +301,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	private void saveCriteria() throws IOException {
 
-		StringBuffer data = new StringBuffer();
+		StringBuilder data = new StringBuilder();
 		data.append(URLCoder.compactEncode(currentWorkingSet));
 		//|scope1$platform#AIX,WINDOWS,$version#1.0,2.0,
 		for (WorkingSet ws : workingSets) {

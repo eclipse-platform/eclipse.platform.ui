@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,6 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUIConstants {
-
 
 	public class SearchScopeObserver implements Observer {
 
@@ -366,7 +365,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	}
 
 	private void updateSearchWordText() {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p>"); //$NON-NLS-1$
 		buff.append(Messages.expression_label);

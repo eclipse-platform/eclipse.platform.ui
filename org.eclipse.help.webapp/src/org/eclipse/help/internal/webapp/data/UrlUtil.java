@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class UrlUtil {
 		if (str == null) return null;
 		char[] wordChars = new char[str.length()];
 		str.getChars(0, str.length(), wordChars, 0);
-		StringBuffer jsEncoded = new StringBuffer();
+		StringBuilder jsEncoded = new StringBuilder();
 		for (char unicode : wordChars) {
 			// to enhance readability, do not encode A-Z,a-z
 			if (('A' <= unicode && unicode <= 'Z')
@@ -93,14 +93,14 @@ public class UrlUtil {
 			return null;
 		}
 
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0 ; i < str.length(); i++) {
 			appendEncodedChar(result, str.charAt(i));
 		}
 		return result.toString();
 	}
 
-	private static void appendEncodedChar(StringBuffer result, char ch) {
+	private static void appendEncodedChar(StringBuilder result, char ch) {
 		if (needsEncoding(ch)) {
 			int chInt = ch;
 			result.append("&#" + chInt + ';'); //$NON-NLS-1$
@@ -541,7 +541,7 @@ public class UrlUtil {
 		if (parameter == null) {
 			return null;
 		}
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < parameter.length(); i++) {
 			char nextChar = parameter.charAt(i);
 			if (Character.isLetterOrDigit(nextChar) || nextChar == '-') {

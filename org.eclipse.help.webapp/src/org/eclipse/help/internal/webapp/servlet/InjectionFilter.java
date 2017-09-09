@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,8 +99,8 @@ public class InjectionFilter implements IFilter {
 		IPath path = new Path(pathInfo);
 		int upLevels = path.segmentCount() - 1;
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
-		StringBuffer script = new StringBuffer();
-		StringBuffer disabledContent = new StringBuffer();
+		StringBuilder script = new StringBuilder();
+		StringBuilder disabledContent = new StringBuilder();
 		script.append(CssUtil.createCssIncludes(cssIncludes, FilterUtils.getRelativePathPrefix(req)));
 		if (addDisabled) {
 			if (needsLiveHelp) {
@@ -116,7 +116,7 @@ public class InjectionFilter implements IFilter {
 	}
 
 
-	private void appendDisabled(StringBuffer buff, int nsteps, boolean narrow, String relativePath) {
+	private void appendDisabled(StringBuilder buff, int nsteps, boolean narrow, String relativePath) {
 		String message = HelpBasePlugin.getActivitySupport().getDocumentMessage(narrow);
 		if (message==null)
 			return;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class AboutServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
 		locale = UrlUtil.getLocaleObj(req, resp);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(XHTML_1);
 		String showParam = req.getParameter("show"); //$NON-NLS-1$
 		if ("agent".equalsIgnoreCase(showParam)) { //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class AboutServlet extends HttpServlet {
 	}
 
 	private void getAgent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(XHTML_1);
 		String title = WebappResources.getString("userAgent", locale); //$NON-NLS-1$
 		buf.append(UrlUtil.htmlEncode(title));

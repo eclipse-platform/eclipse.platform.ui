@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class SearchXMLGenerator  {
 	}
 
 	public static String serialize(SearchHit[] hits, boolean boolIsCategory) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 		buf.append("<searchHits>\n"); //$NON-NLS-1$
 
@@ -42,7 +42,7 @@ public class SearchXMLGenerator  {
 		return buf.toString();
 	}
 
-	private static void serialize(SearchHit hit, StringBuffer buf,
+	private static void serialize(SearchHit hit, StringBuilder buf,
 			String indent, boolean boolIsCategory) {
 		buf.append(indent + "<hit"); //$NON-NLS-1$
 		if (hit.getHref() != null) {
@@ -73,14 +73,14 @@ public class SearchXMLGenerator  {
 		buf.append(indent + "</hit>\n"); //$NON-NLS-1$
 	}
 
-	private static void serialize(String summary, StringBuffer buf, String indent) {
+	private static void serialize(String summary, StringBuilder buf, String indent) {
 		buf.append(indent + "<summary>"); //$NON-NLS-1$
 		buf.append(XMLGenerator.xmlEscape(summary));
 		buf.append("</summary>\n"); //$NON-NLS-1$
 	}
 
 	private static void serializeCategory(IHelpResource categoryResource,
-			StringBuffer buf, String indent) {
+			StringBuilder buf, String indent) {
 		String category = categoryResource.getLabel();
 		if (category == null) return;
 

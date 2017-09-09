@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class ParseElement {
 
 	public String toJSON(int level) {
 
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 
 		String space = JSonHelper.SPACE;
 		for (int s = 0; s < level; s++) {
@@ -131,7 +131,7 @@ public class ParseElement {
 
 	public String toJSON() {
 
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 
 		if (props != null) {
 			Enumeration<?> enumObj = props.keys();

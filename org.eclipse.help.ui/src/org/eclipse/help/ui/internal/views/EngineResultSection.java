@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,7 +187,7 @@ public class EngineResultSection {
 	private void initializeText() {
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.views"); //$NON-NLS-1$
 		if (bundle != null) {
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><a href=\""); //$NON-NLS-1$
 			buff.append(HREF_PROGRESS);
@@ -248,7 +248,7 @@ public class EngineResultSection {
 
 	public synchronized void canceling() {
 		if (hits.size() == 0 && !searchResults.isDisposed()) {
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><span color=\"summary\">");//$NON-NLS-1$
 			buff.append(Messages.EngineResultSection_canceling);
@@ -334,7 +334,7 @@ public class EngineResultSection {
 	void updateResults(boolean reflow) {
 		ISearchEngineResult[] results = getResults();
 		updateSectionTitle(results.length);
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
 
@@ -479,7 +479,7 @@ public class EngineResultSection {
 		return null;
 	}
 
-	private void updateErrorStatus(StringBuffer buff) {
+	private void updateErrorStatus(StringBuilder buff) {
 		int indent = 21;
 		buff.append("<li indent=\"" + indent + "\" style=\"image\" value=\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buff.append(ISharedImages.IMG_OBJS_ERROR_TSK);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class IndexFragmentServlet extends HttpServlet {
 	private class Serializer {
 
 		private IIndex index;
-		private StringBuffer buf;
+		private StringBuilder buf;
 		private int count = 0;
 		private String locale;
 		private List<Integer> entryList;
@@ -142,7 +142,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			this.locale = locale;
 			this.scope = scope;
 			index = HelpPlugin.getIndexManager().getIndex(locale);
-			buf = new StringBuffer();
+			buf = new StringBuilder();
 		}
 
 		/*

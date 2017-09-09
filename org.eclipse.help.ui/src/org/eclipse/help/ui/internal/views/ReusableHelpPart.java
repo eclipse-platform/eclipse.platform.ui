@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1711,7 +1711,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.getShowAllMessage();
 		if (message == null)
 			return Messages.AskShowAll_message;
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		int state = STATE_START;
 
 		for (int i = 0; i < message.length(); i++) {

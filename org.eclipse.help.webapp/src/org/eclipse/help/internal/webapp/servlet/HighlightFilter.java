@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
@@ -33,9 +32,6 @@ public class HighlightFilter implements IFilter {
 	private static final String sheetRefPart1 = "<link id=\"highlightStyle\" rel=\"STYLESHEET\" href=\""; //$NON-NLS-1$
 	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
 
-	/*
-	 * @see IFilter#filter(HttpServletRequest, OutputStream)
-	 */
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
@@ -67,8 +63,8 @@ public class HighlightFilter implements IFilter {
 	 * @return byte[]
 	 */
 	private byte[] createJScript(HttpServletRequest req, Collection<String> keywords) {
-		StringBuffer buf = new StringBuffer(scriptPart1);
-		StringBuffer buf2 = new StringBuffer(sheetRefPart1);
+		StringBuilder buf = new StringBuilder(scriptPart1);
+		StringBuilder buf2 = new StringBuilder(sheetRefPart1);
 		// append comma separated list of keywords
 		Iterator<String> it = keywords.iterator();
 		if (!it.hasNext())

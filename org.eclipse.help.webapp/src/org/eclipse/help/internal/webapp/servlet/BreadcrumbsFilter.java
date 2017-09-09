@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,6 @@ public class BreadcrumbsFilter implements IFilter {
 		+ "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
 	private static final String HEAD_CONTENT3 = "/content/" + HelpPlugin.PLUGIN_ID + "/livehelp.js\"> </script>"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
-	 */
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
@@ -96,7 +93,7 @@ public class BreadcrumbsFilter implements IFilter {
 
 	private String getBackpath(String path) {
 		int num = new Path(path).segmentCount();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i=0;i<num;++i) {
 			if (i > 0) {
 				buf.append('/');
@@ -107,8 +104,8 @@ public class BreadcrumbsFilter implements IFilter {
 	}
 
 	private String getBodyContent(int[] path, String backPath, boolean isNarrow, String locale) {
-		StringBuffer buf = new StringBuffer();
-		StringBuffer pathBuf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
+		StringBuilder pathBuf = new StringBuilder();
 		ITopic topic = HelpPlugin.getTocManager().getTocs(locale)[path[0]].getTopic(null);
 		pathBuf.append(path[0]);
 

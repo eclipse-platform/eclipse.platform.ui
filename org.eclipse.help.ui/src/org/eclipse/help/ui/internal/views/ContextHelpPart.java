@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,7 +409,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private String buildSearchExpression(String[] searchTerms) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < searchTerms.length; i++) {
 			if (buff.length() > 0)
 				buff.append(" OR "); //$NON-NLS-1$
@@ -558,7 +558,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	private String formatHelpContext(IContext context) {
 		String locale = Platform.getNL();
-		StringBuffer sbuf = new StringBuffer();
+		StringBuilder sbuf = new StringBuilder();
 		sbuf.append("<form>"); //$NON-NLS-1$
 		sbuf.append("<p>"); //$NON-NLS-1$
 		sbuf.append(decodeContextBoldTags(context));
@@ -653,7 +653,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return sbuf.toString();
 	}
 
-	private void addCategory(StringBuffer sbuf, String category) {
+	private void addCategory(StringBuilder sbuf, String category) {
 		if (category == null)
 			category = Messages.ContextHelpPart_seeAlso;
 		sbuf.append("<p><span color=\""); //$NON-NLS-1$

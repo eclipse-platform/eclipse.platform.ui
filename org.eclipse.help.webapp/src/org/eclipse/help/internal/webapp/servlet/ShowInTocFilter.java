@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,6 @@ public class ShowInTocFilter implements IFilter {
 	private static final String scriptPart1 = "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
 	private static final String scriptPart3 = "advanced/synchWithToc.js\"></script>"; //$NON-NLS-1$
 
-	/*
-	 * @see IFilter#filter(HttpServletRequest, OutputStream)
-	 */
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
@@ -53,7 +50,7 @@ public class ShowInTocFilter implements IFilter {
 		if (path == null) {
 			return out;
 		}
-		StringBuffer script = new StringBuffer(scriptPart1);
+		StringBuilder script = new StringBuilder(scriptPart1);
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
 		script.append(relativePath);
 
