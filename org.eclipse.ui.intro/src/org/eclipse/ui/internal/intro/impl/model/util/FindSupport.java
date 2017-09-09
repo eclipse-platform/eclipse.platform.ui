@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class FindSupport {
 			path = path.removeLastSegments(1);
 		}
 
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class FindSupport {
 	public static URL[] findEntries(Bundle bundle, IPath path, Map<String, String> override) {
 		List<URL> results = new ArrayList<>(1);
         find(bundle, path, override, results);
-        return (URL[]) results.toArray(new URL[results.size()]);
+        return results.toArray(new URL[results.size()]);
     }
 
 	/**
@@ -144,7 +144,7 @@ public class FindSupport {
 		String osArch = null;
 		if (override != null)
 			// check for override
-			osArch = (String) override.get("$arch$"); //$NON-NLS-1$
+			osArch = override.get("$arch$"); //$NON-NLS-1$
 		if (osArch == null)
 			// use default
 			osArch = Platform.getOSArch();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -805,7 +805,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
         // styles are safe for a shallow copy.
         if (styles != null)
-			clone.styles = new Vector<String>(styles);
+			clone.styles = new Vector<>(styles);
         if (altStyles != null)
 			clone.altStyles = new Hashtable<>(altStyles);
         return clone;

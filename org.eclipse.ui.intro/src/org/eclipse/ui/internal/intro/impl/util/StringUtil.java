@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-
 
 public class StringUtil {
 
@@ -62,7 +60,7 @@ public class StringUtil {
 			List<String> result = new ArrayList<>();
     		for (StringTokenizer tokenizer = new StringTokenizer(string, delimiters); tokenizer.hasMoreTokens(); )
     			result.add(tokenizer.nextToken());
-    		return (String[]) result.toArray(new String[result.size()]);
+    		return result.toArray(new String[result.size()]);
     	}
     }
 

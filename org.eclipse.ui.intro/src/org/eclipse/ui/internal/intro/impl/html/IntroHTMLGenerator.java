@@ -713,13 +713,13 @@ public class IntroHTMLGenerator {
 
 		if (providerClass != null) {
 			StringWriter stringWriter = new StringWriter();
-			PrintWriter pw = new PrintWriter(stringWriter);
-			// create the specialized content
-			providerClass.createContent(element.getId(), pw);
-			// add the content of the specified file into the div element
-			stringWriter.flush();
-			divElement.addContent(stringWriter.toString());
-			pw.close();
+			try (PrintWriter pw = new PrintWriter(stringWriter)) {
+				// create the specialized content
+				providerClass.createContent(element.getId(), pw);
+				// add the content of the specified file into the div element
+				stringWriter.flush();
+				divElement.addContent(stringWriter.toString());
+			}
 		} else {
 			// we couldn't load the content provider, so add any alternate
 			// text content if there is any

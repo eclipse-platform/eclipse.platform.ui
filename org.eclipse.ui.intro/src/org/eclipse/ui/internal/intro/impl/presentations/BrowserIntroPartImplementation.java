@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,10 +143,10 @@ public class BrowserIntroPartImplementation extends
 			try {
 				tempFile = File.createTempFile("intro",".html"); //$NON-NLS-1$//$NON-NLS-2$
             	tempFile.deleteOnExit();
-            	BufferedWriter out = new BufferedWriter(new
-            			FileWriter(tempFile));
-            	out.write(savedContent);
-            	out.close();
+            	try (BufferedWriter out = new BufferedWriter(new
+            			FileWriter(tempFile))) {
+            		out.write(savedContent);
+            	}
             	IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
     			IWebBrowser browser =  support.getExternalBrowser();
     			browser.openURL(tempFile.toURI().toURL());
@@ -424,16 +424,15 @@ public class BrowserIntroPartImplementation extends
 
     private String generateDoctype(boolean strict) {
     	StringWriter swriter = new StringWriter();
-    	PrintWriter writer = new PrintWriter(swriter);
-    	if (strict) {
-    		writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\""); //$NON-NLS-1$
-    		writer.println("\t\t\t\"http://www.w3.org/TR/html4/strict.dtd\">"); //$NON-NLS-1$
-    	}
-    	else {
-    		writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""); //$NON-NLS-1$
-    		writer.println("\t\t\t\"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$
-    	}
-    	writer.close();
+		try (PrintWriter writer = new PrintWriter(swriter)) {
+			if (strict) {
+				writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\""); //$NON-NLS-1$
+				writer.println("\t\t\t\"http://www.w3.org/TR/html4/strict.dtd\">"); //$NON-NLS-1$
+			} else {
+				writer.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""); //$NON-NLS-1$
+				writer.println("\t\t\t\"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$
+			}
+		}
     	return swriter.toString();
     }
 

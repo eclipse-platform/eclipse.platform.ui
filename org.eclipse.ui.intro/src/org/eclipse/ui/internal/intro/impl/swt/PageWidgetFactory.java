@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -207,9 +208,9 @@ public class PageWidgetFactory {
         if (description != null || label != null || expandable) {
             int style = description != null ? Section.DESCRIPTION : SWT.NULL;
             if (expandable)
-            	style |= Section.TWISTIE | Section.FOCUS_TITLE | Section.CLIENT_INDENT;
+            	style |= ExpandableComposite.TWISTIE | ExpandableComposite.FOCUS_TITLE | ExpandableComposite.CLIENT_INDENT;
             if (expanded)
-            	style |= Section.EXPANDED;
+            	style |= ExpandableComposite.EXPANDED;
             Section section = toolkit.createSection(parent, style);
             if (label != null)
                 section.setText(label);

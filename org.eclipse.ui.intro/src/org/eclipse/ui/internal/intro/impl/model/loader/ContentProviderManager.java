@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
 import java.util.HashMap;
@@ -95,8 +94,7 @@ public class ContentProviderManager {
 	 */
 	public IIntroContentProvider getContentProvider(IntroContentProvider provider) {
 		// safe to cast since we know the object class in table.
-		ContentProviderWrapper providerWrapper = (ContentProviderWrapper) contentProviders.get(provider
-				.getId());
+		ContentProviderWrapper providerWrapper = contentProviders.get(provider.getId());
 		if (providerWrapper == null)
 			// return null if provider has not been created yet.
 			return null;

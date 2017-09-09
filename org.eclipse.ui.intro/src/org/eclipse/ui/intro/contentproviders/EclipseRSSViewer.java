@@ -492,8 +492,6 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			threadRunning = true;
 			items = Collections.synchronizedList(new ArrayList<>());
 
-			InputStream in = null;
-
 			try {
 				IntroPlugin.logDebug("Open Connection: "+getParameter("url")); //$NON-NLS-1$ //$NON-NLS-2$
 				URL url = new URL(getParameter("url")); //$NON-NLS-1$
@@ -502,10 +500,11 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				// set connection timeout to 6 seconds
 				setTimeout(conn, SOCKET_TIMEOUT); // Connection timeout to 6 seconds
 				conn.connect();
-				in = url.openStream();
-				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-				parser.parse(in, new RSSHandler());
-				refresh();
+				try (InputStream in = url.openStream()) {
+					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+					parser.parse(in, new RSSHandler());
+					refresh();
+				}
 
 			} catch (Exception e) {
 				IntroPlugin.logError(
@@ -514,12 +513,6 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 								getParameter("url"))); //$NON-NLS-1$
 				refresh();
 			} finally {
-				try {
-					if (in != null) {
-						in.close();
-					}
-				} catch (IOException e) {
-				}
 				threadRunning = false;
 			}
 

@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class IntroElement {
 	 * @return value of the attribute with a given name or <code>null</code> if not set.
 	 */
 	public String getAttribute(String name) {
-		return (String) atts.get(name);
+		return atts.get(name);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class IntroElement {
 	public IntroElement[] getChildren() {
 		if (children == null)
 			return new IntroElement[0];
-		return (IntroElement[]) children.toArray(new IntroElement[children.size()]);
+		return children.toArray(new IntroElement[children.size()]);
 	}
 
 	@Override
@@ -130,8 +130,8 @@ public class IntroElement {
 			if (obj == this) {
 				return true;
 			}
-			String id1 = (String)atts.get("id"); //$NON-NLS-1$
-			String id2 = (String)((IntroElement)obj).atts.get("id"); //$NON-NLS-1$
+			String id1 = atts.get("id"); //$NON-NLS-1$
+			String id2 = ((IntroElement)obj).atts.get("id"); //$NON-NLS-1$
 			if (id1 == null && id2 == null) {
 				return super.equals(obj);
 			}

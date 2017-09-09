@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,14 +54,13 @@ public class ReopenUtil {
 
 	private static XMLMemento readMemento() {
 		XMLMemento memento;
-		InputStreamReader reader = null;
 
-		try {
-			// Read the cheatsheet state file.
-			final File stateFile = getStateFile();
+		// Read the cheatsheet state file.
+		final File stateFile = getStateFile();
+		try (FileInputStream input = new FileInputStream(stateFile);
+				InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
 
-			FileInputStream input = new FileInputStream(stateFile);
-			reader = new InputStreamReader(input, StandardCharsets.UTF_8);
+
 			memento = XMLMemento.createReadRoot(reader);
 
 
@@ -70,13 +69,6 @@ public class ReopenUtil {
 			// Do nothing, the file will not exist the first time the workbench in used.
 		} catch (Exception e) {
 			memento = null;
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-			} catch (IOException e) {
-				// Not much to do, just catch the exception and keep going.
-	        }
 		}
 		return memento;
 	}
@@ -84,20 +76,11 @@ public class ReopenUtil {
 	private static void saveMemento(XMLMemento memento) {
 		// Save the IMemento to a file.
 		File stateFile = getStateFile();
-		OutputStreamWriter writer = null;
-		try {
-			FileOutputStream stream = new FileOutputStream(stateFile);
-			writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
+		try (FileOutputStream stream = new FileOutputStream(stateFile);
+				OutputStreamWriter writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
 			memento.save(writer);
 		} catch (IOException e) {
 			stateFile.delete();
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e) {
-
-			}
 		}
 	}
 

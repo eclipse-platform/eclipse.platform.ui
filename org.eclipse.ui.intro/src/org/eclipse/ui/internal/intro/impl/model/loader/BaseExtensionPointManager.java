@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
 import java.util.ArrayList;
@@ -162,7 +161,7 @@ public class BaseExtensionPointManager {
         			filtered.add(configExtensionElements[i]);
         		}
         	}
-        	configExtensionElements = (IConfigurationElement[])filtered.toArray(new IConfigurationElement[filtered.size()]);
+        	configExtensionElements = filtered.toArray(new IConfigurationElement[filtered.size()]);
         }
 
         IConfigurationElement[] configExtensions = getConfigurationsFromAttribute(
@@ -188,7 +187,7 @@ public class BaseExtensionPointManager {
      * @param modelId
      */
     protected IntroModelRoot getCachedModel(String configId) {
-        return (IntroModelRoot) introModels.get(configId);
+        return introModels.get(configId);
     }
 
     /**

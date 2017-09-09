@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class SharedConfigExtensionsManager {
     public IntroStandbyContentPart getStandbyPart(String partId) {
         if (partId == null)
             return null;
-        return (IntroStandbyContentPart) standbyParts.get(partId);
+        return standbyParts.get(partId);
     }
 
     /**
@@ -117,7 +117,7 @@ public class SharedConfigExtensionsManager {
     public IntroURLAction getCommand(String commandName) {
         if (commandName == null)
             return null;
-        return (IntroURLAction) commands.get(commandName);
+        return commands.get(commandName);
     }
 
 }

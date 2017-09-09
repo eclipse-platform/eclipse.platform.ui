@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.Properties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -97,7 +96,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
         boolean alwaysShowIntro = getAlwaysShowIntroPref();
 
 		Button checkBox = new Button(parent,SWT.CHECK);
-		toolkit.adapt((Control)checkBox,false,false);
+		toolkit.adapt(checkBox,false,false);
 
 		checkBox.setText(getText());
 		checkBox.setSelection(alwaysShowIntro);

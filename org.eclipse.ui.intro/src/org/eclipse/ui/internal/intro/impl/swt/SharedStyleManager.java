@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,9 +64,9 @@ public class SharedStyleManager {
             return;
         try {
             URL styleURL = new URL(style);
-            InputStream is = styleURL.openStream();
-            properties.load(is);
-            is.close();
+            try (InputStream is = styleURL.openStream()) {
+            	properties.load(is);
+            }
            	context.path = new Path(style).removeLastSegments(1);
             String t = (String)properties.get("theme"); //$NON-NLS-1$
             if (t!=null && t.trim().equalsIgnoreCase("true")) //$NON-NLS-1$

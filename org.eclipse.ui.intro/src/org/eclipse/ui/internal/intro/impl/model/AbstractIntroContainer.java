@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,7 +322,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * resolved on a per container basis, when the container is resolved.
      */
     protected void resolveChildren() {
-    	AbstractIntroElement[] array = (AbstractIntroElement[])children.toArray(new AbstractIntroElement[children.size()]);
+    	AbstractIntroElement[] array = children.toArray(new AbstractIntroElement[children.size()]);
     	for (int i=0;i<array.length;++i) {
             AbstractIntroElement child = array[i];
             if (UAContentFilter.isFiltered(UAElementFactory.newElement(child.getElement()), IntroEvaluationContext.getContext())) {
@@ -485,8 +485,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             loadChildren();
 
         for (int i = 0; i < children.size(); i++) {
-            AbstractIntroElement aChild = (AbstractIntroElement) children
-                .elementAt(i);
+            AbstractIntroElement aChild = children.elementAt(i);
             if (!aChild.isOfType(ID_ELEMENT))
                 // includes and heads do not have ids, and so can not be
                 // referenced directly. This means that they can not be
@@ -606,8 +605,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 		clone.children = new Vector<>();
         if (children != null) {
             for (int i = 0; i < children.size(); i++) {
-                AbstractIntroElement cloneChild = (AbstractIntroElement) ((AbstractIntroElement) children
-                    .elementAt(i)).clone();
+                AbstractIntroElement cloneChild = (AbstractIntroElement) children
+                    .elementAt(i).clone();
                 cloneChild.setParent(clone);
                 clone.children.add(i, cloneChild);
             }
