@@ -507,7 +507,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         addUnfilteredExtensions(elements, extensionContents);
         addUnfilteredExtensions(elements, replacementContents);
 
-        return (Element[])elements.toArray(new Element[elements.size()]);
+        return elements.toArray(new Element[elements.size()]);
     }
 
 	private void addUnfilteredExtensions(List<Element> elements, Element[] extensionContents) {
@@ -905,7 +905,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     		return text;
     	// resolve
     	boolean inVariable=false;
-    	StringBuffer buf = new StringBuffer();
+    	StringBuilder buf = new StringBuilder();
     	int vindex=0;
     	for (int i=0; i<text.length(); i++) {
     		char c = text.charAt(i);

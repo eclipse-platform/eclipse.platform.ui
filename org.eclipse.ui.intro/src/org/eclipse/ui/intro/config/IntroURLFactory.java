@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public final class IntroURLFactory {
      * Intro URL. Returns null in all other cases. Example usage:
      *
      * <pre>
-     * StringBuffer url = new StringBuffer();
+     * StringBuilder url = new StringBuilder();
      * url.append(&quot;http://org.eclipse.ui.intro/showStandby?&quot;);
      * url.append(&quot;pluginId=org.eclipse.pde.ui&quot;);
      * url.append(&quot;&amp;&quot;);

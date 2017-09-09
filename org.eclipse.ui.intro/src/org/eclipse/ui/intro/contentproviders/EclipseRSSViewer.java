@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,7 +220,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 		}
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("<form>"); //$NON-NLS-1$
 
 
@@ -234,7 +234,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		} else {
 			if (items.size() > 0) {
 				for (int i = 0; i < items.size(); i++) {
-					NewsItem item = (NewsItem) items.get(i);
+					NewsItem item = items.get(i);
 					buffer.append("<li style=\"image\" value=\""); //$NON-NLS-1$
 					buffer.append(HREF_BULLET);
 					buffer.append("\">"); //$NON-NLS-1$
@@ -399,7 +399,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		private static final String ELEMENT_LINK = "link"; //$NON-NLS-1$
 
 		private Stack<String> stack = new Stack<>();
-		private StringBuffer buf;
+		private StringBuilder buf;
 		private NewsItem item;
 
 		@Override
@@ -410,7 +410,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			if ((ELEMENT_TITLE.equals(qName) || ELEMENT_LINK.equals(qName))
 					&& (item != null)) {
 				// prepare the buffer; we're expecting chars
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 			}
 			// it's an item in a channel in rss
 			else if (ELEMENT_ITEM.equals(qName)
@@ -481,7 +481,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	}
 
 	private String getParameter(String name) {
-		return (String) params.get(name);
+		return params.get(name);
 	}
 
 	private class ContentThread extends Thread{

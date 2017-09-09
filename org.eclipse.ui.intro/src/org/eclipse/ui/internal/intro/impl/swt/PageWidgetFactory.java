@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -447,7 +447,7 @@ public class PageWidgetFactory {
      * added.
      */
     private String generateFormText(String text) {
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sbuf = new StringBuilder();
         sbuf.append("<form>"); //$NON-NLS-1$
         if (text.startsWith("<p>")) //$NON-NLS-1$
             sbuf.append(text);
@@ -467,7 +467,7 @@ public class PageWidgetFactory {
      * @return
      */
     private String generateBoldFormText(String text) {
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sbuf = new StringBuilder();
         sbuf.append("<form>"); //$NON-NLS-1$
         sbuf.append("<p>"); //$NON-NLS-1$
         sbuf.append("<b>"); //$NON-NLS-1$

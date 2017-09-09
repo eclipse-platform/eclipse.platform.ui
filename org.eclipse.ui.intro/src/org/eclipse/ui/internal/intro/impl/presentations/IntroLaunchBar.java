@@ -189,8 +189,8 @@ public class IntroLaunchBar {
 	 */
 	public static IntroLaunchBar create(IWorkbenchWindow window, IntroModelRoot modelRoot,
 			IntroLaunchBarElement element) {
-		EModelService modelService = (EModelService) window.getService(EModelService.class);
-		MTrimmedWindow trimmedWindow = (MTrimmedWindow) window.getService(MTrimmedWindow.class);
+		EModelService modelService = window.getService(EModelService.class);
+		MTrimmedWindow trimmedWindow = window.getService(MTrimmedWindow.class);
 
 		MToolControl trimControl = modelService.createModelElement(MToolControl.class);
 		trimControl.setElementId(LAUNCHBAR_ID);
@@ -275,12 +275,12 @@ public class IntroLaunchBar {
 	void init(Composite parent, MToolControl trimControl) {
 		simple = true;
 		this.trimControl = trimControl;
-		this.lastPageId = (String) trimControl.getPersistedState().get(LAST_PAGE_ID);
+		this.lastPageId = trimControl.getPersistedState().get(LAST_PAGE_ID);
 
 		// Handle situation where intro information is not available from the
 		// the application's IEclipseContext
 		if (element == null || theme == null) {
-			String configId = (String) trimControl.getPersistedState().get(INTRO_CONFIG_ID);
+			String configId = trimControl.getPersistedState().get(INTRO_CONFIG_ID);
 			IntroModelRoot modelRoot = IntroPlugin.getDefault().getExtensionPointManager().getModel(configId);
 			element = modelRoot.getPresentation().getLaunchBarElement();
 			theme = modelRoot.getTheme();
@@ -612,7 +612,7 @@ public class IntroLaunchBar {
 		IIntroPart intro = closeLaunchBar(true);
 		if (intro == null)
 			return;
-		StringBuffer url = new StringBuffer();
+		StringBuilder url = new StringBuilder();
 		url.append(LAUNCH_COMMAND_BASE);
 		url.append(id);
 		IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());

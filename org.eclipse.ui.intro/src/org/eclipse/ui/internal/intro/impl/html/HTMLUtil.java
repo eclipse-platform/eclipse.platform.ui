@@ -95,7 +95,7 @@ public final class HTMLUtil {
 
     /**
      * Given a map of attribute names and values, this method will create a
-     * StringBuffer of the attributes in the form: attrName="attrValue". These
+     * StringBuilder of the attributes in the form: attrName="attrValue". These
      * attributes can appear in the start tag of an HTML element.
      *
      * @param attributes
@@ -105,7 +105,7 @@ public final class HTMLUtil {
     public static String createAttributeList(Map attributes) {
         if (attributes == null)
             return null;
-        StringBuffer attributeList = new StringBuffer();
+        StringBuilder attributeList = new StringBuilder();
         Set attrNames = attributes.keySet();
         for (Iterator it = attrNames.iterator(); it.hasNext();) {
             Object name = it.next();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,7 +204,7 @@ public class IntroHTMLGenerator {
 		// implementation level (which would apply to ALL pages) and at the
 		// page level (which would apply only to that particular page).
 		// For the implementation's head contribution:
-		StringBuffer content = null;
+		StringBuilder content = null;
 		IntroHead introHead = IntroPlugin.getDefault().getIntroModelRoot().getPresentation().getHead();
 		if (introHead != null) {
 			content = readFromFile(introHead.getSrc(), introHead.getInlineEncoding());
@@ -397,7 +397,7 @@ public class IntroHTMLGenerator {
 						indentLevel + 1, true);
 				link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, href);
 				link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-title-link"); //$NON-NLS-1$
-				StringBuffer call = new StringBuffer();
+				StringBuilder call = new StringBuilder();
 				call.append("return (toggleSection('");//$NON-NLS-1$
 				call.append(clientId);
 				call.append("','");//$NON-NLS-1$
@@ -471,7 +471,7 @@ public class IntroHTMLGenerator {
 		if (mixinStyle == null)
 			return;
 		String key = "class"; //$NON-NLS-1$
-		String original = (String) element.getElementAttributes().get(key);
+		String original = element.getElementAttributes().get(key);
 		if (original == null)
 			original = mixinStyle;
 		else
@@ -679,7 +679,7 @@ public class IntroHTMLGenerator {
 		// make sure to ask model for encoding. If encoding is null (ie: not
 		// specified in
 		// markup, local encoding is used.
-		StringBuffer content = readFromFile(element.getSrc(), element.getInlineEncoding());
+		StringBuilder content = readFromFile(element.getSrc(), element.getInlineEncoding());
 		if (content != null && content.length() > 0) {
 			// Create the outer div element
 			String divClass = (element.getStyleId() != null) ? element.getStyleId()
@@ -1126,7 +1126,7 @@ public class IntroHTMLGenerator {
 
 	/**
 	 * Reads the content of the file referred to by the <code>src</code> parameter and returns the
-	 * content in the form of a StringBuffer. If the file read contains substitution segments of the
+	 * content in the form of a StringBuilder. If the file read contains substitution segments of the
 	 * form $plugin:plugin_id$ then this method will make the proper substitution (the segment will
 	 * be replaced with the absolute path to the plugin with id plugin_id).
 	 *
@@ -1135,13 +1135,13 @@ public class IntroHTMLGenerator {
 	 * @param charsetName -
 	 *            the encoding of the file to be read. If null, local encoding is used. But the
 	 *            default of the model is UTF-8, so we should not get a null encoding.
-	 * @return a StringBuffer containing the content in the file, or null
+	 * @return a StringBuilder containing the content in the file, or null
 	 */
-	private StringBuffer readFromFile(String src, String charsetName) {
+	private StringBuilder readFromFile(String src, String charsetName) {
 		if (src == null)
 			return null;
 		InputStream stream = null;
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		BufferedReader reader = null;
 		try {
 			URL url = new URL(src);
@@ -1220,16 +1220,16 @@ public class IntroHTMLGenerator {
 
 		// tokenContent will contain all characters read by the parser, starting
 		// with and including the initial $ token.
-		private StringBuffer tokenContent;
+		private StringBuilder tokenContent;
 
 		// pluginId will contain the content between the "$plugin:" segment
 		// and the closing "$" token
-		private StringBuffer pluginId;
+		private StringBuilder pluginId;
 
 		protected PluginIdParser(int tokenBegin, BufferedReader bufferedreader) {
 			reader = bufferedreader;
-			tokenContent = new StringBuffer();
-			pluginId = new StringBuffer();
+			tokenContent = new StringBuilder();
+			pluginId = new StringBuilder();
 			// make sure tokenBegin is in char range before making cast
 			if (tokenBegin > 0x00 && tokenBegin < 0xffff)
 				tokenContent.append((char) tokenBegin);
@@ -1285,7 +1285,7 @@ public class IntroHTMLGenerator {
 		 * This method should be called after an initial substitution character has been found (that
 		 * is, after a $). It looks at the subsequent characters in the input stream to determine if
 		 * they match the expected <code>plugin:</code> segment of the substitution string. If the
-		 * expected characters are found, they will be appended to the tokenContent StringBuffer and
+		 * expected characters are found, they will be appended to the tokenContent StringBuilder and
 		 * the method will return true. If they are not found, false is returned and the caller
 		 * should reset the BufferedReader to the position it was in before this method was called.
 		 *

@@ -168,7 +168,7 @@ public class BrowserIntroPartImplementation extends
 			IntroPlugin.getDefault().resetVolatileImageRegistry();
 			part = PlatformUI.getWorkbench().getIntroManager().showIntro(window, standby);
 			if (part != null  && !standby) {
-				StringBuffer url = new StringBuffer();
+				StringBuilder url = new StringBuilder();
 				url.append("http://org.eclipse.ui.intro/showPage?id="); //$NON-NLS-1$
 				url.append(currentPageId);
 				IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());

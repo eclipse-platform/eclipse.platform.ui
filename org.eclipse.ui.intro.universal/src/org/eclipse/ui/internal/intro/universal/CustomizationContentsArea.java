@@ -743,7 +743,7 @@ public class CustomizationContentsArea {
 			UniversalIntroPlugin.getDefault().resetVolatileImageRegistry();
 			part = PlatformUI.getWorkbench().getIntroManager().showIntro(window, standby);
 			if (part != null  && !standby) {
-				StringBuffer url = new StringBuffer();
+				StringBuilder url = new StringBuilder();
 				url.append("http://org.eclipse.ui.intro/showPage?id="); //$NON-NLS-1$
 				url.append(currentPageId);
 				IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
@@ -778,7 +778,7 @@ public class CustomizationContentsArea {
 		if (product == null)
 			return;
 		String pid = product.getId();
-		StringBuffer sbuf = new StringBuffer();
+		StringBuilder sbuf = new StringBuilder();
 		if (introRootPages.size() == 0) {
 			// An empty string means no preference so special value needed
 			// to indicate no root pages.

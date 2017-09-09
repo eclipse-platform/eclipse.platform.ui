@@ -234,7 +234,7 @@ public class IntroURL implements IIntroURL {
         introPart.getControl().setData(IIntroConstants.SHOW_STANDBY_PART,
             VALUE_TRUE);
         IntroPlugin.setIntroStandby(true);
-        StandbyPart standbyPart = (StandbyPart) introPart
+        StandbyPart standbyPart = introPart
             .getAdapter(StandbyPart.class);
 
         boolean success = standbyPart.showContentPart(partId, input);
@@ -552,7 +552,7 @@ public class IntroURL implements IIntroURL {
             // intro is closed. Do nothing.
             return false;
 
-        IntroPartPresentation presentation = (IntroPartPresentation) introPart
+        IntroPartPresentation presentation = introPart
             .getAdapter(IntroPartPresentation.class);
 
         if (direction.equalsIgnoreCase(VALUE_BACKWARD))
@@ -614,7 +614,7 @@ public class IntroURL implements IIntroURL {
         }
 
         // custom command. execute it.
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         url.append("http://org.eclipse.ui.intro/"); //$NON-NLS-1$
         url.append(command.getReplaceValue().trim());
         if (command.getReplaceValue().indexOf("?") == -1) //$NON-NLS-1$
@@ -637,7 +637,7 @@ public class IntroURL implements IIntroURL {
      * @return
      */
     private String retrieveInitialQuery() {
-        StringBuffer query = new StringBuffer();
+        StringBuilder query = new StringBuilder();
         Enumeration keys = parameters.keys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 			ISearchDocument doc) {
 		AbstractIntroElement[] children = page.getChildren();
 		if (children.length > 0) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			TitleAndSummary titleSummary = new TitleAndSummary();
 			addChildren(children, buf, doc, titleSummary);
 			String contents = buf.toString();
@@ -174,7 +174,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 		return index.addSearchableDocument(pluginId, name, url, page.getId(), doc);
 	}
 
-	private void addChildren(AbstractIntroElement[] children, StringBuffer buf, ISearchDocument doc, TitleAndSummary titleSummary) {
+	private void addChildren(AbstractIntroElement[] children, StringBuilder buf, ISearchDocument doc, TitleAndSummary titleSummary) {
 		for (int i = 0; i < children.length; i++) {
 			AbstractIntroElement child = children[i];
 			if (child instanceof IntroLink) {
@@ -210,7 +210,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 		}
 	}
 
-	private void appendNewText(StringBuffer buf, String text) {
+	private void appendNewText(StringBuilder buf, String text) {
 		if (text == null) return;
 		if (buf.length() > 0)
 			buf.append(" "); //$NON-NLS-1$

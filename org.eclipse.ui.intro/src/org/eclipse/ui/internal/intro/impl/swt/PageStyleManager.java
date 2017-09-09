@@ -146,7 +146,7 @@ public class PageStyleManager extends SharedStyleManager {
     @Override
 	protected StyleContext getAssociatedContext(String key) {
         Properties aProperties = findPropertyOwner(key);
-        StyleContext context = (StyleContext) altStyleContexts.get(aProperties);
+        StyleContext context = altStyleContexts.get(aProperties);
         if (context != null)
             return context;
         return super.getAssociatedContext(key);
@@ -507,7 +507,7 @@ public class PageStyleManager extends SharedStyleManager {
             String qualifier) {
     	if (link==null || link.getId()==null)
     		return ""; //$NON-NLS-1$
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append(page.getId());
         buff.append("."); //$NON-NLS-1$
         buff.append(link.getId());
