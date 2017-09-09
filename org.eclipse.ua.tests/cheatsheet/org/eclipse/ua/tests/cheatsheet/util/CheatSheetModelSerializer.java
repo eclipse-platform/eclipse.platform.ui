@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given cheat sheet model as XML.
 	 */
 	public static String serialize(CheatSheet sheet) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 		if (sheet == null) {
 			buf.append("<nullCheatSheet/>\n");
@@ -52,7 +52,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given Item with the specified indentation.
 	 */
 	public static String serialize(Item item, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (item == null) {
 			buf.append(indent + "<nullItem/>\n");
 		}
@@ -75,7 +75,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given Action with the specified indentation.
 	 */
 	public static String serialize(Action action, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (action == null) {
 			buf.append(indent + "<nullAction/>\n");
 		}
@@ -95,7 +95,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given String with the specified indentation.
 	 */
 	public static String serialize(String string, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (string == null) {
 			buf.append(indent + "<nullString/>\n");
 		}
@@ -111,7 +111,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given AbstractItemExtensionElement with the specified indentation.
 	 */
 	public static String serialize(AbstractItemExtensionElement ext, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(indent + "<itemExtension\n");
 		buf.append(indent + "      attributeName=\"" + ext.getAttributeName() + "\">\n");
 		buf.append(indent + "</itemExtension>\n");
@@ -122,7 +122,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given PerformWhen with the specified indentation.
 	 */
 	public static String serialize(PerformWhen performWhen, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (performWhen == null) {
 			buf.append(indent + "<nullPerformWhen/>\n");
 		}
@@ -139,7 +139,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given AbstractSubItem with the specified indentation.
 	 */
 	public static String serialize(AbstractSubItem subItem, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (subItem == null) {
 			buf.append(indent + "<nullSubItem/>\n");
 		}
@@ -179,11 +179,10 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given array with the specified indentation.
 	 */
 	public static String serialize(Object[] array, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (array == null) {
 			buf.append(indent + "<nullArray/>\n");
-		}
-		else if (array.length == 0) {
+		} else if (array.length == 0) {
 			buf.append(indent + "<array/>\n");
 		}
 		else {
@@ -228,7 +227,7 @@ public class CheatSheetModelSerializer {
 	 * Serializes the given List with the specified indentation.
 	 */
 	public static String serialize(List<?> list, String indent) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (list == null) {
 			buf.append(indent + "<nullList/>\n");
 		}

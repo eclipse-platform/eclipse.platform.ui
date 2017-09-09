@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class LinkCheckServlet extends HttpServlet {
 			throws IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<BODY>Link Checker</BODY>");
 		String response = buf.toString();
 		resp.getWriter().write(response);

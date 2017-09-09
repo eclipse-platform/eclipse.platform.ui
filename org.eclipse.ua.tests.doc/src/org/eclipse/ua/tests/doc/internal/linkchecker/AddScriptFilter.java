@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,10 @@ import org.eclipse.help.webapp.IFilter;
  * dynamic help view.
  */
 public class AddScriptFilter implements IFilter {
-	/*
-	 * @see IFilter#filter(HttpServletRequest, OutputStream)
-	 */
 	@Override
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
-		StringBuffer script = new StringBuffer();
+		StringBuilder script = new StringBuilder();
 		script.append("\n<script type=\"text/javascript\" src=\"");
 		script.append(relativePath);
 		script.append("content/org.eclipse.ua.tests.doc/checkdoc.js\"> </script>"); //$NON-NLS-1$

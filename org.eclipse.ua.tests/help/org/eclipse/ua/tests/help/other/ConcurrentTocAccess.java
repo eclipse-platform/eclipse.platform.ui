@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,11 +30,11 @@ public class ConcurrentTocAccess {
 
 	private class TocGenerator {
 		private int[] dimensions;
-		private StringBuffer result;
+		private StringBuilder result;
 
 		public String generateToc(int dimensions[]) {
 			this.dimensions = dimensions;
-			result = new StringBuffer();
+			result = new StringBuilder();
 			result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             result.append("<?NLS TYPE=\"org.eclipse.help.toc\"?>\n");
             result.append("<toc label=\"Test Toc\" >\n");

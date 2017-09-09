@@ -67,7 +67,7 @@ public class SearchTestUtils {
 		}
 
 		if (!hrefsToFind.isEmpty() || !unexpectedHrefs.isEmpty()) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append("While searching for: " + searchWord + ",\n");
 			if (!hrefsToFind.isEmpty()) {
 				buf.append("Some of the expected results were not found:\n");

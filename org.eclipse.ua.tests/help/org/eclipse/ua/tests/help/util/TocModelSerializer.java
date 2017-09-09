@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ public class TocModelSerializer {
 	private static final String EMPTY_STRING = "";
 
 	public static String serialize(IToc toc) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 		buf.append(serializeAux(toc, ""));
 		return buf.toString();
@@ -28,7 +28,7 @@ public class TocModelSerializer {
 
 	private static String serializeAux(IToc toc, String indent) {
 		if (!UAContentFilter.isFiltered(toc, HelpEvaluationContext.getContext())) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(indent + "<toc\n");
 			buf.append(indent + "      label=\"" + toc.getLabel() + "\"\n");
 			buf.append(indent + "      href=\"" + toc.getHref() + "\">\n");
@@ -46,7 +46,7 @@ public class TocModelSerializer {
 
 	private static String serializeAux(ITopic topic, String indent) {
 		if (!UAContentFilter.isFiltered(topic, HelpEvaluationContext.getContext())) {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(indent + "<topic\n");
 			buf.append(indent + "      label=\"" + topic.getLabel() + "\"\n");
 			buf.append(indent + "      href=\"" + topic.getHref() + "\">\n");

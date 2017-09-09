@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class ParseCriteriaDefinition {
 	// Replaces white space between ">" and "<" by a single newline
 
 	private String trimWhiteSpace(String input) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		boolean betweenElements = false;
 		for (int i = 0; i < input.length(); i++) {
 			char next = input.charAt(i);

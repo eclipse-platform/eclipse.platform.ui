@@ -56,7 +56,7 @@ public class DynamicXHTMLProcessorTest {
 
 	private String readStream(InputStream is) throws Exception {
 		try (InputStreamReader inputStreamReader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			char[] cbuf = new char[256];
 			int len;
 			do {

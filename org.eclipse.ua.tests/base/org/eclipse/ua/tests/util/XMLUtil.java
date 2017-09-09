@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,12 +67,9 @@ public class XMLUtil extends Assert {
 
 	private static class Handler extends DefaultHandler {
 
-		private StringBuffer buf = new StringBuffer();
+		private StringBuilder buf = new StringBuilder();
 		private EntityResolver entityResolver = new LocalEntityResolver();
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-		 */
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			buf.append('<');

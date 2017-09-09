@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class TocLinkChecker {
 	}
 
 	private void doAssert(List<BrokenLink> failures) {
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		for (int i = 0; i < failures.size(); i++) {
 			BrokenLink link = failures.get(i);
 			message.append("Invalid link in \"" + link.getTocID() + "\": " + link.getHref() + "\n");
