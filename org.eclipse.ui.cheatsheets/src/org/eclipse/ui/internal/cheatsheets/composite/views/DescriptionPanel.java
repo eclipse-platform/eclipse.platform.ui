@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class DescriptionPanel {
 	}
 
 	public void showDescription(final ICompositeCheatSheetTask task) {
-		StringBuffer upperMessage = new StringBuffer();
+		StringBuilder upperMessage = new StringBuilder();
 		upperMessage.append("<form>"); //$NON-NLS-1$
 		upperMessage.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
 		upperMessage.append(MarkupParser.escapeText(task.getName()));
@@ -127,7 +127,7 @@ public class DescriptionPanel {
 		upperMessage.append("</form>"); //$NON-NLS-1$
         upperText.setText(upperMessage.toString(), true, false);
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<form>"); //$NON-NLS-1$
 
         boolean startable = false;
@@ -194,7 +194,7 @@ public class DescriptionPanel {
 		form.reflow(true);
 	}
 
-	private void showBlockingTasks(String message, final ICompositeCheatSheetTask task, StringBuffer buf) {
+	private void showBlockingTasks(String message, final ICompositeCheatSheetTask task, StringBuilder buf) {
 		buf.append("<p/>"); //$NON-NLS-1$
 		buf.append("<p>"); //$NON-NLS-1$
 		buf.append("<img href=\""); //$NON-NLS-1$
@@ -211,7 +211,7 @@ public class DescriptionPanel {
 		buf.append("</p>");	 //$NON-NLS-1$
 	}
 
-	private void addHyperlink(StringBuffer buf, String href, String imageRef, String message) {
+	private void addHyperlink(StringBuilder buf, String href, String imageRef, String message) {
 		buf.append("<p><a href=\""); //$NON-NLS-1$
 		buf.append(href);
 		buf.append("\">"); //$NON-NLS-1$
@@ -225,7 +225,7 @@ public class DescriptionPanel {
 	/*
 	 * If this task is incomplete create a message to that effect
 	 */
-	private void warnOfIncompleteTask(StringBuffer buf, ICompositeCheatSheetTask task) {
+	private void warnOfIncompleteTask(StringBuilder buf, ICompositeCheatSheetTask task) {
 		if (task.getState() != ICompositeCheatSheetTask.COMPLETED &&
 			task.getState() != ICompositeCheatSheetTask.SKIPPED	) {
 			buf.append("<li>"); //$NON-NLS-1$
@@ -240,7 +240,7 @@ public class DescriptionPanel {
 	    }
 	}
 
-	private void showSuccesorTaskLinks(ICompositeCheatSheetTask task, StringBuffer buf) {
+	private void showSuccesorTaskLinks(ICompositeCheatSheetTask task, StringBuilder buf) {
 		// Add the links to the next tasks
 		ICompositeCheatSheetTask[] successorTasks = new SuccesorTaskFinder(task).getRecommendedSuccessors();
 		for (int i = 0; i < successorTasks.length; i++) {

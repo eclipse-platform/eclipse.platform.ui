@@ -103,8 +103,8 @@ public class CheatSheetSaveHelper {
 				ArrayList<SubItemCompositeHolder> compList = withsubs
 						.getListOfSubItemCompositeHolders();
 				if (compList != null) {
-					StringBuffer skippedsubItems = new StringBuffer();
-					StringBuffer completedsubItems = new StringBuffer();
+					StringBuilder skippedsubItems = new StringBuilder();
+					StringBuilder completedsubItems = new StringBuilder();
 					for (int j = 0; j < compList.size(); j++) {
 						SubItemCompositeHolder sch = compList.get(j);
 						if (sch.isCompleted())

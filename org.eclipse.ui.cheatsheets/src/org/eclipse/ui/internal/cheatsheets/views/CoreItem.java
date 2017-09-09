@@ -484,7 +484,7 @@ public class CoreItem extends ViewItem {
 	}
 
 	public String performLineSubstitution(String line, String variable, String value) {
-		StringBuffer buffer = new StringBuffer(line.length());
+		StringBuilder buffer = new StringBuilder(line.length());
 
 		StringDelimitedTokenizer tokenizer = new StringDelimitedTokenizer(line, variable);
 		boolean addValue = false;

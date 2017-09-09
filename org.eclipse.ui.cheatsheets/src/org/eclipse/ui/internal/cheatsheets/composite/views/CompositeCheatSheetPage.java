@@ -347,7 +347,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		}
 	}
 
-	private void addHyperlink(StringBuffer buf, String href, String imageRef, String message) {
+	private void addHyperlink(StringBuilder buf, String href, String imageRef, String message) {
 		buf.append("<p><a href=\""); //$NON-NLS-1$
 		buf.append(href);
 		buf.append("\">"); //$NON-NLS-1$
@@ -370,7 +370,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		text.setImage(DescriptionPanel.REVIEW_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_REVIEW));
 	    text.addHyperlinkListener(getEndReviewListener());
 	    text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 	    buf.append("<form>"); //$NON-NLS-1$
 	    addHyperlink(buf, END_REVIEW_TAG + task.getId(), DescriptionPanel.REVIEW_IMAGE, Messages.COMPOSITE_PAGE_END_REVIEW );
 	    buf.append("</form>"); //$NON-NLS-1$

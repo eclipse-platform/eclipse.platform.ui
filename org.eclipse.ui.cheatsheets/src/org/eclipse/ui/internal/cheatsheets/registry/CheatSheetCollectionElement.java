@@ -184,7 +184,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("CheatSheetCollection, "); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("CheatSheetCollection, "); //$NON-NLS-1$
 		buf.append(childCollections.size());
 		buf.append(" children, "); //$NON-NLS-1$
 		buf.append(cheatsheets.size());

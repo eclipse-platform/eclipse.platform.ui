@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ public class CheatSheetParser implements IStatusContainer {
 	 * @param text the string buffer to have its characters escaped
 	 * @return string buffer with any of the characters requiring XML escaping escaped
 	 */
-	private StringBuffer escapeXMLCharacters(StringBuffer text) {
+	private StringBuilder escapeXMLCharacters(StringBuilder text) {
 		// Set the maximum length of the tags to ignore
 		final int MAXIMUM_TAG_LENGTH = 5;
 
@@ -125,7 +125,7 @@ public class CheatSheetParser implements IStatusContainer {
 		int length = text.length();
 
 		// Create the buffer to store the resulting string
-		StringBuffer result = new StringBuffer(length);
+		StringBuilder result = new StringBuilder(length);
 
 		// Loop for the characters of the original string
 		for(int i=0; i<length; i++) {
@@ -411,7 +411,7 @@ public class CheatSheetParser implements IStatusContainer {
 
 	private String handleMarkedUpText(Node nodeContainingText, Node startNode, String nodeName ) {
 		NodeList nodes = nodeContainingText.getChildNodes();
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 
 		boolean containsMarkup = false;
 
@@ -463,7 +463,7 @@ public class CheatSheetParser implements IStatusContainer {
 
 	// Replace any tabs with spaces
 
-	private void deTab(StringBuffer text) {
+	private void deTab(StringBuilder text) {
 		for (int i = 0; i < text.length(); i++) {
 			if (text.charAt(i) == '\t') {
 				text.setCharAt(i, ' ');

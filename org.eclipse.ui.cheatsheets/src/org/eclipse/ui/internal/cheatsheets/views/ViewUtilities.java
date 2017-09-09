@@ -37,7 +37,7 @@ public class ViewUtilities {
 		}
 
 		int next = 0;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		int index = message.indexOf('&');
 		while (index >= 0) {
 			result.append(message.substring(next, index + 1));

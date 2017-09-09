@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class MarkupParser {
 
 	private static String parseMarkup(Node parentNode) {
 	    NodeList children = parentNode.getChildNodes();
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node childNode = children.item(i);
 			if (childNode.getNodeType() == Node.TEXT_NODE) {
@@ -57,13 +57,13 @@ public class MarkupParser {
 	}
 
 	public static String escapeText(String input) {
-		StringBuffer result = new StringBuffer(input.length() + 10);
+		StringBuilder result = new StringBuilder(input.length() + 10);
 		for (int i = 0; i < input.length(); ++i)
 			appendEscapedChar(result, input.charAt(i));
 		return result.toString();
 	}
 
-	private static void appendEscapedChar(StringBuffer buffer, char c) {
+	private static void appendEscapedChar(StringBuilder buffer, char c) {
 		String replacement = getReplacement(c);
 		if (replacement != null) {
 			buffer.append(replacement);
