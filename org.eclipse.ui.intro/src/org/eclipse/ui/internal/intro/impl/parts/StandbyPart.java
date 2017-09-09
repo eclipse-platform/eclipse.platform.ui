@@ -288,10 +288,8 @@ public class StandbyPart implements IIntroConstants {
             if (controlKey.getControl() == null) {
                 // control is null. This means that interface was not
                 // implemented properly. log fact.
-                String message = StringUtil
-                    .concat("Standby Content part: ", partId, //$NON-NLS-1$
-                        " has a null Control defined. This prevents the part from being displayed.") //$NON-NLS-1$
-                    .toString();
+				String message = StringUtil.concat("Standby Content part: ", partId, //$NON-NLS-1$
+						" has a null Control defined. This prevents the part from being displayed."); //$NON-NLS-1$
                 Log.error(message, null);
                 return null;
             }

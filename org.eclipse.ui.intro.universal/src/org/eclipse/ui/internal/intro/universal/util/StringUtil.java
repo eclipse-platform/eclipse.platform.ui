@@ -12,11 +12,11 @@ package org.eclipse.ui.internal.intro.universal.util;
 
 public class StringUtil {
 
-	public static StringBuffer concat(String... strings) {
-    	StringBuffer buffer = new StringBuffer();
+	public static String concat(String... strings) {
+    	StringBuilder buffer = new StringBuilder();
     	for (String string : strings) {
 			buffer.append(string);
 		}
-    	return buffer;
+    	return buffer.toString();
     }
 }

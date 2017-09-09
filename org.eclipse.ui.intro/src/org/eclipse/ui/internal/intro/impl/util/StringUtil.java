@@ -15,12 +15,12 @@ import java.net.URLDecoder;
 
 public class StringUtil {
 
-    public static StringBuffer concat(String... strings) {
-    	StringBuffer buffer = new StringBuffer();
+    public static String concat(String... strings) {
+    	StringBuilder buffer = new StringBuilder();
     	for (String string : strings) {
 			buffer.append(string);
 		}
-    	return buffer;
+    	return buffer.toString();
     }
 
 	public static String decode(String s, String enc) throws UnsupportedEncodingException {

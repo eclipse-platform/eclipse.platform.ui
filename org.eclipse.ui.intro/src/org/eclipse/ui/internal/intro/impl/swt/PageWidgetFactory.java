@@ -154,11 +154,10 @@ public class PageWidgetFactory {
                 String embddedLink = html.getSrc();
                 if (embddedLink == null)
                     break;
-                String linkText = StringUtil
-                    .concat(
-                        "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=", //$NON-NLS-1$
-                        embddedLink, "\">", //$NON-NLS-1$
-                        Messages.HTML_embeddedLink, "</a></p>").toString(); //$NON-NLS-1$
+				String linkText = StringUtil.concat(
+						"<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=", //$NON-NLS-1$
+						embddedLink, "\">", //$NON-NLS-1$
+						Messages.HTML_embeddedLink, "</a></p>"); //$NON-NLS-1$
                 linkText = generateFormText(linkText);
                 c = createFormText(parent, linkText, null);
             }

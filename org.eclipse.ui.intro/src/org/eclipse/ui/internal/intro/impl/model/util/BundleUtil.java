@@ -44,11 +44,10 @@ public class BundleUtil {
             if (bundle == null)
                 Log.error("Intro tried accessing a NULL bundle.", null); //$NON-NLS-1$
             else {
-                String msg = StringUtil
-                    .concat("Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
-                        bundle, Constants.BUNDLE_NAME), " vendor: ", //$NON-NLS-1$
-                        getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
-                        " bundle state: ", String.valueOf(bundle.getState())).toString(); //$NON-NLS-1$
+				String msg = StringUtil.concat("Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
+						bundle, Constants.BUNDLE_NAME), " vendor: ", //$NON-NLS-1$
+						getBundleHeader(bundle, Constants.BUNDLE_VENDOR), " bundle state: ", //$NON-NLS-1$
+						String.valueOf(bundle.getState()));
                 Log.error(msg, null);
             }
             return false;
@@ -182,9 +181,8 @@ public class BundleUtil {
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. log fact, return resource,
                 // as is.
-                String msg = StringUtil.concat("Could not find resource: ", //$NON-NLS-1$
-                    resource, " in ", getBundleHeader( //$NON-NLS-1$
-                        bundle, Constants.BUNDLE_NAME)).toString();
+				String msg = StringUtil.concat("Could not find resource: ", //$NON-NLS-1$
+						resource, " in ", getBundleHeader(bundle, Constants.BUNDLE_NAME)); //$NON-NLS-1$
                 Log.warning(msg);
                 return resource;
             }
@@ -194,9 +192,8 @@ public class BundleUtil {
             */
             return toExternalForm(localLocation);
         } catch (Exception e) {
-            String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
-                resource, " from ", getBundleHeader(bundle, //$NON-NLS-1$
-                    Constants.BUNDLE_NAME)).toString();
+			String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
+					resource, " from ", getBundleHeader(bundle, Constants.BUNDLE_NAME)); //$NON-NLS-1$
             Log.error(msg, e);
             return resource;
         }
