@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,13 +105,12 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 		elements.add(element);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class)
-			return (T) this;
+			return adapter.cast(this);
 		else if (adapter == IConfigurationElement.class)
-			return (T) configurationElement;
+			return adapter.cast(configurationElement);
 		else
 			return null;
 	}

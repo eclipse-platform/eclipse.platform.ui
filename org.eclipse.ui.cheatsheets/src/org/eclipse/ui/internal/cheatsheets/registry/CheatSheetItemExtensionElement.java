@@ -47,11 +47,10 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 	 * associated with this object. Returns <code>null</code> if
 	 * no such object can be found.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
-			return (T) this;
+			return adapter.cast(this);
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
