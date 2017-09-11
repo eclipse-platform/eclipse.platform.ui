@@ -26,11 +26,11 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ExternalToolsImages {
 
-	/** 
+	/**
 	 * The image registry containing <code>Image</code>s.
 	 */
 	private static ImageRegistry imageRegistry;
-	
+
 	/**
 	 * The registry for composite images
 	 */
@@ -40,17 +40,17 @@ public class ExternalToolsImages {
 	private static URL ICON_BASE_URL= null;
 
 	static {
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$	
+		String pathSuffix = "icons/full/"; //$NON-NLS-1$
 		ICON_BASE_URL= ExternalToolsPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	
+
 	/**
 	 * Declare all images
 	 */
-	private static void declareImages() {		
+	private static void declareImages() {
 		// Objects
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.png"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_BUILD, OBJECT + "build_tab.png"); //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class ExternalToolsImages {
 		}
 		imageRegistry.put(key, desc);
 	}
-	
+
 	/**
 	 * Returns the ImageRegistry.
 	 */
@@ -122,7 +122,7 @@ public class ExternalToolsImages {
 	public static Image getImage(String key) {
 		return getImageRegistry().get(key);
 	}
-	
+
 	/**
 	 * Returns the <code>ImageDescriptor<code> identified by the given key,
 	 * or <code>null</code> if it does not exist.
@@ -130,15 +130,15 @@ public class ExternalToolsImages {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getImageRegistry().getDescriptor(key);
 	}
-	
+
 	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
 		if (ICON_BASE_URL == null) {
 			throw new MalformedURLException();
 		}
-			
+
 		return new URL(ICON_BASE_URL, iconPath);
 	}
-	
+
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *lcl16 folders.
@@ -146,9 +146,9 @@ public class ExternalToolsImages {
 	public static void setLocalImageDescriptors(IAction action, String iconName) {
 		setImageDescriptors(action, "lcl16", iconName); //$NON-NLS-1$
 	}
-	
+
 	private static void setImageDescriptors(IAction action, String type, String relPath) {
-		
+
 		try {
 			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
 			if (id != null)
@@ -167,18 +167,18 @@ public class ExternalToolsImages {
 
 		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
-	
+
 	private static URL makeIconFileURL(String prefix, String name) throws MalformedURLException {
 		if (ICON_BASE_URL == null) {
 			throw new MalformedURLException();
 		}
-		
+
 		StringBuffer buffer= new StringBuffer(prefix);
 		buffer.append('/');
 		buffer.append(name);
 		return new URL(ICON_BASE_URL, buffer.toString());
 	}
-	
+
 	private static ImageDescriptor create(String prefix, String name) {
 		try {
 			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
@@ -187,20 +187,20 @@ public class ExternalToolsImages {
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}
-	
-	/** 
-	 * Returns the image for the given composite descriptor. 
+
+	/**
+	 * Returns the image for the given composite descriptor.
 	 */
 	public static Image getImage(CompositeImageDescriptor imageDescriptor) {
 		if (imageDescriptorRegistry == null) {
-			imageDescriptorRegistry = new ImageDescriptorRegistry();	
+			imageDescriptorRegistry = new ImageDescriptorRegistry();
 		}
 		return imageDescriptorRegistry.get(imageDescriptor);
 	}
-	
+
 	public static void disposeImageDescriptorRegistry() {
 		if (imageDescriptorRegistry != null) {
-			imageDescriptorRegistry.dispose(); 
+			imageDescriptorRegistry.dispose();
 		}
 	}
 }
