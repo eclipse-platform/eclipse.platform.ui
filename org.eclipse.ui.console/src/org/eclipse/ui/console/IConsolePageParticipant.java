@@ -20,7 +20,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * <code>org.eclispe.ui.console.consolePageParticipants</code> extension point.
  * <p>
  * Participant behavior is implementation dependent. For example, a page participant
- * could add actions to a console's toolbar by accessing a its page's action bars.  
+ * could add actions to a console's toolbar by accessing a its page's action bars.
  * </p>
  * <p>
  * Following is an example extension definition.
@@ -37,35 +37,35 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * <code>enablement</code> attribute may be specified to control which consoles
  * a page participant is applicable to.
  * <p>
- * Clients contributing console page participant extensions are intended to 
+ * Clients contributing console page participant extensions are intended to
  * implement this interface.
  * </p>
  * @since 3.1
  */
 public interface IConsolePageParticipant extends IAdaptable {
     /**
-     * Called during page initialization. Marks the start of this 
+     * Called during page initialization. Marks the start of this
      * page participant's lifecycle.
-     * 
+     *
      * @param page the page corresponding to the given console
      * @param console the console for which a page has been created
      */
     public void init(IPageBookViewPage page, IConsole console);
-    
+
     /**
      * Disposes this page participant. Marks the end of this
      * page participant's lifecycle.
      */
     public void dispose();
-    
+
     /**
      * Notification this participant's page has been activated.
      */
     public void activated();
-    
+
     /**
      * Notification this participant's page has been deactivated.
      */
     public void deactivated();
-    
+
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,20 +26,20 @@ public interface IPatternMatchListenerDelegate {
     /**
      * Notification that pattern matching will begin in the specified console.
      * A pattern matcher is connected to only one console at a time.
-     * 
+     *
      * @param console the console in which pattern matching will be performed
      */
     public void connect(TextConsole console);
-    
+
     /**
      * Notification that pattern matching has been completed in the console
      * this delegate was last connected to.
      */
     public void disconnect();
-    
+
     /**
      * Notification that a match has been found.
-     * 
+     *
      * @param event event describing where the match was found
      */
     public void matchFound(PatternMatchEvent event);
