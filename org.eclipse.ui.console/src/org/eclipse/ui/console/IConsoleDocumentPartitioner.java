@@ -27,21 +27,21 @@ import org.eclipse.swt.custom.StyleRange;
  * @since 3.1
  */
 public interface IConsoleDocumentPartitioner extends IDocumentPartitioner {
-
+       
     /**
      * Returns whether this partitioner's document is read-only at the specified
-     * offset. The user is not allowed to type in read-only locations.
-     *
+     * offset. The user is not allowed to type in read-only locations. 
+     * 
      * @param offset document offset
      * @return whether this partitioner's document is read-only at the specified
      * offset
      */
     public boolean isReadOnly(int offset);
-
+    
     /**
      * Returns style ranges for the specified region of this partitioner's document
-     * to use when rendering, or <code>null</code> if none.
-     *
+     * to use when rendering, or <code>null</code> if none. 
+     * 
      * @param offset beginning offset for which style ranges are requested
      * @param length the length of text for which style ranges are requested
      * @return style ranges for the specified region of this partitioner's document

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ package org.eclipse.ui.console;
  * <li><code>class</code> - fully qualified name of the Java class implementing
  *  <code>org.eclipse.ui.console.IPatternMatchListenerDelegate</code></li>
  * </ul>
- * </p>
+ * </p> 
  * <p>
  * Optionally a <code>qualifier</code> attribute may be specified to improve performance
  * of regular expression matching. A qualifier specifies a simple regular expression used to
@@ -55,22 +55,22 @@ package org.eclipse.ui.console;
 public interface IPatternMatchListener extends IPatternMatchListenerDelegate {
     /**
      * Returns the pattern to be used for matching. The pattern is
-     * a string representing a regular expression.
-     *
+     * a string representing a regular expression. 
+     * 
      * @return the regular expression to be used for matching
      */
     public String getPattern();
-
+    
     /**
      * Returns the flags to use when compiling this pattern match listener's
      * regular expression, as defined by by <code>Pattern.compile(String regex, int flags)</code>
-     *
+     * 
      * @return the flags to use when compiling this pattern match listener's
      * regular expression
      * @see java.util.regex.Pattern#compile(java.lang.String, int)
      */
     public int getCompilerFlags();
-
+    
     /**
      * Returns a simple regular expression used to identify lines that may
      * match this pattern matcher's complete pattern, or <code>null</code>.
@@ -78,10 +78,10 @@ public interface IPatternMatchListener extends IPatternMatchListenerDelegate {
      * from the search. When a line is found containing a match for this expression,
      * the line is searched from the beginning for this pattern matcher's
      * complete pattern. Lines not containing this pattern are discarded.
-     *
+     * 
      * @return a simple regular expression used to identify lines that may
      * match this pattern matcher's complete pattern, or <code>null</code>
      */
     public String getLineQualifier();
-
+    
 }

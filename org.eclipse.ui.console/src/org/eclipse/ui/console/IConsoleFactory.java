@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ package org.eclipse.ui.console;
  * An action appears in the console view's 'Open Console' drop-down menu with the
  * corresponding <code>label</code> and optional <code>icon</code>. When the action
  * is invoked, the specified <code>class</code> is instantiated and called to
- * open a console, via the method <code>openConsole()</code>.
+ * open a console, via the method <code>openConsole()</code>. 
  * </p>
  * <p>
  * Clients providing console factory extensions are intended to implement

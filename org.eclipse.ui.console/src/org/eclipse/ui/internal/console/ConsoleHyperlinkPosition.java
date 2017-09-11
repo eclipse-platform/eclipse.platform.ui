@@ -16,7 +16,7 @@ import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Describes the position of a hyperlink within the Console's document.
- *
+ * 
  * @since 3.1
  */
 public class ConsoleHyperlinkPosition extends Position {
