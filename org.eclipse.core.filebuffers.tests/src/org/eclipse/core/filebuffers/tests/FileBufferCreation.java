@@ -69,12 +69,12 @@ public class FileBufferCreation {
 
 	private IPath createLinkedFile(String linkedFileName, String linkedFileTarget) throws CoreException {
 		IFile linkedFile= ResourceHelper.createLinkedFile(fProject, new Path(linkedFileName), FileBuffersTestPlugin.getDefault(), new Path(linkedFileTarget));
-		return linkedFile != null ? linkedFile.getFullPath() : null;
+		return linkedFile.getFullPath();
 	}
 
 	private IPath createLinkedFolder(String linkedFolderName, String linkedFolderTarget) throws CoreException {
 		IFolder linkedFolder= ResourceHelper.createLinkedFolder(fProject, new Path(linkedFolderName), FileBuffersTestPlugin.getDefault(), new Path(linkedFolderTarget));
-		return linkedFolder != null ? linkedFolder.getFullPath() : null;
+		return linkedFolder.getFullPath();
 	}
 
 	/*

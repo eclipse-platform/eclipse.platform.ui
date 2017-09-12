@@ -41,7 +41,7 @@ import org.eclipse.jface.text.TextUtilities;
  * This class is used to present proposals asynchronously to the user. If additional information
  * exists for a proposal, then selecting that proposal will result in the information being
  * displayed in a secondary window.
- * 
+ *
  * @since 3.12
  */
 class AsyncCompletionProposalPopup extends CompletionProposalPopup {
@@ -173,7 +173,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			}
 			fComputedProposals = computedProposals;
 			if (stillRemainingThreeshold > 0) { // everything ready in time, go synchronous
-				int count= (computedProposals == null ? 0 : computedProposals.size());
+				int count= computedProposals.size();
 				if (count == 0 && hideWhenNoProposals(autoActivated))
 					return null;
 

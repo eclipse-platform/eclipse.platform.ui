@@ -141,7 +141,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the zoom level for the current painting operation. Workaround for bug 516293.
-	 * 
+	 *
 	 * @param zoom the zoom to set
 	 * @since 3.12
 	 */
@@ -369,8 +369,7 @@ public final class DiffPainter {
 				if (fLineDiffer != null)
 					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
 				fLineDiffer= (ILineDiffer) differ;
-				if (fLineDiffer != null)
-					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
+				((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
 			}
 		}
 	}

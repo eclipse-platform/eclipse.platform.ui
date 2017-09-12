@@ -6546,13 +6546,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		Caret caret= new Caret(styledText, SWT.NULL);
 		Image image= createRawInsertModeCaretImage(styledText);
-		if (image != null)
-			caret.setImage(image);
-		else {
-			// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
-			caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
-		}
-
+		caret.setImage(image);
 		caret.setFont(styledText.getFont());
 
 		return caret;
