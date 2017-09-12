@@ -525,14 +525,12 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_relatedLink;
 	public static String IDEWorkspacePreference_openReferencedProjects;
 	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
-	public static String IDEWorkspacePreference_workspaceLocation;
 	public static String IDEWorkspacePreference_windowTitleGroupText;
 	public static String IDEWorkspacePreference_showLocationInWindowTitle;
 	public static String IDEWorkspacePreference_showLocationInWindowTitle_lockedByCommandLine;
 	public static String IDEWorkspacePreference_showLocationNameInWindowTitle;
 	public static String IDEWorkspacePreference_showPerspectiveNameInWindowTitle;
 	public static String IDEWorkspacePreference_showProductNameInWindowTitle;
-	public static String IDEWorkspacePreference_workspaceName;
 	public static String IDEWorkbenchPreference_workbenchSystemExplorer;
 
 	// --- Linked Resources ---

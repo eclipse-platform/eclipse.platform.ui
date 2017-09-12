@@ -1,5 +1,5 @@
  /****************************************************************************
-* Copyright (c) 2000, 2016 IBM Corporation and others.
+* Copyright (c) 2000, 2017 IBM Corporation and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -28,13 +28,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.osgi.util.NLS;
@@ -101,7 +102,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
     //A boolean to indicate if the user settings were cleared.
 	private boolean clearUserSettings = false;
 
-	private RadioGroupFieldEditor openReferencesEditor;
+	private ComboFieldEditor openReferencesEditor;
 
 	private StringFieldEditor systemExplorer;
 
@@ -165,10 +166,11 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		String name = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
 		String label = IDEWorkbenchMessages.IDEWorkspacePreference_openReferencedProjects;
         String[][] namesAndValues = {
-                { IDEWorkbenchMessages.Always, IDEInternalPreferences.PSPM_ALWAYS },
-                { IDEWorkbenchMessages.Never, IDEInternalPreferences.PSPM_NEVER },
-                { IDEWorkbenchMessages.Prompt, IDEInternalPreferences.PSPM_PROMPT } };
-		openReferencesEditor = new RadioGroupFieldEditor(name, label, 3, namesAndValues, parent, true);
+				{ Action.removeMnemonics(IDEWorkbenchMessages.Always), IDEInternalPreferences.PSPM_ALWAYS },
+				{ Action.removeMnemonics(IDEWorkbenchMessages.Never), IDEInternalPreferences.PSPM_NEVER },
+				{ Action.removeMnemonics(IDEWorkbenchMessages.Prompt), IDEInternalPreferences.PSPM_PROMPT } };
+		Composite composite = new Composite(parent, SWT.NONE);
+		openReferencesEditor = new ComboFieldEditor(name, label, namesAndValues, composite);
 		openReferencesEditor.setPreferenceStore(getIDEPreferenceStore());
 		openReferencesEditor.setPage(this);
 		openReferencesEditor.load();
@@ -231,19 +233,19 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		grpWindowTitle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		// show workspace name
-		showLocationNameInTitle = new Button(grpWindowTitle, SWT.CHECK);
+		Composite locationNameComposite = new Composite(grpWindowTitle, SWT.NONE);
+		GridDataFactory.defaultsFor(locationNameComposite).indent(0, 0).grab(true, false)
+				.applyTo(locationNameComposite);
+		GridLayout locationNameLayout = new GridLayout(2, false);
+		locationNameComposite.setLayout(locationNameLayout);
+		locationNameLayout.marginWidth = locationNameLayout.marginHeight = 0;
+		showLocationNameInTitle = new Button(locationNameComposite, SWT.CHECK);
 		showLocationNameInTitle.setText(IDEWorkbenchMessages.IDEWorkspacePreference_showLocationNameInWindowTitle);
 		showLocationNameInTitle.setSelection(isShowName);
-
-		Composite compositeWsName = new Composite(grpWindowTitle, SWT.NONE);
-		compositeWsName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		workspaceName = new StringFieldEditor(IDEInternalPreferences.WORKSPACE_NAME,
-				IDEWorkbenchMessages.IDEWorkspacePreference_workspaceName, compositeWsName);
-		gl = ((GridLayout) compositeWsName.getLayout());
-		gl.marginLeft = 15;
-		gl.marginHeight = 0;
-
+		Composite workspaceNameComposite = new Composite(locationNameComposite, SWT.NONE);
+		GridDataFactory.defaultsFor(workspaceNameComposite).align(SWT.FILL, SWT.CENTER).grab(true, false)
+				.applyTo(workspaceNameComposite);
+		workspaceName = new StringFieldEditor(IDEInternalPreferences.WORKSPACE_NAME, "", workspaceNameComposite); //$NON-NLS-1$
 		workspaceName.setPreferenceStore(getIDEPreferenceStore());
 		workspaceName.load();
 		workspaceName.setPage(this);
@@ -255,22 +257,13 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		showPerspectiveNameInTitle.setSelection(isShowPerspective);
 
 		// show full workspace path
-		showLocationPathInTitle = new Button(grpWindowTitle, SWT.CHECK);
+		Composite pathComposite = new Composite(grpWindowTitle, SWT.NONE);
+		pathComposite.setLayoutData(GridDataFactory.copyData((GridData) locationNameComposite.getLayoutData()));
+		pathComposite.setLayout(GridLayoutFactory.copyLayout((GridLayout) locationNameComposite.getLayout()));
+		showLocationPathInTitle = new Button(pathComposite, SWT.CHECK);
 		showLocationPathInTitle.setText(IDEWorkbenchMessages.IDEWorkspacePreference_showLocationInWindowTitle);
 		showLocationPathInTitle.setSelection(isShowLocation);
-
-		Composite compositeWsPath = new Composite(grpWindowTitle, SWT.NONE);
-		compositeWsPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		GridLayout gl_compositeWsPath = new GridLayout(2, false);
-		gl_compositeWsPath.marginLeft = 12;
-		gl_compositeWsPath.marginHeight = 0;
-		compositeWsPath.setLayout(gl_compositeWsPath);
-
-		Label locationLabel = new Label(compositeWsPath, SWT.NONE);
-		locationLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		locationLabel.setText(IDEWorkbenchMessages.IDEWorkspacePreference_workspaceLocation);
-
-		Text workspacePath = new Text(compositeWsPath, SWT.READ_ONLY);
+		Text workspacePath = new Text(pathComposite, SWT.READ_ONLY);
 		workspacePath.setBackground(workspacePath.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		workspacePath.setText(TextProcessor.process(Platform.getLocation().toOSString()));
 		workspacePath.setSelection(workspacePath.getText().length());
@@ -282,7 +275,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		showProductNameInTitle.setSelection(isShowProduct);
 
 		// disable location component if -showlocation forced
-		Stream.of(showLocationPathInTitle, locationLabel, workspacePath)
+		Stream.of(showLocationPathInTitle, workspacePath)
 				.forEach(c -> c.setEnabled(!showLocationIsSetOnCommandLine));
 	}
 
