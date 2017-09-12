@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -537,7 +536,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                     break;
                 }
 
-                if (itemId != null && testId != null) {
+                if (itemId != null) {
                     if (itemId.compareTo(testId) < 1) {
 						break;
 					}

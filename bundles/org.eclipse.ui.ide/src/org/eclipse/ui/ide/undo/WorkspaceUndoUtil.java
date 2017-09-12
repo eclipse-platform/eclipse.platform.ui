@@ -762,7 +762,7 @@ public class WorkspaceUndoUtil {
 		IFile existingFile = (IFile) existing;
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress, deleteSourceFile ? 3 : 2);
-		if (file != null && existingFile != null) {
+		if (file != null) {
 			if (validateEdit(file, existingFile, getShell(uiInfo))) {
 				// Remember the state of the existing file so it can be
 				// restored.

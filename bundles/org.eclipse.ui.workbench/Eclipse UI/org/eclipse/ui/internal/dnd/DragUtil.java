@@ -132,8 +132,8 @@ public class DragUtil {
         target.drop();
 
         // If the target can handle a 'finished' notification then send one
-        if (target!= null && target instanceof IDropTarget2) {
-        	((IDropTarget2)target).dragFinished(true);
+        if (target instanceof IDropTarget2) {
+           ((IDropTarget2)target).dragFinished(true);
         }
 
         return true;

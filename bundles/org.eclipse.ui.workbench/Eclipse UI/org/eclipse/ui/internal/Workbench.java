@@ -1455,7 +1455,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 		// We can't return a window with no widget...it's in the process
 		// of closing...see Bug 379717
-		if (activeWindow == null || (activeWindow != null && activeWindow.getWidget() == null)) {
+		if (activeWindow == null || activeWindow.getWidget() == null) {
 			return null;
 		}
 

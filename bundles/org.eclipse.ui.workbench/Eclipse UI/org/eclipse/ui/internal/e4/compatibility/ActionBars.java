@@ -166,8 +166,7 @@ public class ActionBars extends SubActionBars {
 			return parent instanceof MGenericStack ? parent.getSelectedElement() == placeholder
 					: parent != null;
 		}
-		return parent instanceof MGenericStack ? parent.getSelectedElement() == part
-				: parent != null;
+		return !(parent instanceof MGenericStack) || parent.getSelectedElement() == part;
 	}
 
 	@Override

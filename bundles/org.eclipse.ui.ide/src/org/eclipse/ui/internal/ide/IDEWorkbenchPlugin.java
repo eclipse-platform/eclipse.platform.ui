@@ -394,7 +394,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 						schedule(PROBLEMS_VIEW_CREATION_DELAY);
 						return Status.OK_STATUS;
 					}
-					if (workbench != null && workbench.isClosing()) {
+					if (workbench.isClosing()) {
 						return Status.CANCEL_STATUS;
 					}
 					PlatformUI.getWorkbench().getDisplay().asyncExec(r);

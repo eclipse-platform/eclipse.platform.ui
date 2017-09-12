@@ -191,11 +191,12 @@ import org.eclipse.swt.widgets.Scrollable;
     private static boolean hasMethod(Control control, String name, Class<?>[] parameterTypes) {
         Class<? extends Control> c = control.getClass();
         try {
-            return c.getMethod(name, parameterTypes) != null;
+            c.getMethod(name, parameterTypes);
         } catch (SecurityException e) {
             return false;
         } catch (NoSuchMethodException e) {
             return false;
         }
+		return true;
     }
 }

@@ -321,11 +321,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 item.setData(DATA_EDITOR, editor);
                 // Check if it is the default editor
                 String defaultString = null;
-                if (resourceType != null) {
-                    if (resourceType.getDefaultEditor() == editor && resourceType.isDeclaredDefaultEditor(editor)) {
-						defaultString = WorkbenchMessages.FileEditorPreference_defaultLabel;
-					}
-                }
+				if (resourceType.getDefaultEditor() == editor && resourceType.isDeclaredDefaultEditor(editor)) {
+					defaultString = WorkbenchMessages.FileEditorPreference_defaultLabel;
+				}
 
                 if (defaultString != null) {
                     item.setText(editor.getLabel() + " " + defaultString); //$NON-NLS-1$

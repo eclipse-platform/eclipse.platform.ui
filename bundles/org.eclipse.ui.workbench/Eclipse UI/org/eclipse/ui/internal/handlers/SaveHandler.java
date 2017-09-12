@@ -89,7 +89,7 @@ public class SaveHandler extends AbstractSaveHandler {
 			return EvaluationResult.FALSE;
 		}
 
-		if (saveablePart != null && saveablePart.isDirty())
+		if (saveablePart.isDirty())
 			return EvaluationResult.TRUE;
 
 		return EvaluationResult.FALSE;

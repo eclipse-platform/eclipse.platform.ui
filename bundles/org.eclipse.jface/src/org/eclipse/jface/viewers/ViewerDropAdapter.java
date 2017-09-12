@@ -167,18 +167,18 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         Item item = (Item) event.item;
         Point coordinates = new Point(event.x, event.y);
         coordinates = viewer.getControl().toControl(coordinates);
-        if (item != null) {
-            Rectangle bounds = getBounds(item);
-            if (bounds == null) {
-                return LOCATION_NONE;
-            }
-            if ((coordinates.y - bounds.y) < 5) {
-                return LOCATION_BEFORE;
-            }
-            if ((bounds.y + bounds.height - coordinates.y) < 5) {
-                return LOCATION_AFTER;
-            }
+
+		Rectangle bounds = getBounds(item);
+		if (bounds == null) {
+			return LOCATION_NONE;
+		}
+		if ((coordinates.y - bounds.y) < 5) {
+			return LOCATION_BEFORE;
+		}
+		if ((bounds.y + bounds.height - coordinates.y) < 5) {
+			return LOCATION_AFTER;
         }
+
         return LOCATION_ON;
     }
 

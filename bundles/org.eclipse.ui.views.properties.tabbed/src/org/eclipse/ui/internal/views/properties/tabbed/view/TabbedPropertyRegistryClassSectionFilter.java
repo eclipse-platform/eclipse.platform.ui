@@ -79,7 +79,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 						.hasNext();) {
 					Object object = i.next();
 
-					if (filter != null && filter.select(object) == false) {
+					if (filter.select(object) == false) {
 						/**
 						 * filter fails so section does not apply to the
 						 * selection, do not display section.

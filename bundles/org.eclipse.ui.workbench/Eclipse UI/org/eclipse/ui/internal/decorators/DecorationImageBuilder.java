@@ -159,38 +159,37 @@ class DecorationImageBuilder {
 			img.dispose();
 		}
 		src = base;
-		if (base != null) {
-			maskDepth = Math.max(maskDepth,
-					baseMaskDepth = getTransparencyDepth(src));
-			Image img = new Image(device, src);
-			gc.drawImage(img, 0, 0);
-			img.dispose();
-		}
+
+		maskDepth = Math.max(maskDepth, baseMaskDepth = getTransparencyDepth(src));
+		Image img = new Image(device, src);
+		gc.drawImage(img, 0, 0);
+		img.dispose();
+
 		ImageData topLeft = src = overlay[TOP_LEFT];
 		if (src != null) {
 			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
-			Image img = new Image(device, src);
+			img = new Image(device, src);
 			gc.drawImage(img, 0, 0);
 			img.dispose();
 		}
 		ImageData topRight = src = overlay[TOP_RIGHT];
 		if (src != null) {
 			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
-			Image img = new Image(device, src);
+			img = new Image(device, src);
 			gc.drawImage(img, base.width - src.width, 0);
 			img.dispose();
 		}
 		ImageData bottomLeft = src = overlay[BOTTOM_LEFT];
 		if (src != null) {
 			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
-			Image img = new Image(device, src);
+			img = new Image(device, src);
 			gc.drawImage(img, 0, base.height - src.height);
 			img.dispose();
 		}
 		ImageData bottomRight = src = overlay[BOTTOM_RIGHT];
 		if (src != null) {
 			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
-			Image img = new Image(device, src);
+			img = new Image(device, src);
 			gc.drawImage(img, base.width - src.width, base.height - src.height);
 			img.dispose();
 		}

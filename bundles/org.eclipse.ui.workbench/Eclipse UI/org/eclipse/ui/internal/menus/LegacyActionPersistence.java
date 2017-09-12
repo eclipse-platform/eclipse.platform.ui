@@ -252,7 +252,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		}
 		// this allows us to look up a "commandId" give the contributionId
 		// and the actionId
-		if (mappingService != null && commandId != null) {
+		if (mappingService != null) {
 			mappingService.map(mappingService.getGeneratedCommandId(primaryId,
 					secondaryId), commandId);
 		}

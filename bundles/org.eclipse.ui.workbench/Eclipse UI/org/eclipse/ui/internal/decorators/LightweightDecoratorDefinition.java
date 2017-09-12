@@ -254,10 +254,8 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 					}
 				}
 			}
-			else{
-				if (currentDecorator != null && element != null) {
-					currentDecorator.decorate(element, decoration);
-				}
+			else if (element != null) {
+				currentDecorator.decorate(element, decoration);
 			}
 		} catch (CoreException exception) {
 			handleCoreException(exception);

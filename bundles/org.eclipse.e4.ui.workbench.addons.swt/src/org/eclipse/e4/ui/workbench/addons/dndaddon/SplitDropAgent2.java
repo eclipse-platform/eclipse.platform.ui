@@ -266,7 +266,7 @@ public class SplitDropAgent2 extends DropAgent {
 				return EModelService.ABOVE;
 			} else if (dBottom < thirdOfHeight) {
 				return EModelService.BELOW;
-			} else if (relToElement != null) {
+			} else {
 				return dLeft < dRight ? EModelService.LEFT_OF : EModelService.RIGHT_OF;
 			}
 		}

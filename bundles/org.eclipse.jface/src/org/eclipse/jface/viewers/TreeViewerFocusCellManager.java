@@ -52,11 +52,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 		public boolean isCollapseEvent(ColumnViewer viewer,
 				ViewerCell cellToCollapse, Event event) {
 
-			if (cellToCollapse == null) {
-				return false;
-			}
-
-			return cellToCollapse != null
+			return cellToCollapse != null 
 					&& ((TreeItem) cellToCollapse.getItem()).getExpanded()
 					&& event.keyCode == SWT.ARROW_LEFT
 					&& isFirstColumnCell(cellToCollapse);
@@ -65,10 +61,6 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 		@Override
 		public boolean isExpandEvent(ColumnViewer viewer,
 				ViewerCell cellToExpand, Event event) {
-
-			if (cellToExpand == null) {
-				return false;
-			}
 
 			return cellToExpand != null
 					&& ((TreeItem) cellToExpand.getItem()).getItemCount() > 0

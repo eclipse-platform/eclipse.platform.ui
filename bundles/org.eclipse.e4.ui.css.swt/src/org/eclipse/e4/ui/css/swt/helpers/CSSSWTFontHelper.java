@@ -194,7 +194,7 @@ public class CSSSWTFontHelper {
 				newFontData.setHeight(fontDataByDefinition[0].getHeight());
 				fontHeightSet = true;
 			}
-		} else if (cssFontSize != null) {
+		} else {
 			newFontData.setHeight((int) (cssFontSize).getFloatValue(CSSPrimitiveValue.CSS_PT));
 			fontHeightSet = true;
 		}

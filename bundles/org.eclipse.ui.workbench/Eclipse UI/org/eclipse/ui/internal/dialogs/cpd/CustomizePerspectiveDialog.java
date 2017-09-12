@@ -263,7 +263,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		@Override
 		public String toString() {
-			return super.toString() + item == null ? "" : (" [" + item.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return super.toString() + (item == null ? "" : (" [" + item.getId() + "]")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 

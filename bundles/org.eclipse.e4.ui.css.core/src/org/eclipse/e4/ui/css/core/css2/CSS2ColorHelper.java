@@ -86,19 +86,14 @@ public class CSS2ColorHelper {
 			case ICSSValueConverterColorConfig.COLOR_NAME_FORMAT:
 				// Get the Hexa color string value
 				String hexaColor = getHexaColorStringValue(rgbColor);
-				if (hexaColor != null) {
-					// Search into hexa map the color name
-					String colorName = getColorNameFromHexaColor(hexaColor);
-					if (colorName != null) {
-						return colorName;
-					}
-					// Color name is not found, return the Hexa value
-					return hexaColor;
-
+				// Search into hexa map the color name
+				String colorName = getColorNameFromHexaColor(hexaColor);
+				if (colorName != null) {
+					return colorName;
 				}
-				return getRGBColorStringValue(rgbColor);
+				// Color name is not found, return the Hexa value
+				return hexaColor;
 			}
-
 		}
 		return getHexaColorStringValue(rgbColor);
 	}

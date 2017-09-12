@@ -1758,12 +1758,11 @@ class FilterCopy extends UIResourceFilterDescription {
 				Object arguments = getArguments();
 				if (arguments instanceof IResourceFilterDescription[]) {
 					IResourceFilterDescription[] filters = (IResourceFilterDescription[]) arguments;
-					if (filters != null)
-						for (IResourceFilterDescription filter : filters) {
-							FilterCopy child = new FilterCopy(UIResourceFilterDescription.wrap(filter));
-							child.parent = this;
-							children.add(child);
-						}
+					for (IResourceFilterDescription filter : filters) {
+						FilterCopy child = new FilterCopy(UIResourceFilterDescription.wrap(filter));
+						child.parent = this;
+						children.add(child);
+					}
 				}
 				if (arguments instanceof FilterCopy[]) {
 					FilterCopy[] filters = (FilterCopy[]) arguments;

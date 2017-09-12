@@ -4814,8 +4814,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		IEditorRegistry reg = getWorkbenchWindow().getWorkbench().getEditorRegistry();
 		MPart editorToActivate = null;
 		for (int i = 0; i < inputs.length; i++) {
-			String curEditorID = editorIDs == null ? null : editorIDs[i];
-			IEditorInput curInput = inputs == null ? null : inputs[i];
+			String curEditorID = editorIDs[i];
+			IEditorInput curInput = inputs[i];
 			IMemento curMemento = mementos == null ? null : mementos[i];
 
 			// If we don't have an editorID get it from the memento

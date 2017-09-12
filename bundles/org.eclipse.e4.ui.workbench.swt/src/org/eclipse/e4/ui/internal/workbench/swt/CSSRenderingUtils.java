@@ -213,8 +213,7 @@ public class CSSRenderingUtils {
 		if (imagePath == null)
 			return null;
 
-		if (imagePath != null
-				&& imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			// String imageString = ((CSSPrimitiveValue) imagePath)
 			// .getStringValue();
 			// System.out.println("here" + imageString);
