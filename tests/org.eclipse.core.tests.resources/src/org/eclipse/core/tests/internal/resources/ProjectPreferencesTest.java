@@ -1590,4 +1590,32 @@ public class ProjectPreferencesTest extends ResourceTest {
 		ProjectPreferences.updatePreferences(prefsFile);
 	}
 
+	public void testSettingsFolderCreatedOutsideWorkspace() throws CoreException, BackingStoreException, IOException {
+		String nodeA = "nodeA";
+		String key = "key";
+		String value = "value";
+
+		IProject project1 = getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		// create the project settings folder on disk, it will be out of sync with the workspace
+		// see bug#522214
+		File projectFolder = new File(project1.getLocationURI());
+		File settingsFolder = new File(projectFolder, ".settings");
+		assertTrue(projectFolder.exists());
+		assertFalse(settingsFolder.exists());
+		settingsFolder.mkdir();
+		assertTrue(settingsFolder.exists());
+		// create the preference file also out of synch with the workspace
+		File prefsFile = new File(settingsFolder, "nodeA.prefs");
+		prefsFile.createNewFile();
+
+		// now add some project preference and save them
+		Preferences prefs1 = new ProjectScope(project1).getNode(nodeA);
+		prefs1.put(key, value);
+		prefs1.flush();
+		assertEquals(value, prefs1.get(key, null));
+
+	}
 }

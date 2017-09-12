@@ -624,6 +624,9 @@ public class ProjectPreferences extends EclipsePreferences {
 						if (!systemLineSeparator.equals(fileLineSeparator))
 							s = s.replaceAll(systemLineSeparator, fileLineSeparator);
 						InputStream input = new BufferedInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
+						// make sure that preference folder and file are in sync
+						fileInWorkspace.getParent().refreshLocal(IResource.DEPTH_ZERO, null);
+						fileInWorkspace.refreshLocal(IResource.DEPTH_ZERO, null);
 						if (fileInWorkspace.exists()) {
 							if (Policy.DEBUG_PREFERENCES)
 								Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
