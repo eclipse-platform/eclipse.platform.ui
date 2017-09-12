@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -550,7 +551,7 @@ public final class BindingManager extends HandleObjectManager implements
 			found = false;
 			if (activeSchemeIds != null) {
 				for (String activeSchemeId : activeSchemeIds) {
-					if (Util.equals(schemeId, activeSchemeId)) {
+					if (Objects.equals(schemeId, activeSchemeId)) {
 						found = true;
 						break;
 					}
@@ -1300,7 +1301,7 @@ public final class BindingManager extends HandleObjectManager implements
 			if ((bestLocale == null) && (currentLocale != null)) {
 				bestBinding = currentBinding;
 			}
-			if (!(Util.equals(bestLocale, currentLocale))) {
+			if (!(Objects.equals(bestLocale, currentLocale))) {
 				continue;
 			}
 
@@ -1313,7 +1314,7 @@ public final class BindingManager extends HandleObjectManager implements
 			if ((bestPlatform == null) && (currentPlatform != null)) {
 				bestBinding = currentBinding;
 			}
-			if (!(Util.equals(bestPlatform, currentPlatform))) {
+			if (!(Objects.equals(bestPlatform, currentPlatform))) {
 				continue;
 			}
 
@@ -1648,7 +1649,7 @@ public final class BindingManager extends HandleObjectManager implements
 		}
 
 		for (String localString : locales) {
-			if (Util.equals(localString, locale)) {
+			if (Objects.equals(localString, locale)) {
 				matches = true;
 				break;
 			}
@@ -1681,7 +1682,7 @@ public final class BindingManager extends HandleObjectManager implements
 		}
 
 		for (String platformString : platforms) {
-			if (Util.equals(platformString, platform)) {
+			if (Objects.equals(platformString, platform)) {
 				matches = true;
 				break;
 			}
@@ -1861,11 +1862,11 @@ public final class BindingManager extends HandleObjectManager implements
 		for (int i = 0; i < bindingCount; i++) {
 			final Binding binding = bindings[i];
 			boolean equals = true;
-			equals &= Util.equals(sequence, binding.getTriggerSequence());
-			equals &= Util.equals(schemeId, binding.getSchemeId());
-			equals &= Util.equals(contextId, binding.getContextId());
-			equals &= Util.equals(locale, binding.getLocale());
-			equals &= Util.equals(platform, binding.getPlatform());
+			equals &= Objects.equals(sequence, binding.getTriggerSequence());
+			equals &= Objects.equals(schemeId, binding.getSchemeId());
+			equals &= Objects.equals(contextId, binding.getContextId());
+			equals &= Objects.equals(locale, binding.getLocale());
+			equals &= Objects.equals(platform, binding.getPlatform());
 			equals &= (type == binding.getType());
 			if (equals) {
 				bindingsChanged = true;
@@ -2238,7 +2239,7 @@ public final class BindingManager extends HandleObjectManager implements
 							+ scheme.getId());
 		}
 
-		if (Util.equals(activeScheme, scheme)) {
+		if (Objects.equals(activeScheme, scheme)) {
 			return;
 		}
 
@@ -2315,7 +2316,7 @@ public final class BindingManager extends HandleObjectManager implements
 			throw new NullPointerException("The locale cannot be null"); //$NON-NLS-1$
 		}
 
-		if (!Util.equals(this.locale, locale)) {
+		if (!Objects.equals(this.locale, locale)) {
 			this.locale = locale;
 			this.locales = expand(locale, LOCALE_SEPARATOR);
 			clearSolution();
@@ -2346,7 +2347,7 @@ public final class BindingManager extends HandleObjectManager implements
 			throw new NullPointerException("The platform cannot be null"); //$NON-NLS-1$
 		}
 
-		if (!Util.equals(this.platform, platform)) {
+		if (!Objects.equals(this.platform, platform)) {
 			this.platform = platform;
 			this.platforms = expand(platform, Util.ZERO_LENGTH_STRING);
 			clearSolution();

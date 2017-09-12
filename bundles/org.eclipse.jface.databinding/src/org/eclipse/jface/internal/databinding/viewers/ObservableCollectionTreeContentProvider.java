@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IObservable;
@@ -33,7 +34,6 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IElementComparer;
@@ -410,7 +410,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 
 	protected boolean equal(Object left, Object right) {
 		if (comparer == null)
-			return Util.equals(left, right);
+			return Objects.equals(left, right);
 		return comparer.equals(left, right);
 	}
 
@@ -486,7 +486,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 					children = Observables.emptyObservableSet(realm);
 				} else {
 					Assert
-							.isTrue(Util.equals(realm, children.getRealm()),
+							.isTrue(Objects.equals(realm, children.getRealm()),
 									"Children observable collection must be on the Display realm"); //$NON-NLS-1$
 					listener = createCollectionChangeListener(element);
 					addCollectionChangeListener(children, listener);

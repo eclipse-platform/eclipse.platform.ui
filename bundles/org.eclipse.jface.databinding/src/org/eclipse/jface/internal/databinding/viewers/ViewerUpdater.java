@@ -15,10 +15,10 @@ package org.eclipse.jface.internal.databinding.viewers;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.jface.databinding.viewers.IViewerUpdater;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -86,7 +86,7 @@ public abstract class ViewerUpdater implements IViewerUpdater {
 			IElementComparer comparer = viewer.getComparer();
 			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				Object selectionElement = iter.next();
-				if (comparer == null ? Util.equals(element, selectionElement)
+				if (comparer == null ? Objects.equals(element, selectionElement)
 						: comparer.equals(element, selectionElement)) {
 					return Optional.of(iter);
 				}

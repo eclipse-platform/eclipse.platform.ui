@@ -11,12 +11,12 @@
 
 package org.eclipse.jface.bindings;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.AbstractBitSetEvent;
-import org.eclipse.jface.util.Util;
 
 /**
  * An instance of this class describes changes to an instance of
@@ -197,7 +197,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 			previousBindings = EMTPY_SEQUENCE;
 		}
 
-		return !Util.equals(currentBindings, previousBindings);
+		return !Arrays.equals(currentBindings, previousBindings);
 	}
 
 	/**

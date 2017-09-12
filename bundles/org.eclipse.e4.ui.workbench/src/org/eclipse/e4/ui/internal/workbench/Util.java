@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -228,7 +230,7 @@ public final class Util {
 		}
 
 		for (int i = 0; i < r; i++) {
-			if (!equals(left[l - i - 1], right[r - i - 1])) {
+			if (!Objects.equals(left[l - i - 1], right[r - i - 1])) {
 				return false;
 			}
 		}
@@ -237,56 +239,39 @@ public final class Util {
 	}
 
 	/**
-	 * Checks whether the two objects are <code>null</code> -- allowing for <code>null</code>.
+	 * Checks whether the two objects are <code>null</code> -- allowing for
+	 * <code>null</code>.
 	 *
 	 * @param left
 	 *            The left object to compare; may be <code>null</code>.
 	 * @param right
 	 *            The right object to compare; may be <code>null</code>.
-	 * @return <code>true</code> if the two objects are equivalent; <code>false</code> otherwise.
+	 * @return <code>true</code> if the two objects are equivalent;
+	 *         <code>false</code> otherwise.
+	 * @deprecated Use {@link Objects#equals(Object, Object)}
 	 */
+	@Deprecated
 	public static final boolean equals(final Object left, final Object right) {
 		return left == null ? right == null : ((right != null) && left.equals(right));
 	}
 
 	/**
-	 * Tests whether two arrays of objects are equal to each other. The arrays must not be
-	 * <code>null</code>, but their elements may be <code>null</code>.
+	 * Tests whether two arrays of objects are equal to each other. The arrays must
+	 * not be <code>null</code>, but their elements may be <code>null</code>.
 	 *
 	 * @param leftArray
-	 *            The left array to compare; may be <code>null</code>, and may be empty and may
-	 *            contain <code>null</code> elements.
+	 *            The left array to compare; may be <code>null</code>, and may be
+	 *            empty and may contain <code>null</code> elements.
 	 * @param rightArray
-	 *            The right array to compare; may be <code>null</code>, and may be empty and may
-	 *            contain <code>null</code> elements.
-	 * @return <code>true</code> if the arrays are equal length and the elements at the same
-	 *         position are equal; <code>false</code> otherwise.
+	 *            The right array to compare; may be <code>null</code>, and may be
+	 *            empty and may contain <code>null</code> elements.
+	 * @return <code>true</code> if the arrays are equal length and the elements at
+	 *         the same position are equal; <code>false</code> otherwise.
+	 * @deprecated Use {@link Arrays#equals(Object[], Object[])}
 	 */
+	@Deprecated
 	public static final boolean equals(final Object[] leftArray, final Object[] rightArray) {
-		if (leftArray == rightArray) {
-			return true;
-		}
-
-		if (leftArray == null) {
-			return (rightArray == null);
-		} else if (rightArray == null) {
-			return false;
-		}
-
-		if (leftArray.length != rightArray.length) {
-			return false;
-		}
-
-		for (int i = 0; i < leftArray.length; i++) {
-			final Object left = leftArray[i];
-			final Object right = rightArray[i];
-			final boolean equal = (left == null) ? (right == null) : (left.equals(right));
-			if (!equal) {
-				return false;
-			}
-		}
-
-		return true;
+		return Arrays.equals(leftArray, rightArray);
 	}
 
 	/**
@@ -362,7 +347,7 @@ public final class Util {
 		}
 
 		for (int i = 0; i < r; i++) {
-			if (!equals(left[i], right[i])) {
+			if (!Objects.equals(left[i], right[i])) {
 				return false;
 			}
 		}

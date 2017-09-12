@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.Objects;
+
 import org.eclipse.jface.util.Util;
 
 /**
@@ -59,7 +61,7 @@ public class TreeNode {
 	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof TreeNode) {
-			return Util.equals(this.value, ((TreeNode) object).value);
+			return Objects.equals(this.value, ((TreeNode) object).value);
 		}
 
 		return false;

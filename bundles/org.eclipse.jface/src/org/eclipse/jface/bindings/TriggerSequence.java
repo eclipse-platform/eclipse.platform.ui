@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.util.Util;
 
 /**
@@ -112,7 +114,7 @@ public abstract class TriggerSequence {
 		}
 
 		final TriggerSequence triggerSequence = (TriggerSequence) object;
-		return Util.equals(triggers, triggerSequence.triggers);
+		return Arrays.equals(triggers, triggerSequence.triggers);
 	}
 
 	/**

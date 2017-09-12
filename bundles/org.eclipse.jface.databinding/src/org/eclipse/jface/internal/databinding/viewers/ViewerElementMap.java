@@ -17,10 +17,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredViewer;
 
@@ -162,7 +162,7 @@ public class ViewerElementMap implements Map {
 								Map.Entry that = (Map.Entry) obj;
 								return comparer.equals(this.getKey(), that
 										.getKey())
-										&& Util.equals(this.getValue(), that
+										&& Objects.equals(this.getValue(), that
 												.getValue());
 							}
 
@@ -208,8 +208,8 @@ public class ViewerElementMap implements Map {
 						if (obj == null || !(obj instanceof Map.Entry))
 							return false;
 						Map.Entry that = (Map.Entry) obj;
-						return Util.equals(wrappedKey, that.getKey())
-								&& Util
+						return Objects.equals(wrappedKey, that.getKey())
+								&& Objects
 										.equals(this.getValue(), that
 												.getValue());
 					}

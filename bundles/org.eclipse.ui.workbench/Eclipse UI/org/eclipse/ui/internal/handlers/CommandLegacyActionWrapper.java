@@ -12,6 +12,7 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.util.Objects;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -33,7 +34,6 @@ import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.jface.menus.TextState;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Util;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.commands.ICommandImageService;
@@ -396,7 +396,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 			}
 		}
 
-		if (!Util.equals(oldDescription, newDescription)) {
+		if (!Objects.equals(oldDescription, newDescription)) {
 			firePropertyChange(IAction.DESCRIPTION, oldDescription,
 					newDescription);
 			firePropertyChange(IAction.TOOL_TIP_TEXT, oldDescription,
@@ -419,20 +419,20 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 			}
 		}
 
-		if (!Util.equals(oldDefaultImage, newDefaultImage)) {
+		if (!Objects.equals(oldDefaultImage, newDefaultImage)) {
 			firePropertyChange(IAction.IMAGE, oldDefaultImage, newDefaultImage);
 		}
 
-		if (!Util.equals(oldDisabledImage, newDisabledImage)) {
+		if (!Objects.equals(oldDisabledImage, newDisabledImage)) {
 			firePropertyChange(IAction.IMAGE, oldDisabledImage,
 					newDisabledImage);
 		}
 
-		if (!Util.equals(oldHoverImage, newHoverImage)) {
+		if (!Objects.equals(oldHoverImage, newHoverImage)) {
 			firePropertyChange(IAction.IMAGE, oldHoverImage, newHoverImage);
 		}
 
-		if (!Util.equals(oldText, newText)) {
+		if (!Objects.equals(oldText, newText)) {
 			firePropertyChange(IAction.TEXT, oldText, newText);
 		}
 	}
@@ -458,7 +458,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 				INamedHandleStateIds.DESCRIPTION);
 		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
-			if (!Util.equals(text, currentValue)) {
+			if (!Objects.equals(text, currentValue)) {
 				state.setValue(text);
 			}
 		}
@@ -533,7 +533,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 				INamedHandleStateIds.NAME);
 		if (state instanceof TextState) {
 			final String currentValue = (String) state.getValue();
-			if (!Util.equals(text, currentValue)) {
+			if (!Objects.equals(text, currentValue)) {
 				state.setValue(text);
 			}
 		}

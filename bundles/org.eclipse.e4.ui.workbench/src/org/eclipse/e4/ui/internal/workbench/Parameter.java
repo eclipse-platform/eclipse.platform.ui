@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.core.commands.ITypedParameter;
@@ -151,17 +152,17 @@ public final class Parameter implements IParameter, ITypedParameter {
 		}
 
 		final Parameter parameter = (Parameter) object;
-		if (!Util.equals(id, parameter.id)) {
+		if (!Objects.equals(id, parameter.id)) {
 			return false;
 		}
-		if (!Util.equals(name, parameter.name)) {
+		if (!Objects.equals(name, parameter.name)) {
 			return false;
 		}
-		if (!Util.equals(values, parameter.values)) {
+		if (!Objects.equals(values, parameter.values)) {
 			return false;
 		}
 
-		return Util.equals(optional, parameter.optional);
+		return Objects.equals(optional, parameter.optional);
 	}
 
 	@Override
