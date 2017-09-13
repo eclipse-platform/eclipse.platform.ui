@@ -185,6 +185,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    if (page instanceof IOConsolePage) {
 	        ((IOConsolePage) page).setWordWrap(fWordWrap);
 	    }
+		if (page != null) {
+			page.setFocus();
+		}
 	}
 
 	/**
