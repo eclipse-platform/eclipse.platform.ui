@@ -12,18 +12,19 @@ package org.eclipse.core.internal.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Date;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.service.debug.DebugOptions;
-import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.*;
 import org.osgi.framework.Bundle;
 
 public class Policy {
+	static DebugTrace DEBUG_TRACE;
+
 	public static final DebugOptionsListener RESOURCES_DEBUG_OPTIONS_LISTENER = new DebugOptionsListener() {
 		@Override
 		public void optionsChanged(DebugOptions options) {
+			DEBUG_TRACE = options.newDebugTrace(ResourcesPlugin.PI_RESOURCES);
 			DEBUG = options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/debug", false); //$NON-NLS-1$
 
 			DEBUG_AUTO_REFRESH = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/refresh", false); //$NON-NLS-1$
@@ -118,10 +119,6 @@ public class Policy {
 	 */
 	public static void debug(String message) {
 		StringBuilder output = new StringBuilder();
-		output.append(new Date(System.currentTimeMillis()));
-		output.append(" - ["); //$NON-NLS-1$
-		output.append(Thread.currentThread().getName());
-		output.append("] "); //$NON-NLS-1$
 		Job currentJob = Job.getJobManager().currentJob();
 		if (currentJob != null) {
 			output.append(currentJob.getClass().getName());
@@ -130,7 +127,7 @@ public class Policy {
 			output.append("): "); //$NON-NLS-1$
 		}
 		output.append(message);
-		System.out.println(output.toString());
+		DEBUG_TRACE.trace(null, output.toString());
 	}
 
 	/**
