@@ -15,11 +15,17 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -1909,16 +1915,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @param viewer the text viewer
 	 * @param offset a offset within the document
-	 * @return a content-assist processor or <code>null</code> if none exists
-	 * @since 3.0
+	 * @return the content-assist processors or <code>null</code> if none exists
+	 * @since 3.13
 	 */
-	private IContentAssistProcessor getProcessor(ITextViewer viewer, int offset) {
+	private Set<IContentAssistProcessor> getProcessors(ITextViewer viewer, int offset) {
 		try {
 
 			IDocument document= viewer.getDocument();
 			String type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true);
 
-			return getContentAssistProcessor(type);
+			return getContentAssistProcessors(type);
 
 		} catch (BadLocationException x) {
 		}
@@ -1927,14 +1933,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Returns the content assist processor for the content type of the specified document position.
+	 * Returns the content assist processors for the content type of the specified document position.
 	 *
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset a offset within the document
-	 * @return a content-assist processor or <code>null</code> if none exists
-	 * @since 3.0
+	 * @return the content-assist processors or <code>null</code> if none exists
+	 * @since 3.13
 	 */
-	private IContentAssistProcessor getProcessor(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
+	private Set<IContentAssistProcessor> getProcessors(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		try {
 
 			IDocument document= contentAssistSubjectControl.getDocument();
@@ -1944,7 +1950,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			else
 				type= IDocument.DEFAULT_CONTENT_TYPE;
 
-			return getContentAssistProcessor(type);
+			return getContentAssistProcessors(type);
 
 		} catch (BadLocationException x) {
 		}
@@ -1966,22 +1972,25 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			final IContentAssistSubjectControl contentAssistSubjectControl, final int offset) {
 		fLastErrorMessage= null;
 
-		final ICompletionProposal[][] result= { null };
-
-		final IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
-		if (p instanceof ISubjectControlContentAssistProcessor) {
-			// Ensure that the assist session ends cleanly even if the processor throws an exception.
-			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
-				@Override
-				public void run() throws Exception {
-					result[0]= ((ISubjectControlContentAssistProcessor) p)
-							.computeCompletionProposals(contentAssistSubjectControl, offset);
-					fLastErrorMessage= p.getErrorMessage();
+		final List<ICompletionProposal> result= new ArrayList<>();
+		final Set<IContentAssistProcessor> processors= getProcessors(contentAssistSubjectControl, offset);
+		if (processors != null) {
+			processors.forEach(p -> {
+				if (p instanceof ISubjectControlContentAssistProcessor) {
+					// Ensure that the assist session ends cleanly even if the processor throws an exception.
+					SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
+						@Override
+						public void run() throws Exception {
+							result.addAll(Arrays.asList( ((ISubjectControlContentAssistProcessor) p)
+									.computeCompletionProposals(contentAssistSubjectControl, offset)));
+							fLastErrorMessage= p.getErrorMessage();
+						}
+					});
 				}
 			});
 		}
 
-		return result[0];
+		return result.isEmpty() ? null : result.toArray(new ICompletionProposal[result.size()]);
 	}
 
 	/**
@@ -1996,21 +2005,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, final int offset) {
 		fLastErrorMessage= null;
 
-		final ICompletionProposal[][] result= { null };
-
-		final IContentAssistProcessor p= getProcessor(viewer, offset);
-		if (p != null) {
+		final Set<IContentAssistProcessor> processors= getProcessors(viewer, offset);
+		final List<ICompletionProposal> res = new ArrayList<>();
+		if (processors != null && !processors.isEmpty()) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
 				@Override
 				public void run() throws Exception {
-					result[0]= p.computeCompletionProposals(viewer, offset);
-					fLastErrorMessage= p.getErrorMessage();
+					processors.forEach(p -> {
+						res.addAll(Arrays.asList(p.computeCompletionProposals(viewer, offset)));
+						fLastErrorMessage= p.getErrorMessage();
+					});
 				}
 			});
 		}
 
-		return result[0];
+		return res.isEmpty() ? null : res.toArray(new ICompletionProposal[res.size()]);
 	}
 
 	/**
@@ -2026,21 +2036,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	IContextInformation[] computeContextInformation(final ITextViewer viewer, final int offset) {
 		fLastErrorMessage= null;
 
-		final IContextInformation[][] result= { null };
-
-		final IContentAssistProcessor p= getProcessor(viewer, offset);
-		if (p != null) {
+		final List<IContextInformation> result= new ArrayList<>();
+		final Set<IContentAssistProcessor> processors= getProcessors(viewer, offset);
+		if (processors != null && !processors.isEmpty()) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
 				@Override
 				public void run() throws Exception {
-					result[0]= p.computeContextInformation(viewer, offset);
-					fLastErrorMessage= p.getErrorMessage();
+					processors.forEach(p -> {
+						result.addAll(Arrays.asList(p.computeContextInformation(viewer, offset)));
+						fLastErrorMessage= p.getErrorMessage();
+					});
 				}
 			});
 		}
 
-		return result[0];
+		return result.isEmpty() ? null : result.toArray(new IContextInformation[result.size()]);
 	}
 
 	/**
@@ -2058,22 +2069,25 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			final IContentAssistSubjectControl contentAssistSubjectControl, final int offset) {
 		fLastErrorMessage= null;
 
-		final IContextInformation[][] result= { null };
-
-		final IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
-		if (p instanceof ISubjectControlContentAssistProcessor) {
-			// Ensure that the assist session ends cleanly even if the processor throws an exception.
-			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
-				@Override
-				public void run() throws Exception {
-					result[0]= ((ISubjectControlContentAssistProcessor) p)
-							.computeContextInformation(contentAssistSubjectControl, offset);
-					fLastErrorMessage= p.getErrorMessage();
+		final List<IContextInformation> result= new ArrayList<>();
+		final Set<IContentAssistProcessor> processors = getProcessors(contentAssistSubjectControl, offset);
+		if (processors != null) {
+			processors.forEach(p -> {
+				if (p instanceof ISubjectControlContentAssistProcessor) {
+					// Ensure that the assist session ends cleanly even if the processor throws an exception.
+					SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
+						@Override
+						public void run() throws Exception {
+							result.addAll(Arrays.asList( ((ISubjectControlContentAssistProcessor) p)
+									.computeContextInformation(contentAssistSubjectControl, offset)));
+							fLastErrorMessage= p.getErrorMessage();
+						}
+					});
 				}
 			});
 		}
 
-		return result[0];
+		return result.isEmpty() ? null : result.toArray(new IContextInformation[result.size()]);
 	}
 
 	/**
@@ -2088,7 +2102,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	IContextInformationValidator getContextInformationValidator(ITextViewer viewer, int offset) {
-		IContentAssistProcessor p= getProcessor(viewer, offset);
+		Set<IContentAssistProcessor> processors= getProcessors(viewer, offset);
+		if (processors == null || processors.isEmpty()) {
+			return null;
+		}
+		// pick first one, arbitrary
+		IContentAssistProcessor p = processors.iterator().next();
 		return p != null ? p.getContextInformationValidator() : null;
 	}
 
@@ -2104,7 +2123,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	IContextInformationValidator getContextInformationValidator(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
+		Set<IContentAssistProcessor> processors= getProcessors(contentAssistSubjectControl, offset);
+		if (processors == null || processors.isEmpty()) {
+			return null;
+		}
+		// pick first one, arbitrary
+		IContentAssistProcessor p = processors.iterator().next();
 		return p != null ? p.getContextInformationValidator() : null;
 	}
 
@@ -2152,8 +2176,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	char[] getCompletionProposalAutoActivationCharacters(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
-		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
+		return mergeResults(getProcessors(contentAssistSubjectControl, offset), IContentAssistProcessor::getCompletionProposalAutoActivationCharacters);
 	}
 
 	/**
@@ -2167,8 +2190,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	char[] getCompletionProposalAutoActivationCharacters(ITextViewer viewer, int offset) {
-		IContentAssistProcessor p= getProcessor(viewer, offset);
-		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
+		return mergeResults(getProcessors(viewer, offset), IContentAssistProcessor::getCompletionProposalAutoActivationCharacters);
 	}
 
 	/**
@@ -2183,8 +2205,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
-		IContentAssistProcessor p= getProcessor(viewer, offset);
-		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
+		return mergeResults(getProcessors(viewer, offset), IContentAssistProcessor::getContextInformationAutoActivationCharacters);
 	}
 
 	/**
@@ -2199,8 +2220,34 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	char[] getContextInformationAutoActivationCharacters(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
-		IContentAssistProcessor p= getProcessor(contentAssistSubjectControl, offset);
-		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
+		return mergeResults(getProcessors(contentAssistSubjectControl, offset), IContentAssistProcessor::getContextInformationAutoActivationCharacters);
+	}
+
+	private char[] mergeResults(Collection<IContentAssistProcessor> processors, Function<IContentAssistProcessor, char[]> f) {
+		char[][] arrays = processors.stream()
+			.map(f)
+			.filter(Objects::nonNull)
+			.filter(array -> array.length > 0)
+			.toArray(char[][]::new);
+		if (arrays.length == 0) {
+			return null;
+		} else if (arrays.length == 1) {
+			return arrays[0];
+		} else {
+			LinkedHashSet<Character> res = new LinkedHashSet<>();
+			for (char[] current : arrays) {
+				for (char c : current) {
+					res.add(Character.valueOf(c));
+				}
+			}
+			char[] array = new char[res.size()];
+			int index = 0;
+			for (Character c : res) {
+				array[index] = c.charValue();
+				index++;
+			}
+			return array;
+		}
 	}
 
 	@Override
@@ -2443,11 +2490,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireSessionBeginEvent(boolean isAutoActivated) {
 		if (fContentAssistSubjectControlAdapter != null && !isProposalPopupActive()) {
-			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-			ContentAssistEvent event= new ContentAssistEvent(this, processor, isAutoActivated);
-			for (ICompletionListener listener : fCompletionListeners) {
-				listener.assistSessionStarted(event);
-			}
+			getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x).forEach(processor -> {
+				ContentAssistEvent event= new ContentAssistEvent(this, processor, isAutoActivated);
+				for (ICompletionListener listener : fCompletionListeners) {
+					listener.assistSessionStarted(event);
+				}
+			});
 		}
 	}
 
@@ -2458,12 +2506,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireSessionRestartEvent() {
 		if (fContentAssistSubjectControlAdapter != null) {
-			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			for (ICompletionListener listener : fCompletionListeners) {
-				if (listener instanceof ICompletionListenerExtension)
-					((ICompletionListenerExtension)listener).assistSessionRestarted(event);
-			}
+			getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x).forEach(processor -> {
+				ContentAssistEvent event= new ContentAssistEvent(this, processor);
+				for (ICompletionListener listener : fCompletionListeners) {
+					if (listener instanceof ICompletionListenerExtension)
+						((ICompletionListenerExtension)listener).assistSessionRestarted(event);
+				}
+			});
 		}
 	}
 
@@ -2474,11 +2523,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireSessionEndEvent() {
 		if (fContentAssistSubjectControlAdapter != null) {
-			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			for (ICompletionListener listener : fCompletionListeners) {
-				listener.assistSessionEnded(event);
-			}
+			getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x).forEach(processor -> {
+				ContentAssistEvent event= new ContentAssistEvent(this, processor);
+				for (ICompletionListener listener : fCompletionListeners) {
+					listener.assistSessionEnded(event);
+				}
+			});
 		}
 	}
 

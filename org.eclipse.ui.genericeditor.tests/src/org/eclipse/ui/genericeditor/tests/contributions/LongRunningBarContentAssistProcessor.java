@@ -11,16 +11,16 @@
 package org.eclipse.ui.genericeditor.tests.contributions;
 
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
-public class LongRunningBarContentAssistProcessor implements IContentAssistProcessor {
+public class LongRunningBarContentAssistProcessor extends BarContentAssistProcessor {
 
-	public static final String PROPOSAL = "s are also good for soft drink cocktails.";
+	public static final String PROPOSAL = "bars are also good for soft drink cocktails.";
 	public static final int DELAY = 2000;
+
+	public LongRunningBarContentAssistProcessor() {
+		super(PROPOSAL);
+	}
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
@@ -30,38 +30,6 @@ public class LongRunningBarContentAssistProcessor implements IContentAssistProce
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String text = viewer.getDocument().get();
-		if (text.length() >= 3 && offset >= 3 && text.substring(offset - 3, offset).equals("bar")) {
-			String message = PROPOSAL;
-			CompletionProposal proposal = new CompletionProposal(message, offset, 0, message.length());
-			return new ICompletionProposal[] { proposal };
-		}
-		return new ICompletionProposal[0];
+		return super.computeCompletionProposals(viewer, offset);
 	}
-
-	@Override
-	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
-		return null;
-	}
-
-	@Override
-	public char[] getCompletionProposalAutoActivationCharacters() {
-		return null;
-	}
-
-	@Override
-	public char[] getContextInformationAutoActivationCharacters() {
-		return null;
-	}
-
-	@Override
-	public String getErrorMessage() {
-		return null;
-	}
-
-	@Override
-	public IContextInformationValidator getContextInformationValidator() {
-		return null;
-	}
-
 }

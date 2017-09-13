@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests.contributions;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -19,15 +20,30 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class BarContentAssistProcessor implements IContentAssistProcessor {
 
-	public static final String PROPOSAL = "s are good for a beer.";
+	public static final String PROPOSAL = "bars are good for a beer.";
+	private final String completeString;
+
+	public BarContentAssistProcessor() {
+		this(PROPOSAL);
+	}
+
+	public BarContentAssistProcessor(String completeString) {
+		this.completeString = completeString;
+	}
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-		String text = viewer.getDocument().get();
-		if (text.length() >= 3 && offset >= 3 && text.substring(offset - 3, offset).equals("bar")) {
-			String message = PROPOSAL;
-			CompletionProposal proposal = new CompletionProposal(message, offset, 0, message.length());
-			return new ICompletionProposal[] { proposal };
+		for (int offsetInProposal = Math.min(this.completeString.length(), viewer.getDocument().getLength()); offsetInProposal > 0; offsetInProposal--) {
+			String maybeMatchingString = this.completeString.substring(0, offsetInProposal);
+			try {
+				int lastIndex = offset - offsetInProposal + this.completeString.length();
+				if (offset >= offsetInProposal && viewer.getDocument().get(offset - offsetInProposal, maybeMatchingString.length()).equals(maybeMatchingString)) {
+					CompletionProposal proposal = new CompletionProposal(this.completeString.substring(offsetInProposal), offset, 0, lastIndex);
+					return new ICompletionProposal[] { proposal };
+				}
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
 		}
 		return new ICompletionProposal[0];
 	}
