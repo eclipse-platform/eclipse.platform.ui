@@ -542,13 +542,22 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * @param status MultiStatus for collecting errors
 	 */
 	private IncrementalProjectBuilder getBuilder(IBuildConfiguration buildConfiguration, ICommand command, int buildSpecIndex, MultiStatus status) throws CoreException {
-		InternalBuilder result = ((BuildCommand) command).getBuilder(buildConfiguration);
+		BuildCommand buildCommand = (BuildCommand) command;
+		InternalBuilder result = buildCommand.getBuilder(buildConfiguration);
 		if (result == null) {
 			result = initializeBuilder(command.getBuilderName(), buildConfiguration, buildSpecIndex, status);
 			result.setCommand(command);
 			result.setBuildConfig(buildConfiguration);
 			result.startupOnInitialize();
-			((BuildCommand) command).addBuilder(buildConfiguration, (IncrementalProjectBuilder) result);
+			buildCommand.addBuilder(buildConfiguration, (IncrementalProjectBuilder) result);
+			// the build command holds only one builder per configuration
+			// so query the builder for the configuration once more,
+			// in case another builder was added since we last checked
+			result = buildCommand.getBuilder(buildConfiguration);
+		}
+		// in case the builder was removed, between adding and querying it (see above)
+		if (result == null) {
+			return null;
 		}
 		// Ensure the build configuration stays fresh for non-config aware builders
 		result.setBuildConfig(buildConfiguration);

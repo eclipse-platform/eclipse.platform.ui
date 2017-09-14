@@ -74,6 +74,11 @@ public class BuildCommand extends ModelObject implements ICommand {
 	private int triggers = ALL_TRIGGERS;
 
 	/**
+	 * Lock used to synchronize access to {@link #builder} and {@link #builders}.
+	 */
+	private final Object builderLock = new Object();
+
+	/**
 	 * Returns the trigger bit mask for the given trigger constant.
 	 */
 	private static int maskForTrigger(int trigger) {
@@ -149,9 +154,11 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * associated with this build command.
 	 */
 	public Object getBuilders() {
-		if (supportsConfigs())
-			return builders;
-		return builder;
+		synchronized (builderLock) {
+			if (supportsConfigs())
+				return builders;
+			return builder;
+		}
 	}
 
 	/**
@@ -162,9 +169,11 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * @return {@link IncrementalProjectBuilder} corresponding to config
 	 */
 	public IncrementalProjectBuilder getBuilder(IBuildConfiguration config) {
-		if (builders != null && supportsConfigs())
-			return builders.get(config);
-		return builder;
+		synchronized (builderLock) {
+			if (builders != null && supportsConfigs())
+				return builders.get(config);
+			return builder;
+		}
 	}
 
 	@Override
@@ -217,38 +226,44 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setBuilders(Object value) {
-		if (value == null) {
-			builder = null;
-			builders = null;
-		} else {
-			if (value instanceof IncrementalProjectBuilder)
-				builder = (IncrementalProjectBuilder) value;
-			else
-				builders = new HashMap<>((Map<IBuildConfiguration, IncrementalProjectBuilder>) value);
+		synchronized (builderLock) {
+			if (value == null) {
+				builder = null;
+				builders = null;
+			} else {
+				if (value instanceof IncrementalProjectBuilder)
+					builder = (IncrementalProjectBuilder) value;
+				else
+					builders = new HashMap<>((Map<IBuildConfiguration, IncrementalProjectBuilder>) value);
+			}
 		}
 	}
 
 	/**
 	 * Add an IncrementalProjectBuilder for the given configuration.
+	 *
 	 * For builders which don't respond to multiple configurations, there's only one builder
 	 * instance.
+	 *
+	 * Does nothing if a builder was already added for the specified configuration,
+	 * or if a builder was added and this builder does not support multiple configurations.
+	 *
 	 * @param config
 	 * @param newBuilder
 	 */
 	public void addBuilder(IBuildConfiguration config, IncrementalProjectBuilder newBuilder) {
-		// Builder shouldn't already exist in this build command
-		IncrementalProjectBuilder currentBuilder = builders == null ? null : builders.get(config);
-		if (currentBuilder != null)
-			Assert.isTrue(false, "Current builder: " + currentBuilder.getClass().getName() + ", new builder: " + newBuilder.getClass().getName() + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (builder != null)
-			Assert.isTrue(false, "Current builder: " + builder.getClass().getName() + ", new builder: " + newBuilder.getClass().getName() + ", configuration: " + config); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-		if (supportsConfigs()) {
-			if (builders == null)
-				builders = new HashMap<>(1);
-			builders.put(config, newBuilder);
-		} else
-			builder = newBuilder;
+		synchronized (builderLock) {
+			// Builder shouldn't already exist in this build command
+			IncrementalProjectBuilder configBuilder = builders == null ? null : builders.get(config);
+			if (configBuilder == null && builder == null) {
+				if (supportsConfigs()) {
+					if (builders == null)
+						builders = new HashMap<>(1);
+					builders.put(config, newBuilder);
+				} else
+					builder = newBuilder;
+			}
+		}
 	}
 
 	@Override
