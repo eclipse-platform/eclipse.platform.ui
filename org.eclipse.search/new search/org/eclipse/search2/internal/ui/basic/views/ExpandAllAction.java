@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Karsten Thoms <karsten.thoms@itemis.de> Bug 522335
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.basic.views;
 
@@ -34,7 +35,12 @@ public class ExpandAllAction extends Action {
 	@Override
 	public void run() {
 		if (fViewer != null) {
-			fViewer.expandAll();
+			fViewer.getTree().setRedraw(false);
+			try {
+				fViewer.expandAll();
+			} finally {
+				fViewer.getTree().setRedraw(true);
+			}
 		}
 	}
 }
