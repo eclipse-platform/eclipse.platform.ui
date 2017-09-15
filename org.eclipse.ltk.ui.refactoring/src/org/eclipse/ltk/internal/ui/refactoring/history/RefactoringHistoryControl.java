@@ -735,22 +735,19 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			if (proxies.length > 0)
 				enable= true;
 		}
-		if (fDetailField != null)
+		if (fDetailField != null) {
 			fDetailField.setEnabled(enable);
-		if (fDetailLabel != null)
+			fDetailField.setText(enable ? fControlConfiguration.getCommentCaption() : ""); //$NON-NLS-1$
+		}
+		if (fDetailLabel != null) {
 			fDetailLabel.setEnabled(enable);
-		if (fHistoryPane != null)
+		}
+		if (fHistoryPane != null) {
 			fHistoryPane.setEnabled(enable);
-		if (fSelectionLabel != null)
+		}
+		if (fSelectionLabel != null) {
 			fSelectionLabel.setEnabled(enable);
-		if (enable) {
-			fDetailField.setText(fControlConfiguration.getCommentCaption());
-			if (fSelectionLabel != null)
-				fSelectionLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
-		} else {
-			fDetailField.setText(""); //$NON-NLS-1$
-			if (fSelectionLabel != null)
-				fSelectionLabel.setText(""); //$NON-NLS-1$
+			fSelectionLabel.setText(enable ? RefactoringUIMessages.RefactoringHistoryControl_no_selection : "");  //$NON-NLS-1$
 		}
 	}
 
