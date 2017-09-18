@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.osgi.framework.*;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The class contains a set of helper methods for the runtime Jobs plugin.
@@ -30,7 +28,6 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 class JobOSGiUtils {
 	private ServiceRegistration<DebugOptionsListener> debugRegistration = null;
-	private ServiceTracker bundleTracker = null;
 
 	private static final JobOSGiUtils singleton = new JobOSGiUtils();
 
@@ -49,7 +46,6 @@ class JobOSGiUtils {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
 	void openServices() {
 		BundleContext context = JobActivator.getContext();
 		if (context == null) {
@@ -62,19 +58,12 @@ class JobOSGiUtils {
 		Hashtable<String, String> properties = new Hashtable<>(2);
 		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, JobManager.PI_JOBS);
 		debugRegistration = context.registerService(DebugOptionsListener.class, JobManager.getInstance(), properties);
-
-		bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
-		bundleTracker.open();
 	}
 
 	void closeServices() {
 		if (debugRegistration != null) {
 			debugRegistration.unregister();
 			debugRegistration = null;
-		}
-		if (bundleTracker != null) {
-			bundleTracker.close();
-			bundleTracker = null;
 		}
 	}
 
@@ -83,17 +72,9 @@ class JobOSGiUtils {
 	 * <code>null</code> if the bundle could not be determined.
 	 */
 	public String getBundleId(Object object) {
-		if (bundleTracker == null) {
-			if (JobManager.DEBUG)
-				JobMessages.message("Bundle tracker is not set"); //$NON-NLS-1$
-			return null;
-		}
-		PackageAdmin packageAdmin = (PackageAdmin) bundleTracker.getService();
 		if (object == null)
 			return null;
-		if (packageAdmin == null)
-			return null;
-		Bundle source = packageAdmin.getBundle(object.getClass());
+		Bundle source = FrameworkUtil.getBundle(object.getClass());
 		if (source != null && source.getSymbolicName() != null)
 			return source.getSymbolicName();
 		return null;
