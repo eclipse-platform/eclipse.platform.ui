@@ -41,7 +41,8 @@ public class FileEditorInputTest extends UITestCase {
     /**
      * Regression test for bug 72337 - [IDE] FileEditorInput .equals() not implemented against interface
      */
-    public void testBug72337() {
+	@SuppressWarnings("unlikely-arg-type")
+	public void testBug72337() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IPath path = new Path("/foo/bar.txt");
         IFile fileA = workspace.getRoot().getFile(path);
