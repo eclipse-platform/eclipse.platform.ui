@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,26 +324,25 @@ try {
 
 	abstract IStatus runCommand(IProgressMonitor pm) throws ExecutionException;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IUndoContext.class)) {
-			return (T) undoContext;
+			return adapter.cast(undoContext);
 		}
 		if (adapter.equals(IProgressMonitor.class)) {
 			if (progressDialog != null) {
-				return (T) progressDialog.getProgressMonitor();
+				return adapter.cast(progressDialog.getProgressMonitor());
 			}
 		}
 		if (site != null) {
 			if (adapter.equals(Shell.class)) {
-				return (T) getWorkbenchWindow().getShell();
+				return adapter.cast(getWorkbenchWindow().getShell());
 			}
 			if (adapter.equals(IWorkbenchWindow.class)) {
-				return (T) getWorkbenchWindow();
+				return adapter.cast(getWorkbenchWindow());
 			}
 			if (adapter.equals(IWorkbenchPart.class)) {
-				return (T) site.getPart();
+				return adapter.cast(site.getPart());
 			}
 			// Refer all other requests to the part itself.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=108144

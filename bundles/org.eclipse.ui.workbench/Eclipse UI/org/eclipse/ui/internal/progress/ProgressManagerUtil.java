@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,9 @@ import org.eclipse.ui.views.IViewDescriptor;
 
 public class ProgressManagerUtil {
 
-	@SuppressWarnings("unchecked")
 	static class ProgressViewerComparator extends ViewerComparator {
 		@Override
-		@SuppressWarnings("rawtypes")
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public int compare(Viewer testViewer, Object e1, Object e2) {
 			return ((Comparable) e1).compareTo(e2);
 		}
