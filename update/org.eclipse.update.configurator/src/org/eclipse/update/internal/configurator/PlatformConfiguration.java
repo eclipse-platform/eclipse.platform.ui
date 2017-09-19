@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     James D Miles (IBM Corp.) - bug 176250, Configurator needs to handle more platform urls 
+ *     James D Miles (IBM Corp.) - bug 176250, Configurator needs to handle more platform urls
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
@@ -45,14 +45,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is responsible for providing the features and plugins (bundles) to 
+ * This class is responsible for providing the features and plugins (bundles) to
  * the runtime. Configuration data is stored in the configuration/org.eclipse.update/platform.xml file.
  * When eclipse starts, it tries to load the config info from platform.xml.
  * If the file does not exist, then it also tries to read it from a temp or backup file.
- * If this does not succeed, a platform.xml is created by inspecting the eclipse 
+ * If this does not succeed, a platform.xml is created by inspecting the eclipse
  * installation directory (its features and plugin folders).
  * If platform.xml already exists, a check is made to see when it was last modified
- * and whether there are any file system changes that are newer (users may manually unzip 
+ * and whether there are any file system changes that are newer (users may manually unzip
  * features and plugins). In this case, the newly added features and plugins are picked up.
  * A check for existence of features and plugins is also performed, to detect deletions.
  */
@@ -144,9 +144,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		URL installLocation = Utils.getInstallURL();
 		// Retrieve install location with respect to given url if possible
 		try {
-			if (url.getProtocol().equals("file")) {
-				if (url.getPath().endsWith("configuration/org.eclipse.update/platform.xml"))
-					installLocation = new Path(url.getPath()).removeLastSegments(3).toFile().toURL();
+			if (url != null && url.getProtocol().equals("file") && url.getPath().endsWith("configuration/org.eclipse.update/platform.xml")) {
+				installLocation = new Path(url.getPath()).removeLastSegments(3).toFile().toURL();
 			}
 		} catch (Exception e) {
 			//
@@ -160,9 +159,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	private void setDefaultPolicy() {
-		// Assumption: If the configuration that we initialize with 
-		// has a MANAGED_ONLY policy, then all sites should have default policy 
-		// of MANAGED_ONLY.  
+		// Assumption: If the configuration that we initialize with
+		// has a MANAGED_ONLY policy, then all sites should have default policy
+		// of MANAGED_ONLY.
 		ISiteEntry[] sentries = getConfiguredSites();
 		if (sentries != null && sentries.length > 0) {
 			int policyType = sentries[0].getSitePolicy().getType();
@@ -272,7 +271,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	/**
-	 * 
+	 *
 	 * @param url site url
 	 * @param checkPlatformURL if true, check for url format that is platform:/...
 	 * @return
@@ -611,7 +610,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			if (workingDir != null && !workingDir.exists())
 				workingDir.mkdirs();
 
-			// Do safe i/o: 
+			// Do safe i/o:
 			//    - backup current config, by moving it to the history folder
 			//    - write new config to platform.xml.tmp file
 			//    - rename the temp file to platform.xml
@@ -734,7 +733,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private synchronized void initializeCurrent(Location platformConfigLocation) throws IOException {
 
-		// Configuration URL was is specified by the OSGi layer. 
+		// Configuration URL was is specified by the OSGi layer.
 		// Default behavior is to look
 		// for configuration in the specified meta area. If not found, look
 		// for pre-initialized configuration in the installation location.
@@ -1032,7 +1031,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 			// If multiple paths are defined in the same link file
 			// or if the path changes, the old site will still be kept.
-			// A better algorithm could be implemented by keeping track 
+			// A better algorithm could be implemented by keeping track
 			// of the previous content of the link file.
 			// TODO do the above
 			String linkName = list[i].getLinkFileName();
@@ -1041,7 +1040,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				if (!linkFile.exists()) {
 					unconfigureSite(list[i]);
 					config.setDirty(true);
-					Utils.debug("Site " + siteURL + " is no longer linked ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$	
+					Utils.debug("Site " + siteURL + " is no longer linked ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -1235,7 +1234,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			throw Utils.newCoreException("", e); //$NON-NLS-1$
 		} finally {
 			xmlWriter.flush();
-			// will close the stream in the caller	
+			// will close the stream in the caller
 			//xmlWriter.close();
 		}
 	}
