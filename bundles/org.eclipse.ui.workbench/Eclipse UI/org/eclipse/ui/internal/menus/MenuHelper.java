@@ -307,15 +307,7 @@ public class MenuHelper {
 	 * @return unique string computed from the element registry handle
 	 */
 	private static String getConfigurationHandleId(IConfigurationElement element) {
-		// Note: the line below depends on internal details of
-		// ConfigurationElementHandle implementation, see bug 515405 and 515587.
-
-		// ConfigurationElementHandle.hashCode() is implemented in the way that
-		// it returns same number for different element instances with the same
-		// registry handle id (see org.eclipse.core.internal.registry.Handle).
-
-		// Once the bug 515587 provides new API, we should use that
-		return element.toString();
+		return String.valueOf(element.getHandleId());
 	}
 
 	static String getName(IConfigurationElement element) {
