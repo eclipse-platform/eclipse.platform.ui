@@ -552,6 +552,10 @@
             id="org.eclipse.ui.ide.open"
             label="%PreferenceKeywords.Open">
       </keyword>
+      <keyword
+            id="org.eclipse.ui.ide.nature"
+            label="%PreferenceKeywords.Nature">
+      </keyword>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -652,6 +656,10 @@
             name="%PreferencePages.Workspace">
          <keywordReference id="org.eclipse.ui.ide.workspace"/>
          <keywordReference id="org.eclipse.ui.ide.encoding"/>
+         <keywordReference id="org.eclipse.ui.ide.project"/>
+         <keywordReference
+               id="org.eclipse.ui.ide.nature">
+         </keywordReference>
       </page>
       <page
             category="org.eclipse.ui.preferencePages.Workspace"
