@@ -23,6 +23,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.osgi.framework.*;
@@ -440,6 +441,7 @@ public final class ResourcesPlugin extends Plugin {
 			return;
 		}
 		workspace.removeResourceChangeListener(checkMissingNaturesListener);
+		InstanceScope.INSTANCE.getNode(PREF_MISSING_NATURE_MARKER_SEVERITY).removePreferenceChangeListener(checkMissingNaturesListener);
 		if (workspaceRegistration != null) {
 			workspaceRegistration.unregister();
 		}
@@ -478,9 +480,10 @@ public final class ResourcesPlugin extends Plugin {
 		IStatus result = workspace.open(null);
 		if (!result.isOK())
 			getLog().log(result);
+		workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
 		checkMissingNaturesListener = new CheckMissingNaturesListener();
 		workspace.addResourceChangeListener(checkMissingNaturesListener, IResourceChangeEvent.POST_CHANGE);
-		workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
+		InstanceScope.INSTANCE.getNode(PI_RESOURCES).addPreferenceChangeListener(checkMissingNaturesListener);
 	}
 
 	/*

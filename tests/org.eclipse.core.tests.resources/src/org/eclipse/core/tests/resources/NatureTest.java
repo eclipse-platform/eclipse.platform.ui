@@ -15,8 +15,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.CheckMissingNaturesListener;
 import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.internal.resources.Project;
+import org.eclipse.core.internal.resources.PreferenceInitializer;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,7 +33,7 @@ import org.junit.Assert;
  * APIs on IWorkspace are tested by IWorkspaceTest.
  */
 public class NatureTest extends ResourceTest {
-	private static final String MISSING_NATURE_MARKER_ID = "org.eclipse.core.resources.unknownNature";
+	IProject project;
 
 	/**
 	 * Constructor for NatureTest.
@@ -88,7 +89,8 @@ public class NatureTest extends ResourceTest {
 
 	@Override
 	protected void tearDown() throws Exception {
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).remove(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY);
+		project.delete(true, null);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, PreferenceInitializer.PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT);
 		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
 		super.tearDown();
 		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -98,16 +100,13 @@ public class NatureTest extends ResourceTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, IMarker.SEVERITY_WARNING);
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
+		this.project = ResourcesPlugin.getWorkspace().getRoot().getProject(getUniqueString());
 	}
 
 	/**
 	 * Tests invalid additions to the set of natures for a project.
 	 */
 	public void testInvalidAdditions() {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
 		setNatures("1.0", project, new String[] {NATURE_SIMPLE}, false);
 
@@ -148,8 +147,6 @@ public class NatureTest extends ResourceTest {
 	 * Tests invalid removals from the set of natures for a project.
 	 */
 	public void testInvalidRemovals() {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
 
 		//Removing a nature that still has dependents.
@@ -166,8 +163,6 @@ public class NatureTest extends ResourceTest {
 	}
 
 	public void testNatureLifecyle() {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
 
 		//add simple nature
@@ -212,8 +207,6 @@ public class NatureTest extends ResourceTest {
 	 * Test simple addition and removal of natures.
 	 */
 	public void testSimpleNature() {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
 
 		String[][] valid = getValidNatureSets();
@@ -245,9 +238,8 @@ public class NatureTest extends ResourceTest {
 	 * See bugs 127562 and  128709.
 	 */
 	public void testBug127562Nature() {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
+		IWorkspace ws = project.getWorkspace();
 
 		String[][] valid = getValidNatureSets();
 		for (int i = 0; i < valid.length; i++) {
@@ -284,8 +276,6 @@ public class NatureTest extends ResourceTest {
 	}
 
 	public void testBug297871() {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		Project project = (Project) ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
 
 		java.io.File desc = null;
@@ -372,8 +362,6 @@ public class NatureTest extends ResourceTest {
 	 */
 	public void testBug338055() throws Exception {
 		final boolean finished[] = new boolean[] {false};
-		final Project project = (Project) ResourcesPlugin.getWorkspace().getRoot().getProject(getUniqueString());
-
 		ensureExistsInWorkspace(project, true);
 
 		new Job("CheckNatureJob") {
@@ -436,31 +424,55 @@ public class NatureTest extends ResourceTest {
 	}
 
 	public void testMissingNatureAddsMarker() throws Exception {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, IMarker.SEVERITY_WARNING);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_MISSING});
 		project.setDescription(desc, IResource.FORCE | IResource.AVOID_NATURE_CONFIG, getMonitor());
 		project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		project.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
-		Job.getJobManager().join(MISSING_NATURE_MARKER_ID, getMonitor());
-		IMarker[] markers = project.findMarkers(MISSING_NATURE_MARKER_ID, false, IResource.DEPTH_ZERO);
+		Job.getJobManager().join(CheckMissingNaturesListener.MARKER_TYPE, getMonitor());
+		IMarker[] markers = project.findMarkers(CheckMissingNaturesListener.MARKER_TYPE, false, IResource.DEPTH_ZERO);
 		Assert.assertEquals(1, markers.length);
 		IMarker marker = markers[0];
 		Assert.assertEquals(NATURE_MISSING, marker.getAttribute("natureId"));
 	}
 
 	public void testKnownNatureDoesntAddMarker() throws Exception {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IProject project = ws.getRoot().getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, IMarker.SEVERITY_WARNING);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
 		IProjectDescription desc = project.getDescription();
 		desc.setNatureIds(new String[] {NATURE_SIMPLE});
 		project.setDescription(desc, getMonitor());
 		project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		project.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
-		Job.getJobManager().join(MISSING_NATURE_MARKER_ID, getMonitor());
-		Assert.assertEquals(0, project.findMarkers(MISSING_NATURE_MARKER_ID, false, IResource.DEPTH_ZERO).length);
+		Job.getJobManager().join(CheckMissingNaturesListener.MARKER_TYPE, getMonitor());
+		Assert.assertEquals(0, project.findMarkers(CheckMissingNaturesListener.MARKER_TYPE, false, IResource.DEPTH_ZERO).length);
+	}
+
+	public void testListenToPreferenceChange() throws Exception {
+		testMissingNatureAddsMarker();
+		// to INFO
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, IMarker.SEVERITY_INFO);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
+		Job.getJobManager().join(CheckMissingNaturesListener.MARKER_TYPE, getMonitor());
+		IMarker[] markers = project.findMarkers(CheckMissingNaturesListener.MARKER_TYPE, false, IResource.DEPTH_ZERO);
+		Assert.assertEquals(1, markers.length);
+		Assert.assertEquals(IMarker.SEVERITY_INFO, markers[0].getAttribute(IMarker.SEVERITY, -42));
+		// to IGNORE
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, -1);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
+		Job.getJobManager().join(CheckMissingNaturesListener.MARKER_TYPE, getMonitor());
+		markers = project.findMarkers(CheckMissingNaturesListener.MARKER_TYPE, false, IResource.DEPTH_ZERO);
+		Assert.assertEquals(0, markers.length);
+		// to ERROR
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, IMarker.SEVERITY_ERROR);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).flush();
+		Job.getJobManager().join(CheckMissingNaturesListener.MARKER_TYPE, getMonitor());
+		markers = project.findMarkers(CheckMissingNaturesListener.MARKER_TYPE, false, IResource.DEPTH_ZERO);
+		Assert.assertEquals(1, markers.length);
+		Assert.assertEquals(IMarker.SEVERITY_ERROR, markers[0].getAttribute(IMarker.SEVERITY, -42));
 	}
 }

@@ -41,7 +41,6 @@ public class AutomatedTests extends TestCase {
 		suite.addTest(org.eclipse.core.tests.internal.mapping.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.properties.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.propertytester.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.resources.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.utils.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.watson.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.resources.AllTests.suite());
@@ -51,6 +50,8 @@ public class AutomatedTests extends TestCase {
 		suite.addTest(org.eclipse.core.tests.resources.session.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.resources.content.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.events.AllTests.suite());
+		// move last because WorkspacePreferenceTest breaks the Workspace state (https://bugs.eclipse.org/bugs/show_bug.cgi?id=525343)
+		suite.addTest(org.eclipse.core.tests.internal.resources.AllTests.suite());
 		return suite;
 	}
 }
