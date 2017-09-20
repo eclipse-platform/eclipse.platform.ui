@@ -34,7 +34,7 @@ public interface IConsoleConstants {
 	 * Type identifier for MessageConsole
 	 * @since 3.1
 	 */
-    public static final String MESSAGE_CONSOLE_TYPE = "org.eclipse.ui.MessageConsole"; //$NON-NLS-1$
+	public static final String MESSAGE_CONSOLE_TYPE = "org.eclipse.ui.MessageConsole"; //$NON-NLS-1$
 
 	/**
 	 * The name of the font to use for the Console (value <code>"org.eclipse.ui.console.ConsoleFont"</code>).
@@ -79,23 +79,23 @@ public interface IConsoleConstants {
 	 *
 	 * @since 3.1
 	 */
-    public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS = "consolePatternMatchListeners"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS = "consolePatternMatchListeners"; //$NON-NLS-1$
 
-    /**
-     * Console page participants extension point identifier
-     * (value <code>"consolePageParticipants"</code>).
-     *
-     * @since 3.1
-     */
-    public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS = "consolePageParticipants"; //$NON-NLS-1$
+	/**
+	 * Console page participants extension point identifier
+	 * (value <code>"consolePageParticipants"</code>).
+	 *
+	 * @since 3.1
+	 */
+	public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS = "consolePageParticipants"; //$NON-NLS-1$
 
-    /**
-     * Console factories extension point identifier
-     * (value <code>"consoleFactories"</code>).
-     *
-     * @since 3.1
-     */
-    public static final String EXTENSION_POINT_CONSOLE_FACTORIES = "consoleFactories"; //$NON-NLS-1$
+	/**
+	 * Console factories extension point identifier
+	 * (value <code>"consoleFactories"</code>).
+	 *
+	 * @since 3.1
+	 */
+	public static final String EXTENSION_POINT_CONSOLE_FACTORIES = "consoleFactories"; //$NON-NLS-1$
 
 	/**
 	 * Property constant indicating a console's font has changed.
@@ -147,11 +147,11 @@ public interface IConsoleConstants {
 	 */
 	public static final String P_BACKGROUND_COLOR = ConsolePlugin.getUniqueIdentifier()  + ".P_BACKGROUND_COLOR";	 //$NON-NLS-1$
 
-    /**
-     * The default tab size for text consoles.
-     *
-     * @since 3.1
-     */
-    public static final int DEFAULT_TAB_SIZE = 8;
+	/**
+	 * The default tab size for text consoles.
+	 *
+	 * @since 3.1
+	 */
+	public static final int DEFAULT_TAB_SIZE = 8;
 
 }

@@ -37,9 +37,9 @@ public class HyperlinkUpdater extends DefaultPositionUpdater {
 		int positionEnd = fPosition.offset + fPosition.length - 1;
 		int editEnd = fOffset + fLength - 1;
 		if ((fOffset <= fPosition.offset && (editEnd > fPosition.offset)) ||
-			(fOffset < positionEnd && (editEnd > positionEnd)) ||
-			(fOffset >= fPosition.offset && fOffset <= positionEnd) ||
-			(editEnd >= fPosition.offset && editEnd <= positionEnd)) {
+				(fOffset < positionEnd && (editEnd > positionEnd)) ||
+				(fOffset >= fPosition.offset && fOffset <= positionEnd) ||
+				(editEnd >= fPosition.offset && editEnd <= positionEnd)) {
 
 			fPosition.delete();
 

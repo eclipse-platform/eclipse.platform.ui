@@ -24,28 +24,28 @@ public class FollowHyperlinkAction extends Action {
 
 	private TextConsoleViewer viewer;
 
-    /**
+	/**
 	 * Constructs a follow link action
 	 */
 	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {
-	    super(ConsoleMessages.FollowHyperlinkAction_0);
+		super(ConsoleMessages.FollowHyperlinkAction_0);
 		setToolTipText(ConsoleMessages.FollowHyperlinkAction_1);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_OPEN_LINK_ACTION);
 		this.viewer = consoleViewer;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#isEnabled()
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#isEnabled()
+	 */
 	@Override
 	public boolean isEnabled() {
-        return viewer.getHyperlink() != null;
-    }
+		return viewer.getHyperlink() != null;
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#run()
-     */
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
 	@Override
 	public void run() {
 		IHyperlink link = viewer.getHyperlink();

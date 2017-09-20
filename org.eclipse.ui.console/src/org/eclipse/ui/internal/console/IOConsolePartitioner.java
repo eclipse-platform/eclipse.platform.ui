@@ -84,9 +84,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	private String[] lld;
 	private int highWaterMark = -1;
 	private int lowWaterMark = -1;
-    private boolean connected = false;
+	private boolean connected = false;
 
-    private IOConsole console;
+	private IOConsole console;
 
 	private TrimJob trimJob = new TrimJob();
 	/**
@@ -97,7 +97,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	private Object overflowLock = new Object();
 
 
-    private int fBuffer;
+	private int fBuffer;
 
 	public IOConsolePartitioner(IOConsoleInputStream inputStream, IOConsole console) {
 		this.inputStream = inputStream;
@@ -123,17 +123,17 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		inputPartitions = new ArrayList<IOConsolePartition>();
 		queueJob = new QueueProcessingJob();
 		queueJob.setSystem(true);
-        queueJob.setPriority(Job.INTERACTIVE);
+		queueJob.setPriority(Job.INTERACTIVE);
 		queueJob.setRule(console.getSchedulingRule());
 		connected = true;
 	}
 
 	public int getHighWaterMark() {
-	    return highWaterMark;
+		return highWaterMark;
 	}
 
 	public int getLowWaterMark() {
-	    return lowWaterMark;
+		return lowWaterMark;
 	}
 
 	public void setWaterMarks(int low, int high) {
@@ -150,13 +150,13 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	/**
 	 * Notification from the console that all of its streams have been closed.
 	 */
-    public void streamsClosed() {
-        consoleClosedPartition = new PendingPartition(null, null);
-        synchronized (pendingPartitions) {
-            pendingPartitions.add(consoleClosedPartition);
-        }
-        queueJob.schedule(); //ensure that all pending partitions are processed.
-    }
+	public void streamsClosed() {
+		consoleClosedPartition = new PendingPartition(null, null);
+		synchronized (pendingPartitions) {
+			pendingPartitions.add(consoleClosedPartition);
+		}
+		queueJob.schedule(); //ensure that all pending partitions are processed.
+	}
 
 	/*
 	 *  (non-Javadoc)
@@ -169,9 +169,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			partitions.clear();
 			connected = false;
 			try {
-	            inputStream.close();
-	        } catch (IOException e) {
-	        }
+				inputStream.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 
@@ -223,7 +223,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		IOConsolePartition position= null;
 
 		if (left == right) {
-		    return new IOConsolePartition[]{partitions.get(0)};
+			return new IOConsolePartition[]{partitions.get(0)};
 		}
 		while (left < right) {
 
@@ -251,7 +251,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		List<IOConsolePartition> list = new ArrayList<IOConsolePartition>();
 		int index = left - 1;
 		if (index >= 0) {
-		    position= partitions.get(index);
+			position= partitions.get(index);
 			while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
 				index--;
 				if (index >= 0) {
@@ -309,10 +309,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		if (document != null && highWaterMark > 0) {
 			int length = document.getLength();
 			if (length > highWaterMark) {
-			    if (trimJob.getState() == Job.NONE) { //if the job isn't already running
-				    trimJob.setOffset(length - lowWaterMark);
-				    trimJob.schedule();
-			    }
+				if (trimJob.getState() == Job.NONE) { //if the job isn't already running
+					trimJob.setOffset(length - lowWaterMark);
+					trimJob.schedule();
+				}
 			}
 		}
 	}
@@ -321,10 +321,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Clears the console
 	 */
 	public void clearBuffer() {
-	    synchronized (overflowLock) {
-	        trimJob.setOffset(-1);
-		    trimJob.schedule();
-        }
+		synchronized (overflowLock) {
+			trimJob.setOffset(-1);
+			trimJob.schedule();
+		}
 	}
 
 	/*
@@ -334,9 +334,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 */
 	@Override
 	public IRegion documentChanged2(DocumentEvent event) {
-	    if (document == null) {
-	        return null; //another thread disconnected the partitioner
-	    }
+		if (document == null) {
+			return null; //another thread disconnected the partitioner
+		}
 		if (document.getLength() == 0) { //document cleared
 			if (lastPartition != null && lastPartition.getType().equals(IOConsolePartition.INPUT_PARTITION_TYPE)) {
 				synchronized (partitions) {
@@ -354,20 +354,20 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				if (updatePartitions != null) {
 					for (PendingPartition pp : updatePartitions) {
 						if (pp == consoleClosedPartition) {
-				            continue;
-				        }
+							continue;
+						}
 
-				        int ppLen = pp.text.length();
-				        if (lastPartition != null && lastPartition.getStream() == pp.stream) {
-				            int len = lastPartition.getLength();
-				            lastPartition.setLength(len + ppLen);
-				        } else {
-				            IOConsolePartition partition = new IOConsolePartition(pp.stream, ppLen);
-				            partition.setOffset(firstOffset);
-				            lastPartition = partition;
-				            partitions.add(partition);
-				        }
-				        firstOffset += ppLen;
+						int ppLen = pp.text.length();
+						if (lastPartition != null && lastPartition.getStream() == pp.stream) {
+							int len = lastPartition.getLength();
+							lastPartition.setLength(len + ppLen);
+						} else {
+							IOConsolePartition partition = new IOConsolePartition(pp.stream, ppLen);
+							partition.setOffset(firstOffset);
+							lastPartition = partition;
+							partitions.add(partition);
+						}
+						firstOffset += ppLen;
 					}
 				}
 			}
@@ -398,44 +398,44 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					String ld = lld[i];
 					int index = partitionText.lastIndexOf(ld);
 					if (index != -1) {
-					    index += ld.length();
+						index += ld.length();
 					}
 					if (index > lastLineDelimiter) {
-					    lastLineDelimiter = index;
+						lastLineDelimiter = index;
 					}
 				}
 				if (lastLineDelimiter != -1) {
 					StringBuffer input = new StringBuffer();
 					Iterator<IOConsolePartition> it = inputPartitions.iterator();
 					while (it.hasNext()) {
-					    IOConsolePartition partition = it.next();
-					    if (partition.getOffset() + partition.getLength() <= event.fOffset + lastLineDelimiter) {
-					        if (partition == lastPartition) {
-					            lastPartition = null;
-					        }
-					        input.append(partition.getString());
+						IOConsolePartition partition = it.next();
+						if (partition.getOffset() + partition.getLength() <= event.fOffset + lastLineDelimiter) {
+							if (partition == lastPartition) {
+								lastPartition = null;
+							}
+							input.append(partition.getString());
 							partition.clearBuffer();
 							partition.setReadOnly();
 							it.remove();
-					    } else {
-					        //create a new partition containing everything up to the line delimiter
-					        //and append that to the string buffer.
-					        String contentBefore = partitionText.substring(0, lastLineDelimiter);
-					        IOConsolePartition newPartition = new IOConsolePartition(inputStream, contentBefore);
-					        newPartition.setOffset(partition.getOffset());
-					        newPartition.setReadOnly();
-					        newPartition.clearBuffer();
-					        int index = partitions.indexOf(partition);
-						    partitions.add(index, newPartition);
-					        input.append(contentBefore);
-					        //delete everything that has been appended to the buffer.
-					        partition.delete(0, lastLineDelimiter);
-					        partition.setOffset(lastLineDelimiter + partition.getOffset());
-					        lastLineDelimiter = 0;
-					    }
+						} else {
+							//create a new partition containing everything up to the line delimiter
+							//and append that to the string buffer.
+							String contentBefore = partitionText.substring(0, lastLineDelimiter);
+							IOConsolePartition newPartition = new IOConsolePartition(inputStream, contentBefore);
+							newPartition.setOffset(partition.getOffset());
+							newPartition.setReadOnly();
+							newPartition.clearBuffer();
+							int index = partitions.indexOf(partition);
+							partitions.add(index, newPartition);
+							input.append(contentBefore);
+							//delete everything that has been appended to the buffer.
+							partition.delete(0, lastLineDelimiter);
+							partition.setOffset(lastLineDelimiter + partition.getOffset());
+							lastLineDelimiter = 0;
+						}
 					}
 					if (input.length() > 0) {
-					    inputStream.appendData(input.toString());
+						inputStream.appendData(input.toString());
 					}
 
 				}
@@ -458,36 +458,36 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * @param s The string that should be appended to the document.
 	 */
 	public void streamAppended(IOConsoleOutputStream stream, String s) throws IOException {
-        if (document == null) {
-            throw new IOException("Document is closed"); //$NON-NLS-1$
-        }
+		if (document == null) {
+			throw new IOException("Document is closed"); //$NON-NLS-1$
+		}
 		synchronized(pendingPartitions) {
 			PendingPartition last = pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null;
 			if (last != null && last.stream == stream) {
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-                if (fBuffer > 1000) {
-                    queueJob.schedule();
-                } else {
-                    queueJob.schedule(50);
-                }
+				if (fBuffer > 1000) {
+					queueJob.schedule();
+				} else {
+					queueJob.schedule(50);
+				}
 			}
 
-            if (fBuffer > 160000) {
-            	if(Display.getCurrent() == null){
+			if (fBuffer > 160000) {
+				if(Display.getCurrent() == null){
 					try {
 						pendingPartitions.wait();
 					} catch (InterruptedException e) {
 					}
-            	} else {
+				} else {
 					/*
 					 * if we are in UI thread we cannot lock it, so process
 					 * queued output.
 					 */
-            		processQueue();
-            	}
-            }
+					processQueue();
+				}
+			}
 		}
 	}
 
@@ -501,13 +501,13 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		PendingPartition(IOConsoleOutputStream stream, String text) {
 			this.stream = stream;
 			if (text != null) {
-                append(text);
-            }
+				append(text);
+			}
 		}
 
 		void append(String moreText) {
 			text.append(moreText);
-            fBuffer += moreText.length();
+			fBuffer += moreText.length();
 		}
 	}
 
@@ -517,39 +517,39 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 */
 	private class QueueProcessingJob extends UIJob {
 
-        QueueProcessingJob() {
+		QueueProcessingJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
 		}
 
-        /*
-         *  (non-Javadoc)
-         * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        @Override
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-        	processQueue();
-        	return Status.OK_STATUS;
-        }
+			processQueue();
+			return Status.OK_STATUS;
+		}
 
-        /*
-         * Job will process as much as it can each time it's run, but it gets
-         * scheduled everytime a PendingPartition is added to the list, meaning
-         * that this job could get scheduled unnecessarily in cases of heavy output.
-         * Note however, that schedule() will only reschedule a running/scheduled Job
-         * once even if it's called many times.
-         */
-        @Override
+		/*
+		 * Job will process as much as it can each time it's run, but it gets
+		 * scheduled everytime a PendingPartition is added to the list, meaning
+		 * that this job could get scheduled unnecessarily in cases of heavy output.
+		 * Note however, that schedule() will only reschedule a running/scheduled Job
+		 * once even if it's called many times.
+		 */
+		@Override
 		public boolean shouldRun() {
-            boolean shouldRun = connected && pendingPartitions != null && pendingPartitions.size() > 0;
-            return shouldRun;
-        }
+			boolean shouldRun = connected && pendingPartitions != null && pendingPartitions.size() > 0;
+			return shouldRun;
+		}
 	}
 
 	void processQueue() {
-    	synchronized (overflowLock) {
+		synchronized (overflowLock) {
 			ArrayList<PendingPartition> pendingCopy = new ArrayList<PendingPartition>();
-    		StringBuffer buffer = null;
-    		boolean consoleClosed = false;
+			StringBuffer buffer = null;
+			boolean consoleClosed = false;
 			synchronized(pendingPartitions) {
 				pendingCopy.addAll(pendingPartitions);
 				pendingPartitions.clear();
@@ -571,131 +571,131 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					consoleClosed = true;
 				}
 			}
-    		if (connected) {
-    			setUpdateInProgress(true);
-    			updatePartitions = pendingCopy;
-    			firstOffset = document.getLength();
-    			try {
-    				if (buffer != null) {
-    					document.replace(firstOffset, 0, buffer.toString());
-    				}
-    			} catch (BadLocationException e) {
-    			}
-    			updatePartitions = null;
-    			setUpdateInProgress(false);
-    		}
-    		if (consoleClosed) {
-    			console.partitionerFinished();
-    		}
-    		checkBufferSize();
-    	}
+			if (connected) {
+				setUpdateInProgress(true);
+				updatePartitions = pendingCopy;
+				firstOffset = document.getLength();
+				try {
+					if (buffer != null) {
+						document.replace(firstOffset, 0, buffer.toString());
+					}
+				} catch (BadLocationException e) {
+				}
+				updatePartitions = null;
+				setUpdateInProgress(false);
+			}
+			if (consoleClosed) {
+				console.partitionerFinished();
+			}
+			checkBufferSize();
+		}
 
 	}
 
-    /**
-     * Job to trim the console document, runs in the  UI thread.
-     */
-    private class TrimJob extends WorkbenchJob {
+	/**
+	 * Job to trim the console document, runs in the  UI thread.
+	 */
+	private class TrimJob extends WorkbenchJob {
 
-        /**
-         * trims output up to the line containing the given offset,
-         * or all output if -1.
-         */
-        private int truncateOffset;
+		/**
+		 * trims output up to the line containing the given offset,
+		 * or all output if -1.
+		 */
+		private int truncateOffset;
 
-        /**
-         * Creates a new job to trim the buffer.
-         */
-        TrimJob() {
-            super("Trim Job"); //$NON-NLS-1$
-            setSystem(true);
-        }
+		/**
+		 * Creates a new job to trim the buffer.
+		 */
+		TrimJob() {
+			super("Trim Job"); //$NON-NLS-1$
+			setSystem(true);
+		}
 
-        /**
-         * Sets the trim offset.
-         *
-         * @param offset trims output up to the line containing the given offset
-         */
-        public void setOffset(int offset) {
-            truncateOffset = offset;
-        }
+		/**
+		 * Sets the trim offset.
+		 *
+		 * @param offset trims output up to the line containing the given offset
+		 */
+		public void setOffset(int offset) {
+			truncateOffset = offset;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-        	if (document == null) {
-        		return Status.OK_STATUS;
-        	}
+			if (document == null) {
+				return Status.OK_STATUS;
+			}
 
-        	int length = document.getLength();
-        	if (truncateOffset < length) {
-        		synchronized (overflowLock) {
-        			try {
-        				if (truncateOffset < 0) {
-        				    // clear
-        				    setUpdateInProgress(true);
-        					document.set(""); //$NON-NLS-1$
-        					setUpdateInProgress(false);
-        					partitions.clear();
-        				} else {
-        				    // overflow
-        				    int cutoffLine = document.getLineOfOffset(truncateOffset);
-        				    int cutOffset = document.getLineOffset(cutoffLine);
+			int length = document.getLength();
+			if (truncateOffset < length) {
+				synchronized (overflowLock) {
+					try {
+						if (truncateOffset < 0) {
+							// clear
+							setUpdateInProgress(true);
+							document.set(""); //$NON-NLS-1$
+							setUpdateInProgress(false);
+							partitions.clear();
+						} else {
+							// overflow
+							int cutoffLine = document.getLineOfOffset(truncateOffset);
+							int cutOffset = document.getLineOffset(cutoffLine);
 
 
-        					// set the new length of the first partition
-        					IOConsolePartition partition = (IOConsolePartition) getPartition(cutOffset);
-        					partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
+							// set the new length of the first partition
+							IOConsolePartition partition = (IOConsolePartition) getPartition(cutOffset);
+							partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
 
-        					setUpdateInProgress(true);
-        					document.replace(0, cutOffset, ""); //$NON-NLS-1$
-        					setUpdateInProgress(false);
+							setUpdateInProgress(true);
+							document.replace(0, cutOffset, ""); //$NON-NLS-1$
+							setUpdateInProgress(false);
 
-        					//remove partitions and reset Partition offsets
-        					int index = partitions.indexOf(partition);
-        					for (int i = 0; i < index; i++) {
-                                partitions.remove(0);
-                            }
+							//remove partitions and reset Partition offsets
+							int index = partitions.indexOf(partition);
+							for (int i = 0; i < index; i++) {
+								partitions.remove(0);
+							}
 
-        					int offset = 0;
+							int offset = 0;
 							for (IOConsolePartition p : partitions) {
-        						p.setOffset(offset);
-        						offset += p.getLength();
-        					}
-        				}
-        			} catch (BadLocationException e) {
-        			}
-        		}
-        	}
-        	return Status.OK_STATUS;
-        }
-    }
+								p.setOffset(offset);
+								offset += p.getLength();
+							}
+						}
+					} catch (BadLocationException e) {
+					}
+				}
+			}
+			return Status.OK_STATUS;
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
+	 */
+	@Override
 	public boolean isReadOnly(int offset) {
-        return ((IOConsolePartition)getPartition(offset)).isReadOnly();
-    }
+		return ((IOConsolePartition)getPartition(offset)).isReadOnly();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
+	 */
+	@Override
 	public StyleRange[] getStyleRanges(int offset, int length) {
-    	if (!connected) {
-    		return new StyleRange[0];
-    	}
-        IOConsolePartition[] computedPartitions = (IOConsolePartition[])computePartitioning(offset, length);
-        StyleRange[] styles = new StyleRange[computedPartitions.length];
-        for (int i = 0; i < computedPartitions.length; i++) {
-            int rangeStart = Math.max(computedPartitions[i].getOffset(), offset);
-            int rangeLength = computedPartitions[i].getLength();
-            styles[i] = computedPartitions[i].getStyleRange(rangeStart, rangeLength);
-        }
-        return styles;
-    }
+		if (!connected) {
+			return new StyleRange[0];
+		}
+		IOConsolePartition[] computedPartitions = (IOConsolePartition[])computePartitioning(offset, length);
+		StyleRange[] styles = new StyleRange[computedPartitions.length];
+		for (int i = 0; i < computedPartitions.length; i++) {
+			int rangeStart = Math.max(computedPartitions[i].getOffset(), offset);
+			int rangeLength = computedPartitions[i].getLength();
+			styles[i] = computedPartitions[i].getStyleRange(rangeStart, rangeLength);
+		}
+		return styles;
+	}
 }

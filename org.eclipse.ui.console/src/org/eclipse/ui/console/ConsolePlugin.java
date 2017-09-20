@@ -142,43 +142,43 @@ public class ConsolePlugin extends AbstractUIPlugin {
 		ErrorDialog.openError(shell, title, message, status);
 	}
 
-    /**
-     * Returns the <code>Image</code> identified by the given key,
-     * or <code>null</code> if it does not exist.
-     *
-     * @return the <code>Image</code> identified by the given key,
-     * or <code>null</code> if it does not exist
-     * @since 3.1
-     */
-    public static Image getImage(String key) {
-        return ConsolePluginImages.getImage(key);
-    }
+	/**
+	 * Returns the <code>Image</code> identified by the given key,
+	 * or <code>null</code> if it does not exist.
+	 *
+	 * @return the <code>Image</code> identified by the given key,
+	 * or <code>null</code> if it does not exist
+	 * @since 3.1
+	 */
+	public static Image getImage(String key) {
+		return ConsolePluginImages.getImage(key);
+	}
 
-    /**
-     * Returns the <code>ImageDescriptor</code> identified by the given key,
-     * or <code>null</code> if it does not exist.
-     *
-     * @return the <code>ImageDescriptor</code> identified by the given key,
-     * or <code>null</code> if it does not exist
-     * @since 3.1
-     */
-    public static ImageDescriptor getImageDescriptor(String key) {
-        return ConsolePluginImages.getImageDescriptor(key);
-    }
+	/**
+	 * Returns the <code>ImageDescriptor</code> identified by the given key,
+	 * or <code>null</code> if it does not exist.
+	 *
+	 * @return the <code>ImageDescriptor</code> identified by the given key,
+	 * or <code>null</code> if it does not exist
+	 * @since 3.1
+	 */
+	public static ImageDescriptor getImageDescriptor(String key) {
+		return ConsolePluginImages.getImageDescriptor(key);
+	}
 
-    /* (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-    	if (fConsoleManager != null) {
-	        IConsole[] consoles = fConsoleManager.getConsoles();
-	        if (consoles != null) {
-	            fConsoleManager.removeConsoles(consoles);
-	        }
-    	}
-        super.stop(context);
-    }
+		if (fConsoleManager != null) {
+			IConsole[] consoles = fConsoleManager.getConsoles();
+			if (consoles != null) {
+				fConsoleManager.removeConsoles(consoles);
+			}
+		}
+		super.stop(context);
+	}
 
 
 }

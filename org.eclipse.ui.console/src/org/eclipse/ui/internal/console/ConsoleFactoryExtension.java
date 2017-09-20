@@ -36,84 +36,84 @@ import org.osgi.framework.Bundle;
  */
 public class ConsoleFactoryExtension implements IPluginContribution {
 
-    private IConfigurationElement fConfig;
-    private Expression fEnablementExpression;
-    private String fLabel;
-    private ImageDescriptor fImageDescriptor;
-    private IConsoleFactory fFactory;
+	private IConfigurationElement fConfig;
+	private Expression fEnablementExpression;
+	private String fLabel;
+	private ImageDescriptor fImageDescriptor;
+	private IConsoleFactory fFactory;
 
-    ConsoleFactoryExtension(IConfigurationElement config) {
-        fConfig = config;
-    }
+	ConsoleFactoryExtension(IConfigurationElement config) {
+		fConfig = config;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
 	@Override
 	public String getLocalId() {
-        return fConfig.getAttribute("id"); //$NON-NLS-1$
-    }
+		return fConfig.getAttribute("id"); //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	@Override
 	public String getPluginId() {
-        return fConfig.getContributor().getName();
-    }
+		return fConfig.getContributor().getName();
+	}
 
-    public boolean isEnabled() {
-        try {
-            Expression enablementExpression = getEnablementExpression();
-            if (enablementExpression == null) {
-                return true;
-            }
-            EvaluationContext context = new EvaluationContext(null, this);
-            EvaluationResult evaluationResult = enablementExpression.evaluate(context);
-            return evaluationResult != EvaluationResult.FALSE;
-        } catch (CoreException e) {
-            ConsolePlugin.log(e);
-            return false;
-        }
-    }
+	public boolean isEnabled() {
+		try {
+			Expression enablementExpression = getEnablementExpression();
+			if (enablementExpression == null) {
+				return true;
+			}
+			EvaluationContext context = new EvaluationContext(null, this);
+			EvaluationResult evaluationResult = enablementExpression.evaluate(context);
+			return evaluationResult != EvaluationResult.FALSE;
+		} catch (CoreException e) {
+			ConsolePlugin.log(e);
+			return false;
+		}
+	}
 
-    public Expression getEnablementExpression() throws CoreException {
+	public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
 			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
-			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
+				fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
 			}
 		}
 		return fEnablementExpression;
-    }
+	}
 
-    public String getLabel() {
-        if (fLabel == null) {
-            fLabel = fConfig.getAttribute("label"); //$NON-NLS-1$
-        }
-        return fLabel;
-    }
+	public String getLabel() {
+		if (fLabel == null) {
+			fLabel = fConfig.getAttribute("label"); //$NON-NLS-1$
+		}
+		return fLabel;
+	}
 
-    public ImageDescriptor getImageDescriptor() {
-        if (fImageDescriptor == null) {
-            String path = fConfig.getAttribute("icon"); //$NON-NLS-1$
-            if (path != null) {
-                Bundle bundle = Platform.getBundle(getPluginId());
-                URL url = FileLocator.find(bundle, new Path(path), null);
-                if (url != null) {
-                	fImageDescriptor =  ImageDescriptor.createFromURL(url);
-                }
-            }
-        }
-        return fImageDescriptor;
-    }
+	public ImageDescriptor getImageDescriptor() {
+		if (fImageDescriptor == null) {
+			String path = fConfig.getAttribute("icon"); //$NON-NLS-1$
+			if (path != null) {
+				Bundle bundle = Platform.getBundle(getPluginId());
+				URL url = FileLocator.find(bundle, new Path(path), null);
+				if (url != null) {
+					fImageDescriptor =  ImageDescriptor.createFromURL(url);
+				}
+			}
+		}
+		return fImageDescriptor;
+	}
 
-    public IConsoleFactory createFactory() throws CoreException {
-        if (fFactory == null) {
-            fFactory = (IConsoleFactory) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
-        }
-        return fFactory;
-    }
+	public IConsoleFactory createFactory() throws CoreException {
+		if (fFactory == null) {
+			fFactory = (IConsoleFactory) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
+		}
+		return fFactory;
+	}
 }

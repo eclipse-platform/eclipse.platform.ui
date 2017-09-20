@@ -23,24 +23,24 @@ package org.eclipse.ui.console;
  * @since 3.1
  */
 public interface IPatternMatchListenerDelegate {
-    /**
-     * Notification that pattern matching will begin in the specified console.
-     * A pattern matcher is connected to only one console at a time.
-     *
-     * @param console the console in which pattern matching will be performed
-     */
-    public void connect(TextConsole console);
+	/**
+	 * Notification that pattern matching will begin in the specified console.
+	 * A pattern matcher is connected to only one console at a time.
+	 *
+	 * @param console the console in which pattern matching will be performed
+	 */
+	public void connect(TextConsole console);
 
-    /**
-     * Notification that pattern matching has been completed in the console
-     * this delegate was last connected to.
-     */
-    public void disconnect();
+	/**
+	 * Notification that pattern matching has been completed in the console
+	 * this delegate was last connected to.
+	 */
+	public void disconnect();
 
-    /**
-     * Notification that a match has been found.
-     *
-     * @param event event describing where the match was found
-     */
-    public void matchFound(PatternMatchEvent event);
+	/**
+	 * Notification that a match has been found.
+	 *
+	 * @param event event describing where the match was found
+	 */
+	public void matchFound(PatternMatchEvent event);
 }

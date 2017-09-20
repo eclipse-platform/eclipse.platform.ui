@@ -27,17 +27,17 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
  */
 public class CloseConsoleAction extends Action {
 
-    private IConsole fConsole;
+	private IConsole fConsole;
 
-    public CloseConsoleAction(IConsole console) {
-        super(ConsoleMessages.CloseConsoleAction_0, ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLOSE));
+	public CloseConsoleAction(IConsole console) {
+		super(ConsoleMessages.CloseConsoleAction_0, ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLOSE));
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_CLOSE));
-        setToolTipText(ConsoleMessages.CloseConsoleAction_1);
-        fConsole = console;
-    }
+		setToolTipText(ConsoleMessages.CloseConsoleAction_1);
+		fConsole = console;
+	}
 
 	@Override
 	public void run() {
-        ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{fConsole});
-    }
+		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{fConsole});
+	}
 }

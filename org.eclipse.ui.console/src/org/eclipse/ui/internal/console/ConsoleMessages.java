@@ -51,23 +51,23 @@ public class ConsoleMessages extends NLS {
 	public static String CloseConsoleAction_0;
 	public static String CloseConsoleAction_1;
 
-    public static String TextConsolePage_SelectAllDescrip;
-    public static String TextConsolePage_SelectAllText;
-    public static String TextConsolePage_CutText;
-    public static String TextConsolePage_CutDescrip;
-    public static String TextConsolePage_CopyText;
-    public static String TextConsolePage_CopyDescrip;
-    public static String TextConsolePage_PasteText;
-    public static String TextConsolePage_PasteDescrip;
+	public static String TextConsolePage_SelectAllDescrip;
+	public static String TextConsolePage_SelectAllText;
+	public static String TextConsolePage_CutText;
+	public static String TextConsolePage_CutDescrip;
+	public static String TextConsolePage_CopyText;
+	public static String TextConsolePage_CopyDescrip;
+	public static String TextConsolePage_PasteText;
+	public static String TextConsolePage_PasteDescrip;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);
 	}
 
-    public static String PatternMatchListenerExtension_3;
+	public static String PatternMatchListenerExtension_3;
 
-    public static String PatternMatchListenerExtension_4;
+	public static String PatternMatchListenerExtension_4;
 
-    public static String PatternMatchListenerExtension_5;
+	public static String PatternMatchListenerExtension_5;
 }

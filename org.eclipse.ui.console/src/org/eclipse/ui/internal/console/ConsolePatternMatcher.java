@@ -33,35 +33,35 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
 	private MatchJob fMatchJob;
 
-    /**
-     * Collection of compiled pattern match listeners
-     */
+	/**
+	 * Collection of compiled pattern match listeners
+	 */
 	private ArrayList<CompiledPatternMatchListener> fPatterns = new ArrayList<CompiledPatternMatchListener>();
 
-    private TextConsole fConsole;
+	private TextConsole fConsole;
 
-    private boolean fFinalMatch;
+	private boolean fFinalMatch;
 
 	private boolean fScheduleFinal;
 
-    public ConsolePatternMatcher(TextConsole console) {
-        fConsole = console;
+	public ConsolePatternMatcher(TextConsole console) {
+		fConsole = console;
 		fMatchJob = new MatchJob();
-    }
+	}
 
-    private class MatchJob extends Job {
-        MatchJob() {
-            super("Match Job"); //$NON-NLS-1$
-            setSystem(true);
+	private class MatchJob extends Job {
+		MatchJob() {
+			super("Match Job"); //$NON-NLS-1$
+			setSystem(true);
 			setRule(fConsole.getSchedulingRule());
-        }
+		}
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        @Override
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			IDocument doc = fConsole.getDocument();
 			String text = null;
@@ -175,136 +175,136 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
 		@Override
 		public boolean belongsTo(Object family) {
-            return family == fConsole;
-        }
+			return family == fConsole;
+		}
 
 
-    }
+	}
 
-    private class CompiledPatternMatchListener {
-        Pattern pattern;
+	private class CompiledPatternMatchListener {
+		Pattern pattern;
 
-        Pattern qualifier;
+		Pattern qualifier;
 
-        IPatternMatchListener listener;
+		IPatternMatchListener listener;
 
-        int end = 0;
+		int end = 0;
 
-        CompiledPatternMatchListener(Pattern pattern, Pattern qualifier, IPatternMatchListener matchListener) {
-            this.pattern = pattern;
-            this.listener = matchListener;
-            this.qualifier = qualifier;
-        }
+		CompiledPatternMatchListener(Pattern pattern, Pattern qualifier, IPatternMatchListener matchListener) {
+			this.pattern = pattern;
+			this.listener = matchListener;
+			this.qualifier = qualifier;
+		}
 
-        public void dispose() {
-            listener.disconnect();
-            pattern = null;
-            qualifier = null;
-            listener = null;
-        }
-    }
+		public void dispose() {
+			listener.disconnect();
+			pattern = null;
+			qualifier = null;
+			listener = null;
+		}
+	}
 
-    /**
+	/**
 	 * Adds the given pattern match listener to this console. The listener will
 	 * be connected and receive match notifications.
 	 *
 	 * @param matchListener
 	 *            the pattern match listener to add
 	 */
-    public void addPatternMatchListener(IPatternMatchListener matchListener) {
-        synchronized (fPatterns) {
+	public void addPatternMatchListener(IPatternMatchListener matchListener) {
+		synchronized (fPatterns) {
 			for (CompiledPatternMatchListener listener : fPatterns) {
 				if (listener.listener == matchListener) {
 					return;
 				}
 			}
 
-            if (matchListener == null || matchListener.getPattern() == null) {
-                throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
-            }
+			if (matchListener == null || matchListener.getPattern() == null) {
+				throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
+			}
 
-            Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
-            String qualifier = matchListener.getLineQualifier();
-            Pattern qPattern = null;
-            if (qualifier != null) {
-                qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
-            }
-            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern, matchListener);
-            fPatterns.add(notifier);
-            matchListener.connect(fConsole);
-            fMatchJob.schedule();
-        }
-    }
+			Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
+			String qualifier = matchListener.getLineQualifier();
+			Pattern qPattern = null;
+			if (qualifier != null) {
+				qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
+			}
+			CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern, matchListener);
+			fPatterns.add(notifier);
+			matchListener.connect(fConsole);
+			fMatchJob.schedule();
+		}
+	}
 
-    /**
-     * Removes the given pattern match listener from this console. The listener
-     * will be disconnected and will no longer receive match notifications.
-     *
-     * @param matchListener
-     *            the pattern match listener to remove.
-     */
-    public void removePatternMatchListener(IPatternMatchListener matchListener) {
-        synchronized (fPatterns) {
+	/**
+	 * Removes the given pattern match listener from this console. The listener
+	 * will be disconnected and will no longer receive match notifications.
+	 *
+	 * @param matchListener
+	 *            the pattern match listener to remove.
+	 */
+	public void removePatternMatchListener(IPatternMatchListener matchListener) {
+		synchronized (fPatterns) {
 			for (Iterator<CompiledPatternMatchListener> iter = fPatterns.iterator(); iter.hasNext();) {
-                CompiledPatternMatchListener element = iter.next();
-                if (element.listener == matchListener) {
-                    iter.remove();
-                    matchListener.disconnect();
-                }
-            }
-        }
-    }
+				CompiledPatternMatchListener element = iter.next();
+				if (element.listener == matchListener) {
+					iter.remove();
+					matchListener.disconnect();
+				}
+			}
+		}
+	}
 
-    public void disconnect() {
-        fMatchJob.cancel();
-        synchronized (fPatterns) {
+	public void disconnect() {
+		fMatchJob.cancel();
+		synchronized (fPatterns) {
 			for (CompiledPatternMatchListener listener : fPatterns) {
 				listener.dispose();
 			}
-            fPatterns.clear();
-        }
-    }
+			fPatterns.clear();
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
-        if (event.fLength > 0) {
-            synchronized (fPatterns) {
-                if (event.fDocument.getLength() == 0) {
-                    // document has been cleared, reset match listeners
+		if (event.fLength > 0) {
+			synchronized (fPatterns) {
+				if (event.fDocument.getLength() == 0) {
+					// document has been cleared, reset match listeners
 					for (CompiledPatternMatchListener notifier : fPatterns) {
 						notifier.end = 0;
 					}
-                } else {
-                    if (event.fOffset == 0) {
-                        //document was trimmed
+				} else {
+					if (event.fOffset == 0) {
+						//document was trimmed
 						for (CompiledPatternMatchListener notifier : fPatterns) {
 							notifier.end = notifier.end > event.fLength ? notifier.end - event.fLength : 0;
 						}
-                    }
-                }
-            }
-        }
-        fMatchJob.schedule();
-    }
+					}
+				}
+			}
+		}
+		fMatchJob.schedule();
+	}
 
 
-    public void forceFinalMatching() {
-    	fScheduleFinal = true;
-    	fMatchJob.schedule();
-    }
+	public void forceFinalMatching() {
+		fScheduleFinal = true;
+		fMatchJob.schedule();
+	}
 
 }

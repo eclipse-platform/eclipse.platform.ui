@@ -21,17 +21,17 @@ import org.eclipse.ui.console.IConsoleView;
  */
 public class ScrollLockAction extends Action {
 
-    private IConsoleView fConsoleView;
+	private IConsoleView fConsoleView;
 
 	public ScrollLockAction(IConsoleView consoleView) {
 		super(ConsoleMessages.ScrollLockAction_0);
-        fConsoleView = consoleView;
+		fConsoleView = consoleView;
 
 		setToolTipText(ConsoleMessages.ScrollLockAction_1);
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_LCL_LOCK));
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_LOCK));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_LOCK));
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_SCROLL_LOCK_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_SCROLL_LOCK_ACTION);
 		boolean checked = fConsoleView.getScrollLock();
 		setChecked(checked);
 	}
@@ -41,11 +41,11 @@ public class ScrollLockAction extends Action {
 	 */
 	@Override
 	public void run() {
-        fConsoleView.setScrollLock(isChecked());
+		fConsoleView.setScrollLock(isChecked());
 	}
 
 	public void dispose() {
-        fConsoleView = null;
+		fConsoleView = null;
 	}
 
 }

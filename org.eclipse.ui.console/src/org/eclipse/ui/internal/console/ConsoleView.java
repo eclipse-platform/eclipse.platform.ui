@@ -115,7 +115,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	private OpenConsoleAction fOpenConsoleAction = null;
 
-    private boolean fScrollLock;
+	private boolean fScrollLock;
 	private boolean fWordWrap;
 
 	private boolean isAvailable() {
@@ -146,45 +146,45 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	@Override
 	protected void showPageRec(PageRec pageRec) {
-        // don't show the page when pinned, unless this is the first console to be added
-        // or its the default page
-        if (fActiveConsole != null && pageRec.page != getDefaultPage() && fPinned && fConsoleToPart.size() > 1) {
-            IConsole console = fPartToConsole.get(pageRec.part);
-            if (!fStack.contains(console)) {
-                fStack.add(console);
-            }
-            return;
-        }
+		// don't show the page when pinned, unless this is the first console to be added
+		// or its the default page
+		if (fActiveConsole != null && pageRec.page != getDefaultPage() && fPinned && fConsoleToPart.size() > 1) {
+			IConsole console = fPartToConsole.get(pageRec.part);
+			if (!fStack.contains(console)) {
+				fStack.add(console);
+			}
+			return;
+		}
 
-        IConsole recConsole = fPartToConsole.get(pageRec.part);
-        if (recConsole!=null && recConsole.equals(fActiveConsole)) {
-            return;
-        }
+		IConsole recConsole = fPartToConsole.get(pageRec.part);
+		if (recConsole!=null && recConsole.equals(fActiveConsole)) {
+			return;
+		}
 
-	    super.showPageRec(pageRec);
-	    fActiveConsole = recConsole;
-	    IConsole tos = null;
-	    if (!fStack.isEmpty()) {
-	        tos = fStack.get(0);
-	    }
-	    if (tos != null && !tos.equals(fActiveConsole) && fActive) {
-	        deactivateParticipants(tos);
-	    }
-	    if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
-	        fStack.remove(fActiveConsole);
-	        fStack.add(0,fActiveConsole);
-	        activateParticipants(fActiveConsole);
-	    }
-	    updateTitle();
-	    updateHelp();
-	    // update console actions
-	    if (fPinAction != null) {
-	        fPinAction.update();
-	    }
-	    IPage page = getCurrentPage();
-	    if (page instanceof IOConsolePage) {
-	        ((IOConsolePage) page).setWordWrap(fWordWrap);
-	    }
+		super.showPageRec(pageRec);
+		fActiveConsole = recConsole;
+		IConsole tos = null;
+		if (!fStack.isEmpty()) {
+			tos = fStack.get(0);
+		}
+		if (tos != null && !tos.equals(fActiveConsole) && fActive) {
+			deactivateParticipants(tos);
+		}
+		if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
+			fStack.remove(fActiveConsole);
+			fStack.add(0,fActiveConsole);
+			activateParticipants(fActiveConsole);
+		}
+		updateTitle();
+		updateHelp();
+		// update console actions
+		if (fPinAction != null) {
+			fPinAction.update();
+		}
+		IPage page = getCurrentPage();
+		if (page instanceof IOConsolePage) {
+			((IOConsolePage) page).setWordWrap(fWordWrap);
+		}
 		if (page != null) {
 			page.setFocus();
 		}
@@ -202,7 +202,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			if (listeners != null) {
 				for (IConsolePageParticipant iConsolePageParticipant : listeners) {
 					final IConsolePageParticipant participant = iConsolePageParticipant;
-			    	SafeRunner.run(new ISafeRunnable() {
+					SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {
 							participant.activated();
@@ -213,7 +213,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 							listeners.remove(participant);
 						}
 					});
-			    }
+				}
 			}
 		}
 	}
@@ -230,22 +230,22 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/**
 	 * Updates the view title based on the active console
 	 */
-    protected void updateTitle() {
-        IConsole console = getConsole();
-        if (console == null) {
-            setContentDescription(ConsoleMessages.ConsoleView_0);
-        } else {
-            String newName = console.getName();
-            String oldName = getContentDescription();
-            if (newName!=null && !(newName.equals(oldName))) {
-                setContentDescription(console.getName());
-            }
-        }
-    }
+	protected void updateTitle() {
+		IConsole console = getConsole();
+		if (console == null) {
+			setContentDescription(ConsoleMessages.ConsoleView_0);
+		} else {
+			String newName = console.getName();
+			String oldName = getContentDescription();
+			if (newName!=null && !(newName.equals(oldName))) {
+				setContentDescription(console.getName());
+			}
+		}
+	}
 
-    protected void updateHelp() {
-    	IConsole console = getConsole();
-    	String helpContextId = null;
+	protected void updateHelp() {
+		IConsole console = getConsole();
+		String helpContextId = null;
 		if (console instanceof AbstractConsole) {
 			AbstractConsole abs = (AbstractConsole) console;
 			helpContextId = abs.getHelpContextId();
@@ -254,18 +254,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			helpContextId = IConsoleHelpContextIds.CONSOLE_VIEW;
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), helpContextId);
-    }
+	}
 
 	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
-	    IConsole console = fPartToConsole.get(part);
+		IConsole console = fPartToConsole.get(part);
 
 		// dispose page participants
 		ListenerList<IConsolePageParticipant> listeners = fConsoleToPageParticipants.remove(console);
 		if (listeners != null) {
 			for (IConsolePageParticipant iConsolePageParticipant : listeners) {
 				final IConsolePageParticipant participant = iConsolePageParticipant;
-	            SafeRunner.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
 						participant.dispose();
@@ -275,7 +275,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 						ConsolePlugin.log(exception);
 					}
 				});
-	        }
+			}
 		}
 
 		IPage page = pageRecord.page;
@@ -286,9 +286,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
 		fConsoleToPart.remove(console);
-        if (fPartToConsole.isEmpty()) {
-            fActiveConsole = null;
-        }
+		if (fPartToConsole.isEmpty()) {
+			fActiveConsole = null;
+		}
 
 		// update console actions
 		fPinAction.update();
@@ -302,7 +302,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @return registered page participants or <code>null</code>
 	 */
 	private ListenerList<IConsolePageParticipant> getParticipants(IConsole console) {
-	    return fConsoleToPageParticipants.get(console);
+		return fConsoleToPageParticipants.get(console);
 	}
 
 	@Override
@@ -323,7 +323,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		fConsoleToPageParticipants.put(console, participants);
 		for (IConsolePageParticipant iConsolePageParticipant : participants) {
 			final IConsolePageParticipant participant = iConsolePageParticipant;
-            SafeRunner.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
 					participant.init(page, console);
@@ -334,7 +334,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 					participants.remove(participant);
 				}
 			});
-        }
+		}
 
 		PageRec rec = new PageRec(dummyPart, page);
 		return rec;
@@ -352,9 +352,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			site.getPage().removePartListener((IPartListener2)this);
 		}
 		super.dispose();
-        ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
-        consoleManager.removeConsoleListener(this);
-        consoleManager.unregisterConsoleView(this);
+		ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
+		consoleManager.removeConsoleListener(this);
+		consoleManager.unregisterConsoleView(this);
 		if (fDisplayConsoleAction != null) {
 			fDisplayConsoleAction.dispose();
 			fDisplayConsoleAction = null;
@@ -364,11 +364,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/**
 	 * Returns the console manager.
 	 *
-     * @return the console manager
-     */
-    private IConsoleManager getConsoleManager() {
-        return ConsolePlugin.getDefault().getConsoleManager();
-    }
+	 * @return the console manager
+	 */
+	private IConsoleManager getConsoleManager() {
+		return ConsolePlugin.getDefault().getConsoleManager();
+	}
 
 	@Override
 	protected IPage createDefaultPage(PageBook book) {
@@ -390,15 +390,15 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 							// ensure it's still registered since this is done asynchronously
 							IConsole[] allConsoles = getConsoleManager().getConsoles();
 							for (int j = 0; j < allConsoles.length; j++) {
-                                IConsole registered = allConsoles[j];
-                                if (registered.equals(console)) {
-        							ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
-        							fConsoleToPart.put(console, part);
-        							fPartToConsole.put(part, console);
-        							partActivated(part);
-        							break;
-                                }
-                            }
+								IConsole registered = allConsoles[j];
+								if (registered.equals(console)) {
+									ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
+									fConsoleToPart.put(console, part);
+									fPartToConsole.put(part, console);
+									partActivated(part);
+									break;
+								}
+							}
 
 						}
 					}
@@ -454,7 +454,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		fDisplayConsoleAction = new ConsoleDropDownAction(this);
 		ConsoleFactoryExtension[] extensions = ((ConsoleManager)ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
 		if (extensions.length > 0) {
-		    fOpenConsoleAction = new OpenConsoleAction();
+			fOpenConsoleAction = new OpenConsoleAction();
 		}
 	}
 
@@ -465,9 +465,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		mgr.add(fPinAction);
 		mgr.add(fDisplayConsoleAction);
 		if (fOpenConsoleAction != null) {
-		    mgr.add(fOpenConsoleAction);
-		    if (mgr instanceof ToolBarManager) {
-		    	ToolBarManager tbm= (ToolBarManager) mgr;
+			mgr.add(fOpenConsoleAction);
+			if (mgr instanceof ToolBarManager) {
+				ToolBarManager tbm= (ToolBarManager) mgr;
 				final ToolBar tb= tbm.getControl();
 				tb.addMouseListener(new MouseAdapter() {
 					@Override
@@ -488,28 +488,28 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 						}
 					}
 				});
-		    }
+			}
 		}
 	}
 
 	@Override
 	public void display(IConsole console) {
-	    if (fPinned && fActiveConsole != null) {
-            return;
-        }
-        if (console.equals(fActiveConsole)) {
-            return;
-        }
-	    ConsoleWorkbenchPart part = fConsoleToPart.get(console);
-	    if (part != null) {
-	        partActivated(part);
-	    }
+		if (fPinned && fActiveConsole != null) {
+			return;
+		}
+		if (console.equals(fActiveConsole)) {
+			return;
+		}
+		ConsoleWorkbenchPart part = fConsoleToPart.get(console);
+		if (part != null) {
+			partActivated(part);
+		}
 	}
 
 	@Override
 	public void setPinned(boolean pin) {
-        fPinned = pin;
-	    if (fPinAction != null) {
+		fPinned = pin;
+		if (fPinAction != null) {
 			fPinAction.update();
 		}
 	}
@@ -631,25 +631,25 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> key) {
-        Object adpater = super.getAdapter(key);
-        if (adpater == null) {
-            IConsole console = getConsole();
-            if (console != null) {
+		Object adpater = super.getAdapter(key);
+		if (adpater == null) {
+			IConsole console = getConsole();
+			if (console != null) {
 				ListenerList<IConsolePageParticipant> listeners = getParticipants(console);
-                // an adapter can be asked for before the console participants are created
-                if (listeners != null) {
+				// an adapter can be asked for before the console participants are created
+				if (listeners != null) {
 					for (IConsolePageParticipant iConsolePageParticipant : listeners) {
 						IConsolePageParticipant participant = iConsolePageParticipant;
-                        adpater = participant.getAdapter(key);
-                        if (adpater != null) {
+						adpater = participant.getAdapter(key);
+						if (adpater != null) {
 							return (T) adpater;
-                        }
-                    }
-                }
-            }
-        }
+						}
+					}
+				}
+			}
+		}
 		return (T) adpater;
-    }
+	}
 
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
@@ -673,40 +673,40 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
-        if (isThisPart(partRef)) {
+		if (isThisPart(partRef)) {
 			fActive = false;
 			IContextService contextService = getSite().getService(IContextService.class);
 			if(contextService != null) {
 				contextService.deactivateContext(fActivatedContext);
 				deactivateParticipants(fActiveConsole);
 			}
-        }
+		}
 	}
 
-    /**
+	/**
 	 * Returns if the specified part reference is to this view part (if the part
 	 * reference is the console view or not)
 	 *
 	 * @param partRef the workbench part reference
 	 * @return true if the specified part reference is the console view
 	 */
-    protected boolean isThisPart(IWorkbenchPartReference partRef) {
-        if (partRef instanceof IViewReference) {
-            IViewReference viewRef = (IViewReference) partRef;
-            if (getViewSite() != null && viewRef.getId().equals(getViewSite().getId())) {
-                String secId = viewRef.getSecondaryId();
-                String mySec = null;
-                if (getSite() instanceof IViewSite) {
-                    mySec = ((IViewSite)getSite()).getSecondaryId();
-                }
-                if (mySec == null) {
-                    return secId == null;
-                }
-                return mySec.equals(secId);
-            }
-        }
-        return false;
-    }
+	protected boolean isThisPart(IWorkbenchPartReference partRef) {
+		if (partRef instanceof IViewReference) {
+			IViewReference viewRef = (IViewReference) partRef;
+			if (getViewSite() != null && viewRef.getId().equals(getViewSite().getId())) {
+				String secId = viewRef.getSecondaryId();
+				String mySec = null;
+				if (getSite() instanceof IViewSite) {
+					mySec = ((IViewSite)getSite()).getSecondaryId();
+				}
+				if (mySec == null) {
+					return secId == null;
+				}
+				return mySec.equals(secId);
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Deactivates participants for the given console, if any.
@@ -715,12 +715,12 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	private void deactivateParticipants(IConsole console) {
 		// deactivate
-	    if (console != null) {
+		if (console != null) {
 			final ListenerList<IConsolePageParticipant> listeners = getParticipants(console);
 			if (listeners != null) {
 				for (IConsolePageParticipant iConsolePageParticipant : listeners) {
 					final IConsolePageParticipant participant = iConsolePageParticipant;
-			    	SafeRunner.run(new ISafeRunnable() {
+					SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {
 							participant.deactivated();
@@ -731,9 +731,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 							listeners.remove(participant);
 						}
 					});
-                }
+				}
 			}
-	    }
+		}
 	}
 
 	@Override
@@ -752,20 +752,20 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
-    @Override
+	@Override
 	public void setScrollLock(boolean scrollLock) {
-        fScrollLock = scrollLock;
+		fScrollLock = scrollLock;
 
-        IPage page = getCurrentPage();
-        if (page instanceof IOConsolePage) {
-            ((IOConsolePage)page).setAutoScroll(!scrollLock);
-        }
-    }
+		IPage page = getCurrentPage();
+		if (page instanceof IOConsolePage) {
+			((IOConsolePage)page).setAutoScroll(!scrollLock);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean getScrollLock() {
-        return fScrollLock;
-    }
+		return fScrollLock;
+	}
 
 	@Override
 	public void setWordWrap(boolean wordWrap) {
@@ -785,18 +785,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		return fWordWrap;
 	}
 
-    @Override
+	@Override
 	public void pin(IConsole console) {
-        if (console == null) {
-            setPinned(false);
-        } else {
-            if (isPinned()) {
-                setPinned(false);
-            }
-            display(console);
-            setPinned(true);
-        }
-    }
+		if (console == null) {
+			setPinned(false);
+		} else {
+			if (isPinned()) {
+				setPinned(false);
+			}
+			display(console);
+			setPinned(true);
+		}
+	}
 
 	@Override
 	public void setAutoScrollLock(boolean scrollLock) {

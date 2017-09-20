@@ -31,18 +31,18 @@ import org.eclipse.ui.console.TextConsoleViewer;
  * @since 3.1
  */
 public class IOConsoleViewer extends TextConsoleViewer {
-    /**
-     * will always scroll with output if value is true.
-     */
-    private boolean fAutoScroll = true;
+	/**
+	 * will always scroll with output if value is true.
+	 */
+	private boolean fAutoScroll = true;
 
-    private boolean fWordWrap = false;
+	private boolean fWordWrap = false;
 
-    private IDocumentListener fDocumentListener;
+	private IDocumentListener fDocumentListener;
 
-    public IOConsoleViewer(Composite parent, TextConsole console) {
-        super(parent, console);
-    }
+	public IOConsoleViewer(Composite parent, TextConsole console) {
+		super(parent, console);
+	}
 
 	/**
 	 * Constructs a new viewer in the given parent for the specified console.
@@ -56,65 +56,65 @@ public class IOConsoleViewer extends TextConsoleViewer {
 		super(parent, console, scrollLockStateProvider);
 	}
 
-    public boolean isAutoScroll() {
-        return fAutoScroll;
-    }
+	public boolean isAutoScroll() {
+		return fAutoScroll;
+	}
 
-    public void setAutoScroll(boolean scroll) {
-        fAutoScroll = scroll;
-    }
+	public void setAutoScroll(boolean scroll) {
+		fAutoScroll = scroll;
+	}
 
-    public boolean isWordWrap() {
-        return fWordWrap;
-    }
+	public boolean isWordWrap() {
+		return fWordWrap;
+	}
 
-    public void setWordWrap(boolean wordwrap) {
-        fWordWrap = wordwrap;
-        getTextWidget().setWordWrap(wordwrap);
-    }
+	public void setWordWrap(boolean wordwrap) {
+		fWordWrap = wordwrap;
+		getTextWidget().setWordWrap(wordwrap);
+	}
 
-    @Override
+	@Override
 	protected void handleVerifyEvent(VerifyEvent e) {
-        IDocument doc = getDocument();
-        String[] legalLineDelimiters = doc.getLegalLineDelimiters();
-        String eventString = e.text;
-        try {
-            IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
-            if (!partitioner.isReadOnly(e.start)) {
-                boolean isCarriageReturn = false;
-                for (int i = 0; i < legalLineDelimiters.length; i++) {
-                    if (e.text.equals(legalLineDelimiters[i])) {
-                        isCarriageReturn = true;
-                        break;
-                    }
-                }
+		IDocument doc = getDocument();
+		String[] legalLineDelimiters = doc.getLegalLineDelimiters();
+		String eventString = e.text;
+		try {
+			IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
+			if (!partitioner.isReadOnly(e.start)) {
+				boolean isCarriageReturn = false;
+				for (int i = 0; i < legalLineDelimiters.length; i++) {
+					if (e.text.equals(legalLineDelimiters[i])) {
+						isCarriageReturn = true;
+						break;
+					}
+				}
 
-                if (!isCarriageReturn) {
-                    super.handleVerifyEvent(e);
-                    return;
-                }
-            }
+				if (!isCarriageReturn) {
+					super.handleVerifyEvent(e);
+					return;
+				}
+			}
 
-            int length = doc.getLength();
-            if (e.start == length) {
-                super.handleVerifyEvent(e);
-            } else {
-                try {
-                    doc.replace(length, 0, eventString);
-                    updateWidgetCaretLocation(length);
-                } catch (BadLocationException e1) {
-                }
-                e.doit = false;
-            }
-        } finally {
-            StyledText text = (StyledText) e.widget;
-            text.setCaretOffset(text.getCharCount());
-        }
-    }
+			int length = doc.getLength();
+			if (e.start == length) {
+				super.handleVerifyEvent(e);
+			} else {
+				try {
+					doc.replace(length, 0, eventString);
+					updateWidgetCaretLocation(length);
+				} catch (BadLocationException e1) {
+				}
+				e.doit = false;
+			}
+		} finally {
+			StyledText text = (StyledText) e.widget;
+			text.setCaretOffset(text.getCharCount());
+		}
+	}
 
-    /*
-     * Update the Text widget location to new location
-     */
+	/*
+	 * Update the Text widget location to new location
+	 */
 	private void updateWidgetCaretLocation(int documentCaret) {
 		int widgetCaret = modelOffset2WidgetOffset(documentCaret);
 		if (widgetCaret == -1) {
@@ -135,57 +135,57 @@ public class IOConsoleViewer extends TextConsoleViewer {
 		}
 	}
 
-    /**
-     * makes the associated text widget uneditable.
-     */
-    public void setReadOnly() {
-        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-            @Override
+	/**
+	 * makes the associated text widget uneditable.
+	 */
+	public void setReadOnly() {
+		ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
-                StyledText text = getTextWidget();
-                if (text != null && !text.isDisposed()) {
-                    text.setEditable(false);
-                }
-            }
-        });
-    }
+				StyledText text = getTextWidget();
+				if (text != null && !text.isDisposed()) {
+					text.setEditable(false);
+				}
+			}
+		});
+	}
 
-    /**
-     * @return <code>false</code> if text is editable
-     */
-    public boolean isReadOnly() {
-        return !getTextWidget().getEditable();
-    }
+	/**
+	 * @return <code>false</code> if text is editable
+	 */
+	public boolean isReadOnly() {
+		return !getTextWidget().getEditable();
+	}
 
-    @Override
+	@Override
 	public void setDocument(IDocument document) {
-        IDocument oldDocument= getDocument();
+		IDocument oldDocument= getDocument();
 
-        super.setDocument(document);
+		super.setDocument(document);
 
-        if (oldDocument != null) {
-            oldDocument.removeDocumentListener(getDocumentListener());
-        }
-        if (document != null) {
-            document.addDocumentListener(getDocumentListener());
-        }
-    }
+		if (oldDocument != null) {
+			oldDocument.removeDocumentListener(getDocumentListener());
+		}
+		if (document != null) {
+			document.addDocumentListener(getDocumentListener());
+		}
+	}
 
-    private IDocumentListener getDocumentListener() {
-        if (fDocumentListener == null) {
-            fDocumentListener= new IDocumentListener() {
+	private IDocumentListener getDocumentListener() {
+		if (fDocumentListener == null) {
+			fDocumentListener= new IDocumentListener() {
 				@Override
 				public void documentAboutToBeChanged(DocumentEvent event) {
-                }
+				}
 
-                @Override
+				@Override
 				public void documentChanged(DocumentEvent event) {
-                    if (fAutoScroll) {
-                        revealEndOfDocument();
-                    }
-                }
-            };
-        }
-        return fDocumentListener;
-    }
+					if (fAutoScroll) {
+						revealEndOfDocument();
+					}
+				}
+			};
+		}
+		return fDocumentListener;
+	}
 }

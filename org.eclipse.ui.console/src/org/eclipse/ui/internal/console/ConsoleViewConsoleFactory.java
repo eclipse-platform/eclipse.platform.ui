@@ -20,28 +20,28 @@ import org.eclipse.ui.console.IConsoleFactory;
 
 public class ConsoleViewConsoleFactory implements IConsoleFactory {
 
-    int counter = 1;
+	int counter = 1;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
-     */
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
+	 */
 	@Override
 	public void openConsole() {
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (window != null) {
-            IWorkbenchPage page = window.getActivePage();
-            if (page != null) {
-                try {
-                    String secondaryId = "Console View #" + counter; //$NON-NLS-1$
-                    page.showView(IConsoleConstants.ID_CONSOLE_VIEW, secondaryId, 1);
-                    counter++;
-                } catch (PartInitException e) {
-                    ConsolePlugin.log(e);
-                }
-            }
-        }
-    }
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				try {
+					String secondaryId = "Console View #" + counter; //$NON-NLS-1$
+					page.showView(IConsoleConstants.ID_CONSOLE_VIEW, secondaryId, 1);
+					counter++;
+				} catch (PartInitException e) {
+					ConsolePlugin.log(e);
+				}
+			}
+		}
+	}
 
 }

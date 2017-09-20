@@ -37,107 +37,107 @@ import org.eclipse.ui.internal.console.StreamDecoder;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class IOConsoleOutputStream extends OutputStream {
-    /**
-     * Flag indicating whether this stream has been closed.
-     */
-    private boolean closed = false;
+	/**
+	 * Flag indicating whether this stream has been closed.
+	 */
+	private boolean closed = false;
 
-    /**
-     * The console's document partitioner.
-     */
-    private IOConsolePartitioner partitioner;
+	/**
+	 * The console's document partitioner.
+	 */
+	private IOConsolePartitioner partitioner;
 
-    /**
-     * The console this stream is attached to.
-     */
-    private IOConsole console;
+	/**
+	 * The console this stream is attached to.
+	 */
+	private IOConsole console;
 
-    /**
-     * Flag indicating that the console should be activated when data
-     * is written to this stream.
-     */
-    private boolean activateOnWrite = false;
+	/**
+	 * Flag indicating that the console should be activated when data
+	 * is written to this stream.
+	 */
+	private boolean activateOnWrite = false;
 
-    /**
-     * The color used to decorate data written to this stream.
-     */
-    private Color color;
+	/**
+	 * The color used to decorate data written to this stream.
+	 */
+	private Color color;
 
-    /**
-     * The font style used to decorate data written to this stream.
-     */
-    private int fontStyle;
+	/**
+	 * The font style used to decorate data written to this stream.
+	 */
+	private int fontStyle;
 
 	private StreamDecoder decoder;
 
-    private boolean prependCR;
+	private boolean prependCR;
 
-    /**
-     * Constructs a new output stream on the given console.
-     *
-     * @param console I/O console
-     */
+	/**
+	 * Constructs a new output stream on the given console.
+	 *
+	 * @param console I/O console
+	 */
 	IOConsoleOutputStream(IOConsole console, Charset charset) {
 		this.decoder = new StreamDecoder(charset);
 		this.console = console;
-        this.partitioner = (IOConsolePartitioner) console.getPartitioner();
-    }
+		this.partitioner = (IOConsolePartitioner) console.getPartitioner();
+	}
 
-    /**
-     * Returns the font style used to decorate data written to this stream.
-     *
-     * @return the font style used to decorate data written to this stream
-     */
-    public int getFontStyle() {
-        return fontStyle;
-    }
+	/**
+	 * Returns the font style used to decorate data written to this stream.
+	 *
+	 * @return the font style used to decorate data written to this stream
+	 */
+	public int getFontStyle() {
+		return fontStyle;
+	}
 
-    /**
-     * Sets the font style to be used to decorate data written to this stream.
-     *
-     * @param newFontStyle the font style to be used to decorate data written to this stream
-     */
-    public void setFontStyle(int newFontStyle) {
-        if (newFontStyle != fontStyle) {
-            int old = fontStyle;
-            fontStyle = newFontStyle;
-            console.firePropertyChange(this, IConsoleConstants.P_FONT_STYLE, Integer.valueOf(old), Integer.valueOf(fontStyle));
-        }
-    }
+	/**
+	 * Sets the font style to be used to decorate data written to this stream.
+	 *
+	 * @param newFontStyle the font style to be used to decorate data written to this stream
+	 */
+	public void setFontStyle(int newFontStyle) {
+		if (newFontStyle != fontStyle) {
+			int old = fontStyle;
+			fontStyle = newFontStyle;
+			console.firePropertyChange(this, IConsoleConstants.P_FONT_STYLE, Integer.valueOf(old), Integer.valueOf(fontStyle));
+		}
+	}
 
-    /**
-     * Returns whether the console this stream is writing to will be activated when this stream
-     * is written to.
-     *
-     * @return whether the console this stream is writing to will be activated when this stream
-     * is written to.
-     */
-    public boolean isActivateOnWrite() {
-        return activateOnWrite;
-    }
+	/**
+	 * Returns whether the console this stream is writing to will be activated when this stream
+	 * is written to.
+	 *
+	 * @return whether the console this stream is writing to will be activated when this stream
+	 * is written to.
+	 */
+	public boolean isActivateOnWrite() {
+		return activateOnWrite;
+	}
 
-    /**
-     * Sets whether to activate the console this stream is writing to when this stream
-     * is written to.
-     *
-     * @param activateOnWrite whether the console this stream is writing to will be activated when this stream
-     * is written to.
-     */
-    public void setActivateOnWrite(boolean activateOnWrite) {
-        this.activateOnWrite = activateOnWrite;
-    }
+	/**
+	 * Sets whether to activate the console this stream is writing to when this stream
+	 * is written to.
+	 *
+	 * @param activateOnWrite whether the console this stream is writing to will be activated when this stream
+	 * is written to.
+	 */
+	public void setActivateOnWrite(boolean activateOnWrite) {
+		this.activateOnWrite = activateOnWrite;
+	}
 
 	/**
 	 * Sets the color of this stream. Use <code>null</code> to indicate
-     * the default color.
+	 * the default color.
 	 *
 	 * @param newColor color of this stream, or <code>null</code>
 	 */
 	public void setColor(Color newColor) {
 		Color old = color;
 		if (old == null || !old.equals(newColor)) {
-		    color = newColor;
-		    console.firePropertyChange(this, IConsoleConstants.P_STREAM_COLOR, old, newColor);
+			color = newColor;
+			console.firePropertyChange(this, IConsoleConstants.P_STREAM_COLOR, old, newColor);
 		}
 	}
 
@@ -148,16 +148,16 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * @return the color of this stream, or <code>null</code>
 	 */
 	public Color getColor() {
-	    return color;
+		return color;
 	}
 
-    /**
-     * Returns true if the stream has been closed
-     * @return true is the stream has been closed, false otherwise.
-     */
-    public synchronized boolean isClosed() {
-        return closed;
-    }
+	/**
+	 * Returns true if the stream has been closed
+	 * @return true is the stream has been closed, false otherwise.
+	 */
+	public synchronized boolean isClosed() {
+		return closed;
+	}
 
 	/*
 	 *  (non-Javadoc)
@@ -165,41 +165,41 @@ public class IOConsoleOutputStream extends OutputStream {
 	 */
 	@Override
 	public synchronized void close() throws IOException {
-        if(closed) {
+		if(closed) {
 			// Closeable#close() has no effect if already closed
 			return;
-        }
+		}
 		StringBuilder builder = new StringBuilder();
-        if (prependCR) { // force writing of last /r
-            prependCR = false;
+		if (prependCR) { // force writing of last /r
+			prependCR = false;
 			builder.append('\r');
-        }
+		}
 		this.decoder.finish(builder);
 		if (builder.length() > 0) {
 			notifyParitioner(builder.toString());
 		}
-        console.streamClosed(this);
-        closed = true;
-        partitioner = null;
+		console.streamClosed(this);
+		closed = true;
+		partitioner = null;
 		decoder = null;
-    }
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see java.io.OutputStream#flush()
-     */
-    @Override
+	/*
+	 *  (non-Javadoc)
+	 * @see java.io.OutputStream#flush()
+	 */
+	@Override
 	public void flush() throws IOException {
-        if(closed) {
-            throw new IOException("Output Stream is closed"); //$NON-NLS-1$
-        }
-    }
+		if(closed) {
+			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
+		}
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see java.io.OutputStream#write(byte[], int, int)
-     */
-    @Override
+	/*
+	 *  (non-Javadoc)
+	 * @see java.io.OutputStream#write(byte[], int, int)
+	 */
+	@Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
 		if (closed) {
 			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
@@ -207,23 +207,23 @@ public class IOConsoleOutputStream extends OutputStream {
 		StringBuilder builder = new StringBuilder();
 		this.decoder.decode(builder, b, off, len);
 		encodedWrite(builder.toString());
-    }
-    /*
-     *  (non-Javadoc)
-     * @see java.io.OutputStream#write(byte[])
-     */
-    @Override
+	}
+	/*
+	 *  (non-Javadoc)
+	 * @see java.io.OutputStream#write(byte[])
+	 */
+	@Override
 	public void write(byte[] b) throws IOException {
-        write(b, 0, b.length);
-    }
-    /*
-     *  (non-Javadoc)
-     * @see java.io.OutputStream#write(int)
-     */
-    @Override
+		write(b, 0, b.length);
+	}
+	/*
+	 *  (non-Javadoc)
+	 * @see java.io.OutputStream#write(int)
+	 */
+	@Override
 	public void write(int b) throws IOException {
-        write(new byte[] {(byte)b}, 0, 1);
-    }
+		write(new byte[] {(byte)b}, 0, 1);
+	}
 
 	/**
 	 * Writes a character array to the attached console.
@@ -252,7 +252,7 @@ public class IOConsoleOutputStream extends OutputStream {
 		this.encodedWrite(str);
 	}
 
-    /**
+	/**
 	 * Writes a character sequence to the attached console.
 	 *
 	 * @param chars the string/characters to write to the attached console.
@@ -262,57 +262,57 @@ public class IOConsoleOutputStream extends OutputStream {
 	public void write(CharSequence chars) throws IOException {
 		String str = chars.toString();
 		encodedWrite(str);
-    }
+	}
 
-    /**
+	/**
 	 * Writes a string to the attached console.
 	 *
 	 * @param str the string to write to the attached console
 	 * @throws IOException if the stream is closed
 	 */
-    public void write(String str) throws IOException {
-        encodedWrite(str);
-    }
+	public void write(String str) throws IOException {
+		encodedWrite(str);
+	}
 
-    private synchronized void encodedWrite(String encodedString) throws IOException {
-        if(closed) {
-            throw new IOException("Output Stream is closed"); //$NON-NLS-1$
-        }
+	private synchronized void encodedWrite(String encodedString) throws IOException {
+		if(closed) {
+			throw new IOException("Output Stream is closed"); //$NON-NLS-1$
+		}
 		String newencoding = encodedString;
-        if (prependCR){
+		if (prependCR){
 			newencoding = "\r" + newencoding; //$NON-NLS-1$
-            prependCR=false;
-        }
+			prependCR=false;
+		}
 		if (newencoding.endsWith("\r")) { //$NON-NLS-1$
-            prependCR = true;
+			prependCR = true;
 			newencoding = new String(newencoding.substring(0, newencoding.length() - 1));
-        }
+		}
 		notifyParitioner(newencoding);
-    }
+	}
 
-    private void notifyParitioner(String encodedString) throws IOException {
-        try {
-            partitioner.streamAppended(this, encodedString);
+	private void notifyParitioner(String encodedString) throws IOException {
+		try {
+			partitioner.streamAppended(this, encodedString);
 
-            if (activateOnWrite) {
-            	console.activate();
-            } else {
-            	ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(console);
-            }
-        } catch (IOException e) {
-            if (!closed) {
-                close();
-            }
-            throw e;
-        }
-    }
+			if (activateOnWrite) {
+				console.activate();
+			} else {
+				ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(console);
+			}
+		} catch (IOException e) {
+			if (!closed) {
+				close();
+			}
+			throw e;
+		}
+	}
 
-    /**
-     * Sets the character encoding used to interpret characters written to this steam.
-     *
-     * @param encoding encoding identifier
-     */
-    public void setEncoding(String encoding) {
+	/**
+	 * Sets the character encoding used to interpret characters written to this steam.
+	 *
+	 * @param encoding encoding identifier
+	 */
+	public void setEncoding(String encoding) {
 		String charsetName;
 		if (encoding == null) {
 			charsetName = WorkbenchEncoding.getWorkbenchDefaultEncoding();
@@ -343,6 +343,6 @@ public class IOConsoleOutputStream extends OutputStream {
 			this.encodedWrite(builder.toString());
 		}
 		this.decoder = new StreamDecoder(charset);
-    }
+	}
 
 }

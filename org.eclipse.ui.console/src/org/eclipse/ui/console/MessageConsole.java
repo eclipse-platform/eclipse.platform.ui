@@ -59,12 +59,12 @@ public class MessageConsole extends IOConsole {
 	@Deprecated
 	public static final int DEFAULT_TAB_SIZE = IConsoleConstants.DEFAULT_TAB_SIZE;
 
-    /**
-     * Constructs a message console with the given name and image.
-     *
-     * @param name console name
-     * @param imageDescriptor console image descriptor or <code>null</code>
-     */
+	/**
+	 * Constructs a message console with the given name and image.
+	 *
+	 * @param name console name
+	 * @param imageDescriptor console image descriptor or <code>null</code>
+	 */
 	public MessageConsole(String name, ImageDescriptor imageDescriptor) {
 		this(name, imageDescriptor, true);
 	}
@@ -82,33 +82,33 @@ public class MessageConsole extends IOConsole {
 		this(name, IConsoleConstants.MESSAGE_CONSOLE_TYPE, imageDescriptor, autoLifecycle);
 	}
 
-    /**
-     * Constructs a message console with the given name, type, image, and lifecycle.
-     *
-     * @param name console name
-     * @param consoleType console type identifier or <code>null</code>
-     * @param imageDescriptor console image descriptor or <code>null</code>
-     * @param autoLifecycle whether lifecycle methods should be called automatically
+	/**
+	 * Constructs a message console with the given name, type, image, and lifecycle.
+	 *
+	 * @param name console name
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor console image descriptor or <code>null</code>
+	 * @param autoLifecycle whether lifecycle methods should be called automatically
 	 *  when added and removed from the console manager
 	 *
-     * @since 3.4
-     */
+	 * @since 3.4
+	 */
 	public MessageConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
 		this(name, consoleType, imageDescriptor, null, autoLifecycle);
 	}
 
-    /**
-     * Constructs a message console with the given name, type, image, encoding, and lifecycle specification.
-     *
-     * @param name the name to display for this console
-     * @param consoleType console type identifier or <code>null</code>
-     * @param imageDescriptor console image descriptor or <code>null</code>
-     * @param encoding the encoding that should be used to render the text, or <code>null</code>
-     * 	if the system default encoding should be used
-     * @param autoLifecycle whether lifecycle methods should be called automatically
+	/**
+	 * Constructs a message console with the given name, type, image, encoding, and lifecycle specification.
+	 *
+	 * @param name the name to display for this console
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor console image descriptor or <code>null</code>
+	 * @param encoding the encoding that should be used to render the text, or <code>null</code>
+	 * 	if the system default encoding should be used
+	 * @param autoLifecycle whether lifecycle methods should be called automatically
 	 *  when added and removed from the console manager
 	 * @since 3.5
-     */
+	 */
 	public MessageConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
 		super(name, consoleType, imageDescriptor, encoding, autoLifecycle);
 	}
@@ -116,34 +116,34 @@ public class MessageConsole extends IOConsole {
 	/**
 	 * Returns a new message stream connected to this console.
 	 * <p>
-     * Clients should avoid writing large amounts of output to this stream in the UI
-     * thread. The console needs to process the output in the UI thread and if the client
-     * hogs the UI thread writing output to the console, the console will not be able
-     * to process the output.
-     * </p>
+	 * Clients should avoid writing large amounts of output to this stream in the UI
+	 * thread. The console needs to process the output in the UI thread and if the client
+	 * hogs the UI thread writing output to the console, the console will not be able
+	 * to process the output.
+	 * </p>
 	 * @return a new message stream connected to this console
 	 */
 	public MessageConsoleStream newMessageStream() {
 		return new MessageConsoleStream(this, this.getCharset());
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
+	 */
+	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
-        IOConsolePage page = (IOConsolePage) super.createPage(view);
-        page.setReadOnly();
-        return page;
-    }
+		IOConsolePage page = (IOConsolePage) super.createPage(view);
+		page.setReadOnly();
+		return page;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IOConsole#getInputStream()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IOConsole#getInputStream()
+	 */
+	@Override
 	public IOConsoleInputStream getInputStream() {
-        throw new UnsupportedOperationException("Message Console does not support user input"); //$NON-NLS-1$
-    }
+		throw new UnsupportedOperationException("Message Console does not support user input"); //$NON-NLS-1$
+	}
 
 
 	/**

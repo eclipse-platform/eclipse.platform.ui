@@ -100,8 +100,8 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	}
 
 	private void addActionToMenu(Menu parent, Action action, int accelerator) {
-	    if (accelerator < 10) {
-		    StringBuffer label= new StringBuffer();
+		if (accelerator < 10) {
+			StringBuffer label= new StringBuffer();
 			//add the numerical accelerator
 			label.append('&');
 			label.append(accelerator);
@@ -118,13 +118,13 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 */
 	@Override
 	public void run() {
-        ConsoleView consoleView = (ConsoleView) fView;
-        boolean pinned = consoleView.isPinned();
-        try {
-	        if (pinned) {
-	            consoleView.setPinned(false);
-	        }
-	        IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+		ConsoleView consoleView = (ConsoleView) fView;
+		boolean pinned = consoleView.isPinned();
+		try {
+			if (pinned) {
+				consoleView.setPinned(false);
+			}
+			IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
 			IConsole current = fView.getConsole();
 			int idx = 0;
 			for (int i = 0; i < consoles.length; i++) {
@@ -134,16 +134,16 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 				}
 			}
 			int next = idx+1;
-        	if(next >= consoles.length) {
-        		next = 0;
-        	}
-        	fView.display(consoles[next]);
-        }
-        finally {
-	        if (pinned) {
-	            consoleView.setPinned(true);
-	        }
-        }
+			if(next >= consoles.length) {
+				next = 0;
+			}
+			fView.display(consoles[next]);
+		}
+		finally {
+			if (pinned) {
+				consoleView.setPinned(true);
+			}
+		}
 	}
 
 	/* (non-Javadoc)

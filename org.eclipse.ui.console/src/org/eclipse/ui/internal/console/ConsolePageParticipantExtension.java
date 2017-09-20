@@ -23,53 +23,53 @@ import org.eclipse.ui.console.IConsolePageParticipant;
 
 public class ConsolePageParticipantExtension implements IPluginContribution {
 
-    private IConfigurationElement fConfig;
-    private Expression fEnablementExpression;
+	private IConfigurationElement fConfig;
+	private Expression fEnablementExpression;
 
-    public ConsolePageParticipantExtension(IConfigurationElement config) {
-        fConfig = config;
-    }
+	public ConsolePageParticipantExtension(IConfigurationElement config) {
+		fConfig = config;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	@Override
 	public String getLocalId() {
-        return fConfig.getAttribute("id"); //$NON-NLS-1$
-    }
+		return fConfig.getAttribute("id"); //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
 	@Override
 	public String getPluginId() {
-        return fConfig.getContributor().getName();
-    }
+		return fConfig.getContributor().getName();
+	}
 
-    public boolean isEnabledFor(IConsole console) throws CoreException {
-        EvaluationContext context = new EvaluationContext(null, console);
-        Expression expression = getEnablementExpression();
-        if (expression != null){
-        	EvaluationResult evaluationResult = expression.evaluate(context);
-            return evaluationResult == EvaluationResult.TRUE;
-        }
-        return true;
-    }
+	public boolean isEnabledFor(IConsole console) throws CoreException {
+		EvaluationContext context = new EvaluationContext(null, console);
+		Expression expression = getEnablementExpression();
+		if (expression != null){
+			EvaluationResult evaluationResult = expression.evaluate(context);
+			return evaluationResult == EvaluationResult.TRUE;
+		}
+		return true;
+	}
 
-    public Expression getEnablementExpression() throws CoreException {
+	public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
 			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
-			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
+				fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
 			}
 		}
 		return fEnablementExpression;
-    }
+	}
 
-    public IConsolePageParticipant createDelegate() throws CoreException {
-        return (IConsolePageParticipant) fConfig.createExecutableExtension("class"); //$NON-NLS-1$;
-    }
+	public IConsolePageParticipant createDelegate() throws CoreException {
+		return (IConsolePageParticipant) fConfig.createExecutableExtension("class"); //$NON-NLS-1$;
+	}
 
 }

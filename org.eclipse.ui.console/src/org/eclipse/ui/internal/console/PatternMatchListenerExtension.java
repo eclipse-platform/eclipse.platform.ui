@@ -31,125 +31,125 @@ import com.ibm.icu.text.MessageFormat;
 
 public class PatternMatchListenerExtension implements IPluginContribution {
 
-    private IConfigurationElement fConfig;
-    private Expression fEnablementExpression;
-    private String fPattern;
-    private String fQualifier;
-    private int fFlags = -1;
+	private IConfigurationElement fConfig;
+	private Expression fEnablementExpression;
+	private String fPattern;
+	private String fQualifier;
+	private int fFlags = -1;
 
-    public PatternMatchListenerExtension(IConfigurationElement extension) {
-        fConfig = extension;
-    }
+	public PatternMatchListenerExtension(IConfigurationElement extension) {
+		fConfig = extension;
+	}
 
-    /*
-     * returns the integer value of the flags defined in java.util.regex.Pattern.
-     * Both <code>Pattern.MULTILINE</code> and <code>MULTILINE</code> will return
-     * the same value.
-     */
-    public int parseFlags(String flagsElement) {
-        int val = 0;
-        if (flagsElement == null) {
-            return val;
-        }
+	/*
+	 * returns the integer value of the flags defined in java.util.regex.Pattern.
+	 * Both <code>Pattern.MULTILINE</code> and <code>MULTILINE</code> will return
+	 * the same value.
+	 */
+	public int parseFlags(String flagsElement) {
+		int val = 0;
+		if (flagsElement == null) {
+			return val;
+		}
 
-        try {
+		try {
 			String flags = flagsElement.replaceAll("Pattern.", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			String[] tokens = flags.split("\\s\\|\\s"); //$NON-NLS-1$
 			Class<?> clazz = Class.forName("java.util.regex.Pattern"); //$NON-NLS-1$
 
-            for (int i = 0; i < tokens.length; i++) {
-                Field field = clazz.getDeclaredField(tokens[i]);
-                val |= field.getInt(null);
-            }
-        } catch (ClassNotFoundException e) {
-            ConsolePlugin.log(e);
-        } catch (NoSuchFieldException e) {
-            ConsolePlugin.log(e);
-        } catch (IllegalAccessException e) {
-            ConsolePlugin.log(e);
-        }
-        return val;
-    }
+			for (int i = 0; i < tokens.length; i++) {
+				Field field = clazz.getDeclaredField(tokens[i]);
+				val |= field.getInt(null);
+			}
+		} catch (ClassNotFoundException e) {
+			ConsolePlugin.log(e);
+		} catch (NoSuchFieldException e) {
+			ConsolePlugin.log(e);
+		} catch (IllegalAccessException e) {
+			ConsolePlugin.log(e);
+		}
+		return val;
+	}
 
-    public boolean isEnabledFor(IConsole console) throws CoreException {
-        EvaluationContext context = new EvaluationContext(null, console);
-        EvaluationResult evaluationResult = getEnablementExpression().evaluate(context);
-        return evaluationResult == EvaluationResult.TRUE;
-    }
+	public boolean isEnabledFor(IConsole console) throws CoreException {
+		EvaluationContext context = new EvaluationContext(null, console);
+		EvaluationResult evaluationResult = getEnablementExpression().evaluate(context);
+		return evaluationResult == EvaluationResult.TRUE;
+	}
 
-    public IPatternMatchListenerDelegate createDelegate() throws CoreException {
-        return (IPatternMatchListenerDelegate) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
-    }
+	public IPatternMatchListenerDelegate createDelegate() throws CoreException {
+		return (IPatternMatchListenerDelegate) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
+	}
 
-    public Expression getEnablementExpression() throws CoreException {
+	public Expression getEnablementExpression() throws CoreException {
 		if (fEnablementExpression == null) {
 			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
-            if (elements.length == 0) {
+			if (elements.length == 0) {
 				String message = MessageFormat.format("{0} " + getLocalId() + " {1} " + getPluginId() + " {2}", new Object[] { ConsoleMessages.PatternMatchListenerExtension_3, ConsoleMessages.PatternMatchListenerExtension_4, ConsoleMessages.PatternMatchListenerExtension_5 }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConsolePlugin.log(new Status(IStatus.WARNING, ConsolePlugin.getUniqueIdentifier(), IStatus.OK, message, null));
-            }
+				ConsolePlugin.log(new Status(IStatus.WARNING, ConsolePlugin.getUniqueIdentifier(), IStatus.OK, message, null));
+			}
 			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null;
 
 			if (enablement != null) {
-			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
+				fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
 			}
 		}
 		return fEnablementExpression;
-    }
+	}
 
-    /*
-     * returns the regular expression to be matched.
-     */
-    public String getPattern() {
-        if (fPattern == null) {
-            fPattern = fConfig.getAttribute("regex"); //$NON-NLS-1$
-            try {
-            	fPattern = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fPattern, false);
-            } catch (CoreException e) {
-            	ConsolePlugin.log(e);
-            }
-        }
-        return fPattern;
-    }
-
-    /*
-     * returns the flags to be used by <code>Pattern.compile(pattern, flags)</code>
-     */
-    public int getCompilerFlags() {
-        if(fFlags < 0) {
-            String flagsAttribute = fConfig.getAttribute("flags"); //$NON-NLS-1$
-            fFlags = parseFlags(flagsAttribute);
-        }
-        return fFlags;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
-	@Override
-	public String getLocalId() {
-        return fConfig.getAttribute("id"); //$NON-NLS-1$
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
-    @Override
-	public String getPluginId() {
-        return fConfig.getContributor().getName();
-    }
-
-    public String getQuickPattern() {
-    	if (fQualifier == null) {
-    		fQualifier = fConfig.getAttribute("qualifier"); //$NON-NLS-1$
-    		try {
-    			if (fQualifier != null) {
-    				fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier, false);
-    			}
+	/*
+	 * returns the regular expression to be matched.
+	 */
+	public String getPattern() {
+		if (fPattern == null) {
+			fPattern = fConfig.getAttribute("regex"); //$NON-NLS-1$
+			try {
+				fPattern = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fPattern, false);
 			} catch (CoreException e) {
 				ConsolePlugin.log(e);
 			}
-    	}
-    	return fQualifier;
-    }
+		}
+		return fPattern;
+	}
+
+	/*
+	 * returns the flags to be used by <code>Pattern.compile(pattern, flags)</code>
+	 */
+	public int getCompilerFlags() {
+		if(fFlags < 0) {
+			String flagsAttribute = fConfig.getAttribute("flags"); //$NON-NLS-1$
+			fFlags = parseFlags(flagsAttribute);
+		}
+		return fFlags;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	@Override
+	public String getLocalId() {
+		return fConfig.getAttribute("id"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	@Override
+	public String getPluginId() {
+		return fConfig.getContributor().getName();
+	}
+
+	public String getQuickPattern() {
+		if (fQualifier == null) {
+			fQualifier = fConfig.getAttribute("qualifier"); //$NON-NLS-1$
+			try {
+				if (fQualifier != null) {
+					fQualifier = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fQualifier, false);
+				}
+			} catch (CoreException e) {
+				ConsolePlugin.log(e);
+			}
+		}
+		return fQualifier;
+	}
 }

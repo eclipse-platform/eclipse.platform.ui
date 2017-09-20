@@ -39,10 +39,10 @@ package org.eclipse.ui.console;
  * @since 3.1
  */
 public interface IConsoleFactory {
-    /**
-     * Opens a console in the console view. Implementations may create a new
-     * console or activate an existing console.
-     */
-    public void openConsole();
+	/**
+	 * Opens a console in the console view. Implementations may create a new
+	 * console or activate an existing console.
+	 */
+	public void openConsole();
 
 }

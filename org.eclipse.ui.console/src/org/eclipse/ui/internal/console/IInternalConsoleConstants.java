@@ -32,5 +32,5 @@ public interface IInternalConsoleConstants {
 	public static final String IMG_ELCL_LOCK = "IMG_ELCL_LOCK"; //$NON-NLS-1$
 	public static final String IMG_ELCL_WRAP = "IMG_ELCL_WRAP"; //$NON-NLS-1$
 	public static final String IMG_ELCL_CLOSE = "IMG_ELCL_CLOSE"; //$NON-NLS-1$
-    public static final String IMG_ELCL_NEW_CON = "IMG_ELCL_NEW_CON"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NEW_CON = "IMG_ELCL_NEW_CON"; //$NON-NLS-1$
 }

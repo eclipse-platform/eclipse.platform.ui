@@ -108,7 +108,7 @@ public abstract class AbstractConsole implements IConsole {
 			fEvent = event;
 			for (IPropertyChangeListener iPropertyChangeListener : fListeners) {
 				fListener = iPropertyChangeListener;
-                SafeRunner.run(this);
+				SafeRunner.run(this);
 			}
 			fListener = null;
 		}
@@ -126,7 +126,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * @since 3.1
 	 */
 	public AbstractConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
-	    this(name, null, imageDescriptor, autoLifecycle);
+		this(name, null, imageDescriptor, autoLifecycle);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public abstract class AbstractConsole implements IConsole {
 		setType(type);
 		setImageDescriptor(imageDescriptor);
 		if (autoLifecycle) {
-		    ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new Lifecycle());
+			ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new Lifecycle());
 		}
 	}
 
@@ -174,12 +174,12 @@ public abstract class AbstractConsole implements IConsole {
 	 * @param name the new name
 	 */
 	protected void setName(String name) {
-        if (!name.equals(fName)) {
-            String old = fName;
-            fName = name;
-            firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
-        }
-    }
+		if (!name.equals(fName)) {
+			String old = fName;
+			fName = name;
+			firePropertyChange(this, IBasicPropertyConstants.P_TEXT, old, name);
+		}
+	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
@@ -238,7 +238,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * @since 3.1
 	 */
 	public final void initialize() {
-	    init();
+		init();
 	}
 
 	/**
@@ -261,7 +261,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * @since 3.1
 	 */
 	public final void destroy() {
-	    dispose();
+		dispose();
 	}
 
 	/**
@@ -281,38 +281,38 @@ public abstract class AbstractConsole implements IConsole {
 	 *
 	 * @since 3.1
 	 */
-    public void activate() {
-        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
-    }
+	public void activate() {
+		ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
+	}
 
-    /**
-     * Sets this console's type identifier.
-     *
-     * @param typeIdentifier the type identifier for this console
-     * @since 3.1
-     */
-    protected void setType(String typeIdentifier) {
-        fType = typeIdentifier;
-    }
+	/**
+	 * Sets this console's type identifier.
+	 *
+	 * @param typeIdentifier the type identifier for this console
+	 * @since 3.1
+	 */
+	protected void setType(String typeIdentifier) {
+		fType = typeIdentifier;
+	}
 
-    /**
-     * @since 3.1
-     */
-    @Override
+	/**
+	 * @since 3.1
+	 */
+	@Override
 	public String getType() {
-        return fType;
-    }
+		return fType;
+	}
 
-    /**
-     * Returns the help context identifier for this console, or <code>null</code>
-     * if none. When a non-<code>null</code> value is returned the associated help
-     * will be installed for this console.
-     *
-     * @return help context id or <code>null</code>
-     * @since 3.2
-     */
-    public String getHelpContextId() {
-    	return null;
-    }
+	/**
+	 * Returns the help context identifier for this console, or <code>null</code>
+	 * if none. When a non-<code>null</code> value is returned the associated help
+	 * will be installed for this console.
+	 *
+	 * @return help context id or <code>null</code>
+	 * @since 3.2
+	 */
+	public String getHelpContextId() {
+		return null;
+	}
 
 }

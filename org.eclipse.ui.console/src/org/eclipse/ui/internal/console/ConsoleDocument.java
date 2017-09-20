@@ -94,37 +94,37 @@ public class ConsoleDocument extends Document {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
 	 */
-    @Override
+	@Override
 	public synchronized void set(String text) {
-        super.set(text);
-    }
+		super.set(text);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.AbstractDocument#completeInitialization()
 	 */
-    @Override
+	@Override
 	protected void completeInitialization() {
-        super.completeInitialization();
-        addPositionUpdater(new HyperlinkUpdater());
-    }
+		super.completeInitialization();
+		addPositionUpdater(new HyperlinkUpdater());
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#addPosition(java.lang.String, org.eclipse.jface.text.Position)
 	 */
 	@Override
 	public synchronized void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException {
-        super.addPosition(category, position);
-    }
+		super.addPosition(category, position);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#removePosition(java.lang.String, org.eclipse.jface.text.Position)
 	 */
-    @Override
+	@Override
 	public synchronized void removePosition(String category, Position position) throws BadPositionCategoryException {
-        super.removePosition(category, position);
-    }
+		super.removePosition(category, position);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#getPositions(java.lang.String)
 	 */
-    @Override
+	@Override
 	public synchronized Position[] getPositions(String category) throws BadPositionCategoryException {
-        return super.getPositions(category);
-    }
+		return super.getPositions(category);
+	}
 }

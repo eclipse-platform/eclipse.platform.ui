@@ -37,7 +37,7 @@ import org.eclipse.ui.WorkbenchEncoding;
  */
 public class MessageConsoleStream extends IOConsoleOutputStream {
 
-    private MessageConsole fMessageConsole;
+	private MessageConsole fMessageConsole;
 
 	/**
 	 * Constructs a new stream connected to the given console.
@@ -56,7 +56,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 */
 	public MessageConsoleStream(MessageConsole console, Charset charset) {
 		super(console, charset);
-        fMessageConsole = console;
+		fMessageConsole = console;
 	}
 
 	/**
@@ -66,10 +66,10 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 */
 	public void print(String message) {
 		try {
-            write(message);
-        } catch (IOException e) {
-            ConsolePlugin.log(e);
-        }
+			write(message);
+		} catch (IOException e) {
+			ConsolePlugin.log(e);
+		}
 	}
 
 
@@ -78,10 +78,10 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 */
 	public void println() {
 		try {
-            write("\n"); //$NON-NLS-1$
-        } catch (IOException e) {
-            ConsolePlugin.log(e);
-        }
+			write("\n"); //$NON-NLS-1$
+		} catch (IOException e) {
+			ConsolePlugin.log(e);
+		}
 	}
 
 	/**
@@ -94,12 +94,12 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 		print(message + "\n"); //$NON-NLS-1$
 	}
 
-    /**
-     * Returns the console this stream is connected to.
-     *
-     * @return the console this stream is connected to
-     */
-    public MessageConsole getConsole() {
-        return fMessageConsole;
-    }
+	/**
+	 * Returns the console this stream is connected to.
+	 *
+	 * @return the console this stream is connected to
+	 */
+	public MessageConsole getConsole() {
+		return fMessageConsole;
+	}
 }

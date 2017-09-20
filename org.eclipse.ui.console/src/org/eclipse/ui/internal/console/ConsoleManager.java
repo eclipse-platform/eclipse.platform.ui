@@ -78,56 +78,56 @@ public class ConsoleManager implements IConsoleManager {
 
 	private List<IConsoleView> fConsoleViews = new ArrayList<IConsoleView>();
 
-    private boolean fWarnQueued = false;
+	private boolean fWarnQueued = false;
 
-    private RepaintJob fRepaintJob = new RepaintJob();
+	private RepaintJob fRepaintJob = new RepaintJob();
 
-    private class RepaintJob extends WorkbenchJob {
+	private class RepaintJob extends WorkbenchJob {
 		private Set<IConsole> list = new HashSet<IConsole>();
 
-        public RepaintJob() {
-            super("schedule redraw() of viewers"); //$NON-NLS-1$
-            setSystem(true);
-        }
+		public RepaintJob() {
+			super("schedule redraw() of viewers"); //$NON-NLS-1$
+			setSystem(true);
+		}
 
-        void addConsole(IConsole console) {
-        	synchronized (list) {
-        		list.add(console);
+		void addConsole(IConsole console) {
+			synchronized (list) {
+				list.add(console);
 			}
-        }
+		}
 
-        @Override
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-            synchronized (list) {
-                if (list.isEmpty()) {
-                    return Status.OK_STATUS;
-                }
+			synchronized (list) {
+				if (list.isEmpty()) {
+					return Status.OK_STATUS;
+				}
 
-                IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-                for (int i = 0; i < workbenchWindows.length; i++) {
-                    IWorkbenchWindow window = workbenchWindows[i];
-                    if (window != null) {
-                        IWorkbenchPage page = window.getActivePage();
-                        if (page != null) {
-                            IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-                            if (part != null && part instanceof IConsoleView) {
-                                ConsoleView view = (ConsoleView) part;
-                                if (list.contains(view.getConsole())) {
-                                    Control control = view.getCurrentPage().getControl();
-                                    if (!control.isDisposed()) {
-                                        control.redraw();
-                                    }
-                                }
-                            }
+				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (int i = 0; i < workbenchWindows.length; i++) {
+					IWorkbenchWindow window = workbenchWindows[i];
+					if (window != null) {
+						IWorkbenchPage page = window.getActivePage();
+						if (page != null) {
+							IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+							if (part != null && part instanceof IConsoleView) {
+								ConsoleView view = (ConsoleView) part;
+								if (list.contains(view.getConsole())) {
+									Control control = view.getCurrentPage().getControl();
+									if (!control.isDisposed()) {
+										control.redraw();
+									}
+								}
+							}
 
-                        }
-                    }
-                }
-                list.clear();
-            }
-            return Status.OK_STATUS;
-        }
-    }
+						}
+					}
+				}
+				list.clear();
+			}
+			return Status.OK_STATUS;
+		}
+	}
 
 	/**
 	 * Notifies a console listener of additions or removals
@@ -178,7 +178,7 @@ public class ConsoleManager implements IConsoleManager {
 			fType = update;
 			for (IConsoleListener iConsoleListener : fListeners) {
 				fListener = iConsoleListener;
-                SafeRunner.run(this);
+				SafeRunner.run(this);
 			}
 			fChanged = null;
 			fListener = null;
@@ -186,17 +186,17 @@ public class ConsoleManager implements IConsoleManager {
 	}
 
 	public void registerConsoleView(ConsoleView view) {
-	    synchronized (fConsoleViews) {
-	        fConsoleViews.add(view);
-	    }
+		synchronized (fConsoleViews) {
+			fConsoleViews.add(view);
+		}
 	}
-    public void unregisterConsoleView(ConsoleView view) {
-        synchronized (fConsoleViews) {
-            fConsoleViews.remove(view);
-        }
-    }
+	public void unregisterConsoleView(ConsoleView view) {
+		synchronized (fConsoleViews) {
+			fConsoleViews.remove(view);
+		}
+	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#addConsoleListener(org.eclipse.ui.console.IConsoleListener)
 	 */
 	@Override
@@ -225,11 +225,11 @@ public class ConsoleManager implements IConsoleManager {
 		List<IConsole> added = new ArrayList<IConsole>(consoles.length);
 		synchronized (fConsoles) {
 			for (int i = 0; i < consoles.length; i++) {
-			    IConsole console = consoles[i];
-			    if(console instanceof TextConsole) {
-			        TextConsole ioconsole = (TextConsole)console;
-			        createPatternMatchListeners(ioconsole);
-			    }
+				IConsole console = consoles[i];
+				if(console instanceof TextConsole) {
+					TextConsole ioconsole = (TextConsole)console;
+					createPatternMatchListeners(ioconsole);
+				}
 				if (!fConsoles.contains(console)) {
 					fConsoles.add(console);
 					added.add(console);
@@ -409,96 +409,96 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleManager#getPatternMatchListenerDelegates(org.eclipse.ui.console.IConsole)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleManager#getPatternMatchListenerDelegates(org.eclipse.ui.console.IConsole)
+	 */
+	@Override
 	public IPatternMatchListener[] createPatternMatchListeners(IConsole console) {
-    		if (fPatternMatchListeners == null) {
+		if (fPatternMatchListeners == null) {
 			fPatternMatchListeners = new ArrayList<PatternMatchListenerExtension>();
-    			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
-    			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-    			for (int i = 0; i < elements.length; i++) {
-    				IConfigurationElement config = elements[i];
-    				PatternMatchListenerExtension extension = new PatternMatchListenerExtension(config);
-    				fPatternMatchListeners.add(extension);
-    			}
-    		}
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement config = elements[i];
+				PatternMatchListenerExtension extension = new PatternMatchListenerExtension(config);
+				fPatternMatchListeners.add(extension);
+			}
+		}
 		ArrayList<PatternMatchListener> list = new ArrayList<PatternMatchListener>();
 		for (Iterator<PatternMatchListenerExtension> i = fPatternMatchListeners.iterator(); i.hasNext();) {
-    		    PatternMatchListenerExtension extension = i.next();
-                try {
-                    if (extension.getEnablementExpression() == null) {
-                        i.remove();
-                        continue;
-                    }
+			PatternMatchListenerExtension extension = i.next();
+			try {
+				if (extension.getEnablementExpression() == null) {
+					i.remove();
+					continue;
+				}
 
-    		        if (console instanceof TextConsole && extension.isEnabledFor(console)) {
-                        TextConsole textConsole = (TextConsole) console;
-    		            PatternMatchListener patternMatchListener = new PatternMatchListener(extension);
-                        try {
-                            textConsole.addPatternMatchListener(patternMatchListener);
-                            list.add(patternMatchListener);
-                        } catch (PatternSyntaxException e) {
-                            ConsolePlugin.log(e);
-                            i.remove();
-                        }
-    		        }
-    		    } catch (CoreException e) {
-    		        ConsolePlugin.log(e);
-    		    }
-    		}
-        return list.toArray(new PatternMatchListener[0]);
-    }
+				if (console instanceof TextConsole && extension.isEnabledFor(console)) {
+					TextConsole textConsole = (TextConsole) console;
+					PatternMatchListener patternMatchListener = new PatternMatchListener(extension);
+					try {
+						textConsole.addPatternMatchListener(patternMatchListener);
+						list.add(patternMatchListener);
+					} catch (PatternSyntaxException e) {
+						ConsolePlugin.log(e);
+						i.remove();
+					}
+				}
+			} catch (CoreException e) {
+				ConsolePlugin.log(e);
+			}
+		}
+		return list.toArray(new PatternMatchListener[0]);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleManager#getPageParticipants(org.eclipse.ui.console.IConsole)
-     */
-    public IConsolePageParticipant[] getPageParticipants(IConsole console) {
-        if(fPageParticipants == null) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleManager#getPageParticipants(org.eclipse.ui.console.IConsole)
+	 */
+	public IConsolePageParticipant[] getPageParticipants(IConsole console) {
+		if(fPageParticipants == null) {
 			fPageParticipants = new ArrayList<ConsolePageParticipantExtension>();
-            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS);
-            IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-            for(int i = 0; i < elements.length; i++) {
-                IConfigurationElement config = elements[i];
-                ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config);
-                fPageParticipants.add(extension);
-            }
-        }
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS);
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for(int i = 0; i < elements.length; i++) {
+				IConfigurationElement config = elements[i];
+				ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config);
+				fPageParticipants.add(extension);
+			}
+		}
 		ArrayList<IConsolePageParticipant> list = new ArrayList<IConsolePageParticipant>();
 		for (Iterator<ConsolePageParticipantExtension> i = fPageParticipants.iterator(); i.hasNext();) {
-            ConsolePageParticipantExtension extension = i.next();
-            try {
-                if (extension.isEnabledFor(console)) {
-                    list.add(extension.createDelegate());
-                }
-            } catch (CoreException e) {
-                ConsolePlugin.log(e);
-            }
-        }
-        return list.toArray(new IConsolePageParticipant[0]);
-    }
+			ConsolePageParticipantExtension extension = i.next();
+			try {
+				if (extension.isEnabledFor(console)) {
+					list.add(extension.createDelegate());
+				}
+			} catch (CoreException e) {
+				ConsolePlugin.log(e);
+			}
+		}
+		return list.toArray(new IConsolePageParticipant[0]);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsoleManager#getConsoleFactories()
-     */
-    public ConsoleFactoryExtension[] getConsoleFactoryExtensions() {
-        if (fConsoleFactoryExtensions == null) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleManager#getConsoleFactories()
+	 */
+	public ConsoleFactoryExtension[] getConsoleFactoryExtensions() {
+		if (fConsoleFactoryExtensions == null) {
 			fConsoleFactoryExtensions = new ArrayList<ConsoleFactoryExtension>();
-            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORIES);
-            IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-            for (int i = 0; i < configurationElements.length; i++) {
-                fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));
-            }
-        }
-        return fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
-    }
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORIES);
+			IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < configurationElements.length; i++) {
+				fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));
+			}
+		}
+		return fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
+	}
 
 
-    @Override
+	@Override
 	public void refresh(final IConsole console) {
-        fRepaintJob.addConsole(console);
-        fRepaintJob.schedule(50);
-    }
+		fRepaintJob.addConsole(console);
+		fRepaintJob.schedule(50);
+	}
 
 }

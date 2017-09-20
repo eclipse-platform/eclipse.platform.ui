@@ -31,54 +31,54 @@ import org.eclipse.ui.console.TextConsoleViewer;
  */
 public class IOConsolePage extends TextConsolePage {
 
-    private ScrollLockAction fScrollLockAction;
-    private WordWrapAction fWordWrapAction;
+	private ScrollLockAction fScrollLockAction;
+	private WordWrapAction fWordWrapAction;
 
-    private boolean fReadOnly;
+	private boolean fReadOnly;
 
-    private IPropertyChangeListener fPropertyChangeListener;
+	private IPropertyChangeListener fPropertyChangeListener;
 
 	private IConsoleView fView;
 
-    public IOConsolePage(TextConsole console, IConsoleView view) {
-        super(console, view);
+	public IOConsolePage(TextConsole console, IConsoleView view) {
+		super(console, view);
 		fView = view;
 
-        fPropertyChangeListener = new IPropertyChangeListener() {
-            @Override
+		fPropertyChangeListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-                String property = event.getProperty();
-                if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
-                    setReadOnly();
-                }
-            }
-        };
-        console.addPropertyChangeListener(fPropertyChangeListener);
-    }
+				String property = event.getProperty();
+				if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
+					setReadOnly();
+				}
+			}
+		};
+		console.addPropertyChangeListener(fPropertyChangeListener);
+	}
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
-        super.createControl(parent);
-        if (fReadOnly) {
-            IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
-            viewer.setReadOnly();
-        }
-    }
+		super.createControl(parent);
+		if (fReadOnly) {
+			IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
+			viewer.setReadOnly();
+		}
+	}
 
-    @Override
+	@Override
 	protected TextConsoleViewer createViewer(Composite parent) {
 		return new IOConsoleViewer(parent, (TextConsole) getConsole(), fView);
-    }
+	}
 
-    public void setAutoScroll(boolean scroll) {
-        IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
-        if (viewer != null) {
-            viewer.setAutoScroll(scroll);
-            fScrollLockAction.setChecked(!scroll);
-        }
-    }
+	public void setAutoScroll(boolean scroll) {
+		IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
+		if (viewer != null) {
+			viewer.setAutoScroll(scroll);
+			fScrollLockAction.setChecked(!scroll);
+		}
+	}
 
-    public boolean isAutoScroll() {
+	public boolean isAutoScroll() {
 		IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
 		if (viewer != null) {
 			return viewer.isAutoScroll();
@@ -86,65 +86,65 @@ public class IOConsolePage extends TextConsolePage {
 		}
 		return false;
 	}
-    public void setWordWrap(boolean wordwrap) {
-        IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
-        if (viewer != null) {
-            viewer.setWordWrap(wordwrap);
-            fWordWrapAction.setChecked(wordwrap);
-        }
-    }
+	public void setWordWrap(boolean wordwrap) {
+		IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
+		if (viewer != null) {
+			viewer.setWordWrap(wordwrap);
+			fWordWrapAction.setChecked(wordwrap);
+		}
+	}
 
-    /**
-     * Informs the viewer that it's text widget should not be editable.
-     */
-    public void setReadOnly() {
-        fReadOnly = true;
-        IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
-        if (viewer != null) {
-            viewer.setReadOnly();
-        }
-    }
+	/**
+	 * Informs the viewer that it's text widget should not be editable.
+	 */
+	public void setReadOnly() {
+		fReadOnly = true;
+		IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
+		if (viewer != null) {
+			viewer.setReadOnly();
+		}
+	}
 
-    @Override
+	@Override
 	protected void createActions() {
-        super.createActions();
-        fScrollLockAction = new ScrollLockAction(getConsoleView());
-        setAutoScroll(!fScrollLockAction.isChecked());
-        fWordWrapAction = new WordWrapAction(getConsoleView());
-        setWordWrap(fWordWrapAction.isChecked());
-    }
+		super.createActions();
+		fScrollLockAction = new ScrollLockAction(getConsoleView());
+		setAutoScroll(!fScrollLockAction.isChecked());
+		fWordWrapAction = new WordWrapAction(getConsoleView());
+		setWordWrap(fWordWrapAction.isChecked());
+	}
 
-    @Override
+	@Override
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
-        super.contextMenuAboutToShow(menuManager);
-        menuManager.add(fScrollLockAction);
-        menuManager.add(fWordWrapAction);
-        IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
-        if (!viewer.isReadOnly()) {
-            menuManager.remove(ActionFactory.CUT.getId());
-            menuManager.remove(ActionFactory.PASTE.getId());
-        }
-    }
+		super.contextMenuAboutToShow(menuManager);
+		menuManager.add(fScrollLockAction);
+		menuManager.add(fWordWrapAction);
+		IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
+		if (!viewer.isReadOnly()) {
+			menuManager.remove(ActionFactory.CUT.getId());
+			menuManager.remove(ActionFactory.PASTE.getId());
+		}
+	}
 
 	@Override
 	protected void configureToolBar(IToolBarManager mgr) {
-        super.configureToolBar(mgr);
-        mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
-        mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWordWrapAction);
-    }
+		super.configureToolBar(mgr);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWordWrapAction);
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-        if (fScrollLockAction != null) {
-            fScrollLockAction.dispose();
-            fScrollLockAction = null;
-        }
-        if (fWordWrapAction != null) {
-            fWordWrapAction.dispose();
-            fWordWrapAction = null;
-        }
-        fView = null;
-        getConsole().removePropertyChangeListener(fPropertyChangeListener);
-        super.dispose();
-    }
+		if (fScrollLockAction != null) {
+			fScrollLockAction.dispose();
+			fScrollLockAction = null;
+		}
+		if (fWordWrapAction != null) {
+			fWordWrapAction.dispose();
+			fWordWrapAction = null;
+		}
+		fView = null;
+		getConsole().removePropertyChangeListener(fPropertyChangeListener);
+		super.dispose();
+	}
 }

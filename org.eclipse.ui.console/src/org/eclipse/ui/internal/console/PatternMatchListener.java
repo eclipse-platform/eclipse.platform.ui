@@ -18,53 +18,53 @@ import org.eclipse.ui.console.TextConsole;
 
 public class PatternMatchListener implements IPatternMatchListener {
 
-    private PatternMatchListenerExtension fExtension;
-    private IPatternMatchListenerDelegate fDelegate;
+	private PatternMatchListenerExtension fExtension;
+	private IPatternMatchListenerDelegate fDelegate;
 
-    public PatternMatchListener(PatternMatchListenerExtension extension) throws CoreException {
-        fExtension = extension;
-        fDelegate = fExtension.createDelegate();
-    }
+	public PatternMatchListener(PatternMatchListenerExtension extension) throws CoreException {
+		fExtension = extension;
+		fDelegate = fExtension.createDelegate();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
+	 */
+	@Override
 	public String getPattern() {
-        return fExtension.getPattern();
-    }
+		return fExtension.getPattern();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
+	 */
+	@Override
 	public int getCompilerFlags() {
-        return fExtension.getCompilerFlags();
-    }
+		return fExtension.getCompilerFlags();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
+	 */
+	@Override
 	public void matchFound(PatternMatchEvent event) {
-        fDelegate.matchFound(event);
-    }
+		fDelegate.matchFound(event);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
+	 */
 	@Override
 	public void connect(TextConsole console) {
-        fDelegate.connect(console);
-    }
+		fDelegate.connect(console);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
+	 */
+	@Override
 	public void disconnect() {
-        fDelegate.disconnect();
-    }
+		fDelegate.disconnect();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IPatternMatchListener#getQuickPattern()

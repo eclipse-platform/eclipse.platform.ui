@@ -70,14 +70,14 @@ import org.eclipse.ui.texteditor.IUpdate;
  * @since 3.1
  */
 public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListener, IAdaptable {
-    private IPageSite fSite;
-    private TextConsole fConsole;
-    private IConsoleView fConsoleView;
-    private TextConsoleViewer fViewer;
-    private MenuManager fMenuManager;
+	private IPageSite fSite;
+	private TextConsole fConsole;
+	private IConsoleView fConsoleView;
+	private TextConsoleViewer fViewer;
+	private MenuManager fMenuManager;
 	protected Map<String, IAction> fGlobalActions = new HashMap<String, IAction>();
 	protected ArrayList<String> fSelectionActions = new ArrayList<String>();
-    protected ClearOutputAction fClearOutputAction;
+	protected ClearOutputAction fClearOutputAction;
 
 	// text selection listener, used to update selection dependent actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
@@ -89,7 +89,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 	// updates the find replace action and the clear action if the document length is > 0
 	private ITextListener textListener = new ITextListener() {
-	    @Override
+		@Override
 		public void textChanged(TextEvent event) {
 			IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
 			if (findReplace != null) {
@@ -105,61 +105,61 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 	};
 
-    /**
-     * Constructs a text console page for the given console in the given view.
-     *
-     * @param console text console
-     * @param view console view the page is contained in
-     */
+	/**
+	 * Constructs a text console page for the given console in the given view.
+	 *
+	 * @param console text console
+	 * @param view console view the page is contained in
+	 */
 	public TextConsolePage(TextConsole console, IConsoleView view) {
-	    fConsole = console;
-	    fConsoleView = view;
+		fConsole = console;
+		fConsoleView = view;
 	}
 
-    /**
-     * Returns a viewer used to display the contents of this page's console.
-     *
-     * @param parent container for the viewer
-     * @return a viewer used to display the contents of this page's console
-     */
+	/**
+	 * Returns a viewer used to display the contents of this page's console.
+	 *
+	 * @param parent container for the viewer
+	 * @return a viewer used to display the contents of this page's console
+	 */
 	protected TextConsoleViewer createViewer(Composite parent) {
 		return new TextConsoleViewer(parent, fConsole, fConsoleView);
 	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPageBookViewPage#getSite()
-     */
-    @Override
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPageBookViewPage#getSite()
+	 */
+	@Override
 	public IPageSite getSite() {
-        return fSite;
-    }
+		return fSite;
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
-     */
-    @Override
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
+	 */
+	@Override
 	public void init(IPageSite pageSite) throws PartInitException {
-        fSite = pageSite;
-    }
+		fSite = pageSite;
+	}
 
-    /**
-     * Updates selection dependent actions.
-     */
-    protected void updateSelectionDependentActions() {
+	/**
+	 * Updates selection dependent actions.
+	 */
+	protected void updateSelectionDependentActions() {
 		for (String string : fSelectionActions) {
 			updateAction(string);
 		}
 	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	@Override
 	public void createControl(Composite parent) {
-        fViewer = createViewer(parent);
+		fViewer = createViewer(parent);
 		fViewer.setConsoleWidth(fConsole.getConsoleWidth());
 		fViewer.setTabWidth(fConsole.getTabWidth());
 		fConsole.addPropertyChangeListener(this);
@@ -167,7 +167,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 		String id = "#ContextMenu"; //$NON-NLS-1$
 		if (getConsole().getType() != null) {
-		    id = getConsole().getType() + "." + id; //$NON-NLS-1$
+			id = getConsole().getType() + "." + id; //$NON-NLS-1$
 		}
 		fMenuManager= new MenuManager("#ContextMenu", id);  //$NON-NLS-1$
 		fMenuManager.setRemoveAllWhenShown(true);
@@ -188,90 +188,90 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 		fViewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
 		fViewer.addTextListener(textListener);
-    }
+	}
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPage#dispose()
-     */
-    @Override
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#dispose()
+	 */
+	@Override
 	public void dispose() {
-        fConsole.removePropertyChangeListener(this);
-        JFaceResources.getFontRegistry().removeListener(this);
+		fConsole.removePropertyChangeListener(this);
+		JFaceResources.getFontRegistry().removeListener(this);
 
-        if (fMenuManager != null) {
-            fMenuManager.dispose();
-        }
-        fClearOutputAction = null;
-        fSelectionActions.clear();
-        fGlobalActions.clear();
+		if (fMenuManager != null) {
+			fMenuManager.dispose();
+		}
+		fClearOutputAction = null;
+		fSelectionActions.clear();
+		fGlobalActions.clear();
 
-        fViewer.getSelectionProvider().removeSelectionChangedListener(selectionChangedListener);
-        fViewer.removeTextListener(textListener);
-        fViewer = null;
-    }
+		fViewer.getSelectionProvider().removeSelectionChangedListener(selectionChangedListener);
+		fViewer.removeTextListener(textListener);
+		fViewer = null;
+	}
 
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPage#getControl()
-     */
-    @Override
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#getControl()
+	 */
+	@Override
 	public Control getControl() {
-        return fViewer != null ? fViewer.getControl() : null;
-    }
+		return fViewer != null ? fViewer.getControl() : null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
+	 */
+	@Override
 	public void setActionBars(IActionBars actionBars) {
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.IPage#setFocus()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#setFocus()
+	 */
+	@Override
 	public void setFocus() {
-        if (fViewer != null) {
-            fViewer.getTextWidget().setFocus();
+		if (fViewer != null) {
+			fViewer.getTextWidget().setFocus();
 			updateAction(ActionFactory.FIND.getId());
-        }
-    }
+		}
+	}
 
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-    @Override
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        if (fViewer != null) {
+		if (fViewer != null) {
 			Object source = event.getSource();
 			String property = event.getProperty();
 
 			if (source.equals(fConsole) && IConsoleConstants.P_FONT.equals(property)) {
 				fViewer.setFont(fConsole.getFont());
 			} else if (IConsoleConstants.P_FONT_STYLE.equals(property)) {
-			    fViewer.getTextWidget().redraw();
+				fViewer.getTextWidget().redraw();
 			} else if (property.equals(IConsoleConstants.P_STREAM_COLOR)) {
-			    fViewer.getTextWidget().redraw();
+				fViewer.getTextWidget().redraw();
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_TAB_SIZE)) {
-			    Integer tabSize = (Integer)event.getNewValue();
-			    fViewer.setTabWidth(tabSize.intValue());
+				Integer tabSize = (Integer)event.getNewValue();
+				fViewer.setTabWidth(tabSize.intValue());
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
-			    fViewer.setConsoleWidth(fConsole.getConsoleWidth());
+				fViewer.setConsoleWidth(fConsole.getConsoleWidth());
 			} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
 				fViewer.getTextWidget().setBackground(fConsole.getBackground());
 			}
-        }
+		}
 	}
 
-    /**
-     * Creates actions.
-     */
-    protected void createActions() {
-        IActionBars actionBars= getSite().getActionBars();
-        TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
+	/**
+	 * Creates actions.
+	 */
+	protected void createActions() {
+		IActionBars actionBars= getSite().getActionBars();
+		TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.TextConsolePage_SelectAllText, ConsoleMessages.TextConsolePage_SelectAllDescrip, ConsoleMessages.TextConsolePage_SelectAllDescrip);
 		action.setActionDefinitionId(ActionFactory.SELECT_ALL.getCommandId());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_SELECT_ALL_ACTION);
@@ -300,9 +300,9 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 		fClearOutputAction = new ClearOutputAction(fConsole);
 
-        ResourceBundle bundle = ConsoleResourceBundleMessages.getBundle();
-        FindReplaceAction fraction = new FindReplaceAction(bundle, "find_replace_action_", fConsoleView); //$NON-NLS-1$
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fraction, IConsoleHelpContextIds.CONSOLE_FIND_REPLACE_ACTION);
+		ResourceBundle bundle = ConsoleResourceBundleMessages.getBundle();
+		FindReplaceAction fraction = new FindReplaceAction(bundle, "find_replace_action_", fConsoleView); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fraction, IConsoleHelpContextIds.CONSOLE_FIND_REPLACE_ACTION);
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), fraction);
 
 		fSelectionActions.add(ActionFactory.CUT.getId());
@@ -311,23 +311,23 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		fSelectionActions.add(ActionFactory.FIND.getId());
 
 		actionBars.updateActionBars();
-    }
+	}
 
-    /**
-     * Configures an action for key bindings.
-     *
-     * @param actionBars action bars for this page
-     * @param actionID action definition id
-     * @param action associated action
-     */
-    protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
-        fGlobalActions.put(actionID, action);
-        actionBars.setGlobalActionHandler(actionID, action);
-    }
+	/**
+	 * Configures an action for key bindings.
+	 *
+	 * @param actionBars action bars for this page
+	 * @param actionID action definition id
+	 * @param action associated action
+	 */
+	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
+		fGlobalActions.put(actionID, action);
+		actionBars.setGlobalActionHandler(actionID, action);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> required) {
@@ -338,9 +338,9 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 			return (T) fViewer.getTextWidget();
 		}
 		return null;
-    }
+	}
 
-    /**
+	/**
 	 * Returns the view this page is contained in.
 	 *
 	 * @return the view this page is contained in
@@ -358,11 +358,11 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		return fConsole;
 	}
 
-    /**
-     * Updates the global action with the given id
-     *
-     * @param actionId action definition id
-     */
+	/**
+	 * Updates the global action with the given id
+	 *
+	 * @param actionId action definition id
+	 */
 	protected void updateAction(String actionId) {
 		IAction action= fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
@@ -400,21 +400,21 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 	}
 
 
-    /**
-     * Returns the viewer contained in this page.
-     *
-     * @return the viewer contained in this page
-     */
-    public TextConsoleViewer getViewer() {
-        return fViewer;
-    }
+	/**
+	 * Returns the viewer contained in this page.
+	 *
+	 * @return the viewer contained in this page
+	 */
+	public TextConsoleViewer getViewer() {
+		return fViewer;
+	}
 
-    /**
-     * Sets the viewer contained in this page.
-     *
-     * @param viewer text viewer
-     */
-    public void setViewer(TextConsoleViewer viewer) {
-        this.fViewer = viewer;
-    }
+	/**
+	 * Sets the viewer contained in this page.
+	 *
+	 * @param viewer text viewer
+	 */
+	public void setViewer(TextConsoleViewer viewer) {
+		this.fViewer = viewer;
+	}
 }

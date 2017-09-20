@@ -39,58 +39,58 @@ public class IOConsole extends TextConsole {
 	/**
 	 * The document partitioner
 	 */
-    private IOConsolePartitioner partitioner;
+	private IOConsolePartitioner partitioner;
 
-    /**
-     * The stream from which user input may be read
-     */
+	/**
+	 * The stream from which user input may be read
+	 */
 	private InputStream inputStream;
 
-    /**
-     * A collection of open streams connected to this console.
-     */
+	/**
+	 * A collection of open streams connected to this console.
+	 */
 	private List<Closeable> openStreams = Collections.synchronizedList(new ArrayList<Closeable>());
 
-    /**
-     * The encoding used to for displaying console output.
-     */
+	/**
+	 * The encoding used to for displaying console output.
+	 */
 	private Charset charset;
 
 
-    /**
-     * Constructs a console with the given name, type, image, and lifecycle, with the
-     * workbench's default encoding.
-     *
-     * @param name name to display for this console
-     * @param consoleType console type identifier or <code>null</code>
-     * @param imageDescriptor image to display for this console or <code>null</code>
-     * @param autoLifecycle whether lifecycle methods should be called automatically
-     *  when this console is added/removed from the console manager
-     */
-    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+	/**
+	 * Constructs a console with the given name, type, image, and lifecycle, with the
+	 * workbench's default encoding.
+	 *
+	 * @param name name to display for this console
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor image to display for this console or <code>null</code>
+	 * @param autoLifecycle whether lifecycle methods should be called automatically
+	 *  when this console is added/removed from the console manager
+	 */
+	public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
 		this(name, consoleType, imageDescriptor, (String)null, autoLifecycle);
-    }
+	}
 
-    /**
-     * Constructs a console with the given name, type, image, encoding and lifecycle.
-     *
-     * @param name name to display for this console
-     * @param consoleType console type identifier or <code>null</code>
-     * @param imageDescriptor image to display for this console or <code>null</code>
-     * @param encoding the encoding that should be used to render the text, or <code>null</code>
-     * 	if the system default encoding should be used
-     * @param autoLifecycle whether lifecycle methods should be called automatically
-     *  when this console is added/removed from the console manager
-     */
-    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
+	/**
+	 * Constructs a console with the given name, type, image, encoding and lifecycle.
+	 *
+	 * @param name name to display for this console
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor image to display for this console or <code>null</code>
+	 * @param encoding the encoding that should be used to render the text, or <code>null</code>
+	 * 	if the system default encoding should be used
+	 * @param autoLifecycle whether lifecycle methods should be called automatically
+	 *  when this console is added/removed from the console manager
+	 */
+	public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
 		this(name, consoleType, imageDescriptor,
 				encoding == null
-						? Charset.forName(WorkbenchEncoding.getWorkbenchDefaultEncoding())
+				? Charset.forName(WorkbenchEncoding.getWorkbenchDefaultEncoding())
 						: Charset.forName(encoding),
-				autoLifecycle);
-    }
+						autoLifecycle);
+	}
 
-    /**
+	/**
 	 * Constructs a console with the given name, type, image, encoding and
 	 * lifecycle.
 	 *
@@ -106,83 +106,83 @@ public class IOConsole extends TextConsole {
 	 * @since 3.7
 	 */
 	public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, Charset charset, boolean autoLifecycle) {
-        super(name, consoleType, imageDescriptor, autoLifecycle);
+		super(name, consoleType, imageDescriptor, autoLifecycle);
 		this.charset = charset;
-        synchronized (openStreams) {
+		synchronized (openStreams) {
 			inputStream = new IOConsoleInputStream(this);
-        	openStreams.add(inputStream);
+			openStreams.add(inputStream);
 		}
 
 		if (inputStream instanceof IOConsoleInputStream) {
 			partitioner = new IOConsolePartitioner((IOConsoleInputStream) inputStream, this);
 			partitioner.connect(getDocument());
 		}
-    }
+	}
 
-    /**
-     * Constructs a console with the given name, type, and image with the workbench's
-     * default encoding. Lifecycle methods will be called when this console is
-     * added/removed from the console manager.
-     *
-     * @param name name to display for this console
-     * @param consoleType console type identifier or <code>null</code>
-     * @param imageDescriptor image to display for this console or <code>null</code>
-     */
-    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor) {
-        this(name, consoleType, imageDescriptor, true);
-    }
+	/**
+	 * Constructs a console with the given name, type, and image with the workbench's
+	 * default encoding. Lifecycle methods will be called when this console is
+	 * added/removed from the console manager.
+	 *
+	 * @param name name to display for this console
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor image to display for this console or <code>null</code>
+	 */
+	public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor) {
+		this(name, consoleType, imageDescriptor, true);
+	}
 
-    /**
-     * Constructs a console with the given name and image. Lifecycle methods
-     * will be called when this console is added/removed from the console manager.
-     * This console will have an unspecified (<code>null</code>) type.
-     *
-     * @param name name to display for this console
-     * @param imageDescriptor image to display for this console or <code>null</code>
-     */
-    public IOConsole(String name, ImageDescriptor imageDescriptor) {
-        this(name, null, imageDescriptor);
-    }
+	/**
+	 * Constructs a console with the given name and image. Lifecycle methods
+	 * will be called when this console is added/removed from the console manager.
+	 * This console will have an unspecified (<code>null</code>) type.
+	 *
+	 * @param name name to display for this console
+	 * @param imageDescriptor image to display for this console or <code>null</code>
+	 */
+	public IOConsole(String name, ImageDescriptor imageDescriptor) {
+		this(name, null, imageDescriptor);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
+	 */
+	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
-        return new IOConsolePage(this, view);
-    }
+		return new IOConsolePage(this, view);
+	}
 
-    /**
-     * Creates and returns a new output stream which may be used to write to this console.
-     * A console may be connected to more than one output stream at once. Clients are
-     * responsible for closing any output streams created on this console.
-     * <p>
-     * Clients should avoid writing large amounts of output to this stream in the UI
-     * thread. The console needs to process the output in the UI thread and if the client
-     * hogs the UI thread writing output to the console, the console will not be able
-     * to process the output.
-     * </p>
-     * @return a new output stream connected to this console
-     */
-    public IOConsoleOutputStream newOutputStream() {
+	/**
+	 * Creates and returns a new output stream which may be used to write to this console.
+	 * A console may be connected to more than one output stream at once. Clients are
+	 * responsible for closing any output streams created on this console.
+	 * <p>
+	 * Clients should avoid writing large amounts of output to this stream in the UI
+	 * thread. The console needs to process the output in the UI thread and if the client
+	 * hogs the UI thread writing output to the console, the console will not be able
+	 * to process the output.
+	 * </p>
+	 * @return a new output stream connected to this console
+	 */
+	public IOConsoleOutputStream newOutputStream() {
 		IOConsoleOutputStream outputStream = new IOConsoleOutputStream(this, this.charset);
-        synchronized(openStreams) {
-            openStreams.add(outputStream);
-        }
-        return outputStream;
-    }
+		synchronized(openStreams) {
+			openStreams.add(outputStream);
+		}
+		return outputStream;
+	}
 
-    /**
-     * Returns the input stream connected to the keyboard.
-     *
-     * @return the input stream connected to the keyboard.
-     */
-    public IOConsoleInputStream getInputStream() {
+	/**
+	 * Returns the input stream connected to the keyboard.
+	 *
+	 * @return the input stream connected to the keyboard.
+	 */
+	public IOConsoleInputStream getInputStream() {
 		if (inputStream instanceof IOConsoleInputStream) {
 			return (IOConsoleInputStream) inputStream;
 		}
 		return null;
-    }
+	}
 
 	/**
 	 * Sets the new input stream.
@@ -194,15 +194,15 @@ public class IOConsole extends TextConsole {
 		this.inputStream = inputStream;
 	}
 
-    /**
-     * Returns this console's document partitioner.
-     *
-     * @return this console's document partitioner
-     */
-    @Override
+	/**
+	 * Returns this console's document partitioner.
+	 *
+	 * @return this console's document partitioner
+	 */
+	@Override
 	protected IConsoleDocumentPartitioner getPartitioner() {
-        return partitioner;
-    }
+		return partitioner;
+	}
 
 	/**
 	 * Returns the maximum number of characters that the console will display at
@@ -212,7 +212,7 @@ public class IOConsole extends TextConsole {
 	 * @return the maximum number of characters that the console will display
 	 */
 	public int getHighWaterMark() {
-	    return partitioner.getHighWaterMark();
+		return partitioner.getHighWaterMark();
 	}
 
 	/**
@@ -239,68 +239,68 @@ public class IOConsole extends TextConsole {
 	 * @exception IllegalArgumentException if low >= high & low != -1
 	 */
 	public void setWaterMarks(int low, int high) {
-        if (low >= 0) {
-    	    if (low >= high) {
-    	        throw new IllegalArgumentException("High water mark must be greater than low water mark"); //$NON-NLS-1$
-    	    }
-        }
+		if (low >= 0) {
+			if (low >= high) {
+				throw new IllegalArgumentException("High water mark must be greater than low water mark"); //$NON-NLS-1$
+			}
+		}
 		partitioner.setWaterMarks(low, high);
 	}
 
-    /**
-     * Check if all streams connected to this console are closed. If so,
-     * notify the partitioner that this console is finished.
-     */
-    private void checkFinished() {
+	/**
+	 * Check if all streams connected to this console are closed. If so,
+	 * notify the partitioner that this console is finished.
+	 */
+	private void checkFinished() {
 		if (openStreams.isEmpty()) {
 			partitioner.streamsClosed();
 		}
-    }
+	}
 
-    /**
-     * Notification that an output stream connected to this console has been closed.
-     *
-     * @param stream stream that closed
-     */
-    void streamClosed(IOConsoleOutputStream stream) {
-    	synchronized (openStreams) {
-            openStreams.remove(stream);
-            checkFinished();
+	/**
+	 * Notification that an output stream connected to this console has been closed.
+	 *
+	 * @param stream stream that closed
+	 */
+	void streamClosed(IOConsoleOutputStream stream) {
+		synchronized (openStreams) {
+			openStreams.remove(stream);
+			checkFinished();
 		}
-    }
+	}
 
-    /**
-     * Notification that the input stream connected to this console has been closed.
-     *
-     * @param stream stream that closed
-     */
-    void streamClosed(IOConsoleInputStream stream) {
-    	synchronized (openStreams) {
-            openStreams.remove(stream);
-            checkFinished();
+	/**
+	 * Notification that the input stream connected to this console has been closed.
+	 *
+	 * @param stream stream that closed
+	 */
+	void streamClosed(IOConsoleInputStream stream) {
+		synchronized (openStreams) {
+			openStreams.remove(stream);
+			checkFinished();
 		}
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.TextConsole#clearConsole()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.TextConsole#clearConsole()
+	 */
+	@Override
 	public void clearConsole() {
-        if (partitioner != null) {
-            partitioner.clearBuffer();
-        }
-    }
+		if (partitioner != null) {
+			partitioner.clearBuffer();
+		}
+	}
 
-    /**
-     * Disposes this console.
-     */
+	/**
+	 * Disposes this console.
+	 */
 	@Override
 	protected void dispose() {
-        super.dispose();
-        partitioner.disconnect();
-        //make a copy of the open streams and close them all
-        //a copy is needed as close the streams results in a callback that
-        //removes the streams from the openStreams collection (bug 152794)
+		super.dispose();
+		partitioner.disconnect();
+		//make a copy of the open streams and close them all
+		//a copy is needed as close the streams results in a callback that
+		//removes the streams from the openStreams collection (bug 152794)
 		List<Closeable> list = new ArrayList<Closeable>(openStreams);
 		for (Closeable closable : list) {
 			try {
@@ -309,17 +309,17 @@ public class IOConsole extends TextConsole {
 				// e.printStackTrace();
 			}
 		}
-        inputStream = null;
-    }
+		inputStream = null;
+	}
 
-    /**
-     * Returns the encoding for this console, or <code>null</code> to indicate
-     * default encoding.
-     *
-     * @return the encoding set for this console, or <code>null</code> to indicate
-     * 	default encoding
-     * @since 3.3
-     */
+	/**
+	 * Returns the encoding for this console, or <code>null</code> to indicate
+	 * default encoding.
+	 *
+	 * @return the encoding set for this console, or <code>null</code> to indicate
+	 * 	default encoding
+	 * @since 3.3
+	 */
 	public String getEncoding() {
 		return this.charset.name();
 	}

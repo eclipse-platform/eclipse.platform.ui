@@ -38,14 +38,14 @@ public class ShowConsoleAction extends Action {
 	 */
 	public static void showConsole(IConsole console, IConsoleView consoleView) {
 		if (!console.equals(consoleView.getConsole())) {
-            boolean pinned = consoleView.isPinned();
-            if (pinned) {
-                consoleView.setPinned(false);
-            }
-		    consoleView.display(console);
-            if (pinned) {
-               consoleView.setPinned(true);
-            }
+			boolean pinned = consoleView.isPinned();
+			if (pinned) {
+				consoleView.setPinned(false);
+			}
+			consoleView.display(console);
+			if (pinned) {
+				consoleView.setPinned(true);
+			}
 		}
 	}
 

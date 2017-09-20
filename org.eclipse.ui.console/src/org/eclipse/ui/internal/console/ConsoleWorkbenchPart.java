@@ -31,7 +31,7 @@ public class ConsoleWorkbenchPart implements IWorkbenchPart {
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof ConsoleWorkbenchPart) &&
-			fConsole.equals(((ConsoleWorkbenchPart)obj).fConsole);
+				fConsole.equals(((ConsoleWorkbenchPart)obj).fConsole);
 	}
 
 	/* (non-Javadoc)

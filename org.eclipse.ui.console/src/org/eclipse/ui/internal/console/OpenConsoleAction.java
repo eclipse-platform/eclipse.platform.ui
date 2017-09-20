@@ -31,71 +31,71 @@ import org.eclipse.ui.console.IConsoleFactory;
  */
 public class OpenConsoleAction extends Action implements IMenuCreator {
 
-    private ConsoleFactoryExtension[] fFactoryExtensions;
-    private Menu fMenu;
+	private ConsoleFactoryExtension[] fFactoryExtensions;
+	private Menu fMenu;
 
-    public OpenConsoleAction() {
-        fFactoryExtensions = ((ConsoleManager)ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
+	public OpenConsoleAction() {
+		fFactoryExtensions = ((ConsoleManager)ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
 		setText(ConsoleMessages.OpenConsoleAction_0);
 		setToolTipText(ConsoleMessages.OpenConsoleAction_1);
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_NEW_CON));
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_NEW_CON));
 		setMenuCreator(this);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_OPEN_CONSOLE_ACTION);
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuCreator#dispose()
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
+	 */
 	@Override
 	public void dispose() {
-        fFactoryExtensions = null;
-    }
+		fFactoryExtensions = null;
+	}
 
-    /*
-     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-     * @since 3.5
-     */
-    @Override
+	/*
+	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+	 * @since 3.5
+	 */
+	@Override
 	public void runWithEvent(Event event) {
-    	if (event.widget instanceof ToolItem) {
+		if (event.widget instanceof ToolItem) {
 			ToolItem toolItem= (ToolItem) event.widget;
 			Control control= toolItem.getParent();
-    		Menu menu= getMenu(control);
+			Menu menu= getMenu(control);
 
-    		Rectangle bounds= toolItem.getBounds();
-    		Point topLeft= new Point(bounds.x, bounds.y + bounds.height);
-    		menu.setLocation(control.toDisplay(topLeft));
-    		menu.setVisible(true);
-    	}
-    }
+			Rectangle bounds= toolItem.getBounds();
+			Point topLeft= new Point(bounds.x, bounds.y + bounds.height);
+			menu.setLocation(control.toDisplay(topLeft));
+			menu.setVisible(true);
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+	 */
+	@Override
 	public Menu getMenu(Control parent) {
-        if (fMenu != null) {
-            fMenu.dispose();
-        }
+		if (fMenu != null) {
+			fMenu.dispose();
+		}
 
-        fMenu= new Menu(parent);
-        int accel = 1;
-        for (int i = 0; i < fFactoryExtensions.length; i++) {
-            ConsoleFactoryExtension extension = fFactoryExtensions[i];
-            if (!WorkbenchActivityHelper.filterItem(extension) && extension.isEnabled()) {
-                String label = extension.getLabel();
-                ImageDescriptor image = extension.getImageDescriptor();
-                addActionToMenu(fMenu, new ConsoleFactoryAction(label, image, extension), accel);
-                accel++;
-            }
-        }
-        return fMenu;
-    }
+		fMenu= new Menu(parent);
+		int accel = 1;
+		for (int i = 0; i < fFactoryExtensions.length; i++) {
+			ConsoleFactoryExtension extension = fFactoryExtensions[i];
+			if (!WorkbenchActivityHelper.filterItem(extension) && extension.isEnabled()) {
+				String label = extension.getLabel();
+				ImageDescriptor image = extension.getImageDescriptor();
+				addActionToMenu(fMenu, new ConsoleFactoryAction(label, image, extension), accel);
+				accel++;
+			}
+		}
+		return fMenu;
+	}
 
 	private void addActionToMenu(Menu parent, Action action, int accelerator) {
 		if (accelerator < 10) {
-		    StringBuffer label= new StringBuffer();
+			StringBuffer label= new StringBuffer();
 			//add the numerical accelerator
 			label.append('&');
 			label.append(accelerator);
@@ -108,50 +108,50 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	@Override
 	public Menu getMenu(Menu parent) {
-        return null;
-    }
+		return null;
+	}
 
-    private class ConsoleFactoryAction extends Action {
+	private class ConsoleFactoryAction extends Action {
 
-        private ConsoleFactoryExtension fConfig;
-        private IConsoleFactory fFactory;
+		private ConsoleFactoryExtension fConfig;
+		private IConsoleFactory fFactory;
 
-        public ConsoleFactoryAction(String label, ImageDescriptor image, ConsoleFactoryExtension extension) {
-            setText(label);
-            if (image != null) {
-                setImageDescriptor(image);
-            }
-            fConfig = extension;
-        }
+		public ConsoleFactoryAction(String label, ImageDescriptor image, ConsoleFactoryExtension extension) {
+			setText(label);
+			if (image != null) {
+				setImageDescriptor(image);
+			}
+			fConfig = extension;
+		}
 
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.action.IAction#run()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		@Override
 		public void run() {
-            try {
-                if (fFactory == null) {
-                    fFactory = fConfig.createFactory();
-                }
+			try {
+				if (fFactory == null) {
+					fFactory = fConfig.createFactory();
+				}
 
-                fFactory.openConsole();
-            } catch (CoreException e) {
-                ConsolePlugin.log(e);
-            }
-        }
+				fFactory.openConsole();
+			} catch (CoreException e) {
+				ConsolePlugin.log(e);
+			}
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
+		 */
+		@Override
 		public void runWithEvent(Event event) {
-            run();
-        }
-    }
+			run();
+		}
+	}
 }

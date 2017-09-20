@@ -42,7 +42,7 @@ public class PinConsoleAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void run() {
-        fView.setPinned(isChecked());
+		fView.setPinned(isChecked());
 	}
 
 	/* (non-Javadoc)

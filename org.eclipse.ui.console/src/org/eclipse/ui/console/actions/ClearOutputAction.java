@@ -70,8 +70,8 @@ public class ClearOutputAction extends Action {
 	 * @param viewer viewer whose document this action is associated with
 	 */
 	public ClearOutputAction(ITextViewer viewer) {
-	    this();
-	    fViewer = viewer;
+		this();
+		fViewer = viewer;
 	}
 
 	/* (non-Javadoc)
@@ -82,15 +82,15 @@ public class ClearOutputAction extends Action {
 		BusyIndicator.showWhile(ConsolePlugin.getStandardDisplay(), new Runnable() {
 			@Override
 			public void run() {
-			    if (fIOConsole == null) {
+				if (fIOConsole == null) {
 					IDocument document = fViewer.getDocument();
 					if (document != null) {
 						document.set(""); //$NON-NLS-1$
 					}
 					fViewer.setSelectedRange(0, 0);
-			    } else {
-			        fIOConsole.clearConsole();
-			    }
+				} else {
+					fIOConsole.clearConsole();
+				}
 			}
 		});
 	}
