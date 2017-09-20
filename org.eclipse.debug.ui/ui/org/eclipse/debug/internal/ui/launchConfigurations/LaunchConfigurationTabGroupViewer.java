@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,8 +68,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -98,6 +101,11 @@ public class LaunchConfigurationTabGroupViewer {
 	 * The working copy of the original
 	 */
 	private ILaunchConfigurationWorkingCopy fWorkingCopy;
+
+	/**
+	 * The old configuration
+	 */
+	private boolean fRefreshTabs = false;
 
 	/**
 	 * This view's control, which contains a composite area of controls
@@ -316,6 +324,10 @@ public class LaunchConfigurationTabGroupViewer {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
+				ILaunchConfigurationTab[] tabs = getTabs();
+				for (ILaunchConfigurationTab tab : tabs) {
+					tab.postApply();
+				}
 			}
 		});
         Dialog.applyDialogFont(parent);
@@ -373,13 +385,51 @@ public class LaunchConfigurationTabGroupViewer {
 			fTabFolder.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
+					int selectedIndex = fTabFolder.indexOf((CTabItem) event.item);
 					if (!fInitializingTabs) {
-						handleTabSelected();
-						refresh();
+						handleTabChange(selectedIndex);
 					}
+
+					Display display = fTabFolder.getDisplay();
+					display.addListener(SWT.PostEvent, new Listener() {
+						@Override
+						public void handleEvent(Event newEvent) {
+							if (newEvent.detail == SWT.Selection) { //
+								display.removeListener(SWT.PostEvent, this);
+								if (fRefreshTabs) {
+									refreshTabs(true);
+									fTabFolder.setSelection(selectedIndex);
+									refreshStatus();
+								}
+							}
+						}
+					});
+
 				}
 			});
 		}
+	}
+
+	private void handleTabChange(int newPageIndex) {
+		if (fCurrentTabIndex == newPageIndex) {
+			return;
+		}
+		if (isDirty() && !fInitializingTabs) {
+			ILaunchConfigurationTab[] tabs = getTabs();
+			if (fCurrentTabIndex != -1) {
+				ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
+				fTabFolder.setSelection(fCurrentTabIndex);
+				if (tab.OkToLeaveTab()) {
+					fTabFolder.setSelection(newPageIndex);
+					handleTabSelected();
+					refresh();
+				}
+			}
+		} else {
+			handleTabSelected();
+			refresh();
+		}
+
 	}
 
 	/**
@@ -616,6 +666,42 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 	}
+	/*
+	 * Refresh tabs for same input
+	 */
+
+	public void refreshTabs(boolean refresh) {
+		if (DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			refreshTabs0(refresh);
+		} else {
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					refreshTabs0(refresh);
+				}
+			});
+		}
+	}
+
+	/**
+	 * The input has changed to the given object, possibly <code>null</code>.
+	 *
+	 * @param input the new input, possibly <code>null</code>
+	 */
+	protected void refreshTabs0(boolean refreshTabs) {
+		final boolean refresh = refreshTabs;
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				fViewform.setRedraw(false);
+				fRefreshTabs = !refresh;
+				displayInstanceTabs(refresh);
+				refreshStatus();
+				fViewform.setRedraw(true);
+			}
+		};
+		BusyIndicator.showWhile(getShell().getDisplay(), r);
+	}
 
 	/**
 	 * The input has changed to the given object, possibly <code>null</code>.
@@ -631,10 +717,14 @@ public class LaunchConfigurationTabGroupViewer {
 					fViewform.setRedraw(false);
 					if (finput instanceof ILaunchConfiguration) {
 						ILaunchConfiguration configuration = (ILaunchConfiguration)finput;
-						boolean refreshtabs = !delegatesEqual(fWorkingCopy, configuration);
+						boolean refreshTabs = true;
+						if (fWorkingCopy != null && fWorkingCopy.getOriginal().equals(configuration.getWorkingCopy().getOriginal())) {
+							refreshTabs = false;
+						}
 						fOriginal = configuration;
 						fWorkingCopy = configuration.getWorkingCopy();
-						displayInstanceTabs(refreshtabs);
+						// Need to refresh all the time as tabs might have changed
+						displayInstanceTabs(refreshTabs);
 					} else if (finput instanceof ILaunchConfigurationType) {
 						fDescription = getDescription((ILaunchConfigurationType)finput);
 						setNoInput();
@@ -1383,7 +1473,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 *
 	 * @return the saved launch configuration or <code>null</code> if not saved
 	 */
-	protected ILaunchConfiguration handleApplyPressed() {
+	public ILaunchConfiguration handleApplyPressed() {
 		if(fOriginal != null && fOriginal.isReadOnly()) {
 			IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {fOriginal.getFile()}, fViewerControl.getShell());
 			if(!status.isOK()) {
@@ -1484,10 +1574,12 @@ public class LaunchConfigurationTabGroupViewer {
 	 * @param index the index of the tab to display
 	 */
 	public void setActiveTab(int index) {
-		ILaunchConfigurationTab[] tabs = getTabs();
-		if (index >= 0 && index < tabs.length) {
-			fTabFolder.setSelection(index);
-			handleTabSelected();
+		if (!fTabFolder.isDisposed()) {
+			ILaunchConfigurationTab[] tabs = getTabs();
+			if (index >= 0 && index < tabs.length) {
+				fTabFolder.setSelection(index);
+				handleTabSelected();
+			}
 		}
 	}
 

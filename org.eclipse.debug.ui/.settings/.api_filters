@@ -48,6 +48,20 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="ui/org/eclipse/debug/ui/ILaunchConfigurationTab.java" type="org.eclipse.debug.ui.ILaunchConfigurationTab">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.debug.ui.ILaunchConfigurationTab"/>
+                <message_argument value="OkToLeaveTab()"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.debug.ui.ILaunchConfigurationTab"/>
+                <message_argument value="postApply()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="ui/org/eclipse/debug/ui/actions/AbstractLaunchHistoryAction.java" type="org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction">
         <filter comment="Known leaked internal types" id="576725006">
             <message_arguments>
