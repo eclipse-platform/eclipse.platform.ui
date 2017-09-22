@@ -66,13 +66,13 @@ public class UIDialogs extends TestCase {
     public void testAbout() {
         Dialog dialog = null;
         dialog = new AboutDialog(getShell());
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testAddProjects() {
 		Dialog dialog = new ListSelectionDialog(getShell(), null, ArrayContentProvider.getInstance(),
 				new LabelProvider(), PROJECT_SELECTION_MESSAGE);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testCopyMoveProject() {
@@ -80,13 +80,13 @@ public class UIDialogs extends TestCase {
                 .getProject("DummyProject");
         Dialog dialog = new ProjectLocationSelectionDialog(getShell(),
                 dummyProject);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testCopyMoveResource() {
         Dialog dialog = new ContainerSelectionDialog(getShell(), null, true,
                 "Select Destination");
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testEditActionSetsDialog() {
@@ -106,7 +106,7 @@ public class UIDialogs extends TestCase {
 //        } catch (WorkbenchException e) {
 //            dialog = null;
 //        }
-//        DialogCheck.assertDialog(dialog, this);
+//        DialogCheck.assertDialog(dialog);
 //        if (persp != null) {
 //            persp.dispose();
 //        }
@@ -114,37 +114,37 @@ public class UIDialogs extends TestCase {
 
     public void testEditorSelection() {
         Dialog dialog = new EditorSelectionDialog(getShell());
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     /**
      * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public
      * packages. public void testFindReplace() { Dialog dialog =
      * TextEditorTestStub.newFindReplaceDialog( getShell() );
-     * DialogCheck.assertDialog(dialog, this); } public void testGotoResource() {
+     * DialogCheck.assertDialog(dialog); } public void testGotoResource() {
      * Dialog dialog = NavigatorTestStub.newGotoResourceDialog(getShell(), new
-     * IResource[0]); DialogCheck.assertDialog(dialog, this); }
+     * IResource[0]); DialogCheck.assertDialog(dialog); }
      */
     public void testNavigatorFilter() {
 		Dialog dialog = new ListSelectionDialog(getShell(), null, ArrayContentProvider.getInstance(),
 				new LabelProvider(), FILTER_SELECTION_MESSAGE);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testNewFileType() {
         Dialog dialog = new FileExtensionDialog(getShell());
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testProgressInformation() {
         ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
         dialog.setBlockOnOpen(true);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testSaveAs() {
         Dialog dialog = new SaveAsDialog(getShell());
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testSavePerspective() {
@@ -158,7 +158,7 @@ public class UIDialogs extends TestCase {
                         .getActiveWorkbenchWindow().getActivePage()
                         .getPerspective().getId());
         dialog.setInitialSelection(description);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     // see bug 211350
@@ -177,12 +177,12 @@ public class UIDialogs extends TestCase {
     public void testSelectPerspective() {
         Dialog dialog = new SelectPerspectiveDialog(getShell(), PlatformUI
                 .getWorkbench().getPerspectiveRegistry());
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testSelectTypes() {
         Dialog dialog = new TypeFilteringDialog(getShell(), null);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testShowView() {
@@ -197,12 +197,12 @@ public class UIDialogs extends TestCase {
 		MApplication app = workbench.getService(MApplication.class);
 		MWindow window = workbench.getService(MWindow.class);
 		Dialog dialog = new ShowViewDialog(shell, app, window, modelService, partService, ctx);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
     /**
      * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public
      * packages. public void testTaskFilters() { Dialog dialog =
      * TaskListTestStub.newFiltersDialog( getShell() );
-     * DialogCheck.assertDialog(dialog, this); }
+     * DialogCheck.assertDialog(dialog); }
      */
 }
