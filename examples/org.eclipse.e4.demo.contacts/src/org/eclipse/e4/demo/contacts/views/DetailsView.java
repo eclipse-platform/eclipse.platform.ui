@@ -205,7 +205,7 @@ public class DetailsView {
 			if (dirtyable.isDirty()) {
 				MessageDialog dialog = new MessageDialog(
 						detailComposite.getShell(), "Save vCard", null,
-						"The current vCard has been modified. Save changes?",
+						"Save changes in vCard?",
 						MessageDialog.CONFIRM, 0,
 						IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL);
