@@ -50,7 +50,7 @@ public class UIErrorDialogs extends TestCase {
 
     public void testErrorClipboard() {
         Dialog dialog = getMultiStatusErrorDialog();
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
 }

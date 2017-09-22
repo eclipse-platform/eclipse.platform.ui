@@ -113,7 +113,7 @@ public class UIWizards extends TestCase {
 
     public void testExportResources() {//reference: ExportResourcesAction
         Dialog dialog = exportWizard(null);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     /**
@@ -121,16 +121,16 @@ public class UIWizards extends TestCase {
      *
      public void testFileSystemExport() {
      Dialog dialog = exportWizard( DataTransferTestStub.newFileSystemResourceExportPage1(null) );
-     DialogCheck.assertDialog(dialog, this);
+     DialogCheck.assertDialog(dialog);
      }
      public void testZipFileExport() {
      Dialog dialog = exportWizard( DataTransferTestStub.newZipFileResourceExportPage1(null) );
-     DialogCheck.assertDialog(dialog, this);
+     DialogCheck.assertDialog(dialog);
      }
      */
     public void testImportResources() {//reference: ImportResourcesAction
         Dialog dialog = importWizard(null);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     /**
@@ -138,11 +138,11 @@ public class UIWizards extends TestCase {
      *
      public void testFileSystemImport() {
      Dialog dialog = importWizard( DataTransferTestStub.newFileSystemResourceImportPage1(WorkbenchPlugin.getDefault().getWorkbench(), StructuredSelection.EMPTY) );
-     DialogCheck.assertDialog(dialog, this);
+     DialogCheck.assertDialog(dialog);
      }
      public void testZipFileImport() {
      Dialog dialog = importWizard( DataTransferTestStub.newZipFileResourceImportPage1(null) );
-     DialogCheck.assertDialog(dialog, this);
+     DialogCheck.assertDialog(dialog);
      }
      */
     public void testNewFile() {
@@ -154,7 +154,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setText("CreateFileAction_title");
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
                 IIDEHelpContextIds.NEW_FILE_WIZARD);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testNewFolder() {
@@ -166,7 +166,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setText("CreateFolderAction_title");
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_FOLDER_WIZARD);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testNewProjectPage1() {
@@ -182,7 +182,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setText("CreateFileAction_title");
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testNewProjectPage2() {
@@ -205,7 +205,7 @@ public class UIWizards extends TestCase {
         dialog.showPage(page);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testNewProject() {
@@ -240,7 +240,7 @@ public class UIWizards extends TestCase {
                 SIZING_WIZARD_HEIGHT_2);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 
     public void testNewResource() {
@@ -271,7 +271,7 @@ public class UIWizards extends TestCase {
                 Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT_2);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IWorkbenchHelpContextIds.NEW_WIZARD);
-        DialogCheck.assertDialog(dialog, this);
+        DialogCheck.assertDialog(dialog);
     }
 }
 

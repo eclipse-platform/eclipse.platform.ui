@@ -29,7 +29,7 @@ public class UIFilteredResourcesSelectionDialog extends
 		final FilteredResourcesSelectionDialog dialog = new FilteredResourcesSelectionDialog(
 				DialogCheck.getShell(), true, input, IResource.FILE);
 		dialog.setInitialPattern("**");
-		DialogCheck.assertDialog(dialog, this);
+		DialogCheck.assertDialog(dialog);
 	}
 
 }
