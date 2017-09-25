@@ -57,38 +57,38 @@ public class UIPreferencesAuto extends TestCase {
 
     public void testWorkbenchPref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Workbench");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testAppearancePref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testDefaultTextEditorPref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testFileEditorsPref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileEditors");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testLocalHistoryPref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileStates");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testPerspectivesPref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     //Only really checking if this opens without an exception
     public void testFontEditorsPref() {
         Dialog dialog = getPreferenceDialog("org.eclipse.ui.tests.dialogs.FontFieldEditorTestPreferencePage");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testInfoProp() {
@@ -98,7 +98,7 @@ public class UIPreferencesAuto extends TestCase {
          * is an SWT issue.
          *
          Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.info.file");
-         DialogCheck.assertDialogTexts(dialog, this);
+         DialogCheck.assertDialogTexts(dialog);
          */
     }
 
@@ -109,7 +109,7 @@ public class UIPreferencesAuto extends TestCase {
          * is an SWT issue.
          *
          Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.project.reference");
-         DialogCheck.assertDialogTexts(dialog, this);
+         DialogCheck.assertDialogTexts(dialog);
          */
     }
 

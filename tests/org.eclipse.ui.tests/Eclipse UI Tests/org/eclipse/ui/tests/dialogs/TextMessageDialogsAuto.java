@@ -71,13 +71,13 @@ public class TextMessageDialogsAuto extends TestCase {
                     bundle
                             .getString("Editor_error_activated_deleted_close_message"));
         }
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testErrorClosing() {
         Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
                 WorkbenchMessages.ErrorClosingNoArg);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testFileChanged() {
@@ -90,7 +90,7 @@ public class TextMessageDialogsAuto extends TestCase {
                     bundle
                             .getString("Editor_error_activated_outofsync_message"));
         }
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
     public void testSaveFileDeleted() {
         MessageDialog dialog = null;
@@ -102,7 +102,7 @@ public class TextMessageDialogsAuto extends TestCase {
 					bundle.getString("Editor_error_activated_deleted_save_button_save"),
 					bundle.getString("Editor_error_activated_deleted_save_button_close"));
         }
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testUpdateConflict() {
@@ -114,7 +114,7 @@ public class TextMessageDialogsAuto extends TestCase {
                     .getString("Editor_error_save_outofsync_title"), bundle
                     .getString("Editor_error_save_outofsync_message"));
         }
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
 }

@@ -111,7 +111,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
         assertTrue(ArrayUtil.contains(workingSetItems, p1));
         assertTrue(ArrayUtil.contains(workingSetItems, p2));
 
-        DialogCheck.assertDialogTexts(fWizardDialog, this);
+		DialogCheck.assertDialogTexts(fWizardDialog);
     }
 }
 

@@ -86,12 +86,12 @@ public class UIMessageDialogsAuto extends TestCase {
         Dialog dialog = getWarningDialog(JFaceResources
                 .getString("AbortPageFlippingDialog.title"), JFaceResources
                 .getString("AbortPageFlippingDialog.message"));
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testCopyOverwrite() {
         Dialog dialog = getQuestionDialog("Exists","");
-         DialogCheck.assertDialogTexts(dialog, this);
+         DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testDeleteProject() {
@@ -101,7 +101,7 @@ public class UIMessageDialogsAuto extends TestCase {
 				msg, MessageDialog.QUESTION, 0,
 				IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testDeleteReadOnlyCheck() {
@@ -112,17 +112,17 @@ public class UIMessageDialogsAuto extends TestCase {
 				IDialogConstants.YES_TO_ALL_LABEL,
 				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testDeleteResource() {
         Dialog dialog = getQuestionDialog("Delete","");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testDeleteResources() {
 		  Dialog dialog = getQuestionDialog("Delete","");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testDropOverwrite() {
@@ -135,42 +135,42 @@ public class UIMessageDialogsAuto extends TestCase {
 				IDialogConstants.YES_TO_ALL_LABEL,
 				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testErrorClosing() {
         Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
                 WorkbenchMessages.ErrorClosingNoArg);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
     public void testFileExtensionEmpty() {
         Dialog dialog = getInformationDialog(
                 "Empty",
                 "ExtensionEmptyMessage");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testFileNameWrong() {
         Dialog dialog = getInformationDialog(
                 "InvalidTitle",
                "InvalidMessage");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testFileTypeExists() {
         Dialog dialog = getInformationDialog(WorkbenchMessages.FileEditorPreference_existsTitle,
                 WorkbenchMessages.FileEditorPreference_existsMessage);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testInvalidType_1() {
         Dialog dialog = getWarningDialog("invalidTitle","invalidMessage");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testInvalidType_2() {
         Dialog dialog = getWarningDialog("invalidType", "invalidTypeMessage");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testMoveReadOnlyCheck() {
@@ -180,28 +180,28 @@ public class UIMessageDialogsAuto extends TestCase {
                 IDialogConstants.YES_TO_ALL_LABEL,
                 IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testNoBuilders() {
         Dialog dialog = getWarningDialog("BuildAction_warning", "noBuilders");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testNoGlobalBuildersDialog() {
         Dialog dialog = getWarningDialog("GlobalBuildAction_warning","GlobalBuildAction_noBuilders");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testNoPropertyPage() {
         Dialog dialog = getInformationDialog(WorkbenchMessages.PropertyDialog_messageTitle, NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage, (new Object[] { "DummyPropertyPage" })));
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
 
     public void testOperationNotAvailable() {
         Dialog dialog = getInformationDialog(WorkbenchMessages.Information, "operationNotAvailableMessage");
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testOverwritePerspective() {
@@ -211,7 +211,7 @@ public class UIMessageDialogsAuto extends TestCase {
 				IDialogConstants.YES_LABEL,
 				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testRefreshDeleteProject() {
@@ -220,12 +220,12 @@ public class UIMessageDialogsAuto extends TestCase {
                 MessageDialog.QUESTION, 0,
                 IDialogConstants.YES_LABEL,
                 IDialogConstants.NO_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testRenameOverwrite() {
         Dialog dialog = getQuestionDialog(".RenameResourceAction_resourceExist",DUMMY_RELATIVE_PATH);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testResetPerspective() {
@@ -233,7 +233,7 @@ public class UIMessageDialogsAuto extends TestCase {
                 MessageDialog.QUESTION, 0,
                 IDialogConstants.OK_LABEL,
                 IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testSaveAsOverwrite() {
@@ -242,7 +242,7 @@ public class UIMessageDialogsAuto extends TestCase {
 				IDialogConstants.YES_LABEL,
 				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testSaveChanges() {
@@ -250,7 +250,7 @@ public class UIMessageDialogsAuto extends TestCase {
                 0,
 				WorkbenchMessages.Save, WorkbenchMessages.Dont_Save,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
 
@@ -261,7 +261,7 @@ public class UIMessageDialogsAuto extends TestCase {
 						.getString("WizardClosingDialog_message"),
                 MessageDialog.QUESTION,
 				0, IDialogConstants.OK_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
     public void testWizardOverwrite() {
@@ -270,7 +270,7 @@ public class UIMessageDialogsAuto extends TestCase {
 				IDialogConstants.YES_TO_ALL_LABEL,
 				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
 }

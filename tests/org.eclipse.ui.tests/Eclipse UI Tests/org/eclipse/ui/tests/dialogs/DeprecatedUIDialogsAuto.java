@@ -36,7 +36,7 @@ public class DeprecatedUIDialogsAuto extends TestCase {
                 new WorkbenchContentProvider(),
                 new WorkbenchPartLabelProvider(), WorkbenchMessages.EditorManager_saveResourcesMessage);
         dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
-        DialogCheck.assertDialogTexts(dialog, this);
+        DialogCheck.assertDialogTexts(dialog);
     }
 
 }
