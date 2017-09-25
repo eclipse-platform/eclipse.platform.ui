@@ -112,14 +112,7 @@ public class DialogCheck {
 	 */
 	@Deprecated
     public static void assertDialogTexts(Dialog dialog, Assert assertion) {
-		assertNotNull(dialog);
-        dialog.setBlockOnOpen(false);
-        dialog.open();
-        Shell shell = dialog.getShell();
-		verifyCompositeText(shell);
-		dialog.close();
-		// close "verify results" dialog, it makes other tests unhappy
-		_verifyDialog.buttonPressed(IDialogConstants.YES_ID);
+		assertDialogTexts(dialog);
     }
 
 	/**
