@@ -13,9 +13,12 @@ package org.eclipse.core.tests.internal.events;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.events.BuildCommand;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.internal.builders.ConfigurationBuilder;
 import org.eclipse.core.tests.resources.AutomatedTests;
 import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.core.tests.resources.regression.SimpleBuilder;
@@ -85,7 +88,7 @@ public class BuildProjectFromMultipleJobsTest extends ResourceTest {
 		int jobs = 8;
 
 		for (int i = 0; i < iterations; ++i) {
-			IProject project = createTestProject(monitor);
+			IProject project = createTestProject(SimpleBuilder.BUILDER_ID, monitor);
 
 			List<BuildTestProject> buildJobs = new ArrayList<>();
 			for (int j = 0; j < jobs; ++j) {
@@ -108,7 +111,30 @@ public class BuildProjectFromMultipleJobsTest extends ResourceTest {
 		}
 	}
 
-	private IProject createTestProject(IProgressMonitor monitor) throws CoreException {
+
+	/**
+	 * Tests that modifying {@link BuildCommand#getBuilders()} map does not allow to modify internal state of the command.
+	 */
+	@SuppressWarnings("rawtypes")
+	public void testBuildersAreNotModifiable() throws Exception {
+		Project project = (Project) createTestProject(ConfigurationBuilder.BUILDER_NAME, null);
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+		// Get a non-cloned version of the project desc build spec
+		BuildCommand buildCommand = (BuildCommand) project.internalGetDescription().getBuildSpec(false)[0];
+		Map buildersMap = (Map) buildCommand.getBuilders();
+		assertEquals(1, buildersMap.size());
+
+		// Try to change the internal data
+		buildersMap.clear();
+		assertEquals(0, buildersMap.size());
+
+		// Should still be OK
+		buildersMap = (Map) buildCommand.getBuilders();
+		assertEquals("BuildCommand state was changed!", 1, buildersMap.size());
+	}
+
+	private IProject createTestProject(String builderId, IProgressMonitor monitor) throws CoreException {
 		IProject project = getTestProject();
 		assertFalse("Expected test project to not exist at beginning of test", project.exists());
 
@@ -119,7 +145,7 @@ public class BuildProjectFromMultipleJobsTest extends ResourceTest {
 		IProjectDescription projectDescription = project.getDescription();
 		ICommand[] buildSpec = projectDescription.getBuildSpec();
 		ICommand command = projectDescription.newCommand();
-		command.setBuilderName(SimpleBuilder.BUILDER_ID);
+		command.setBuilderName(builderId);
 		Collection<ICommand> builders = new ArrayList<>(Arrays.asList(buildSpec));
 		builders.add(command);
 		projectDescription.setBuildSpec(builders.toArray(new ICommand[] {}));
