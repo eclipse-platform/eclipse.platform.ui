@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2015, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sascha Becher - Bug 186404 - Update PatternFilter API to allow extensions
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 203792] filter should support multiple keywords
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -173,7 +174,9 @@ public class PatternFilter extends ViewerFilter {
         if (patternString == null || patternString.equals("")) { //$NON-NLS-1$
 			matcher = null;
 		} else {
-			String pattern = patternString + "*"; //$NON-NLS-1$
+			String pattern = patternString;
+			if (!patternString.endsWith(" ")) //$NON-NLS-1$
+				pattern += "*"; //$NON-NLS-1$
 			if (includeLeadingWildcard) {
 				pattern = "*" + pattern; //$NON-NLS-1$
 			}
