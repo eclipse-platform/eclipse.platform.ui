@@ -10,6 +10,7 @@
  *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *     Stefan Xenos <sxenos@google.com> - Bug 466793
+ *     Lucas Bullen (Red Hat Inc.) - Bug 500051
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -36,12 +37,15 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -49,11 +53,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
@@ -66,6 +73,8 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
+import org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard;
 import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
@@ -180,6 +189,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	private IHandlerActivation showViewHandler;
 
 	private boolean locked;
+
+	private Image importImage;
+
+	private Image exportImage;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -353,6 +366,61 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 			((PreferencePage) page).applyData(this.pageData);
 		}
 
+	}
+
+	@Override
+	protected Control createHelpControl(Composite parent) {
+		Control control = super.createHelpControl(parent);
+		if (control instanceof ToolBar) {
+			ToolBar toolBar = (ToolBar) control;
+
+			new ToolItem(toolBar, SWT.SEPARATOR).setWidth(0);
+
+			ToolItem importButton = new ToolItem(toolBar, SWT.PUSH);
+			importImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ)
+					.createImage();
+			importButton.setImage(importImage);
+			importButton.setToolTipText(WorkbenchMessages.Preference_importTooltip);
+			importButton.addListener(SWT.Selection, e -> openImportWizard(parent));
+
+			new ToolItem(toolBar, SWT.SEPARATOR).setWidth(0);
+
+			ToolItem exportButton = new ToolItem(toolBar, SWT.PUSH);
+			exportImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ)
+					.createImage();
+			exportButton.setImage(exportImage);
+			exportButton.setToolTipText(WorkbenchMessages.Preference_exportTooltip);
+			exportButton.addListener(SWT.Selection, e -> openExportWizard(parent));
+		} else if (control instanceof Link) {
+			Composite linkParent = ((Link) control).getParent();
+			Link importLink = new Link(linkParent, SWT.WRAP | SWT.NO_FOCUS);
+			((GridLayout) parent.getLayout()).numColumns++;
+			importLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+			importLink.setText(" <a>" + WorkbenchMessages.Preference_import + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+			importLink.addListener(SWT.Selection, e -> openImportWizard(parent));
+
+			Link exportLink = new Link(linkParent, SWT.WRAP | SWT.NO_FOCUS);
+			((GridLayout) parent.getLayout()).numColumns++;
+			exportLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+			exportLink.setText(" <a>" + WorkbenchMessages.Preference_export + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+			exportLink.addListener(SWT.Selection, e -> openExportWizard(parent));
+		}
+		return control;
+	}
+
+	private void openImportWizard(Composite parent) {
+		Wizard importWizard = new PreferencesImportWizard();
+		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), importWizard);
+		wizardDialog.open();
+		if (wizardDialog.getReturnCode() == 0) {
+			parent.getShell().close();
+		}
+	}
+
+	private void openExportWizard(Composite parent) {
+		Wizard exportWizard = new PreferencesExportWizard();
+		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), exportWizard);
+		wizardDialog.open();
 	}
 
 	@Override
@@ -607,6 +675,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		}
 		removeKeyScrolling();
 		history.dispose();
+		if (importImage != null)
+			importImage.dispose();
+		if (exportImage != null)
+			exportImage.dispose();
 		return super.close();
 	}
 
