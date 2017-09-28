@@ -2224,6 +2224,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	private char[] mergeResults(Collection<IContentAssistProcessor> processors, Function<IContentAssistProcessor, char[]> f) {
+		if (processors == null) {
+			return null;
+		}
 		char[][] arrays = processors.stream()
 			.map(f)
 			.filter(Objects::nonNull)
@@ -2490,12 +2493,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireSessionBeginEvent(boolean isAutoActivated) {
 		if (fContentAssistSubjectControlAdapter != null && !isProposalPopupActive()) {
-			getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x).forEach(processor -> {
-				ContentAssistEvent event= new ContentAssistEvent(this, processor, isAutoActivated);
-				for (ICompletionListener listener : fCompletionListeners) {
-					listener.assistSessionStarted(event);
-				}
-			});
+			Set<IContentAssistProcessor> processors= getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+			if (processors != null) {
+				processors.forEach(processor -> {
+					ContentAssistEvent event= new ContentAssistEvent(this, processor, isAutoActivated);
+					for (ICompletionListener listener : fCompletionListeners) {
+						listener.assistSessionStarted(event);
+					}
+				});
+			}
 		}
 	}
 
@@ -2506,13 +2512,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireSessionRestartEvent() {
 		if (fContentAssistSubjectControlAdapter != null) {
-			getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x).forEach(processor -> {
-				ContentAssistEvent event= new ContentAssistEvent(this, processor);
-				for (ICompletionListener listener : fCompletionListeners) {
-					if (listener instanceof ICompletionListenerExtension)
-						((ICompletionListenerExtension)listener).assistSessionRestarted(event);
-				}
-			});
+			Set<IContentAssistProcessor> processors= getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+			if (processors != null) {
+				processors.forEach(processor -> {
+					ContentAssistEvent event= new ContentAssistEvent(this, processor);
+					for (ICompletionListener listener : fCompletionListeners) {
+						if (listener instanceof ICompletionListenerExtension)
+							((ICompletionListenerExtension)listener).assistSessionRestarted(event);
+					}
+				});
+			}
 		}
 	}
 
@@ -2523,12 +2532,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireSessionEndEvent() {
 		if (fContentAssistSubjectControlAdapter != null) {
-			getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x).forEach(processor -> {
-				ContentAssistEvent event= new ContentAssistEvent(this, processor);
-				for (ICompletionListener listener : fCompletionListeners) {
-					listener.assistSessionEnded(event);
-				}
-			});
+			Set<IContentAssistProcessor> processors= getProcessors(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+			if (processors != null) {
+				processors.forEach(processor -> {
+					ContentAssistEvent event= new ContentAssistEvent(this, processor);
+					for (ICompletionListener listener : fCompletionListeners) {
+						listener.assistSessionEnded(event);
+					}
+				});
+			}
 		}
 	}
 
