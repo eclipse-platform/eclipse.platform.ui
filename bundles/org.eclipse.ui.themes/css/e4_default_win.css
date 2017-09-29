@@ -118,3 +118,22 @@ Section {
   	background-color-gradient-titlebar: #eaeaea;
   	border-color-titlebar: #ffffff;
 }
+
+TabbedPropertyTitle > CLabel{
+	color: #505050;
+}
+
+TabbedPropertyTitle {
+	swt-backgroundGradientStart-color:  #eaeaea;
+	swt-backgroundGradientEnd-color:    #eaeaea;
+	swt-backgroundBottomKeyline1-color: #eaeaea;
+	swt-backgroundBottomKeyline2-color: #eaeaea;
+}
+
+TabbedPropertyList {
+	swt-tabAreaBackground-color : #ffffff;
+	swt-tabBackground-color     : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START';
+	swt-tabNormalShadow-color   : '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';             /* color of shadow lines around the tabs */
+	swt-tabDarkShadow-color     : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR'; /* line color of the tiny scroll triangle (at top / at bottom) */
+	color                       : #505050; /* text color in the tab / tab area */
+}
