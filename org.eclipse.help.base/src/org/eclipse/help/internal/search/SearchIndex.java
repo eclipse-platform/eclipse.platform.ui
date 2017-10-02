@@ -46,11 +46,10 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.LogByteSizeMergePolicy;
 import org.apache.lucene.index.LogMergePolicy;
 import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowCompositeReaderWrapper;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -562,15 +561,18 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	public IStatus removeDuplicates(String name, String[] index_paths) {
 
-		try (LeafReader ar = SlowCompositeReaderWrapper.wrap(ir)) {
+		try (DirectoryReader ar = DirectoryReader.open(luceneDirectory)) {
 			PostingsEnum hrefDocs = null;
 			PostingsEnum indexDocs = null;
 			Term hrefTerm = new Term(FIELD_NAME, name);
 			for (int i = 0; i < index_paths.length; i++) {
 				Term indexTerm = new Term(FIELD_INDEX_ID, index_paths[i]);
-				hrefDocs = ar.postings(hrefTerm);
-				indexDocs = ar.postings(indexTerm);
-				removeDocuments(hrefDocs, indexDocs);
+				List<LeafReaderContext> leaves = ar.leaves();
+				for (LeafReaderContext c : leaves) {
+					indexDocs = c.reader().postings(indexTerm);
+					hrefDocs = c.reader().postings(hrefTerm);
+					removeDocuments(hrefDocs, indexDocs);
+				}
 			}
 		} catch (IOException ioe) {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
@@ -750,9 +752,9 @@ public class SearchIndex implements IHelpSearchIndex {
 		}
 		Version luceneVersion = new Version(luceneVersionString);
 		Version indexVersion = new Version(indexVersionString);
-		Version v610 = new Version(6, 1, 0);
-		if (indexVersion.compareTo(v610) < 0) {
-			// index is older than Lucene 6.1.0
+		Version v700 = new Version(7, 0, 0);
+		if (indexVersion.compareTo(v700) < 0) {
+			// index is older than Lucene 7.0.0
 			return false;
 		}
 		if ( luceneVersion.compareTo(indexVersion) >= 0 ) {

@@ -83,9 +83,17 @@ public class PrebuiltIndexCompatibility {
 	/**
 	 * Test index built with Lucene 6.1.0
 	 */
-	@Test
-	public void test6_1_0_IndexReadable() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void test6_1_0_IndexUnReadable() throws Exception {
 		checkReadable("data/help/searchindex/index610");
+	}
+
+	/**
+	 * Test index built with Lucene 7.0.0
+	 */
+	@Test
+	public void test7_0_0_IndexReadable() throws Exception {
+		checkReadable("data/help/searchindex/index700");
 	}
 
 	/**
@@ -119,7 +127,15 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void test6_1_0Compatible() {
-		checkCompatible("data/help/searchindex/index610", true);
+		checkCompatible("data/help/searchindex/index610", false);
+	}
+
+	/**
+	 ** Test compatibility of Lucene 7.0.0 index with current Lucene
+	 */
+	@Test
+	public void test7_0_0Compatible() {
+		checkCompatible("data/help/searchindex/index700", true);
 	}
 
 	@Test
@@ -147,7 +163,12 @@ public class PrebuiltIndexCompatibility {
 
 	@Test
 	public void test6_1_0LuceneCompatible() {
-		checkLuceneCompatible("6.1.0", true);
+		checkLuceneCompatible("6.1.0", false);
+	}
+
+	@Test
+	public void test7_0_0LuceneCompatible() {
+		checkLuceneCompatible("7.0.0", true);
 	}
 
 	@Test
