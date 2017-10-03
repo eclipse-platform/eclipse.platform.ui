@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.swt.SWT;
@@ -28,7 +28,7 @@ public class JFaceViewerPopupTests extends PopupTests {
     }
 
     @Override
-	protected ITreeModelViewer createViewer(Display display, Shell shell, int style) {
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell, int style) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL | style, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

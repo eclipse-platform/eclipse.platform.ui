@@ -11,17 +11,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests which verify the check box support.  This test is very similar to the
@@ -31,64 +24,18 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class CheckTests extends AbstractDebugTest {
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class CheckTests extends AbstractViewerModelTest {
 
     public CheckTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
+	@Override
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, false, false);
+	}
 
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, false, false);
-
-        fShell.open ();
-    }
-
-    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-
-    public void testSimpleSingleLevel() throws InterruptedException {
+	public void testSimpleSingleLevel() throws Exception {
         // Create the model with test data
         TestModel model = TestModel.simpleSingleLevel();
 
@@ -105,16 +52,12 @@ abstract public class CheckTests extends AbstractDebugTest {
         fViewer.setInput(model.getRootElement());
 
         // Wait for the updates to complete.
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
-    public void testSimpleMultiLevel() throws InterruptedException {
+	public void testSimpleMultiLevel() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = TestModel.simpleMultiLevel();
@@ -124,11 +67,7 @@ abstract public class CheckTests extends AbstractDebugTest {
 
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -163,7 +102,7 @@ abstract public class CheckTests extends AbstractDebugTest {
 //        Assert.assertTrue(element.getChecked() != initialCheckState);
 //    }
 
-    public void testUpdateCheck() throws InterruptedException {
+	public void testUpdateCheck() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = TestModel.simpleSingleLevel();
@@ -174,11 +113,7 @@ abstract public class CheckTests extends AbstractDebugTest {
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         // Update the model
@@ -189,12 +124,7 @@ abstract public class CheckTests extends AbstractDebugTest {
 
         fListener.reset(elementPath, element, -1, true, false);
         model.postDelta(delta);
-        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.LABEL_COMPLETE | ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ITestModelUpdatesListenerConstants.LABEL_COMPLETE | ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
     }
-
 }

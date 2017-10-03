@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.swt.widgets.Display;
@@ -27,7 +27,7 @@ public class VirtualViewerUpdateTests extends UpdateTests {
     }
 
     @Override
-	protected ITreeModelViewer createViewer(Display display, Shell shell) {
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

@@ -11,83 +11,37 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests to measure the performance of the viewer updates.
  */
-abstract public class PerformanceTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class PerformanceTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
+
+	protected VisibleVirtualItemValidator fVirtualItemValidator;
 
     public PerformanceTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Override
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, false, false);
+	}
+
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fVirtualItemValidator = new VisibleVirtualItemValidator(0, Integer.MAX_VALUE);
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, false, false);
-
-        fShell.open();
-    }
-
-    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+		fVirtualItemValidator = new VisibleVirtualItemValidator(0, Integer.MAX_VALUE);
     }
 
     /**
@@ -97,9 +51,8 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
      */
     abstract protected int getTestModelDepth();
 
-    protected VisibleVirtualItemValidator fVirtualItemValidator;
 
-    public void testRefreshStruct() throws InterruptedException {
+	public void testRefreshStruct() throws Exception {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements(model, getTestModelDepth(), "model.")); //$NON-NLS-1$
@@ -111,11 +64,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
@@ -130,11 +79,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
                 meter.stop();
                 System.gc();
             }
@@ -146,7 +91,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
         }
     }
 
-    public void testRefreshStruct2() throws InterruptedException {
+	public void testRefreshStruct2() throws Exception {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements2(model, new int[] { 2, 3000, 1 }, "model.")); //$NON-NLS-1$
@@ -158,14 +103,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE))
-		 {
-			if (!fDisplay.readAndDispatch ())
-			 {
-				Thread.sleep(0);
-				//model.validateData(fViewer, TreePath.EMPTY);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         fVirtualItemValidator.setVisibleRange(0, 50);
 
@@ -182,17 +120,9 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-                while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
                 meter.stop();
                 System.gc();
             }
@@ -205,7 +135,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
     }
 
 
-    public void testRefreshStructReplaceElements() throws InterruptedException {
+	public void testRefreshStructReplaceElements() throws Exception {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements(model, getTestModelDepth(), "model.")); //$NON-NLS-1$
@@ -217,11 +147,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
@@ -236,11 +162,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
                 meter.stop();
                 System.gc();
             }
@@ -253,7 +175,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
     }
 
 
-    public void testRefreshList() throws InterruptedException {
+	public void testRefreshList() throws Exception {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
         int numElements = (int)Math.pow(2, getTestModelDepth());
@@ -266,11 +188,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
@@ -285,11 +203,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
                 meter.stop();
                 System.gc();
             }
@@ -301,7 +215,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
         }
     }
 
-    public void testSaveAndRestore() throws InterruptedException {
+	public void testSaveAndRestore() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -313,11 +227,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         // Set a selection in view
@@ -338,11 +248,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
                 meter.start();
                 fViewer.setInput(null);
-                while (!fListener.isFinished(STATE_SAVE_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE), createListenerErrorMessage());
 
                 // Set the viewer input back to the model.  When view updates are complete
                 // the viewer
@@ -350,11 +256,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
                 fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
                 // TODO: add state updates somehow?
                 fViewer.setInput(model.getRootElement());
-                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
                 meter.stop();
                 System.gc();
             }
@@ -367,7 +269,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
     }
 
-    public void testRefreshListFiltered() throws InterruptedException {
+	public void testRefreshListFiltered() throws Exception {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
         int numElements = (int)Math.pow(2, getTestModelDepth());
@@ -396,11 +298,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
@@ -415,11 +313,7 @@ abstract public class PerformanceTests extends AbstractDebugTest implements ITes
 
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-					if (!fDisplay.readAndDispatch ()) {
-						Thread.sleep(0);
-					}
-				}
+				waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
                 meter.stop();
                 System.gc();
             }

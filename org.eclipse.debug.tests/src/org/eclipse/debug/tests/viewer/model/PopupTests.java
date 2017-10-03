@@ -18,19 +18,16 @@ import java.util.Set;
 
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests to verify that the viewer property updates when created
@@ -38,63 +35,32 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class PopupTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class PopupTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
     public PopupTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fViewer = createViewer(fDisplay, fShell, SWT.POP_UP);
-
-        fListener = new TestModelUpdatesListener(fViewer, false, false);
-
-        fShell.open ();
-    }
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, false, false);
+	}
 
     protected IInternalTreeModelViewer getCTargetViewer() {
-        return (IInternalTreeModelViewer)fViewer;
+        return fViewer;
     }
 
+	@Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+		return createViewer(display, shell, SWT.POP_UP);
+	}
 
-    abstract protected ITreeModelViewer createViewer(Display display, Shell shell, int style);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
+	abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell, int style);
 
     /**
      * This test verifies that content updates are still being performed.
      */
-    public void testRefreshStruct() throws InterruptedException {
+	public void testRefreshStruct() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = TestModel.simpleSingleLevel();
@@ -105,11 +71,7 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         // Update the model
@@ -124,18 +86,14 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
 
         fListener.reset(elementPath, element, -1, true, false);
         model.postDelta(delta);
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
     /**
      * This test verifies that expand and select updates are being ignored.
      */
-    public void testExpandAndSelect() throws InterruptedException {
+	public void testExpandAndSelect() throws Exception {
         TestModel model = TestModel.simpleMultiLevel();
 
         // Create the listener
@@ -143,11 +101,7 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Create the delta
@@ -166,24 +120,15 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
 
         // Validate the expansion state BEFORE posting the delta.
 
-        IInternalTreeModelViewer contentProviderViewer = (IInternalTreeModelViewer)fViewer;
+        IInternalTreeModelViewer contentProviderViewer = fViewer;
         assertFalse(contentProviderViewer.getExpandedState(path_root_3));
 
         model.postDelta(deltaRoot);
-        while (true) {
-            if (fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-                if (fListener.isFinished(CONTENT_SEQUENCE_STARTED)) {
-                    if (fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            }
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		TestUtil.processUIEvents();
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE)
+				&& (fListener.isFinished(CONTENT_SEQUENCE_STARTED)
+						|| !fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)),
+				createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Validate the expansion state AFTER posting the delta.
@@ -199,9 +144,7 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
         }
     }
 
-
-
-    public void testPreserveExpandedOnSubTreeContent() throws InterruptedException {
+	public void testPreserveExpandedOnSubTreeContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -213,11 +156,7 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Turn off auto-expansion
@@ -242,11 +181,7 @@ abstract public class PopupTests extends AbstractDebugTest implements ITestModel
 
         // Post the sub-tree update
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);

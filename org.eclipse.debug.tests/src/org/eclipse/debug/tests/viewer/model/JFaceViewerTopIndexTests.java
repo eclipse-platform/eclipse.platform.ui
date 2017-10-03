@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -21,76 +20,29 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisito
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
-import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.6
  */
-public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-
-    Display fDisplay;
-    Shell fShell;
-    TreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
     public JFaceViewerTopIndexTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setSize(300, 80);
-        fShell.setLayout(new FillLayout());
+	@Override
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, false, false);
+	}
 
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, false, false);
-
-        fShell.open ();
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-
-    protected IInternalTreeModelViewer getCTargetViewer() {
-        return fViewer;
+	protected final TreeModelViewer getCTargetViewer() {
+		return (TreeModelViewer) fViewer;
     }
 
     /**
@@ -98,7 +50,8 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      * @param shell the shell
      * @return the new viewer
      */
-    protected TreeModelViewer createViewer(Display display, Shell shell) {
+    @Override
+	protected TreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL | SWT.MULTI, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 
@@ -106,8 +59,8 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      * Restore REVEAL on simple model with elements without children.
      *
      */
-    public void testRestoreTopIndex() throws InterruptedException {
-        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+	public void testRestoreTopIndex() throws Exception {
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
     	TestModel model = new TestModel();
 
@@ -127,11 +80,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Stop forcing view updates.
@@ -140,7 +89,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         // scroll to the 5th element
         int indexRevealElem = 4;
         getCTargetViewer().reveal(TreePath.EMPTY, indexRevealElem);
-        while(fDisplay.readAndDispatch()) {}
+		TestUtil.processUIEvents();
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", originalTopPath); //$NON-NLS-1$
         // Bug 116105: On a Mac the reveal call is not reliable.  Use the viewer returned path instead.
@@ -155,22 +104,14 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Set the viewer input back to the model to trigger RESTORE operation.
         fListener.reset(false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
-        while (fDisplay.readAndDispatch ()) {}
+		TestUtil.processUIEvents();
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", topPath); //$NON-NLS-1$
@@ -183,8 +124,8 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      *
      * See bug 324100
      */
-    public void testRestoreTopAndExpand() throws InterruptedException {
-        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+	public void testRestoreTopAndExpand() throws Exception {
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
         TestModel model = new TestModel();
 
@@ -213,11 +154,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand first element
@@ -235,11 +172,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         model.postDelta(rootDelta);
 
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Validate that the first node is expanded
         assertTrue(getCTargetViewer().getExpandedState(firstElemPath) == true);
@@ -249,7 +182,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // scroll to the 2nd element
         getCTargetViewer().reveal(TreePath.EMPTY, 1);
-        while(fDisplay.readAndDispatch()) {}
+		TestUtil.processUIEvents();
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", originalTopPath); //$NON-NLS-1$
         // Bug 116105: On a Mac the reveal call is not reliable.  Use the viewer returned path instead.
@@ -263,22 +196,14 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         fListener.reset(true, false);
         fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE), createListenerErrorMessage());
 
         // Set the viewer input back to the model
         fListener.reset(false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
-        while (fDisplay.readAndDispatch ()) {}
+		TestUtil.processUIEvents();
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", topPath); //$NON-NLS-1$
@@ -291,8 +216,8 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      *
      * See bug 324100
      */
-    public void testRestoreTopTriggersExpand() throws InterruptedException {
-        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+	public void testRestoreTopTriggersExpand() throws Exception {
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
         TestModel model = new TestModel();
 
@@ -323,11 +248,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         int indexLastElem = elements.length-1;
@@ -343,7 +264,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // scroll to the element before last element
         getCTargetViewer().reveal(TreePath.EMPTY, indexLastElem-1);
-        while(fDisplay.readAndDispatch()) {}
+		TestUtil.processUIEvents();
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", originalTopPath); //$NON-NLS-1$
 
@@ -356,22 +277,14 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Set the viewer input back to the model.
         fListener.reset(false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
-        while (fDisplay.readAndDispatch ()) {}
+		TestUtil.processUIEvents();
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", topPath); //$NON-NLS-1$
@@ -383,8 +296,8 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      * This test verifies that canceling a reveal pending state delta is
      * properly handled when a new reveal delta is received from the model.
      */
-    public void testRestoreRevealAfterRevealCancel() throws InterruptedException {
-        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+	public void testRestoreRevealAfterRevealCancel() throws Exception {
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
         TestModel model = TestModel.simpleMultiLevel();
 
         // Expand all
@@ -395,11 +308,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Stop autopopulating the view.
@@ -407,7 +316,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // Set top index of view to element "3" and wait for view to repaint.
         getCTargetViewer().reveal(TreePath.EMPTY, 2);
-        while(fDisplay.readAndDispatch()) {}
+		TestUtil.processUIEvents();
 
         // Trigger save of state.
         fListener.reset();
@@ -422,11 +331,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 		TreePath elementPath = model.findElement("3"); //$NON-NLS-1$
         fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 1, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Update the viewer with new selection delta to something new in the view
 		ModelDelta revealDelta = model.makeElementDelta(model.findElement("2.1"), IModelDelta.REVEAL); //$NON-NLS-1$
@@ -434,11 +339,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         // Wait for the second model delta to process
         fListener.reset();
         model.postDelta(revealDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Clear view then reset it again.
         fListener.reset();
@@ -447,13 +348,9 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 			Thread.sleep(0);
 		}
 
-        autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+		autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_RESTORE_COMPLETE), createListenerErrorMessage());
         autopopulateAgent.dispose();
     }
 
@@ -462,12 +359,12 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      * This test verifies that canceling a reveal pending state delta is
      * properly handled when a new reveal delta is received from the model.
      */
-    public void testRestoreRevealAfterRevealCancel2() throws InterruptedException {
+	public void testRestoreRevealAfterRevealCancel2() throws Exception {
     	if (Platform.getOS().equals(Platform.OS_MACOSX)) {
     		// skip this test on Mac - see bug 327557
     		return;
     	}
-        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
         TestModel model = TestModel.simpleMultiLevel();
 
         // Expand all
@@ -478,11 +375,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Stop auto-populating and auto-expanding the view.
@@ -491,7 +384,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // Set top index of view to element "3" and wait for view to repaint.
         getCTargetViewer().reveal(TreePath.EMPTY, 2);
-        while(fDisplay.readAndDispatch()) {}
+		TestUtil.processUIEvents();
 
         // Trigger save of state.
         fListener.reset();
@@ -508,11 +401,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 		elementPath = model.findElement("3"); //$NON-NLS-1$
         fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 0, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_UPDATES), createListenerErrorMessage());
 
         // Update the viewer with new selection delta to something new in the view
 		TreePath pathToBeRevealed = model.findElement("2.1"); //$NON-NLS-1$
@@ -528,11 +417,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // Wait for the second model delta to process
         model.postDelta(revealDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_UPDATES | LABEL_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_UPDATES | LABEL_UPDATES), createListenerErrorMessage());
 
         // check if REVEAL was triggered by the delta and not by the
         // state restore operation
@@ -549,8 +434,8 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
      *
      * See bug 324100
      */
-    public void testRestoreDeepTreeAndReveal() throws InterruptedException {
-        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+	public void testRestoreDeepTreeAndReveal() throws Exception {
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
         TestModel model = TestModel.simpleDeepMultiLevel();
         fViewer.setAutoExpandLevel(-1);
@@ -562,11 +447,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Stop forcing view updates.
@@ -574,7 +455,7 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
         // Scroll down to the last part of the tree.
 		getCTargetViewer().reveal(model.findElement("3.6.3.16.16.16.16.16"), 1); //$NON-NLS-1$
-        while(fDisplay.readAndDispatch()) {}
+		TestUtil.processUIEvents();
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", originalTopPath); //$NON-NLS-1$
 
@@ -586,23 +467,15 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
         fListener.reset(true, false);
         fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE), createListenerErrorMessage());
 
         // Set the viewer input back to the model
         fListener.reset(false, false);
         fListener.addUpdates(getCTargetViewer(), originalTopPath, (TestElement)originalTopPath.getLastSegment(), 0, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(STATE_UPDATES | CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_UPDATES | CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
-        while (fDisplay.readAndDispatch ()) {}
+		TestUtil.processUIEvents();
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
 		assertNotNull("Top item should not be null!", topPath); //$NON-NLS-1$
@@ -614,9 +487,9 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 	 * This test verifies that a revealed node does not get scrolled away due to
 	 * structural updates.
 	 */
-	public void testRevealWithContentChanges() throws InterruptedException {
+	public void testRevealWithContentChanges() throws Exception {
 		@SuppressWarnings("unused")
-		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 		TestModel model = TestModel.simpleDeepMultiLevel();
 
 		// Expand first level
@@ -627,17 +500,12 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
 		// Set the input into the view and update the view.
 		fViewer.setInput(model.getRootElement());
-		while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 		model.validateData(fViewer, TreePath.EMPTY, true);
 
 		// Set top index of view to element "2" and wait for view to repaint.
 		getCTargetViewer().reveal(TreePath.EMPTY, 1);
-		while (fDisplay.readAndDispatch()) {
-		}
+		TestUtil.processUIEvents();
 		TreePath element2Path = model.findElement("2"); //$NON-NLS-1$
 		TreePath pathToBeRevealed = element2Path;
 		TreePath topPath = getCTargetViewer().getTopElementPath();
@@ -663,19 +531,11 @@ public class JFaceViewerTopIndexTests extends AbstractDebugTest implements ITest
 
 		// Wait for the model delta to process
 		model.postDelta(revealDelta);
-		while (!fListener.isFinished(CHILD_COUNT_UPDATES_STARTED)) {
-			if (!fDisplay.readAndDispatch()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CHILD_COUNT_UPDATES_STARTED), createListenerErrorMessage());
 
 		model.setQeueueingUpdate(false);
 
-		while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
 		// check if REVEAL actually revealed the desired element
 		topPath = getCTargetViewer().getTopElementPath();

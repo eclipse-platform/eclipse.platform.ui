@@ -13,23 +13,17 @@ package org.eclipse.debug.tests.viewer.model;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewerFilter;
-import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests that verify that the viewer property retrieves all the content
@@ -37,68 +31,20 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.8
  */
-abstract public class FilterTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class FilterTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
     public FilterTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, true, true);
-
-        fShell.open ();
-    }
-
-    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
+	@Override
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, true, true);
+	}
 
     protected IInternalTreeModelViewer getInternalViewer() {
-        return (IInternalTreeModelViewer)fViewer;
+        return fViewer;
     }
-
 
     class TestViewerFilter extends ViewerFilter {
 
@@ -147,37 +93,37 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         }
     }
 
-    public void testSimpleSingleLevel() throws InterruptedException {
+	public void testSimpleSingleLevel() throws Exception {
         TestModel model = TestModel.simpleSingleLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
 
-    public void testSimpleSingleLevelWithTMVFilter() throws InterruptedException {
+	public void testSimpleSingleLevelWithTMVFilter() throws Exception {
         TestModel model = TestModel.simpleSingleLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()) }); //$NON-NLS-1$
     }
 
-    public void testSimpleSingleLevelWithMixedFilters() throws InterruptedException {
+	public void testSimpleSingleLevelWithMixedFilters() throws Exception {
         TestModel model = TestModel.simpleSingleLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()), new TestViewerFilter("1") }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void testSimpleMultiLevel() throws InterruptedException {
+	public void testSimpleMultiLevel() throws Exception {
         TestModel model = TestModel.simpleMultiLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void testSimpleMultiLevelWithTMVFilter() throws InterruptedException {
+	public void testSimpleMultiLevelWithTMVFilter() throws Exception {
         TestModel model = TestModel.simpleMultiLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void testSimpleMultiLevelWithMixedFilters() throws InterruptedException {
+	public void testSimpleMultiLevelWithMixedFilters() throws Exception {
         TestModel model = TestModel.simpleMultiLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void doTestSimpleLevel(TestModel model, ViewerFilter[] filters) throws InterruptedException {
+	private void doTestSimpleLevel(TestModel model, ViewerFilter[] filters) throws Exception {
 
         // Make sure that all elements are expanded
         fViewer.setAutoExpandLevel(-1);
@@ -192,24 +138,20 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         fViewer.setInput(model.getRootElement());
 
         // Wait for the updates to complete.
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         model.validateData(fViewer, TreePath.EMPTY, false, filters);
     }
 
-    public void testLargeSingleLevel() throws InterruptedException {
+	public void testLargeSingleLevel() throws Exception {
 		doTestLargeSingleLevel(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
 
-    public void testLargeSingleLevelWithTMVFilter() throws InterruptedException {
+	public void testLargeSingleLevelWithTMVFilter() throws Exception {
 		doTestLargeSingleLevel(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
     }
 
-    private void doTestLargeSingleLevel(ViewerFilter[] filters) throws InterruptedException {
+	private void doTestLargeSingleLevel(ViewerFilter[] filters) throws Exception {
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
 		model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 3000, "model.")); //$NON-NLS-1$
@@ -223,11 +165,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
 
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
     }
 
 
@@ -235,7 +173,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
      * Replace an element that is not visible but filtered out.  With an element that is NOT filtered out.
      * Fire REPLACE delta.
      */
-    public void testReplacedUnrealizedFilteredElement() throws InterruptedException {
+	public void testReplacedUnrealizedFilteredElement() throws Exception {
 		doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
 
@@ -244,11 +182,11 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
      * Replace an element that is not visible but filtered out.  With an element that is NOT filtered out.
      * Fire REPLACE delta.
      */
-    public void testReplacedUnrealizedFilteredElementWithTMVFilter() throws InterruptedException {
+	public void testReplacedUnrealizedFilteredElementWithTMVFilter() throws Exception {
 		doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
     }
 
-    private void doTestReplacedUnrealizedFilteredElement(ViewerFilter[] filters) throws InterruptedException {
+	private void doTestReplacedUnrealizedFilteredElement(ViewerFilter[] filters) throws Exception {
 
         // Populate a view with a large model (only first 100 elements will be visible in virtual viewer).
         TestModel model = new TestModel();
@@ -263,11 +201,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Switch out element "201" which is filtered out, with a "replaced element" which should NOT be
         // filtered out.
@@ -275,20 +209,12 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         IModelDelta replaceDelta = model.replaceElementChild(TreePath.EMPTY, 200, replacedElement);
         fListener.reset();
         model.postDelta(replaceDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Reposition the viewer to make element 100 the top element, making the replaced element visible.
         fListener.reset();
-        ((IInternalTreeModelViewer) fViewer).reveal(TreePath.EMPTY, 150);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+        fViewer.reveal(TreePath.EMPTY, 150);
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Verify that the replaced element is in viewer now (i.e. it's not filtered out.
         TreePath[] replacedElementPaths = fViewer.getElementPaths(replacedElement);
@@ -296,11 +222,11 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
     }
 
 
-    public void testRefreshUnrealizedFilteredElement() throws InterruptedException {
+	public void testRefreshUnrealizedFilteredElement() throws Exception {
 		doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
 
-    public void testRefreshUnrealizedFilteredElementWithTMVFilter() throws InterruptedException {
+	public void testRefreshUnrealizedFilteredElementWithTMVFilter() throws Exception {
 		doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
     }
 
@@ -308,7 +234,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
      * Replace an element that is not visible but filtered out.  With an element that is NOT filtered out.
      * Fire CONTENT delta on parent.
      */
-    private void doTestRefreshUnrealizedFilteredElement(ViewerFilter[] filters) throws InterruptedException {
+	private void doTestRefreshUnrealizedFilteredElement(ViewerFilter[] filters) throws Exception {
         // Populate a view with a large model (only first 100 elements will be visible in virtual viewer).
         TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
@@ -322,11 +248,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Switch out element "201" which is filtered out, with a "replaced element" which should NOT be
         // filtered out.
@@ -334,35 +256,27 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         model.replaceElementChild(TreePath.EMPTY, 200, replacedElement);
         fListener.reset();
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Reposition the viewer to make element 100 the top element, making the replaced element visible.
         fListener.reset();
-        ((IInternalTreeModelViewer) fViewer).reveal(TreePath.EMPTY, 150);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+        fViewer.reveal(TreePath.EMPTY, 150);
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Verify that the replaced element is in viewer now (i.e. it's not filtered out.
         TreePath[] replacedElementPaths = fViewer.getElementPaths(replacedElement);
         assertTrue(replacedElementPaths.length != 0);
     }
 
-    public void testRefreshToUnfilterElements() throws InterruptedException {
+	public void testRefreshToUnfilterElements() throws Exception {
 		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void testRefreshToUnfilterElementsWithTMVFilter() throws InterruptedException {
+	public void testRefreshToUnfilterElementsWithTMVFilter() throws Exception {
 		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void testRefreshToUnfilterElementsWithMixedFilters() throws InterruptedException {
+	public void testRefreshToUnfilterElementsWithMixedFilters() throws Exception {
 		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -370,7 +284,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
      * Replace an element that is not visible but filtered out.  With an element that is NOT filtered out.
      * Fire CONTENT delta on parent.
      */
-    private void doTestRefreshToUnfilterElements(ViewerFilter[] filters) throws InterruptedException {
+	private void doTestRefreshToUnfilterElements(ViewerFilter[] filters) throws Exception {
 		ViewerFilter[] filters1 = filters;
         // Populate a view with a large model (only first 100 elements will be visible in virtual viewer).
         TestModel model = TestModel.simpleMultiLevel();
@@ -386,11 +300,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Turn off filters and refresh.
 		filters1 = new ViewerFilter[0];
@@ -398,16 +308,12 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
 
         fListener.reset();
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
 		model.validateData(fViewer, TreePath.EMPTY, false, filters1);
     }
 
-    public void testPreserveExpandedOnMultLevelContent() throws InterruptedException {
+	public void testPreserveExpandedOnMultLevelContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = StateTests.alternatingSubsreesModel(6);
 
@@ -418,11 +324,7 @@ abstract public class FilterTests extends AbstractDebugTest implements ITestMode
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         StateTests.expandAlternateElements(fListener, model, true);
@@ -444,11 +346,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Post the refresh delta
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true, filters);
@@ -473,11 +371,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.reset();
         fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), filters, -1, ALL_UPDATES_COMPLETE);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true, filters);

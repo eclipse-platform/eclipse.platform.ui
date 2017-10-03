@@ -12,25 +12,21 @@
 package org.eclipse.debug.tests.viewer.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests that verify that the viewer property retrieves all the content
@@ -38,65 +34,18 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class ContentTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
+abstract public class ContentTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+	public ContentTests(String name) {
+		super(name);
+	}
 
-    public ContentTests(String name) {
-        super(name);
-    }
+	@Override
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, true, true);
+	}
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, true, true);
-
-        fShell.open ();
-    }
-
-    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-
-    public void testSimpleSingleLevel() throws InterruptedException {
+	public void testSimpleSingleLevel() throws Exception {
         // Create the model with test data
         TestModel model = TestModel.simpleSingleLevel();
 
@@ -113,18 +62,14 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
         fViewer.setInput(model.getRootElement());
 
         // Wait for the updates to complete.
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         model.validateData(fViewer, TreePath.EMPTY);
 
         assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
     }
 
-    public void testSimpleMultiLevel() throws InterruptedException {
+	public void testSimpleMultiLevel() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = TestModel.simpleMultiLevel();
@@ -134,11 +79,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
 
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         model.validateData(fViewer, TreePath.EMPTY);
 
@@ -198,7 +139,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
      * use data from stale updates to populate the viewer.<br>
      * See bug 210027
      */
-    public void testLabelUpdatesCompletedOutOfSequence1() throws InterruptedException {
+	public void testLabelUpdatesCompletedOutOfSequence1() throws Exception {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
 
@@ -210,11 +151,8 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
-        while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
+
 		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
 		model.fCapturedUpdates = new ArrayList<IViewerUpdate>(2);
 
@@ -223,11 +161,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
 		model.getElement(model.findElement("2")).setLabelAppendix(" - changed"); //$NON-NLS-1$ //$NON-NLS-2$
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 
         // Complete the second set of children updates
         for (int i = 0; i < model.fCapturedUpdates.size(); i++) {
@@ -241,15 +175,15 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
             capturedUpdate.done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CHILDREN_UPDATES), createListenerErrorMessage());
 
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
     }
+
+	private Function<AbstractDebugTest, String> createModelErrorMessage(TestModelWithCapturedUpdates model) {
+		return t -> "Unxexpected model state: captured updates: " + model.fCapturedUpdates + ", root children: " + Arrays.toString(model.getRootElement().fChildren);
+	}
 
     /**
      * Test to make sure that label provider cancels stale updates and doesn't
@@ -259,7 +193,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
      * updates.<br>
      * See bug 210027
      */
-    public void testLabelUpdatesCompletedOutOfSequence2() throws InterruptedException {
+	public void testLabelUpdatesCompletedOutOfSequence2() throws Exception {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
 
@@ -271,11 +205,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
-        while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
 		model.fCapturedUpdates = new ArrayList<IViewerUpdate>(2);
 
@@ -286,11 +216,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
         });
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 
         // Complete the second set of children updates
         for (int i = 0; i < model.fCapturedUpdates.size(); i++) {
@@ -304,11 +230,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
             capturedUpdate.done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CHILDREN_UPDATES), createListenerErrorMessage());
 
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
@@ -323,7 +245,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
      * point, then this test should be re-enabled.<br>
      * See bug 210027
      */
-    public void _x_testChildrenUpdatesCompletedOutOfSequence() throws InterruptedException {
+	public void _x_testChildrenUpdatesCompletedOutOfSequence() throws Exception {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureChildrenUpdates = true;
 
@@ -335,11 +257,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
-        while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> !areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length), createModelErrorMessage(model));
         IChildrenUpdate[] firstUpdates = model.fCapturedUpdates.toArray(new IChildrenUpdate[0]);
         model.fCapturedUpdates.clear();
 
@@ -350,11 +268,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
         });
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> !areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length), createModelErrorMessage(model));
 
         // Complete the second set of children updates
         for (int i = 0; i < model.fCapturedUpdates.size(); i++) {
@@ -366,11 +280,7 @@ abstract public class ContentTests extends AbstractDebugTest implements ITestMod
             firstUpdates[i].done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CHILDREN_UPDATES), createListenerErrorMessage());
 
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);

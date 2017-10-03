@@ -11,19 +11,13 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests that verify that the viewer property retrieves all the content
@@ -31,62 +25,16 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class LazyTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-
-    Display fDisplay;
-    Shell fShell;
-    IInternalTreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class LazyTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
     public LazyTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, true, true);
-
-        fShell.open ();
-    }
-
-    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
-        /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
+	@Override
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, true, true);
+	}
 
     /**
      * Creates a model in the pattern of:
@@ -116,7 +64,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
      * not automatically materialized.
      * (bug 305739 and bug 304277)
      */
-    public void testExpandLargeSubTree() throws InterruptedException {
+	public void testExpandLargeSubTree() throws Exception {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000);
 
@@ -125,11 +73,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
         // Populate initial view content
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, true);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Create delta to expand the "1" element.
         TestElement rootElement = model.getRootElement();
@@ -152,11 +96,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
         }
         model.postDelta(rootDelta);
 
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE | LABEL_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE | LABEL_SEQUENCE_COMPLETE), createListenerErrorMessage());
     }
 
     /**
@@ -164,7 +104,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
      * then selected and replaced, that no extra elements are retrieved.
      * (bug 304277 comment #24, and bug 305739 comment #9).
      */
-    public void testReplaceAndSelectInSubTreeTree() throws InterruptedException {
+	public void testReplaceAndSelectInSubTreeTree() throws Exception {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000);
 
@@ -180,11 +120,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
         fListener.setFailOnRedundantUpdates(false);
         fViewer.setInput(model.getRootElement());
 		fListener.addLabelUpdate(model.findElement("1.0")); //$NON-NLS-1$
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_COMPLETE), createListenerErrorMessage());
 
         // Set selection so that the initial selection is not empty
 		fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("1.0") })); //$NON-NLS-1$
@@ -209,11 +145,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
         fListener.addLabelUpdate(_1_0_newElementPath);
         model.postDelta(rootDelta);
 
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE |  LABEL_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE | LABEL_COMPLETE), createListenerErrorMessage());
 
 
         assertEquals(((IStructuredSelection)fViewer.getSelection()).getFirstElement(), _1_0_newElement);
@@ -221,7 +153,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
 
     /**
      */
-    public void testContentRefresh() throws InterruptedException {
+	public void testContentRefresh() throws Exception {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000);
 
@@ -231,11 +163,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
         // Populate initial view content
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Turn off autoexpand
         fViewer.setAutoExpandLevel(0);
@@ -244,11 +172,7 @@ abstract public class LazyTests extends AbstractDebugTest implements ITestModelU
         fListener.reset();
         fListener.setFailOnRedundantUpdates(false);
 		fViewer.reveal(model.findElement("1"), 500); //$NON-NLS-1$
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Create delta to refresh the "1" element.
         TestElement rootElement = model.getRootElement();

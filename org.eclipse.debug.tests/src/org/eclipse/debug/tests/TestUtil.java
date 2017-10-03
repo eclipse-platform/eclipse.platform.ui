@@ -18,12 +18,15 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.util.function.Function;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 public class TestUtil {
 
@@ -63,7 +66,7 @@ public class TestUtil {
 	 * Process all queued UI events. If called from background thread, does
 	 * nothing.
 	 */
-	public static void runEventLoop() {
+	public static void processUIEvents() {
 		Display display = Display.getCurrent();
 		if (display != null && !display.isDisposed()) {
 			while (display.readAndDispatch()) {
@@ -75,6 +78,8 @@ public class TestUtil {
 	/**
 	 * Process all queued UI events. If called from background thread, just
 	 * waits
+	 *
+	 * @param millis max wait time to process events
 	 */
 	public static void processUIEvents(final long millis) throws Exception {
 		long start = System.currentTimeMillis();
@@ -87,6 +92,41 @@ public class TestUtil {
 			} else {
 				Thread.sleep(10);
 			}
+		}
+	}
+
+	/**
+	 * Waits while given condition is {@code true} for a given amount of
+	 * milliseconds. If the actual wait time exceeds given timeout and condition
+	 * will be still {@code true}, throws {@link AssertionFailedError} with
+	 * given message.
+	 * <p>
+	 * Will process UI events while waiting in UI thread, if called from
+	 * background thread, just waits.
+	 *
+	 * @param <T> type of the context
+	 * @param context test context
+	 * @param condition function which will be evaluated while waiting
+	 * @param timeout max wait time in milliseconds to wait on given condition
+	 * @param errorMessage message which will be used to construct the failure
+	 *            exception in case the condition will still return {@code true}
+	 *            after given timeout
+	 */
+	public static <T> void waitWhile(Function<T, Boolean> condition, T context, long timeout, Function<T, String> errorMessage) throws Exception {
+		long start = System.currentTimeMillis();
+		Display display = Display.getCurrent();
+		while (System.currentTimeMillis() - start < timeout && condition.apply(context)) {
+			if (display != null && !display.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					Thread.sleep(0);
+				}
+			} else {
+				Thread.sleep(5);
+			}
+		}
+		Boolean stillTrue = condition.apply(context);
+		if (stillTrue) {
+			TestCase.fail(errorMessage.apply(context));
 		}
 	}
 
@@ -128,7 +168,7 @@ public class TestUtil {
 		}
 		final long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < minTimeMs) {
-			runEventLoop();
+			processUIEvents();
 			try {
 				Thread.sleep(Math.min(10, minTimeMs));
 			} catch (InterruptedException e) {
@@ -152,7 +192,7 @@ public class TestUtil {
 				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
 			}
-			runEventLoop();
+			processUIEvents();
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {

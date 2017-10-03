@@ -14,72 +14,30 @@ package org.eclipse.debug.tests.viewer.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests to verify that the viewer properly handles selection changes.
  */
-abstract public class SelectionTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class SelectionTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
     public SelectionTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, false, false);
-
-        fShell.open ();
-    }
-
-    abstract protected ITreeModelViewer createViewer(Display display, Shell shell);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, false, false);
+	}
 
     private static class SelectionListener implements ISelectionChangedListener {
 		private final List<SelectionChangedEvent> fEvents = new ArrayList<SelectionChangedEvent>(1);
@@ -90,16 +48,12 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
         }
     }
 
-    private TestModel makeMultiLevelModel() throws InterruptedException {
+	private TestModel makeMultiLevelModel() throws Exception {
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
         return model;
     }
@@ -110,7 +64,7 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
      * - verify that selection chagned listener is called
      * - verify that the selection is in the viewer is correct
      */
-    public void testSimpleSetSelection() throws InterruptedException {
+	public void testSimpleSetSelection() throws Exception {
         // Create the model and populate the view.
         TestModel model = makeMultiLevelModel();
 
@@ -133,7 +87,7 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
      * from being set and verify that a FORCE flag can override the selection
      * policy.
      */
-    public void testSelectionPolicy() throws InterruptedException {
+	public void testSelectionPolicy() throws Exception {
         // Create the model and populate the view.
         final TestModel model = makeMultiLevelModel();
 
@@ -181,22 +135,14 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
         ModelDelta delta_3_3_3 = model.getElementDelta(baseDelta, path_3_3_3, false);
         delta_3_3_3.setFlags(IModelDelta.SELECT);
         fViewer.updateViewer(baseDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
         assertEquals(selection_3_3_1, fViewer.getSelection());
 
         // Add the *force* flag to the selection delta and update viewer again.
         // Verify that selection did change.
         delta_3_3_3.setFlags(IModelDelta.SELECT | IModelDelta.FORCE);
         fViewer.updateViewer(baseDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
         assertEquals(selection_3_3_3, fViewer.getSelection());
     }
 
@@ -208,7 +154,7 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
      * - update the view with remove delta
      * -> The selection should be re-set to empty.
      */
-    public void testSelectRemove() throws InterruptedException {
+	public void testSelectRemove() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         // Create the model and populate the view.
@@ -235,11 +181,7 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
         // delta only wait for the delta to be processed.
         fListener.reset();
         model.postDelta(delta);
-        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Check to make sure the selection was made
         //assertTrue(listener.fEvents.size() == 1);
@@ -257,7 +199,7 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
      * - then refresh the view.
      * -> The selection should be re-set to empty.
      */
-    public void testSelectRemoveRefreshStruct() throws InterruptedException {
+	public void testSelectRemoveRefreshStruct() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         // Create the model and populate the view.
@@ -286,11 +228,7 @@ abstract public class SelectionTests extends AbstractDebugTest implements ITestM
 
         // Refresh the viewer
         model.postDelta( new ModelDelta(model.getRootElement(), IModelDelta.CONTENT) );
-        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ITestModelUpdatesListenerConstants.ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Check to make sure the selection was made
         // Commented out until JFace bug 219887 is fixed.

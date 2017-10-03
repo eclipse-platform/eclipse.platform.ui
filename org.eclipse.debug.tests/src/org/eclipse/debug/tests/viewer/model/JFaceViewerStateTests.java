@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.swt.SWT;
@@ -28,7 +28,7 @@ public class JFaceViewerStateTests extends StateTests {
     }
 
     @Override
-	protected ITreeModelViewer createViewer(Display display, Shell shell) {
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new TreeModelViewer(fShell, SWT.VIRTUAL | SWT.MULTI, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
 }

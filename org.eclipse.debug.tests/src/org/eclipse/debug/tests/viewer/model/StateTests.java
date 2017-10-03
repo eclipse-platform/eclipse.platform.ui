@@ -15,20 +15,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests to verify that the viewer can save and restore correctly the expansion
@@ -36,69 +30,22 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.6
  */
-abstract public class StateTests extends AbstractDebugTest implements ITestModelUpdatesListenerConstants {
-    Display fDisplay;
-    Shell fShell;
-    ITreeModelViewer fViewer;
-    TestModelUpdatesListener fListener;
+abstract public class StateTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
     public StateTests(String name) {
         super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-        fDisplay = PlatformUI.getWorkbench().getDisplay();
-
-        fShell = new Shell(fDisplay);
-        fShell.setMaximized(true);
-        fShell.setLayout(new FillLayout());
-
-        fViewer = createViewer(fDisplay, fShell);
-
-        fListener = new TestModelUpdatesListener(fViewer, false, false);
-
-        fShell.open ();
-    }
-
-    abstract protected ITreeModelViewer createViewer(Display display, Shell shell);
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Override
-	protected void tearDown() throws Exception, InterruptedException {
-        fListener.dispose();
-        fViewer.getPresentationContext().dispose();
-
-        // Close the shell and exit.
-        fShell.close();
-        while (!fShell.isDisposed()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
-		super.tearDown();
-    }
-
-    @Override
-	protected void runTest() throws Throwable {
-        try {
-            super.runTest();
-        } catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
+	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
+		return new TestModelUpdatesListener(viewer, false, false);
+	}
 
     protected IInternalTreeModelViewer getInternalViewer() {
-        return (IInternalTreeModelViewer)fViewer;
+        return fViewer;
     }
 
-    public void testUpdateViewer() throws InterruptedException {
+	public void testUpdateViewer() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = TestModel.simpleMultiLevel();
@@ -111,11 +58,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Create the update delta
@@ -150,11 +93,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         fListener.addLabelUpdate(path3);
 
         fViewer.updateViewer(updateDelta);
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_UPDATES), createListenerErrorMessage());
 
         // Extract the new state from viewer
         ModelDelta savedDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -232,7 +171,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         return sel1Set.equals(sel2Set);
     }
 
-    static void expandAlternateElements(TestModelUpdatesListener listener, TestModel model, boolean waitForAllUpdates) throws InterruptedException {
+	static void expandAlternateElements(TestModelUpdatesListener listener, TestModel model, boolean waitForAllUpdates) throws Exception {
         listener.reset();
         listener.setFailOnRedundantUpdates(false);
 
@@ -262,14 +201,10 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         }
         model.postDelta(rootDelta);
 
-        while (!listener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE)) {
-			if (!Display.getDefault().readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		TestUtil.waitWhile(t -> !listener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE), null, 30000, t -> "Listener not finished: " + listener);
     }
 
-    public void testPreserveExpandedOnRemove() throws InterruptedException {
+	public void testPreserveExpandedOnRemove() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -280,11 +215,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         expandAlternateElements(fListener, model, true);
@@ -299,11 +230,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         // Remove delta should not generate any new updates
         fListener.reset();
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
@@ -317,7 +244,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
-    public void testPreserveExpandedOnInsert() throws InterruptedException {
+	public void testPreserveExpandedOnInsert() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -328,11 +255,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         expandAlternateElements(fListener, model, true);
@@ -350,11 +273,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         fListener.reset(path, (TestElement)path.getLastSegment(), 0, false, false);
         fListener.addChildreUpdate(TreePath.EMPTY, 0);
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | ALL_UPDATES_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE | ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
@@ -370,7 +289,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
         assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
-    public void testPreserveExpandedOnMultLevelContent() throws InterruptedException {
+	public void testPreserveExpandedOnMultLevelContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -381,11 +300,7 @@ abstract public class StateTests extends AbstractDebugTest implements ITestModel
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         expandAlternateElements(fListener, model, true);
@@ -411,11 +326,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Post the multi-content update delta
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
@@ -434,7 +345,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
     }
 
 
-    public void testPreserveExpandedOnSubTreeContent() throws InterruptedException {
+	public void testPreserveExpandedOnSubTreeContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -446,11 +357,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Turn off auto-expansion
@@ -475,11 +382,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Post the sub-tree update
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
@@ -492,7 +395,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
-    public void testPreserveExpandedOnContentStress() throws InterruptedException {
+	public void testPreserveExpandedOnContentStress() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -503,11 +406,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         expandAlternateElements(fListener, model, true);
@@ -529,11 +428,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
             fListener.reset(false, false);
             fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
             model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-            while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-				if (!fDisplay.readAndDispatch ()) {
-					Thread.sleep(0);
-				}
-			}
+			waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
             // Validate data
             model.validateData(fViewer, TreePath.EMPTY, true);
@@ -553,11 +448,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
             fListener.reset(false, false);
             fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
             model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-            while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-				if (!fDisplay.readAndDispatch ()) {
-					Thread.sleep(0);
-				}
-			}
+			waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
             // Validate data
             model.validateData(fViewer, TreePath.EMPTY, true);
@@ -572,7 +463,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         }
     }
 
-    public void testPreserveLargeModelOnContent() throws InterruptedException {
+	public void testPreserveLargeModelOnContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(100);
 
@@ -583,14 +474,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE))
-		 {
-			if (!fDisplay.readAndDispatch ())
-			 {
-				Thread.sleep(0);
-//        model.validateData(fViewer, TreePath.EMPTY, true);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         expandAlternateElements(fListener, model, false);
 
@@ -605,11 +489,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false); //$NON-NLS-1$
@@ -627,11 +507,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false); //$NON-NLS-1$
@@ -649,7 +525,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
      * following a content refresh, the state restore logic will
      * not override the selection requested by the model.
      */
-    public void testPreserveSelectionDeltaAfterContent() throws InterruptedException {
+	public void testPreserveSelectionDeltaAfterContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -661,11 +537,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Set a selection in view
@@ -677,11 +549,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Refresh content.
         // Note: Wait only for the processing of the delta, not for all updates
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Update the viewer with new selection delta to something new in the view
 		ModelDelta selectDelta = model.makeElementDelta(model.findElement("2.1"), IModelDelta.SELECT); //$NON-NLS-1$
@@ -689,25 +557,17 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Wait for the second model delta to process
         fListener.resetModelChanged();
         model.postDelta(selectDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Wait for all the updates to complete (note: we're not resetting the listener.
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Check to make sure that the state restore didn't change the selection.
 		assertEquals(new TreeSelection(model.findElement("2.1")), fViewer.getSelection()); //$NON-NLS-1$
     }
 
-    public void testPreserveCollapseDeltaAfterContent() throws InterruptedException {
+	public void testPreserveCollapseDeltaAfterContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -719,11 +579,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Turn off auto-expand
@@ -735,11 +591,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Refresh content.
         // Note: Wait only for the processing of the delta, not for all updates
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Update the viewer to collapse an element
 		ModelDelta collapseDelta = model.makeElementDelta(model.findElement("3.1"), IModelDelta.COLLAPSE); //$NON-NLS-1$
@@ -760,25 +612,17 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Wait for the second model delta to process
         model.postDelta(collapseDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Wait for all the updates to complete (note: we're not resetting the listener.
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Check to make sure that the state restore didn't change the selection.
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == false); //$NON-NLS-1$
     }
 
-    public void testPreserveExpandDeltaAfterContent() throws InterruptedException {
+	public void testPreserveExpandDeltaAfterContent() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -789,11 +633,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Reset the listener (ignore redundant updates)
@@ -802,11 +642,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Refresh content.
         // Note: Wait only for the processing of the delta, not for all updates
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Update the viewer to expand an element
 		ModelDelta expandDelta = model.makeElementDelta(model.findElement("3.1"), IModelDelta.EXPAND); //$NON-NLS-1$
@@ -814,26 +650,18 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Wait for the second model delta to process
         fListener.resetModelChanged();
         model.postDelta(expandDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Wait for all the updates to complete (note: we're not resetting the listener.
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Check to make sure that the state restore didn't change the selection.
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true); //$NON-NLS-1$
     }
 
 
-    public void testSaveAndRestore1() throws InterruptedException {
+	public void testSaveAndRestore1() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -844,11 +672,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand some, but not all elements
@@ -865,11 +689,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.reset(false, false);
         fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer
@@ -877,11 +697,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
         // TODO: add state updates somehow?
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         // Extract the restored state from viewer
         ModelDelta restoredState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -892,7 +708,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         }
     }
 
-    public void testSaveAndRestore2() throws InterruptedException {
+	public void testSaveAndRestore2() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -904,11 +720,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         // Set a selection in view
@@ -927,11 +739,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer
@@ -939,11 +747,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
         // TODO: add state updates somehow?
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         // Extract the restored state from viewer
         ModelDelta restoredState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -954,7 +758,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         }
     }
 
-    public void testSaveAndRestoreInputInstance() throws InterruptedException {
+	public void testSaveAndRestoreInputInstance() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -965,11 +769,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand some, but not all elements
@@ -989,11 +789,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Note: disable redundant updates because the reveal delta triggers one.
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         // Extract the restored state from viewer
         ModelDelta restoredState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -1004,7 +800,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         }
     }
 
-    public void testSaveAndRestoreInputInstanceEquals() throws InterruptedException {
+	public void testSaveAndRestoreInputInstanceEquals() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -1015,11 +811,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand some, but not all elements
@@ -1042,11 +834,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
 
         // Extract the restored state from viewer
         ModelDelta restoredState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -1058,7 +846,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
     }
 
 
-    public void testSaveAndRestoreLarge() throws InterruptedException {
+	public void testSaveAndRestoreLarge() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(100);
 
@@ -1069,11 +857,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         expandAlternateElements(fListener, model, false);
 
@@ -1091,22 +875,14 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer
         // Note: disable redundant updates because the reveal delta triggers one.
         fListener.reset();
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Validate data (only select visible elements).
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("1")) == true); //$NON-NLS-1$
@@ -1126,7 +902,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
      * to contain much fewer elements.  The restore logic should discard the
      * rest of the saved state delta once all the elements are visible.
      */
-    public void testSaveAndRestorePartialStateLarge() throws InterruptedException {
+	public void testSaveAndRestorePartialStateLarge() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(100);
 
@@ -1137,11 +913,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         expandAlternateElements(fListener, model, false);
 
@@ -1159,11 +931,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
 
         TestElement[] elements = model.getRootElement().getChildren();
@@ -1178,11 +946,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fViewer.setInput(model.getRootElement());
 
         // MONITOR FOR THE STATE RESTORE TO COMPLETE
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE| STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Validate data
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("1")) == true); //$NON-NLS-1$
@@ -1197,7 +961,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
-    public void testPreserveCollapseAndSelectDeltaAfterSaveAndRestore() throws InterruptedException {
+	public void testPreserveCollapseAndSelectDeltaAfterSaveAndRestore() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -1209,11 +973,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
 		fViewer.setSelection(new TreeSelection(model.findElement("3"))); //$NON-NLS-1$
@@ -1224,11 +984,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(false, false);
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE), createListenerErrorMessage());
 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer
@@ -1243,44 +999,24 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Wait till we restore state of elements we want to collapse and select
         // Bug 372619 - Need to wait until proxy installed delta is processed before
         // posting the next delta.
-        while (!fListener.isFinished(STATE_RESTORE_STARTED | STATE_UPDATES | CHILDREN_UPDATES | MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_RESTORE_STARTED | STATE_UPDATES | CHILDREN_UPDATES | MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Post first collapse delta
         fListener.resetModelChanged();
 		model.postDelta(model.makeElementDelta(model.findElement("2"), IModelDelta.COLLAPSE)); //$NON-NLS-1$
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Post second collapse delta
         fListener.resetModelChanged();
 		model.postDelta(model.makeElementDelta(model.findElement("3"), IModelDelta.COLLAPSE)); //$NON-NLS-1$
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Post select delta
 		model.postDelta(model.makeElementDelta(model.findElement("1"), IModelDelta.SELECT)); //$NON-NLS-1$
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE), createListenerErrorMessage());
 
         // Wait for all the updates to complete (note: we're not resetting the listener).
-        while (!fListener.isFinished(STATE_RESTORE_COMPLETE)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(STATE_RESTORE_COMPLETE), createListenerErrorMessage());
 
         // Check to make sure that the state restore didn't change the selection.
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false); //$NON-NLS-1$
@@ -1292,7 +1028,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
      * Test for bug 359859.<br>
      * This test verifies that RESTORE state is handled after SAVE previous state was completed
      */
-    public void testSaveRestoreOrder() throws InterruptedException {
+	public void testSaveRestoreOrder() throws Exception {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
         model.setDelayUpdates(true);
@@ -1305,11 +1041,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // a new similar model
@@ -1319,11 +1051,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.reset();
         fListener.expectRestoreAfterSaveComplete();
         fViewer.setInput(copyModel.getRootElement());
-        while (!fListener.isFinished(STATE_RESTORE_STARTED)) {
-            if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-        }
+		waitWhile(t -> !fListener.isFinished(STATE_RESTORE_STARTED), createListenerErrorMessage());
 		assertTrue("RESTORE started before SAVE to complete", fListener.isFinished(STATE_SAVE_COMPLETE)); //$NON-NLS-1$
     }
 
@@ -1331,7 +1059,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
      * This test tries to restore a viewer state while input == null.
      * See: Bug 380288 - NPE switching to the Breakpoints View
      */
-    public void testUpdateWithNullInput() throws InterruptedException {
+	public void testUpdateWithNullInput() throws Exception {
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
 
@@ -1340,11 +1068,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
         model.validateData(fViewer, TreePath.EMPTY);
 
         ModelDelta expandedState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
@@ -1356,20 +1080,12 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
 
         // Wait for the delta to be processed.
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES), createListenerErrorMessage());
 
         fViewer.setInput(null);
         fViewer.updateViewer(expandedState);
 
-        while (!fListener.isFinished(CONTENT_COMPLETE | VIEWER_UPDATES_RUNNING)) {
-			if (!fDisplay.readAndDispatch ()) {
-				Thread.sleep(0);
-			}
-		}
+		waitWhile(t -> !fListener.isFinished(CONTENT_COMPLETE | VIEWER_UPDATES_RUNNING), createListenerErrorMessage());
 
     }
 }
