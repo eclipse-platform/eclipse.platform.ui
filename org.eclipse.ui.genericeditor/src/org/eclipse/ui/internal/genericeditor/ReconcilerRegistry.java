@@ -18,8 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -28,33 +26,38 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * A registry of reconciliers provided by extension <code>org.eclipse.ui.genericeditor.reconcilers</code>.
+ * A registry of reconciliers provided by extensions <code>org.eclipse.ui.genericeditor.reconcilers</code>
+ * and <code>org.eclipse.ui.genericeditor.foldingReconcilers</code>.
  * Those extensions are specific to a given {@link IContentType}.
- * 
+ *
  * @since 1.1
  */
 public class ReconcilerRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".reconcilers"; //$NON-NLS-1$
+	private static final String HIGHLIGHT_EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".highlightReconcilers"; //$NON-NLS-1$
 
 	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> extensions = new HashMap<>();
+	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> highlightExtensions = new HashMap<>();
 	private boolean outOfSync = true;
+	private boolean highlightOutOfSync = true;
 
 	/**
 	 * Creates the registry and binds it to the extension point.
 	 */
 	public ReconcilerRegistry() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
-			@Override
-			public void registryChanged(IRegistryChangeEvent event) {
-				outOfSync = true;
-			}
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
+			outOfSync = true;
 		}, EXTENSION_POINT_ID);
+
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
+			highlightOutOfSync = true;
+		}, HIGHLIGHT_EXTENSION_POINT_ID);
 	}
 
 	/**
 	 * Get the contributed {@link IReconciliers}s that are relevant to hook on source viewer according
-	 * to document content types. 
+	 * to document content types.
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param contentTypes the content types of the document we're editing.
 	 * @return the list of {@link IReconciler} contributed for at least one of the content types,
@@ -70,6 +73,26 @@ public class ReconcilerRegistry {
 				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate)
 				.collect(Collectors.toList());
 		return reconcilers;
+	}
+
+	/**
+	 * Get the contributed highlight {@link IReconciliers}s that are relevant to hook on source viewer according
+	 * to document content types.
+	 * @param sourceViewer the source viewer we're hooking completion to.
+	 * @param contentTypes the content types of the document we're editing.
+	 * @return the list of highlight {@link IReconciler}s contributed for at least one of the content types,
+	 * sorted by most generic content type to most specific.
+	 */
+	public List<IReconciler> getHighlightReconcilers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+		if (this.highlightOutOfSync) {
+			syncHighlight();
+		}
+		List<IReconciler> highlightReconcilers = this.highlightExtensions.values().stream()
+				.filter(ext -> contentTypes.contains(ext.targetContentType))
+				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
+				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate)
+				.collect(Collectors.toList());
+		return highlightReconcilers;
 	}
 
 	private void sync() {
@@ -88,6 +111,24 @@ public class ReconcilerRegistry {
 			this.extensions.remove(toRemove);
 		}
 		this.outOfSync = false;
+	}
+
+	private void syncHighlight() {
+		Set<IConfigurationElement> toRemoveExtensions = new HashSet<>(this.extensions.keySet());
+		for (IConfigurationElement extension : Platform.getExtensionRegistry().getConfigurationElementsFor(HIGHLIGHT_EXTENSION_POINT_ID)) {
+			toRemoveExtensions.remove(extension);
+			if (!this.highlightExtensions.containsKey(extension)) {
+				try {
+					this.highlightExtensions.put(extension, new GenericContentTypeRelatedExtension<IReconciler>(extension));
+				} catch (Exception ex) {
+					GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+				}
+			}
+		}
+		for (IConfigurationElement toRemove : toRemoveExtensions) {
+			this.highlightExtensions.remove(toRemove);
+		}
+		this.highlightOutOfSync = false;
 	}
 
 }

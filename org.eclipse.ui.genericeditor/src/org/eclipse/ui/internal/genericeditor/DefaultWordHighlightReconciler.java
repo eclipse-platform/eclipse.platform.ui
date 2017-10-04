@@ -1,0 +1,37 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * - Lucas Bullen (Red Hat Inc.)
+ *******************************************************************************/
+package org.eclipse.ui.internal.genericeditor;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.reconciler.Reconciler;
+
+public class DefaultWordHighlightReconciler extends Reconciler {
+
+	private DefaultWordHighlightStrategy fStrategy;
+
+	public DefaultWordHighlightReconciler() {
+        fStrategy = new DefaultWordHighlightStrategy();
+        this.setReconcilingStrategy(fStrategy, IDocument.DEFAULT_CONTENT_TYPE);
+    }
+
+	@Override
+	public void install(ITextViewer textViewer) {
+		super.install(textViewer);
+		fStrategy.install(textViewer);
+	}
+
+	@Override
+	public void uninstall() {
+		super.uninstall();
+		fStrategy.uninstall();
+	}
+}

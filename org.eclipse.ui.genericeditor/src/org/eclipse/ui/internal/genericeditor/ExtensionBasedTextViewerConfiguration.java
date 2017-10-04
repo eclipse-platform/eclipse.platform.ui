@@ -8,6 +8,7 @@
  * Contributors:
  *   Sopot Cela, Mickael Istria (Red Hat Inc.) - initial implementation
  *   Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support
+ *                               - Bug 521382 default highlight reconciler
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -27,7 +28,6 @@ import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -39,7 +39,6 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.hover.CompositeTextHover;
@@ -72,12 +71,9 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	public ExtensionBasedTextViewerConfiguration(ITextEditor editor, IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		this.editor = editor;
-		this.editor.addPropertyListener(new IPropertyListener() {
-			@Override
-			public void propertyChanged(Object source, int propId) {
-				if (propId == IEditorPart.PROP_INPUT) {
-					watchDocument(editor.getDocumentProvider().getDocument(editor.getEditorInput()));
-				}
+		this.editor.addPropertyListener((source, propId) -> {
+			if (propId == IEditorPart.PROP_INPUT) {
+				watchDocument(editor.getDocumentProvider().getDocument(editor.getEditorInput()));
 			}
 		});
 	}
@@ -185,12 +181,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 				));
 		quickAssistAssistant.setQuickAssistProcessor(processor);
 		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
-		quickAssistAssistant.setInformationControlCreator(new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString());
-			}
-		});
+		quickAssistAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
 		return quickAssistAssistant;
 	}
 
@@ -198,12 +189,20 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
 		List<IReconciler> reconciliers = registry.getReconcilers(sourceViewer, getContentTypes());
+		List<IReconciler> highlightReconciliers = registry.getHighlightReconcilers(sourceViewer, getContentTypes());
+
+		if(!highlightReconciliers.isEmpty()) {
+			reconciliers.addAll(highlightReconciliers);
+		}else {
+			reconciliers.add(new DefaultWordHighlightReconciler());
+		}
+
 		if (!reconciliers.isEmpty()) {
 			return new CompositeReconciler(reconciliers);
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		AutoEditStrategyRegistry registry = GenericEditorPlugin.getDefault().getAutoEditStrategyRegistry();
@@ -213,5 +212,5 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 		return super.getAutoEditStrategies(sourceViewer, contentType);
 	}
-	
+
 }

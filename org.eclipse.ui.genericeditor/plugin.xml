@@ -10,6 +10,7 @@
 <!-- Contributors:                                                          -->
 <!--     Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation -->
 <!--     Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support -->
+<!--                                 - Bug 521382 default highlighter       -->
 <!-- ====================================================================== -->
 <plugin>
    <extension-point id="reconcilers" name="%ExtPoint.reconciliers" schema="schema/reconcilers.exsd"/>
@@ -17,6 +18,7 @@
    <extension-point id="contentAssistProcessors" name="%ExtPoint.contentAssistProcessors" schema="schema/contentAssistProcessors.exsd"/>
    <extension-point id="hoverProviders" name="%ExtPoint.hoverProviders" schema="schema/hoverProviders.exsd"/>
    <extension-point id="autoEditStrategies" name="%ExtPoint.autoEditStrategies" schema="schema/autoEditStrategies.exsd"/>
+   <extension-point id="highlightReconcilers" name="%ExtPoint.highlightReconcilers" schema="schema/highlightReconcilers.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -37,6 +39,14 @@
             description="%findReferencesCommand_description"
             id="org.eclipse.ui.genericeditor.findReferences"
             name="%findReferencesCommand_name">
+      </command>
+      <command
+            id="org.eclipse.ui.genericeditor.togglehighlight"
+            name="%command.toggle.highlight.name">
+		   <state
+		         class="org.eclipse.ui.handlers.RegistryToggleState:true"
+		         id="org.eclipse.ui.commands.toggleState">
+		   </state>
       </command>
    </extension>
    <extension
@@ -73,6 +83,23 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.genericeditor.GenericEditor">
+         <command
+               commandId="org.eclipse.ui.genericeditor.togglehighlight"
+               label="%command.toggle.highlight.label"
+               style="toggle">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="org.eclipse.ui.genericeditor.togglehighlight">
+         <class
+               class="org.eclipse.ui.internal.genericeditor.ToggleHighlight"></class>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.genericeditor.hoverProviders">
@@ -90,5 +117,40 @@
             id="org.eclipse.ui.genericeditor.annotationsHoverProvider">
       </hoverProvider>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.genericeditor.togglehighlight"
+            disabledIcon="icons/full/dtool16/mark_occurrences.png"
+            icon="icons/full/etool16/mark_occurrences.png">
+      </image>
+   </extension>
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+      <type name="org.eclipse.ui.genericeditor.text"></type>
+   </extension>
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+		<specification annotationType="org.eclipse.ui.genericeditor.text"
+			label="Text Occurrence"
+			textPreferenceKey="TextOccurrenceIndication" textPreferenceValue="false"
+			highlightPreferenceKey="TextOccurrenceHighlighting"
+			highlightPreferenceValue="true" contributesToHeader="false"
+			overviewRulerPreferenceKey="TextOccurrenceIndicationInOverviewRuler"
+			overviewRulerPreferenceValue="true"
+			verticalRulerPreferenceKey="TextOccurrenceIndicationInVerticalRuler"
+			verticalRulerPreferenceValue="false" colorPreferenceKey="TextOccurrenceIndicationColor"
+			colorPreferenceValue="212,212,212" presentationLayer="4"
+			showInNextPrevDropdownToolbarAction="true"
+			textStylePreferenceKey="TextOccurrenceTextStyle"
+			textStylePreferenceValue="NONE">
+		</specification>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <stylesheet
+            uri="resources/css/dark.css">
+         <themeid
+               refid="org.eclipse.e4.ui.css.theme.e4_dark">
+         </themeid>
+      </stylesheet>
+   </extension>
 </plugin>
