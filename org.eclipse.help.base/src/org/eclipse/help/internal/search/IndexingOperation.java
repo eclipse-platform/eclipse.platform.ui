@@ -195,43 +195,44 @@ class IndexingOperation {
 	 */
 	private void removeNewDocuments(IProgressMonitor pm, Map<String, String[]> docsToDelete)
 			throws IndexingException {
+		if (docsToDelete.size() == 0) {
+			return;
+		}
 		pm = new LazyProgressMonitor(pm);
 		pm.beginTask("", docsToDelete.size()); //$NON-NLS-1$
 		checkCancelled(pm);
 		Set<String> keysToDelete = docsToDelete.keySet();
-		if (keysToDelete.size() > 0) {
-			if (!index.beginRemoveDuplicatesBatch()) {
-				throw new IndexingException();
+		if (!index.beginRemoveDuplicatesBatch()) {
+			throw new IndexingException();
+		}
+		MultiStatus multiStatus = null;
+		for (Iterator<String> it = keysToDelete.iterator(); it.hasNext();) {
+			String href = it.next();
+			String[] indexIds = docsToDelete.get(href);
+			if (indexIds == null) {
+				// delete all copies
+				index.removeDocument(href);
+				continue;
 			}
-			MultiStatus multiStatus = null;
-			for (Iterator<String> it = keysToDelete.iterator(); it.hasNext();) {
-				String href = it.next();
-				String[] indexIds = docsToDelete.get(href);
-				if (indexIds == null) {
-					// delete all copies
-					index.removeDocument(href);
-					continue;
+			IStatus status = index.removeDuplicates(href, indexIds);
+			if (status.getCode() != IStatus.OK) {
+				if (multiStatus == null) {
+					multiStatus = new MultiStatus(
+							HelpBasePlugin.PLUGIN_ID,
+							IStatus.WARNING,
+							"Some help documents could not removed from index.", //$NON-NLS-1$
+							null);
 				}
-				IStatus status = index.removeDuplicates(href, indexIds);
-				if (status.getCode() != IStatus.OK) {
-					if (multiStatus == null) {
-						multiStatus = new MultiStatus(
-								HelpBasePlugin.PLUGIN_ID,
-								IStatus.WARNING,
-								"Some help documents could not removed from index.", //$NON-NLS-1$
-								null);
-					}
-					multiStatus.add(status);
-				}
-				checkCancelled(pm);
-				pm.worked(1);
-				if (multiStatus != null) {
-					HelpBasePlugin.logStatus(multiStatus);
-				}
+				multiStatus.add(status);
 			}
-			if (!index.endRemoveDuplicatesBatch()) {
-				throw new IndexingException();
+			checkCancelled(pm);
+			pm.worked(1);
+			if (multiStatus != null) {
+				HelpBasePlugin.logStatus(multiStatus);
 			}
+		}
+		if (!index.endRemoveDuplicatesBatch()) {
+			throw new IndexingException();
 		}
 		pm.done();
 	}
