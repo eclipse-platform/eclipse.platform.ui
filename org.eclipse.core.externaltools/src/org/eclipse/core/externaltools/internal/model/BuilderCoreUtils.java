@@ -214,7 +214,7 @@ public class BuilderCoreUtils {
 			args = new HashMap<String, String>();
 			// Launch configuration builders are stored with a project-relative
 			// path
-			StringBuffer buffer = new StringBuffer(PROJECT_TAG);
+			StringBuilder buffer = new StringBuilder(PROJECT_TAG);
 			// Append the project-relative path (workspace path minus first
 			// segment)
 			buffer.append('/').append(temp.getFile().getFullPath().removeFirstSegments(1));

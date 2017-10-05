@@ -169,11 +169,11 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		if (commandLine.length < 1) {
 			return IExternalToolConstants.EMPTY_STRING;
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < commandLine.length; i++) {
 			buf.append(' ');
 			char[] characters = commandLine[i].toCharArray();
-			StringBuffer command = new StringBuffer();
+			StringBuilder command = new StringBuilder();
 			boolean containsSpace = false;
 			for (int j = 0; j < characters.length; j++) {
 				char character = characters[j];

@@ -248,7 +248,7 @@ public final class ExternalToolMigration {
 			if (arguments != null) {
 				int start = 0;
 				ArrayList<String> targets = new ArrayList<String>();
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				VariableDefinition varDef = extractVariableDefinition(arguments, start);
 				while (varDef.end != -1) {
 					if ("ant_target".equals(varDef.name) && varDef.argument != null) { //$NON-NLS-1$
