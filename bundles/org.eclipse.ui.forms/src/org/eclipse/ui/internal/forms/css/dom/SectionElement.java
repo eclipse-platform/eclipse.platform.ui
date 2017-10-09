@@ -23,12 +23,14 @@ import org.eclipse.ui.forms.widgets.Section;
 public class SectionElement extends CompositeElement {
 
 
+	private Color titleBarForeground;
 	private Color titleBarBackground;
 	private Color titleBarBorderColor;
 	private Color titleBarGradientBackground;
 
 	public SectionElement(Section section, CSSEngine engine) {
 		super(section, engine);
+		titleBarForeground = section.getTitleBarForeground();
 		titleBarBackground = section.getTitleBarBackground();
 		titleBarBorderColor = section.getTitleBarBorderColor();
 		titleBarGradientBackground = section.getTitleBarGradientBackground();
@@ -36,11 +38,12 @@ public class SectionElement extends CompositeElement {
 
 	@Override
 	public void reset() {
-		super.reset();
 		Section section = (Section) getWidget();
+		section.setTitleBarForeground(titleBarForeground);
 		section.setTitleBarBackground(titleBarBackground);
 		section.setTitleBarBorderColor(titleBarBorderColor);
 		section.setTitleBarGradientBackground(titleBarGradientBackground);
+		super.reset();
 	}
 
 }

@@ -90,9 +90,9 @@ public class StyledTextElement extends CompositeElement {
 
 	@Override
 	public void reset() {
-		super.reset();
 		// Default is not having the scroll bar themed.
 		setScrollBarThemed(false);
+		super.reset();
 	}
 
 	/**

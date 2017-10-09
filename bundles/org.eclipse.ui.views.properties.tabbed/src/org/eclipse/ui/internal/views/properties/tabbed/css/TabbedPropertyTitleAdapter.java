@@ -19,8 +19,8 @@ public class TabbedPropertyTitleAdapter extends CompositeElement {
 
 	@Override
 	public void reset() {
-		super.reset();
 		getTabbedPropertyTitle().resetSectionToolBarColors();
+		super.reset();
 	}
 
 	private TabbedPropertyTitle getTabbedPropertyTitle() {
