@@ -14,6 +14,7 @@ package org.eclipse.ui.forms.widgets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -107,6 +108,9 @@ public class FormToolkit {
 	private class BorderPainter implements PaintListener {
 		@Override
 		public void paintControl(PaintEvent event) {
+			if (isDisposed) {
+				return;
+			}
 			Composite composite = (Composite) event.widget;
 			Control[] children = composite.getChildren();
 			for (Control element : children) {
