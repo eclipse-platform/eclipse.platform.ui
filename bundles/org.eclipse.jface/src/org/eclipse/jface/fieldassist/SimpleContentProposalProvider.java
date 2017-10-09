@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Amir Kouchekinia <amir@pyrus.us> - bug 200762
+ *     Amir Kouchekinia <amir@pyrus.us> - Bug 200762
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 525783
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
@@ -40,14 +41,13 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	private boolean filterProposals = false;
 
 	/**
-	 * Construct a SimpleContentProposalProvider whose content proposals are
-	 * always the specified array of Objects.
+	 * Construct a SimpleContentProposalProvider whose content proposals are always
+	 * the specified array of Objects.
 	 *
 	 * @param proposals
-	 *            the array of Strings to be returned whenever proposals are
-	 *            requested.
+	 *            the Strings to be returned whenever proposals are requested.
 	 */
-	public SimpleContentProposalProvider(String[] proposals) {
+	public SimpleContentProposalProvider(String... proposals) {
 		super();
 		this.proposals = proposals;
 	}
@@ -91,9 +91,9 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	 * Set the Strings to be used as content proposals.
 	 *
 	 * @param items
-	 *            the array of Strings to be used as proposals.
+	 *            the Strings to be used as proposals.
 	 */
-	public void setProposals(String[] items) {
+	public void setProposals(String... items) {
 		this.proposals = items;
 		contentProposals = null;
 	}
