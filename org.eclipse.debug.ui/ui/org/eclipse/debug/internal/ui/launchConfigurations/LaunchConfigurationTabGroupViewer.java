@@ -325,8 +325,10 @@ public class LaunchConfigurationTabGroupViewer {
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
 				ILaunchConfigurationTab[] tabs = getTabs();
-				for (ILaunchConfigurationTab tab : tabs) {
-					tab.postApply();
+				if (tabs != null) {
+					for (ILaunchConfigurationTab tab : tabs) {
+						tab.postApply();
+					}
 				}
 			}
 		});
