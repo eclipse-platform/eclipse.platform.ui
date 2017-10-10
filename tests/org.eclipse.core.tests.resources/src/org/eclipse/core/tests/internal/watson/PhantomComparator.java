@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,29 +56,25 @@ public class PhantomComparator extends TestElementComparator implements IElement
 			if (newInfo.isPhantom) {
 				/* ignore changes to phantoms */
 				return K_NO_CHANGE;
-			} else {
-				/* phantom -> real is an addition */
-				return ADDED;
 			}
-		} else {
-			if (newInfo.isPhantom) {
-				/* real -> phantom == deletion */
-				return REMOVED;
-			} else {
-				/* not a phantom */
-				if (oldInfo.name == null && newInfo.name == null) {
-					return K_NO_CHANGE;
-				}
-				if (oldInfo.name == null || newInfo.name == null) {
-					return CHANGED;
-				}
-				if (oldInfo.name.equals(newInfo.name)) {
-					return K_NO_CHANGE;
-				} else {
-					return CHANGED;
-				}
-			}
+			/* phantom -> real is an addition */
+			return ADDED;
 		}
+		if (newInfo.isPhantom) {
+			/* real -> phantom == deletion */
+			return REMOVED;
+		}
+		/* not a phantom */
+		if (oldInfo.name == null && newInfo.name == null) {
+			return K_NO_CHANGE;
+		}
+		if (oldInfo.name == null || newInfo.name == null) {
+			return CHANGED;
+		}
+		if (oldInfo.name.equals(newInfo.name)) {
+			return K_NO_CHANGE;
+		}
+		return CHANGED;
 	}
 
 	/**

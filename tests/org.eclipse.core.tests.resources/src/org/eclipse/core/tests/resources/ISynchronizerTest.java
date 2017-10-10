@@ -129,9 +129,8 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("1.0." + resource.getFullPath(), actual);
 					return true;
-				} else {
-					assertNotNull("1.1." + resource.getFullPath(), actual);
 				}
+				assertNotNull("1.1." + resource.getFullPath(), actual);
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("1.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -168,9 +167,8 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("3.0", actual);
 					return true;
-				} else {
-					assertNotNull("3.1." + resource.getFullPath(), actual);
 				}
+				assertNotNull("3.1." + resource.getFullPath(), actual);
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("3.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -241,9 +239,8 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("1.0." + resource.getFullPath(), actual);
 					return true;
-				} else {
-					assertNotNull("1.1." + resource.getFullPath(), actual);
 				}
+				assertNotNull("1.1." + resource.getFullPath(), actual);
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("1.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -282,9 +279,8 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("3.0", actual);
 					return true;
-				} else {
-					assertNotNull("3.1." + resource.getFullPath(), actual);
 				}
+				assertNotNull("3.1." + resource.getFullPath(), actual);
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("3.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -603,9 +599,8 @@ public class ISynchronizerTest extends ResourceTest {
 			if (resource.getType() == IResource.ROOT) {
 				assertNull("4.0", actual);
 				return true;
-			} else {
-				assertNotNull("4.1." + resource.getFullPath(), actual);
 			}
+			assertNotNull("4.1." + resource.getFullPath(), actual);
 			byte[] expected = table.get(resource.getFullPath());
 			assertEquals("4.2." + resource.getFullPath(), expected, actual);
 			return true;
@@ -840,9 +835,8 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("5.0", actual);
 					return true;
-				} else {
-					assertNotNull("5.1." + resource.getFullPath(), actual);
 				}
+				assertNotNull("5.1." + resource.getFullPath(), actual);
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("5.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
@@ -883,9 +877,8 @@ public class ISynchronizerTest extends ResourceTest {
 				if (resource.getType() == IResource.ROOT) {
 					assertNull("7.0", actual);
 					return true;
-				} else {
-					assertNotNull("7.1." + resource.getFullPath(), actual);
 				}
+				assertNotNull("7.1." + resource.getFullPath(), actual);
 				byte[] expected = table.get(resource.getFullPath());
 				assertEquals("7.2." + resource.getFullPath(), expected, actual);
 			} catch (CoreException e) {
