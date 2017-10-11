@@ -42,7 +42,7 @@ public class ComboViewerAutoComplete {
 	public ComboViewerAutoComplete(final ComboViewer dropDown) {
 		// use all items in the wrapped combo as proposals to filter instead of
 		// static String[]
-		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(new String[0]) {
+		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider() {
 			@Override
 			public IContentProposal[] getProposals(String contents, int position) {
 				String[] proposals = dropDown.getCombo().getItems();
