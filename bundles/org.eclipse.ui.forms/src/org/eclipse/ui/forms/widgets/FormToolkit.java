@@ -467,8 +467,12 @@ public class FormToolkit {
 	 */
 	public void adapt(Control control, boolean trackFocus, boolean trackKeyboard) {
 		checkDisposed();
-		control.setBackground(colors.getBackground());
-		control.setForeground(colors.getForeground());
+		if (colors.getBackground() != null) {
+			control.setBackground(colors.getBackground());
+		}
+		if (colors.getForeground() != null) {
+			control.setForeground(colors.getForeground());
+		}
 		if (control instanceof ExpandableComposite) {
 			ExpandableComposite ec = (ExpandableComposite) control;
 			if (ec.toggle != null) {
@@ -499,7 +503,9 @@ public class FormToolkit {
 	 */
 	public void adapt(Composite composite) {
 		checkDisposed();
-		composite.setBackground(colors.getBackground());
+		if (colors.getBackground() != null) {
+			composite.setBackground(colors.getBackground());
+		}
 		composite.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
