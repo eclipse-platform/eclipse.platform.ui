@@ -32,7 +32,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 public class HandlerServiceHandler extends AbstractHandler {
 
 	private static final String FAILED_TO_FIND_HANDLER_DURING_EXECUTION = "Failed to find handler during execution"; //$NON-NLS-1$
-	private static final String HANDLER_MISSING_EXECUTE_ANNOTATION = "Handler is missing @Execute"; //$NON-NLS-1$
+	private static final String HANDLER_MISSING_EXECUTE_ANNOTATION = " handler is missing @Execute"; //$NON-NLS-1$
 	private static final Object missingExecute = new Object();
 
 	protected String commandId;
@@ -153,7 +153,7 @@ public class HandlerServiceHandler extends AbstractHandler {
  executionContext,
 					staticContext, missingExecute);
 			if (result == missingExecute) {
-				throw new ExecutionException(HANDLER_MISSING_EXECUTE_ANNOTATION,
+				throw new ExecutionException(handler.getClass().getName() + HANDLER_MISSING_EXECUTE_ANNOTATION,
 						new NotHandledException(getClass().getName()));
 			}
 			return result;
