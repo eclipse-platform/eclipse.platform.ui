@@ -42,6 +42,7 @@ import org.eclipse.e4.core.internal.tests.di.AutoConstructWithCreatableTest;
 import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
 import org.eclipse.e4.core.internal.tests.di.InjectArraysTest;
 import org.eclipse.e4.core.internal.tests.di.InjectBaseTypeTest;
+import org.eclipse.e4.core.internal.tests.di.InjectBridgeTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionOrderTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionResultLeakTest;
 import org.eclipse.e4.core.internal.tests.di.InvokeTest;
@@ -106,6 +107,7 @@ import junit.framework.Test;
 		ExtraDependenciesTest.class,
 		ContextFunctionDynamicsTest.class,
 		InjectArraysTest.class,
+		InjectBridgeTest.class,
 		InvokeInRATTest.class,
 		Bug317183Test.class,
 		DependenciesLeakTest.class,

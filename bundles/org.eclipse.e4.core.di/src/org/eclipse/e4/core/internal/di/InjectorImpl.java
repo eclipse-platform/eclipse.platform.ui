@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -837,7 +838,9 @@ public class InjectorImpl implements IInjector {
 	private Method[] getDeclaredMethods(Class<?> c) {
 		Method[] methods = methodsCache.get(c);
 		if (methods == null) {
-			methods = c.getDeclaredMethods();
+			// filter out all bridge methods
+			methods = Stream.of(c.getDeclaredMethods())
+					.filter(m -> !m.isBridge()).toArray(s -> new Method[s]);
 			methodsCache.put(c, methods);
 		}
 		return methods;
