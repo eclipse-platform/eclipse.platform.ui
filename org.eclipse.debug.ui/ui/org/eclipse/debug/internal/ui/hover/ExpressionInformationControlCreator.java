@@ -1,3 +1,13 @@
+/****************************************************************************
+* Copyright (c) 2017 Red Hat Inc. and others.
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+*     Mickael Istria (Red Hat Inc.) - [521958] initial implementation
+*******************************************************************************/
 package org.eclipse.debug.internal.ui.hover;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,10 +54,12 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Creates an information control to display an expression in a hover control.
+ * This was mostly copied for JDT
+ * org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator
  *
  * @noextend This class is not intended to be subclassed by clients.
  *
- * @since 3.3
+ * @since 3.13
  */
 public class ExpressionInformationControlCreator implements IInformationControlCreator {
 
