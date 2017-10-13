@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,7 +180,7 @@ public class EModelServiceInsertTest {
 
 	@Test
 	public void testInsertRightOfSharedStack() {
-		EModelService modelService = (EModelService) applicationContext.get(EModelService.class.getName());
+		EModelService modelService = applicationContext.get(EModelService.class);
 		assertNotNull(modelService);
 		app = modelService.createModelElement(MApplication.class);
 		app.setContext(applicationContext);

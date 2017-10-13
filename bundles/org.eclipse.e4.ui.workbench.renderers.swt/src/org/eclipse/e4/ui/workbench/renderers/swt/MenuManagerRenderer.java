@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -860,7 +860,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		String iconURI = element.getIconURI();
 		if (iconURI != null && iconURI.length() > 0) {
 			ISWTResourceUtilities resUtils = (ISWTResourceUtilities) localContext
-					.get(IResourceUtilities.class.getName());
+					.get(IResourceUtilities.class);
 			return resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
 		}
 		return null;

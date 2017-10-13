@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,8 +92,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			return;
 		}
 
-		final IStylingEngine engine = (IStylingEngine) ctxt
-				.get(IStylingEngine.SERVICE_NAME);
+		final IStylingEngine engine = ctxt.get(IStylingEngine.class);
 		if (engine == null)
 			return;
 
@@ -321,8 +320,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void init(IEclipseContext context) {
 		super.init(context);
 
-		resUtils = (ISWTResourceUtilities) context.get(IResourceUtilities.class
-				.getName());
+		resUtils = (ISWTResourceUtilities) context.get(IResourceUtilities.class);
 		pinImage = getImageFromURI(pinURI);
 
 		Display.getCurrent().disposeExec(() -> {

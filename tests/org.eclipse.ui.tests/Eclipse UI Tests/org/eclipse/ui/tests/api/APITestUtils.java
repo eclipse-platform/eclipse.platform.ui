@@ -109,7 +109,7 @@ public class APITestUtils {
 
 	private static void saveableHelperSetAutomatedResponse(final int response,
 			IEclipseContext context) {
-		ISaveHandler saveHandler = (ISaveHandler) context.get(ISaveHandler.class.getName());
+		ISaveHandler saveHandler = context.get(ISaveHandler.class);
 		if (response == -1) {
 			context.set(ISaveHandler.class.getName(), originalHandlers.remove(context));
 		} else {

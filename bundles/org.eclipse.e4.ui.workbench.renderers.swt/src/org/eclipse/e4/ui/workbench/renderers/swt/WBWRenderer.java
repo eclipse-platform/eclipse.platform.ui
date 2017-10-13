@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -799,8 +799,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	private void applyDialogStyles(Control control) {
-		IStylingEngine engine = (IStylingEngine) context
-				.get(IStylingEngine.SERVICE_NAME);
+		IStylingEngine engine = context.get(IStylingEngine.class);
 		if (engine != null) {
 			Shell shell = control.getShell();
 			if (shell.getBackgroundMode() == SWT.INHERIT_NONE) {

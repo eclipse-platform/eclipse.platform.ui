@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,13 +80,12 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 			String iconURI = descriptor.getIconURI();
 			if (iconURI == null) {
 				// If the icon attribute was omitted, use the default one
-				IWorkbench workbench = (IWorkbench) application.getContext().get(
-						IWorkbench.class.getName());
+				IWorkbench workbench = application.getContext().get(IWorkbench.class);
 				imageDescriptor = workbench.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_DEF_VIEW);
 			} else {
 				ISWTResourceUtilities utility = (ISWTResourceUtilities) application.getContext()
-						.get(IResourceUtilities.class.getName());
+						.get(IResourceUtilities.class);
 				imageDescriptor = utility.imageDescriptorFromURI(URI.createURI(iconURI));
 			}
 		}
