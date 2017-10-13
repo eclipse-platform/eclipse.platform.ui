@@ -617,12 +617,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	@Override
 	public void mouseMove(MouseEvent e) {
 		int offset = -1;
-		try {
-			Point p = new Point(e.x, e.y);
-			offset = getTextWidget().getOffsetAtLocation(p);
-		} catch (IllegalArgumentException ex) {
-			// out of the document range
-		}
+		Point p = new Point(e.x, e.y);
+		offset = getTextWidget().getOffsetAtPoint(p);
 		updateLinks(offset);
 	}
 
