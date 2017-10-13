@@ -160,7 +160,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * @param selectedElements
 	 *            the array of elements to select
 	 */
-	public void setInitialSelections(Object[] selectedElements) {
+	public void setInitialSelections(Object... selectedElements) {
 		initialSelections = new ArrayList(selectedElements.length);
 		for (Object selectedElement : selectedElements) {
 			initialSelections.add(selectedElement);

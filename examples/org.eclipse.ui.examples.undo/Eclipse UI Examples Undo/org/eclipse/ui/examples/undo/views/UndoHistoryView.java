@@ -278,7 +278,7 @@ public class UndoHistoryView extends ViewPart implements
 		dialog.setTitle(UndoExampleMessages.UndoHistoryView_ContextFilterDialog);
 		dialog.setMessage(UndoExampleMessages.UndoHistoryView_ChooseContextMessage);
 		dialog.setElements(input.toArray());
-		dialog.setInitialSelections(new Object[] { fContext });
+		dialog.setInitialSelections(fContext);
 		if (dialog.open() == Window.OK) {
 			Object[] contexts = dialog.getResult();
 			if (contexts[0] instanceof IUndoContext) {

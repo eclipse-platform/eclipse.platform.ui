@@ -79,7 +79,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
         resolutions = markerResolutions;
         setTitle(IDEWorkbenchMessages.MarkerResolutionSelectionDialog_title);
         setMessage(IDEWorkbenchMessages.MarkerResolutionSelectionDialog_messageLabel);
-        setInitialSelections(new Object[] { markerResolutions[0] });
+		setInitialSelections(markerResolutions[0]);
     }
 
     @Override
