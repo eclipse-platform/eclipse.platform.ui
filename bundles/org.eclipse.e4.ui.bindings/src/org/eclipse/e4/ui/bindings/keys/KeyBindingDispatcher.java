@@ -388,14 +388,14 @@ public class KeyBindingDispatcher {
 
 	private EBindingService getBindingService() {
 		if (bindingService == null) {
-			bindingService = (EBindingService) context.get(EBindingService.class.getName());
+			bindingService = context.get(EBindingService.class);
 		}
 		return bindingService;
 	}
 
 	private EHandlerService getHandlerService() {
 		if (handlerService == null) {
-			handlerService = (EHandlerService) context.get(EHandlerService.class.getName());
+			handlerService = context.get(EHandlerService.class);
 		}
 		return handlerService;
 	}
@@ -428,14 +428,10 @@ public class KeyBindingDispatcher {
 		startTime = System.currentTimeMillis();
 		final long myStartTime = startTime;
 		final Display display = getDisplay();
-		display.timerExec(DELAY, new Runnable() {
-			@Override
-			public void run() {
-				if ((System.currentTimeMillis() > (myStartTime - DELAY))
-						&& (startTime == myStartTime)) {
-					Collection<Binding> partialMatches = bindingService.getPartialMatches(sequence);
-					openKeyAssistShell(partialMatches);
-				}
+		display.timerExec(DELAY, () -> {
+			if ((System.currentTimeMillis() > (myStartTime - DELAY)) && (startTime == myStartTime)) {
+				Collection<Binding> partialMatches = bindingService.getPartialMatches(sequence);
+				openKeyAssistShell(partialMatches);
 			}
 		});
 

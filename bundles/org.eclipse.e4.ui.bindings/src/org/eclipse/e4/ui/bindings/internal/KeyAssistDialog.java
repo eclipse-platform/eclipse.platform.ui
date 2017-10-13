@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -36,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -355,12 +353,7 @@ public class KeyAssistDialog extends PopupDialog {
 		/*
 		 * If you double-click on the table, it should execute the selected command.
 		 */
-		completionsTable.addListener(SWT.DefaultSelection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				executeKeyBinding(event);
-			}
-		});
+		completionsTable.addListener(SWT.DefaultSelection, event -> executeKeyBinding(event));
 	}
 
 	/**
@@ -393,19 +386,16 @@ public class KeyAssistDialog extends PopupDialog {
 		Collection<Binding> matchesForCommand;
 		Collection<Binding> activeBindings = bindingService.getActiveBindings();
 		Collection<Binding> conflictBindings = bindingService.getAllConflicts();
-		Collection<Binding> sortedMatches = new TreeSet<Binding>(new Comparator<Binding>() {
-			@Override
-			public int compare(Binding binding1, Binding binding2) {
-				ParameterizedCommand cmdA = binding1.getParameterizedCommand();
-				ParameterizedCommand cmdB = binding2.getParameterizedCommand();
-				int result = 0;
-				try {
-					result = cmdA.getName().compareTo(cmdB.getName());
-				} catch (NotDefinedException e) {
-					// whaaa?
-				}
-				return result;
+		Collection<Binding> sortedMatches = new TreeSet<Binding>((binding1, binding2) -> {
+			ParameterizedCommand cmdA = binding1.getParameterizedCommand();
+			ParameterizedCommand cmdB = binding2.getParameterizedCommand();
+			int result = 0;
+			try {
+				result = cmdA.getName().compareTo(cmdB.getName());
+			} catch (NotDefinedException e) {
+				// whaaa?
 			}
+			return result;
 		});
 
 		// if the active scheme is not the default scheme then we should clean up the active
@@ -486,19 +476,16 @@ public class KeyAssistDialog extends PopupDialog {
 	 * @since 3.3
 	 */
 	public int open(Collection<Binding> bindings) {
-		matches = new TreeSet<Binding>(new Comparator<Binding>() {
-			@Override
-			public int compare(Binding a, Binding b) {
-				Binding bindingA = a;
-				Binding bindingB = b;
-				ParameterizedCommand commandA = bindingA.getParameterizedCommand();
-				ParameterizedCommand commandB = bindingB.getParameterizedCommand();
-				try {
-					return commandA.getName().compareTo(commandB.getName());
-				} catch (NotDefinedException e) {
-					// should not happen
-					return 0;
-				}
+		matches = new TreeSet<Binding>((a, b) -> {
+			Binding bindingA = a;
+			Binding bindingB = b;
+			ParameterizedCommand commandA = bindingA.getParameterizedCommand();
+			ParameterizedCommand commandB = bindingB.getParameterizedCommand();
+			try {
+				return commandA.getName().compareTo(commandB.getName());
+			} catch (NotDefinedException e) {
+				// should not happen
+				return 0;
 			}
 		});
 		matches.addAll(bindings);
