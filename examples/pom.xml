@@ -14,11 +14,11 @@
   <parent>
     <groupId>eclipse.platform.ui</groupId>
     <artifactId>eclipse.platform.ui</artifactId>
-    <version>4.7.1-SNAPSHOT</version>
+    <version>4.7.2-SNAPSHOT</version>
   </parent>
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>eclipse.platform.ui.examples</artifactId>
-  <version>4.7.1-SNAPSHOT</version>
+  <version>4.7.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
