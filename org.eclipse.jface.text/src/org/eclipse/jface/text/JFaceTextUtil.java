@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -420,27 +420,33 @@ public final class JFaceTextUtil {
 	 * @since 3.5
 	 */
 	public static int getOffsetForCursorLocation(ITextViewer viewer) {
-		StyledText text= viewer.getTextWidget();
-		if (text == null || text.isDisposed())
-			return -1;
+		try {
+			StyledText text= viewer.getTextWidget();
+			if (text == null || text.isDisposed()) {
+				return -1;
+			}
 
-		Display display= text.getDisplay();
-		Point absolutePosition= display.getCursorLocation();
-		Point relativePosition= text.toControl(absolutePosition);
+			Display display= text.getDisplay();
+			Point absolutePosition= display.getCursorLocation();
+			Point relativePosition= text.toControl(absolutePosition);
 
-		int widgetOffset= text.getOffsetAtPoint(relativePosition);
-		if (widgetOffset == -1) {
+			int widgetOffset= text.getOffsetAtPoint(relativePosition);
+			if (widgetOffset == -1) {
+				return -1;
+			}
+			Point p= text.getLocationAtOffset(widgetOffset);
+			if (p.x > relativePosition.x) {
+				widgetOffset--;
+			}
+
+			if (viewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
+				return extension.widgetOffset2ModelOffset(widgetOffset);
+			}
+
+			return widgetOffset + viewer.getVisibleRegion().getOffset();
+		} catch (IllegalArgumentException e) {
 			return -1;
 		}
-		Point p= text.getLocationAtOffset(widgetOffset);
-		if (p.x > relativePosition.x)
-			widgetOffset--;
-
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
-			return extension.widgetOffset2ModelOffset(widgetOffset);
-		}
-
-		return widgetOffset + viewer.getVisibleRegion().getOffset();
 	}
 }

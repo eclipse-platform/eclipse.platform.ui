@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1455,35 +1455,46 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			return new Region(vOffset, vLength);
 		}
 
-		int widgetOffset;
+		int widgetOffset= -1;
 		int widgetClippingStartOffset= fTextWidget.getOffsetAtPoint(new Point(0, event.y));
 		if (widgetClippingStartOffset != -1) {
-			int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
-			widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
-		} else {
+			try {
+				int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
+				widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
+			} catch (IllegalArgumentException ex) {
+				/* ignore; keep widgetOffset at -1 */
+			}
+		}
+		if (widgetOffset == -1) {
 			try {
 				int firstVisibleLine= JFaceTextUtil.getPartialTopIndex(fTextWidget);
 				widgetOffset= fTextWidget.getOffsetAtLine(firstVisibleLine);
-			} catch (IllegalArgumentException ex2) { // above try code might fail too
+			} catch (IllegalArgumentException ex) { // above try code might fail
 				widgetOffset= 0;
 			}
 		}
 
-		int widgetEndOffset;
+		int widgetEndOffset= -1;
 		int widgetClippingEndOffset= fTextWidget.getOffsetAtPoint(new Point(0, event.y + event.height));
 		if (widgetClippingEndOffset != -1) {
-			int lastWidgetLine= fTextWidget.getLineAtOffset(widgetClippingEndOffset);
-			widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
-		} else {
+			try {
+				int lastWidgetLine= fTextWidget.getLineAtOffset(widgetClippingEndOffset);
+				widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
+			} catch (IllegalArgumentException ex1) {
+				/* ignore; keep widgetEndOffset at -1 */
+			}
+		}
+		if (widgetEndOffset == -1) {
 			// happens if the editor is not "full", e.g. the last line of the document is visible in the editor
 			try {
 				int lastVisibleLine= JFaceTextUtil.getPartialBottomIndex(fTextWidget);
-				if (lastVisibleLine == fTextWidget.getLineCount() - 1)
+				if (lastVisibleLine == fTextWidget.getLineCount() - 1) {
 					// last line
 					widgetEndOffset= fTextWidget.getCharCount();
-				else
+				} else {
 					widgetEndOffset= fTextWidget.getOffsetAtLine(lastVisibleLine + 1) - 1;
-			} catch (IllegalArgumentException ex2) { // above try code might fail too
+				}
+			} catch (IllegalArgumentException ex) { // above try code might fail too
 				widgetEndOffset= fTextWidget.getCharCount();
 			}
 		}

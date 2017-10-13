@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,21 +259,26 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @return the document offset corresponding to the given point
 	 */
 	private int computeOffsetAtLocation(int x, int y) {
-		StyledText styledText= fTextViewer.getTextWidget();
-		int widgetOffset= styledText.getOffsetAtPoint(new Point(x, y));
-		if (widgetOffset == -1) {
+		try {
+			StyledText styledText= fTextViewer.getTextWidget();
+			int widgetOffset= styledText.getOffsetAtPoint(new Point(x, y));
+			if (widgetOffset == -1) {
+				return -1;
+			}
+			Point p= styledText.getLocationAtOffset(widgetOffset);
+			if (p.x > x) {
+				widgetOffset--;
+			}
+
+			if (fTextViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+				return extension.widgetOffset2ModelOffset(widgetOffset);
+			}
+
+			return widgetOffset + fTextViewer._getVisibleRegionOffset();
+		} catch (IllegalArgumentException e) {
 			return -1;
 		}
-		Point p= styledText.getLocationAtOffset(widgetOffset);
-		if (p.x > x)
-			widgetOffset--;
-
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-			return extension.widgetOffset2ModelOffset(widgetOffset);
-		}
-
-		return widgetOffset + fTextViewer._getVisibleRegionOffset();
 	}
 
 	@Override

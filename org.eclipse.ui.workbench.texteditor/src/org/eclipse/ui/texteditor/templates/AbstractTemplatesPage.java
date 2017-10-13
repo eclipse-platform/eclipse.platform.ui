@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Dakshinamurthy Karra, IBM Corporation and others.
+ * Copyright (c) 2007, 2018 Dakshinamurthy Karra, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1571,15 +1571,16 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		int widgetCaret= fViewer.getTextWidget().getCaretOffset();
 		if (fViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 ext= (ITextViewerExtension5) fViewer;
-			try {
-				return ext.widgetOffset2ModelOffset(textWidget.getOffsetAtPoint(point));
-			} catch (IllegalArgumentException e) {
+			int widgetOffset = textWidget.getOffsetAtPoint(point);
+			int offset = widgetOffset != -1 ? ext.widgetOffset2ModelOffset(textWidget.getOffsetAtPoint(point)) : -1;
+			if (offset == -1) {
 				int docLineIndex= ext.widgetLine2ModelLine(textWidget.getLineIndex(point.y));
 				String lineDelimiter= document.getLineDelimiter(docLineIndex);
 				int delimLength= lineDelimiter == null ? 0 : lineDelimiter.length();
 				return document.getLineOffset(docLineIndex) + document.getLineLength(docLineIndex)
 						- delimLength;
 			}
+			return offset;
 		}
 		IRegion visible= fViewer.getVisibleRegion();
 		return widgetCaret + visible.getOffset();

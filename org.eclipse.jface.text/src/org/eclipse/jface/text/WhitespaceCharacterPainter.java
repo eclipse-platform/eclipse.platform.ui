@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 Wind River Systems, Inc., IBM Corporation and others.
+ * Copyright (c) 2006, 2018 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -265,8 +265,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 				endOffset= fTextWidget.getOffsetAtPoint(new Point(x + w - 1, y)) + 1;
 				if (endOffset == -1) {
 					endOffset= lineEndOffset;
-				}
-				if (endOffset + 2 >= lineEndOffset) {
+				} else if (endOffset + 2 >= lineEndOffset) {
 					endOffset= lineEndOffset;
 				}
 			}
