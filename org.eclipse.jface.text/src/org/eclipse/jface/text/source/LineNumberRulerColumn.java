@@ -243,20 +243,21 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				if (relativePosition.x < 0)
 					offset= lineInfo.getOffset();
 				else {
-					try {
-						int widgetOffset= fCachedTextWidget.getOffsetAtLocation(relativePosition);
+					int widgetOffset= fCachedTextWidget.getOffsetAtPoint(relativePosition);
+					if (widgetOffset != -1) {
 						Point p= fCachedTextWidget.getLocationAtOffset(widgetOffset);
-						if (p.x > relativePosition.x)
+						if (p.x > relativePosition.x) {
 							widgetOffset--;
+						}
 
 						// Convert to model offset
 						if (fCachedTextViewer instanceof ITextViewerExtension5) {
 							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
 							offset= extension.widgetOffset2ModelOffset(widgetOffset);
-						} else
+						} else {
 							offset= widgetOffset + fCachedTextViewer.getVisibleRegion().getOffset();
-
-					} catch (IllegalArgumentException ex) {
+						}
+					} else {
 						int lineEndOffset= lineInfo.getOffset() + lineInfo.getLength();
 
 						// Convert to widget offset

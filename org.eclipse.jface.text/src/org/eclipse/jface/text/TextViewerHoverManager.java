@@ -259,25 +259,21 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @return the document offset corresponding to the given point
 	 */
 	private int computeOffsetAtLocation(int x, int y) {
-
-		try {
-
-			StyledText styledText= fTextViewer.getTextWidget();
-			int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
-			Point p= styledText.getLocationAtOffset(widgetOffset);
-			if (p.x > x)
-				widgetOffset--;
-
-			if (fTextViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-				return extension.widgetOffset2ModelOffset(widgetOffset);
-			}
-
-			return widgetOffset + fTextViewer._getVisibleRegionOffset();
-
-		} catch (IllegalArgumentException e) {
+		StyledText styledText= fTextViewer.getTextWidget();
+		int widgetOffset= styledText.getOffsetAtPoint(new Point(x, y));
+		if (widgetOffset == -1) {
 			return -1;
 		}
+		Point p= styledText.getLocationAtOffset(widgetOffset);
+		if (p.x > x)
+			widgetOffset--;
+
+		if (fTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+			return extension.widgetOffset2ModelOffset(widgetOffset);
+		}
+
+		return widgetOffset + fTextViewer._getVisibleRegionOffset();
 	}
 
 	@Override

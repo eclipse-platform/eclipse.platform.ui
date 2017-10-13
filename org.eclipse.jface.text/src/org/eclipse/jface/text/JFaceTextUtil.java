@@ -420,30 +420,27 @@ public final class JFaceTextUtil {
 	 * @since 3.5
 	 */
 	public static int getOffsetForCursorLocation(ITextViewer viewer) {
+		StyledText text= viewer.getTextWidget();
+		if (text == null || text.isDisposed())
+			return -1;
 
-		try {
-			StyledText text= viewer.getTextWidget();
-			if (text == null || text.isDisposed())
-				return -1;
+		Display display= text.getDisplay();
+		Point absolutePosition= display.getCursorLocation();
+		Point relativePosition= text.toControl(absolutePosition);
 
-			Display display= text.getDisplay();
-			Point absolutePosition= display.getCursorLocation();
-			Point relativePosition= text.toControl(absolutePosition);
-
-			int widgetOffset= text.getOffsetAtLocation(relativePosition);
-			Point p= text.getLocationAtOffset(widgetOffset);
-			if (p.x > relativePosition.x)
-				widgetOffset--;
-
-			if (viewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
-				return extension.widgetOffset2ModelOffset(widgetOffset);
-			}
-
-			return widgetOffset + viewer.getVisibleRegion().getOffset();
-
-		} catch (IllegalArgumentException e) {
+		int widgetOffset= text.getOffsetAtPoint(relativePosition);
+		if (widgetOffset == -1) {
 			return -1;
 		}
+		Point p= text.getLocationAtOffset(widgetOffset);
+		if (p.x > relativePosition.x)
+			widgetOffset--;
+
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
+			return extension.widgetOffset2ModelOffset(widgetOffset);
+		}
+
+		return widgetOffset + viewer.getVisibleRegion().getOffset();
 	}
 }

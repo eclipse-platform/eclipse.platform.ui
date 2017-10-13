@@ -1456,11 +1456,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 
 		int widgetOffset;
-		try {
-			int widgetClippingStartOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y));
+		int widgetClippingStartOffset= fTextWidget.getOffsetAtPoint(new Point(0, event.y));
+		if (widgetClippingStartOffset != -1) {
 			int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
 			widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
-		} catch (IllegalArgumentException ex1) {
+		} else {
 			try {
 				int firstVisibleLine= JFaceTextUtil.getPartialTopIndex(fTextWidget);
 				widgetOffset= fTextWidget.getOffsetAtLine(firstVisibleLine);
@@ -1470,11 +1470,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 
 		int widgetEndOffset;
-		try {
-			int widgetClippingEndOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y + event.height));
+		int widgetClippingEndOffset= fTextWidget.getOffsetAtPoint(new Point(0, event.y + event.height));
+		if (widgetClippingEndOffset != -1) {
 			int lastWidgetLine= fTextWidget.getLineAtOffset(widgetClippingEndOffset);
 			widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
-		} catch (IllegalArgumentException ex1) {
+		} else {
 			// happens if the editor is not "full", e.g. the last line of the document is visible in the editor
 			try {
 				int lastVisibleLine= JFaceTextUtil.getPartialBottomIndex(fTextWidget);

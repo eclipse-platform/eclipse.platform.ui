@@ -250,13 +250,10 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			// Y-coordinate of line
 			int y= fTextWidget.getLinePixel(line);
 			// compute first visible char offset
-			int startOffset;
-			try {
-				startOffset= fTextWidget.getOffsetAtLocation(new Point(x, y)) - 1;
-				if (startOffset - 2 <= lineOffset) {
-					startOffset= lineOffset;
-				}
-			} catch (IllegalArgumentException iae) {
+			int startOffset = fTextWidget.getOffsetAtPoint(new Point(x, y)) - 1;
+			if (startOffset == -1) {
+				startOffset= lineOffset;
+			} else if (startOffset - 2 <= lineOffset) {
 				startOffset= lineOffset;
 			}
 			// compute last visible char offset
@@ -265,12 +262,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 				// line end is visible
 				endOffset= lineEndOffset;
 			} else {
-				try {
-					endOffset= fTextWidget.getOffsetAtLocation(new Point(x + w - 1, y)) + 1;
-					if (endOffset + 2 >= lineEndOffset) {
-						endOffset= lineEndOffset;
-					}
-				} catch (IllegalArgumentException iae) {
+				endOffset= fTextWidget.getOffsetAtPoint(new Point(x + w - 1, y)) + 1;
+				if (endOffset == -1) {
+					endOffset= lineEndOffset;
+				}
+				if (endOffset + 2 >= lineEndOffset) {
 					endOffset= lineEndOffset;
 				}
 			}

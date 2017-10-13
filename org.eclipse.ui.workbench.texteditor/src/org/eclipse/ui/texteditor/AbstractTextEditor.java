@@ -1902,21 +1902,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (document == null)
 				return -1;
 
-			try {
-				int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
-				Point p= styledText.getLocationAtOffset(widgetOffset);
-				if (p.x > x)
-					widgetOffset--;
-
-				if (textViewer instanceof ITextViewerExtension5) {
-					ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
-					return extension.widgetOffset2ModelOffset(widgetOffset);
-				}
-				IRegion visibleRegion= textViewer.getVisibleRegion();
-				return widgetOffset + visibleRegion.getOffset();
-			} catch (IllegalArgumentException e) {
+			int widgetOffset = styledText.getOffsetAtPoint(new Point(x, y));
+			if (widgetOffset == -1) {
 				return -1;
 			}
+			Point p = styledText.getLocationAtOffset(widgetOffset);
+			if (p.x > x)
+				widgetOffset--;
+
+			if (textViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension = (ITextViewerExtension5) textViewer;
+				return extension.widgetOffset2ModelOffset(widgetOffset);
+			}
+			IRegion visibleRegion = textViewer.getVisibleRegion();
+			return widgetOffset + visibleRegion.getOffset();
 		}
 	}
 
@@ -3534,7 +3533,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (isBlockSelectionModeEnabled())
 					return false;
 
-				int offset= st.getOffsetAtLocation(point);
+				int offset = st.getOffsetAtPoint(point);
 				Point p= st.getLocationAtOffset(offset);
 				if (p.x > point.x)
 					offset--;

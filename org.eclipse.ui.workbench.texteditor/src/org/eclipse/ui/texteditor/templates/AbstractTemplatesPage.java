@@ -1572,7 +1572,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		if (fViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 ext= (ITextViewerExtension5) fViewer;
 			try {
-				return ext.widgetOffset2ModelOffset(textWidget.getOffsetAtLocation(point));
+				return ext.widgetOffset2ModelOffset(textWidget.getOffsetAtPoint(point));
 			} catch (IllegalArgumentException e) {
 				int docLineIndex= ext.widgetLine2ModelLine(textWidget.getLineIndex(point.y));
 				String lineDelimiter= document.getLineDelimiter(docLineIndex);
