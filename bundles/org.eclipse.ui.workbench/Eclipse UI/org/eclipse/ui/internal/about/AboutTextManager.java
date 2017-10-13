@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.about;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -166,13 +165,8 @@ public class AboutTextManager {
 		        return;
 		    }
 		    StyledText text2 = (StyledText) e.widget;
-		    int offset = -1;
-		    try {
-		        offset = text2.getOffsetAtLocation(new Point(e.x, e.y));
-		    } catch (IllegalArgumentException ex) {
-		        // leave value as -1
-		    }
-		    if (offset == -1) {
+			int offset = text2.getOffsetAtPoint(new Point(e.x, e.y));
+			if (offset == -1) {
 				text2.setCursor(null);
 			} else if (item != null && item.isLinkAt(offset)) {
 				text2.setCursor(handCursor);

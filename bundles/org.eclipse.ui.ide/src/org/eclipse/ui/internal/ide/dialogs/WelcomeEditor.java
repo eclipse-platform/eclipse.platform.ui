@@ -288,11 +288,7 @@ public class WelcomeEditor extends EditorPart {
 		    StyledText text2 = (StyledText) e.widget;
 		    WelcomeItem item = (WelcomeItem) e.widget.getData();
 		    int offset = -1;
-		    try {
-		        offset = text2.getOffsetAtLocation(new Point(e.x, e.y));
-		    } catch (IllegalArgumentException ex) {
-		        // location is not over a character
-		    }
+			offset = text2.getOffsetAtPoint(new Point(e.x, e.y));
 		    if (offset == -1) {
 				text2.setCursor(null);
 			} else if (item.isLinkAt(offset)) {
