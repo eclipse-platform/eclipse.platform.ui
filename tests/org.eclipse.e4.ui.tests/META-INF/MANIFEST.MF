@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Modelled UI tests bundle (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.tests; singleton:=true
 Bundle-Version: 0.11.300.qualifier
-Bundle-Activator: org.eclipse.e4.ui.tests.Activator
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.4.0",
  org.eclipse.jface;bundle-version="3.4.0",
