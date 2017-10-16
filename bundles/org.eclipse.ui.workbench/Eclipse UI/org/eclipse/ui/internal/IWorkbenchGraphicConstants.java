@@ -158,4 +158,7 @@ public interface IWorkbenchGraphicConstants {
      * @since 3.3
      */
 	public static final String IMG_OBJ_SIGNED_UNKNOWN = "IMG_OBJ_SIGNED_UNKNOWN"; //$NON-NLS-1$
+
+	public static final String IMG_PREF_IMPORT = "IMG_PREF_IMPORT"; //$NON-NLS-1$
+	public static final String IMG_PREF_EXPORT = "IMG_PREF_EXPORT"; //$NON-NLS-1$
 }

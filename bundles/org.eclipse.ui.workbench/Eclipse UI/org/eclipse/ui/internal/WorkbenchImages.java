@@ -90,6 +90,8 @@ public/*final*/class WorkbenchImages {
 
     private final static String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
 
+	private final static String PATH_PREF = ICONS_PATH + "pref/"; // Preferences icons//$NON-NLS-1$
+
     /**
      * Declares a workbench image given the path of the image file (relative to
      * the workbench plug-in). This is a helper method that creates the image
@@ -300,6 +302,9 @@ public/*final*/class WorkbenchImages {
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT + "signed_yes_tbl.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO, PATH_OBJECT + "signed_no_tbl.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN, PATH_OBJECT + "signed_unkn_tbl.png", true); //$NON-NLS-1$
+
+		declareImage(IWorkbenchGraphicConstants.IMG_PREF_IMPORT, PATH_PREF + "import_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_PREF_EXPORT, PATH_PREF + "export_wiz.png", false); //$NON-NLS-1$
 
 		declareHoverImages();
 
