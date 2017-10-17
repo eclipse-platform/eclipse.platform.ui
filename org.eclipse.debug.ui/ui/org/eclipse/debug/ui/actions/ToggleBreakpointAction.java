@@ -168,14 +168,20 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	 * @return the document or <code>null</code> if none
 	 */
 	private IDocument getDocument() {
-		if (fDocument != null)
+		if (fDocument != null) {
 			return fDocument;
+		}
+
+		if (fPart == null) {
+			return null;
+		}
 
 		if (fPart instanceof ITextEditor) {
 			ITextEditor editor= (ITextEditor)fPart;
 			IDocumentProvider provider = editor.getDocumentProvider();
-			if (provider != null)
+			if (provider != null) {
 				return provider.getDocument(editor.getEditorInput());
+			}
 		}
 
 		IDocument doc = fPart.getAdapter(IDocument.class);
@@ -186,9 +192,6 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		IDocument document= getDocument();
