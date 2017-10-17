@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lucas Bullen (Red Hat Inc.) - Bug 525343: importPreferencesremoves preferenceChangedListeners
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -85,10 +91,23 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
 
     @Override
 	public boolean performFinish() {
-		boolean success = mainPage.finish();
-		sendEvent(EVENT_IMPORT_END);
-		return success;
+        boolean success = mainPage.finish();
+        sendEvent(EVENT_IMPORT_END);
+        showRestartDialog();
+        return success;
     }
+
+	private void showRestartDialog() {
+		if (0 == MessageDialog.open(MessageDialog.CONFIRM, mainPage.getShell(),
+				PreferencesMessages.WizardPreferencesImportRestartDialog_title,
+				PreferencesMessages.WizardPreferencesImportRestartDialog_message, SWT.NONE,
+				PreferencesMessages.WizardPreferencesImportRestartDialog_restart,
+				IDialogConstants.CANCEL_LABEL)) {
+			Display.getDefault().asyncExec(() -> {
+				PlatformUI.getWorkbench().restart();
+			});
+		}
+	}
 
 	private void sendEvent(String topic) {
 		if (eventBroker != null) {

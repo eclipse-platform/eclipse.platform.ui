@@ -1,11 +1,12 @@
 /**********************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2005, 2017 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Lucas Bullen (Red Hat Inc.) - Bug 525343: importPreferencesremoves preferenceChangedListeners
  **********************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
@@ -50,6 +51,9 @@ public class PreferencesMessages extends NLS {
 	public static String WizardPreferencesImportPage1_file;
 	public static String WizardPreferencesImportPage1_title;
 	public static String WizardPreferencesImportPage1_invalidPrefFile;
+	public static String WizardPreferencesImportRestartDialog_title;
+	public static String WizardPreferencesImportRestartDialog_message;
+	public static String WizardPreferencesImportRestartDialog_restart;
 
 	public static String SelectionDialog_selectLabel;
 	public static String SelectionDialog_deselectLabel;
