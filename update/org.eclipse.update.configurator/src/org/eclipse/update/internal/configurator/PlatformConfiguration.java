@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -267,7 +268,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			try {
 				//PAL foundation
 				//key = URLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
-				key = UpdateURLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
+				key = URLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 				// ignore
 			}
