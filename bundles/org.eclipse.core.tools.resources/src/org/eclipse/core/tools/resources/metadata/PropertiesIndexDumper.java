@@ -20,7 +20,7 @@ import org.eclipse.core.tools.metadata.DumpException;
 public class PropertiesIndexDumper extends AbstractDumper {
 
 	@Override
-	protected void dumpContents(PushbackInputStream input, StringBuffer contents) throws IOException, Exception, DumpException {
+	protected void dumpContents(PushbackInputStream input, StringBuilder contents) throws IOException, Exception, DumpException {
 		DataInputStream source = new DataInputStream(input);
 		int version = source.readByte();
 		contents.append("version: ");
