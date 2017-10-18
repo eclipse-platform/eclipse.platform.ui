@@ -43,7 +43,7 @@ public class FeatureEntry
 	private String url;
 	private String description;
 	private String licenseURL;
-	private ArrayList plugins;
+	private ArrayList<PluginEntry> plugins;
 	private AboutInfo branding;
 	private SiteEntry site;
 	private ResourceBundle resourceBundle;
@@ -75,14 +75,14 @@ public class FeatureEntry
 	
 	public void addPlugin(PluginEntry plugin) {
 		if (plugins == null)
-			plugins = new ArrayList();
+			plugins = new ArrayList<>();
 		plugins.add(plugin);
 	}
 	
 	public PluginEntry[] getPluginEntries() {
 		if (plugins == null)
 			fullParse();
-		return (PluginEntry[])plugins.toArray(new PluginEntry[plugins.size()]);
+		return plugins.toArray(new PluginEntry[plugins.size()]);
 	}
 	
 	/**
@@ -102,52 +102,38 @@ public class FeatureEntry
 		return url;
 	}
 	
-	/*
-	 * @see IFeatureEntry#getFeatureIdentifier()
-	 */
+	@Override
 	public String getFeatureIdentifier() {
 		return id;
 	}
 
-	/*
-	 * @see IFeatureEntry#getFeatureVersion()
-	 */
+	@Override
 	public String getFeatureVersion() {
 		return version;
 	}
 
-	/*
-	 * @see IFeatureEntry#getFeaturePluginVersion()
-	 */
+	@Override
 	public String getFeaturePluginVersion() {
 		return pluginVersion != null && pluginVersion.length() > 0 ? pluginVersion : null;
 	}
 
-	/*
-	 * @see IFeatureEntry#getFeaturePluginIdentifier()
-	 */
+	@Override
 	public String getFeaturePluginIdentifier() {
 		// if no plugin is specified, use the feature id
 		return pluginIdentifier != null && pluginIdentifier.length() > 0 ? pluginIdentifier : id;
 	}
 	
-	/*
-	 * @see IFeatureEntry#getFeatureApplication()
-	 */
+	@Override
 	public String getFeatureApplication() {
 		return application;
 	}
 
-	/*
-	 * @see IFeatureEntry#getFeatureRootURLs()
-	 */
+	@Override
 	public URL[] getFeatureRootURLs() {
 		return root;
 	}
 
-	/*
-	 * @see IFeatureEntry#canBePrimary()
-	 */
+	@Override
 	public boolean canBePrimary() {
 		return primary;
 	}
@@ -191,48 +177,42 @@ public class FeatureEntry
 		this.description = description;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getBundles()
-	 */
+	@Override
 	public Bundle[] getBundles() {
 		if (plugins == null)
 			fullParse();
 		
-		ArrayList bundles = new ArrayList(plugins.size());
+		ArrayList<Bundle> bundles = new ArrayList<>(plugins.size());
 		for (int i=0; i<plugins.size(); i++) {
-			PluginEntry plugin = (PluginEntry)plugins.get(i);
+			PluginEntry plugin = plugins.get(i);
 			// get the highest version for the plugin
 			Bundle bundle = Utils.getBundle(plugin.getPluginIdentifier());
 			if (bundle != null)
 				bundles.add(bundle);
 		}
-		return (Bundle[])bundles.toArray(new Bundle[bundles.size()]);
+		return bundles.toArray(new Bundle[bundles.size()]);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getDescription()
-	 */
+
+	@Override
 	public String getDescription() {
 		if (description == null)
 			fullParse();
 		return description;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getIdentifier()
-	 */
+
+	@Override
 	public String getIdentifier() {
 		return id;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getName()
-	 */
+
+	@Override
 	public String getName() {
 		if (branding == null)
 			branding = AboutInfo.readFeatureInfo(id, version, getFeaturePluginIdentifier());
 		return branding.getProductName();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getProperty(java.lang.String)
-	 */
+
+	@Override
 	public String getProperty(String key) {
 		if (key == null)
 			return null;
@@ -278,29 +258,23 @@ public class FeatureEntry
 		
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getProviderName()
-	 */
+	
+	@Override
 	public String getProviderName() {
 		if (branding == null)
 			branding = AboutInfo.readFeatureInfo(id, version, getFeaturePluginIdentifier());
 		return branding.getProviderName();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroup#getVersion()
-	 */
+	
+	@Override
 	public String getVersion() {
 		return version;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProduct#getApplication()
-	 */
+
 	public String getApplication() {
 		return application;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProduct#getId()
-	 */
+
 	public String getId() {
 		return id;
 	}
@@ -351,7 +325,7 @@ public class FeatureEntry
 			return;
 		fullyParsed = true;
 		if (plugins == null) 
-			plugins = new ArrayList();
+			plugins = new ArrayList<>();
 		FullFeatureParser parser = new FullFeatureParser(this);
 		parser.parse();
 	}

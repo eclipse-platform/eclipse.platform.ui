@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.w3c.dom.*;
 
 public class Configuration implements IConfigurationConstants {
 	
-	private HashMap sites = new HashMap();
-	private HashMap platformURLs = new HashMap();
+	private HashMap<String, SiteEntry> sites = new HashMap<>();
+	private HashMap<String, URL> platformURLs = new HashMap<>();
 	private Date date;
 	private long lastModified; // needed to account for file system limitations
 	private URL url;
@@ -129,7 +129,7 @@ public class Configuration implements IConfigurationConstants {
 	
 	public SiteEntry getSiteEntry(String url) {
 		url = Utils.canonicalizeURL(url);		
-		SiteEntry site = (SiteEntry)sites.get(url);
+		SiteEntry site = sites.get(url);
 		if (site == null && linkedConfig != null)
 			site = linkedConfig.getSiteEntry(url);
 		return site;
@@ -137,10 +137,10 @@ public class Configuration implements IConfigurationConstants {
 	
 	public SiteEntry[] getSites() {
 		if (linkedConfig == null)
-			return (SiteEntry[]) sites.values().toArray(new SiteEntry[sites.size()]);
-		ArrayList combinedSites = new ArrayList(sites.values());
+			return sites.values().toArray(new SiteEntry[sites.size()]);
+		ArrayList<SiteEntry> combinedSites = new ArrayList<>(sites.values());
 		combinedSites.addAll(linkedConfig.sites.values());
-		return (SiteEntry[]) combinedSites.toArray(new SiteEntry[combinedSites.size()]);
+		return combinedSites.toArray(new SiteEntry[combinedSites.size()]);
 	}
 	
 	public Element toXML(Document doc) throws CoreException {	
@@ -158,7 +158,7 @@ public class Configuration implements IConfigurationConstants {
 			}
 
 			// collect site entries
-			SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
+			SiteEntry[] list = sites.values().toArray(new SiteEntry[0]);
 			for (int i = 0; i < list.length; i++) {
 				if (linkedConfig != null && linkedConfig.getSiteEntry(list[i].getURL().toExternalForm()) != null)
 					continue;
@@ -214,7 +214,7 @@ public class Configuration implements IConfigurationConstants {
 		try {
 			if (url.getProtocol().equals("file")) {//$NON-NLS-1$
 				String rUrl = url.toExternalForm();
-				URL pUrl = (URL)platformURLs.get(rUrl);
+				URL pUrl = platformURLs.get(rUrl);
 				if(pUrl == null)
 					return url;
 				return pUrl;

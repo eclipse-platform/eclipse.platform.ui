@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 	 * @see DefaultHandler#startElement(String, String, String, Attributes)
 	 * @since 2.0
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -126,18 +127,15 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 		feature.setLicenseURL(attributes.getValue("url")); //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ContentHandler#characters(char[], int, int)
-	 */
+	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (!isDescription)
 			return;
 		description.append(ch, start, length);
 	}
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-	 */
+
+	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		if ("description".equals(localName)) { //$NON-NLS-1$

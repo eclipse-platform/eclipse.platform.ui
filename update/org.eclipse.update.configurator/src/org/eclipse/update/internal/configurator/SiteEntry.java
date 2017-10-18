@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private URL resolvedURL; // this is the resolved URL used internally
 	private ISitePolicy policy;
 	private boolean updateable = true;
-	private Map featureEntries;
-	private ArrayList pluginEntries;
+	private Map<String, IFeatureEntry> featureEntries;
+	private ArrayList<PluginEntry> pluginEntries;
 	private long changeStamp;
 	private long featuresChangeStamp;
 	private long pluginsChangeStamp;
@@ -101,39 +101,29 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		return config;
 	}
 	
-	/*
-	 * @see ISiteEntry#getURL()
-	 */
+	@Override
 	public URL getURL() {
 		return url;
 	}
 
-	/*
-	* @see ISiteEntry#getSitePolicy()
-	*/
+	@Override
 	public ISitePolicy getSitePolicy() {
 		return policy;
 	}
 
-	/*
-	 * @see ISiteEntry#setSitePolicy(ISitePolicy)
-	 */
+	@Override
 	public synchronized void setSitePolicy(ISitePolicy policy) {
 		if (policy == null)
 			throw new IllegalArgumentException();
 		this.policy = policy;
 	}
 
-	/*
-	 * @see ISiteEntry#getFeatures()
-	 */
+	@Override
 	public String[] getFeatures() {
 		return getDetectedFeatures();
 	}
 
-	/*
-	 * @see ISiteEntry#getPlugins()
-	 */
+	@Override
 	public String[] getPlugins() {
 
 		ISitePolicy policy = getSitePolicy();
@@ -142,13 +132,13 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			return policy.getList();
 
 		if (policy.getType() == ISitePolicy.USER_EXCLUDE) {
-			ArrayList detectedPlugins = new ArrayList(Arrays.asList(getDetectedPlugins()));
+			ArrayList<String> detectedPlugins = new ArrayList<>(Arrays.asList(getDetectedPlugins()));
 			String[] excludedPlugins = policy.getList();
 			for (int i = 0; i < excludedPlugins.length; i++) {
 				if (detectedPlugins.contains(excludedPlugins[i]))
 					detectedPlugins.remove(excludedPlugins[i]);
 			}
-			return (String[]) detectedPlugins.toArray(new String[0]);
+			return detectedPlugins.toArray(new String[0]);
 		}
 		
 		if (policy.getType() == ISitePolicy.MANAGED_ONLY) {
@@ -175,15 +165,15 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			detectFeatures();
 		
 		// cache all the plugin entries for faster lookup later
-		Map cachedPlugins = new HashMap(pluginEntries.size());
+		Map<VersionedIdentifier, PluginEntry> cachedPlugins = new HashMap<>(pluginEntries.size());
 		for (int i=0; i<pluginEntries.size(); i++) {
-			PluginEntry p = (PluginEntry)pluginEntries.get(i);
+			PluginEntry p = pluginEntries.get(i);
 			cachedPlugins.put(p.getVersionedIdentifier(), p);
 		}
 		
-		ArrayList managedPlugins = new ArrayList();
-		for (Iterator iterator=featureEntries.values().iterator(); iterator.hasNext();) {
-			Object feature = iterator.next();
+		ArrayList<PluginEntry> managedPlugins = new ArrayList<>();
+		for (Iterator<IFeatureEntry> iterator=featureEntries.values().iterator(); iterator.hasNext();) {
+			IFeatureEntry feature = iterator.next();
 			if (!(feature instanceof FeatureEntry))
 				continue;
 			
@@ -193,58 +183,50 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 					managedPlugins.add(cachedPlugins.get(plugins[i].getVersionedIdentifier()));
 					
 		}
-		return (PluginEntry[])managedPlugins.toArray(new PluginEntry[managedPlugins.size()]);
+		return managedPlugins.toArray(new PluginEntry[managedPlugins.size()]);
 	}
 	
 	public PluginEntry[] getPluginEntries() {
 		String[] pluginURLs = getPlugins();
 		// hash the array, for faster lookups
-		HashMap map = new HashMap(pluginURLs.length);
+		HashMap<String, String> map = new HashMap<>(pluginURLs.length);
 		for (int i=0; i<pluginURLs.length; i++)
 			map.put(pluginURLs[i], pluginURLs[i]);
 		
 		if (pluginEntries == null)
 				detectPlugins();
 		
-		ArrayList plugins = new ArrayList(pluginURLs.length);
+		ArrayList<PluginEntry> plugins = new ArrayList<>(pluginURLs.length);
 		for (int i=0; i<pluginEntries.size(); i++) {
-			PluginEntry p = (PluginEntry)pluginEntries.get(i);
+			PluginEntry p = pluginEntries.get(i);
 			if (map.containsKey(p.getURL()))
 				plugins.add(p);
 		}
-		return (PluginEntry[])plugins.toArray(new PluginEntry[plugins.size()]);
+		return plugins.toArray(new PluginEntry[plugins.size()]);
 	}
 	
-	/*
-	 * @see ISiteEntry#getChangeStamp()
-	 */
+	@Override
 	public long getChangeStamp() {
 		if (changeStamp == 0)
 			computeChangeStamp();
 		return changeStamp;
 	}
 
-	/*
-	 * @see ISiteEntry#getFeaturesChangeStamp()
-	 */
+	@Override
 	public long getFeaturesChangeStamp() {
 		if (featuresChangeStamp == 0)
 			computeFeaturesChangeStamp();
 		return featuresChangeStamp;
 	}
 
-	/*
-	 * @see ISiteEntry#getPluginsChangeStamp()
-	 */
+	@Override
 	public long getPluginsChangeStamp() {
 		if (pluginsChangeStamp == 0)
 			computePluginsChangeStamp();
 		return pluginsChangeStamp;
 	}
 
-	/*
-	 * @see ISiteEntry#isUpdateable()
-	 */
+	@Override
 	public boolean isUpdateable() {
 		return updateable;
 	}
@@ -253,9 +235,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		this.updateable = updateable;
 	}
 
-	/*
-	 * @see ISiteEntry#isNativelyLinked()
-	 */
+	@Override
 	public boolean isNativelyLinked() {
 		return isExternallyLinkedSite();
 	}
@@ -273,7 +253,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (featureEntries != null)
 			validateFeatureEntries();
 		else
-			featureEntries = new HashMap();
+			featureEntries = new HashMap<>();
 
 		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL()))
 			return;
@@ -283,16 +263,14 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		File featuresDir = new File(siteRoot, FEATURES);
 		if (featuresDir.exists()) {
 			// handle the installed features under the features directory
-			File[] dirs = featuresDir.listFiles(new FileFilter() {
-				public boolean accept(File f) {
-					// mac os folders contain a file .DS_Store in each folder, and we need to skip it (bug 76869) 
-					if (isMacOS && f.getName().equals(MAC_OS_MARKER))
-						return false;
-					boolean valid = f.isDirectory() && (new File(f,FEATURE_XML).exists());
-					if (!valid)
-						Utils.log(NLS.bind(Messages.SiteEntry_cannotFindFeatureInDir, (new String[] { f.getAbsolutePath() })));
-					return valid;
-				}
+			File[] dirs = featuresDir.listFiles((FileFilter) f -> {
+				// mac os folders contain a file .DS_Store in each folder, and we need to skip it (bug 76869) 
+				if (isMacOS && f.getName().equals(MAC_OS_MARKER))
+					return false;
+				boolean valid = f.isDirectory() && (new File(f,FEATURE_XML).exists());
+				if (!valid)
+					Utils.log(NLS.bind(Messages.SiteEntry_cannotFindFeatureInDir, (new String[] { f.getAbsolutePath() })));
+				return valid;
 			});
 		
 			for (int index = 0; index < dirs.length; index++) {
@@ -324,7 +302,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			validatePluginEntries();
 			compareTimeStamps = true; // only pick up newer plugins
 		} else
-			pluginEntries = new ArrayList();
+			pluginEntries = new ArrayList<>();
 
 		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL()))
 			return;
@@ -358,13 +336,12 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			return;
 		}
 		String entryName = META_MANIFEST_MF;
-		ZipFile z = null;
 		InputStream bundleManifestIn = null;
 		InputStream pluginManifestIn = null;
 		String pluginURL = PLUGINS + "/" + file.getName(); //$NON-NLS-1$
-		try {
+		try (ZipFile z = new ZipFile(file)){
 			// First, check if has valid bundle manifest
-			z = new ZipFile(file);
+			
 			if (z.getEntry(entryName) != null) {
 				bundleManifestIn = z.getInputStream(new ZipEntry(entryName));
 				BundleManifest manifest = new BundleManifest(bundleManifestIn,
@@ -402,12 +379,6 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				try {
 					pluginManifestIn.close();
 				} catch (IOException e2) {
-				}
-			}
-			if (z != null) {
-				try {
-					z.close();
-				} catch (IOException e1) {
 				}
 			}
 		}
@@ -471,7 +442,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (featureEntries == null)
 			detectFeatures();
 		String[] features = new String[featureEntries.size()];
-		Iterator iterator = featureEntries.values().iterator();
+		Iterator<IFeatureEntry> iterator = featureEntries.values().iterator();
 		for (int i=0; i<features.length; i++)
 			features[i] = ((FeatureEntry)iterator.next()).getURL();
 		return features;
@@ -486,7 +457,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		String[] plugins = new String[pluginEntries.size()];
 		for (int i=0; i<plugins.length; i++)
-			plugins[i] = ((PluginEntry)pluginEntries.get(i)).getURL();
+			plugins[i] = pluginEntries.get(i).getURL();
 		return plugins;
 	}
 
@@ -601,9 +572,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	
 	public void addFeatureEntry(IFeatureEntry feature) {
 		if (featureEntries == null)
-			featureEntries = new HashMap();
+			featureEntries = new HashMap<>();
 		// Make sure we keep the larger version of same feature
-		IFeatureEntry existing = (FeatureEntry)featureEntries.get(feature.getFeatureIdentifier());
+		IFeatureEntry existing = featureEntries.get(feature.getFeatureIdentifier());
 		if (existing != null) {
 			VersionedIdentifier existingVersion = new VersionedIdentifier(existing.getFeatureIdentifier(), existing.getFeatureVersion());
 			VersionedIdentifier newVersion = new VersionedIdentifier(feature.getFeatureIdentifier(), feature.getFeatureVersion());
@@ -630,12 +601,12 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		if (featureEntries == null)
 			return new FeatureEntry[0];
-		return (FeatureEntry[])featureEntries.values().toArray(new FeatureEntry[featureEntries.size()]);
+		return featureEntries.values().toArray(new FeatureEntry[featureEntries.size()]);
 	}
 	
 	public void addPluginEntry(PluginEntry plugin) {
 		if (pluginEntries == null)
-			pluginEntries = new ArrayList();
+			pluginEntries = new ArrayList<>();
 		// Note: we could use the latest version of the same plugin, like we do for features, but we let the runtime figure it out
 		pluginEntries.add(plugin);
 	}
@@ -643,7 +614,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	public PluginEntry[] getAllPluginEntries() {
 		if (pluginEntries == null)
 			detectPlugins();
-		return (PluginEntry[])pluginEntries.toArray(new PluginEntry[pluginEntries.size()]);
+		return pluginEntries.toArray(new PluginEntry[pluginEntries.size()]);
 	}
 	
 	public void loadFromDisk(long lastChange) throws CoreException{
@@ -704,8 +675,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	
 	private void validateFeatureEntries() {
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
-		Iterator iterator = featureEntries.values().iterator();
-		Collection deletedFeatures = new ArrayList();
+		Iterator<IFeatureEntry> iterator = featureEntries.values().iterator();
+		Collection<String> deletedFeatures = new ArrayList<>();
 		while(iterator.hasNext()) {
 			FeatureEntry feature = (FeatureEntry)iterator.next();
 			// Note: in the future, we can check for absolute url as well.
@@ -714,23 +685,23 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			if (!featureXML.exists())
 				deletedFeatures.add(feature.getFeatureIdentifier());
 		}
-		for(Iterator it=deletedFeatures.iterator(); it.hasNext();){
+		for(Iterator<String> it=deletedFeatures.iterator(); it.hasNext();){
 			featureEntries.remove(it.next());
 		}
 	}
 	
 	private void validatePluginEntries() {
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
-		Collection deletedPlugins = new ArrayList();
+		Collection<PluginEntry> deletedPlugins = new ArrayList<>();
 		for (int i=0; i<pluginEntries.size(); i++) {
-			PluginEntry plugin = (PluginEntry)pluginEntries.get(i);
+			PluginEntry plugin = pluginEntries.get(i);
 			// Note: in the future, we can check for absolute url as well.
 			//       For now, feature url is plugins/org.eclipse.foo/plugin.xml
 			File pluginLocation = new File(root, plugin.getURL());
 			if (!pluginLocation.exists())
 				deletedPlugins.add(plugin);
 		}
-		for(Iterator it=deletedPlugins.iterator(); it.hasNext();){
+		for(Iterator<PluginEntry> it=deletedPlugins.iterator(); it.hasNext();){
 			pluginEntries.remove(it.next());
 		}
 	}
@@ -766,6 +737,6 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	 */
 	public void initialized() { 
 		if (featureEntries == null)
-			featureEntries = new HashMap();
+			featureEntries = new HashMap<>();
 	}
 }

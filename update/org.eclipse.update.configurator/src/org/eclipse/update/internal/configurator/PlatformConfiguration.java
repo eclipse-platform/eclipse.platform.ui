@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private Configuration config;
 	private URL configLocation;
-	private HashMap externalLinkSites; // used to restore prior link site state
+	private HashMap<URL, SiteEntry> externalLinkSites; // used to restore prior link site state
 	private long changeStamp;
 	private long featuresChangeStamp;
 	private boolean featuresChangeStampIsValid;
@@ -97,7 +97,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private PlatformConfiguration(Location platformConfigLocation) throws CoreException, IOException {
 
-		this.externalLinkSites = new HashMap();
+		this.externalLinkSites = new HashMap<>();
 		this.config = null;
 
 		// initialize configuration
@@ -140,7 +140,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	PlatformConfiguration(URL url) throws Exception {
-		this.externalLinkSites = new HashMap();
+		this.externalLinkSites = new HashMap<>();
 		URL installLocation = Utils.getInstallURL();
 		// Retrieve install location with respect to given url if possible
 		try {
@@ -154,7 +154,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	public PlatformConfiguration(URL url, URL installLocation) throws Exception {
-		this.externalLinkSites = new HashMap();
+		this.externalLinkSites = new HashMap<>();
 		initialize(url, installLocation);
 	}
 
@@ -175,45 +175,32 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return defaultPolicy;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#createSiteEntry(URL, ISitePolicy)
-	 */
+	@Override
 	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy) {
 		return new SiteEntry(url, policy);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#createSitePolicy(int, String[])
-	 */
+	@Override
 	public ISitePolicy createSitePolicy(int type, String[] list) {
 		return new SitePolicy(type, list);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#createFeatureEntry(String, String, String, boolean, String, URL)
-	 */
+	@Override
 	public IFeatureEntry createFeatureEntry(String id, String version, String pluginVersion, boolean primary, String application, URL[] root) {
 		return new FeatureEntry(id, version, pluginVersion, primary, application, root);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#createFeatureEntry(String, String, String,
-	 * String, boolean, String, URL)
-	 */
+	@Override
 	public IFeatureEntry createFeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
 		return new FeatureEntry(id, version, pluginIdentifier, pluginVersion, primary, application, root);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#configureSite(ISiteEntry)
-	 */
+	@Override
 	public void configureSite(ISiteEntry entry) {
 		configureSite(entry, false);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#configureSite(ISiteEntry, boolean)
-	 */
+	@Override
 	public synchronized void configureSite(ISiteEntry entry, boolean replace) {
 
 		if (entry == null)
@@ -231,9 +218,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			config.addSiteEntry(key, (SiteEntry) entry);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#unconfigureSite(ISiteEntry)
-	 */
+	@Override
 	public synchronized void unconfigureSite(ISiteEntry entry) {
 		if (entry == null)
 			return;
@@ -247,25 +232,21 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			config.removeSiteEntry(key);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getConfiguredSites()
-	 */
+	@Override
 	public ISiteEntry[] getConfiguredSites() {
 		if (config == null)
 			return new ISiteEntry[0];
 
 		SiteEntry[] sites = config.getSites();
-		ArrayList enabledSites = new ArrayList(sites.length);
+		ArrayList<ISiteEntry> enabledSites = new ArrayList<>(sites.length);
 		for (int i = 0; i < sites.length; i++) {
 			if (sites[i].isEnabled())
 				enabledSites.add(sites[i]);
 		}
-		return (ISiteEntry[]) enabledSites.toArray(new ISiteEntry[enabledSites.size()]);
+		return enabledSites.toArray(new ISiteEntry[enabledSites.size()]);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#findConfiguredSite(URL)
-	 */
+	@Override
 	public ISiteEntry findConfiguredSite(URL url) {
 		return findConfiguredSite(url, true);
 	}
@@ -303,9 +284,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return result;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#configureFeatureEntry(IFeatureEntry)
-	 */
+	@Override
 	public synchronized void configureFeatureEntry(IFeatureEntry entry) {
 		if (entry == null)
 			return;
@@ -340,9 +319,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	/*
-	 * @see IPlatformConfiguration#unconfigureFeatureEntry(IFeatureEntry)
-	 */
+	@Override
 	public synchronized void unconfigureFeatureEntry(IFeatureEntry entry) {
 		if (entry == null)
 			return;
@@ -354,23 +331,19 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		config.unconfigureFeatureEntry(entry);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getConfiguredFeatureEntries()
-	 */
+	@Override
 	public IFeatureEntry[] getConfiguredFeatureEntries() {
-		ArrayList configFeatures = new ArrayList();
+		ArrayList<IFeatureEntry> configFeatures = new ArrayList<>();
 		SiteEntry[] sites = config.getSites();
 		for (int i = 0; i < sites.length; i++) {
 			FeatureEntry[] features = sites[i].getFeatureEntries();
 			for (int j = 0; j < features.length; j++)
 				configFeatures.add(features[j]);
 		}
-		return (IFeatureEntry[]) configFeatures.toArray(new FeatureEntry[configFeatures.size()]);
+		return configFeatures.toArray(new FeatureEntry[configFeatures.size()]);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#findConfiguredFeatureEntry(String)
-	 */
+	@Override
 	public IFeatureEntry findConfiguredFeatureEntry(String id) {
 		if (id == null)
 			return null;
@@ -384,34 +357,26 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return null;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getConfigurationLocation()
-	 */
+	@Override
 	public URL getConfigurationLocation() {
 		return configLocation;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getChangeStamp()
-	 */
+	@Override
 	public long getChangeStamp() {
 		if (config.getLinkedConfig() == null)
 			return config.getDate().getTime();
 		return Math.max(config.getDate().getTime(), config.getLinkedConfig().getDate().getTime());
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getFeaturesChangeStamp()
-	 * @deprecated Don't use this method
-	 */
+	@Override
+	@Deprecated
 	public long getFeaturesChangeStamp() {
 		return 0;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getPluginsChangeStamp()
-	 * @deprecated Don't use this method
-	 */
+	@Override
+	@Deprecated
 	public long getPluginsChangeStamp() {
 		return 0;
 	}
@@ -438,9 +403,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return DEFAULT_FEATURE_APPLICATION;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getPrimaryFeatureIdentifier()
-	 */
+	@Override
 	public String getPrimaryFeatureIdentifier() {
 		// Return the product if defined in system properties
 		String primaryFeatureId = ConfigurationActivator.getBundleContext().getProperty(ECLIPSE_PRODUCT);
@@ -453,11 +416,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return null;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getPluginPath()
-	 */
+	@Override
 	public URL[] getPluginPath() {
-		ArrayList path = new ArrayList();
+		ArrayList<URL> path = new ArrayList<>();
 		Utils.debug("computed plug-in path:"); //$NON-NLS-1$
 
 		ISiteEntry[] sites = getConfiguredSites();
@@ -475,12 +436,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				}
 			}
 		}
-		return (URL[]) path.toArray(new URL[0]);
+		return path.toArray(new URL[0]);
 	}
 
-	public Set getPluginPaths() {
+	public Set<String> getPluginPaths() {
 
-		HashSet paths = new HashSet();
+		HashSet<String> paths = new HashSet<>();
 		ISiteEntry[] sites = getConfiguredSites();
 
 		for (int i = 0; i < sites.length; i++) {
@@ -497,7 +458,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * A variation of the getPluginPath, but it returns the actual plugin entries
 	 */
 	public PluginEntry[] getPlugins() {
-		ArrayList allPlugins = new ArrayList();
+		ArrayList<PluginEntry> allPlugins = new ArrayList<>();
 		Utils.debug("computed plug-ins:"); //$NON-NLS-1$
 
 		ISiteEntry[] sites = getConfiguredSites();
@@ -512,47 +473,35 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				Utils.debug("   " + plugins[j].getURL()); //$NON-NLS-1$
 			}
 		}
-		return (PluginEntry[]) allPlugins.toArray(new PluginEntry[0]);
+		return allPlugins.toArray(new PluginEntry[0]);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getBootstrapPluginIdentifiers()
-	 */
+	@Override
 	public String[] getBootstrapPluginIdentifiers() {
 		return BOOTSTRAP_PLUGINS;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#setBootstrapPluginLocation(String, URL)
-	 */
+	@Override
 	public void setBootstrapPluginLocation(String id, URL location) {
 	}
 
-	/*
-	 * @see IPlatformConfiguration#isUpdateable()
-	 */
+	@Override
 	public boolean isUpdateable() {
 		return true;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#isTransient()
-	 */
+	@Override
 	public boolean isTransient() {
 		return (config != null) ? config.isTransient() : false;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#isTransient(boolean)
-	 */
+	@Override
 	public void isTransient(boolean value) {
 		if (this != getCurrent() && config != null)
 			config.setTransient(value);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#refresh()
-	 */
+	@Override
 	public synchronized void refresh() {
 		// Reset computed values. Will be lazily refreshed
 		// on next access
@@ -565,36 +514,29 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	/*
-	 * @see IPlatformConfiguration#save()
-	 */
+	@Override
 	public void save() throws IOException {
 		if (isUpdateable())
 			save(configLocation);
 	}
 
-	/*
-	 * @see IPlatformConfiguration#save(URL)
-	 */
+	@Override
 	public synchronized void save(URL url) throws IOException {
 		if (url == null)
 			throw new IOException(Messages.cfig_unableToSave_noURL);
 
-		OutputStream os = null;
 		if (!url.getProtocol().equals("file")) { //$NON-NLS-1$
 			// not a file protocol - attempt to save to the URL
 			URLConnection uc = url.openConnection();
 			uc.setDoOutput(true);
-			os = uc.getOutputStream();
-			try {
+			
+			try(OutputStream os = uc.getOutputStream()) {
 				saveAsXML(os);
 				config.setDirty(false);
 			} catch (CoreException e) {
 				Utils.log(e.getMessage());
 				Utils.log(e.getStatus());
 				throw new IOException(NLS.bind(Messages.cfig_unableToSave, (new String[] {url.toExternalForm()})));
-			} finally {
-				os.close();
 			}
 		} else {
 			// file protocol - do safe i/o
@@ -637,14 +579,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			}
 
 			// first save the file as temp
-			os = new FileOutputStream(cfigTmp);
-
-			try {
+			try (FileOutputStream os = new FileOutputStream(cfigTmp)){
 				saveAsXML(os);
 				// Try flushing any internal buffers, and synchronize with the disk
 				try {
 					os.flush();
-					((FileOutputStream) os).getFD().sync();
+					os.getFD().sync();
 				} catch (SyncFailedException e2) {
 					Utils.log(e2.getMessage());
 				} catch (IOException e2) {
@@ -652,7 +592,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				}
 				try {
 					os.close();
-					os = null;
 				} catch (IOException e1) {
 					Utils.log(Messages.PlatformConfiguration_cannotCloseStream + cfigTmp);
 					Utils.log(e1.getMessage());
@@ -666,13 +605,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				config.setDirty(false);
 			} catch (CoreException e) {
 				throw new IOException(NLS.bind(Messages.cfig_unableToSave, (new String[] {cfigTmp.getAbsolutePath()})));
-			} finally {
-				if (os != null)
-					try {
-						os.close();
-					} catch (IOException e1) {
-						Utils.log(Messages.PlatformConfiguration_cannotCloseTempFile + cfigTmp);
-					}
 			}
 
 			// at this point we have old config (if existed) as "bak" and the
@@ -996,7 +928,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 
 		// process the link
-		SiteEntry linkSite = (SiteEntry) externalLinkSites.get(siteURL);
+		SiteEntry linkSite = externalLinkSites.get(siteURL);
 		if (linkSite == null) {
 			// this is a link to a new target so create site for it
 			ISitePolicy linkSitePolicy = createSitePolicy(getDefaultPolicy(), DEFAULT_POLICY_LIST);
@@ -1104,11 +1036,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 						File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
 						File workingDir = cfigFile.getParentFile();
 						if (workingDir != null && workingDir.exists()) {
-							File[] backups = workingDir.listFiles(new FileFilter() {
-								public boolean accept(File pathname) {
-									return pathname.isFile() && pathname.getName().endsWith(".xml"); //$NON-NLS-1$
-								}
-							});
+							File[] backups = workingDir.listFiles((FileFilter) pathname -> pathname.isFile() && pathname.getName().endsWith(".xml"));
 							if (backups != null && backups.length > 0) {
 								URL backupUrl = backups[backups.length - 1].toURL();
 								config = parser.parse(backupUrl, installLocation);

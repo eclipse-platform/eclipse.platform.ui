@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class Locker_JavaIo implements Locker {
 		this.lockFile = lockFile;
 	}
 
+	@Override
 	public synchronized boolean lock() throws IOException {
 		//if the lock file already exists, try to delete,
 		//assume failure means another eclipse has it open
@@ -38,6 +39,7 @@ public class Locker_JavaIo implements Locker {
 		return true;
 	}
 
+	@Override
 	public synchronized void release() {
 		try {
 			if (lockRAF != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class IniFileReader {
 	 * 
 	 * @return the string value for the given key, or <code>null</code>
 	 */
-	public String getString(String key, boolean doNls, Hashtable runtimeMappings) {
+	public String getString(String key, boolean doNls, Hashtable<String, String> runtimeMappings) {
 		if (ini == null)
 			return null;
 		String value = ini.getProperty(key);
@@ -171,7 +171,7 @@ public class IniFileReader {
 			return null;
 
 		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
-		ArrayList array = new ArrayList(10);
+		ArrayList<URL> array = new ArrayList<>(10);
 		while (tokens.hasMoreTokens()) {
 			String str = tokens.nextToken().trim();
 			array.add(FileLocator.find(bundle, new Path(str), null));
@@ -190,7 +190,7 @@ public class IniFileReader {
 	public String getFeaturePluginLabel() {
 		if (bundle == null)
 			return null;
-		return (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
+		return bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
 	
 	/**
@@ -201,7 +201,7 @@ public class IniFileReader {
 	public String getProviderName() {
 		if (bundle == null)
 			return null;
-		return (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
+		return bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
 	}
 	
 	/*
@@ -236,7 +236,7 @@ public class IniFileReader {
 	 * @param runtimeMappings runtime mappings or <code>null</code>
 	 * @return the resource string
 	 */
-	 public String getResourceString(String value, Hashtable runtimeMappings) {
+	 public String getResourceString(String value, Hashtable<String, String> runtimeMappings) {
 		
 		if (value == null)
 			return null;
@@ -262,12 +262,12 @@ public class IniFileReader {
 			return dflt;
 		}
 		if (runtimeMappings != null) {
-			for (Enumeration e = runtimeMappings.keys(); e.hasMoreElements();) {
-				String keyValue = (String) e.nextElement();
+			for (Enumeration<String> e = runtimeMappings.keys(); e.hasMoreElements();) {
+				String keyValue = e.nextElement();
 				int i = result.indexOf(keyValue);
 				if (i != -1) {
 					String s1 = result.substring(0,i);
-					String s2 = (String) runtimeMappings.get(keyValue);
+					String s2 = runtimeMappings.get(keyValue);
 					String s3 = result.substring(i+keyValue.length());
 					result = s1 + s2 + s3;
 				}
@@ -346,7 +346,7 @@ public class IniFileReader {
 			}
 		}
 
-		ArrayList mappingsList = new ArrayList();
+		ArrayList<String> mappingsList = new ArrayList<>();
 		if (bundle != null) {
 			boolean found = true;
 			int i = 0;
@@ -359,7 +359,7 @@ public class IniFileReader {
 				i++;
 			}
 		}
-		mappings = (String[])mappingsList.toArray(new String[mappingsList.size()]);
+		mappings = mappingsList.toArray(new String[mappingsList.size()]);
 		
 		return OK_STATUS;
 	}

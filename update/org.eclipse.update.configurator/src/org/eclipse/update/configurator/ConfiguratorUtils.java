@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.osgi.framework.*;
  * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
  * This API will be deleted in a future release. See bug 311590 for details.
  */
+@Deprecated
 public class ConfiguratorUtils {
 	/**
 	 * Returns the current platform configuration. This method replaces the one we used
@@ -42,10 +43,10 @@ public class ConfiguratorUtils {
 	public static IPlatformConfiguration getCurrentPlatformConfiguration() {
 		// acquire factory service first
 		BundleContext context = ConfigurationActivator.getBundleContext();
-		ServiceReference configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class.getName());
+		ServiceReference<IPlatformConfigurationFactory> configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class);
 		if (configFactorySR == null)
 			throw new IllegalStateException();
-		IPlatformConfigurationFactory configFactory = (IPlatformConfigurationFactory) context.getService(configFactorySR);
+		IPlatformConfigurationFactory configFactory = context.getService(configFactorySR);
 		if (configFactory == null)
 			throw new IllegalStateException();
 		// get the configuration using the factory
@@ -65,10 +66,10 @@ public class ConfiguratorUtils {
 	public static IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
 		// acquire factory service first
 		BundleContext context = ConfigurationActivator.getBundleContext();
-		ServiceReference configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class.getName());
+		ServiceReference<IPlatformConfigurationFactory> configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class);
 		if (configFactorySR == null)
 			throw new IllegalStateException();
-		IPlatformConfigurationFactory configFactory = (IPlatformConfigurationFactory) context.getService(configFactorySR);
+		IPlatformConfigurationFactory configFactory = context.getService(configFactorySR);
 		if (configFactory == null)
 			throw new IllegalStateException();
 		// get the configuration using the factory
@@ -89,10 +90,10 @@ public class ConfiguratorUtils {
 	public static IPlatformConfiguration getPlatformConfiguration(URL url, URL loc) throws IOException {
 		// acquire factory service first
 		BundleContext context = ConfigurationActivator.getBundleContext();
-		ServiceReference configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class.getName());
+		ServiceReference<IPlatformConfigurationFactory> configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class);
 		if (configFactorySR == null)
 			throw new IllegalStateException();
-		IPlatformConfigurationFactory configFactory = (IPlatformConfigurationFactory) context.getService(configFactorySR);
+		IPlatformConfigurationFactory configFactory = context.getService(configFactorySR);
 		if (configFactory == null)
 			throw new IllegalStateException();
 		// get the configuration using the factory

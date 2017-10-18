@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
-
-import org.osgi.framework.InvalidSyntaxException;
 
 import java.io.*;
 import java.net.*;
@@ -41,8 +39,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static boolean DEBUG = false;
 
 	private static BundleContext context;
-	private ServiceRegistration configurationFactorySR;
-	ServiceRegistration bundleGroupProviderSR;
+	private ServiceRegistration<IPlatformConfigurationFactory> configurationFactorySR;
+	ServiceRegistration<?> bundleGroupProviderSR;
 	private PlatformConfiguration configuration;
 
 	// Location of the configuration data
@@ -61,6 +59,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		configurator = this;
 	}
 
+	@Override
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
 		loadOptions();
@@ -100,7 +99,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		final String serviceName = IBundleGroupProvider.class.getName();
 		try {
 			//don't register the service if this bundle has already registered it declaratively
-			ServiceReference[] refs = getBundleContext().getServiceReferences(serviceName, null);
+			ServiceReference<?>[] refs = getBundleContext().getServiceReferences(serviceName, null);
 			if (refs != null) {
 				for (int i = 0; i < refs.length; i++)
 					if (PI_CONFIGURATOR.equals(refs[i].getBundle().getSymbolicName()))
@@ -132,7 +131,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				// ignore
 			}
 		}
-		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
+		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class, new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(Utils.getInstallURL(), configLocation);
 		if (configuration == null)
 			throw Utils.newCoreException(NLS.bind(Messages.ConfigurationActivator_createConfig, (new String[] {configLocation.getURL().toExternalForm()})), null);
@@ -155,6 +154,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		}
 	}
 
+	@Override
 	public void stop(BundleContext ctx) throws Exception {
 		// quick fix (hack) for bug 47861
 		try {
@@ -171,7 +171,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 	public boolean installBundles() {
 		Utils.debug("Installing bundles..."); //$NON-NLS-1$
-		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
+		ServiceReference<StartLevel> reference = context.getServiceReference(StartLevel.class);
 		int startLevel = 4;
 		String defaultStartLevel = context.getProperty("osgi.bundles.defaultStartLevel"); //$NON-NLS-1$
 		if (defaultStartLevel != null) {
@@ -186,7 +186,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 		StartLevel start = null;
 		if (reference != null)
-			start = (StartLevel) context.getService(reference);
+			start = context.getService(reference);
 		try {
 			// Get the list of cached bundles and compare with the ones to be installed.
 			// Uninstall all the cached bundles that do not appear on the new list
@@ -194,7 +194,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			URL[] plugins = configuration.getPluginPath();
 
 			// starts the list of bundles to refresh with all currently unresolved bundles (see bug 50680)
-			List toRefresh = getUnresolvedBundles();
+			List<Bundle> toRefresh = getUnresolvedBundles();
 
 			Bundle[] bundlesToUninstall = getBundlesToUninstall(cachedBundles, plugins);
 			for (int i = 0; i < bundlesToUninstall.length; i++) {
@@ -211,7 +211,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 			// Get the urls to install
 			String[] bundlesToInstall = getBundlesToInstall(cachedBundles, plugins);
-			ArrayList lazyActivationBundles = new ArrayList(bundlesToInstall.length);
+			ArrayList<Bundle> lazyActivationBundles = new ArrayList<>(bundlesToInstall.length);
 			for (int i = 0; i < bundlesToInstall.length; i++) {
 				try {
 					if (DEBUG)
@@ -233,10 +233,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			}
 			context.ungetService(reference);
 			removeInitialBundles(toRefresh, cachedBundles);
-			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
+			refreshPackages(toRefresh.toArray(new Bundle[toRefresh.size()]));
 			// after resolving all the bundles; activate the bundles that have a lazy activation policy
-			for (Iterator activateBundles = lazyActivationBundles.iterator(); activateBundles.hasNext();) {
-				Bundle toActivate = (Bundle) activateBundles.next();
+			for (Iterator<Bundle> activateBundles = lazyActivationBundles.iterator(); activateBundles.hasNext();) {
+				Bundle toActivate = activateBundles.next();
 				try {
 					// use the START_ACTIVATION_POLICY option so this is not an eager activation.
 					toActivate.start(Bundle.START_ACTIVATION_POLICY);
@@ -256,13 +256,13 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 	private static boolean hasLazyActivationPolicy(Bundle target) {
 		// check the bundle manifest to see if it defines a lazy activation policy
-		Dictionary headers = target.getHeaders(""); //$NON-NLS-1$
+		Dictionary<String, String> headers = target.getHeaders(""); //$NON-NLS-1$
 		// first check to see if this is a fragment bundle
-		String fragmentHost = (String) headers.get(Constants.FRAGMENT_HOST);
+		String fragmentHost = headers.get(Constants.FRAGMENT_HOST);
 		if (fragmentHost != null)
 			return false; // do not activate fragment bundles
 		// look for the OSGi defined Bundle-ActivationPolicy header
-		String activationPolicy = (String) headers.get(Constants.BUNDLE_ACTIVATIONPOLICY);
+		String activationPolicy = headers.get(Constants.BUNDLE_ACTIVATIONPOLICY);
 		try {
 			if (activationPolicy != null) {
 				ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_ACTIVATIONPOLICY, activationPolicy);
@@ -273,9 +273,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				}
 			} else {
 				// check for Eclipse specific lazy start headers "Eclipse-LazyStart" and "Eclipse-AutoStart"
-				String eclipseLazyStart = (String) headers.get("Eclipse-LazyStart"); //$NON-NLS-1$
+				String eclipseLazyStart = headers.get("Eclipse-LazyStart"); //$NON-NLS-1$
 				if (eclipseLazyStart == null)
-					eclipseLazyStart = (String) headers.get("Eclipse-AutoStart"); //$NON-NLS-1$
+					eclipseLazyStart = headers.get("Eclipse-AutoStart"); //$NON-NLS-1$
 				ManifestElement[] elements = ManifestElement.parseHeader("Eclipse-LazyStart", eclipseLazyStart); //$NON-NLS-1$
 				if (elements != null && elements.length > 0) {
 					// if the value is true then it is lazy activated
@@ -292,11 +292,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return false;
 	}
 
-	private void removeInitialBundles(List bundles, Bundle[] cachedBundles) {
+	private void removeInitialBundles(List<Bundle> bundles, Bundle[] cachedBundles) {
 		String[] initialSymbolicNames = getInitialSymbolicNames(cachedBundles);
-		Iterator iter = bundles.iterator();
+		Iterator<Bundle> iter = bundles.iterator();
 		while (iter.hasNext()) {
-			Bundle bundle = (Bundle) iter.next();
+			Bundle bundle = iter.next();
 			String symbolicName = bundle.getSymbolicName();
 			for (int i = 0; i < initialSymbolicNames.length; i++) {
 				if (initialSymbolicNames[i].equals(symbolicName)) {
@@ -308,7 +308,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 
 	private String[] getInitialSymbolicNames(Bundle[] cachedBundles) {
-		ArrayList initial = new ArrayList();
+		ArrayList<String> initial = new ArrayList<>();
 		for (int i = 0; i < cachedBundles.length; i++) {
 			Bundle bundle = cachedBundles[i];
 			if (bundle.getLocation().startsWith(INITIAL_PREFIX)) {
@@ -317,12 +317,12 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 					initial.add(symbolicName);
 			}
 		}
-		return (String[]) initial.toArray(new String[initial.size()]);
+		return initial.toArray(new String[initial.size()]);
 	}
 
-	private List getUnresolvedBundles() {
+	private List<Bundle> getUnresolvedBundles() {
 		Bundle[] allBundles = context.getBundles();
-		List unresolved = new ArrayList();
+		List<Bundle> unresolved = new ArrayList<>();
 		for (int i = 0; i < allBundles.length; i++)
 			if (allBundles[i].getState() == Bundle.INSTALLED)
 				unresolved.add(allBundles[i]);
@@ -331,7 +331,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 	private String[] getBundlesToInstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		// First, create a map of the cached bundles, for faster lookup
-		HashSet cachedBundlesSet = new HashSet(cachedBundles.length);
+		HashSet<String> cachedBundlesSet = new HashSet<>(cachedBundles.length);
 		int offset = UPDATE_PREFIX.length();
 		for (int i = 0; i < cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
@@ -348,7 +348,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				cachedBundlesSet.add(bundleLocation.toLowerCase());
 		}
 
-		ArrayList bundlesToInstall = new ArrayList(newPlugins.length);
+		ArrayList<String> bundlesToInstall = new ArrayList<>(newPlugins.length);
 		for (int i = 0; i < newPlugins.length; i++) {
 			String location = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
 			// check if already installed
@@ -359,12 +359,12 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 			bundlesToInstall.add(location);
 		}
-		return (String[]) bundlesToInstall.toArray(new String[bundlesToInstall.size()]);
+		return bundlesToInstall.toArray(new String[bundlesToInstall.size()]);
 	}
 
 	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		// First, create a map for faster lookups
-		HashSet newPluginsSet = new HashSet(newPlugins.length);
+		HashSet<String> newPluginsSet = new HashSet<>(newPlugins.length);
 		for (int i = 0; i < newPlugins.length; i++) {
 
 			String pluginLocation = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
@@ -374,7 +374,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				newPluginsSet.add(pluginLocation.toLowerCase());
 		}
 
-		ArrayList bundlesToUninstall = new ArrayList();
+		ArrayList<Bundle> bundlesToUninstall = new ArrayList<>();
 		int offset = UPDATE_PREFIX.length();
 		for (int i = 0; i < cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
@@ -392,7 +392,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 			bundlesToUninstall.add(cachedBundles[i]);
 		}
-		return (Bundle[]) bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
+		return bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
 	}
 
 	/**
@@ -421,10 +421,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private void refreshPackages(Bundle[] bundles) {
 		if (bundles.length == 0)
 			return;
-		ServiceReference packageAdminRef = context.getServiceReference(PackageAdmin.class.getName());
+		ServiceReference<PackageAdmin> packageAdminRef = context.getServiceReference(PackageAdmin.class);
 		PackageAdmin packageAdmin = null;
 		if (packageAdminRef != null) {
-			packageAdmin = (PackageAdmin) context.getService(packageAdminRef);
+			packageAdmin = context.getService(packageAdminRef);
 			if (packageAdmin == null)
 				return;
 		}
@@ -432,14 +432,12 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		// but this should allow for some progress...
 		// (patch from John A.)
 		final boolean[] flag = new boolean[] {false};
-		FrameworkListener listener = new FrameworkListener() {
-			public void frameworkEvent(FrameworkEvent event) {
-				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED)
-					synchronized (flag) {
-						flag[0] = true;
-						flag.notifyAll();
-					}
-			}
+		FrameworkListener listener = event -> {
+			if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED)
+				synchronized (flag) {
+					flag[0] = true;
+					flag.notifyAll();
+				}
 		};
 		context.addFrameworkListener(listener);
 		packageAdmin.refreshPackages(bundles);
@@ -482,9 +480,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private void loadOptions() {
 		// all this is only to get the application args		
 		DebugOptions service = null;
-		ServiceReference reference = context.getServiceReference(DebugOptions.class.getName());
+		ServiceReference<DebugOptions> reference = context.getServiceReference(DebugOptions.class);
 		if (reference != null)
-			service = (DebugOptions) context.getService(reference);
+			service = context.getService(reference);
 		if (service == null)
 			return;
 		try {
@@ -504,27 +502,23 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return context;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getName()
-	 */
+	@Override
 	public String getName() {
 		return Messages.BundleGroupProvider;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getBundleGroups()
-	 */
+	@Override
 	public IBundleGroup[] getBundleGroups() {
 		if (configuration == null)
 			return new IBundleGroup[0];
 
 		IPlatformConfiguration.IFeatureEntry[] features = configuration.getConfiguredFeatureEntries();
-		ArrayList bundleGroups = new ArrayList(features.length);
+		ArrayList<IBundleGroup> bundleGroups = new ArrayList<>(features.length);
 		for (int i = 0; i < features.length; i++) {
 			if (features[i] instanceof FeatureEntry && ((FeatureEntry) features[i]).hasBranding())
-				bundleGroups.add(features[i]);
+				bundleGroups.add((IBundleGroup) features[i]);
 		}
-		return (IBundleGroup[]) bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
+		return bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
 	}
 
 	public static ConfigurationActivator getConfigurator() {
@@ -532,9 +526,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 
 	private void acquireFrameworkLogService() {
-		ServiceReference logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
+		ServiceReference<FrameworkLog> logServiceReference = context.getServiceReference(FrameworkLog.class);
 		if (logServiceReference == null)
 			return;
-		Utils.log = (FrameworkLog) context.getService(logServiceReference);
+		Utils.log = context.getService(logServiceReference);
 	}
 }

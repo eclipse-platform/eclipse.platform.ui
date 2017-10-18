@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,15 +102,8 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		}
 	}
 
-	/**
-	 * @see DefaultHandler#startElement(String, String, String, Attributes)
-	 */
-	public void startElement(
-		String uri,
-		String localName,
-		String qName,
-		Attributes attributes)
-		throws SAXException {
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		// DEBUG:		
 		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -257,7 +250,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		// get install locations
 		String locations = attributes.getValue(CFG_FEATURE_ENTRY_ROOT);
 		StringTokenizer st = locations != null ? new StringTokenizer(locations,",") : new StringTokenizer(""); //$NON-NLS-1$ //$NON-NLS-2$
-		ArrayList rootList = new ArrayList(st.countTokens());
+		ArrayList<URL> rootList = new ArrayList<>(st.countTokens());
 		while (st.hasMoreTokens()){
 			try{
 				URL rootEntry = new URL(st.nextToken());
@@ -266,7 +259,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				// skip bad entries ...
 			}
 		}
-		URL[] roots = (URL[]) rootList.toArray(new URL[rootList.size()]);
+		URL[] roots = rootList.toArray(new URL[rootList.size()]);
 
 		// get primary flag
 		boolean primary = false;
@@ -373,9 +366,8 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		}
 		return true;
 	}
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-	 */
+
+	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		super.endElement(uri, localName, qName);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import java.net.URL;
  * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
  * This API will be deleted in a future release. See bug 311590 for details.
  */
+@Deprecated
 public interface IPlatformConfiguration {
 
 	/**
@@ -107,6 +108,7 @@ public interface IPlatformConfiguration {
 		 * @since 2.0
 		 * @deprecated Do not use this method
 		 */
+		@Deprecated
 		public long getFeaturesChangeStamp();
 
 		/**
@@ -118,6 +120,7 @@ public interface IPlatformConfiguration {
 		 * @since 2.0
 		 * @deprecated Do not use this method
 		 */
+		@Deprecated
 		public long getPluginsChangeStamp();
 
 		/**
@@ -475,6 +478,7 @@ public interface IPlatformConfiguration {
 	 * @since 2.0
 	 * @deprecated Do not use this method.
 	 */
+	@Deprecated
 	public long getFeaturesChangeStamp();
 
 	/**
@@ -486,6 +490,7 @@ public interface IPlatformConfiguration {
 	 * @since 2.0
 	 * @deprecated Do not use this method
 	 */
+	@Deprecated
 	public long getPluginsChangeStamp();
 
 	/**
@@ -517,6 +522,7 @@ public interface IPlatformConfiguration {
 	 * @deprecated Do not use this method. Check the osgi.bundles system property for the
 	 * urls of the automatically started bundles
 	 */
+	@Deprecated
 	public String[] getBootstrapPluginIdentifiers();
 
 	/**
@@ -530,6 +536,7 @@ public interface IPlatformConfiguration {
 	 * @deprecated Do not use this method. Use the osig.bundles system property contains
 	 * the urls of the automatically started bundles.
 	 */
+	@Deprecated
 	public void setBootstrapPluginLocation(String id, URL location);
 
 	/**

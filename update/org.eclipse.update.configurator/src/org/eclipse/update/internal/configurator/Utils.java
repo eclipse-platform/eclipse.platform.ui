@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,9 @@ public class Utils {
 	// os
 	public static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$	
 	static FrameworkLog log;
-	private static ServiceTracker bundleTracker;
-	private static ServiceTracker instanceLocation;
-	private static ServiceTracker configurationLocation;
+	private static ServiceTracker<?, PackageAdmin> bundleTracker;
+	private static ServiceTracker<?, Location> instanceLocation;
+	private static ServiceTracker<?, Location> configurationLocation;
 
 	public static void debug(String s) {
 		if (ConfigurationActivator.DEBUG)
@@ -197,10 +197,10 @@ public class Utils {
 	 * @see State#getTimeStamp()
 	 */
 	public static long getStateStamp() {
-		ServiceReference platformAdminReference = getContext().getServiceReference(PlatformAdmin.class.getName());
+		ServiceReference<PlatformAdmin> platformAdminReference = getContext().getServiceReference(PlatformAdmin.class);
 		if (platformAdminReference == null)
 			return -1;
-		PlatformAdmin admin = (PlatformAdmin) getContext().getService(platformAdminReference);
+		PlatformAdmin admin = getContext().getService(platformAdminReference);
 		return admin == null ? -1 : admin.getState(false).getTimeStamp();
 	}
 
@@ -211,10 +211,10 @@ public class Utils {
 	 */
 	public static synchronized Bundle getBundle(String symbolicName) {
 		if (bundleTracker == null) {
-			bundleTracker = new ServiceTracker(getContext(), PackageAdmin.class.getName(), null);
+			bundleTracker = new ServiceTracker<>(getContext(), PackageAdmin.class, null);
 			bundleTracker.open();
 		}
-		PackageAdmin admin = (PackageAdmin) bundleTracker.getService();
+		PackageAdmin admin = bundleTracker.getService();
 		if (admin == null)
 			return null;
 		Bundle[] bundles = admin.getBundles(symbolicName, null);
@@ -249,10 +249,10 @@ public class Utils {
 			} catch (InvalidSyntaxException e) {
 				// ignore this. It should never happen as we have tested the above format.
 			}
-			configurationLocation = new ServiceTracker(getContext(), filter, null);
+			configurationLocation = new ServiceTracker<>(getContext(), filter, null);
 			configurationLocation.open();
 		}
-		return (Location) configurationLocation.getService();
+		return configurationLocation.getService();
 	}
 	
 	/**
@@ -510,11 +510,11 @@ public class Utils {
 				// ignore this. It should never happen as we have tested the
 				// above format.
 			}
-			instanceLocation = new ServiceTracker(getContext(), filter, null);
+			instanceLocation = new ServiceTracker<>(getContext(), filter, null);
 			instanceLocation.open();
 		}
 
-		Location location = (Location) instanceLocation.getService();
+		Location location = instanceLocation.getService();
 
 		// it is pretty much impossible for the install location to be null.  If it is, the
 		// system is in a bad way so throw and exception and get the heck outta here.

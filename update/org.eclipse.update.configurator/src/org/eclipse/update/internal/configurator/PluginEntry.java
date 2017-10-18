@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,6 @@ package org.eclipse.update.internal.configurator;
 
 import org.eclipse.osgi.util.NLS;
 
-
-/**
- */
 public class PluginEntry {
 
 	private String pluginId;
@@ -101,9 +98,7 @@ public class PluginEntry {
 		this.isFragment = isFragment;
 	}
 
-	/**
-	 * @see Object#toString()
-	 */
+	@Override
 	public String toString() {
 		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():""; //$NON-NLS-1$
 		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -150,6 +145,7 @@ public class PluginEntry {
 	 * @return <code>true</code> if the two entries are equal, 
 	 * <code>false</code> otherwise
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof PluginEntry))
 			return false;
@@ -157,9 +153,7 @@ public class PluginEntry {
 		return getVersionedIdentifier().equals(e.getVersionedIdentifier());
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return getVersionedIdentifier().hashCode();
 	}
