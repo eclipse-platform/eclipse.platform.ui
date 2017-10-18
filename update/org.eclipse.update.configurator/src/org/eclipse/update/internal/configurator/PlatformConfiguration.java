@@ -76,8 +76,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	//private FileLock lock;
 	private Locker lock = null;
 	private static int defaultPolicy = DEFAULT_POLICY_TYPE;
-	private static boolean checkNio = false;
-	private static boolean useNio;
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
@@ -775,7 +773,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		File lockFile = new File(url.getFile(), ConfigurationActivator.NAME_SPACE + File.separator + CONFIG_FILE_LOCK_SUFFIX);
 		verifyPath(url, config == null ? null : config.getInstallURL());
 		// PAL nio optional
-		lock = createLocker(lockFile);
+		lock = new Locker_JavaNio(lockFile);
 		try {
 			lock.lock();
 		} catch (IOException ioe) {
@@ -788,26 +786,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (lock != null) {
 			lock.release();
 		}
-	}
-
-	/**
-	 * Create a locker using java new I/O or regular I/O
-	 * depending whether we run in J2SE or cdcFoundation
-	 * PAL nio optional
-	 */
-	private static Locker createLocker(File lock) {
-		if (!checkNio) {
-			useNio = true;
-			try {
-				Class.forName("java.nio.channels.FileLock"); //$NON-NLS-1$
-			} catch (ClassNotFoundException e) {
-				useNio = false;
-			}
-		}
-		if (useNio)
-			return new Locker_JavaNio(lock);
-
-		return new Locker_JavaIo(lock);
 	}
 
 	private long computeChangeStamp() {
