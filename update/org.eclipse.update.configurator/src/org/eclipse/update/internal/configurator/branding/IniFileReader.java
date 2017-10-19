@@ -48,7 +48,7 @@ public class IniFileReader {
 	private String mappingsFilename;
 	private Properties ini = null;
 	private PropertyResourceBundle properties = null;
-	private String[] mappings = null;
+	private Object[] mappings = null;
 	private Bundle bundle;
 
 	/**
