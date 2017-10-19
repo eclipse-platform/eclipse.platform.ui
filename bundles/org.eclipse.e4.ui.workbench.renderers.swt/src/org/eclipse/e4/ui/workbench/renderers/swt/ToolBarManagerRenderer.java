@@ -845,8 +845,13 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			IContributionItem ici = getContribution(element);
 			clearModelToContribution(element, ici);
 		}
-		modelToManager.remove(model);
+		ToolBarManager removed = modelToManager.remove(model);
+		if (manager == null) {
+			managerToModel.remove(removed);
+		} else {
 			managerToModel.remove(manager);
+		}
+
 		if (Policy.DEBUG_RENDERER) {
 			logger.debug("\nTBMR:clearModelToManager: modelToManager size = {0}, managerToModel size = {1}", //$NON-NLS-1$
 					modelToManager.size(), managerToModel.size());
