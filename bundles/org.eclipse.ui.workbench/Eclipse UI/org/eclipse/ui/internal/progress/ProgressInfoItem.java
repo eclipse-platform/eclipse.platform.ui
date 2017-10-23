@@ -430,8 +430,8 @@ public class ProgressInfoItem extends Composite {
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, name);
 		}
 
-		if (jobInfo.isBlocked()) {
-			IStatus blockedStatus = jobInfo.getBlockedStatus();
+		IStatus blockedStatus = jobInfo.getBlockedStatus();
+		if (blockedStatus != null) {
 			return NLS.bind(ProgressMessages.JobInfo_Blocked, name,
 					blockedStatus.getMessage());
 		}
