@@ -151,27 +151,18 @@ public class NavigationHistoryAction extends PageEventAction {
         if (forward) {
             setText(WorkbenchMessages.NavigationHistoryAction_forward_text);
             setToolTipText(WorkbenchMessages.NavigationHistoryAction_forward_toolTip);
-            // @issue missing action id
-            window.getWorkbench().getHelpSystem().setHelp(this,
-					IWorkbenchHelpContextIds.NAVIGATION_HISTORY_FORWARD);
-            setImageDescriptor(sharedImages
-                    .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
-            setDisabledImageDescriptor(sharedImages
-                    .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+            window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.NAVIGATION_HISTORY_FORWARD);
+            setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+            setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
             setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
         } else {
             setText(WorkbenchMessages.NavigationHistoryAction_backward_text);
             setToolTipText(WorkbenchMessages.NavigationHistoryAction_backward_toolTip);
-            // @issue missing action id
-            window.getWorkbench().getHelpSystem().setHelp(this,
-					IWorkbenchHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
-            setImageDescriptor(sharedImages
-                    .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-            setDisabledImageDescriptor(sharedImages
-                    .getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+            window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
+            setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+            setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
             setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
         }
-        // PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
         setEnabled(false);
         this.forward = forward;
         setMenuCreator(new MenuCreator());
@@ -227,8 +218,7 @@ public class NavigationHistoryAction extends PageEventAction {
         }
         IWorkbenchPage page = getActivePage();
         if (page != null) {
-            NavigationHistory nh = (NavigationHistory) page
-                    .getNavigationHistory();
+            NavigationHistory nh = (NavigationHistory) page.getNavigationHistory();
             if (forward) {
                 nh.forward();
             } else {
