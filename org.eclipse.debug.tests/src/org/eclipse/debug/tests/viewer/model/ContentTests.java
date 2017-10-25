@@ -139,7 +139,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
      * use data from stale updates to populate the viewer.<br>
      * See bug 210027
      */
-	public void testLabelUpdatesCompletedOutOfSequence1() throws Exception {
+	public void testLabelUpdatesCompletedOutOfSequence3() throws Exception {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
 
