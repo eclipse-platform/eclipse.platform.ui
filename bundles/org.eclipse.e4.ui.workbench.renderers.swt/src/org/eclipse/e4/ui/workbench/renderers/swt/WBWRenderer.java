@@ -771,20 +771,23 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		});
 
-		// Apply the correct shell state
-		if (shellME.getTags().contains(ShellMaximizedTag)) {
-			shell.setMaximized(true);
-		} else if (shellME.getTags().contains(ShellMinimizedTag)) {
-			shell.setMinimized(true);
-		}
+		 try {
+			// Apply the correct shell state
+			if (shellME.getTags().contains(ShellMaximizedTag)) {
+				shell.setMaximized(true);
+			} else if (shellME.getTags().contains(ShellMinimizedTag)) {
+				shell.setMinimized(true);
+			}
 
-		shell.layout(true);
-		forceLayout(shell);
-		if (shellME.isVisible()) {
-			shell.open();
-		} else {
-			shell.setVisible(false);
-		}
+			shell.layout(true);
+			forceLayout(shell);
+		 } finally {
+			if (shellME.isVisible()) {
+				shell.open();
+			} else {
+				shell.setVisible(false);
+			}
+		 }
 	}
 
 	private Object[] promptForSave(Shell parentShell,
