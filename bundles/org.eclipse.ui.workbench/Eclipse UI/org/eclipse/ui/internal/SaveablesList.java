@@ -16,8 +16,10 @@ package org.eclipse.ui.internal;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,10 +80,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private ListenerList<ISaveablesLifecycleListener> listeners = new ListenerList<>();
 
 	// event source (mostly ISaveablesSource) -> Set of Saveable
-	private Map<Object, Set<Saveable>> modelMap = new HashMap<>();
+	private Map<Object, Set<Saveable>> modelMap = new LinkedHashMap<>();
 
 	// reference counting map
-	private Map<Saveable, Integer> modelRefCounts = new HashMap<>();
+	private Map<Saveable, Integer> modelRefCounts = new LinkedHashMap<>();
+
+	// lists contain "equal" saveables as many times as we have counted them above
+	private Map<Saveable, List<Saveable>> equalKeys = new IdentityHashMap<>();
 
 	private Set<ISaveablesSource> nonPartSources = new HashSet<>();
 
@@ -137,29 +142,148 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			result = true;
 			refCount = Integer.valueOf(0);
 		}
+
+		// Remember concrete saveable instance to make sure we can find it later
+		if (referenceMap == modelRefCounts) {
+			if (result) {
+				// first time we saw such key
+				rememberRefKey(key);
+			} else {
+				incrementRefKeys(key);
+			}
+		}
+
 		referenceMap.put(key, Integer.valueOf(refCount.intValue() + 1));
 		return result;
+	}
+
+	private void rememberRefKey(Saveable key) {
+		ArrayList<Saveable> equals = new ArrayList<>();
+		equals.add(key);
+		equalKeys.put(key, equals);
+	}
+
+	private void incrementRefKeys(Saveable key) {
+		Saveable keyUsedInCountMap = findExistingRefKey(key);
+		if (keyUsedInCountMap == null) {
+			// Should not happen
+			rememberRefKey(key);
+			return;
+		}
+		List<Saveable> equals = equalKeys.get(keyUsedInCountMap);
+		equals.add(key);
+		equalKeys.put(key, equals);
 	}
 
 	/**
 	 * returns true if the given key has been removed
 	 *
-	 * @param referenceMap
 	 * @param key
 	 * @return true if the ref count of the given key was 1
 	 */
-	private boolean decrementRefCount(Map<Saveable, Integer> referenceMap, Saveable key) {
+	private boolean decrementRefCount(Saveable key) {
 		boolean result = false;
-		Integer refCount = referenceMap.get(key);
-		if (refCount == null)
-			Assert.isTrue(false, key + ": " + key.getName()); //$NON-NLS-1$
-		if (refCount.intValue() == 1) {
-			referenceMap.remove(key);
+		Integer refCount = modelRefCounts.get(key);
+		final Saveable keyToDecrement = key;
+		if (refCount == null) {
+			key = fixKeyIfKnown(key);
+			if (keyToDecrement != key) {
+				refCount = modelRefCounts.get(key);
+			}
+		}
+		if (refCount == null) {
+			Assert.isTrue(false, keyToDecrement + ": " + keyToDecrement.getName()); //$NON-NLS-1$
+		}
+		int refCountValue = refCount.intValue();
+		if (refCountValue == 1) {
+			modelRefCounts.remove(key);
 			result = true;
+			forgetRefKeys(key);
 		} else {
-			referenceMap.put(key, Integer.valueOf(refCount.intValue() - 1));
+			Saveable keyUsedInCountMap;
+			Collection<Saveable> equals = equalKeys.get(keyToDecrement);
+			long instanceCount = count(keyToDecrement, equals);
+			if (instanceCount == 1) {
+				forgetRefKeys(keyToDecrement);
+				keyUsedInCountMap = equals.iterator().next();
+			} else {
+				decrementRefKeys(keyToDecrement);
+				keyUsedInCountMap = key;
+			}
+			modelRefCounts.remove(keyToDecrement);
+			modelRefCounts.put(keyUsedInCountMap, Integer.valueOf(refCountValue - 1));
 		}
 		return result;
+	}
+
+	private long count(final Saveable keyToDecrement, Collection<Saveable> equals) {
+		return equals.stream().filter(x -> x == keyToDecrement).count();
+	}
+
+	/**
+	 * If the given key changed the equals() behavior since we've used it for the
+	 * first time, we should still have its instance in the equalKeys map and could
+	 * use his previously "equal" colleagues to retrieve the expected reference
+	 * count
+	 *
+	 * @key object to find known, previously equal one
+	 * @return fixed key or given key
+	 */
+	private Saveable fixKeyIfKnown(Saveable key) {
+		Collection<Saveable> keys = equalKeys.get(key);
+		if (keys == null) {
+			return key;
+		}
+		Saveable goodKey = null;
+		for (Saveable saveable : keys) {
+			Integer refCount = modelRefCounts.get(saveable);
+			if (refCount != null) {
+				goodKey = saveable;
+				break;
+			}
+		}
+		if (goodKey == null) {
+			return key;
+		}
+		return goodKey;
+	}
+
+	private void forgetRefKeys(Saveable key) {
+		Collection<Saveable> keys = equalKeys.get(key);
+		if (keys != null) {
+			equalKeys.remove(key);
+			keys.removeIf(x -> x == key);
+		}
+	}
+
+	private void decrementRefKeys(Saveable key) {
+		List<Saveable> keys = equalKeys.get(key);
+		if (keys != null) {
+			for (int i = 0; i < keys.size(); i++) {
+				if (keys.get(i) == key) {
+					keys.remove(i);
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param key
+	 *            current key
+	 * @return probably existing equal key we use in modelRefCounts map
+	 */
+	private Saveable findExistingRefKey(Saveable key) {
+		Saveable existingKey = null;
+		Set<Saveable> keys = modelRefCounts.keySet();
+		for (Saveable s : keys) {
+			if (s.equals(key)) {
+				existingKey = s;
+				break;
+			}
+		}
+		return existingKey;
 	}
 
 	// returns true if this model was removed from getModels();
@@ -171,7 +295,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					"Ignored attempt to remove a saveable when no saveables were known", source, model); //$NON-NLS-1$
 		} else {
 			if (modelsForSource.remove(model)) {
-				result = decrementRefCount(modelRefCounts, model);
+				result = decrementRefCount(model);
 				if (modelsForSource.isEmpty()) {
 					modelMap.remove(source);
 				}
@@ -844,4 +968,24 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		return result.toArray(new IWorkbenchPart[result.size()]);
 	}
 
+	/**
+	 * FOR TESTS ONLY
+	 */
+	protected Map<Saveable, Integer> getModelRefCounts() {
+		return modelRefCounts;
+	}
+
+	/**
+	 * FOR TESTS ONLY
+	 */
+	protected Map<Object, Set<Saveable>> getModelMap() {
+		return modelMap;
+	}
+
+	/**
+	 * FOR TESTS ONLY
+	 */
+	protected Map<Saveable, List<Saveable>> getEqualKeys() {
+		return equalKeys;
+	}
 }

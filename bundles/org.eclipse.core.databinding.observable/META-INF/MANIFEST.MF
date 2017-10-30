@@ -14,7 +14,7 @@ Export-Package: org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.observable.sideeffect,
  org.eclipse.core.databinding.observable.value;x-internal:=false,
  org.eclipse.core.databinding.util,
- org.eclipse.core.internal.databinding.identity;x-friends:="org.eclipse.core.databinding,org.eclipse.core.databinding.property",
+ org.eclipse.core.internal.databinding.identity;x-friends:="org.eclipse.core.databinding,org.eclipse.core.databinding.property,org.eclipse.ui.workbench",
  org.eclipse.core.internal.databinding.observable;x-internal:=true,
  org.eclipse.core.internal.databinding.observable.masterdetail;x-friends:="org.eclipse.jface.tests.databinding",
  org.eclipse.core.internal.databinding.observable.sideeffect;x-friends:="org.eclipse.jface.databinding"
