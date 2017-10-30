@@ -13,6 +13,9 @@
 package org.eclipse.ui.views.contentoutline;
 
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -69,9 +72,7 @@ import org.eclipse.ui.part.PageBookView;
  */
 public class ContentOutline extends PageBookView implements ISelectionProvider, ISelectionChangedListener {
 
-
-
-    /**
+	/**
      * The plugin prefix.
      */
     public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
@@ -82,6 +83,8 @@ public class ContentOutline extends PageBookView implements ISelectionProvider, 
      */
     public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = PREFIX
             + "content_outline_context";//$NON-NLS-1$
+
+	private static final String VIEWS_PLUGIN_ID = "org.eclipse.ui.views"; //$NON-NLS-1$
 
     /**
      * Message to show on the default page.
@@ -128,7 +131,15 @@ public class ContentOutline extends PageBookView implements ISelectionProvider, 
             if (page instanceof IPageBookViewPage) {
 				initPage((IPageBookViewPage) page);
 			}
-            page.createControl(getPageBook());
+			try {
+				page.createControl(getPageBook());
+			} catch (Exception e) {
+				String message = "Failed to create outline control for " + page.getClass(); //$NON-NLS-1$
+				Platform.getLog(Platform.getBundle(VIEWS_PLUGIN_ID))
+						.log(new Status(IStatus.ERROR, VIEWS_PLUGIN_ID, IStatus.OK, message, e));
+				page.dispose();
+				return null;
+			}
             return new PageRec(part, page);
         }
         // There is no content outline
