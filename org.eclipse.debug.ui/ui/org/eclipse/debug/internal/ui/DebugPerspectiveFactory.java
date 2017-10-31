@@ -16,6 +16,8 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.texteditor.templates.TemplatesView;
 
 /**
  * The debug perspective factory.
@@ -28,27 +30,32 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
 
-		IFolderLayout consoleFolder = layout.createFolder(IInternalDebugUIConstants.ID_CONSOLE_FOLDER_VIEW, IPageLayout.BOTTOM, (float)0.75, layout.getEditorArea());
-		consoleFolder.addView(IConsoleConstants.ID_CONSOLE_VIEW);
-		consoleFolder.addView(IPageLayout.ID_TASK_LIST);
-		consoleFolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-		consoleFolder.addPlaceholder(IPageLayout.ID_PROP_SHEET);
+		String editorArea = layout.getEditorArea();
 
-		IFolderLayout navFolder= layout.createFolder(IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW, IPageLayout.TOP, (float) 0.45, layout.getEditorArea());
+		IFolderLayout navFolder = layout.createFolder(IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW, IPageLayout.LEFT, (float) 0.25, editorArea);
 		navFolder.addView(IDebugUIConstants.ID_DEBUG_VIEW);
 		navFolder.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
 
-		IFolderLayout toolsFolder= layout.createFolder(IInternalDebugUIConstants.ID_TOOLS_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.50, IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW);
-		toolsFolder.addView(IDebugUIConstants.ID_VARIABLE_VIEW);
-		toolsFolder.addView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-		toolsFolder.addPlaceholder(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		IFolderLayout toolsFolder = layout.createFolder(IInternalDebugUIConstants.ID_TOOLS_FOLDER_VIEW, IPageLayout.BOTTOM, (float) 0.75, editorArea);
+		toolsFolder.addView(IConsoleConstants.ID_CONSOLE_VIEW);
+		toolsFolder.addView(IPageLayout.ID_PROBLEM_VIEW);
 		toolsFolder.addPlaceholder(IDebugUIConstants.ID_REGISTER_VIEW);
+		toolsFolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
+		toolsFolder.addPlaceholder(IProgressConstants.PROGRESS_VIEW_ID);
 
-		IFolderLayout outlineFolder= layout.createFolder(IInternalDebugUIConstants.ID_OUTLINE_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.75, layout.getEditorArea());
-		outlineFolder.addView(IPageLayout.ID_OUTLINE);
+		IFolderLayout outlineFolder = layout.createFolder(IInternalDebugUIConstants.ID_OUTLINE_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.65, editorArea);
+		outlineFolder.addView(IDebugUIConstants.ID_VARIABLE_VIEW);
+		outlineFolder.addView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		outlineFolder.addView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		outlineFolder.addPlaceholder(IPageLayout.ID_OUTLINE);
+		outlineFolder.addPlaceholder(IPageLayout.ID_PROP_SHEET);
+
+		layout.addShowViewShortcut(IProgressConstants.PROGRESS_VIEW_ID);
+		layout.addShowViewShortcut(TemplatesView.ID);
 
 		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
+		layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);
 
 		setContentsOfShowViewMenu(layout);
 	}
@@ -63,6 +70,7 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IDebugUIConstants.ID_EXPRESSION_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
-		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
+		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
+		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
 	}
 }
