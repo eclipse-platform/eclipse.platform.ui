@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014-2016 Red Hat Inc., and others
+ * Copyright (c) 2014, 2017 Red Hat Inc., and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,7 +115,7 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 				for (ProjectConfigurator configurator : ((Entry<IProject, List<ProjectConfigurator>>)element).getValue()) {
 					builder.append(ProjectConfiguratorExtensionManager.getLabel(configurator));
 					builder.append(", "); //$NON-NLS-1$
-				};
+				}
 				if (builder.length() > 0) {
 					builder.delete(builder.length() - 2, builder.length());
 				}

@@ -457,7 +457,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 	/**
 	 * Add modify listener to the search text, trigger search each time text
-	 * changes. After the search the first matching result is selected. 
+	 * changes. After the search the first matching result is selected.
 	 */
 	protected void addModifyListener(Text text) {
 		text.addModifyListener(e -> {
@@ -881,7 +881,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 					return ((WorkbenchPartReference) element).getTitleToolTip();
 				}
 				return super.getToolTipText(element);
-			};
+			}
 		};
 	}
 
