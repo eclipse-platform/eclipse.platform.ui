@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -60,8 +61,8 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 	private ResourceHandler createHandler(URI uri) {
 		IEclipseContext localContext = applicationContext.createChild();
 		localContext.set(E4Workbench.INSTANCE_LOCATION, getInstanceLocation());
-		localContext.set(E4Workbench.PERSIST_STATE, Boolean.TRUE);
-		localContext.set(E4Workbench.CLEAR_PERSISTED_STATE, Boolean.TRUE);
+		localContext.set(IWorkbench.PERSIST_STATE, Boolean.TRUE);
+		localContext.set(IWorkbench.CLEAR_PERSISTED_STATE, Boolean.TRUE);
 
 		localContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI, uri);
 

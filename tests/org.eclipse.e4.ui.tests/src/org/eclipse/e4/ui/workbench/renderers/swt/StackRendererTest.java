@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.internal.events.EventBroker;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabItem;
@@ -51,7 +52,7 @@ public class StackRendererTest {
 	@Before
 	public void setUp() throws Exception {
 		context = E4Application.createDefaultContext();
-		context.set(E4Workbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
+		context.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 		ems = context.get(EModelService.class);
 		MApplication application = ems.createModelElement(MApplication.class);
 		MWindow window = ems.createModelElement(MWindow.class);

@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -102,7 +103,7 @@ public class PartRenderingEngineTests {
 	public void setUp() throws Exception {
 		logged = false;
 		appContext = E4Application.createDefaultContext();
-		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
+		appContext.set(IWorkbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
 
 		final Display d = Display.getDefault();
