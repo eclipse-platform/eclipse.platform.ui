@@ -23,6 +23,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -135,11 +136,22 @@ public class ResourceItemLabelTest extends UITestCase {
 		dialog = new FilteredResourcesSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				true, project,
 				IResource.FILE);
-		dialog.setInitialPattern(searchString);
 		dialog.setBlockOnOpen(false);
 		dialog.create();
 		dialog.open();
 		Shell shell = dialog.getShell();
+
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return project.getFile(fileName).exists();
+			}
+		}.waitForCondition(shell.getDisplay(), 1000);
+
+		assertTrue("File was not created", project.getFile(fileName).exists());
+		dialog.reloadCache(true, new NullProgressMonitor());
+
+		((Text) dialog.getPatternControl()).setText(searchString);
 		Table table = (Table) ((Composite) ((Composite) ((Composite) shell.getChildren()[0]).getChildren()[0])
 				.getChildren()[0]).getChildren()[3];
 
@@ -148,7 +160,7 @@ public class ResourceItemLabelTest extends UITestCase {
 			protected boolean condition() {
 				return table.getItemCount() > 0;
 			}
-		}.waitForCondition(shell.getDisplay(), 1000);
+		}.waitForCondition(shell.getDisplay(), 3000);
 
 		assertEquals("Impropper number of results", 1, table.getItemCount());
 
