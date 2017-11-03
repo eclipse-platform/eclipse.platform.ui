@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.function.Consumer;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
@@ -89,15 +88,16 @@ public class PartRenderingEngineTests {
 	@Rule
 	public TestName testName = new TestName();
 
-	private boolean checkMacBug466636() {
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			System.out.println("skipping " + PartRenderingEngineTests.class.getName() + "#"
-					+ this.getClass().getSimpleName()
-					+ " on Mac for now, see bug 466636");
-			return true;
-		}
-		return false;
-	}
+	// private boolean checkMacBug466636() {
+	// if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+	// System.out.println("skipping " + PartRenderingEngineTests.class.getName() +
+	// "#"
+	// + this.getClass().getSimpleName()
+	// + " on Mac for now, see bug 466636");
+	// return true;
+	// }
+	// return false;
+	// }
 
 	@Before
 	public void setUp() throws Exception {
@@ -1025,8 +1025,8 @@ public class PartRenderingEngineTests {
 
 	@Test
 	public void testBug324839() throws Exception {
-		if (checkMacBug466636())
-			return;
+		// if (checkMacBug466636())
+		// return;
 
 		MApplication application = ems.createModelElement(MApplication.class);
 		application.setContext(appContext);
@@ -2180,8 +2180,8 @@ public class PartRenderingEngineTests {
 
 	@Test
 	public void testBug326175_False() {
-		if (checkMacBug466636())
-			return;
+		// if (checkMacBug466636())
+		// return;
 		testBug326175(false);
 	}
 
