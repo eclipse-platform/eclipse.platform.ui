@@ -57,6 +57,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	 *            <code>true</code> if only the currently focused cell should be
 	 *            indicated as selected. <code>false</code> to indicate both the
 	 *            full selection and the currently focused cell.
+	 * @since 3.14
 	 */
 	public FocusCellOwnerDrawHighlighter(ColumnViewer viewer, boolean removeNonFocusedSelectionInformation) {
 		super(viewer);
