@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
 
@@ -139,7 +140,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
      * use data from stale updates to populate the viewer.<br>
      * See bug 210027
      */
-	public void testLabelUpdatesCompletedOutOfSequence3() throws Exception {
+	public void testLabelUpdatesCompletedOutOfSequence1() throws Exception {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
 
@@ -151,10 +152,11 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
+		TestUtil.waitForJobs(getName(), 300, 5000);
 		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 
 		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
-		model.fCapturedUpdates = new ArrayList<IViewerUpdate>(2);
+		model.fCapturedUpdates = Collections.synchronizedList(new ArrayList<IViewerUpdate>(2));
 
 //      // Change the model and run another update set.
 		model.getElement(model.findElement("1")).setLabelAppendix(" - changed"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -205,16 +207,17 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
+		TestUtil.waitForJobs(getName(), 300, 5000);
 		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
-		model.fCapturedUpdates = new ArrayList<IViewerUpdate>(2);
+		model.fCapturedUpdates = Collections.synchronizedList(new ArrayList<IViewerUpdate>(2));
 
         // Change the model and run another update set.
 		model.setElementChildren(TreePath.EMPTY, new TestElement[] {
 				new TestElement(model, "1-new", new TestElement[0]), //$NON-NLS-1$
 				new TestElement(model, "2-new", new TestElement[0]), //$NON-NLS-1$
         });
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
+		fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
 		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 
