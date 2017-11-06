@@ -458,6 +458,11 @@ public class WorkbenchMessages extends NLS {
 	public static String Preference_import;
 	public static String Preference_export;
 
+	public static String PreferenceExportWarning_title;
+	public static String PreferenceExportWarning_message;
+	public static String PreferenceExportWarning_continue;
+	public static String PreferenceExportWarning_applyAndContinue;
+
 	// --- Workbench ---
 	public static String WorkbenchPreference_showMultipleEditorTabsButton;
 	public static String WorkbenchPreference_allowInplaceEditingButton;

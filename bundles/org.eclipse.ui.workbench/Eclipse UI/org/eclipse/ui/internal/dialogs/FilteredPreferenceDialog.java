@@ -22,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceContentProvider;
@@ -373,16 +374,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		if (control instanceof ToolBar) {
 			ToolBar toolBar = (ToolBar) control;
 
-			new ToolItem(toolBar, SWT.SEPARATOR).setWidth(0);
-
 			ToolItem importButton = new ToolItem(toolBar, SWT.PUSH);
 			importImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_IMPORT)
 					.createImage();
 			importButton.setImage(importImage);
 			importButton.setToolTipText(WorkbenchMessages.Preference_importTooltip);
 			importButton.addListener(SWT.Selection, e -> openImportWizard(parent));
-
-			new ToolItem(toolBar, SWT.SEPARATOR).setWidth(0);
 
 			ToolItem exportButton = new ToolItem(toolBar, SWT.PUSH);
 			exportImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_EXPORT)
@@ -419,7 +416,21 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	private void openExportWizard(Composite parent) {
 		Wizard exportWizard = new PreferencesExportWizard();
 		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), exportWizard);
+
+		int dialogResponse = MessageDialog.open(MessageDialog.CONFIRM, parent.getShell(),
+				WorkbenchMessages.PreferenceExportWarning_title, WorkbenchMessages.PreferenceExportWarning_message,
+				SWT.NONE, WorkbenchMessages.PreferenceExportWarning_applyAndContinue,
+				WorkbenchMessages.PreferenceExportWarning_continue);
+		if (dialogResponse == -1) {
+			return;
+		} else if (dialogResponse == 0) {
+			okPressed();
+		}
+
 		wizardDialog.open();
+		if (dialogResponse == 1) {
+			close();
+		}
 	}
 
 	@Override
