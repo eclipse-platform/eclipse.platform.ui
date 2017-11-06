@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.preferences.*;
 
@@ -41,11 +42,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public static final long PREF_DELTA_EXPIRATION_DEFAULT = 30 * 24 * 3600 * 1000l; // 30 days
 	/**
 	 * Default setting for {@value ResourcesPlugin#PREF_MISSING_NATURE_MARKER_SEVERITY}.
-	 * Currently -1/ignore, but very likely to change.
 	 *
 	 * @since 3.12
 	 */
-	public static final int PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT = -1;
+	public static final int PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT = IMarker.SEVERITY_WARNING;
 
 	public PreferenceInitializer() {
 		super();

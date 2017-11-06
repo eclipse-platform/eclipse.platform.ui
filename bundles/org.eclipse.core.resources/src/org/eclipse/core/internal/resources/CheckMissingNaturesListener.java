@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -145,7 +149,7 @@ public class CheckMissingNaturesListener implements IResourceChangeListener, IPr
 				}
 
 				final Set<IMarker> toRemove = new HashSet<>();
-				for (IMarker existingMarker : getRelatedMarkers(project)) {
+				for (IMarker existingMarker : getRelatedProjectMarkers(project)) {
 					String markerNature = existingMarker.getAttribute(NATURE_ID_ATTRIBUTE, ""); //$NON-NLS-1$
 					if (!missingNatures.contains(markerNature)) {
 						toRemove.add(existingMarker);
@@ -162,11 +166,18 @@ public class CheckMissingNaturesListener implements IResourceChangeListener, IPr
 							for (IMarker marker : toRemove) {
 								marker.delete();
 							}
+							IResource targetResource = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+							if (!targetResource.isAccessible()) {
+								targetResource = project;
+							}
 							for (String natureId : missingNatures) {
-								IMarker marker = project.createMarker(MARKER_TYPE);
+								IMarker marker = targetResource.createMarker(MARKER_TYPE);
 								marker.setAttribute(IMarker.SEVERITY, getMissingNatureSeverity(project));
 								marker.setAttribute(IMarker.MESSAGE, NLS.bind(Messages.natures_missingNature, natureId));
 								marker.setAttribute(NATURE_ID_ATTRIBUTE, natureId);
+								if (targetResource.getType() == IResource.FILE) {
+									updateRange(marker, natureId, (IFile) targetResource);
+								}
 							}
 							return Status.OK_STATUS;
 						}
@@ -188,12 +199,54 @@ public class CheckMissingNaturesListener implements IResourceChangeListener, IPr
 		}
 	}
 
-	protected Collection<IMarker> getRelatedMarkers(IContainer workspaceRootOrProject) {
-		if (!workspaceRootOrProject.isAccessible()) {
+	protected void updateRange(IMarker marker, String natureId, IFile file) {
+		if (!file.isAccessible()) {
+			return;
+		}
+		Pattern pattern = Pattern.compile(".*<" + IModelObjectConstants.NATURE + ">\\s*(" + natureId.replace(".", "\\.") + ")\\s*</" + IModelObjectConstants.NATURE + ">.*", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				Pattern.DOTALL);
+		try (InputStream input = file.getContents(); ByteArrayOutputStream output = new ByteArrayOutputStream();) {
+			FileUtil.transferStreams(input, output, file.getLocation().toString(), new NullProgressMonitor());
+			String content = output.toString();
+			Matcher matcher = pattern.matcher(content);
+			if (matcher.matches() && matcher.groupCount() > 0) {
+				marker.setAttribute(IMarker.CHAR_START, matcher.start(1));
+				marker.setAttribute(IMarker.CHAR_END, matcher.end(1) - 1);
+			}
+		} catch (IOException e) {
+			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, e.getMessage(), e));
+		} catch (CoreException e) {
+			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, e.getMessage(), e));
+		}
+	}
+
+	protected Collection<IMarker> getRelatedMarkers(IContainer rootOrProject) {
+		switch (rootOrProject.getType()) {
+			case IResource.ROOT :
+				return getRelatedRootMarkers((IWorkspaceRoot) rootOrProject);
+			case IResource.PROJECT :
+				return getRelatedProjectMarkers((IProject) rootOrProject);
+		}
+		return Collections.emptyList();
+	}
+
+	protected Collection<IMarker> getRelatedRootMarkers(IWorkspaceRoot root) {
+		if (!root.isAccessible()) {
+			return Collections.emptyList();
+		}
+		Set<IMarker> res = new HashSet<>();
+		for (IProject project : root.getProjects()) {
+			res.addAll(getRelatedProjectMarkers(project));
+		}
+		return res;
+	}
+
+	protected Collection<IMarker> getRelatedProjectMarkers(IProject project) {
+		if (!project.isAccessible()) {
 			return Collections.emptyList();
 		}
 		try {
-			return Arrays.asList(workspaceRootOrProject.findMarkers(MARKER_TYPE, true, workspaceRootOrProject.getType() == IResource.ROOT ? IResource.DEPTH_ONE : IResource.DEPTH_ZERO));
+			return Arrays.asList(project.findMarkers(MARKER_TYPE, true, IResource.DEPTH_ONE));
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, e.getMessage(), e));
 			return Collections.emptyList();
