@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *  Simon Muschel <smuschel@gmx.de> - bug 258493
  *  Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *  Patrik Suzzi <psuzzi@gmail.com> - Bug 485133
+ *  Lucas Bullen <lbullen@redhat.com> - Bug 525974
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -2855,21 +2856,39 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			}
 
 			ArrayList preparedElements = new ArrayList();
+			int i = 0;
 			boolean hasHistory = false;
+			int reportEvery = filteredElements.length / ticks;
 
-			if (filteredElements.length > 0) {
-				if (isHistoryElement(filteredElements[0])) {
+			for (; i < filteredElements.length; i++) {
+				Object item = filteredElements[i];
+				if (filter != null && filter.getPattern().equals(getElementName(item))) {
+					if (isHistoryElement(item)) {
+						preparedElements.add(0, item);
+						hasHistory = true;
+					} else {
+						preparedElements.add(item);
+					}
+				} else {
+					break;
+				}
+
+				if (reportEvery != 0 && ((i + 1) % reportEvery == 0)) {
+					monitor.worked(1);
+				}
+			}
+
+			if (filteredElements.length > i) {
+				if (isHistoryElement(filteredElements[i])) {
 					hasHistory = true;
 				}
 			}
 
-			int reportEvery = filteredElements.length / ticks;
-
-			// add separator
-			for (int i = 0; i < filteredElements.length; i++) {
+			// add separators
+			for (; i < filteredElements.length; i++) {
 				Object item = filteredElements[i];
-
 				if (hasHistory && !isHistoryElement(item)) {
+					setSeparatorLabel(WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel);
 					preparedElements.add(itemsListSeparator);
 					hasHistory = false;
 				}
@@ -3049,6 +3068,20 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		@Override
 		public int compare(Object o1, Object o2) {
+			// find perfect matches
+			if (filter != null) {
+				String filterPattern = filter.getPattern();
+				// See if any are exact matches
+				boolean m1 = filterPattern.equals(getElementName(o1));
+				boolean m2 = filterPattern.equals(getElementName(o2));
+				if (m1 && m2)
+					return 0;
+				if (m1 && !m2)
+					return -1;
+				if (m2 && !m1)
+					return 1;
+			}
+
 			boolean h1 = isHistoryElement(o1);
 			boolean h2 = isHistoryElement(o2);
 			if (h1 == h2)
