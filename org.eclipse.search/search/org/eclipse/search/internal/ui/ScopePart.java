@@ -7,12 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 526453] disambiguate "Selected Resources"
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -27,8 +34,11 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.PixelConverter;
@@ -42,6 +52,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
+import org.eclipse.search.internal.ui.text.LineElement;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.NewSearchUI;
@@ -148,6 +159,59 @@ public class ScopePart {
 		return null;
 	}
 
+	public static List<IResource> selectionToResources(ISelection selection) {
+		if (selection == null || !(selection instanceof IStructuredSelection)) {
+			return Collections.emptyList();
+		}
+		List<IResource> resources = new ArrayList<>();
+		Iterator<?> iter = ((IStructuredSelection) selection).iterator();
+		while (iter.hasNext()) {
+			Object curr = iter.next();
+			if (curr instanceof IWorkingSet) {
+				IWorkingSet workingSet = (IWorkingSet) curr;
+				if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+					continue;
+				}
+				IAdaptable[] elements = workingSet.getElements();
+				for (IAdaptable element : elements) {
+					IResource resource = element.getAdapter(IResource.class);
+					if (resource != null && resource.isAccessible()) {
+						resources.add(resource);
+					}
+				}
+			} else if (curr instanceof LineElement) {
+				IResource resource = ((LineElement) curr).getParent();
+				if (resource != null && resource.isAccessible())
+					resources.add(resource);
+			} else if (curr instanceof IAdaptable) {
+				IResource resource = ((IAdaptable) curr).getAdapter(IResource.class);
+				if (resource != null && resource.isAccessible()) {
+					resources.add(resource);
+				}
+			}
+		}
+		return resources;
+	}
+
+	private String getSelectedResurcesButtonText() {
+		List<IResource> resources = selectionToResources(fSearchDialog.getSelection());
+		int size = resources.size();
+		if (size == 1)
+			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_singular, resources.get(0).getName());
+		if (size > 1)
+			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_plural, new Integer(size));
+		return SearchMessages.ScopePart_selectedResourcesScope_text;
+	}
+
+	private String getEnclosingProjectsButtonText() {
+		String[] projectNames = fSearchDialog.getEnclosingProjectNames();
+		int size = projectNames.length;
+		if (size == 1)
+			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_singular, projectNames[0]);
+		if (size > 1)
+			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_plural, new Integer(size));
+		return SearchMessages.ScopePart_enclosingProjectsScope_text;
+	}
 
 	/**
 	 * Returns the scope selected in this part
@@ -283,7 +347,7 @@ public class ScopePart {
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(Integer.valueOf(ISearchPageContainer.SELECTION_SCOPE));
-		fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
+		fUseSelection.setText(getSelectedResurcesButtonText());
 
 		boolean canSearchInSelection= canSearchInSelection();
 		fUseSelection.setEnabled(canSearchInSelection);
@@ -294,7 +358,7 @@ public class ScopePart {
 
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(Integer.valueOf(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
-		fUseProject.setText(SearchMessages.ScopePart_enclosingProjectsScope_text);
+		fUseProject.setText(getEnclosingProjectsButtonText());
 		fUseProject.setEnabled(fSearchDialog.getEnclosingProjectNames().length > 0);
 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);

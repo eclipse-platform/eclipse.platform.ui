@@ -173,7 +173,11 @@ public final class SearchMessages extends NLS {
 	public static String WorkspaceScope;
 	public static String ScopePart_group_text;
 	public static String ScopePart_selectedResourcesScope_text;
+	public static String ScopePart_selectedResourcesScope_text_plural;
+	public static String ScopePart_selectedResourcesScope_text_singular;
 	public static String ScopePart_enclosingProjectsScope_text;
+	public static String ScopePart_enclosingProjectsScope_text_plural;
+	public static String ScopePart_enclosingProjectsScope_text_singular;
 	public static String ScopePart_workingSetChooseButton_text;
 	public static String ScopePart_workingSetText_accessible_label;
 	public static String ScopePart_workingSetScope_text;

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +41,6 @@ import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
@@ -75,6 +73,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
@@ -340,32 +339,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		HashSet<IResource> resources= new HashSet<>();
 		ISelection sel= getContainer().getSelection();
 		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
-			Iterator<?> iter= ((IStructuredSelection) sel).iterator();
-			while (iter.hasNext()) {
-				Object curr= iter.next();
-				if (curr instanceof IWorkingSet) {
-					IWorkingSet workingSet= (IWorkingSet) curr;
-					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
-						return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
-					}
-					IAdaptable[] elements= workingSet.getElements();
-					for (IAdaptable element : elements) {
-						IResource resource= element.getAdapter(IResource.class);
-						if (resource != null && resource.isAccessible()) {
-							resources.add(resource);
-						}
-					}
-				} else if (curr instanceof LineElement) {
-					IResource resource= ((LineElement)curr).getParent();
-					if (resource != null && resource.isAccessible())
-						resources.add(resource);
-				} else if (curr instanceof IAdaptable) {
-					IResource resource= ((IAdaptable)curr).getAdapter(IResource.class);
-					if (resource != null && resource.isAccessible()) {
-						resources.add(resource);
-					}
-				}
-			}
+			resources.addAll(ScopePart.selectionToResources(sel));
 		} else if (getContainer().getActiveEditorInput() != null) {
 			resources.add(getContainer().getActiveEditorInput().getAdapter(IFile.class));
 		}
