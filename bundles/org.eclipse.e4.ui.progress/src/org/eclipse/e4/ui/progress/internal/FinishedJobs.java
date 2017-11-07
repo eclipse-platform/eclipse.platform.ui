@@ -191,12 +191,12 @@ public class FinishedJobs extends EventManager {
 				keptjobinfos.add(info);
 
 				long now = System.currentTimeMillis();
-				finishedTime.put(info, new Long(now));
+				finishedTime.put(info, Long.valueOf(now));
 
 				GroupInfo parent = info.getParent();
 				if (!(parent == null || keptjobinfos.contains(parent))) {
 					keptjobinfos.add(parent);
-					finishedTime.put(parent, new Long(now));
+					finishedTime.put(parent, Long.valueOf(now));
 				}
 
 				fire = true;

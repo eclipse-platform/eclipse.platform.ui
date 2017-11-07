@@ -112,7 +112,7 @@ public class UIStats {
      */
     public static void start(int event, String label) {
         if (debug[event]) {
-			operations.put(event + label, new Long(System.currentTimeMillis()));
+			operations.put(event + label, Long.valueOf(System.currentTimeMillis()));
 		}
     }
 

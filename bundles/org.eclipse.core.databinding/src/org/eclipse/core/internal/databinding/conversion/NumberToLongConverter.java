@@ -34,7 +34,7 @@ public class NumberToLongConverter extends NumberToNumberConverter {
 	@Override
 	protected Number doConvert(Number number) {
 		if (StringToNumberParser.inLongRange(number)) {
-			return new Long(number.longValue());
+			return Long.valueOf(number.longValue());
 		}
 
 		return null;

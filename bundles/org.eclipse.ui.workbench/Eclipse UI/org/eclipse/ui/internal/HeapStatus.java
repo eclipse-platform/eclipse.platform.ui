@@ -531,7 +531,7 @@ public class HeapStatus extends Composite {
      * Converts the given number of bytes to a printable number of megabytes (rounded up).
      */
     private String convertToMegString(long numBytes) {
-        return NLS.bind(WorkbenchMessages.HeapStatus_meg, new Long(convertToMeg(numBytes)));
+		return NLS.bind(WorkbenchMessages.HeapStatus_meg, Long.valueOf(convertToMeg(numBytes)));
     }
 
     /**

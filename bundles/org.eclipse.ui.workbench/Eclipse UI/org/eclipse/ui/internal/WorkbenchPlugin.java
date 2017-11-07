@@ -1246,7 +1246,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 				// we're on a 64 bit platform so invoke it with a long
 				splashShell = (Shell) method.invoke(null, new Object[] {
-						display, new Long(splashHandle) });
+						display, Long.valueOf(splashHandle) });
 			} catch (NoSuchMethodException e2) {
 				// cant find either method - don't do anything.
 			}

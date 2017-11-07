@@ -53,7 +53,7 @@ public class StringToShortConverter extends NumberFormatConverter {
 		}
 
 		if (StringToNumberParser.inShortRange(result.getNumber())) {
-			return new Short(result.getNumber().shortValue());
+			return Short.valueOf(result.getNumber().shortValue());
 		}
 
 		synchronized (this) {

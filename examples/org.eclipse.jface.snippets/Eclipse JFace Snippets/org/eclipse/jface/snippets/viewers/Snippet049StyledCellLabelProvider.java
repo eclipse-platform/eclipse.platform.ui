@@ -140,7 +140,7 @@ public class Snippet049StyledCellLabelProvider {
 				// With JFace 3.4, the font information (bold in this example) will be ignored.
 				Styler style= file.isDirectory() ? fBoldStyler: null;
 				StyledString styledString= new StyledString(file.getName(), style);
-				String decoration = MessageFormat.format(" ({0} bytes)", new Long(file.length())); //$NON-NLS-1$
+				String decoration = MessageFormat.format(" ({0} bytes)", Long.valueOf(file.length())); //$NON-NLS-1$
 				styledString.append(decoration, StyledString.COUNTER_STYLER);
 
 				cell.setText(styledString.toString());

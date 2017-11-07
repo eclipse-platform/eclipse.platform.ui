@@ -11,11 +11,11 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
 
 import com.ibm.icu.text.NumberFormat;
+
+import junit.framework.TestCase;
 
 /**
  * @since 1.1
@@ -47,7 +47,7 @@ public class IntegerToStringConverterTest extends TestCase {
 	}
 
 	public void testConvertShortToString() throws Exception {
-		Short value = new Short((short) 1);
+		Short value = Short.valueOf((short) 1);
 		String expected = integerFormat.format(value);
 
 		IntegerToStringConverter converter = IntegerToStringConverter
@@ -57,7 +57,7 @@ public class IntegerToStringConverterTest extends TestCase {
 	}
 
 	public void testConvertByteToString() throws Exception {
-		Byte value = new Byte((byte) 1);
+		Byte value = Byte.valueOf((byte) 1);
 		String expected = integerFormat.format(value);
 
 		IntegerToStringConverter converter = IntegerToStringConverter.fromByte(

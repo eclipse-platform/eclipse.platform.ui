@@ -27,11 +27,11 @@ public class StringToNumberParserByteTest extends
 
 	@Override
 	protected Number getValidMax() {
-		return new Byte(Byte.MAX_VALUE);
+		return Byte.MAX_VALUE;
 	}
 
 	@Override
 	protected Number getValidMin() {
-		return new Byte(Byte.MIN_VALUE);
+		return Byte.MIN_VALUE;
 	}
 }

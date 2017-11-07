@@ -49,7 +49,7 @@ public class StringToCharacterConverter implements IConverter {
 					"String2Character: string too long: " + s); //$NON-NLS-1$
 
 		try {
-			result = new Character(s.charAt(0));
+			result = Character.valueOf(s.charAt(0));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 					"String2Character: " + e.getMessage() + ": " + s); //$NON-NLS-1$ //$NON-NLS-2$

@@ -23,14 +23,11 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
  * @since 1.0
  */
 public class NumberToByteValidator extends NumberToNumberValidator {
-	private static final Byte MAX = new Byte(Byte.MAX_VALUE);
-	private static final Byte MIN = new Byte(Byte.MIN_VALUE);
-
 	/**
 	 * @param converter
 	 */
 	public NumberToByteValidator(NumberToByteConverter converter) {
-		super(converter, MIN, MAX);
+		super(converter, Byte.MIN_VALUE, Byte.MAX_VALUE);
 	}
 
 	@Override

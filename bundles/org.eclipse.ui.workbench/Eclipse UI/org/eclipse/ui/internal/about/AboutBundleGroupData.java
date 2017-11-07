@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
-
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IBundleGroupConstants;
@@ -93,7 +92,7 @@ public class AboutBundleGroupData extends AboutData {
 				}
 			}
 
-            featureImageCrc = new Long(checksum.getValue());
+			featureImageCrc = Long.valueOf(checksum.getValue());
             return featureImageCrc;
 
         } catch (IOException e) {

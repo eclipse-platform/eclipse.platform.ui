@@ -49,10 +49,10 @@ public class RelaxedDuckType extends DuckType implements InvocationHandler {
 	{
         NULL_VALUES.put(Boolean.TYPE, Boolean.FALSE);
         NULL_VALUES.put(Integer.TYPE, Integer.valueOf(0));
-        NULL_VALUES.put(Float.TYPE, new Float(0));
-        NULL_VALUES.put(Long.TYPE, new Long(0));
-        NULL_VALUES.put(Double.TYPE, new Double(0));
-        NULL_VALUES.put(Character.TYPE, new Character(' '));
+		NULL_VALUES.put(Float.TYPE, Float.valueOf(0));
+		NULL_VALUES.put(Long.TYPE, Long.valueOf(0));
+		NULL_VALUES.put(Double.TYPE, Double.valueOf(0));
+		NULL_VALUES.put(Character.TYPE, Character.valueOf(' '));
     }
 
 	protected RelaxedDuckType(Object object) {

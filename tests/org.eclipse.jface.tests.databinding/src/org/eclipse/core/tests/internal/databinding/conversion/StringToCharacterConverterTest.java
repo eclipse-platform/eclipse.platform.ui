@@ -11,9 +11,9 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
+
+import junit.framework.TestCase;
 
 /**
  * @since 1.1
@@ -31,7 +31,7 @@ public class StringToCharacterConverterTest extends TestCase {
 	}
 
 	public void testConvertsToCharacter() throws Exception {
-		Character value = new Character('X');
+		Character value = Character.valueOf('X');
 		Character result = (Character) converter.convert(Character
 				.toString(value.charValue()));
 
@@ -39,7 +39,7 @@ public class StringToCharacterConverterTest extends TestCase {
 	}
 
 	public void testConvertsToCharacterPrimitive() throws Exception {
-		Character value = new Character('Y');
+		Character value = Character.valueOf('Y');
 		Character result = (Character) primitiveConverter.convert(String
 				.valueOf(value.charValue()));
 		assertEquals(value, result);

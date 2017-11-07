@@ -25,7 +25,7 @@ public class StringToByteValidatorTest extends
 
 	@Override
 	protected Number getInRangeNumber() {
-		return new Byte(Byte.MAX_VALUE);
+		return Byte.valueOf(Byte.MAX_VALUE);
 	}
 
 	@Override

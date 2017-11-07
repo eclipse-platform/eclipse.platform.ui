@@ -71,7 +71,7 @@ public class StringToByteConverter extends NumberFormatConverter {
 		}
 
 		if (StringToNumberParser.inByteRange(result.getNumber())) {
-			return new Byte(result.getNumber().byteValue());
+			return Byte.valueOf(result.getNumber().byteValue());
 		}
 
 		synchronized (this) {
