@@ -50,8 +50,7 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 
 	@Override
 	public String getProperty(String id) {
-		Object propVal = null;
-		return propVal == null ? "" : propVal.toString(); //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
