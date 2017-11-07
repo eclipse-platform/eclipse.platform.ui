@@ -11,11 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -37,14 +34,12 @@ public class PreferencePatternFilter extends PatternFilter {
 	/**
 	 * this cache is needed because
 	 * WorkbenchPreferenceExtensionNode.getKeywordLabels() is expensive. When it
-	 * tracks keyword changes effectivly than this cache can be removed.
+	 * tracks keyword changes effectively than this cache can be removed.
 	 */
-	private Map keywordCache = new HashMap();
+	private Map<WorkbenchPreferenceExtensionNode, Collection<String>> keywordCache = new HashMap<>();
 
 	/**
 	 * Create a new instance of a PreferencePatternFilter
-	 *
-	 * @param isMatchItem
 	 */
 	public PreferencePatternFilter() {
 		super();
@@ -56,24 +51,17 @@ public class PreferencePatternFilter extends PatternFilter {
 	 * property pages.
 	 */
 	private String[] getKeywords(Object element) {
-		List keywordList = new ArrayList();
 		if (element instanceof WorkbenchPreferenceExtensionNode) {
 			WorkbenchPreferenceExtensionNode workbenchNode = (WorkbenchPreferenceExtensionNode) element;
 
-			Collection keywordCollection = (Collection) keywordCache
-					.get(element);
+			Collection<String> keywordCollection = keywordCache.get(element);
 			if (keywordCollection == null) {
 				keywordCollection = workbenchNode.getKeywordLabels();
-				keywordCache.put(element, keywordCollection);
+				keywordCache.put(workbenchNode, keywordCollection);
 			}
-			if (!keywordCollection.isEmpty()){
-				Iterator keywords = keywordCollection.iterator();
-				while (keywords.hasNext()) {
-					keywordList.add(keywords.next());
-				}
-			}
+			return keywordCollection.toArray(new String[keywordCollection.size()]);
 		}
-		return (String[]) keywordList.toArray(new String[keywordList.size()]);
+		return new String[0];
 	}
 
 	@Override

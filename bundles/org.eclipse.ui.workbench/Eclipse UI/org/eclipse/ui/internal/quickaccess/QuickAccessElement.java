@@ -176,17 +176,22 @@ public abstract class QuickAccessElement {
 	 */
 	public QuickAccessEntry match(String filter,
 			QuickAccessProvider providerForMatching) {
-		String sortLabel = getLabel();
+		String sortLabel = getSortLabel();
 		// first occurrence of filter
 		int index = sortLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
-			int quality = sortLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
-					: (sortLabel.toLowerCase().startsWith(filter) ? QuickAccessEntry.MATCH_EXCELLENT
-							: QuickAccessEntry.MATCH_GOOD);
-			return new QuickAccessEntry(this, providerForMatching,
-					new int[][] { { index, index + filter.length() - 1 } },
- EMPTY_INDICES, quality);
+			index = getLabel().toLowerCase().indexOf(filter);
+			if (index != -1) { // match actual label
+				int quality = sortLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
+						: (sortLabel.toLowerCase().startsWith(filter) ? QuickAccessEntry.MATCH_EXCELLENT
+								: QuickAccessEntry.MATCH_GOOD);
+				return new QuickAccessEntry(this, providerForMatching,
+						new int[][] { { index, index + filter.length() - 1 } },
+	 EMPTY_INDICES, quality);
+			}
+			return new QuickAccessEntry(this, providerForMatching, EMPTY_INDICES, EMPTY_INDICES, QuickAccessEntry.MATCH_PARTIAL);
 		}
+		//
 		Pattern p;
 		if (filter.contains("*") || filter.contains("?")) { //$NON-NLS-1$ //$NON-NLS-2$
 			// check for wildcards
@@ -196,8 +201,10 @@ public abstract class QuickAccessElement {
 			p = getWhitespacesPattern(filter);
 		}
 		Matcher m = p.matcher(sortLabel);
-		// if matches, return an entry and highlight the match
+		// if matches, return an entry
 		if (m.matches()) {
+			// and highlight match on the label
+			m = p.matcher(getLabel());
 			int groupCount = m.groupCount();
 			int[][] indices = new int[groupCount][];
 			for (int i = 0; i < groupCount; i++) {
@@ -212,22 +219,27 @@ public abstract class QuickAccessElement {
 					EMPTY_INDICES, quality );
 		}
 		//
+		String combinedSortLabel = (providerForMatching.getName() + " " + getSortLabel()); //$NON-NLS-1$
 		String combinedLabel = (providerForMatching.getName() + " " + getLabel()); //$NON-NLS-1$
-		index = combinedLabel.toLowerCase().indexOf(filter);
-		if (index != -1) {
-			int lengthOfElementMatch = index + filter.length()
-					- providerForMatching.getName().length() - 1;
-			if (lengthOfElementMatch > 0) {
+		index = combinedSortLabel.toLowerCase().indexOf(filter);
+		if (index != -1) { // match
+			index = combinedLabel.toLowerCase().indexOf(filter);
+			if (index != -1) { // compute highlight on label
+				int lengthOfElementMatch = index + filter.length() - providerForMatching.getName().length() - 1;
+				if (lengthOfElementMatch > 0) {
+					return new QuickAccessEntry(this, providerForMatching,
+							new int[][] { { 0, lengthOfElementMatch - 1 } },
+							new int[][] { { index, index + filter.length() - 1 } }, QuickAccessEntry.MATCH_GOOD);
+				}
 				return new QuickAccessEntry(this, providerForMatching,
-						new int[][] { { 0, lengthOfElementMatch - 1 } },
- new int[][] { { index,
-						index + filter.length() - 1 } }, QuickAccessEntry.MATCH_GOOD);
+						EMPTY_INDICES, new int[][] { { index, index + filter.length() - 1 } },
+						QuickAccessEntry.MATCH_GOOD);
 			}
 			return new QuickAccessEntry(this, providerForMatching,
-					EMPTY_INDICES, new int[][] { { index,
- index + filter.length() - 1 } }, QuickAccessEntry.MATCH_GOOD);
+					EMPTY_INDICES, EMPTY_INDICES, QuickAccessEntry.MATCH_PARTIAL);
 		}
-		String camelCase = CamelUtil.getCamelCase(sortLabel);
+		//
+		String camelCase = CamelUtil.getCamelCase(getLabel()); // use actual label for camelcase
 		index = camelCase.indexOf(filter);
 		if (index != -1) {
 			int[][] indices = CamelUtil.getCamelCaseIndices(sortLabel, index, filter
