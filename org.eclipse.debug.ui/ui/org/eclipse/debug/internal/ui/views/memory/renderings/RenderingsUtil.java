@@ -435,13 +435,13 @@ public class RenderingsUtil {
 		{
 			for (int j=0; j<8; j++)
 			{
-				buf[j] = new Long(i>>j*8).byteValue();
+				buf[j] = Long.valueOf(i>>j*8).byteValue();
 			}
 			return buf;
 		}
         for (int j=7; j>=0; j--)
         {
-        	buf[j] = new Long(i>>(7-j)*8).byteValue();
+        	buf[j] = Long.valueOf(i>>(7-j)*8).byteValue();
         }
         return buf;
 	}

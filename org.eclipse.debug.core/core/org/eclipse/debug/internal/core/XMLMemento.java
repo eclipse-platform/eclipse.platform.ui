@@ -250,7 +250,7 @@ public final class XMLMemento {
 		}
         String strValue = attr.getValue();
         try {
-            return new Float(strValue);
+            return Float.valueOf(strValue);
         } catch (NumberFormatException e) {
            DebugPlugin.logMessage("Memento problem - Invalid float for key: " //$NON-NLS-1$
                     + key + " value: " + strValue, e); //$NON-NLS-1$

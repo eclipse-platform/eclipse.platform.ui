@@ -56,7 +56,7 @@ public class SortBreakpointsAction extends Action {
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_BREAKPOINT_SORTING_ORDER, actionSort);
 		}
 		// update the presentation context element comparator sorting order
-		fView.getTreeModelViewer().getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR_SORT, new Integer(actionSort));
+		fView.getTreeModelViewer().getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR_SORT, Integer.valueOf(actionSort));
 	}
 
 }

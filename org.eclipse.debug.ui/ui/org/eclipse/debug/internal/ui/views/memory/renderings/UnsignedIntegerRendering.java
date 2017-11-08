@@ -63,7 +63,7 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 			return bigRet.toString();
 		}
 
-		ret = new Long(result).toString();
+		ret = Long.valueOf(result).toString();
 
 		return ret;
 	}
