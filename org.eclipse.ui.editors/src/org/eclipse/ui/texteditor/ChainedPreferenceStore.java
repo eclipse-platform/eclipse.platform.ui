@@ -434,13 +434,13 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		if (thisValue instanceof Boolean)
 			return store.getBoolean(property) ? Boolean.TRUE : Boolean.FALSE;
 		else if (thisValue instanceof Double)
-			return new Double(store.getDouble(property));
+			return Double.valueOf(store.getDouble(property));
 		else if (thisValue instanceof Float)
-			return new Float(store.getFloat(property));
+			return Float.valueOf(store.getFloat(property));
 		else if (thisValue instanceof Integer)
 			return Integer.valueOf(store.getInt(property));
 		else if (thisValue instanceof Long)
-			return new Long(store.getLong(property));
+			return Long.valueOf(store.getLong(property));
 		else if (thisValue instanceof String)
 			return store.getString(property);
 

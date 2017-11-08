@@ -417,7 +417,7 @@ public class TextSearchVisitor {
 			fProgressMonitor.done();
 			fCollector.endReporting();
 			if (TRACING) {
-				Object[] args= { Integer.valueOf(fNumberOfScannedFiles), Integer.valueOf(jobCount), Integer.valueOf(NUMBER_OF_LOGICAL_THREADS), new Long(System.currentTimeMillis() - startTime) };
+				Object[] args= { Integer.valueOf(fNumberOfScannedFiles), Integer.valueOf(jobCount), Integer.valueOf(NUMBER_OF_LOGICAL_THREADS), Long.valueOf(System.currentTimeMillis() - startTime) };
 				System.out.println(Messages.format(
 						"[TextSearch] Search duration for {0} files in {1} jobs using {2} threads: {3}ms", args)); //$NON-NLS-1$
 			}

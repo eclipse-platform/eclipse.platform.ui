@@ -161,7 +161,7 @@ public final class RevisionPainter {
 				return;
 			List<Long> revisions= new ArrayList<>();
 			for (Revision revision : info.getRevisions()) {
-				revisions.add(new Long(computeAge(revision)));
+				revisions.add(Long.valueOf(computeAge(revision)));
 			}
 			Collections.sort(revisions);
 			fRevisions= revisions;
@@ -205,7 +205,7 @@ public final class RevisionPainter {
 
 		private int computeAgeIndex(Revision revision) {
 			long age= computeAge(revision);
-			int index= fRevisions.indexOf(new Long(age));
+			int index= fRevisions.indexOf(Long.valueOf(age));
 			return index;
 		}
 

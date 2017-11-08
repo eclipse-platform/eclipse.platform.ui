@@ -456,7 +456,7 @@ class FindReplaceDialog extends Dialog {
 					e.doit= false;
 				}
 				else if (e.detail == SWT.TRAVERSE_MNEMONIC) {
-					Character mnemonic= new Character(Character.toLowerCase(e.character));
+					Character mnemonic= Character.valueOf(Character.toLowerCase(e.character));
 					if (fMnemonicButtonMap.containsKey(mnemonic)) {
 						Button button= fMnemonicButtonMap.get(mnemonic);
 						if ((fFindField.isFocusControl() || fReplaceField.isFocusControl() || (button.getStyle() & SWT.PUSH) != 0)
@@ -1285,7 +1285,7 @@ class FindReplaceDialog extends Dialog {
 	private void storeButtonWithMnemonicInMap(Button button) {
 		char mnemonic= LegacyActionTools.extractMnemonic(button.getText());
 		if (mnemonic != LegacyActionTools.MNEMONIC_NONE)
-			fMnemonicButtonMap.put(new Character(Character.toLowerCase(mnemonic)), button);
+			fMnemonicButtonMap.put(Character.valueOf(Character.toLowerCase(mnemonic)), button);
 	}
 
 	/**
