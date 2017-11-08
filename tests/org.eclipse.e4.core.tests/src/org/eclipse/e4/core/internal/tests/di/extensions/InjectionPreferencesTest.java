@@ -240,9 +240,9 @@ public class InjectionPreferencesTest {
 
 		assertEquals(Integer.valueOf(12), target.intField);
 		assertEquals(Boolean.TRUE, target.booleanField);
-		assertEquals(new Double(12.35345345345d), target.doubleField);
-		assertEquals(new Float(5.13f), target.floatField);
-		assertEquals(new Long(131232343453453L), target.longField);
+		assertEquals(Double.valueOf(12.35345345345d), target.doubleField);
+		assertEquals(Float.valueOf(5.13f), target.floatField);
+		assertEquals(Long.valueOf(131232343453453L), target.longField);
 
 		assertEquals(Integer.valueOf(12), target.intArg);
 		assertEquals(Boolean.TRUE, target.booleanArg);

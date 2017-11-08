@@ -52,9 +52,9 @@ public class ContextDynamicTest {
 	public synchronized void testAddRemove() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Double testDouble = new Double(1.23);
-		Float testFloat = new Float(12.3);
-		Character testChar = new Character('v');
+		Double testDouble = Double.valueOf(1.23);
+		Float testFloat = Float.valueOf(12.3f);
+		Character testChar = Character.valueOf('v');
 
 		// create original context
 		IEclipseContext context = EclipseContextFactory.create();
@@ -78,7 +78,7 @@ public class ContextDynamicTest {
 		assertEquals(testChar, userObject.c);
 
 		// change value
-		Double testDouble2 = new Double(3.45);
+		Double testDouble2 = Double.valueOf(3.45);
 		Integer testInt2 = Integer.valueOf(123);
 		context.set(Double.class.getName(), testDouble2);
 		context.set(Integer.class.getName(), testInt2);
@@ -115,9 +115,9 @@ public class ContextDynamicTest {
 	public synchronized void testParentAddRemove() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Double testDouble = new Double(1.23);
-		Float testFloat = new Float(12.3);
-		Character testChar = new Character('v');
+		Double testDouble = Double.valueOf(1.23);
+		Float testFloat = Float.valueOf(12.3f);
+		Character testChar = Character.valueOf('v');
 
 		// create original context
 		IEclipseContext parentContext = EclipseContextFactory.create();
@@ -142,7 +142,7 @@ public class ContextDynamicTest {
 		assertEquals(testChar, userObject.c);
 
 		// change value
-		Double testDouble2 = new Double(3.45);
+		Double testDouble2 = Double.valueOf(3.45);
 		Integer testInt2 = Integer.valueOf(123);
 		context.set(Double.class.getName(), testDouble2);
 		context.set(Integer.class.getName(), testInt2);

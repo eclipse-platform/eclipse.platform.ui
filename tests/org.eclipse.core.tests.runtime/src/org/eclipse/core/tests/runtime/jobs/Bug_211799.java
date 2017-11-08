@@ -31,7 +31,7 @@ public class Bug_211799 extends AbstractJobManagerTest {
 		}
 
 		public Long getId() {
-			return new Long(this.id);
+			return Long.valueOf(this.id);
 		}
 
 		@Override
@@ -40,11 +40,11 @@ public class Bug_211799 extends AbstractJobManagerTest {
 				Long val = list.getFirst();
 				if (val.longValue() != id)
 					failure = new RuntimeException("We broke, running should have been: " + val.longValue());
-				list.remove(new Long(id));
+				list.remove(Long.valueOf(id));
 			}
 
 			synchronized (runList) {
-				runList.add(new Long(id));
+				runList.add(Long.valueOf(id));
 			}
 
 			return Status.OK_STATUS;
@@ -63,7 +63,7 @@ public class Bug_211799 extends AbstractJobManagerTest {
 		for (int i = 0; i < JOBS_TO_SCHEDULE; i++) {
 			synchronized (list) {
 				counter++;
-				list.addLast(new Long(counter));
+				list.addLast(Long.valueOf(counter));
 				new BugJob(counter).schedule(0L);
 			}
 		}

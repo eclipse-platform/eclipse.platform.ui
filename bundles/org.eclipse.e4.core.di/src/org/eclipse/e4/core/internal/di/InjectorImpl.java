@@ -62,12 +62,12 @@ public class InjectorImpl implements IInjector {
 
 	final private static Boolean DEFAULT_BOOLEAN = Boolean.FALSE;
 	final private static Integer DEFAULT_INTEGER = Integer.valueOf(0);
-	final private static Character DEFAULT_CHAR = new Character((char) 0);
-	final private static Float DEFAULT_FLOAT = new Float(0.0f);
-	final private static Double DEFAULT_DOUBLE = new Double(0.0d);
+	final private static Character DEFAULT_CHAR = Character.valueOf((char) 0);
+	final private static Float DEFAULT_FLOAT = Float.valueOf(0.0f);
+	final private static Double DEFAULT_DOUBLE = Double.valueOf(0.0d);
 	final private static Long DEFAULT_LONG = Long.valueOf(0L);
-	final private static Short DEFAULT_SHORT = new Short((short) 0);
-	final private static Byte DEFAULT_BYTE = new Byte((byte) 0);
+	final private static Short DEFAULT_SHORT = Short.valueOf((short) 0);
+	final private static Byte DEFAULT_BYTE = Byte.valueOf((byte) 0);
 
 	private Map<PrimaryObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<>();
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<>();

@@ -115,9 +115,9 @@ public class ContextInjectionTest {
 	public synchronized void testInjection() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Double testDouble = new Double(1.23);
-		Float testFloat = new Float(12.3);
-		Character testChar = new Character('v');
+		Double testDouble = Double.valueOf(1.23);
+		Float testFloat = Float.valueOf(12.3f);
+		Character testChar = Character.valueOf('v');
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
@@ -153,9 +153,9 @@ public class ContextInjectionTest {
 	public synchronized void testInjectionFromParent() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Double testDouble = new Double(1.23);
-		Float testFloat = new Float(12.3);
-		Character testChar = new Character('v');
+		Double testDouble = Double.valueOf(1.23);
+		Float testFloat = Float.valueOf(12.3f);
+		Character testChar = Character.valueOf('v');
 
 		// create parent context
 		IEclipseContext parentContext = EclipseContextFactory.create();
@@ -194,7 +194,7 @@ public class ContextInjectionTest {
 	public synchronized void testInjectionAndInheritance() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Float testFloat = new Float(12.3);
+		Float testFloat = Float.valueOf(12.3f);
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
@@ -277,7 +277,7 @@ public class ContextInjectionTest {
 	public synchronized void testInjectionCloseOverride() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Double testDouble = new Double(12.3);
+		Double testDouble = Double.valueOf(12.3);
 		Boolean testBoolean = Boolean.TRUE;
 
 		// create context

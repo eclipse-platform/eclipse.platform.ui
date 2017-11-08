@@ -73,7 +73,7 @@ public class ComputedValueLimitationTest {
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			context.get(String.valueOf(System.currentTimeMillis()));
-			return new Long(System.currentTimeMillis());
+			return Long.valueOf(System.currentTimeMillis());
 		}
 	}
 

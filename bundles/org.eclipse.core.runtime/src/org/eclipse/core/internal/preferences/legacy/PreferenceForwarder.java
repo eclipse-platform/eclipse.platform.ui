@@ -165,9 +165,9 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		else if (obj instanceof Integer)
 			return Integer.valueOf(defaults.getInt(key, INT_DEFAULT_DEFAULT));
 		else if (obj instanceof Double)
-			return new Double(defaults.getDouble(key, DOUBLE_DEFAULT_DEFAULT));
+			return Double.valueOf(defaults.getDouble(key, DOUBLE_DEFAULT_DEFAULT));
 		else if (obj instanceof Float)
-			return new Float(defaults.getFloat(key, FLOAT_DEFAULT_DEFAULT));
+			return Float.valueOf(defaults.getFloat(key, FLOAT_DEFAULT_DEFAULT));
 		else if (obj instanceof Long)
 			return Long.valueOf(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
 		else if (obj instanceof byte[])
@@ -326,8 +326,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		final double doubleValue = getDouble(name);
 		if (value == doubleValue)
 			return;
-		Double oldValue = new Double(doubleValue);
-		Double newValue = new Double(value);
+		Double oldValue = Double.valueOf(doubleValue);
+		Double newValue = Double.valueOf(value);
 		try {
 			notify = false;
 			if (getDefaultDouble(name) == value)
@@ -420,8 +420,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		final float floatValue = getFloat(name);
 		if (value == floatValue)
 			return;
-		Float oldValue = new Float(floatValue);
-		Float newValue = new Float(value);
+		Float oldValue = Float.valueOf(floatValue);
+		Float newValue = Float.valueOf(value);
 		try {
 			notify = false;
 			if (getDefaultFloat(name) == value)

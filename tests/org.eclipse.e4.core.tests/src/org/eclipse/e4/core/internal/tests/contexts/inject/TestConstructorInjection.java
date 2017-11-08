@@ -97,11 +97,11 @@ public class TestConstructorInjection {
 		context.set(Integer.class.getName(), intValue);
 		Boolean boolValue = Boolean.TRUE;
 		context.set(Boolean.class.getName(), boolValue);
-		Double doubleValue = new Double(1.23);
+		Double doubleValue = Double.valueOf(1.23);
 		context.set(Double.class.getName(), doubleValue);
-		Float floatValue = new Float(12.3);
+		Float floatValue = Float.valueOf(12.3f);
 		context.set(Float.class.getName(), floatValue);
-		Character charValue = new Character('v');
+		Character charValue = Character.valueOf('v');
 		context.set(Character.class.getName(), charValue);
 
 		Object result = ContextInjectionFactory.make(TestConstructorObject.class, context);

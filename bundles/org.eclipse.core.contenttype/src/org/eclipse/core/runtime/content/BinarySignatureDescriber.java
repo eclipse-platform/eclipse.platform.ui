@@ -107,7 +107,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 		List<Byte> bytes = new ArrayList<>();
 		StringTokenizer tokenizer = new StringTokenizer(data, " \t\n\r\f,"); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
-			bytes.add(new Byte((byte) Integer.parseInt(tokenizer.nextToken().trim(), 16)));
+			bytes.add(Byte.valueOf((byte) Integer.parseInt(tokenizer.nextToken().trim(), 16)));
 		byte[] signature = new byte[bytes.size()];
 		for (int i = 0; i < signature.length; i++)
 			signature[i] = bytes.get(i).byteValue();

@@ -115,9 +115,9 @@ public class AnnotationsInjectionTest {
 	public synchronized void testInjection() {
 		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
-		Double testDouble = new Double(1.23);
-		Float testFloat = new Float(12.3);
-		Character testChar = new Character('v');
+		Double testDouble = Double.valueOf(1.23);
+		Float testFloat = Float.valueOf(12.3f);
+		Character testChar = Character.valueOf('v');
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
@@ -215,8 +215,8 @@ public class AnnotationsInjectionTest {
 
 		// add optional services
 		String testString = new String("abc");
-		Double testDouble = new Double(1.23);
-		Float testFloat = new Float(12.3);
+		Double testDouble = Double.valueOf(1.23);
+		Float testFloat = Float.valueOf(12.3f);
 		context.set(String.class.getName(), testString);
 		context.set(Double.class.getName(), testDouble);
 		context.set(Float.class.getName(), testFloat);
@@ -266,7 +266,7 @@ public class AnnotationsInjectionTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(Integer.class.getName(), Integer.valueOf(123));
 		context.set(String.class.getName(), new String("abc"));
-		context.set(Float.class.getName(), new Float(12.3));
+		context.set(Float.class.getName(), Float.valueOf(12.3f));
 
 		ObjectSubClass userObject = new ObjectSubClass();
 		ContextInjectionFactory.inject(userObject, context);
@@ -276,7 +276,7 @@ public class AnnotationsInjectionTest {
 		assertEquals(0, userObject.subPreDestroyCount);
 		assertEquals(0, userObject.overriddenPreDestroyCount);
 
-		context.set(Float.class.getName(), new Float(45.6));
+		context.set(Float.class.getName(), Float.valueOf(45.6f));
 		assertEquals(1, userObject.superPostConstructCount);
 		assertEquals(1, userObject.subPostConstructCount);
 		assertEquals(0, userObject.superPreDestroyCount);

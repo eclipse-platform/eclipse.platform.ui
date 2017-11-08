@@ -99,7 +99,7 @@ public class ExpressionTests extends TestCase {
 		assertEquals(Boolean.TRUE, Expressions.convertArgument("true")); //$NON-NLS-1$
 		assertEquals(Boolean.FALSE, Expressions.convertArgument("false")); //$NON-NLS-1$
 		assertEquals(Integer.valueOf(100), Expressions.convertArgument("100")); //$NON-NLS-1$
-		assertEquals(new Float(1.7f), Expressions.convertArgument("1.7")); //$NON-NLS-1$
+		assertEquals(Float.valueOf(1.7f), Expressions.convertArgument("1.7")); //$NON-NLS-1$
 	}
 
 	public void testArgumentParsing() throws Exception {

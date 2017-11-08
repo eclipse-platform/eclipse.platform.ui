@@ -194,11 +194,11 @@ public class ReparentingTest {
 		IEclipseContext oldParent = EclipseContextFactory.create();
 		oldParent.set("String", "oldField");
 		oldParent.set(String.class.getName(), "old");
-		oldParent.set(Float.class.getName(), new Float(12.3));
+		oldParent.set(Float.class.getName(), Float.valueOf(12.3f));
 		IEclipseContext newParent = EclipseContextFactory.create();
 		newParent.set("String", "newField");
 		newParent.set(String.class.getName(), "new");
-		newParent.set(Float.class.getName(), new Float(34.5));
+		newParent.set(Float.class.getName(), Float.valueOf(34.5f));
 		IEclipseContext child = oldParent.createChild();
 
 		ObjectSuperClass object = new ObjectSuperClass();
@@ -221,7 +221,7 @@ public class ReparentingTest {
 		IEclipseContext grandpa = EclipseContextFactory.create();
 		grandpa.set("String", "field");
 		grandpa.set(String.class.getName(), "s");
-		grandpa.set(Float.class.getName(), new Float(12.3));
+		grandpa.set(Float.class.getName(), Float.valueOf(12.3f));
 
 		IEclipseContext oldParent = grandpa.createChild();
 		IEclipseContext newParent = grandpa.createChild();
