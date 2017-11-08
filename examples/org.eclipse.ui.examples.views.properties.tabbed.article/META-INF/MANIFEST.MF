@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.properties.tabbed
 Bundle-Vendor: %Plugin.providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.ui.examples.views.properties.tabbed.article.views
