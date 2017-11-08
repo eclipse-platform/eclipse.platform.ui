@@ -313,9 +313,9 @@ public class IResourceTest extends ResourceTest {
 	/**
 	 * Returns interesting resource states. */
 	protected Integer[] interestingStates() {
-		return new Integer[] {Integer.valueOf(S_WORKSPACE_ONLY), Integer.valueOf(S_FILESYSTEM_ONLY), Integer.valueOf(S_UNCHANGED), new Integer(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
-				//		new Integer(S_FOLDER_TO_FILE),
-				//		new Integer(S_FILE_TO_FOLDER),
+		return new Integer[] {Integer.valueOf(S_WORKSPACE_ONLY), Integer.valueOf(S_FILESYSTEM_ONLY), Integer.valueOf(S_UNCHANGED), Integer.valueOf(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
+				//		Integer.valueOf(S_FOLDER_TO_FILE),
+				//		Integer.valueOf(S_FILE_TO_FOLDER),
 		};
 	}
 
@@ -1517,7 +1517,7 @@ public class IResourceTest extends ResourceTest {
 			}
 			assertTrue("3.3." + project.getFullPath(), project.getModificationStamp() != IResource.NULL_STAMP);
 			// cache the value for later use
-			table.put(project.getFullPath(), new Long(project.getModificationStamp()));
+			table.put(project.getFullPath(), Long.valueOf(project.getModificationStamp()));
 		}
 		for (IResource resource : resources) {
 			if (resource.getType() != IResource.PROJECT) {
@@ -1525,7 +1525,7 @@ public class IResourceTest extends ResourceTest {
 				ensureExistsInWorkspace(resource, true);
 				assertTrue("3.5." + resource.getFullPath(), resource.getModificationStamp() != IResource.NULL_STAMP);
 				// cache the value for later use
-				table.put(resource.getFullPath(), new Long(resource.getModificationStamp()));
+				table.put(resource.getFullPath(), Long.valueOf(resource.getModificationStamp()));
 			}
 		}
 
@@ -1577,7 +1577,7 @@ public class IResourceTest extends ResourceTest {
 				long old = ((Long) v).longValue();
 				assertTrue("6.1." + resource.getFullPath(), old != stamp);
 				// cache for next time
-				tempTable.put(resource.getFullPath(), new Long(stamp));
+				tempTable.put(resource.getFullPath(), Long.valueOf(stamp));
 			}
 		}
 		table.clear();
@@ -1622,7 +1622,7 @@ public class IResourceTest extends ResourceTest {
 				assertNotNull("8.3." + resource.getFullPath(), v);
 				long old = ((Long) v).longValue();
 				assertTrue("8.4." + resource.getFullPath(), old != IResource.NULL_STAMP);
-				tempTable.put(resource.getFullPath(), new Long(stamp));
+				tempTable.put(resource.getFullPath(), Long.valueOf(stamp));
 			}
 		}
 		table.clear();
@@ -2383,7 +2383,7 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Long[] interestingTimes = new Long[] {new Long(-1), new Long(System.currentTimeMillis() - 1000), new Long(System.currentTimeMillis() - 100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
+		Long[] interestingTimes = new Long[] {Long.valueOf(-1), new Long(System.currentTimeMillis() - 1000), new Long(System.currentTimeMillis() - 100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
 		Object[][] inputs = new Object[][] {interestingResources, interestingTimes};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
@@ -2396,7 +2396,7 @@ public class IResourceTest extends ResourceTest {
 				IResource receiver = (IResource) args[0];
 				long time = ((Long) args[1]).longValue();
 				long actual = receiver.setLocalTimeStamp(time);
-				return new Long(actual);
+				return Long.valueOf(actual);
 			}
 
 			@Override

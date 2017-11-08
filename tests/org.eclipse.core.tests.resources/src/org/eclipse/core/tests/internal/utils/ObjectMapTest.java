@@ -55,7 +55,7 @@ public class ObjectMapTest extends ResourceTest {
 		int max = 100;
 		Object[] values = new Object[max];
 		for (int i = 0; i < max; i++) {
-			values[i] = new Long(System.currentTimeMillis());
+			values[i] = Long.valueOf(System.currentTimeMillis());
 		}
 
 		// add each object to the map
@@ -156,7 +156,7 @@ public class ObjectMapTest extends ResourceTest {
 		ObjectMap<Integer, Object> map = new ObjectMap<>();
 		values = new Object[max];
 		for (int i = 0; i < max; i++) {
-			values[i] = new Long(System.currentTimeMillis());
+			values[i] = Long.valueOf(System.currentTimeMillis());
 			map.put(Integer.valueOf(i), values[i]);
 		}
 		assertEquals("#populateMap", max, map.size());

@@ -59,7 +59,7 @@ public class MarkerAttributeChangeListener extends Assert implements IResourceCh
 	private void checkDelta(IMarkerDelta[] deltas) throws AssertionFailedError {
 		assertEquals("wrong number of changes", attributeMap.size(), deltas.length);
 		for (IMarkerDelta delta : deltas) {
-			Map<String, Object> values = attributeMap.get(new Long(delta.getId()));
+			Map<String, Object> values = attributeMap.get(Long.valueOf(delta.getId()));
 			assertEquals("Changes different from expecations", delta.getAttributes(), values);
 		}
 	}

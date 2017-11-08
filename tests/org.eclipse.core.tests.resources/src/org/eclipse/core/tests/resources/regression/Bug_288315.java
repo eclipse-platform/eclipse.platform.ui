@@ -35,7 +35,7 @@ public class Bug_288315 extends ResourceTest {
 		char[] chars = new char[65537];
 		Arrays.fill(chars, 'a');
 		String value1 = new String(chars);
-		Float value2 = new Float(1.1);
+		Float value2 = Float.valueOf(1.1f);
 
 		IMarker nonPersistentMarker = ResourcesPlugin.getWorkspace().getRoot().createMarker(IMarker.MARKER);
 		try {
