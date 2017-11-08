@@ -63,11 +63,11 @@ public class InstallLogParser {
 			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();
 			for (int i=0;i<configs.length; i++){
 				if (!configs[i].isCurrent())
-					installConfigMap.put(new Long(configs[i].getCreationDate().getTime()), configs[i]);
+					installConfigMap.put(Long.valueOf(configs[i].getCreationDate().getTime()), configs[i]);
 			}
 			// Need to make a copy of the current config instead
 			InstallConfiguration config = getConfigCopy((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration());
-			installConfigMap.put(new Long(config.getCreationDate().getTime()), config);
+			installConfigMap.put(Long.valueOf(config.getCreationDate().getTime()), config);
 			
 		} catch (CoreException e) {
 			UpdateCore.log(e);
@@ -163,7 +163,7 @@ public class InstallLogParser {
 							date.append(" "); //$NON-NLS-1$
 						date.append(htmlCode.nextToken());
 					}
-					currentConfiguration = (InstallConfiguration)installConfigMap.get(new Long(time));
+					currentConfiguration = (InstallConfiguration)installConfigMap.get(Long.valueOf(time));
 				}
 			}
 		} catch (Exception e) {

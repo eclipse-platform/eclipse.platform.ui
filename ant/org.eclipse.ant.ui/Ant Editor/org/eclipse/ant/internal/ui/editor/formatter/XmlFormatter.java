@@ -207,7 +207,7 @@ public class XmlFormatter {
 		for (int i = 0; i != variables.length; i++) {
 			int[] offsets = variables[i].getOffsets();
 			for (int j = 0; j != offsets.length; j++) {
-				list.add(new Integer(offsets[j]));
+				list.add(Integer.valueOf(offsets[j]));
 			}
 		}
 

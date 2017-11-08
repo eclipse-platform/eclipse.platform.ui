@@ -41,8 +41,8 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
 	private Map<String, IFile> fFileNameToIFile = new HashMap<>();
 
 	private JavacMarkerCreator fMarkerCreator;
-	protected static final Integer fgWarningType = new Integer(IMarker.SEVERITY_WARNING);
-	protected static final Integer fgErrorType = new Integer(IMarker.SEVERITY_ERROR);
+	protected static final Integer fgWarningType = Integer.valueOf(IMarker.SEVERITY_WARNING);
+	protected static final Integer fgErrorType = Integer.valueOf(IMarker.SEVERITY_ERROR);
 
 	/*
 	 * (non-Javadoc)

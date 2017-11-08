@@ -183,11 +183,11 @@ public class InternalSiteManager {
 			sites.put(site.getURL().toExternalForm(), site);
 			UpdateCore.getPlugin().getUpdateSession().markVisited(site.getURL());
 			if (site instanceof ITimestamp) {
-				siteTimestamps.put(site.getURL(), new Long(((ITimestamp)site).getTimestamp().getTime()));
+				siteTimestamps.put(site.getURL(), Long.valueOf(((ITimestamp)site).getTimestamp().getTime()));
 			} else {
 				try {
 					IResponse response = ConnectionFactory.get(URLEncoder.encode(siteURL));
-					siteTimestamps.put(siteURL, new Long(response.getLastModified()));
+					siteTimestamps.put(siteURL, Long.valueOf(response.getLastModified()));
 				} catch (MalformedURLException e) {
 				} catch (IOException e) {
 				}
@@ -368,13 +368,13 @@ public class InternalSiteManager {
 			return;
 		String host = url.getHost();
 		long sizeByTime = (time == 0) ? 0 : downloadSize / time;
-		Long value = new Long(sizeByTime);
+		Long value = Long.valueOf(sizeByTime);
 		if (estimates == null) {
 			estimates = new HashMap();
 		} else {
 			Long previous = (Long) estimates.get(host);
 			if (previous != null) {
-				value = new Long((previous.longValue() + sizeByTime) / 2);
+				value = Long.valueOf((previous.longValue() + sizeByTime) / 2);
 			}
 		}
 		estimates.put(host, value);

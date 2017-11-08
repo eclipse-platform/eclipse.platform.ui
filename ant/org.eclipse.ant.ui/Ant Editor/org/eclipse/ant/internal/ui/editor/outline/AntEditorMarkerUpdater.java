@@ -162,7 +162,7 @@ public class AntEditorMarkerUpdater {
 		MarkerUtilities.setLineNumber(attributes, problem.getLineNumber());
 		MarkerUtilities.setCharStart(attributes, problem.getOffset());
 		MarkerUtilities.setCharEnd(attributes, problem.getOffset() + problem.getLength());
-		attributes.put(IMarker.SEVERITY, new Integer(severity));
+		attributes.put(IMarker.SEVERITY, Integer.valueOf(severity));
 		return attributes;
 	}
 

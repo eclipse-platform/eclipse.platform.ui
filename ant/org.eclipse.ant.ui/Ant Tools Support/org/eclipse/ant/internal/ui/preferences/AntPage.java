@@ -137,7 +137,7 @@ public abstract class AntPage {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
 		button.setText(buttonText);
-		button.setData(new Integer(buttonId));
+		button.setData(Integer.valueOf(buttonId));
 		button.addSelectionListener(selectionAdapter);
 		preferencePage.setButtonLayoutData(button);
 		return button;

@@ -161,8 +161,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		int maxValue = 1200000;
 		timeout.setValidRange(minValue, maxValue);
 		timeout.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] { new Integer(minValue),
-				new Integer(maxValue) }));
+		timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] { Integer.valueOf(minValue),
+				Integer.valueOf(maxValue) }));
 		addField(timeout);
 
 		editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());

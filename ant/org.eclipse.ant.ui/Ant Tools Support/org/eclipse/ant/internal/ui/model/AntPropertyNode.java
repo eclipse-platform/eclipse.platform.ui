@@ -241,7 +241,7 @@ public class AntPropertyNode extends AntTaskNode {
 			if (fBaseLabel.equals(identifier)) {
 				int nameOffset = textToSearch.indexOf(IAntCoreConstants.NAME);
 				nameOffset = textToSearch.indexOf(identifier, nameOffset + 1);
-				results.add(new Integer(getOffset() + nameOffset));
+				results.add(Integer.valueOf(getOffset() + nameOffset));
 			}
 		}
 		if (fValue != null) {
@@ -252,7 +252,7 @@ public class AntPropertyNode extends AntTaskNode {
 				if (valueOffset == -1 || valueOffset > endOffset) {
 					break;
 				}
-				results.add(new Integer(getOffset() + valueOffset));
+				results.add(Integer.valueOf(getOffset() + valueOffset));
 				valueOffset += identifier.length();
 			}
 		}

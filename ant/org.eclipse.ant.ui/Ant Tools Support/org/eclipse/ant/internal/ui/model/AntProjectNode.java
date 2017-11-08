@@ -154,7 +154,7 @@ public class AntProjectNode extends AntElementNode {
 		String newidentifier = new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
 		int defaultTargetNameOffset = textToSearch.indexOf(IAntCoreConstants.DEFAULT);
 		defaultTargetNameOffset = textToSearch.indexOf(newidentifier, defaultTargetNameOffset);
-		results.add(new Integer(getOffset() + defaultTargetNameOffset + 1));
+		results.add(Integer.valueOf(getOffset() + defaultTargetNameOffset + 1));
 		return results;
 	}
 

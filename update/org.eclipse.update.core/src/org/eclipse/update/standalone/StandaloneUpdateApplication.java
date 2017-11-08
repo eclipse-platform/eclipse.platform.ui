@@ -28,7 +28,7 @@ import org.eclipse.update.internal.core.*;
  */
 public class StandaloneUpdateApplication implements IPlatformRunnable {
 
-	public final static Integer EXIT_ERROR = new Integer(1);
+	public final static Integer EXIT_ERROR = Integer.valueOf(1);
 	private static boolean loggedException = false;
 
 	/* (non-Javadoc)

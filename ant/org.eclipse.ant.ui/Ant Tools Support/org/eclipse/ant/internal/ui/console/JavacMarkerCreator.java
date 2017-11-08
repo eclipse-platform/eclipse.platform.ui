@@ -114,7 +114,7 @@ public class JavacMarkerCreator {
 					for (MarkerInfo info : infos) {
 						IMarker marker = file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
 						Map<String, Object> attributes = new HashMap<>(3);
-						attributes.put(IMarker.LINE_NUMBER, new Integer(info.fLineNumber));
+						attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(info.fLineNumber));
 						String message = getMessage(info);
 						attributes.put(IMarker.MESSAGE, message);
 						attributes.put(IMarker.SEVERITY, info.fType);

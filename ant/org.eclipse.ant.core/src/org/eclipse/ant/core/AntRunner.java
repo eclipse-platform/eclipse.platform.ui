@@ -357,7 +357,7 @@ public class AntRunner implements IApplication {
 			// set message output level
 			if (messageOutputLevel != 2) { // changed from the default Project.MSG_INFO
 				Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
-				setMessageOutputLevel.invoke(runner, new Object[] { new Integer(messageOutputLevel) });
+				setMessageOutputLevel.invoke(runner, new Object[] { Integer.valueOf(messageOutputLevel) });
 			}
 
 			// set execution targets

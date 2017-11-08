@@ -102,7 +102,7 @@ public class AntAugmentTaskNode extends AntTaskNode {
 			ArrayList<Integer> list = new ArrayList<>();
 			int idx = text.indexOf(attrId);
 			if (idx > -1) {
-				list.add(new Integer(getOffset() + idx));
+				list.add(Integer.valueOf(getOffset() + idx));
 			}
 			return list;
 		}

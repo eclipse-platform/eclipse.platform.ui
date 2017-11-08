@@ -48,10 +48,10 @@ public class UpdateManagerUtils {
 
 	static {
 		table = new HashMap();
-		table.put("compatible", new Integer(IUpdateConstants.RULE_COMPATIBLE)); //$NON-NLS-1$
-		table.put("perfect", new Integer(IUpdateConstants.RULE_PERFECT)); //$NON-NLS-1$
-		table.put("equivalent", new Integer(IUpdateConstants.RULE_EQUIVALENT)); //$NON-NLS-1$
-		table.put("greaterOrEqual", new Integer(IUpdateConstants.RULE_GREATER_OR_EQUAL)); //$NON-NLS-1$
+		table.put("compatible", Integer.valueOf(IUpdateConstants.RULE_COMPATIBLE)); //$NON-NLS-1$
+		table.put("perfect", Integer.valueOf(IUpdateConstants.RULE_PERFECT)); //$NON-NLS-1$
+		table.put("equivalent", Integer.valueOf(IUpdateConstants.RULE_EQUIVALENT)); //$NON-NLS-1$
+		table.put("greaterOrEqual", Integer.valueOf(IUpdateConstants.RULE_GREATER_OR_EQUAL)); //$NON-NLS-1$
 	}
 
 	// manage URL to File
@@ -465,7 +465,7 @@ public class UpdateManagerUtils {
 		if (result != UpdateCore.HTTP_OK) { 
 			String serverMsg = response.getStatusMessage();
 			response.close();
-			throw new FatalIOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { new Integer(result), serverMsg, url })));						
+			throw new FatalIOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { Integer.valueOf(result), serverMsg, url })));						
 		}
 	}
 

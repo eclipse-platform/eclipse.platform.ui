@@ -105,7 +105,7 @@ public final class URLEncoder {
 			if (mustEncode(c)) {
 				byte[] bytes = null;
 				try {
-					bytes = new Character(c).toString().getBytes("UTF8"); //$NON-NLS-1$
+					bytes = Character.valueOf(c).toString().getBytes("UTF8"); //$NON-NLS-1$
 				} catch (UnsupportedEncodingException e) {
 					Assert.isTrue(false, e.getMessage());
 				}

@@ -54,7 +54,7 @@ public class UnconfigureAndUninstallFeatureOperation extends FeatureOperation
 			FileInputStream fis = new FileInputStream(f);
 			Properties toBeUninstalled = new Properties();
 			toBeUninstalled.load(fis);
-			toBeUninstalled.put(new Integer(toBeUninstalled.size()+1).toString(), targetSite.getSite().getURL() + ";" + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
+			toBeUninstalled.put(Integer.valueOf(toBeUninstalled.size()+1).toString(), targetSite.getSite().getURL() + ";" + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
 			fis.close();
 			FileOutputStream fos = new FileOutputStream(f);
 			toBeUninstalled.store(fos, "to be uninstalled on start-up"); //$NON-NLS-1$

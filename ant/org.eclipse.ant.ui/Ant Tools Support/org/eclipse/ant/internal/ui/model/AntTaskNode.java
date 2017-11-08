@@ -210,7 +210,7 @@ public class AntTaskNode extends AntElementNode {
 					// so if the line separator is greater than 1 in length we need to correct for this
 					int resultOffset = getOffset() + valueOffset + withinValueOffset + identifierCorrection
 							+ ((resultLine - valueLine) * (lineSep.length() - 1));
-					results.add(new Integer(resultOffset));
+					results.add(Integer.valueOf(resultOffset));
 					withinValueOffset = value.indexOf(identifier, withinValueOffset + 1);
 				}
 			}
@@ -220,7 +220,7 @@ public class AntTaskNode extends AntElementNode {
 		if (text.length() > 0) {
 			int offset = textToSearch.indexOf(text.toString());
 			offset = textToSearch.indexOf(identifier, offset);
-			results.add(new Integer(offset + getOffset()));
+			results.add(Integer.valueOf(offset + getOffset()));
 		}
 		return results;
 	}

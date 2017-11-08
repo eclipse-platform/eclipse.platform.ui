@@ -1245,7 +1245,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 					BundleRevision input = edges.get(i).from;
 					Integer count = counts.get(input);
 					if (count != null) {
-						counts.put(input, new Integer(count.intValue() - 1));
+						counts.put(input, Integer.valueOf(count.intValue() - 1));
 					}
 				}
 			}
@@ -1282,11 +1282,11 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			Integer fromCount = counts.get(from);
 			BundleRevision to = mappings.get(i).to;
 			if (to == null)
-				counts.put(from, new Integer(0));
+				counts.put(from, Integer.valueOf(0));
 			else {
 				if (counts.get(to) == null)
-					counts.put(to, new Integer(0));
-				fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
+					counts.put(to, Integer.valueOf(0));
+				fromCount = fromCount == null ? Integer.valueOf(1) : new Integer(fromCount.intValue() + 1);
 				counts.put(from, fromCount);
 			}
 		}

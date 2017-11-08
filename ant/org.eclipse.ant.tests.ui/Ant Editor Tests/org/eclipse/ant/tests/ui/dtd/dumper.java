@@ -121,7 +121,7 @@ public class dumper {
 
 	private static int dumpDfm(IDfm dfm, HashMap<IDfm, Integer> map, int num) {
 		if (!map.containsKey(dfm)) {
-			map.put(dfm, new Integer(num++));
+			map.put(dfm, Integer.valueOf(num++));
 			String[] accepts = dfm.getAccepts();
 			for (int i = 0; i < accepts.length; i++) {
 				IDfm next = dfm.advance(accepts[i]);

@@ -72,7 +72,7 @@ import org.xml.sax.SAXException;
  * @since 3.2
  */
 public class SiteOptimizerApplication implements IPlatformRunnable {
-	public final static Integer EXIT_ERROR = new Integer(1);
+	public final static Integer EXIT_ERROR = Integer.valueOf(1);
 
 	public final static String JAR_PROCESSOR = "-jarProcessor"; //$NON-NLS-1$
 

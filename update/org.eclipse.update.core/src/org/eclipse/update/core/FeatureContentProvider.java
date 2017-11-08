@@ -578,7 +578,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			return result;
 
 		StringTokenizer tokenizer = new StringTokenizer(executables, ","); //$NON-NLS-1$
-		Integer defaultExecutablePermission = new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
+		Integer defaultExecutablePermission = Integer.valueOf(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
 		while (tokenizer.hasMoreTokens()) {
 			FileFilter filter = new FileFilter(tokenizer.nextToken());
 			result.put(filter, defaultExecutablePermission);

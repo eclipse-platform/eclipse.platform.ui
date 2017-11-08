@@ -210,19 +210,19 @@ public class AntTargetNode extends AntElementNode {
 		if (getTargetName().equals(identifier)) {
 			int nameOffset = textToSearch.indexOf(IAntCoreConstants.NAME);
 			nameOffset = textToSearch.indexOf(identifier, nameOffset);
-			results.add(new Integer(getOffset() + nameOffset));
+			results.add(Integer.valueOf(getOffset() + nameOffset));
 		} else {
 			String ifString = fTarget.getIf();
 			if (ifString != null && ifString.endsWith(identifier)) {
 				int ifOffset = textToSearch.indexOf("if"); //$NON-NLS-1$
 				ifOffset = textToSearch.indexOf(identifier, ifOffset);
-				results.add(new Integer(getOffset() + ifOffset));
+				results.add(Integer.valueOf(getOffset() + ifOffset));
 			} else {
 				String unlessString = fTarget.getUnless();
 				if (unlessString != null && unlessString.endsWith(identifier)) {
 					int unlessOffset = textToSearch.indexOf("unless"); //$NON-NLS-1$
 					unlessOffset = textToSearch.indexOf(identifier, unlessOffset);
-					results.add(new Integer(getOffset() + unlessOffset));
+					results.add(Integer.valueOf(getOffset() + unlessOffset));
 				} else {
 					int dependsOffset = textToSearch.indexOf("depends"); //$NON-NLS-1$
 					while (dependsOffset > 0 && !Character.isWhitespace(textToSearch.charAt(dependsOffset - 1))) {
@@ -239,7 +239,7 @@ public class AntTargetNode extends AntElementNode {
 							}
 							char delimiter = textToSearch.charAt(dependsOffset - 1);
 							if (delimiter == ',' || delimiter == '"' || delimiter == ' ') {
-								results.add(new Integer(getOffset() + dependsOffset));
+								results.add(Integer.valueOf(getOffset() + dependsOffset));
 							}
 							dependsOffset += identifier.length();
 						}
