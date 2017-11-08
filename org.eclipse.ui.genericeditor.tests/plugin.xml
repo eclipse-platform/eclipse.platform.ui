@@ -10,6 +10,7 @@
 <!-- Contributors:                                                          -->
 <!--     Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation -->
 <!--     Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support -->
+<!--                                 - Bug 521382 default highlighter       -->
 <!-- ====================================================================== -->
 <plugin>
 	<extension
@@ -135,4 +136,11 @@
 			contentType="org.eclipse.ui.genericeditor.tests.sub-specialized-content-type">
 		</autoEditStrategy>
 	</extension>
+	<extension
+			point="org.eclipse.ui.genericeditor.highlightReconcilers">
+		<highlightReconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.HighlightReconciler"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type">
+		</highlightReconciler>
+ </extension>
 </plugin>

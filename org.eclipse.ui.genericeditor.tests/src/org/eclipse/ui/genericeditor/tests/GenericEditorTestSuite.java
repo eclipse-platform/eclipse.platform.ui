@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Mickael Istria, Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.)
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
@@ -22,9 +23,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		HoverTest.class,
 		EditorTest.class,
 		AutoEditTest.class,
-		ReconcilerTest.class
+		ReconcilerTest.class,
+		HighlightTest.class
 })
 public class GenericEditorTestSuite {
 	// see @SuiteClasses
-	
+
 }
