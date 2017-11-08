@@ -142,13 +142,13 @@ public class TocManager {
 				UAElement element = (UAElement) topic;
 				while (!(element instanceof Toc)) {
 					UAElement parent = element.getParentElement();
-					path.add(new Integer(indexOf(parent, (Topic)element)));
+					path.add(Integer.valueOf(indexOf(parent, (Topic)element)));
 					element = parent;
 				}
 				Toc[] tocs = getTocs(locale);
 				for (int i=0;i<tocs.length;++i) {
 					if (tocs[i] == element) {
-						path.add(new Integer(i));
+						path.add(Integer.valueOf(i));
 						int[] array = new int[path.size()];
 						for (int j=0;j<array.length;++j) {
 							array[j] = path.get(array.length - 1 - j).intValue();

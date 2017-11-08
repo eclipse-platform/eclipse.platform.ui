@@ -56,7 +56,7 @@ public class HttpsUtility {
 	public static InputStream getHttpsInputStream(String thisProtocol,String thisHost, String thisPort, String thisPath, String locale)
 	{
 		try {
-			URL url = new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(),
+			URL url = new URL(thisProtocol, thisHost, Integer.valueOf(thisPort) .intValue(),
 					thisPath + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
 	        return getHttpsStream(url);
 		} catch (Exception e) {
@@ -68,7 +68,7 @@ public class HttpsUtility {
 	public static URL getHttpsURL(String thisProtocol,String thisHost, int thisPort, String thisPath)
 	{
 		try {
-			return new URL(thisProtocol, thisHost, new Integer(thisPort) .intValue(),
+			return new URL(thisProtocol, thisHost, Integer.valueOf(thisPort) .intValue(),
 					thisPath + PATH_TOC);
 		} catch (Exception e) {
 			e.printStackTrace();

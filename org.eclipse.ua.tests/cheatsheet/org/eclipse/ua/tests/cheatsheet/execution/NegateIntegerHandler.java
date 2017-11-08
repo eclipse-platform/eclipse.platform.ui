@@ -20,7 +20,7 @@ public class NegateIntegerHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		Integer val = (Integer)event.getObjectParameterForExecution("number");
-		return new Integer(-val.intValue());
+		return Integer.valueOf(-val.intValue());
 
 	}
 

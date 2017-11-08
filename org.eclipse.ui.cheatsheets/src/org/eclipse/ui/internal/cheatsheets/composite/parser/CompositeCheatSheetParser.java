@@ -115,7 +115,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			addStatus(IStatus.ERROR,  message,  e);
 			return null;
 		} catch (SAXParseException spe) {
-			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] {filename, new Integer(spe.getLineNumber()), new Integer(spe.getColumnNumber())}));
+			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] {filename, Integer.valueOf(spe.getLineNumber()), new Integer(spe.getColumnNumber())}));
 			addStatus(IStatus.ERROR,  message,  spe);
 			return null;
 		} catch (SAXException se) {

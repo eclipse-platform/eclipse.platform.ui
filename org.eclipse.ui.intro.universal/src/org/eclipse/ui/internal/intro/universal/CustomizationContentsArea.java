@@ -1025,7 +1025,7 @@ public class CustomizationContentsArea {
 				if (element instanceof ExtensionData) {
 					ExtensionData ed = (ExtensionData) element;
 					if (property.equals(IUniversalIntroConstants.P_IMPORTANCE))
-						return new Integer(ed.getImportance());
+						return Integer.valueOf(ed.getImportance());
 				}
 				return null;
 			}

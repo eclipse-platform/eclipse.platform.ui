@@ -62,12 +62,12 @@ public class JettyHelpServer extends HelpServer {
 				final Dictionary<String, Object> d = new Hashtable<>();
 				final int SESSION_TIMEOUT_INTERVAL_IN_SECONDS = 30*60;  // 30 minutes
 				configurePort();
-				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
+				d.put("http.port", Integer.valueOf(getPortParameter())); //$NON-NLS-1$
 
 				// set the base URL
 				d.put("context.path", getContextPath()); //$NON-NLS-1$
 				d.put("other.info", getOtherInfo()); //$NON-NLS-1$
-				d.put(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, new Integer(SESSION_TIMEOUT_INTERVAL_IN_SECONDS));
+				d.put(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, Integer.valueOf(SESSION_TIMEOUT_INTERVAL_IN_SECONDS));
 
 				// suppress Jetty INFO/DEBUG messages to stderr
 				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$

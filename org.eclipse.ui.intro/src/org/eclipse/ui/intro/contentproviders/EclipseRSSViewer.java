@@ -523,7 +523,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			try {
 				Method timeoutMethod = conClass.getMethod(
 						"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
-				timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
+				timeoutMethod.invoke(conn, new Object[] { Integer.valueOf(milliseconds)} );
 			} catch (Exception e) {
 			     // If running on a 1.4 JRE an exception is expected, fall through
 			}

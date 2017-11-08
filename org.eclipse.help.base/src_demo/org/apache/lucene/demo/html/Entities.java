@@ -33,7 +33,7 @@ public class Entities {
 	radix = 16;
       }
       Character c =
-	new Character((char)Integer.parseInt(entity.substring(start), radix));
+	Character.valueOf((char)Integer.parseInt(entity.substring(start), radix));
       return c.toString();
     } else {
       String s = decoder.get(entity);
@@ -64,7 +64,7 @@ public class Entities {
   }
 
   static final void add(String entity, int value) {
-    decoder.put(entity, (new Character((char)value)).toString());
+    decoder.put(entity, (Character.valueOf((char)value)).toString());
     if (value < 0x100)
       encoder[value] = entity;
   }

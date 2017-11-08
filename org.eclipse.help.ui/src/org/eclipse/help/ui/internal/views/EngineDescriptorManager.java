@@ -268,7 +268,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 				if (loc!= -1) {
 					String cvalue = edId.substring(loc+1);
 					int ivalue = Integer.parseInt(cvalue);
-					used.add(new Integer(ivalue));
+					used.add(Integer.valueOf(ivalue));
 				}
 			}
 		}

@@ -28,7 +28,7 @@ public class DialogIntegerValueConverter extends
 
 		try {
 			int i = Integer.parseInt(parameterValue);
-			return new Integer(i);
+			return Integer.valueOf(i);
 		} catch (NumberFormatException ex) {
 			throw new ParameterValueConversionException(
 					"error converting to integer: " + parameterValue); //$NON-NLS-1$

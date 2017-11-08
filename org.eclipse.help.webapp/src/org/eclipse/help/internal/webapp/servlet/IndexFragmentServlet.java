@@ -238,7 +238,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			while (nextEntry < entries.length) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
 				if (remaining == size || remaining > entrySize) {
-                    entryList.add(new Integer(nextEntry));
+                    entryList.add(Integer.valueOf(nextEntry));
                     setFlags(nextEntry);
                     remaining -= entrySize;
 				} else {
@@ -254,7 +254,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			while (nextEntry >= 0) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
 				if (remaining == size || remaining > entrySize) {
-                    entryList.add(0, new Integer(nextEntry));
+                    entryList.add(0, Integer.valueOf(nextEntry));
 
                     setFlags(nextEntry);
                     remaining -= entrySize;
