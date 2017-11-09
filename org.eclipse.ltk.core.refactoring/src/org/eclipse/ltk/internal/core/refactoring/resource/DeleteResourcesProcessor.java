@@ -338,5 +338,10 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		result.add(curr);
 	}
 
+	public RefactoringStatus setResources(IResource[] resources, IProgressMonitor pm) throws OperationCanceledException, CoreException {
+		this.fResources = resources;
+		return checkInitialConditions(pm);
+	}
+
 
 }
