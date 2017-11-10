@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,17 +114,16 @@ public final class Util {
 
             if (l != r) {
 				return l - r;
-			} else {
-                for (int i = 0; i < l; i++) {
-                    int compareTo = compare(left[i], right[i]);
+			}
+			for (int i = 0; i < l; i++) {
+				int compareTo = compare(left[i], right[i]);
 
-                    if (compareTo != 0) {
-						return compareTo;
-					}
-                }
+				if (compareTo != 0) {
+					return compareTo;
+				}
+			}
 
-                return 0;
-            }
+			return 0;
         }
     }
 
@@ -145,18 +144,16 @@ public final class Util {
 
             if (l != r) {
 				return l - r;
-			} else {
-                for (int i = 0; i < l; i++) {
-                    int compareTo = compare((Comparable) left.get(i),
-                            (Comparable) right.get(i));
+			}
+			for (int i = 0; i < l; i++) {
+				int compareTo = compare((Comparable) left.get(i), (Comparable) right.get(i));
 
-                    if (compareTo != 0) {
-						return compareTo;
-					}
-                }
+				if (compareTo != 0) {
+					return compareTo;
+				}
+			}
 
-                return 0;
-            }
+			return 0;
         }
     }
 
@@ -256,43 +253,41 @@ public final class Util {
     public static boolean endsWith(List left, List right, boolean equals) {
         if (left == null || right == null) {
 			return false;
-		} else {
-            int l = left.size();
-            int r = right.size();
+		}
+		int l = left.size();
+		int r = right.size();
 
-            if (r > l || !equals && r == l) {
+		if (r > l || !equals && r == l) {
+			return false;
+		}
+
+		for (int i = 0; i < r; i++) {
+			if (!equals(left.get(l - i - 1), right.get(r - i - 1))) {
 				return false;
 			}
+		}
 
-            for (int i = 0; i < r; i++) {
-				if (!equals(left.get(l - i - 1), right.get(r - i - 1))) {
-					return false;
-				}
-			}
-
-            return true;
-        }
+		return true;
     }
 
     public static boolean endsWith(Object[] left, Object[] right, boolean equals) {
         if (left == null || right == null) {
 			return false;
-		} else {
-            int l = left.length;
-            int r = right.length;
+		}
+		int l = left.length;
+		int r = right.length;
 
-            if (r > l || !equals && r == l) {
+		if (r > l || !equals && r == l) {
+			return false;
+		}
+
+		for (int i = 0; i < r; i++) {
+			if (!equals(left[l - i - 1], right[r - i - 1])) {
 				return false;
 			}
+		}
 
-            for (int i = 0; i < r; i++) {
-				if (!equals(left[l - i - 1], right[r - i - 1])) {
-					return false;
-				}
-			}
-
-            return true;
-        }
+		return true;
     }
 
     public static boolean equals(boolean left, boolean right) {

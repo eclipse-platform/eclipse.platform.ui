@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,9 +112,8 @@ class GridInfo {
     public int getStartPos(int control, boolean row) {
         if (row) {
             return controlRow[control];
-        } else {
-            return controlCol[control];
         }
+		return controlCol[control];
     }
 
     /**
@@ -126,9 +125,8 @@ class GridInfo {
     public int getNumRows(boolean isRow) {
         if (isRow) {
             return rows;
-        } else {
-			return cols;
 		}
+		return cols;
     }
 
     public void getRow(int[] result, int rowId, boolean horizontal) {

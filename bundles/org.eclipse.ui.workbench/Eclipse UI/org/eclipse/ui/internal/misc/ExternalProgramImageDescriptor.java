@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,9 +47,8 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
         String otherName = other.program.getName();
         if (otherName == null) {
 			return other.program.equals(program);
-		} else {
-            return otherName.equals(program.getName());
-        }
+		}
+		return otherName.equals(program.getName());
     }
 
     /**
@@ -94,8 +93,7 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
         String programName = program.getName();
         if (programName == null) {
 			return program.hashCode();
-		} else {
-			return programName.hashCode();
 		}
+		return programName.hashCode();
     }
 }

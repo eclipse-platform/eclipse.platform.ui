@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationLocation;
@@ -103,9 +102,8 @@ public class NavigationHistoryEntry {
                 historyText = text;
             }
             return text;
-        } else {
-            return historyText;
         }
+		return historyText;
     }
 
     /**
@@ -177,9 +175,8 @@ public class NavigationHistoryEntry {
                     currentEntry.location = location;
                     location = null;
                     return true;
-                } else {
-                    return location.mergeInto(currentEntry.location);
                 }
+				return location.mergeInto(currentEntry.location);
             } else if (currentEntry.location == null) {
                 return true;
             }

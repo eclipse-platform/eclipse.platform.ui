@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.layout;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -310,19 +309,18 @@ public class CellLayout extends Layout {
             }
 
             return result;
-        } else {
-            if (rowNum >= cols.size()) {
-                return defaultColSettings;
-            }
+		}
+		if (rowNum >= cols.size()) {
+			return defaultColSettings;
+		}
 
-            Row result = (Row) cols.get(rowNum);
+		Row result = (Row) cols.get(rowNum);
 
-            if (result == null) {
-                result = defaultColSettings;
-            }
+		if (result == null) {
+			result = defaultColSettings;
+		}
 
-            return result;
-        }
+		return result;
     }
 
     /**
@@ -391,22 +389,19 @@ public class CellLayout extends Layout {
                 // If we're larger in both dimensions, don't adjust the minimum
                 // size.
                 return preferredSize;
-            } else {
-                // If our preferred height is smaller than the minimum height,
-                // recompute the preferred width using the minimum height
-                return computeSize(composite, wHint, minimumSize.y, false);
             }
-        } else {
-            if (taller) {
-                // If our preferred width is smaller than the minimum width,
-                // recompute the preferred height using the minimum width
-                return computeSize(composite, minimumSize.x, hHint, false);
-            } else {
-                // If both dimensions are smaller than the minimum size,
-                // use the minimum size as our preferred size.
-                return minimumSize;
-            }
+			// If our preferred height is smaller than the minimum height,
+			// recompute the preferred width using the minimum height
+			return computeSize(composite, wHint, minimumSize.y, false);
         }
+		if (taller) {
+			// If our preferred width is smaller than the minimum width,
+			// recompute the preferred height using the minimum width
+			return computeSize(composite, minimumSize.x, hHint, false);
+		}
+		// If both dimensions are smaller than the minimum size,
+		// use the minimum size as our preferred size.
+		return minimumSize;
     }
 
     int[] computeSizes(int[] constraints, int availableSpace,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.handlers;
 
 import java.util.Collections;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -99,9 +98,8 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	public Map getAttributeValuesByName() {
 		if (loadHandler()) {
 			return handler.getAttributeValuesByName();
-		} else {
-			return Collections.EMPTY_MAP;
 		}
+		return Collections.EMPTY_MAP;
 	}
 
 	/**

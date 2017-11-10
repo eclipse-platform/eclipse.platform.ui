@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -139,9 +138,8 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
 
         if (Math.abs(lbg1 - lfg) > Math.abs(lbg2 - lfg)) {
             return cbg1;
-        } else {
-            return cbg2;
         }
+		return cbg2;
     }
 
     /**

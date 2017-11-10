@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.keys;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.Key;
@@ -115,10 +114,8 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
             return Util.translateString(RESOURCE_BUNDLE,
                     CARBON_KEY_DELIMITER_KEY, Util.ZERO_LENGTH_STRING, false,
                     false);
-        } else {
-            return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
-                    KeyStroke.KEY_DELIMITER, false, false);
         }
+		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, KeyStroke.KEY_DELIMITER, false, false);
     }
 
     @Override
@@ -128,11 +125,9 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
             return Util.translateString(RESOURCE_BUNDLE,
                     WIN32_KEY_STROKE_DELIMITER_KEY,
                     KeySequence.KEY_STROKE_DELIMITER, false, false);
-        } else {
-            return Util.translateString(RESOURCE_BUNDLE,
-                    KEY_STROKE_DELIMITER_KEY, KeySequence.KEY_STROKE_DELIMITER,
-                    false, false);
         }
+		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY, KeySequence.KEY_STROKE_DELIMITER, false,
+				false);
     }
 
     @Override
