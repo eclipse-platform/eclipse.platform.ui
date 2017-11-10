@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *     Marco Descher <marco@descher.at> - Open Search dialog with previous page instead of using the current selection to detect the page - http://bugs.eclipse.org/33710
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 526453] disambiguate "Selected Resources"
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -175,6 +176,7 @@ public final class SearchMessages extends NLS {
 	public static String ScopePart_selectedResourcesScope_text;
 	public static String ScopePart_selectedResourcesScope_text_plural;
 	public static String ScopePart_selectedResourcesScope_text_singular;
+	public static String ScopePart_selectedResourcesScope_text_editor;
 	public static String ScopePart_enclosingProjectsScope_text;
 	public static String ScopePart_enclosingProjectsScope_text_plural;
 	public static String ScopePart_enclosingProjectsScope_text_singular;

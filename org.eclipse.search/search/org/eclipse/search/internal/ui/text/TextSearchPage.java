@@ -55,7 +55,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
@@ -336,14 +335,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private FileTextSearchScope getSelectedResourcesScope() {
-		HashSet<IResource> resources= new HashSet<>();
-		ISelection sel= getContainer().getSelection();
-		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
-			resources.addAll(ScopePart.selectionToResources(sel));
-		} else if (getContainer().getActiveEditorInput() != null) {
-			resources.add(getContainer().getActiveEditorInput().getAdapter(IFile.class));
-		}
-		IResource[] arr= resources.toArray(new IResource[resources.size()]);
+		IResource[] arr = ScopePart.selectedResourcesFromContainer(getContainer()).toArray(new IResource[0]);
 		return FileTextSearchScope.newSearchScope(arr, getExtensions(), fSearchDerived);
 	}
 

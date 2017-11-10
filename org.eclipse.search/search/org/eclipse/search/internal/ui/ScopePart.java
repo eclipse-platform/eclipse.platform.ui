@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -159,11 +160,17 @@ public class ScopePart {
 		return null;
 	}
 
-	public static List<IResource> selectionToResources(ISelection selection) {
-		if (selection == null || !(selection instanceof IStructuredSelection)) {
+	public static List<IResource> selectedResourcesFromContainer(ISearchPageContainer container) {
+		if (container == null)
 			return Collections.emptyList();
-		}
+		ISelection selection = container.getSelection();
 		List<IResource> resources = new ArrayList<>();
+		if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
+			if (container.getActiveEditorInput() != null) {
+				resources.add(container.getActiveEditorInput().getAdapter(IFile.class));
+			}
+			return resources;
+		}
 		Iterator<?> iter = ((IStructuredSelection) selection).iterator();
 		while (iter.hasNext()) {
 			Object curr = iter.next();
@@ -194,20 +201,23 @@ public class ScopePart {
 	}
 
 	private String getSelectedResurcesButtonText() {
-		List<IResource> resources = selectionToResources(fSearchDialog.getSelection());
-		int size = resources.size();
-		if (size == 1)
-			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_singular, resources.get(0).getName());
+		int size = selectedResourcesFromContainer(fSearchDialog).size();
+		if (size == 1) {
+			if (fSearchDialog.getActiveEditor() != null)
+				return SearchMessages.ScopePart_selectedResourcesScope_text_editor;
+			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_singular,
+					fSearchDialog.getWorkbenchWindow().getActivePage().getActivePart().getTitle());
+		}
 		if (size > 1)
-			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_plural, new Integer(size));
+			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_plural, new Integer(size),
+					fSearchDialog.getWorkbenchWindow().getActivePage().getActivePart().getTitle());
 		return SearchMessages.ScopePart_selectedResourcesScope_text;
 	}
 
 	private String getEnclosingProjectsButtonText() {
-		String[] projectNames = fSearchDialog.getEnclosingProjectNames();
-		int size = projectNames.length;
+		int size = fSearchDialog.getEnclosingProjectNames().length;
 		if (size == 1)
-			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_singular, projectNames[0]);
+			return SearchMessages.ScopePart_enclosingProjectsScope_text_singular;
 		if (size > 1)
 			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_plural, new Integer(size));
 		return SearchMessages.ScopePart_enclosingProjectsScope_text;
