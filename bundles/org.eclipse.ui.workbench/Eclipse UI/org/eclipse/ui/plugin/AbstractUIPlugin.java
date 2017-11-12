@@ -128,11 +128,19 @@ public abstract class AbstractUIPlugin extends Plugin {
      */
     private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml"; //$NON-NLS-1$
 
+	/**
+	 * Key used to allow dialog_settings.xml customization. The value is the root
+	 * url of the parent directory containing settings for different plug-ins. Each
+	 * plug-in dialog_settings.xml file should reside in the directory with the
+	 * plug-in name.
+	 */
+	private static final String KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL = "default_dialog_settings_rootUrl"; //$NON-NLS-1$
+
     /**
      * Storage for dialog and wizard data; <code>null</code> if not yet
      * initialized.
      */
-    private IDialogSettings dialogSettings = null;
+	private IDialogSettings dialogSettings;
 
     /**
      * Storage for preferences.
@@ -143,7 +151,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * The registry for all graphic images; <code>null</code> if not yet
      * initialized.
      */
-    private ImageRegistry imageRegistry = null;
+	private ImageRegistry imageRegistry;
 
     /**
      * The bundle listener used for kicking off refreshPluginActions().
@@ -381,24 +389,71 @@ public abstract class AbstractUIPlugin extends Plugin {
     }
 
     /**
-     * Loads the dialog settings for this plug-in.
-     * The default implementation first looks for a standard named file in the
-     * plug-in's read/write state area; if no such file exists, the plug-in's
-     * install directory is checked to see if one was installed with some default
-     * settings; if no file is found in either place, a new empty dialog settings
-     * is created. If a problem occurs, an empty settings is silently used.
-     * <p>
-     * This framework method may be overridden, although this is typically
-     * unnecessary.
-     * </p>
-     */
+	 * Loads the dialog settings for this plug-in. The default implementation first
+	 * looks for a standard named file in the plug-in's read/write state area; if no
+	 * such file exists, default product dialog settings directory (specified by
+	 * org.eclipse.ui/default_dialog_settings_rootUrl property) is checked to see if
+	 * there is a file with default plug-in dialog settings exists; if no such file
+	 * exists, the plug-in's install directory is checked to see if one was
+	 * installed with some default settings; if no file is found in either place, a
+	 * new empty dialog settings is created. If a problem occurs, an empty settings
+	 * is silently used.
+	 * <p>
+	 * This framework method may be overridden, although this is typically
+	 * unnecessary.
+	 * </p>
+	 */
     protected void loadDialogSettings() {
     	dialogSettings = createEmptySettings();
 		boolean loaded = loadDialogSettingsFromWorkspace();
+		// otherwise look for product custom dialog settings
+		if (!loaded) {
+			loaded = loadDefaultDialogSettingsFromProduct();
+		}
 		// otherwise look for bundle specific dialog settings
 		if (!loaded) {
 			loadDefaultDialogSettingsFromBundle();
 		}
+	}
+
+	/**
+	 * @return true if the product specific settings file was successfully read
+	 */
+	private boolean loadDefaultDialogSettingsFromProduct() {
+		String rootUrl = PlatformUI.getPreferenceStore().getString(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL);
+		if (rootUrl == null || rootUrl.isEmpty()) {
+			return false;
+		}
+		String bundlePart = getBundle().getSymbolicName() + "/" + FN_DIALOG_SETTINGS; //$NON-NLS-1$
+		String fullUrl = rootUrl.endsWith("/") ? rootUrl + bundlePart : rootUrl + "/" + bundlePart; //$NON-NLS-1$//$NON-NLS-2$
+		URL url;
+		try {
+			url = new URL(fullUrl);
+		} catch (MalformedURLException e) {
+			getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
+					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
+			return false;
+		}
+
+		try {
+			url = FileLocator.resolve(url);
+		} catch (IOException e) {
+			getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
+					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
+			return false;
+		}
+
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+			dialogSettings.load(reader);
+			return true;
+		} catch (IOException e) {
+			// load failed so ensure we have an empty settings
+			dialogSettings = createEmptySettings();
+			getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
+					"Failed to load dialog settings from: " + url, e)); //$NON-NLS-1$
+		}
+		return false;
 	}
 
 	/**

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<!-- Default settings for DialogSettingsCustomizationTest -->
+	<section name="DialogSettingsCustomizationTest">
+		<item value="defaultBundleValue" key="testKey"/>
+	</section>
+</section>

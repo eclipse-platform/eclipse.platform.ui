@@ -28,6 +28,7 @@ import org.junit.runners.Suite;
 	PropertyPageEnablementTest.class,
 	ListenerRemovalTestCase.class,
 	PreferencesDialogTest.class,
-	ZoomAndPreferencesFontTest.class})
+	ZoomAndPreferencesFontTest.class,
+	DialogSettingsCustomizationTest.class})
 public class PreferencesTestSuite {
 }
