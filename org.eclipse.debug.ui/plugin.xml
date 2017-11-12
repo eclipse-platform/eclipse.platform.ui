@@ -193,9 +193,9 @@
             visible="false"
             id="org.eclipse.debug.ui.breakpointActionSet">
          <menu
-               label="%RunMenu.label"
+               label="%DebugMenu.label"
                path="additions"
-               id="org.eclipse.ui.run">
+               id="org.eclipse.ui.debug">
             <separator
                   name="breakpointGroup">
             </separator>
@@ -219,7 +219,7 @@
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
-               menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
+               menubarPath="org.eclipse.ui.debug/lineBreakpointBeforeGroup"
                id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
           </action>
          <action
@@ -230,7 +230,7 @@
                icon="$nl$/icons/full/elcl16/rem_all_co.png"
                id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"
                label="%RemoveAllBreakpointsAction.label"
-               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
+               menubarPath="org.eclipse.ui.debug/lineBreakpointAfterGroup"
                style="push"/>
           <action
                definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
@@ -239,7 +239,7 @@
                icon="$nl$/icons/full/elcl16/skip_brkp.png"
                helpContextId="skip_all_breakpoints_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction"
-               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
+               menubarPath="org.eclipse.ui.debug/lineBreakpointAfterGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/breakpointGroup"
                style="toggle"
                id="org.eclipse.debug.ui.actions.SkipAllBreakpoints">
@@ -251,7 +251,7 @@
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_method_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetMethodBreakpointAction"
-               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
+               menubarPath="org.eclipse.ui.debug/lineBreakpointAfterGroup"
                id="org.eclipse.debug.ui.actions.ToggleMethodBreakpoint">
          </action>
           <action
@@ -261,7 +261,7 @@
                disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.png"
                helpContextId="toggle_watchpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetWatchpointAction"
-               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
+               menubarPath="org.eclipse.ui.debug/lineBreakpointAfterGroup"
                id="org.eclipse.debug.ui.actions.ToggleWatchpoint">
          </action>
          <action
@@ -271,7 +271,7 @@
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_line_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
-               menubarPath="org.eclipse.ui.run/lineBreakpointAfterGroup"
+               menubarPath="org.eclipse.ui.debug/lineBreakpointAfterGroup"
                id="org.eclipse.debug.ui.actions.ToggleLineBreakpoint">
          </action>
       </actionSet>
@@ -280,9 +280,9 @@
             visible="false"
             id="org.eclipse.debug.ui.debugActionSet">
          <menu
-               label="%RunMenu.label"
+               label="%DebugMenu.label"
                path="additions"
-               id="org.eclipse.ui.run">
+               id="org.eclipse.ui.debug">
             <separator
                   name="stepGroup">
             </separator>
@@ -308,7 +308,7 @@
                icon="$nl$/icons/full/elcl16/stepbystep_co.png"
                helpContextId="org.eclipse.debug.ui.step_with_filters_action_context"
                label="%StepWithFiltersAction.label"
-               menubarPath="org.eclipse.ui.run/emptyStepGroup"
+               menubarPath="org.eclipse.ui.debug/emptyStepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup"
                style="toggle"
                state="false">
@@ -330,7 +330,7 @@
                disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.png"
                icon="$nl$/icons/full/elcl16/runtoline_co.png"
                label="%RunToLine.label"
-               menubarPath="org.eclipse.ui.run/emptyStepGroup"
+               menubarPath="org.eclipse.ui.debug/emptyStepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/emptyStepGroup">
          </action>                  
          <action
@@ -342,7 +342,7 @@
                icon="$nl$/icons/full/elcl16/stepreturn_co.png"
                helpContextId="step_return_action_context"
                label="%StepReturnAction.label"
-               menubarPath="org.eclipse.ui.run/stepReturnGroup"
+               menubarPath="org.eclipse.ui.debug/stepReturnGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/stepReturnGroup">
          </action>
          <action
@@ -354,7 +354,7 @@
                icon="$nl$/icons/full/elcl16/stepover_co.png"
                helpContextId="step_over_action_context"
                label="%StepOverAction.label"
-               menubarPath="org.eclipse.ui.run/stepOverGroup"
+               menubarPath="org.eclipse.ui.debug/stepOverGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/stepOverGroup">
          </action>
          <action
@@ -366,7 +366,7 @@
                icon="$nl$/icons/full/elcl16/stepinto_co.png"
                helpContextId="step_into_action_context"
                label="%StepIntoAction.label"
-               menubarPath="org.eclipse.ui.run/stepIntoGroup"
+               menubarPath="org.eclipse.ui.debug/stepIntoGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/stepIntoGroup">               
          </action>
          <action
@@ -378,7 +378,7 @@
                icon="$nl$/icons/full/elcl16/disconnect_co.png"
                helpContextId="disconnect_action_context"
                label="%Disconnect.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
+               menubarPath="org.eclipse.ui.debug/stepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
          </action>
          <action
@@ -390,7 +390,7 @@
                icon="$nl$/icons/full/elcl16/terminate_co.png"
                helpContextId="terminate_action_context"
                label="%TerminateAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
+               menubarPath="org.eclipse.ui.debug/stepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
          </action>
          <action
@@ -402,7 +402,7 @@
                icon="$nl$/icons/full/elcl16/suspend_co.png"
                helpContextId="suspend_action_context"
                label="%SuspendAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
+               menubarPath="org.eclipse.ui.debug/stepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
          </action>
          <action
@@ -414,7 +414,7 @@
                icon="$nl$/icons/full/elcl16/resume_co.png"
                helpContextId="resume_action_context"
                label="%ResumeAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
+               menubarPath="org.eclipse.ui.debug/stepGroup"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
          </action>
       </actionSet>
@@ -472,7 +472,7 @@
                icon="$nl$/icons/full/elcl16/debuglast_co.png"
                helpContextId="debug_last_action_context"
                label="%ContextLaunchingDebugMenu.name"
-               menubarPath="org.eclipse.ui.run/relaunchGroup">
+               menubarPath="org.eclipse.ui.debug/relaunchGroup">
          </action>
          <action
                id="org.eclipse.debug.ui.actions.RunLast"
@@ -502,14 +502,14 @@
                helpContextId="open_debug_configurations_action_context"
                id="org.eclipse.debug.ui.actions.OpenDebugConfigurations"
                label="%OpenDebugConfigurations.label"
-               menubarPath="org.eclipse.ui.run/debugGroup">
+               menubarPath="org.eclipse.ui.debug/debugGroup">
          </action>
          <action
                label="%DebugWithConfigurationAction.label"
                style="pulldown"
                helpContextId="debug_with_configuration_action_context"
                class="org.eclipse.debug.internal.ui.actions.DebugAsAction"
-               menubarPath="org.eclipse.ui.run/debugGroup"
+               menubarPath="org.eclipse.ui.debug/debugGroup"
                id="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction">
          </action>
          <action
@@ -517,7 +517,7 @@
                style="pulldown"
                helpContextId="debug_history_menu_action_context"
                class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
-               menubarPath="org.eclipse.ui.run/debugGroup"
+               menubarPath="org.eclipse.ui.debug/debugGroup"
                id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
          </action>
          <action
@@ -629,9 +629,27 @@
             <separator name="lineBreakpointGroup"/>
             <separator name="emptyBreakpointGroup"/>
          </menu>         
+         <menu 
+              id="org.eclipse.ui.debug" 
+         	  label="%DebugMenu.label">
+            <separator name="stepGroup" visible="true"/>
+            <separator name="stepIntoGroup"/>
+            <separator name="stepOverGroup"/>
+            <separator name="stepReturnGroup"/>
+            <separator name="emptyStepGroup"/>
+            <separator name="relaunchGroup" visible="true"/>
+            <separator name="profileGroup" visible="true"/>
+            <separator name="debugGroup" visible="true"/>
+            <separator name="emptyLaunchGroup" visible="true"/>
+            <separator name="breakpointGroup" visible="true"/>
+            <separator name="lineBreakpointBeforeGroup" visible="true"/>
+            <separator name="lineBreakpointAfterGroup"/>
+            <separator name="lineBreakpointGroup"/>
+            <separator name="emptyBreakpointGroup"/>
+         </menu>         
        </menuContribution>
        <menuContribution
-             locationURI="menu:org.eclipse.ui.run?after=breakpointGroup">
+             locationURI="menu:org.eclipse.ui.debug?after=breakpointGroup">
             <menu 
                  id="breakpointTypes" 
             	 label="%BreakpointTypesMenu.label">
