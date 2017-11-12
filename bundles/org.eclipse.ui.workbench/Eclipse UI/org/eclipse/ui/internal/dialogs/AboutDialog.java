@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440149, 472654
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 496319, 498301
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 527162
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -59,6 +61,7 @@ import org.eclipse.ui.internal.about.AboutTextManager;
 import org.eclipse.ui.internal.about.InstallationDialog;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Displays information about the product.
@@ -390,15 +393,17 @@ public class AboutDialog extends TrayDialog {
 	 */
 	private void createTextMenu() {
 		final MenuManager textManager = new MenuManager();
+		IServiceLocator serviceLocator = PlatformUI.getWorkbench();
+		ICommandService commandService = serviceLocator.getService(ICommandService.class);
 		textManager.add(new CommandContributionItem(
-				new CommandContributionItemParameter(PlatformUI
-						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_COPY,
+				new CommandContributionItemParameter(serviceLocator, null, IWorkbenchCommandConstants.EDIT_COPY,
 						CommandContributionItem.STYLE_PUSH)));
-		textManager.add(new CommandContributionItem(
-				new CommandContributionItemParameter(PlatformUI
-						.getWorkbench(), null, COPY_BUILD_ID_COMMAND, CommandContributionItem.STYLE_PUSH)));
-		textManager.add(new CommandContributionItem(new CommandContributionItemParameter(PlatformUI
-						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_SELECT_ALL,
+		if (commandService.getCommand(COPY_BUILD_ID_COMMAND).isDefined()) {
+			textManager.add(new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, null,
+					COPY_BUILD_ID_COMMAND, CommandContributionItem.STYLE_PUSH)));
+		}
+		textManager.add(new CommandContributionItem(new CommandContributionItemParameter(serviceLocator, null,
+				IWorkbenchCommandConstants.EDIT_SELECT_ALL,
 						CommandContributionItem.STYLE_PUSH)));
 		text.setMenu(textManager.createContextMenu(text));
 		text.addDisposeListener(e -> textManager.dispose());
