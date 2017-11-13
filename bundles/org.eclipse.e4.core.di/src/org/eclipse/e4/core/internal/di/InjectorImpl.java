@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 426754
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 493697
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
@@ -88,13 +89,24 @@ public class InjectorImpl implements IInjector {
 	@Override
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		try {
-			inject(object, objectSupplier, null);
+			internalInject(object, objectSupplier, null);
 		} catch (NoClassDefFoundError | NoSuchMethodError e) {
 			throw new InjectionException(e);
 		}
 	}
 
-	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
+	@Override
+	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier)
+			throws InjectionException {
+		try {
+			internalInject(object, objectSupplier, staticSupplier);
+		} catch (NoClassDefFoundError | NoSuchMethodError e) {
+			throw new InjectionException(e);
+		}
+	}
+
+	private void internalInject(Object object, PrimaryObjectSupplier objectSupplier,
+			PrimaryObjectSupplier tempSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor<?>> requestors = new ArrayList<>();
 		processClassHierarchy(object, objectSupplier, tempSupplier, true /* track */, true /* normal order */, requestors);
@@ -396,7 +408,7 @@ public class InjectorImpl implements IInjector {
 
 				Object newInstance = requestor.execute();
 				if (newInstance != null) {
-					inject(newInstance, objectSupplier, tempSupplier);
+					internalInject(newInstance, objectSupplier, tempSupplier);
 					if (isSingleton) {
 						synchronized (singletonCache) { // TBD this is not quite right, synch the method
 							singletonCache.put(clazz, newInstance);

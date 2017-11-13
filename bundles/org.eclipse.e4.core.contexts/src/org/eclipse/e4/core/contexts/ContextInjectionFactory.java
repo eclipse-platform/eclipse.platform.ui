@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 527308
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 493697, 527308
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
@@ -72,6 +72,34 @@ public final class ContextInjectionFactory {
 	static public void inject(Object object, IEclipseContext context) throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		injector.inject(object, supplier);
+	}
+
+	/**
+	 * Injects a context into a domain object. See the class comment for details on
+	 * the injection algorithm that is used.
+	 * <p>
+	 * This method allows extra values that don't need to be tracked to be passed to
+	 * the object using staticContext. If values for the same key present in both
+	 * the context and the static context, the values from the static context are
+	 * injected.
+	 * </p>
+	 *
+	 * @param object
+	 *            The object to perform injection on
+	 * @param context
+	 *            The context to obtain injected values from
+	 * @param staticContext
+	 *            The context containing extra values; not tracked
+	 * @throws InjectionException
+	 *             if an exception occurred while performing this operation
+	 * @see #inject(Object, IEclipseContext)
+	 * @since 1.7
+	 */
+	static public void inject(Object object, IEclipseContext context, IEclipseContext staticContext)
+			throws InjectionException {
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(staticContext, injector);
+		injector.inject(object, supplier, tempSupplier);
 	}
 
 	/**

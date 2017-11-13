@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 527308
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 493697, 527308
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
@@ -64,6 +64,30 @@ public interface IInjector {
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+
+	/**
+	 * Injects data from the supplier into a domain object. See the class comment
+	 * for details on the injection algorithm that is used.
+	 * <p>
+	 * If values for the same key present in both the object supplier and the static
+	 * supplier, the values from the static supplier are injected. Injected values
+	 * from the static supplier are not tracked and no links between the static
+	 * supplier and the object are established.
+	 * </p>
+	 *
+	 * @param object
+	 *            the object to perform injection on
+	 * @param objectSupplier
+	 *            primary object supplier for the injection
+	 * @param staticSupplier
+	 *            additional object supplier for the injection, changes in injected
+	 *            values are not tracked
+	 * @throws InjectionException
+	 *             if an exception occurred while performing this operation
+	 * @since 1.7
+	 */
+	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier)
+			throws InjectionException;
 
 	/**
 	 * Un-injects the supplier from the object.
