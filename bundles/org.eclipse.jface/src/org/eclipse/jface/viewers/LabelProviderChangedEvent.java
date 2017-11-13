@@ -75,9 +75,8 @@ public class LabelProviderChangedEvent extends EventObject {
     public Object getElement() {
         if (this.elements == null || this.elements.length == 0) {
 			return null;
-		} else {
-			return this.elements[0];
 		}
+		return this.elements[0];
     }
 
     /**
@@ -89,8 +88,7 @@ public class LabelProviderChangedEvent extends EventObject {
     public Object[] getElements() {
         if (this.elements == null) {
 			return null;
-		} else {
-			return this.elements;
 		}
+		return this.elements;
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,9 +85,8 @@ import java.util.NoSuchElementException;
                 Object result = key ? entry.key : entry.value;
                 entry = entry.next;
                 return result;
-            } else {
-				throw new NoSuchElementException();
 			}
+			throw new NoSuchElementException();
         }
     }
 
@@ -266,9 +265,8 @@ import java.util.NoSuchElementException;
     private int hashCode(Object key) {
         if (comparer == null) {
 			return key.hashCode();
-		} else {
-			return comparer.hashCode(key);
 		}
+		return comparer.hashCode(key);
     }
 
     /**
@@ -277,9 +275,8 @@ import java.util.NoSuchElementException;
     private boolean keyEquals(Object a, Object b) {
         if (comparer == null) {
 			return a.equals(b);
-		} else {
-			return comparer.equals(a, b);
 		}
+		return comparer.equals(a, b);
     }
 
     /**
@@ -333,9 +330,8 @@ import java.util.NoSuchElementException;
             entry.key = key; // important to avoid hanging onto keys that are equal but "old" -- see bug 30607
             entry.value = value;
             return result;
-        } else {
-			throw new NullPointerException();
 		}
+		throw new NullPointerException();
     }
 
     /**

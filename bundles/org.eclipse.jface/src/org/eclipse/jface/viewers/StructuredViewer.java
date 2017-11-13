@@ -712,9 +712,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	protected boolean equals(Object elementA, Object elementB) {
 		if (comparer == null) {
 			return elementA == null ? elementB == null : elementA.equals(elementB);
-		} else {
-			return elementA == null ? elementB == null : comparer.equals(elementA, elementB);
 		}
+		return elementA == null ? elementB == null : comparer.equals(elementA, elementB);
 	}
 
 	/**
