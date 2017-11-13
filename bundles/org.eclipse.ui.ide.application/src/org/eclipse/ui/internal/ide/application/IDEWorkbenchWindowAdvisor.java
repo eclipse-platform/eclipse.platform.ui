@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -581,7 +581,6 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * Open the welcome editor for the primary feature and for any newly
 	 * installed features.
 	 */
-	@SuppressWarnings("rawtypes")
 	private void openWelcomeEditors(IWorkbenchWindow window) {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
 				IDEInternalPreferences.WELCOME_DIALOG)) {
