@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@ import java.net.URL;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class ExternalBrowserTestCase extends TestCase {
+public class ExternalBrowserTestCase {
+	@Test
 	public void testBrowser() throws Exception {
 		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.EXTERNAL);
 		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();

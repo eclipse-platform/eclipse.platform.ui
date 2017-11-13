@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Tasktop Technologies and others.
+ * Copyright (c) 2015, 2017 Tasktop Technologies and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,13 @@ package org.eclipse.ui.tests.browser.internal;
 import static org.eclipse.ui.internal.browser.IBrowserDescriptor.URL_PARAMETER;
 import static org.eclipse.ui.internal.browser.WebBrowserUtil.createParameterArray;
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.TestCase;
+
+import org.junit.Test;
 
 @SuppressWarnings("restriction")
-public class WebBrowserUtilTestCase extends TestCase {
+public class WebBrowserUtilTestCase {
 
+	@Test
 	public void testCreateParameterArray() {
 		assertArrayEquals(new String[0], createParameterArray(null, null));
 		assertArrayEquals(new String[] { "parameters" }, createParameterArray("parameters", null));
@@ -32,6 +34,7 @@ public class WebBrowserUtilTestCase extends TestCase {
 				createParameterArray("param1 " + URL_PARAMETER + " param2 " + URL_PARAMETER, "url"));
 	}
 
+	@Test
 	public void testCreateParameterArrayForMozilla() {
 		assertArrayEquals(new String[] { "-remote", "openURL(url)" },
 				createParameterArray(" -remote openURL(" + URL_PARAMETER + ")", "url"));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,7 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class UITestHelper {
 	private static class PreferenceDialogWrapper extends PreferenceDialog {
@@ -52,6 +51,7 @@ public class UITestHelper {
 		public PropertyDialogWrapper(Shell parentShell, PreferenceManager manager, ISelection selection) {
 			super(parentShell, manager, selection);
 		}
+
 		@Override
 		protected boolean showPage(IPreferenceNode node) {
 			return super.showPage(node);
@@ -69,10 +69,11 @@ public class UITestHelper {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
 
-			for (Iterator iterator = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
+			for (Iterator<IPreferenceNode> iterator = manager.getElements(PreferenceManager.PRE_ORDER)
+					.iterator();
 			     iterator.hasNext();)
 			{
-				IPreferenceNode node = (IPreferenceNode)iterator.next();
+				IPreferenceNode node = iterator.next();
 				if ( node.getId().equals(id) ) {
 					dialog.showPage(node);
 					break;
@@ -99,7 +100,7 @@ public class UITestHelper {
 		}
 
 		// testing if there are pages in the manager
-		Iterator pages = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
+		Iterator<IPreferenceNode> pages = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		if (!pages.hasNext())
 			return null;
 
@@ -107,9 +108,9 @@ public class UITestHelper {
 		dialog = new PropertyDialogWrapper(getShell(), manager, new StructuredSelection(element));
 		dialog.create();
 		dialog.getShell().setText(title);
-		for (Iterator iterator = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
+		for (Iterator<IPreferenceNode> iterator = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		     iterator.hasNext();) {
-			IPreferenceNode node = (IPreferenceNode)iterator.next();
+			IPreferenceNode node = iterator.next();
 			if ( node.getId().equals(id) ) {
 				dialog.showPage(node);
 				break;

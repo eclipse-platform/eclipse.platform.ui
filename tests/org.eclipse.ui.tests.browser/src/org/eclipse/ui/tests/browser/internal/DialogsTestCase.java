@@ -13,14 +13,14 @@ package org.eclipse.ui.tests.browser.internal;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.browser.BrowserDescriptorDialog;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class DialogsTestCase extends TestCase {
+public class DialogsTestCase {
 	private Shell getShell() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
+	@Test
 	public void testExternalBrowserDialog() {
 		BrowserDescriptorDialog bdd = new BrowserDescriptorDialog(getShell());
 		UITestHelper.assertDialog(bdd);
