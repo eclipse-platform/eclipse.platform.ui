@@ -278,21 +278,24 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     private void determineHomePage() {
-    	String pid = Platform.getProduct().getId();
-    	startPageId = getProcessPreference("INTRO_START_PAGE", pid); //$NON-NLS-1$
-    	String homePagePreference = getProcessPreference("INTRO_HOME_PAGE", pid); //$NON-NLS-1$
-    	homePage = rootPage;  // Default, may be overridden
-    	if (homePagePreference.length() != 0) {
-    		AbstractIntroPage page = (AbstractIntroPage) findChild(homePagePreference,
-    	            ABSTRACT_PAGE);
-    		if (page != null) {
-    			homePage = page;
-    		    if(startPageId.length() == 0) {
-    			    startPageId = homePagePreference;
-    		    }
-    		}
-    	}
-    	String standbyPagePreference = getProcessPreference("INTRO_STANDBY_PAGE", pid); //$NON-NLS-1$
+	    	homePage = rootPage;  // Default, may be overridden
+	    	if (Platform.getProduct() == null) {
+	    		return;
+	    	}
+	    	String pid = Platform.getProduct().getId();
+	    	startPageId = getProcessPreference("INTRO_START_PAGE", pid); //$NON-NLS-1$
+	    	String homePagePreference = getProcessPreference("INTRO_HOME_PAGE", pid); //$NON-NLS-1$
+	    	if (homePagePreference.length() != 0) {
+	    		AbstractIntroPage page = (AbstractIntroPage) findChild(homePagePreference,
+	    	            ABSTRACT_PAGE);
+	    		if (page != null) {
+	    			homePage = page;
+	    		    if(startPageId.length() == 0) {
+	    			    startPageId = homePagePreference;
+	    		    }
+	    		}
+	    	}
+	    	String standbyPagePreference = getProcessPreference("INTRO_STANDBY_PAGE", pid); //$NON-NLS-1$
         modelStandbyPageId = getPresentation().getStandbyPageId();
 
         if (standbyPagePreference.length() != 0) {
@@ -309,34 +312,34 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     private void loadTheme() {
-    	String pid = Platform.getProduct().getId();
-    	String themeId = getProcessPreference("INTRO_THEME", pid); //$NON-NLS-1$
+	    	String pid = Platform.getProduct() != null ? Platform.getProduct().getId() : null;
+	    	String themeId = pid != null ? getProcessPreference("INTRO_THEME", pid) : null; //$NON-NLS-1$
 
-    	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
-    	IConfigurationElement themeElement=null;
-    	for (int i=0; i<elements.length; i++) {
-    		if (elements[i].getName().equals("theme")) { //$NON-NLS-1$
-    			String id = elements[i].getAttribute("id"); //$NON-NLS-1$
-    			if (themeId!=null) {
-    				if (id!=null && themeId.equals(id)) {
-    					// use this one
-    					themeElement = elements[i];
-    					break;
-    				}
-    			}
-    			else {
-    				// see if this one is the default
-    				String value = elements[i].getAttribute("default"); //$NON-NLS-1$
-    				if (value!=null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
-    					themeElement = elements[i];
-    					break;
-    				}
-    			}
-    		}
-    	}
-    	if (themeElement!=null) {
-    		theme = new IntroTheme(themeElement);
-    	}
+	    	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
+	    	IConfigurationElement themeElement=null;
+	    	for (int i=0; i<elements.length; i++) {
+	    		if (elements[i].getName().equals("theme")) { //$NON-NLS-1$
+	    			String id = elements[i].getAttribute("id"); //$NON-NLS-1$
+	    			if (themeId!=null) {
+	    				if (id!=null && themeId.equals(id)) {
+	    					// use this one
+	    					themeElement = elements[i];
+	    					break;
+	    				}
+	    			}
+	    			else {
+	    				// see if this one is the default
+	    				String value = elements[i].getAttribute("default"); //$NON-NLS-1$
+	    				if (value!=null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
+	    					themeElement = elements[i];
+	    					break;
+	    				}
+	    			}
+	    		}
+	    	}
+	    	if (themeElement!=null) {
+	    		theme = new IntroTheme(themeElement);
+	    	}
     }
 
     /**
