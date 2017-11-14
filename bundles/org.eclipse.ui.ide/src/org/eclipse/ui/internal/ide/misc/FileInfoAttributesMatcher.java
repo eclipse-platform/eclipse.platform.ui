@@ -83,7 +83,7 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	 * @param operator
 	 * @return
 	 */
-	public static  Class getTypeForKey(String key, String operator) {
+	public static Class<?> getTypeForKey(String key, String operator) {
 		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION))
 			return String.class;
 		if (key.equals(KEY_IS_SYMLINK) || key.equals(KEY_IS_READONLY))
@@ -211,27 +211,28 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
         */
 
 		try {
-			Class fileSystems = Class.forName("java.nio.file.FileSystems"); //$NON-NLS-1$
+			Class<?> fileSystems = Class.forName("java.nio.file.FileSystems"); //$NON-NLS-1$
 			Method getDefault = fileSystems.getMethod("getDefault"); //$NON-NLS-1$
 			Object fs = getDefault.invoke(null);
 
-			Class fileRef = Class.forName("java.nio.file.FileRef"); //$NON-NLS-1$
+			Class<?> fileRef = Class.forName("java.nio.file.FileRef"); //$NON-NLS-1$
 
-			Class fileSystem = Class.forName("java.nio.file.FileSystem"); //$NON-NLS-1$
-			Method getPath = fileSystem.getMethod("getPath", new Class[] {String.class}); //$NON-NLS-1$
-			Object fileRefObj = getPath.invoke(fs, new Object[] {fullPath});
+			Class<?> fileSystem = Class.forName("java.nio.file.FileSystem"); //$NON-NLS-1$
+			Method getPath = fileSystem.getMethod("getPath", String.class); //$NON-NLS-1$
+			Object fileRefObj = getPath.invoke(fs, fullPath);
 
-			Class attributes = Class.forName("java.nio.file.attribute.Attributes"); //$NON-NLS-1$
-			Class linkOptions = Class.forName("java.nio.file.LinkOption"); //$NON-NLS-1$
+			Class<?> attributes = Class.forName("java.nio.file.attribute.Attributes"); //$NON-NLS-1$
+			Class<?> linkOptions = Class.forName("java.nio.file.LinkOption"); //$NON-NLS-1$
 			Object linkOptionsEmptyArray = Array.newInstance(linkOptions, 0);
-			Method readBasicFileAttributes = attributes.getMethod("readBasicFileAttributes", new Class[] {fileRef, linkOptionsEmptyArray.getClass()}); //$NON-NLS-1$
+			Method readBasicFileAttributes = attributes.getMethod("readBasicFileAttributes", fileRef, //$NON-NLS-1$
+					linkOptionsEmptyArray.getClass());
 			Object attributesObj = readBasicFileAttributes.invoke(null, new Object[] {fileRefObj, linkOptionsEmptyArray});
 
-			Class basicAttributes = Class.forName("java.nio.file.attribute.BasicFileAttributes"); //$NON-NLS-1$
+			Class<?> basicAttributes = Class.forName("java.nio.file.attribute.BasicFileAttributes"); //$NON-NLS-1$
 			Method creationTime = basicAttributes.getMethod("creationTime"); //$NON-NLS-1$
 			Object time = creationTime.invoke(attributesObj);
 
-			Class fileTime = Class.forName("java.nio.file.attribute.FileTime"); //$NON-NLS-1$
+			Class<?> fileTime = Class.forName("java.nio.file.attribute.FileTime"); //$NON-NLS-1$
 			Method toMillis = fileTime.getMethod("toMillis"); //$NON-NLS-1$
 			Object result = toMillis.invoke(time);
 
@@ -261,7 +262,7 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 
 
 		Argument argument;
-		Class type;
+		Class<?> type;
 		StringMatcher stringMatcher = null;
 		Pattern regExPattern = null;
 

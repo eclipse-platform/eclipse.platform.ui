@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,25 +15,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
-
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -61,7 +56,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 	 * A collection of objects listening to changes to this manager. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private transient ListenerList listenerList = null;
+	private transient ListenerList<IHandlerListener> listenerList = null;
 
 	/**
 	 * Creates a new instance of the class.
@@ -75,7 +70,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 	@Override
 	public final void addHandlerListener(final IHandlerListener listener) {
 		if (listenerList == null) {
-			listenerList = new ListenerList(ListenerList.IDENTITY);
+			listenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		listenerList.add(listener);
@@ -89,7 +84,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 	@Override
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
-		final List files = new ArrayList();
+		final List<IFile> files = new ArrayList<>();
 
 		if (event.getParameter(PARAM_ID_FILE_PATH) == null) {
 			// Prompt the user for the resource to open.
@@ -98,7 +93,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 			if (result != null) {
 				for (Object fileResource : result) {
 					if (fileResource instanceof IFile) {
-						files.add(fileResource);
+						files.add((IFile) fileResource);
 					}
 				}
 			}
@@ -111,7 +106,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 				throw new ExecutionException(
 						"filePath parameter must identify a file"); //$NON-NLS-1$
 			}
-			files.add(resource);
+			files.add((IFile) resource);
 		}
 
 		if (files.size() > 0) {
@@ -128,8 +123,8 @@ public final class OpenResourceHandler extends Action implements IHandler,
 			}
 
 			try {
-				for (Iterator it = files.iterator(); it.hasNext();) {
-					IDE.openEditor(page, (IFile) it.next(), true);
+				for (Iterator<IFile> it = files.iterator(); it.hasNext();) {
+					IDE.openEditor(page, it.next(), true);
 				}
 			} catch (final PartInitException e) {
 				throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$

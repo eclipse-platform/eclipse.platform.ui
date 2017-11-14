@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public abstract class IDERegistryReader {
     protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-    protected static Hashtable extensionPoints = new Hashtable();
+	protected static Hashtable<String, IExtension[]> extensionPoints = new Hashtable<>();
 
-    private static final Comparator comparer = (arg0, arg1) -> {
-		IExtension i1 = (IExtension) arg0;
+	private static final Comparator<IExtension> comparer = (i1, i2) -> {
 		String s1 = i1.getNamespace();
-		IExtension i2 = (IExtension) arg1;
 		String s2 = i2.getNamespace();
 		return s1.compareToIgnoreCase(s2);
 	};
@@ -172,7 +170,7 @@ public abstract class IDERegistryReader {
     protected void readRegistry(IExtensionRegistry registry, String pluginId,
             String extensionPoint) {
         String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
-        IExtension[] extensions = (IExtension[]) extensionPoints.get(pointId);
+        IExtension[] extensions = extensionPoints.get(pointId);
         if (extensions == null) {
             IExtensionPoint point = registry.getExtensionPoint(pluginId,
                     extensionPoint);

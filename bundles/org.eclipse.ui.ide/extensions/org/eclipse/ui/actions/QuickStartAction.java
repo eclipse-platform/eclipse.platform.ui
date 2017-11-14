@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,9 +110,9 @@ public class QuickStartAction extends Action implements
      *
      * @return the chosen feature, or <code>null</code> if none was chosen
      */
-    private AboutInfo promptForFeature() throws WorkbenchException {
+	private AboutInfo promptForFeature() throws WorkbenchException {
         // Ask the user to select a feature
-        ArrayList welcomeFeatures = new ArrayList();
+		ArrayList<AboutInfo> welcomeFeatures = new ArrayList<>();
 
         URL productUrl = null;
         IProduct product = Platform.getProduct();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -333,12 +333,12 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * @return list of resource elements (element type: <code>IResource</code>)
 	 */
 	@Override
-	protected List getActionResources() {
+	protected List<? extends IResource> getActionResources() {
 		if (inlinedResource == null) {
 			return super.getActionResources();
 		}
 
-		List actionResources = new ArrayList();
+		List<IResource> actionResources = new ArrayList<>();
 		actionResources.add(inlinedResource);
 		return actionResources;
 	}
@@ -478,9 +478,9 @@ public class RenameResourceAction extends WorkspaceAction {
 	 *         one resources selected.
 	 */
 	private IResource getCurrentResource() {
-		List resources = getSelectedResources();
+		List<? extends IResource> resources = getSelectedResources();
 		if (resources.size() == 1) {
-			return (IResource) resources.get(0);
+			return resources.get(0);
 		}
 		return null;
 
@@ -617,7 +617,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	@Override
 	protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
 		return monitor -> {
-			IResource[] resources = (IResource[]) getActionResources()
+			IResource[] resources = getActionResources()
 					.toArray(new IResource[getActionResources().size()]);
 			// Rename is only valid for a single resource. This has already
 			// been validated.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,9 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 
     private ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
 
-    private Map children;
+	private Map<ZipEntry, List<ZipEntry>> children;
 
-    private Map directoryEntryCache = new HashMap();
+	private Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
 
     /**
      * Creates a <code>ZipFileStructureProvider</code>, which will operate
@@ -52,9 +52,9 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
      * Adds the specified child to the internal collection of the parent's children.
      */
     protected void addToChildren(ZipEntry parent, ZipEntry child) {
-        List childList = (List) children.get(parent);
+		List<ZipEntry> childList = children.get(parent);
         if (childList == null) {
-            childList = new ArrayList();
+			childList = new ArrayList<>();
             children.put(parent, childList);
         }
 
@@ -74,7 +74,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
         if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
-			parent = (ZipEntry) directoryEntryCache.get(pathname
+			parent = directoryEntryCache.get(pathname
                     .removeLastSegments(1));
 		}
 
@@ -92,7 +92,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
         if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
-			parent = (ZipEntry) directoryEntryCache.get(pathname
+			parent = directoryEntryCache.get(pathname
                     .removeLastSegments(1));
 		}
 
@@ -105,7 +105,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 			initialize();
 		}
 
-        return ((List) children.get(element));
+        return (children.get(element));
     }
 
     @Override
@@ -155,11 +155,11 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
      * the specified source file.
      */
     protected void initialize() {
-        children = new HashMap(1000);
+		children = new HashMap<>(1000);
 
-        Enumeration entries = zipFile.entries();
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
+            ZipEntry entry = entries.nextElement();
             if (!entry.isDirectory()) {
                 IPath path = new Path(entry.getName()).addTrailingSeparator();
                 int pathSegmentCount = path.segmentCount();

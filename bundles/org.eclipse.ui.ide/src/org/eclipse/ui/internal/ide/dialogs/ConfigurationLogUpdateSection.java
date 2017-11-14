@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,11 +48,11 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			return;
 
 		// Print out the list of IUs which are installed in the profile.
-		ServiceReference reference = context.getServiceReference(IProfileRegistry.class.getName());
+		ServiceReference<IProfileRegistry> reference = context.getServiceReference(IProfileRegistry.class);
 		if (reference == null)
 			return;
 		try {
-			IProfileRegistry registry = (IProfileRegistry) context.getService(reference);
+			IProfileRegistry registry = context.getService(reference);
 			if (registry == null)
 				return;
 			IProfile profile = registry.getProfile(IProfileRegistry.SELF);
@@ -68,16 +68,16 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			// Since this code is only called in the Help -> About -> Configuration Details case we
 			// won't worry too much about performance here and we will sort the query results
 			// afterwards, but before printing them out.
-			IQueryResult result = profile.available(QueryUtil.createIUAnyQuery(), null);
-			SortedSet sorted = new TreeSet();
-			for (Iterator iter = result.iterator(); iter.hasNext();) {
-				IInstallableUnit unit = (IInstallableUnit) iter.next();
+			IQueryResult<IInstallableUnit> result = profile.available(QueryUtil.createIUAnyQuery(), null);
+			SortedSet<String> sorted = new TreeSet<>();
+			for (Iterator<IInstallableUnit> iter = result.iterator(); iter.hasNext();) {
+				IInstallableUnit unit = iter.next();
 				sorted.add(NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_IU, unit.getId(), unit.getVersion()));
 			}
 			if (!sorted.isEmpty()) {
 				writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_IUHeader);
 				writer.println();
-				for (Iterator iter = sorted.iterator(); iter.hasNext();)
+				for (Iterator<String> iter = sorted.iterator(); iter.hasNext();)
 					writer.println(iter.next());
 			}
 		} finally {
@@ -92,16 +92,16 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 		BundleContext context = IDEWorkbenchPlugin.getDefault().getBundle().getBundleContext();
 		if (context == null)
 			return;
-		ServiceReference reference = context.getServiceReference(PlatformAdmin.class.getName());
+		ServiceReference<PlatformAdmin> reference = context.getServiceReference(PlatformAdmin.class);
 		if (reference == null)
 			return;
-		PlatformAdmin admin = (PlatformAdmin) context.getService(reference);
+		PlatformAdmin admin = context.getService(reference);
 		try {
 			State state = admin.getState(false);
 			// Since this code is only called in the Help -> About -> Configuration Details case we
 			// won't worry too much about performance here and we will sort the query results
 			// afterwards, but before printing them out.
-			SortedSet sorted = new TreeSet();
+			SortedSet<String> sorted = new TreeSet<>();
 			for (BundleDescription bundle : state.getBundles()) {
 				String name = bundle.getName();
 				if (name == null)
@@ -112,7 +112,7 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			if (!sorted.isEmpty()) {
 				writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundleHeader);
 				writer.println();
-				for (Iterator iter = sorted.iterator(); iter.hasNext();)
+				for (Iterator<String> iter = sorted.iterator(); iter.hasNext();)
 					writer.println(iter.next());
 			}
 		} finally {

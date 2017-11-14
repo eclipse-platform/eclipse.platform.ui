@@ -148,14 +148,14 @@ public class RelativePathVariableGroup {
 		else
 			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 
-		ArrayList items = new ArrayList();
+		ArrayList<String> items = new ArrayList<>();
 		for (String variableName : pathVariableManager.getPathVariableNames()) {
 			if (variableName.equals("PARENT")) //$NON-NLS-1$
 				continue;
 			items.add(variableName);
 		}
 		items.add(IDEWorkbenchMessages.ImportTypeDialog_editVariables);
-		variableCombo.setItems((String[]) items.toArray(new String[0]));
+		variableCombo.setItems(items.toArray(new String[0]));
 	}
 
 	private void setupVariableCheckboxToolTip() {

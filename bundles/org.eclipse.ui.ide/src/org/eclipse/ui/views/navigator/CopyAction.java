@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,8 +103,8 @@ import org.eclipse.ui.part.ResourceTransfer;
          * on <code>IAction</code> copies the selected resources to the
          * clipboard.
          */
-        List selectedResources = getSelectedResources();
-        IResource[] resources = (IResource[]) selectedResources
+		List<? extends IResource> selectedResources = getSelectedResources();
+        IResource[] resources = selectedResources
                 .toArray(new IResource[selectedResources.size()]);
 
         // Get the file names and a string representation
@@ -193,7 +193,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 			return false;
 		}
 
-        List selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
         if (selectedResources.size() == 0) {
 			return false;
 		}
@@ -217,9 +217,9 @@ import org.eclipse.ui.part.ResourceTransfer;
 			return false;
 		}
 
-        Iterator resourcesEnum = selectedResources.iterator();
+		Iterator<? extends IResource> resourcesEnum = selectedResources.iterator();
         while (resourcesEnum.hasNext()) {
-            IResource currentResource = (IResource) resourcesEnum.next();
+            IResource currentResource = resourcesEnum.next();
             if (!currentResource.getParent().equals(firstParent)) {
 				return false;
 			}

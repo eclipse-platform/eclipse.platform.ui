@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	private static String MSG_FATAL_ERROR_Title = IDEWorkbenchMessages.InternalError;
 
 	// cache handled statuses
-	private final Map map = Collections.synchronizedMap(new WeakHashMap());
+	private final Map<IStatus, ?> map = Collections.synchronizedMap(new WeakHashMap<>());
 
 	/**
 	 * @param configurer

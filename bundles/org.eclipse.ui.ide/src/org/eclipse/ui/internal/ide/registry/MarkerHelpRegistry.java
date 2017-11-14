@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,18 +46,19 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker F1 help.
 	 */
-	private Map helpQueries = new HashMap();
+	private Map<MarkerQuery,
+			Map<MarkerQueryResult, Collection<IConfigurationElement>>> helpQueries = new HashMap<>();
 
 	/**
 	 * Sorted list of help queries. Used to ensure that the "most specific"
 	 * query is tried first
 	 */
-	private List sortedHelpQueries;
+	private List<MarkerQuery> sortedHelpQueries;
 
 	/**
 	 * Table of queries for marker resolutions
 	 */
-	private Map<MarkerQuery, Map> resolutionQueries = new LinkedHashMap<>();
+	private Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> resolutionQueries = new LinkedHashMap<>();
 
 	/**
 	 * Help context id attribute in configuration element
@@ -69,7 +70,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 */
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
-	private class QueryComparator implements Comparator {
+	private class QueryComparator implements Comparator<MarkerQuery> {
 		@Override
 		public boolean equals(Object o) {
 			if (!(o instanceof QueryComparator)) {
@@ -79,11 +80,8 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 		}
 
 		@Override
-		public int compare(Object o1, Object o2) {
+		public int compare(MarkerQuery q1, MarkerQuery q2) {
 			// more attribues come first
-			MarkerQuery q1 = (MarkerQuery) o1;
-			MarkerQuery q2 = (MarkerQuery) o2;
-
 			int size1 = q1.getAttributes().length;
 			int size2 = q2.getAttributes().length;
 
@@ -100,27 +98,25 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	@Override
 	public String getHelp(IMarker marker) {
 		if (sortedHelpQueries == null) {
-			Set set = helpQueries.keySet();
-			sortedHelpQueries = new ArrayList(set.size());
+			Set<MarkerQuery> set = helpQueries.keySet();
+			sortedHelpQueries = new ArrayList<>(set.size());
 			sortedHelpQueries.addAll(set);
 			Collections.sort(sortedHelpQueries, new QueryComparator());
 		}
 
 		// Return the first match (we assume there is only one)
-		for (Iterator iter = sortedHelpQueries.iterator(); iter.hasNext();) {
-			MarkerQuery query = (MarkerQuery) iter.next();
+		for (Iterator<MarkerQuery> iter = sortedHelpQueries.iterator(); iter.hasNext();) {
+			MarkerQuery query = iter.next();
 			MarkerQueryResult result = query.performQuery(marker);
 			if (result != null) {
 				// See if a matching result is registered
-				Map resultsTable = (Map) helpQueries.get(query);
+				Map<MarkerQueryResult, Collection<IConfigurationElement>> resultsTable = helpQueries.get(query);
 
 				if (resultsTable.containsKey(result)) {
 
-					Iterator elements = ((Collection) resultsTable.get(result))
-							.iterator();
+					Iterator<IConfigurationElement> elements = resultsTable.get(result).iterator();
 					while (elements.hasNext()) {
-						IConfigurationElement element = (IConfigurationElement) elements
-								.next();
+						IConfigurationElement element = elements.next();
 						// We have a match so return the help context id
 						return element.getAttribute(ATT_HELP);
 					}
@@ -133,20 +129,20 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	@Override
 	public boolean hasResolutions(IMarker marker) {
 		// Detect a match
-		for (Entry<MarkerQuery, Map> entry : resolutionQueries.entrySet()) {
+		for (Entry<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> entry : resolutionQueries
+				.entrySet()) {
 			MarkerQuery query = entry.getKey();
 			MarkerQueryResult result = query.performQuery(marker);
 			if (result != null) {
 				// See if a matching result is registered
-				Map resultsTable = entry.getValue();
+				Map<MarkerQueryResult, Collection<IConfigurationElement>> resultsTable = entry.getValue();
 
 				if (resultsTable.containsKey(result)) {
 
-					Iterator elements = ((Collection) resultsTable.get(result))
+					Iterator<IConfigurationElement> elements = resultsTable.get(result)
 							.iterator();
 					while (elements.hasNext()) {
-						IConfigurationElement element = (IConfigurationElement) elements
-								.next();
+						IConfigurationElement element = elements.next();
 
 						if (hasResolution(marker, element))
 							return true;
@@ -212,18 +208,19 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		// Collect all matches
-		ArrayList resolutions = new ArrayList();
-		for (Object resolutionQueryEntry : resolutionQueries.entrySet()) {
-			Map.Entry entry = (Entry) resolutionQueryEntry;
-			MarkerQuery query = (MarkerQuery) entry.getKey();
+		ArrayList<IMarkerResolution> resolutions = new ArrayList<>();
+		for (Entry<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> resolutionQueryEntry : resolutionQueries
+				.entrySet()) {
+			Entry<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> entry = resolutionQueryEntry;
+			MarkerQuery query = entry.getKey();
 			MarkerQueryResult result = query.performQuery(marker);
 			if (result != null) {
 				// See if a matching result is registered
-				Map resultsTable = (Map) entry.getValue();
+				Map<MarkerQueryResult, Collection<IConfigurationElement>> resultsTable = entry.getValue();
 				if (resultsTable.containsKey(result)) {
-					Iterator elements = ((Collection) resultsTable.get(result)).iterator();
+					Iterator<IConfigurationElement> elements = resultsTable.get(result).iterator();
 					while (elements.hasNext()) {
-						IConfigurationElement element = (IConfigurationElement) elements.next();
+						IConfigurationElement element = elements.next();
 						IMarkerResolutionGenerator generator = null;
 						try {
 							generator = (IMarkerResolutionGenerator) element.createExecutableExtension(ATT_CLASS);
@@ -247,7 +244,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 				}
 			}
 		}
-		return (IMarkerResolution[]) resolutions.toArray(new IMarkerResolution[resolutions.size()]);
+		return resolutions.toArray(new IMarkerResolution[resolutions.size()]);
 	}
 
 	/**
@@ -294,24 +291,25 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 * @param element
 	 *            the configuration element defining the result
 	 */
-	private void addQuery(Map table, MarkerQuery query,
+	private void addQuery(Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> table,
+			MarkerQuery query,
 			MarkerQueryResult result, IConfigurationElement element) {
 
 		// See if the query is already in the table
-		Map results = (Map) table.get(query);
+		Map<MarkerQueryResult, Collection<IConfigurationElement>> results = table.get(query);
 		if (results == null) {
 			// Create a new results table
-			results = new HashMap();
+			results = new HashMap<>();
 
 			// Add the query to the table
 			table.put(query, results);
 		}
 
 		if (results.containsKey(result)) {
-			Collection currentElements = (Collection) results.get(result);
+			Collection<IConfigurationElement> currentElements = results.get(result);
 			currentElements.add(element);
 		} else {
-			Collection elements = new HashSet();
+			Collection<IConfigurationElement> elements = new HashSet<>();
 			elements.add(element);
 
 			// Add the new result

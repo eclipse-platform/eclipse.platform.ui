@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class MarkerHelpRegistryReader extends IDERegistryReader {
     private MarkerHelpRegistry markerHelpRegistry;
 
-    private ArrayList currentAttributeNames;
+	private ArrayList<String> currentAttributeNames;
 
-    private ArrayList currentAttributeValues;
+	private ArrayList<String> currentAttributeValues;
 
     private static final String TAG_HELP = "markerHelp";//$NON-NLS-1$
 
@@ -88,12 +88,12 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
         String type = element.getAttribute(ATT_TYPE);
 
         // read attributes and values
-        currentAttributeNames = new ArrayList();
-        currentAttributeValues = new ArrayList();
+		currentAttributeNames = new ArrayList<>();
+		currentAttributeValues = new ArrayList<>();
         readElementChildren(element);
-        String[] attributeNames = (String[]) currentAttributeNames
+        String[] attributeNames = currentAttributeNames
                 .toArray(new String[currentAttributeNames.size()]);
-        String[] attributeValues = (String[]) currentAttributeValues
+        String[] attributeValues = currentAttributeValues
                 .toArray(new String[currentAttributeValues.size()]);
 
         // add query to the registry
@@ -110,12 +110,12 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
         String type = element.getAttribute(ATT_TYPE);
 
         // read attributes and values
-        currentAttributeNames = new ArrayList();
-        currentAttributeValues = new ArrayList();
+		currentAttributeNames = new ArrayList<>();
+		currentAttributeValues = new ArrayList<>();
         readElementChildren(element);
-        String[] attributeNames = (String[]) currentAttributeNames
+        String[] attributeNames = currentAttributeNames
                 .toArray(new String[currentAttributeNames.size()]);
-        String[] attributeValues = (String[]) currentAttributeValues
+        String[] attributeValues = currentAttributeValues
                 .toArray(new String[currentAttributeValues.size()]);
 
         // add query to the registry

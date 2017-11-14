@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,11 +43,11 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 
     private IProgressMonitor monitor;
 
-    private List resourcesToExport;
+	private List<? extends IResource> resourcesToExport;
 
     private IResource resource;
 
-    private List errorTable = new ArrayList(1); //IStatus
+	private List<IStatus> errorTable = new ArrayList<>(1); // IStatus
 
     private boolean useCompression = true;
 
@@ -64,13 +64,13 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *	@param resources java.util.Vector
      *	@param filename java.lang.String
      */
-    public ArchiveFileExportOperation(List resources, String filename) {
+	public ArchiveFileExportOperation(List<? extends IResource> resources, String filename) {
         super();
 
         // Eliminate redundancies in list of resources being exported
-        Iterator elementsEnum = resources.iterator();
+		Iterator<? extends IResource> elementsEnum = resources.iterator();
         while (elementsEnum.hasNext()) {
-            IResource currentResource = (IResource) elementsEnum.next();
+            IResource currentResource = elementsEnum.next();
             if (isDescendent(resources, currentResource)) {
 				elementsEnum.remove(); //Removes currentResource;
 			}
@@ -102,7 +102,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *  @param resources java.util.Vector
      *  @param filename java.lang.String
      */
-    public ArchiveFileExportOperation(IResource res, List resources, String filename) {
+	public ArchiveFileExportOperation(IResource res, List<IResource> resources, String filename) {
         this(res, filename);
         resourcesToExport = resources;
     }
@@ -145,9 +145,9 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      */
     protected int countSelectedResources() throws CoreException {
         int result = 0;
-        Iterator resources = resourcesToExport.iterator();
+		Iterator<? extends IResource> resources = resourcesToExport.iterator();
         while (resources.hasNext()) {
-			result += countChildrenOf((IResource) resources.next());
+			result += countChildrenOf(resources.next());
 		}
 
         return result;
@@ -235,10 +235,10 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *	resourcesToExport collection
      */
     protected void exportSpecifiedResources() throws InterruptedException {
-        Iterator resources = resourcesToExport.iterator();
+		Iterator<? extends IResource> resources = resourcesToExport.iterator();
 
         while (resources.hasNext()) {
-            IResource currentResource = (IResource) resources.next();
+            IResource currentResource = resources.next();
             exportResource(currentResource);
         }
     }
@@ -283,7 +283,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      *  @param resources java.util.Vector
      *  @param child org.eclipse.core.resources.IResource
      */
-    protected boolean isDescendent(List resources, IResource child) {
+	protected boolean isDescendent(List<? extends IResource> resources, IResource child) {
         if (child.getType() == IResource.PROJECT) {
 			return false;
 		}

@@ -49,7 +49,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 
     private IResource resource;
 
-    private List errorTable = new ArrayList(1);
+	private List<IStatus> errorTable = new ArrayList<>(1);
 
     //The constants for the overwrite 3 state
     private static final int OVERWRITE_NOT_SET = 0;

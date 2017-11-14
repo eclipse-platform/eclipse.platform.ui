@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ class PasteBookmarkAction extends BookmarkAction {
 			return;
 		}
         final ArrayList newMarkerAttributes = new ArrayList();
-        final ArrayList newMarkerResources = new ArrayList();
+		final ArrayList<IResource> newMarkerResources = new ArrayList<>();
         try {
             ResourcesPlugin.getWorkspace().run(monitor -> {
 				for (int i = 0; i < markerData.length; i++) {
@@ -79,7 +79,7 @@ class PasteBookmarkAction extends BookmarkAction {
             return;
         }
 		final Map [] attrs = (Map []) newMarkerAttributes.toArray(new Map [newMarkerAttributes.size()]);
-		final IResource [] resources = (IResource []) newMarkerResources.toArray(new IResource [newMarkerResources.size()]);
+		final IResource [] resources = newMarkerResources.toArray(new IResource [newMarkerResources.size()]);
 		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.BOOKMARK, attrs,
 				resources, BookmarkMessages.PasteBookmark_undoText);
 		execute(op, BookmarkMessages.PasteBookmark_errorTitle, null,

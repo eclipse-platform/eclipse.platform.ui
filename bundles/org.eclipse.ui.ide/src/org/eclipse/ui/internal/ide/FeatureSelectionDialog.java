@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,16 +88,13 @@ public class FeatureSelectionDialog extends SelectionDialog {
         setMessage(shellMessage);
 
         // Sort ascending
-        Arrays.sort(features, new Comparator() {
+		Arrays.sort(features, new Comparator<AboutInfo>() {
             Collator coll = Collator.getInstance(Locale.getDefault());
 
             @Override
-			public int compare(Object a, Object b) {
-                AboutInfo i1, i2;
+			public int compare(AboutInfo i1, AboutInfo i2) {
                 String name1, name2;
-                i1 = (AboutInfo) a;
                 name1 = i1.getFeatureLabel();
-                i2 = (AboutInfo) b;
                 name2 = i2.getFeatureLabel();
                 if (name1 == null) {
 					name1 = ""; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class OpenWorkspaceAction extends Action implements
 
 
 	private IContributionItem[] getContributionItems() {
-		ArrayList list = new ArrayList();
+		ArrayList<IContributionItem> list = new ArrayList<>();
 		final ChooseWorkspaceData data = new ChooseWorkspaceData(Platform
 				.getInstanceLocation().getURL());
 		data.readPersistedData();
@@ -127,12 +127,12 @@ public class OpenWorkspaceAction extends Action implements
 		if (list.size()>0) {
 			list.add(new Separator());
 		}
-		return (IContributionItem[]) list
+		return list
 				.toArray(new IContributionItem[list.size()]);
 	}
 
 	class MenuCreator implements IMenuCreator {
-		ArrayList menus = new ArrayList();
+		ArrayList<Menu> menus = new ArrayList<>();
 
 		private MenuManager dropDownMenuMgr;
 
@@ -185,8 +185,8 @@ public class OpenWorkspaceAction extends Action implements
 				dropDownMenuMgr = null;
 			}
 			if (menus.size()>0) {
-				for (Iterator i = menus.iterator(); i.hasNext();) {
-					Menu m = (Menu) i.next();
+				for (Iterator<Menu> i = menus.iterator(); i.hasNext();) {
+					Menu m = i.next();
 					if (!m.isDisposed()) {
 						m.dispose();
 					}

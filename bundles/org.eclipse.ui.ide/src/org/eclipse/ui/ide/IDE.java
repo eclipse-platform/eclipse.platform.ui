@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -447,12 +447,12 @@ public final class IDE {
 			return null;
 
 		int length = files.length;
-		ArrayList existentFiles = new ArrayList(length);
+		ArrayList<IFile> existentFiles = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			if (files[i].exists())
 				existentFiles.add(files[i]);
 		}
-		return (IFile[]) existentFiles.toArray(new IFile[existentFiles.size()]);
+		return existentFiles.toArray(new IFile[existentFiles.size()]);
 	}
 
 	/**
@@ -1724,7 +1724,7 @@ public final class IDE {
 		}
 		final IStatus displayStatus;
 		if (status.isMultiStatus()) {
-			List result = new ArrayList();
+			List<IStatus> result = new ArrayList<>();
 			IStatus[] children = status.getChildren();
 			for (IStatus child : children) {
 				if (!isIgnoredStatus(child, ignoreModelProviderIds)) {
@@ -1735,12 +1735,10 @@ public final class IDE {
 				return true;
 			}
 			if (result.size() == 1) {
-				displayStatus = (IStatus) result.get(0);
+				displayStatus = result.get(0);
 			} else {
-				displayStatus = new MultiStatus(status.getPlugin(), status
-						.getCode(), (IStatus[]) result
-						.toArray(new IStatus[result.size()]), status
-						.getMessage(), status.getException());
+				displayStatus = new MultiStatus(status.getPlugin(), status.getCode(),
+						result.toArray(new IStatus[result.size()]), status.getMessage(), status.getException());
 			}
 		} else {
 			if (isIgnoredStatus(status, ignoreModelProviderIds)) {

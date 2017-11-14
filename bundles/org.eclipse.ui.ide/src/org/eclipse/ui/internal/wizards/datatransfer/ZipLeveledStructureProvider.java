@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,9 @@ public class ZipLeveledStructureProvider implements
 
 	private ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
 
-	private Map children;
+	private Map<ZipEntry, List<ZipEntry>> children;
 
-	private Map directoryEntryCache = new HashMap();
+	private Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
 
 	private int stripLevel;
 
@@ -67,7 +67,7 @@ public class ZipLeveledStructureProvider implements
 	 * @return The element represented by this pathname (it may have already existed)
 	 */
 	protected ZipEntry createContainer(IPath pathname) {
-		ZipEntry existingEntry = (ZipEntry) directoryEntryCache.get(pathname);
+		ZipEntry existingEntry = directoryEntryCache.get(pathname);
 		if (existingEntry != null) {
 			return existingEntry;
 		}
@@ -82,10 +82,10 @@ public class ZipLeveledStructureProvider implements
 		}
 		ZipEntry newEntry = new ZipEntry(pathname.toString());
 		directoryEntryCache.put(pathname, newEntry);
-		List childList = new ArrayList();
+		List<ZipEntry> childList = new ArrayList<>();
 		children.put(newEntry, childList);
 
-		List parentChildList = (List) children.get(parent);
+		List<ZipEntry> parentChildList = children.get(parent);
 		parentChildList.add(newEntry);
 		return newEntry;
 	}
@@ -99,11 +99,11 @@ public class ZipLeveledStructureProvider implements
 		if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
-			parent = (ZipEntry) directoryEntryCache.get(pathname
+			parent = directoryEntryCache.get(pathname
 					.removeLastSegments(1));
 		}
 
-		List childList = (List) children.get(parent);
+		List<ZipEntry> childList = children.get(parent);
 		childList.add(entry);
 	}
 
@@ -113,7 +113,7 @@ public class ZipLeveledStructureProvider implements
 			initialize();
 		}
 
-		return ((List) children.get(element));
+		return (children.get(element));
 	}
 
 	@Override
@@ -200,12 +200,12 @@ public class ZipLeveledStructureProvider implements
 	 * specified source file.
 	 */
 	protected void initialize() {
-		children = new HashMap(1000);
+		children = new HashMap<>(1000);
 
-		children.put(root, new ArrayList());
-		Enumeration entries = zipFile.entries();
+		children.put(root, new ArrayList<>());
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
+			ZipEntry entry = entries.nextElement();
 			IPath path = new Path(entry.getName()).addTrailingSeparator();
 
 			if (entry.isDirectory()) {

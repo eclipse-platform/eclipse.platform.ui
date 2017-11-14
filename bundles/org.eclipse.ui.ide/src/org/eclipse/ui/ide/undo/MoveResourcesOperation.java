@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,9 +122,9 @@ public class MoveResourcesOperation extends
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				resources.length + (resourceDescriptions != null ? resourceDescriptions.length : 0));
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
-		List resourcesAtDestination = new ArrayList();
-		List undoDestinationPaths = new ArrayList();
-		List overwrittenResources = new ArrayList();
+		List<IResource> resourcesAtDestination = new ArrayList<>();
+		List<IPath> undoDestinationPaths = new ArrayList<>();
+		List<ResourceDescription> overwrittenResources = new ArrayList<>();
 
 		for (int i = 0; i < resources.length; i++) {
 			// Move the resources and record the overwrites that would
@@ -149,15 +149,15 @@ public class MoveResourcesOperation extends
 		}
 
 		// Reset resource descriptions to the just overwritten resources
-		setResourceDescriptions((ResourceDescription[]) overwrittenResources
+		setResourceDescriptions(overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]));
 
 		// Reset the target resources to refer to the resources in their new
 		// location.
-		setTargetResources((IResource[]) resourcesAtDestination
+		setTargetResources(resourcesAtDestination
 				.toArray(new IResource[resourcesAtDestination.size()]));
 		// Reset the destination paths that correspond to these resources
-		destinationPaths = (IPath[]) undoDestinationPaths
+		destinationPaths = undoDestinationPaths
 				.toArray(new IPath[undoDestinationPaths.size()]);
 		destination = null;
 	}

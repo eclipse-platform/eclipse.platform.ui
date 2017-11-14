@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
-
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 
@@ -110,7 +108,7 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * @param initialAttributes the initial attributes
      */
     @Override
-	public void setInitialAttributes(Map initialAttributes) {
+	public void setInitialAttributes(Map<String, Object> initialAttributes) {
     	// Method is overridden because API is being inherited from an internal class.
         super.setInitialAttributes(initialAttributes);
     }
@@ -123,7 +121,7 @@ public class TaskPropertiesDialog extends DialogTaskProperties {
      * @return the initial attributes
      */
     @Override
-	public Map getInitialAttributes() {
+	public Map<String, Object> getInitialAttributes() {
     	// Method is overridden because API is being inherited from an internal class.
         return super.getInitialAttributes();
     }

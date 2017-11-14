@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class BookmarkPropertiesDialog extends DialogMarkerProperties {
      * @param initialAttributes the initial attributes
      */
     @Override
-	public void setInitialAttributes(Map initialAttributes) {
+	public void setInitialAttributes(Map<String, Object> initialAttributes) {
     	// Method is overridden because API is being inherited from an internal class.
         super.setInitialAttributes(initialAttributes);
     }
@@ -124,7 +124,7 @@ public class BookmarkPropertiesDialog extends DialogMarkerProperties {
      * @return the initial attributes
      */
     @Override
-	public Map getInitialAttributes() {
+	public Map<String, Object> getInitialAttributes() {
     	// Method is overridden because API is being inherited from an internal class.
         return super.getInitialAttributes();
     }

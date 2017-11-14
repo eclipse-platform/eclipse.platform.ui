@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -370,7 +370,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            holds the collected existing files
 	 */
 	private void collectExistingReadonlyFiles(IPath destinationPath,
-			IResource[] copyResources, ArrayList existing) {
+			IResource[] copyResources, ArrayList<IFile> existing) {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		for (IResource resource : copyResources) {
@@ -1556,12 +1556,12 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private boolean validateEdit(IContainer destination,
 			IResource[] sourceResources) {
-		ArrayList copyFiles = new ArrayList();
+		ArrayList<IFile> copyFiles = new ArrayList<>();
 
 		collectExistingReadonlyFiles(destination.getFullPath(),
 				sourceResources, copyFiles);
 		if (copyFiles.size() > 0) {
-			IFile[] files = (IFile[]) copyFiles.toArray(new IFile[copyFiles
+			IFile[] files = copyFiles.toArray(new IFile[copyFiles
 					.size()]);
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IStatus status = workspace.validateEdit(files, messageShell);
@@ -1720,7 +1720,7 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private IResource[] validateNoNameCollisions(IContainer destination,
 			IResource[] sourceResources) {
-		List copyItems = new ArrayList();
+		List<IResource> copyItems = new ArrayList<>();
 		IWorkspaceRoot workspaceRoot = destination.getWorkspace().getRoot();
 		int overwrite = IDialogConstants.NO_ID;
 
@@ -1765,7 +1765,7 @@ public class CopyFilesAndFoldersOperation {
 				copyItems.add(resource);
 			}
 		}
-		return (IResource[]) copyItems.toArray(new IResource[copyItems.size()]);
+		return copyItems.toArray(new IResource[copyItems.size()]);
 	}
 
 	private void copyResources(final IResource[] resources, final IPath destinationPath,

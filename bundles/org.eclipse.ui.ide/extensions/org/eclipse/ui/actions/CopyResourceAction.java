@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,9 +153,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * @return The initial container; <code>null</code> if none.
      */
     IContainer getInitialContainer() {
-        List resources = getSelectedResources();
+		List<? extends IResource> resources = getSelectedResources();
         if (resources.size() > 0) {
-            IResource resource = (IResource) resources.get(0);
+            IResource resource = resources.get(0);
             return resource.getParent();
         }
         return null;
@@ -168,8 +168,8 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * @param resourceList The list of resources to converted into an array.
      * @return an array of resources to use for the operation
      */
-    protected IResource[] getResources(List resourceList) {
-        return (IResource[]) resourceList.toArray(new IResource[resourceList
+	protected IResource[] getResources(List<? extends IResource> resourceList) {
+        return resourceList.toArray(new IResource[resourceList
                 .size()]);
     }
 
@@ -196,8 +196,8 @@ public class CopyResourceAction extends SelectionListenerAction implements
             // create a new operation here.
             // isValid is API and may be called in any context.
             CopyFilesAndFoldersOperation newOperation = createOperation();
-            List sources = getSelectedResources();
-            IResource[] resources = (IResource[]) sources
+			List<? extends IResource> sources = getSelectedResources();
+            IResource[] resources = sources
                     .toArray(new IResource[sources.size()]);
             return newOperation.validateDestination(container, resources);
         }
@@ -235,7 +235,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
             // since the selection may change during the run,
             // e.g. due to window activation when the prompt dialog is dismissed.
             // For more details, see Bug 60606 [Navigator] (data loss) Navigator deletes/moves the wrong file
-            List sources = getSelectedResources();
+			List<? extends IResource> sources = getSelectedResources();
 
             IPath destination = queryDestinationResource();
             if (destination == null) {
@@ -281,7 +281,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
         }
 
         // to enable this command all selected resources must be siblings
-        List selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
         if (selectedResources.size() == 0) {
 			return false;
 		}
@@ -290,9 +290,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
         if (firstParent == null) {
             return false;
         }
-        Iterator resourcesEnum = selectedResources.iterator();
+		Iterator<? extends IResource> resourcesEnum = selectedResources.iterator();
         while (resourcesEnum.hasNext()) {
-            IResource currentResource = (IResource) resourcesEnum.next();
+            IResource currentResource = resourcesEnum.next();
             if (!currentResource.exists()) {
                 return false;
             }

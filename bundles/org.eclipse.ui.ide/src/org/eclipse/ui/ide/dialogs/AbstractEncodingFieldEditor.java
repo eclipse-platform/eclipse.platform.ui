@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -289,7 +288,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @param selectedEncoding
 	 *            the selected encoding, or <code>null</code>
 	 */
-	private void populateEncodingsCombo(List encodings, String selectedEncoding) {
+	private void populateEncodingsCombo(List<String> encodings, String selectedEncoding) {
 		String[] encodingStrings = new String[encodings.size()];
 		encodings.toArray(encodingStrings);
 		encodingCombo.setItems(encodingStrings);

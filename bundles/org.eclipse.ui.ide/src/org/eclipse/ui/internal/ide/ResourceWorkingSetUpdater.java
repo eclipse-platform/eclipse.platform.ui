@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,13 +102,13 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 		}
 	}
 
-	private List fWorkingSets;
+	private List<IWorkingSet> fWorkingSets;
 
 	/**
 	 * Create a new instance of this updater.
 	 */
 	public ResourceWorkingSetUpdater() {
-		fWorkingSets = new ArrayList();
+		fWorkingSets = new ArrayList<>();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this,
 				IResourceChangeEvent.POST_CHANGE);
 	}
@@ -154,7 +154,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 		}
 		IWorkingSet[] workingSets;
 		synchronized (fWorkingSets) {
-			workingSets = (IWorkingSet[]) fWorkingSets
+			workingSets = fWorkingSets
 					.toArray(new IWorkingSet[fWorkingSets.size()]);
 		}
 		for (IWorkingSet workingSet : workingSets) {
@@ -204,10 +204,10 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 	}
 
 	private void checkElementExistence(IWorkingSet workingSet) {
-		List elements = new ArrayList(Arrays.asList(workingSet.getElements()));
+		List<IAdaptable> elements = new ArrayList<>(Arrays.asList(workingSet.getElements()));
 		boolean changed = false;
-		for (Iterator iter = elements.iterator(); iter.hasNext();) {
-			IAdaptable element = (IAdaptable) iter.next();
+		for (Iterator<IAdaptable> iter = elements.iterator(); iter.hasNext();) {
+			IAdaptable element = iter.next();
 			boolean remove = false;
 			if (element instanceof IProject) {
 				IProject project = (IProject) element;
@@ -224,7 +224,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 			}
 		}
 		if (changed) {
-			workingSet.setElements((IAdaptable[]) elements
+			workingSet.setElements(elements
 					.toArray(new IAdaptable[elements.size()]));
 		}
 	}

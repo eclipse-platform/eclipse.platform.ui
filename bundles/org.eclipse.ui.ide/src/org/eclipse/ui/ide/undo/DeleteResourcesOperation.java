@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,7 +165,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		// in a DeleteResourcesOperation. However, this is not specified
 		// in the API, so assume that there could be mixes.
 		if (!deleteContent) {
-			ArrayList nonProjectResourcesToCheck = new ArrayList();
+			ArrayList<IResource> nonProjectResourcesToCheck = new ArrayList<>();
 			for (IResource resource : resourcesToCheck) {
 				if (resource.getType() != IResource.PROJECT) {
 					nonProjectResourcesToCheck.add(resource);
@@ -174,10 +174,8 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 			if (nonProjectResourcesToCheck.isEmpty()) {
 				return Status.OK_STATUS;
 			}
-			return super
-					.checkReadOnlyResources((IResource[]) nonProjectResourcesToCheck
-							.toArray(new IResource[nonProjectResourcesToCheck
-									.size()]));
+			return super.checkReadOnlyResources(
+					nonProjectResourcesToCheck.toArray(new IResource[nonProjectResourcesToCheck.size()]));
 		}
 		// We are deleting project content, so do it the normal way
 		return super.checkReadOnlyResources(resourcesToCheck);

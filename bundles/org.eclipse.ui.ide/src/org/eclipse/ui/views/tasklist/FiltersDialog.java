@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -637,7 +637,7 @@ class FiltersDialog extends TrayDialog {
      */
     MarkerType[] getMarkerTypes() {
         if (markerTypes == null) {
-            ArrayList typesList = new ArrayList();
+			ArrayList<MarkerType> typesList = new ArrayList<>();
 			for (MarkerType type : markerTypesModel.getTypes()) {
                 if (type.getLabel().length() > 0) {
                     if (type.isSubtypeOf(markerTypesModel
@@ -648,13 +648,12 @@ class FiltersDialog extends TrayDialog {
                     }
                 }
             }
-            Collections.sort(typesList, new Comparator() {
+			Collections.sort(typesList, new Comparator<MarkerType>() {
                 Collator collator = Collator.getInstance();
 
                 @Override
-				public int compare(Object o1, Object o2) {
-                    return collator.compare(((MarkerType) o1).getLabel(),
-                            ((MarkerType) o2).getLabel());
+				public int compare(MarkerType o1, MarkerType o2) {
+					return collator.compare(o1.getLabel(), o2.getLabel());
                 }
             });
             markerTypes = new MarkerType[typesList.size()];

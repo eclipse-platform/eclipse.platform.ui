@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,7 +213,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      * @param t
      *            The throwable from where the problem actually occurred.
      */
-    public static void log(Class clazz, String methodName, Throwable t) {
+	public static void log(Class<?> clazz, String methodName, Throwable t) {
         String msg = MessageFormat.format("Exception in {0}.{1}: {2}", //$NON-NLS-1$
 				clazz.getName(), methodName, t);
         log(msg, t);
@@ -292,7 +292,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      */
     public AboutInfo[] getFeatureInfos() {
         // cannot be cached since bundle groups come and go
-        List infos = new ArrayList();
+		List<AboutInfo> infos = new ArrayList<>();
 
         // add an entry for each bundle group
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
@@ -304,7 +304,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
             }
 		}
 
-        return (AboutInfo[]) infos.toArray(new AboutInfo[infos.size()]);
+        return infos.toArray(new AboutInfo[infos.size()]);
     }
 	/**
 	 * Get the workbench image with the given path relative to

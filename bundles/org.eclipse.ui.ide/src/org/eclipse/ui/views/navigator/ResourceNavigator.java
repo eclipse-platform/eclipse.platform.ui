@@ -1021,7 +1021,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             // check if first element has new tag defined, indicates new version
             if (children.length > 0
                     && children[0].getString(TAG_IS_ENABLED) != null) {
-                ArrayList selectedFilters = new ArrayList();
+				ArrayList<String> selectedFilters = new ArrayList<>();
                 ArrayList unSelectedFilters = new ArrayList();
 				for (IMemento memento : children) {
 					if (memento.getString(TAG_IS_ENABLED).equals(String.valueOf(true))) {

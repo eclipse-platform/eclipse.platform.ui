@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+. * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class WelcomeParser extends DefaultHandler {
 
     private WelcomeItem introItem;
 
-    private ArrayList items = new ArrayList();
+	private ArrayList<WelcomeItem> items = new ArrayList<>();
 
     private String format;
 
@@ -83,31 +83,28 @@ public class WelcomeParser extends DefaultHandler {
         }
 
         @Override
-		public void characters(char[] ch, int start, int length)
-                throws SAXException {
+		public void characters(char[] ch, int start, int length) {
         }
 
         @Override
-		public void endDocument() throws SAXException {
+		public void endDocument() {
         }
 
         @Override
 		public void endElement(String namespaceURI, String localName,
-                String qName) throws SAXException {
+				String qName) throws SAXException {
         }
 
         @Override
-		public void endPrefixMapping(String prefix) throws SAXException {
+		public void endPrefixMapping(String prefix) {
         }
 
         @Override
-		public void ignorableWhitespace(char[] ch, int start, int length)
-                throws SAXException {
+		public void ignorableWhitespace(char[] ch, int start, int length) {
         }
 
         @Override
-		public void processingInstruction(String target, String data)
-                throws SAXException {
+		public void processingInstruction(String target, String data) {
         }
 
         @Override
@@ -115,21 +112,20 @@ public class WelcomeParser extends DefaultHandler {
         }
 
         @Override
-		public void skippedEntity(String name) throws SAXException {
+		public void skippedEntity(String name) {
         }
 
         @Override
-		public void startDocument() throws SAXException {
+		public void startDocument() {
         }
 
         @Override
 		public void startElement(String namespaceURI, String localName,
-                String qName, Attributes atts) throws SAXException {
+				String qName, Attributes atts) throws SAXException {
         }
 
         @Override
-		public void startPrefixMapping(String prefix, String uri)
-                throws SAXException {
+		public void startPrefixMapping(String prefix, String uri) {
         }
     }
 
@@ -154,21 +150,21 @@ public class WelcomeParser extends DefaultHandler {
     }
 
     private class ItemHandler extends WelcomeContentHandler {
-        private ArrayList boldRanges = new ArrayList();
+		private ArrayList<int[]> boldRanges = new ArrayList<>();
 
-        protected ArrayList wrapRanges = new ArrayList();
+		protected ArrayList<int[]> wrapRanges = new ArrayList<>();
 
-        private ArrayList actionRanges = new ArrayList();
+		private ArrayList<int[]> actionRanges = new ArrayList<>();
 
-        private ArrayList pluginIds = new ArrayList();
+		private ArrayList<String> pluginIds = new ArrayList<>();
 
-        private ArrayList classes = new ArrayList();
+		private ArrayList<String> classes = new ArrayList<>();
 
-        private ArrayList helpRanges = new ArrayList();
+		private ArrayList<int[]> helpRanges = new ArrayList<>();
 
-        private ArrayList helpIds = new ArrayList();
+		private ArrayList<String> helpIds = new ArrayList<>();
 
-        private ArrayList helpHrefs = new ArrayList();
+		private ArrayList<String> helpHrefs = new ArrayList<>();
 
         private StringBuilder text = new StringBuilder();
 
@@ -180,8 +176,7 @@ public class WelcomeParser extends DefaultHandler {
 
         private class BoldHandler extends WelcomeContentHandler {
             @Override
-			public void characters(char[] ch, int start, int length)
-                    throws SAXException {
+			public void characters(char[] ch, int start, int length) {
                 ItemHandler.this.characters(ch, start, length);
             }
 
@@ -202,8 +197,7 @@ public class WelcomeParser extends DefaultHandler {
             }
 
             @Override
-			public void characters(char[] ch, int start, int length)
-                    throws SAXException {
+			public void characters(char[] ch, int start, int length) {
                 ItemHandler.this.characters(ch, start, length);
             }
 
@@ -225,8 +219,7 @@ public class WelcomeParser extends DefaultHandler {
             }
 
             @Override
-			public void characters(char[] ch, int start, int length)
-                    throws SAXException {
+			public void characters(char[] ch, int start, int length) {
                 ItemHandler.this.characters(ch, start, length);
             }
 
@@ -244,7 +237,7 @@ public class WelcomeParser extends DefaultHandler {
             if (isFormatWrapped()) {
                 // replace all line delimiters with a space
                 for (int i = 0; i < wrapRanges.size(); i++) {
-                    int[] range = (int[]) wrapRanges.get(i);
+                    int[] range = wrapRanges.get(i);
                     int start = range[0];
                     int length = range[1];
                     for (int j = start; j < start + length; j++) {
@@ -257,19 +250,18 @@ public class WelcomeParser extends DefaultHandler {
             }
             return new WelcomeItem(
                     text.toString(),
-                    (int[][]) boldRanges.toArray(new int[boldRanges.size()][2]),
-                    (int[][]) actionRanges
+                    boldRanges.toArray(new int[boldRanges.size()][2]),
+                    actionRanges
                             .toArray(new int[actionRanges.size()][2]),
-                    (String[]) pluginIds.toArray(new String[pluginIds.size()]),
-                    (String[]) classes.toArray(new String[classes.size()]),
-                    (int[][]) helpRanges.toArray(new int[helpRanges.size()][2]),
-                    (String[]) helpIds.toArray(new String[helpIds.size()]),
-                    (String[]) helpHrefs.toArray(new String[helpHrefs.size()]));
+                    pluginIds.toArray(new String[pluginIds.size()]),
+                    classes.toArray(new String[classes.size()]),
+                    helpRanges.toArray(new int[helpRanges.size()][2]),
+                    helpIds.toArray(new String[helpIds.size()]),
+                    helpHrefs.toArray(new String[helpHrefs.size()]));
         }
 
         @Override
-		public void characters(char[] ch, int start, int length)
-                throws SAXException {
+		public void characters(char[] ch, int start, int length) {
             for (int i = 0; i < length; i++) {
                 text.append(ch[start + i]);
             }
@@ -351,7 +343,7 @@ public class WelcomeParser extends DefaultHandler {
      * Returns the items.
      */
     public WelcomeItem[] getItems() {
-        return (WelcomeItem[]) items.toArray(new WelcomeItem[items.size()]);
+        return items.toArray(new WelcomeItem[items.size()]);
     }
 
     /**

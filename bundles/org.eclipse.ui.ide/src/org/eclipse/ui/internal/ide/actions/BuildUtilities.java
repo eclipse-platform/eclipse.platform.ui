@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,7 +49,7 @@ public class BuildUtilities {
 	 * @return The selected projects
 	 */
 	public static IProject[] extractProjects(Object[] selection) {
-		HashSet projects = new HashSet();
+		HashSet<IProject> projects = new HashSet<>();
 		for (Object currentSelection : selection) {
 			IResource resource = ResourceUtil.getResource(currentSelection);
 			if (resource != null) {
@@ -61,9 +62,9 @@ public class BuildUtilities {
 						projects.add(theProject);
 					}
 				} else {
-					Object marker = ResourceUtil.getAdapter(currentSelection, IMarker.class, false);
-					if (marker instanceof IMarker) {
-						IProject project = ((IMarker) marker).getResource().getProject();
+					IMarker marker = Adapters.adapt(currentSelection, IMarker.class, false);
+					if (marker != null) {
+						IProject project = marker.getResource().getProject();
 						if (project != null) {
 							projects.add(project);
 						}
@@ -71,7 +72,7 @@ public class BuildUtilities {
 				}
 			}
 		}
-		return (IProject[]) projects.toArray(new IProject[projects.size()]);
+		return projects.toArray(new IProject[projects.size()]);
 	}
 
 	/**

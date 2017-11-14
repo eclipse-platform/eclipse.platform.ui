@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,13 @@ public class StatusUtil {
 	/**
 	 * Answer a flat collection of the passed status and its recursive children
 	 */
-	protected static List flatten(IStatus aStatus) {
-		List result = new ArrayList();
+	protected static List<IStatus> flatten(IStatus aStatus) {
+		List<IStatus> result = new ArrayList<>();
 
 		if (aStatus.isMultiStatus()) {
 			for (IStatus currentChild : aStatus.getChildren()) {
 				if (currentChild.isMultiStatus()) {
-					Iterator childStatiiEnum = flatten(currentChild).iterator();
+					Iterator<IStatus> childStatiiEnum = flatten(currentChild).iterator();
 					while (childStatiiEnum.hasNext()) {
 						result.add(childStatiiEnum.next());
 					}
@@ -105,14 +105,14 @@ public class StatusUtil {
 	 * @param exception
 	 * @return {@link IStatus}
 	 */
-	public static IStatus newStatus(List children, String message,
+	public static IStatus newStatus(List<IStatus> children, String message,
 			Throwable exception) {
 
-		List flatStatusCollection = new ArrayList();
-		Iterator iter = children.iterator();
+		List<IStatus> flatStatusCollection = new ArrayList<>();
+		Iterator<IStatus> iter = children.iterator();
 		while (iter.hasNext()) {
-			IStatus currentStatus = (IStatus) iter.next();
-			Iterator childrenIter = flatten(currentStatus).iterator();
+			IStatus currentStatus = iter.next();
+			Iterator<IStatus> childrenIter = flatten(currentStatus).iterator();
 			while (childrenIter.hasNext()) {
 				flatStatusCollection.add(childrenIter.next());
 			}

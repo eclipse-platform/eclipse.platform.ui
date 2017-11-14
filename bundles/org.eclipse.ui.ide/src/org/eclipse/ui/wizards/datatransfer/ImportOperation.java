@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private Shell context;
 
-    private List errorTable = new ArrayList();
+	private List<IStatus> errorTable = new ArrayList<>();
 
     private boolean createVirtualFolder = false;
 
@@ -871,10 +871,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param existingFiles existing files to validate
      * @return list of rejected files as absolute paths. Object type IPath.
      */
-    ArrayList validateEdit(List existingFiles) {
+	ArrayList validateEdit(List<IFile> existingFiles) {
 
         if (existingFiles.size() > 0) {
-            IFile[] files = (IFile[]) existingFiles
+            IFile[] files = existingFiles
                     .toArray(new IFile[existingFiles.size()]);
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
             IStatus status = workspace.validateEdit(files, context);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,15 +40,15 @@ class MarkerType {
      * Returns all this type's supertypes.
      */
     public MarkerType[] getAllSupertypes() {
-        ArrayList result = new ArrayList();
+		ArrayList<MarkerType> result = new ArrayList<>();
         getAllSupertypes(result);
-        return (MarkerType[]) result.toArray(new MarkerType[result.size()]);
+        return result.toArray(new MarkerType[result.size()]);
     }
 
     /**
      * Appends all this type's supertypes to the given list.
      */
-    private void getAllSupertypes(ArrayList result) {
+	private void getAllSupertypes(ArrayList<MarkerType> result) {
 		for (MarkerType sup : getSupertypes()) {
             if (!result.contains(sup)) {
                 result.add(sup);
@@ -77,7 +77,7 @@ class MarkerType {
      * @return the direct subtypes of this type
      */
     public MarkerType[] getSubtypes() {
-        ArrayList result = new ArrayList();
+		ArrayList<MarkerType> result = new ArrayList<>();
 		for (MarkerType markerType : model.getTypes()) {
 			for (String supertypeId : markerType.getSupertypeIds()) {
 				if (supertypeId.equals(id)) {
@@ -85,7 +85,7 @@ class MarkerType {
                 }
             }
         }
-        return (MarkerType[]) result.toArray(new MarkerType[result.size()]);
+        return result.toArray(new MarkerType[result.size()]);
     }
 
     /**
@@ -99,14 +99,14 @@ class MarkerType {
      * Returns this type's direct supertypes.
      */
     public MarkerType[] getSupertypes() {
-        ArrayList result = new ArrayList();
+		ArrayList<MarkerType> result = new ArrayList<>();
         for (String supertypeId : supertypeIds) {
             MarkerType sup = model.getType(supertypeId);
             if (sup != null) {
                 result.add(sup);
             }
         }
-        return (MarkerType[]) result.toArray(new MarkerType[result.size()]);
+        return result.toArray(new MarkerType[result.size()]);
     }
 
     /**
