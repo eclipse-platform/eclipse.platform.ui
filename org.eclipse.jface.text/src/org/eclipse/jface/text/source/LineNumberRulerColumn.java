@@ -767,7 +767,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				gcImage.dispose();
 				return imageData;
 			});
-			
+
 		} else {
 			if (fBuffer == null)
 				fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
@@ -795,9 +795,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * This method is not API and it is expected to disappear in Eclipse 4.8.
 	 * Subclasses that want to take advantage of the unsupported workaround for bug 516258
 	 * can re-implement this method and return true.
-	 * 
+	 *
 	 * @return true iff this class supports the workaround for bug 516258
-	 * 
+	 *
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 3.12
@@ -810,9 +810,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * This method is not API and it is expected to disappear in Eclipse 4.8.
 	 * Subclasses that want to take advantage of the unsupported workaround for bug 516258
 	 * can override this method and store the given zoom level for later use.
-	 * 
+	 *
 	 * @param zoom the zoom level to use for drawing operations
-	 * 
+	 *
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 3.12
@@ -820,7 +820,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	protected void internalSetZoom(int zoom) {
 		// callback for subclasses
 	}
-	
+
 	/**
 	 * Returns the view port height in lines.
 	 *

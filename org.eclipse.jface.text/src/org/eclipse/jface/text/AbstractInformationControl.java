@@ -647,7 +647,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			setStatusLabelColors(fStatusLabel.getForeground(), background);
 		}
 	}
-	
+
 	private void setStatusLabelColors(Color foreground, Color background) {
 		if (foreground == null || background == null) return;
 		if (fStatusLabelForeground != null) {

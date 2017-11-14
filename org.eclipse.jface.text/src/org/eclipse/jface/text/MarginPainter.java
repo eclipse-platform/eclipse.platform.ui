@@ -46,7 +46,7 @@ public class MarginPainter implements IPainter, PaintListener {
 	/** The line width of the line to be painted, default value <code>1</code> */
 	private int fLineWidth= 0; // NOTE: 0 means width is 1 but with optimized performance
 	/** The cached x-offset of the <code>fMarginWidth</code> for the current font */
-	private int fCachedWidgetX= -1;	
+	private int fCachedWidgetX= -1;
 	private Font fFontForCachedWidgetX;
 	/** The active state of this painter */
 	private boolean fIsActive= false;

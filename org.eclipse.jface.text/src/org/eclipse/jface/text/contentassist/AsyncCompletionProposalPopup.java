@@ -54,7 +54,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		private final int fOffset;
 		private final int fSize;
 		private int fRemaining;
-		
+
 		public ComputingProposal(int offset, int size) {
 			fSize= size;
 			fRemaining = size;

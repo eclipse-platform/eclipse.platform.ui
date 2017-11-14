@@ -664,7 +664,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the zoom level for the current painting operation. Workaround for bug 516293.
-	 * 
+	 *
 	 * @param zoom the zoom to set
 	 * @since 3.12
 	 */

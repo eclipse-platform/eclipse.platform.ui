@@ -153,7 +153,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			fCurrentStyleRange.strikeout= false;
 		}
 	}
-	
+
 	private void finishAndReinitializeCurrentStyle(int offset) {
 		if (fTextPresentation != null && offset != fCurrentStyleRange.start && !isDefaultStyleRange(fCurrentStyleRange)) {
 			fCurrentStyleRange.length= offset - fCurrentStyleRange.start;
@@ -219,12 +219,12 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			startItalic();
 			return EMPTY_STRING;
 		}
-		
+
 		if ("/i".equals(html) || "/em".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
 			stopItalic();
 			return EMPTY_STRING;
 		}
-		
+
 		if ("b".equals(html) || "strong".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
 			startBold();
 			return EMPTY_STRING;

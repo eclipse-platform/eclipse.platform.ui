@@ -89,7 +89,7 @@ import org.eclipse.jface.text.TextUtilities;
 /**
  * The standard implementation of the {@link IContentAssistant} interface. Usually, clients
  * instantiate this class and configure it before using it.
- * 
+ *
  * Since 3.12, it can compute and display the proposals asynchronously when invoking
  * {@link #ContentAssistant(boolean)} with <code>true</code>.
  */
@@ -1054,7 +1054,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Tells whether this content assistant allows to run asynchronous
-	 * 
+	 *
 	 * @since 3.12
 	 */
 	private boolean fAsynchronous;
@@ -1076,7 +1076,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * context information above the location at which it was activated. If auto activation will be
 	 * enabled, without further configuration steps, this content assistant is activated after a 500
 	 * milliseconds delay. It uses the default partitioning.
-	 * 
+	 *
 	 * @param asynchronous <true> if this content assistant should present the proposals
 	 *            asynchronously, <code>false</code> otherwise
 	 * @since 3.12
@@ -1122,7 +1122,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		else
 			fProcessors.put(contentType, Collections.singleton(processor));
 	}
-	
+
 	/**
 	 * Registers a given content assist processor for a particular content type. If there is already
 	 * a processor registered for this type, it is kept and the new processor is appended to the list
