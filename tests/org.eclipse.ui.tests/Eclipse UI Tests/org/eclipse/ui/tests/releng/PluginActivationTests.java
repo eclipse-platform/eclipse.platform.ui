@@ -18,13 +18,14 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 /**
- * Tests to ensure the correct bundles are activated. Their are two reasons why a bundle is activated:
+ * Tests to ensure the correct bundles are activated. There are two reasons why
+ * a bundle is activated:
  *
- * - a plugin contributes OSGi services
- * - a plugin contains an activator
+ * - a plugin contributes OSGi services - a plugin contains an activator
  *
- * Additional plug-ins with activators should be avoided as they can slow down the startup of the Eclipse IDE
- * Additional plug-ins provided OSGi services is desired as the OSGi framework initializes these services asynchronously
+ * Additional plug-ins with activators should be avoided as they can slow down
+ * the startup of the Eclipse IDE Additional plug-ins provided OSGi services is
+ * desired as the OSGi framework initializes these services asynchronously
  *
  * @since 3.1
  */
@@ -75,8 +76,6 @@ public class PluginActivationTests {
 			"org.eclipse.ui.views.properties.tabbed",
 			"org.eclipse.ui.win32",
 			"org.eclipse.ui.workbench.compatibility",
-			"org.eclipse.update.core.win32",
-			"org.eclipse.update.core.linux",
 			"org.eclipse.update.ui",
 			"org.junit",
 			"org.eclipse.core.databinding.beans",
