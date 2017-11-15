@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -154,12 +153,7 @@ public class ProgressRegion {
 
         animationItem.getControl().setLayoutData(gd);
 
-        viewerControl.addMouseListener(new MouseAdapter() {
-            @Override
-			public void mouseDoubleClick(MouseEvent e) {
-                processDoubleClick();
-            }
-        });
+		viewerControl.addMouseListener(MouseListener.mouseDoubleClickAdapter(e -> processDoubleClick()));
 
         //Never show debug info
         IContentProvider provider = contentProviderfactory.getProgressViewerContentProvider(viewer,

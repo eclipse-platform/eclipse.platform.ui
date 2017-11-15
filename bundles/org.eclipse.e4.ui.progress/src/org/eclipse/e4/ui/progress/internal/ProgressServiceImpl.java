@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,13 +90,7 @@ public class ProgressServiceImpl implements IProgressService {
 		final RunnableWithStatus runnableWithStatus = new RunnableWithStatus(
 				context,
 				runnable, rule);
-		uiSynchronize.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				BusyIndicator.showWhile(getDisplay(), runnableWithStatus);
-			}
-
-		});
+		uiSynchronize.syncExec(() -> BusyIndicator.showWhile(getDisplay(), runnableWithStatus));
 
 		IStatus status = runnableWithStatus.getStatus();
 		if (!status.isOK()) {
@@ -132,20 +126,17 @@ public class ProgressServiceImpl implements IProgressService {
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
 		// show a busy cursor until the dialog opens
-		Runnable dialogWaitRunnable = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					dialog.setOpenOnRun(false);
-					setUserInterfaceActive(false);
-					dialog.run(true, true, runnable);
-				} catch (InvocationTargetException e) {
-					invokes[0] = e;
-				} catch (InterruptedException e) {
-					interrupt[0] = e;
-				} finally {
-					setUserInterfaceActive(true);
-				}
+		Runnable dialogWaitRunnable = () -> {
+			try {
+				dialog.setOpenOnRun(false);
+				setUserInterfaceActive(false);
+				dialog.run(true, true, runnable);
+			} catch (InvocationTargetException e1) {
+				invokes[0] = e1;
+			} catch (InterruptedException e2) {
+				interrupt[0] = e2;
+			} finally {
+				setUserInterfaceActive(true);
 			}
 		};
 		busyCursorWhile(dialogWaitRunnable, dialog);

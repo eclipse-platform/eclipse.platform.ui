@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal.legacy;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -32,32 +29,7 @@ public class StatusUtil {
         // a wrapper, unwrap it
         Throwable cause = null;
         if (exception != null) {
-            if (exception instanceof CoreException) {
-                // Workaround: CoreException contains a cause, but does not actually implement getCause().
-                // If we get a CoreException, we need to manually unpack the cause. Otherwise, use
-                // the general-purpose mechanism. Remove this branch if CoreException ever implements
-                // a correct getCause() method.
-                CoreException ce = (CoreException)exception;
-                cause = ce.getStatus().getException();
-            } else {
-            	// use reflect instead of a direct call to getCause(), to allow compilation against JCL Foundation (bug 80053)
-            	try {
-            		Method causeMethod = exception.getClass().getMethod("getCause", new Class[0]); //$NON-NLS-1$
-            		Object o = causeMethod.invoke(exception, new Object[0]);
-            		if (o instanceof Throwable) {
-            			cause = (Throwable) o;
-            		}
-            	}
-            	catch (NoSuchMethodException e) {
-            		// ignore
-            	} catch (IllegalArgumentException e) {
-            		// ignore
-				} catch (IllegalAccessException e) {
-            		// ignore
-				} catch (InvocationTargetException e) {
-            		// ignore
-				}
-            }
+			cause = exception.getCause();
 
             if (cause == null) {
                 cause = exception;

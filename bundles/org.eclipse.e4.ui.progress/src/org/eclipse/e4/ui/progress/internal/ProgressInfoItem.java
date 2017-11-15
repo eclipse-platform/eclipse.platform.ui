@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,10 +47,8 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -227,21 +225,18 @@ public class ProgressInfoItem extends Composite {
 				cancelOrRemove();
 			}
 		});
-		actionBar.addListener(SWT.Traverse, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (indexListener == null) {
-					return;
-				}
-				int detail = event.detail;
-				if (detail == SWT.TRAVERSE_ARROW_NEXT) {
-					indexListener.selectNext();
-				}
-				if (detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
-					indexListener.selectPrevious();
-				}
-
+		actionBar.addListener(SWT.Traverse, event -> {
+			if (indexListener == null) {
+				return;
 			}
+			int detail = event.detail;
+			if (detail == SWT.TRAVERSE_ARROW_NEXT) {
+				indexListener.selectNext();
+			}
+			if (detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
+				indexListener.selectPrevious();
+			}
+
 		});
 		updateToolBarValues();
 
@@ -754,17 +749,14 @@ public class ProgressInfoItem extends Composite {
 				}
 			});
 
-			link.addListener(SWT.Resize, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
+			link.addListener(SWT.Resize, event -> {
 
-					Object text = link.getData(TEXT_KEY);
-					if (text == null)
-						return;
+				Object text = link.getData(TEXT_KEY);
+				if (text == null)
+					return;
 
-					updateText((String) text, link);
+				updateText((String) text, link);
 
-				}
 			});
 			taskEntries.add(link);
 		} else {

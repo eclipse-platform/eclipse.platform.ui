@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Image;
@@ -71,28 +68,9 @@ public abstract class AnimationItem {
 
         Control animationItem = createAnimationItem(parent);
 
-        animationItem.addMouseListener(new MouseListener() {
-            @Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-                ProgressManagerUtil.openProgressView();
-            }
-
-            @Override
-			public void mouseDown(MouseEvent arg0) {
-                //Do nothing
-            }
-
-            @Override
-			public void mouseUp(MouseEvent arg0) {
-                //Do nothing
-            }
-        });
-        animationItem.addDisposeListener(new DisposeListener() {
-            @Override
-			public void widgetDisposed(DisposeEvent e) {
-                animationManager.removeItem(AnimationItem.this);
-            }
-        });
+		animationItem
+				.addMouseListener(MouseListener.mouseDoubleClickAdapter(e -> ProgressManagerUtil.openProgressView()));
+		animationItem.addDisposeListener(e -> animationManager.removeItem(AnimationItem.this));
         animationManager.addItem(this);
     }
 

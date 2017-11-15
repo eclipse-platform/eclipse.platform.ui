@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,38 +83,33 @@ public abstract class UIJob extends Job {
         if (uiSynchronize == null) {
             return Status.CANCEL_STATUS;
         }
-        uiSynchronize.asyncExec(new Runnable() {
-            @Override
-			public void run() {
-                IStatus result = null;
-                Throwable throwable = null;
-                try {
-                    //As we are in the UI Thread we can
-                    //always know what to tell the job.
-                    setThread(Thread.currentThread());
-                    if (monitor.isCanceled()) {
-						result = Status.CANCEL_STATUS;
-					} else {
-                        // TODO E4 - missing e4 replacement
-                        // UIStats.start(UIStats.UI_JOB, getName());
-                        result = runInUIThread(monitor);
-                    }
+		uiSynchronize.asyncExec(() -> {
+			IStatus result = null;
+			Throwable throwable = null;
+			try {
+				// As we are in the UI Thread we can
+				// always know what to tell the job.
+				setThread(Thread.currentThread());
+				if (monitor.isCanceled()) {
+					result = Status.CANCEL_STATUS;
+				} else {
+					// TODO E4 - missing e4 replacement
+					// UIStats.start(UIStats.UI_JOB, getName());
+					result = runInUIThread(monitor);
+				}
 
-                } catch(Throwable t){
-                	throwable = t;
-                } finally {
-                    // TODO E4 - missing e4 replacement
-                    // UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
-                    if (result == null) {
-						result = new Status(IStatus.ERROR,
-                                IProgressConstants.PLUGIN_ID, IStatus.ERROR,
-                                ProgressMessages.InternalError,
-                                throwable);
-                    }
-                    done(result);
-                }
-            }
-        });
+			} catch (Throwable t) {
+				throwable = t;
+			} finally {
+				// TODO E4 - missing e4 replacement
+				// UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
+				if (result == null) {
+					result = new Status(IStatus.ERROR, IProgressConstants.PLUGIN_ID, IStatus.ERROR,
+							ProgressMessages.InternalError, throwable);
+				}
+				done(result);
+			}
+		});
         return Job.ASYNC_FINISH;
     }
 

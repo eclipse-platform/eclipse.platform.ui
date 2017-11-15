@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.e4.ui.progress.internal.ProgressViewUpdater;
 import org.eclipse.e4.ui.progress.internal.ProgressViewerContentProvider;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -58,12 +57,9 @@ public class ProgressView {
 		viewer.setContentProvider(provider);
 		viewer.setInput(progressManager);
 
-		selectionListener = new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (selectionService != null)
-					selectionService.setSelection(event.getSelection());
-			}
+		selectionListener = event -> {
+			if (selectionService != null)
+				selectionService.setSelection(event.getSelection());
 		};
 		viewer.addSelectionChangedListener(selectionListener);
 	}

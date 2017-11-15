@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class ProgressManager extends ProgressProvider {
 	        .synchronizedMap(new HashMap<Object, Collection<IJobBusyListener>>());
 
 	//	list of IJobProgressManagerListener
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<IJobProgressManagerListener> listeners = new ListenerList<>();
 
 	IJobChangeListener changeListener;
 
@@ -505,8 +505,7 @@ public class ProgressManager extends ProgressProvider {
 			sleepGroup(group,info);
 		}
 
-		for (Object element : listeners.getListeners()) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
+		for (IJobProgressManagerListener listener : listeners) {
 			// Is this one the user never sees?
 			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
 				continue;
@@ -537,9 +536,8 @@ public class ProgressManager extends ProgressProvider {
 	 * @param group
 	 */
 	private void sleepGroup(GroupInfo group, JobInfo info) {
-		for (Object element : listeners.getListeners()) {
+		for (IJobProgressManagerListener listener : listeners) {
 
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
 			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
 				continue;
 
@@ -582,8 +580,7 @@ public class ProgressManager extends ProgressProvider {
 			refreshGroup(group);
 		}
 
-		for (Object element : listeners.getListeners()) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
+		for (IJobProgressManagerListener listener : listeners) {
 			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.refreshJobInfo(info);
 			}
@@ -597,8 +594,8 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public void refreshGroup(GroupInfo info) {
 
-		for (Object element : listeners.getListeners()) {
-			((IJobProgressManagerListener)element).refreshGroup(info);
+		for (IJobProgressManagerListener element : listeners) {
+			element.refreshGroup(info);
 		}
 	}
 
@@ -609,8 +606,8 @@ public class ProgressManager extends ProgressProvider {
 	public void refreshAll() {
 
 		pruneStaleJobs();
-		for (Object element : listeners.getListeners()) {
-			((IJobProgressManagerListener)element).refreshAll();
+		for (IJobProgressManagerListener element : listeners) {
+			element.refreshAll();
 		}
 
 	}
@@ -627,8 +624,7 @@ public class ProgressManager extends ProgressProvider {
 		jobs.remove(job);
 		runnableMonitors.remove(job);
 
-		for (Object element : listeners.getListeners()) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
+		for (IJobProgressManagerListener listener : listeners) {
 			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.removeJob(info);
 			}
@@ -643,8 +639,8 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public void removeGroup(GroupInfo group) {
 
-		for (Object element : listeners.getListeners()) {
-			((IJobProgressManagerListener)element).removeGroup(group);
+		for (IJobProgressManagerListener element : listeners) {
+			element.removeGroup(group);
 		}
 	}
 
@@ -660,8 +656,7 @@ public class ProgressManager extends ProgressProvider {
 		}
 
 		jobs.put(info.getJob(), info);
-		for (Object element : listeners.getListeners()) {
-			IJobProgressManagerListener listener = (IJobProgressManagerListener) element;
+		for (IJobProgressManagerListener listener : listeners) {
 			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.addJob(info);
 			}
@@ -788,10 +783,8 @@ public class ProgressManager extends ProgressProvider {
 	 * @return ImageData[]
 	 */
 	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
-		try {
-			InputStream stream = fileSystemPath.openStream();
+		try (InputStream stream = fileSystemPath.openStream()) {
 			ImageData[] result = loader.load(stream);
-			stream.close();
 			return result;
 		} catch (FileNotFoundException exception) {
 			ProgressManagerUtil.logException(exception);

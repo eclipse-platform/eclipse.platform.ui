@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -89,12 +85,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      */
     @Override
 	protected void hookControl(Control control) {
-        control.addDisposeListener(new DisposeListener() {
-            @Override
-			public void widgetDisposed(DisposeEvent event) {
-                handleDispose(event);
-            }
-        });
+		control.addDisposeListener(event -> handleDispose(event));
     }
 
     @Override
@@ -140,52 +131,49 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     }
 
     private void initializeListeners() {
-        canvas.addPaintListener(new PaintListener() {
-            @Override
-			public void paintControl(PaintEvent event) {
+		canvas.addPaintListener(event -> {
 
-                GC gc = event.gc;
-                Transform transform = null;
-                if (orientation == SWT.VERTICAL) {
-	                transform = new Transform(event.display);
-	            	transform.translate(TrimUtil.TRIM_DEFAULT_HEIGHT, 0);
-	            	transform.rotate(90);
-                }
-                ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+			GC gc = event.gc;
+			Transform transform = null;
+			if (orientation == SWT.VERTICAL) {
+				transform = new Transform(event.display);
+				transform.translate(TrimUtil.TRIM_DEFAULT_HEIGHT, 0);
+				transform.rotate(90);
+			}
+			ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
 
-                int itemCount = Math.min(displayedItems.length, numShowItems);
+			int itemCount = Math.min(displayedItems.length, numShowItems);
 
-                int yOffset = 0;
-                int xOffset = 0;
-                if (numShowItems == 1) {//If there is a single item try to center it
-                    Rectangle clientArea = canvas.getParent().getClientArea();
-                    if (orientation == SWT.HORIZONTAL) {
-                    	int size = clientArea.height;
-	                    yOffset = size - (fontMetrics.getHeight());
-	                    yOffset = yOffset / 2;
-                    } else {
-                    	int size = clientArea.width;
-                    	xOffset = size - (fontMetrics.getHeight());
-                    	xOffset = xOffset / 2;
-                    }
-                }
+			int yOffset = 0;
+			int xOffset = 0;
+			if (numShowItems == 1) {// If there is a single item try to center it
+				Rectangle clientArea = canvas.getParent().getClientArea();
+				if (orientation == SWT.HORIZONTAL) {
+					int size1 = clientArea.height;
+					yOffset = size1 - (fontMetrics.getHeight());
+					yOffset = yOffset / 2;
+				} else {
+					int size2 = clientArea.width;
+					xOffset = size2 - (fontMetrics.getHeight());
+					xOffset = xOffset / 2;
+				}
+			}
 
-                for (int i = 0; i < itemCount; i++) {
-                    String string = labelProvider.getText(displayedItems[i]);
-                    if(string == null) {
-						string = "";//$NON-NLS-1$
-					}
-                    if (orientation == SWT.HORIZONTAL) {
-                    	gc.drawString(string, 2, yOffset + (i * fontMetrics.getHeight()), true);
-                    } else {
-		            	gc.setTransform(transform);
-                    	gc.drawString(string, xOffset + (i * fontMetrics.getHeight()), 2, true);
-                    }
-                }
-                if (transform != null)
-                	transform.dispose();
-            }
-        });
+			for (int i = 0; i < itemCount; i++) {
+				String string = labelProvider.getText(displayedItems[i]);
+				if (string == null) {
+					string = "";//$NON-NLS-1$
+				}
+				if (orientation == SWT.HORIZONTAL) {
+					gc.drawString(string, 2, yOffset + (i * fontMetrics.getHeight()), true);
+				} else {
+					gc.setTransform(transform);
+					gc.drawString(string, xOffset + (i * fontMetrics.getHeight()), 2, true);
+				}
+			}
+			if (transform != null)
+				transform.dispose();
+		});
     }
 
     @Override

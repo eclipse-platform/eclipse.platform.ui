@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.progress.internal;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
@@ -64,12 +63,7 @@ public class ProgressManagerUtil {
 			 */
 			for (int retries = 3; retries > 0; retries--) {
 				try {
-					Arrays.sort(elements, new Comparator<Object>() {
-						@Override
-						public int compare(Object a, Object b) {
-							return ProgressViewerComparator.this.compare(viewer, a, b);
-						}
-					});
+					Arrays.sort(elements, (a, b) -> ProgressViewerComparator.this.compare(viewer, a, b));
 					return; // success
 				} catch (IllegalArgumentException e) {
 					// retry

@@ -24,10 +24,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -85,12 +81,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 		finishedJobs.addListener(this);
 
 		progressRegion = region;
-		mouseListener = new MouseAdapter() {
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				doAction();
-			}
-		};
+		mouseListener = MouseListener.mouseDoubleClickAdapter(e -> doAction());
 	}
 
 	void doAction() {
@@ -256,15 +247,11 @@ public class ProgressAnimationItem extends AnimationItem implements
 		}
 
 		top = new Composite(parent, SWT.NULL);
-		top.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				finishedJobs.removeListener(
-						ProgressAnimationItem.this);
-				noneImage.dispose();
-				okImage.dispose();
-				errorImage.dispose();
-			}
+		top.addDisposeListener(e -> {
+			finishedJobs.removeListener(ProgressAnimationItem.this);
+			noneImage.dispose();
+			okImage.dispose();
+			errorImage.dispose();
 		});
 
 		boolean isCarbon = Util.isMac();
@@ -361,23 +348,13 @@ public class ProgressAnimationItem extends AnimationItem implements
 	@Override
 	public void removed(JobTreeElement info) {
 		final Display display = Display.getDefault();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				refresh();
-			}
-		});
+		display.asyncExec(() -> refresh());
 	}
 
 	@Override
 	public void finished(final JobTreeElement jte) {
 		final Display display = Display.getDefault();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				refresh();
-			}
-		});
+		display.asyncExec(() -> refresh());
 	}
 
 	protected StatusReporter getStatusReporter() {

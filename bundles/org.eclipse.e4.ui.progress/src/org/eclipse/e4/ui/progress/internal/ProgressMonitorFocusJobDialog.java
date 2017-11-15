@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -76,14 +74,11 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(job.getName());
-		shell.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					cancelPressed();
-					e.detail = SWT.TRAVERSE_NONE;
-					e.doit = true;
-				}
+		shell.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE) {
+				cancelPressed();
+				e.detail = SWT.TRAVERSE_NONE;
+				e.doit = true;
 			}
 		});
 	}
@@ -162,44 +157,23 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			public void beginTask(String name, int totalWork) {
 				final String finalName = name;
 				final int finalWork = totalWork;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().beginTask(finalName, finalWork);
-					}
-				});
+				runAsync(() -> getProgressMonitor().beginTask(finalName, finalWork));
 			}
 
 			@Override
 			public void clearBlocked() {
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						((IProgressMonitorWithBlocking) getProgressMonitor())
-								.clearBlocked();
-					}
-				});
+				runAsync(() -> ((IProgressMonitorWithBlocking) getProgressMonitor()).clearBlocked());
 			}
 
 			@Override
 			public void done() {
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().done();
-					}
-				});
+				runAsync(() -> getProgressMonitor().done());
 			}
 
 			@Override
 			public void internalWorked(double work) {
 				final double finalWork = work;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().internalWorked(finalWork);
-					}
-				});
+				runAsync(() -> getProgressMonitor().internalWorked(finalWork));
 			}
 
 			@Override
@@ -229,32 +203,23 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					display = currentShell.getDisplay();
 				}
 
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (alreadyClosed) {
-							return;// Check again as the async may come too
-							// late
-						}
-						Shell shell = getShell();
-						if (shell != null && shell.isDisposed())
-							return;
-
-						runnable.run();
+				display.asyncExec(() -> {
+					if (alreadyClosed) {
+						return;// Check again as the async may come too
+						// late
 					}
+					Shell shell = getShell();
+					if (shell != null && shell.isDisposed())
+						return;
+
+					runnable.run();
 				});
 			}
 
 			@Override
 			public void setBlocked(IStatus reason) {
 				final IStatus finalReason = reason;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						((IProgressMonitorWithBlocking) getProgressMonitor())
-								.setBlocked(finalReason);
-					}
-				});
+				runAsync(() -> ((IProgressMonitorWithBlocking) getProgressMonitor()).setBlocked(finalReason));
 			}
 
 			@Override
@@ -265,23 +230,13 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			@Override
 			public void setTaskName(String name) {
 				final String finalName = name;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().setTaskName(finalName);
-					}
-				});
+				runAsync(() -> getProgressMonitor().setTaskName(finalName));
 			}
 
 			@Override
 			public void subTask(String name) {
 				final String finalName = name;
-				runAsync(new Runnable() {
-					@Override
-					public void run() {
-						getProgressMonitor().subTask(finalName);
-					}
-				});
+				runAsync(() -> getProgressMonitor().subTask(finalName));
 			}
 
 			@Override
@@ -342,19 +297,16 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		// start with a quick busy indicator. Lock the UI as we
 		// want to preserve modality
 		BusyIndicator.showWhile(getDisplay(),
-				new Runnable() {
-					@Override
-					public void run() {
-						try {
-							synchronized (jobIsDone) {
-								if (job.getState() != Job.NONE) {
-									jobIsDone.wait(ProgressManagerUtil.SHORT_OPERATION_TIME);
-								}
+				() -> {
+					try {
+						synchronized (jobIsDone) {
+							if (job.getState() != Job.NONE) {
+								jobIsDone.wait(ProgressManagerUtil.SHORT_OPERATION_TIME);
 							}
-						} catch (InterruptedException e) {
-							// Do not log as this is a common operation from the
-							// lock listener
 						}
+					} catch (InterruptedException e) {
+						// Do not log as this is a common operation from the
+						// lock listener
 					}
 				});
 		job.removeJobChangeListener(jobListener);
