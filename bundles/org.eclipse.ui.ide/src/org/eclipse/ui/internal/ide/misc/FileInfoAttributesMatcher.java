@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2017 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -203,43 +206,11 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	 * return value in milliseconds since epoch(1970-01-01T00:00:00Z)
 	 */
 	private static long getFileCreationTime(String fullPath) {
-		/*
-		java.nio.file.FileSystem fs = java.nio.file.FileSystems.getDefault();
-		java.nio.file.FileRef fileRef = fs.getPath(file);
-		java.nio.file.attribute.BasicFileAttributes attributes = java.nio.file.attribute.Attributes.readBasicFileAttributes(fileRef, new java.nio.file.LinkOption[0]);
-		return attributes.creationTime();
-        */
-
-		try {
-			Class<?> fileSystems = Class.forName("java.nio.file.FileSystems"); //$NON-NLS-1$
-			Method getDefault = fileSystems.getMethod("getDefault"); //$NON-NLS-1$
-			Object fs = getDefault.invoke(null);
-
-			Class<?> fileRef = Class.forName("java.nio.file.FileRef"); //$NON-NLS-1$
-
-			Class<?> fileSystem = Class.forName("java.nio.file.FileSystem"); //$NON-NLS-1$
-			Method getPath = fileSystem.getMethod("getPath", String.class); //$NON-NLS-1$
-			Object fileRefObj = getPath.invoke(fs, fullPath);
-
-			Class<?> attributes = Class.forName("java.nio.file.attribute.Attributes"); //$NON-NLS-1$
-			Class<?> linkOptions = Class.forName("java.nio.file.LinkOption"); //$NON-NLS-1$
-			Object linkOptionsEmptyArray = Array.newInstance(linkOptions, 0);
-			Method readBasicFileAttributes = attributes.getMethod("readBasicFileAttributes", fileRef, //$NON-NLS-1$
-					linkOptionsEmptyArray.getClass());
-			Object attributesObj = readBasicFileAttributes.invoke(null, new Object[] {fileRefObj, linkOptionsEmptyArray});
-
-			Class<?> basicAttributes = Class.forName("java.nio.file.attribute.BasicFileAttributes"); //$NON-NLS-1$
-			Method creationTime = basicAttributes.getMethod("creationTime"); //$NON-NLS-1$
-			Object time = creationTime.invoke(attributesObj);
-
-			Class<?> fileTime = Class.forName("java.nio.file.attribute.FileTime"); //$NON-NLS-1$
-			Method toMillis = fileTime.getMethod("toMillis"); //$NON-NLS-1$
-			Object result = toMillis.invoke(time);
-
-			if (result instanceof Long) {
-				return ((Long) result).longValue();
-			}
-		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+		try (FileSystem fs = java.nio.file.FileSystems.getDefault()) {
+			Path fileRef = fs.getPath(fullPath);
+			BasicFileAttributes attributes = Files.readAttributes(fileRef, BasicFileAttributes.class);
+			return attributes.creationTime().toMillis();
+		} catch (IOException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 		return 0;
