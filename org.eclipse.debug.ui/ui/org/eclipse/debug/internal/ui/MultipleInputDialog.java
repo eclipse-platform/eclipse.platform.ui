@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,7 +213,7 @@ public class MultipleInputDialog extends Dialog {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
+				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
 				dialog.setMessage(DebugUIMessages.MultipleInputDialog_7);
 				String currentWorkingDir = text.getText();
 				if (!currentWorkingDir.trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {

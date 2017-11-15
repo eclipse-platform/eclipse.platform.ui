@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,7 +91,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * This method handles the fBrowseForFileButton being pressed.
 	 */
 	protected void handleBrowseForFileButtonPressed() {
-		FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.OPEN);
+		FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.OPEN | SWT.SHEET);
 		dialog.setFilterExtensions(new String[]{"*."+IImportExportConstants.EXTENSION});  //$NON-NLS-1$
 		String file = dialog.open();
 		if(file != null) {

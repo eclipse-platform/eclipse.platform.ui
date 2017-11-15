@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,7 +218,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		if (last == null) {
 			last = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
-		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SINGLE);
+		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SINGLE | SWT.SHEET);
 		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0);
 		dialog.setMessage(SourceLookupUIMessages.DirectorySourceContainerDialog_1);
 		dialog.setFilterPath(last);

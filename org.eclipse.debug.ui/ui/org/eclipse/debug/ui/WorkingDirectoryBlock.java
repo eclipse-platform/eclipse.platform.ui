@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -183,7 +184,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 * Show a dialog that lets the user select a working directory
 	 */
 	private void handleWorkingDirBrowseButtonSelected() {
-		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
 		dialog.setMessage(DebugUIMessages.WorkingDirectoryBlock_7);
 		String currentWorkingDir = getWorkingDirectoryText();
 		if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$

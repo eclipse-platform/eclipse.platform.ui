@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -529,7 +529,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * sets the location as the full path of the selected file.
 	 */
 	protected void handleFileLocationButtonSelected() {
-		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE | SWT.SHEET);
 		fileDialog.setFileName(locationField.getText());
 		String text= fileDialog.open();
 		if (text != null) {
@@ -589,7 +589,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * Prompts the user to choose a working directory from the filesystem.
 	 */
 	protected void handleFileWorkingDirectoryButtonSelected() {
-		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
+		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE | SWT.SHEET);
 		dialog.setMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_23);
 		dialog.setFilterPath(workDirectoryField.getText());
 		String text= dialog.open();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 Matt Conway and others.
+ * Copyright (c) 2000, 2017 Matt Conway and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
 /**
@@ -24,7 +25,7 @@ public class FilePrompt extends PromptingResolver {
 	 */
 	@Override
 	public void prompt() {
-		FileDialog dialog = new FileDialog(getShell());
+		FileDialog dialog = new FileDialog(getShell(), SWT.SHEET);
 		dialog.setText(dialogMessage);
 		dialog.setFileName(lastValue == null ? defaultValue : lastValue);
 		dialogResultString = dialog.open();

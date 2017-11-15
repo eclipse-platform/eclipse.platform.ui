@@ -266,7 +266,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
+				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell(), SWT.SHEET);
 				dd.setText(WizardMessages.ExportLaunchConfigurationsWizard_0);
 				String file = dd.open();
 				if(file != null) {

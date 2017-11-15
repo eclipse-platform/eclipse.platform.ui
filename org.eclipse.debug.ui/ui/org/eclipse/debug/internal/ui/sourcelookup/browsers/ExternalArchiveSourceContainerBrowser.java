@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class ExternalArchiveSourceContainerBrowser extends AbstractSourceContain
 	 */
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI);
+		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI | SWT.SHEET);
 		String rootDir = DebugUIPlugin.getDefault().getDialogSettings().get(ROOT_DIR);
 		dialog.setText(SourceLookupUIMessages.ExternalArchiveSourceContainerBrowser_2);
 		dialog.setFilterExtensions(new String[]{"*.jar;*.zip"});  //$NON-NLS-1$

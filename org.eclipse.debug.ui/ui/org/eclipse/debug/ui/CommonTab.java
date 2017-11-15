@@ -316,7 +316,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             @Override
 			public void widgetSelected(SelectionEvent e) {
                 String filePath = fFileText.getText();
-                FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE | SWT.SHEET);
                 filePath = dialog.open();
                 if (filePath != null) {
                     fFileText.setText(filePath);
@@ -426,7 +426,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String filePath = fInputFileLocationText.getText();
-				FileDialog dialog = new FileDialog(getShell(), SWT.OK);
+				FileDialog dialog = new FileDialog(getShell(), SWT.OK | SWT.SHEET);
 				filePath = dialog.open();
 				if (filePath != null) {
 					fInputFileLocationText.setText(filePath);

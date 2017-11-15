@@ -288,7 +288,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
         browse.addSelectionListener(new SelectionAdapter () {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
+				DirectoryDialog dd = new DirectoryDialog(getContainer().getShell(), SWT.SHEET);
 				dd.setText(WizardMessages.ImportLaunchConfigurationsWizardPage_0);
 				String filename = dd.open();
 				if(filename != null) {
