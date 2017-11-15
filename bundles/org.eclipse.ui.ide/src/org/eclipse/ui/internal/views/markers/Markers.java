@@ -341,7 +341,7 @@ class Markers {
 	 * @param marker
 	 * @return {@link MarkerItem}
 	 */
-	public MarkerItem getMarkerItem(IMarker marker) {
+	public synchronized MarkerItem getMarkerItem(IMarker marker) {
 		if (markerToEntryMap == null) {
 			markerToEntryMap = new HashMap<>();
 			for (MarkerEntry markerEntry : markerEntryArray) {
