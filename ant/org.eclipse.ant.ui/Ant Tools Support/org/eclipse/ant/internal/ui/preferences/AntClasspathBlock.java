@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,13 +215,13 @@ public class AntClasspathBlock {
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
-		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell());
+		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell(), SWT.SHEET);
 		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_1);
 		dialog.setFilterPath(lastUsedPath);
 		String result = dialog.open();
 		if (result != null) {
 			try {
-				URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + result + "/"); //$NON-NLS-1$;
+				URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + result + "/"); //$NON-NLS-1$ ;
 				((AntClasspathContentProvider) treeViewer.getContentProvider()).add(currentParent, url);
 			}
 			catch (MalformedURLException e) {
@@ -238,7 +238,7 @@ public class AntClasspathBlock {
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
-		FileDialog dialog = new FileDialog(treeViewer.getControl().getShell(), SWT.MULTI);
+		FileDialog dialog = new FileDialog(treeViewer.getControl().getShell(), SWT.MULTI | SWT.SHEET);
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip" }); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 
@@ -473,7 +473,7 @@ public class AntClasspathBlock {
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
-		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell());
+		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell(), SWT.SHEET);
 		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_3);
 		dialog.setFilterPath(lastUsedPath);
 		String path = dialog.open();

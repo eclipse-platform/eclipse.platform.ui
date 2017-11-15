@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,8 +101,8 @@ public class AntPropertiesBlock {
 	private final String[] fTableColumnHeaders = { AntPreferencesMessages.AntPropertiesBlock_0, AntPreferencesMessages.AntPropertiesBlock_5,
 			AntPreferencesMessages.AntPropertiesBlock_6 };
 
-	private final ColumnLayoutData[] fTableColumnLayouts = { new ColumnWeightData(30),// , 190, true),
-			new ColumnWeightData(40),// , 190, true),
+	private final ColumnLayoutData[] fTableColumnLayouts = { new ColumnWeightData(30), // , 190, true),
+			new ColumnWeightData(40), // , 190, true),
 			new ColumnWeightData(30) // , 190, true)
 	};
 
@@ -417,8 +417,8 @@ public class AntPropertiesBlock {
 		if (lastUsedPath == null) {
 			lastUsedPath = IAntCoreConstants.EMPTY_STRING;
 		}
-		FileDialog dialog = new FileDialog(fileTableViewer.getControl().getShell(), SWT.MULTI);
-		dialog.setFilterExtensions(new String[] { "*.properties", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$;
+		FileDialog dialog = new FileDialog(fileTableViewer.getControl().getShell(), SWT.MULTI | SWT.SHEET);
+		dialog.setFilterExtensions(new String[] { "*.properties", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$ ;
 		dialog.setFilterPath(lastUsedPath);
 
 		String result = dialog.open();
