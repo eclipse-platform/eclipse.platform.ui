@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -498,7 +497,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				URLConnection conn = url.openConnection();
 
 				// set connection timeout to 6 seconds
-				setTimeout(conn, SOCKET_TIMEOUT); // Connection timeout to 6 seconds
+				conn.setConnectTimeout(SOCKET_TIMEOUT); // Connection timeout to 6 seconds
 				conn.connect();
 				try (InputStream in = url.openStream()) {
 					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -516,17 +515,6 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				threadRunning = false;
 			}
 
-		}
-
-		private void setTimeout(URLConnection conn, int milliseconds) {
-			Class<? extends URLConnection> conClass = conn.getClass();
-			try {
-				Method timeoutMethod = conClass.getMethod(
-						"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
-				timeoutMethod.invoke(conn, new Object[] { Integer.valueOf(milliseconds)} );
-			} catch (Exception e) {
-			     // If running on a 1.4 JRE an exception is expected, fall through
-			}
 		}
 	}
 
