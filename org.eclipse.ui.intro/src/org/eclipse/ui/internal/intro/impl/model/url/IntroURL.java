@@ -237,13 +237,9 @@ public class IntroURL implements IIntroURL {
         StandbyPart standbyPart = introPart
             .getAdapter(StandbyPart.class);
 
-        boolean success = standbyPart.showContentPart(partId, input);
-        if (success)
-            return true;
-
-        // we do not have a valid partId or we failed to instantiate part or
-        // create the part content, empty part will be shown. Signal failure.
-        return false;
+        // We may not have a valid partId or we might fail to instantiate part or
+        // create the part content. An empty part will be shown. Signal failure.
+        return standbyPart != null && standbyPart.showContentPart(partId, input);
     }
 
     /**
