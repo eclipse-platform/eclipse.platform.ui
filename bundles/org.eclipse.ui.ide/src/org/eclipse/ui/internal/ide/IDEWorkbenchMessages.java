@@ -992,6 +992,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEApplication_versionMessage_newerWorkspace;
 	public static String IDEApplication_versionMessage_olderWorkspace;
 	public static String IDEApplication_version_doNotWarnAgain;
+	public static String IDEApplication_version_continue;
 	public static String GlobalBuildAction_BuildRunningTitle;
 	public static String GlobalBuildAction_BuildRunningMessage;
 	public static String CleanDialog_buildCleanAuto;
