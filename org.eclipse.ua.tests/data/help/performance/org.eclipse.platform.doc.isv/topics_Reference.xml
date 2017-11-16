@@ -188,11 +188,6 @@
       <topic label="org.eclipse.ui.wizards.newresource" href="reference/api/org/eclipse/ui/wizards/newresource/package-summary.html"/>
       <topic label="org.eclipse.update.configurator" href="reference/api/org/eclipse/update/configurator/package-summary.html"/>
       <topic label="org.eclipse.update.configuration" href="reference/api/org/eclipse/update/configuration/package-summary.html"/>
-      <topic label="org.eclipse.update.core" href="reference/api/org/eclipse/update/core/package-summary.html"/>
-      <topic label="org.eclipse.update.core.model" href="reference/api/org/eclipse/update/core/model/package-summary.html"/>
-      <topic label="org.eclipse.update.operations" href="reference/api/org/eclipse/update/operations/package-summary.html"/>
-      <topic label="org.eclipse.update.search" href="reference/api/org/eclipse/update/search/package-summary.html"/>
-      <topic label="org.eclipse.update.standalone" href="reference/api/org/eclipse/update/standalone/package-summary.html"/>
     </topic>
 
 	<topic label="Extension Points Reference" href="reference/extension-points/index.html">
@@ -354,9 +349,6 @@
        <topic label="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider" href="reference/extension-points/org_eclipse_ui_workbench_texteditor_quickDiffReferenceProvider.html"/>
        <topic label="org.eclipse.ui.workbench.texteditor.spellingEngine" href="reference/extension-points/org_eclipse_ui_workbench_texteditor_spellingEngine.html"/>
        <topic label="org.eclipse.ui.workingSets" href="reference/extension-points/org_eclipse_ui_workingSets.html"/>
-       <topic label="org.eclipse.update.core.featureTypes" href="reference/extension-points/org_eclipse_update_core_featureTypes.html"/>
-       <topic label="org.eclipse.update.core.installHandlers" href="reference/extension-points/org_eclipse_update_core_installHandlers.html"/>
-       <topic label="org.eclipse.update.core.siteTypes" href="reference/extension-points/org_eclipse_update_core_siteTypes.html"/>
     </topic>
 
 	<topic label="OSGi API Reference" href="http://bundles.osgi.org/javadoc/r4"/>

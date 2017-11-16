@@ -401,11 +401,6 @@
       <topic href="reference/api/org/eclipse/ui/wizards/newresource/package-summary.html" label="org.eclipse.ui.wizards.newresource"/>
       <topic href="reference/api/org/eclipse/update/configurator/package-summary.html" label="org.eclipse.update.configurator"/>
       <topic href="reference/api/org/eclipse/update/configuration/package-summary.html" label="org.eclipse.update.configuration"/>
-      <topic href="reference/api/org/eclipse/update/core/package-summary.html" label="org.eclipse.update.core"/>
-      <topic href="reference/api/org/eclipse/update/core/model/package-summary.html" label="org.eclipse.update.core.model"/>
-      <topic href="reference/api/org/eclipse/update/operations/package-summary.html" label="org.eclipse.update.operations"/>
-      <topic href="reference/api/org/eclipse/update/search/package-summary.html" label="org.eclipse.update.search"/>
-      <topic href="reference/api/org/eclipse/update/standalone/package-summary.html" label="org.eclipse.update.standalone"/>
     </topic>
 
 	<topic href="reference/extension-points/index.html" label="Extension Points Reference">
@@ -523,9 +518,6 @@
        <topic href="reference/extension-points/org_eclipse_ui_views.html" label="org.eclipse.ui.views"/>
        <topic href="reference/extension-points/org_eclipse_ui_workbench_texteditor_quickDiffReferenceProvider.html" label="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider"/>
        <topic href="reference/extension-points/org_eclipse_ui_workingSets.html" label="org.eclipse.ui.workingSets"/>
-       <topic href="reference/extension-points/org_eclipse_update_core_featureTypes.html" label="org.eclipse.update.core.featureTypes"/>
-       <topic href="reference/extension-points/org_eclipse_update_core_installHandlers.html" label="org.eclipse.update.core.installHandlers"/>
-       <topic href="reference/extension-points/org_eclipse_update_core_siteTypes.html" label="org.eclipse.update.core.siteTypes"/>
     </topic>
 
 	<topic href="reference/osgi/overview-summary.html" label="OSGi API Reference"/>
