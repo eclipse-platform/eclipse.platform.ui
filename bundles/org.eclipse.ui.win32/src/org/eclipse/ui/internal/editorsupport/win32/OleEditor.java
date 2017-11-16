@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,26 +96,18 @@ public class OleEditor extends EditorPart {
             switch (delta.getKind()) {
             case IResourceDelta.REMOVED:
                 if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-                    changeRunnable = new Runnable() {
-                        @Override
-						public void run() {
-                            IPath path = delta.getMovedToPath();
-                            IFile newFile = delta.getResource().getWorkspace()
-                                    .getRoot().getFile(path);
-                            if (newFile != null) {
-                                sourceChanged(newFile);
-                            }
-                        }
-                    };
+					changeRunnable = () -> {
+						IPath path = delta.getMovedToPath();
+						IFile newFile = delta.getResource().getWorkspace().getRoot().getFile(path);
+						if (newFile != null) {
+							sourceChanged(newFile);
+						}
+					};
                 } else {
-                    changeRunnable = new Runnable() {
-                        @Override
-						public void run() {
-                            sourceDeleted = true;
-                            getSite().getPage().closeEditor(OleEditor.this,
-                                    true);
-                        }
-                    };
+					changeRunnable = () -> {
+						sourceDeleted = true;
+						getSite().getPage().closeEditor(OleEditor.this, true);
+					};
 
                 }
 
@@ -253,14 +245,8 @@ public class OleEditor extends EditorPart {
     public void doPrint() {
         if (clientSite == null)
             return;
-        BusyIndicator.showWhile(clientSite.getDisplay(), new Runnable() {
-            @Override
-			public void run() {
-                clientSite.exec(OLE.OLECMDID_PRINT,
-                        OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
-                // note: to check for success: above == SWTOLE.S_OK
-            }
-        });
+		BusyIndicator.showWhile(clientSite.getDisplay(),
+				() -> clientSite.exec(OLE.OLECMDID_PRINT, OLE.OLECMDEXECOPT_PROMPTUSER, null, null));
     }
 
     /**
@@ -270,44 +256,36 @@ public class OleEditor extends EditorPart {
 	public void doSave(final IProgressMonitor monitor) {
         if (clientSite == null)
             return;
-        BusyIndicator.showWhile(clientSite.getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(clientSite.getDisplay(), () -> {
 
-            @Override
-			public void run() {
-
-                //Do not try and use the component provided save if the source has
-                //changed in Eclipse
-                if (!sourceChanged) {
-                    int result = clientSite.queryStatus(OLE.OLECMDID_SAVE);
-                    if ((result & OLE.OLECMDF_ENABLED) != 0) {
-                        result = clientSite.exec(OLE.OLECMDID_SAVE,
-                                OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
-                        if (result == OLE.S_OK) {
-                            try {
-                                resource.refreshLocal(IResource.DEPTH_ZERO,
-                                        monitor);
-                            } catch (CoreException ex) {
-                                //Do nothing on a failed refresh
-                            }
-                            return;
-                        }
-                        displayErrorDialog(OLE_EXCEPTION_TITLE,
-                                OLE_EXCEPTION_MESSAGE + String.valueOf(result));
-                        return;
-                    }
-                }
-                if (saveFile(source)) {
-                    try {
-                    	if (resource != null)
-                    		resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
-                    } catch (CoreException ex) {
-                        //Do nothing on a failed refresh
-                    }
-                } else
-                    displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE
-                            + source.getName());
-            }
-        });
+			// Do not try and use the component provided save if the source has
+			// changed in Eclipse
+			if (!sourceChanged) {
+				int result = clientSite.queryStatus(OLE.OLECMDID_SAVE);
+				if ((result & OLE.OLECMDF_ENABLED) != 0) {
+					result = clientSite.exec(OLE.OLECMDID_SAVE, OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
+					if (result == OLE.S_OK) {
+						try {
+							resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
+						} catch (CoreException ex1) {
+							// Do nothing on a failed refresh
+						}
+						return;
+					}
+					displayErrorDialog(OLE_EXCEPTION_TITLE, OLE_EXCEPTION_MESSAGE + String.valueOf(result));
+					return;
+				}
+			}
+			if (saveFile(source)) {
+				try {
+					if (resource != null)
+						resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
+				} catch (CoreException ex2) {
+					// Do nothing on a failed refresh
+				}
+			} else
+				displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE + source.getName());
+		});
     }
 
     /**
@@ -432,7 +410,7 @@ public class OleEditor extends EditorPart {
         // Swap the file and window menus.
         MenuItem[] windowMenu = new MenuItem[1];
         MenuItem[] fileMenu = new MenuItem[1];
-		Vector<MenuItem> containerItems = new Vector<MenuItem>();
+		Vector<MenuItem> containerItems = new Vector<>();
 
         IWorkbenchWindow window = getSite().getWorkbenchWindow();
 
