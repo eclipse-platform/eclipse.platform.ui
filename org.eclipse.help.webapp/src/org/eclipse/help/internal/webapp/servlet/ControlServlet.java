@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,21 +11,16 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpApplication;
 import org.eclipse.help.internal.base.HelpDisplay;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
-import org.osgi.framework.Bundle;
 
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
@@ -37,7 +32,6 @@ import org.osgi.framework.Bundle;
  */
 public class ControlServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core"; //$NON-NLS-1$
 
 	public static final String CMD_DISPLAYHELP = "displayHelp"; //$NON-NLS-1$
 
@@ -192,119 +186,11 @@ public class ControlServlet extends HttpServlet {
 				|| CMD_ADDSITE.equalsIgnoreCase(command)
 				|| CMD_REMOVESITE.equalsIgnoreCase(command)
 				|| CMD_APPLY.equalsIgnoreCase(command)) {
-			updateDocs(command, req);
+			// skip old update system commands
 		} else {
 			// this should never happen and is invisible to the user
 			resp.getWriter().print("Unrecognized command."); //$NON-NLS-1$
 		}
-	}
-
-	private void updateDocs(String command, HttpServletRequest req) {
-		Bundle bundle = Platform.getBundle(UPDATE_PLUGIN_ID);
-		if (bundle == null) {
-			// no update plugin present
-			return;
-		}
-		try {
-			String className = getStandaloneClassName(command);
-			if (className == null) {
-				System.out.println("No class name for command " + command); //$NON-NLS-1$
-				return;
-			}
-			Class<?> c = bundle.loadClass(className);
-			if (c == null) {
-				System.out.println("No class for command " + command); //$NON-NLS-1$
-				return;
-			}
-			Class<?>[] parameterTypes = getParameterTypes(className);
-			Constructor<?> constr = c.getConstructor(parameterTypes);
-			if (constr == null) {
-				System.out.println("No expected constructor for command " //$NON-NLS-1$
-						+ command);
-				return;
-			}
-			Method m;
-			if (!CMD_APPLY.equalsIgnoreCase(command)) {
-				m = c.getMethod("run", new Class[]{}); //$NON-NLS-1$
-			} else {
-				m = c.getMethod("applyChangesNow", new Class[]{}); //$NON-NLS-1$
-			}
-			Object[] initargs = getInitArgs(className, req);
-			Object o = constr.newInstance(initargs);
-			Object ret = m.invoke(o, new Object[]{});
-			if (!CMD_APPLY.equalsIgnoreCase(command) &&((Boolean)ret).equals(Boolean.FALSE)){
-				System.out.println("Command not executed."); //$NON-NLS-1$
-			} else {
-				System.out.println("Command executed."); //$NON-NLS-1$
-			}
-		} catch (Exception e) {
-			Throwable t = e;
-			if (e instanceof InvocationTargetException) {
-				t = ((InvocationTargetException) e).getTargetException();
-			}
-			System.out.println(t.getLocalizedMessage());
-			//t.printStackTrace();
-		}
-	}
-
-	private String getStandaloneClassName(String command) {
-		if (CMD_INSTALL.equalsIgnoreCase(command))
-			return CLASS_INSTALL;
-		else if (CMD_UPDATE.equalsIgnoreCase(command))
-			return CLASS_UPDATE;
-		else if (CMD_ENABLE.equalsIgnoreCase(command))
-			return CLASS_ENABLE;
-		else if (CMD_DISABLE.equalsIgnoreCase(command))
-			return CLASS_DISABLE;
-		else if (CMD_UNINSTALL.equalsIgnoreCase(command))
-			return CLASS_UNINSTALL;
-		else if (CMD_SEARCH.equalsIgnoreCase(command))
-			return CLASS_SEARCH;
-		else if (CMD_LIST.equalsIgnoreCase(command)
-				|| CMD_APPLY.equalsIgnoreCase(command))
-			return CLASS_LIST;
-		else if (CMD_ADDSITE.equalsIgnoreCase(command))
-			return CLASS_ADDSITE;
-		else if (CMD_REMOVESITE.equalsIgnoreCase(command))
-			return CLASS_REMOVESITE;
-		else
-			return null;
-	}
-
-	private Class<?>[] getParameterTypes(String className) {
-		if (CLASS_INSTALL.equals(className))
-			return new Class[]{String.class, String.class, String.class,
-					String.class, String.class};
-		else if (CLASS_UPDATE.equals(className))
-			return new Class[]{String.class, String.class, String.class};
-		else if (CLASS_ENABLE.equals(className)
-				|| CLASS_DISABLE.equals(className)
-				|| CLASS_UNINSTALL.equals(className))
-			return new Class[]{String.class, String.class, String.class,
-					String.class};
-		else
-			return new Class[]{String.class};
-	}
-
-	private Object[] getInitArgs(String className, HttpServletRequest req) {
-		String featureId = req.getParameter(PARAM_FEATUREID);
-		String version = req.getParameter(PARAM_VERSION);
-		String fromSite = req.getParameter(PARAM_FROM);
-		String toSite = req.getParameter(PARAM_TO);
-		String verifyOnly = req.getParameter(PARAM_VERIFYONLY);
-		if (CLASS_INSTALL.equals(className))
-			return new Object[]{featureId, version, fromSite, toSite,
-					verifyOnly};
-		else if (CLASS_UPDATE.equals(className))
-			return new Object[]{featureId, version, verifyOnly};
-		else if (CLASS_ENABLE.equals(className)
-				|| CLASS_DISABLE.equals(className)
-				|| CLASS_UNINSTALL.equals(className))
-			return new Object[]{featureId, version, toSite, verifyOnly};
-		else if (CLASS_REMOVESITE.equals(className))
-			return new Object[]{toSite};
-		else
-			return new Object[]{fromSite};
 	}
 
 	/**
