@@ -399,8 +399,6 @@
       <topic href="reference/api/org/eclipse/ui/views/tasklist/package-summary.html" label="org.eclipse.ui.views.tasklist"/>
       <topic href="reference/api/org/eclipse/ui/wizards/datatransfer/package-summary.html" label="org.eclipse.ui.wizards.datatransfer"/>
       <topic href="reference/api/org/eclipse/ui/wizards/newresource/package-summary.html" label="org.eclipse.ui.wizards.newresource"/>
-      <topic href="reference/api/org/eclipse/update/configurator/package-summary.html" label="org.eclipse.update.configurator"/>
-      <topic href="reference/api/org/eclipse/update/configuration/package-summary.html" label="org.eclipse.update.configuration"/>
     </topic>
 
 	<topic href="reference/extension-points/index.html" label="Extension Points Reference">
