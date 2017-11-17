@@ -156,7 +156,6 @@ public class PluginActivationTests {
 			"org.eclipse.ui.views.log",
 			"org.eclipse.ui.workbench",
 			"org.eclipse.ui.workbench.texteditor",
-			"org.eclipse.update.configurator",
 			"org.hamcrest.core"
 		};
 
