@@ -38,11 +38,6 @@
   				<dependency-resolution>
   					<extraRequirements>
   						<requirement>
-  							<id>org.eclipse.update.configurator</id>
-  							<type>p2-installable-unit</type>
-  							<versionRange>0.0.0</versionRange>
-  						</requirement>
-  						<requirement>
   							<id>org.eclipse.jdt.junit.runtime</id>
   							<type>p2-installable-unit</type>
   							<versionRange>0.0.0</versionRange>
