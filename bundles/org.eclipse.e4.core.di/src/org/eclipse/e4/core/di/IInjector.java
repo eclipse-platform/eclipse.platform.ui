@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 527308
  *******************************************************************************/
 package org.eclipse.e4.core.di;
 
@@ -65,8 +66,7 @@ public interface IInjector {
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
-	 * Un-injects the supplier from the object. All un-injected values have to be optional,
-	 * or un-injection will fail.
+	 * Un-injects the supplier from the object.
 	 * @param object the domain object previously injected with the supplier's data
 	 * @param objectSupplier primary object supplier for the injection
 	 * @throws InjectionException if an exception occurred while performing this operation

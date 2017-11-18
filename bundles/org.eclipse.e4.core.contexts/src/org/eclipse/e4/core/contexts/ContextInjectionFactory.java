@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 527308
  *******************************************************************************/
 package org.eclipse.e4.core.contexts;
 
@@ -133,8 +134,7 @@ public final class ContextInjectionFactory {
 	}
 
 	/**
-	 * Un-injects the context from the object. The un-injection requires that all injected
-	 * values were marked as optional, or the un-injection will fail.
+	 * Un-injects the context from the object.
 	 *
 	 * @param object The domain object previously injected with the context
 	 * @param context The context previously injected into the object
