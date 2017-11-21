@@ -168,7 +168,7 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 	public void initialReconcile() {
 		if (sourceViewer != null) {
 			sourceViewer.getTextWidget().getDisplay().asyncExec(() -> {
-				if (sourceViewer != null) {
+				if (sourceViewer != null && sourceViewer.getTextWidget() != null) {
 					applyHighlights(sourceViewer.getTextWidget().getCaretOffset());
 				}
 			});
