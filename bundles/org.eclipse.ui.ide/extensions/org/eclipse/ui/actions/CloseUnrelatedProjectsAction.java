@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 462760
  *     Mickael Istria (Red Hat Inc.) - Bug 486901
+ *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -118,7 +119,10 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * @since 3.4
 	 */
 	public CloseUnrelatedProjectsAction(IShellProvider provider){
-		super(provider, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
+		super(provider, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text,
+				IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip,
+				IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text_plural,
+				IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip_plural);
 		initAction();
 	}
 

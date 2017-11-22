@@ -20,6 +20,7 @@
  * Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 485201, 502050, 514355
  * Simon Scholz <simon.scholz@vogella.com> - Bug 486777
+ * Lucas Bullen (Red Hat Inc.) - Bug 522096
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -313,33 +314,43 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenLocalFileAction_message_fileLinkedToMultiple;
 
 	public static String OpenResourceAction_text;
+	public static String OpenResourceAction_text_plural;
 	public static String OpenResourceAction_toolTip;
+	public static String OpenResourceAction_toolTip_plural;
 	public static String OpenResourceAction_dialogTitle;
 	public static String OpenResourceAction_problemMessage;
 	public static String OpenResourceAction_operationMessage;
+	public static String OpenResourceAction_operationMessage_plural;
 	public static String OpenResourceAction_openRequiredProjects;
 
 	public static String CloseResourceAction_text;
+	public static String CloseResourceAction_text_plural;
 	public static String CloseResourceAction_warningForOne;
 	public static String CloseResourceAction_warningForMultiple;
 	public static String CloseResourceAction_confirm;
 	public static String CloseResourceAction_toolTip;
+	public static String CloseResourceAction_toolTip_plural;
 	public static String CloseResourceAction_title;
 	public static String CloseResourceAction_problemMessage;
 	public static String CloseResourceAction_operationMessage;
+	public static String CloseResourceAction_operationMessage_plural;
 
 	public static String CloseUnrelatedProjectsAction_text;
+	public static String CloseUnrelatedProjectsAction_text_plural;
 	public static String CloseUnrelatedProjectsAction_toolTip;
+	public static String CloseUnrelatedProjectsAction_toolTip_plural;
 	public static String CloseUnrelatedProjectsAction_confirmMsg1;
 	public static String CloseUnrelatedProjectsAction_confirmMsgN;
 	public static String CloseUnrelatedProjectsAction_AlwaysClose;
 	public static String CloseUnrelatedProjectsAction_AlwaysCloseWithoutPrompt;
 
 	public static String BuildAction_text;
+	public static String BuildAction_text_plural;
 	public static String BuildAction_toolTip;
 	public static String BuildAction_problemMessage;
 	public static String BuildAction_problemTitle;
 	public static String BuildAction_operationMessage;
+	public static String BuildAction_operationMessage_plural;
 
 	public static String RebuildAction_text;
 	public static String RebuildAction_tooltip;

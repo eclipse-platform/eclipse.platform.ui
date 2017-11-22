@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mohamed Tarief , IBM - Bug 139211
+ *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -113,6 +114,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	@Override
 	protected String getOperationMessage() {
+		if (getActionResources().size() > 1)
+			return IDEWorkbenchMessages.OpenResourceAction_operationMessage_plural;
 		return IDEWorkbenchMessages.OpenResourceAction_operationMessage;
 	}
 
@@ -297,18 +300,25 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	protected boolean updateSelection(IStructuredSelection s) {
 		// don't call super since we want to enable if closed project is
 		// selected.
-
+		setText(IDEWorkbenchMessages.OpenResourceAction_text);
+		setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
 		if (!selectionIsOfType(IResource.PROJECT)) {
 			return false;
 		}
 
+		boolean hasClosedProjects = false;
 		Iterator resources = getSelectedResources().iterator();
 		while (resources.hasNext()) {
 			IProject currentResource = (IProject) resources.next();
 			if (!currentResource.isOpen()) {
-				return true;
+				if (hasClosedProjects) {
+					setText(IDEWorkbenchMessages.OpenResourceAction_text_plural);
+					setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip_plural);
+					break;
+				}
+				hasClosedProjects = true;
 			}
 		}
-		return false;
+		return hasClosedProjects;
 	}
 }

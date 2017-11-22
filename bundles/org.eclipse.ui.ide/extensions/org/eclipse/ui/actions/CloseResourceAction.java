@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 41431, 462760, 461786
+ *     Lucas Bullen (Red Hat Inc.) - Bug 522096 - "Close Projects" on working set
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -60,6 +61,11 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
      */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseResourceAction"; //$NON-NLS-1$
 
+	private final String defaultText;
+	private final String defaultToolTip;
+	private final String pluralText;
+	private final String pluralTooltip;
+
 	private String[] modelProviderIds;
 
     /**
@@ -70,8 +76,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
      */
     @Deprecated
 	public CloseResourceAction(Shell shell) {
-        super(shell, IDEWorkbenchMessages.CloseResourceAction_text);
-        initAction();
+		this(() -> shell);
     }
 
     /**
@@ -81,7 +86,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 */
     @Deprecated
 	protected CloseResourceAction(Shell shell, String text) {
-    	super(shell, text);
+		this(() -> shell, text);
     }
 
     /**
@@ -92,7 +97,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 * @since 3.4
 	 */
     public CloseResourceAction(IShellProvider provider) {
-    	super(provider, IDEWorkbenchMessages.CloseResourceAction_text);
+		this(provider, IDEWorkbenchMessages.CloseResourceAction_text);
         initAction();
     }
 
@@ -102,12 +107,38 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 * @param provider
 	 *            the shell provider for any dialogs
 	 * @param text
-	 *            label
+	 *            label for action when only a singular selection is made
 	 * @since 3.4
 	 */
     protected CloseResourceAction(IShellProvider provider, String text) {
-    	super(provider, text);
+		this(provider, text, IDEWorkbenchMessages.CloseResourceAction_toolTip,
+				IDEWorkbenchMessages.CloseResourceAction_text_plural,
+				IDEWorkbenchMessages.CloseResourceAction_toolTip_plural);
     }
+
+	/**
+	 * Provide text to the action.
+	 *
+	 * @param provider
+	 *            the shell provider for any dialogs
+	 * @param text
+	 *            label for action when only a singular selection is made
+	 * @param tooltip
+	 *            tooltip text for action when only a singular selection is made
+	 * @param textPlural
+	 *            label for action when selection contains multiple elements
+	 * @param tooltipPlural
+	 *            tooltip text for action when selection contains multiple elements
+	 * @since 3.14
+	 */
+	protected CloseResourceAction(IShellProvider provider, String text, String tooltip, String textPlural,
+			String tooltipPlural) {
+		super(provider, text);
+		defaultText = text;
+		defaultToolTip = tooltip;
+		pluralText = textPlural;
+		pluralTooltip = tooltipPlural;
+	}
 
 	private void initAction() {
 		setId(ID);
@@ -117,6 +148,8 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 
     @Override
 	protected String getOperationMessage() {
+		if (getActionResources().size() > 1)
+			return IDEWorkbenchMessages.CloseResourceAction_operationMessage_plural;
         return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
     }
 
@@ -183,19 +216,27 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
      */
     @Override
 	protected boolean updateSelection(IStructuredSelection s) {
-        // don't call super since we want to enable if open project is selected.
-        if (!selectionIsOfType(IResource.PROJECT)) {
+		// don't call super since we want to enable if open project is selected.
+		setText(defaultText);
+		setToolTipText(defaultToolTip);
+		if (!selectionIsOfType(IResource.PROJECT)) {
 			return false;
 		}
 
+		boolean hasOpenProjects = false;
 		Iterator<? extends IResource> resources = getSelectedResources().iterator();
-        while (resources.hasNext()) {
-            IProject currentResource = (IProject) resources.next();
-            if (currentResource.isOpen()) {
-                return true;
-            }
-        }
-        return false;
+		while (resources.hasNext()) {
+			IProject currentResource = (IProject) resources.next();
+			if (currentResource.isOpen()) {
+				if (hasOpenProjects) {
+					setText(pluralText);
+					setToolTipText(pluralTooltip);
+					break;
+				}
+				hasOpenProjects = true;
+			}
+		}
+		return hasOpenProjects;
     }
 
     /**

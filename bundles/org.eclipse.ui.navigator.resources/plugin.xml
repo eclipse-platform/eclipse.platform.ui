@@ -242,6 +242,7 @@
 					<adapt type="java.util.Collection">
 						<count value="0" />
 					</adapt>
+					<adapt type="org.eclipse.ui.IWorkingSet" />
 				</or>
            </enablement>
         </actionProvider>
