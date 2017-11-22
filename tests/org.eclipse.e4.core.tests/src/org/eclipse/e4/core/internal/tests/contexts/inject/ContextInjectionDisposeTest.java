@@ -46,8 +46,9 @@ public class ContextInjectionDisposeTest {
 				disposeInvoked = true;
 			}
 		}
+
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(String.class.getName(), "hello");
+		context.set(String.class, "hello");
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		context.dispose();
@@ -76,7 +77,7 @@ public class ContextInjectionDisposeTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		Object fieldValue = new Object();
 		Object methodValue = "abc";
-		context.set(Object.class.getName(), fieldValue);
+		context.set(Object.class, fieldValue);
 		context.set(String.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
@@ -112,10 +113,10 @@ public class ContextInjectionDisposeTest {
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		Object fieldValue = Integer.valueOf(123);
-		Object methodValue = "abc";
-		context.set(Integer.class.getName(), fieldValue);
-		context.set(String.class.getName(), methodValue);
+		Integer fieldValue = Integer.valueOf(123);
+		String methodValue = "abc";
+		context.set(Integer.class, fieldValue);
+		context.set(String.class, methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 
