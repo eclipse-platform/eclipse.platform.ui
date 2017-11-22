@@ -30,7 +30,6 @@
     <module>org.eclipse.ui.examples.readmetool</module>
     <module>org.eclipse.ui.examples.undo</module>
     <module>org.eclipse.ui.examples.views.properties.tabbed.article</module>
-    <module>org.eclipse.e4.demo.contacts</module>
     <module>org.eclipse.e4.demo.cssbridge</module>
     <module>org.eclipse.jface.snippets</module>
     <module>org.eclipse.ui.examples.job</module>
