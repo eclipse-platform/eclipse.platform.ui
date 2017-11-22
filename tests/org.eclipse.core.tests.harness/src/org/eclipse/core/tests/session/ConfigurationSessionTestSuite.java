@@ -45,6 +45,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			"org.eclipse.equinox.preferences", //
 			"org.eclipse.core.contenttype", //
 			"org.eclipse.equinox.app", //
+			"org.eclipse.core.tests.harness", //
 			"org.eclipse.jdt.junit.runtime", //
 			"org.eclipse.jdt.junit4.runtime", //
 			"org.eclipse.pde.junit.runtime", //
