@@ -60,7 +60,7 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 	public boolean hasContents() {
 		return this.markers != null && !this.markers.isEmpty();
 	}
-	
+
 	@Override
 	protected void createContent(Composite parent) {
 		parent.setLayout(new RowLayout(SWT.VERTICAL));
@@ -90,24 +90,35 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 			this.composites.put(marker, markerComposite);
 			GridLayout gridLayout = new GridLayout(1, false);
 			gridLayout.verticalSpacing = 0;
+			gridLayout.horizontalSpacing = 0;
+			gridLayout.marginHeight = 0;
+			gridLayout.marginWidth = 0;
 			markerComposite.setLayout(gridLayout);
 			Composite markerLine = new Composite(markerComposite, SWT.NONE);
-			markerLine.setLayout(new RowLayout());
-			Label markerImage = new Label(markerLine, SWT.NONE);
-			markerImage.setImage(getImage(marker));
+			RowLayout rowLayout = new RowLayout();
+			rowLayout.marginTop = 0;
+			rowLayout.marginBottom = 0;
+			rowLayout.marginLeft = 0;
+			rowLayout.marginRight = 0;
+			markerLine.setLayout(rowLayout);
+			IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
+			if(resolutions.length > 0) {
+				Label markerImage = new Label(markerLine, SWT.NONE);
+				markerImage.setImage(getImage(marker));
+			}
 			Label markerLabel = new Label(markerLine, SWT.NONE);
 			markerLabel.setText(marker.getAttribute(IMarker.MESSAGE, "missing message")); //$NON-NLS-1$
-			for (IMarkerResolution resolution : IDE.getMarkerHelpRegistry().getResolutions(marker)) {
+			for (IMarkerResolution resolution : resolutions) {
 				Composite resolutionComposite = new Composite(markerComposite, SWT.NONE);
 				GridData layoutData = new GridData();
 				layoutData.horizontalIndent = 10;
 				resolutionComposite.setLayoutData(layoutData);
-				RowLayout rowLayout = new RowLayout();
-				rowLayout.marginBottom = 0;
-				resolutionComposite.setLayout(rowLayout);
+				RowLayout resolutionRowLayout = new RowLayout();
+				resolutionRowLayout.marginBottom = 0;
+				resolutionComposite.setLayout(resolutionRowLayout);
 				Label resolutionImage = new Label(resolutionComposite, SWT.NONE);
 				// TODO: try to retrieve icon from QuickFix command
-				Image resolutionPic = null; 
+				Image resolutionPic = null;
 				if (resolution instanceof IMarkerResolution2) {
 					resolutionPic = ((IMarkerResolution2) resolution).getImage();
 				}
@@ -138,16 +149,16 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 		}
 		parent.layout(true);
 	}
-	
+
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new MarkerHoverControlCreator(false);
 	}
-	
+
 	@Override
 	public Point computeSizeHint() {
 		getShell().pack();
 		return getShell().getSize();
 	}
-	
+
 }
