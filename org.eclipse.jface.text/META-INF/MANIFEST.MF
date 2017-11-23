@@ -25,6 +25,7 @@ Export-Package:
  org.eclipse.jface.text.revisions,
  org.eclipse.jface.text.rules,
  org.eclipse.jface.text.source,
+ org.eclipse.jface.text.source.inlined,
  org.eclipse.jface.text.source.projection,
  org.eclipse.jface.text.source.projection.images,
  org.eclipse.jface.text.templates,
