@@ -444,6 +444,42 @@ public final class Platform {
 		super();
 	}
 
+	/**
+	 * Adds the given authorization information to the key ring. The
+	 * information is relevant for the specified protection space and the
+	 * given authorization scheme. The protection space is defined by the
+	 * combination of the given server URL and realm. The authorization
+	 * scheme determines what the authorization information contains and how
+	 * it should be used. The authorization information is a <code>Map</code>
+	 * of <code>String</code> to <code>String</code> and typically
+	 * contains information such as user names and passwords.
+	 *
+	 * @param serverUrl the URL identifying the server for this authorization
+	 *		information. For example, "http://www.example.com/".
+	 * @param realm the subsection of the given server to which this
+	 *		authorization information applies.  For example,
+	 *		"realm1@example.com" or "" for no realm.
+	 * @param authScheme the scheme for which this authorization information
+	 *		applies. For example, "Basic" or "" for no authorization scheme
+	 * @param info a <code>Map</code> containing authorization information
+	 *		such as user names and passwords (key type : <code>String</code>,
+	 *		value type : <code>String</code>)
+	 * @exception CoreException if there are problems setting the
+	 *		authorization information. Reasons include:
+	 * <ul>
+	 * <li>The keyring could not be saved.</li>
+	 * </ul>
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.
+	 * Consider using <code>ISecurePreferences#put(String, String, boolean)</code> as a replacement of this method.
+	 * This API will be deleted in a future release. See bug 370248 for details.
+	 */
+	@Deprecated
+	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map<String,String> info) throws CoreException {
+		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
+	}
 
 	/**
 	 * Adds the given log listener to the notification list of the platform.
@@ -461,6 +497,32 @@ public final class Platform {
 		InternalPlatform.getDefault().addLogListener(listener);
 	}
 
+	/**
+	 * Adds the specified resource to the protection space specified by the
+	 * given realm. All targets at or deeper than the depth of the last
+	 * symbolic element in the path of the given resource URL are assumed to
+	 * be in the same protection space.
+	 *
+	 * @param resourceUrl the URL identifying the resources to be added to
+	 *		the specified protection space. For example,
+	 *		"http://www.example.com/folder/".
+	 * @param realm the name of the protection space. For example,
+	 *		"realm1@example.com"
+	 * @exception CoreException if there are problems setting the
+	 *		authorization information. Reasons include:
+	 * <ul>
+	 * <li>The key ring could not be saved.</li>
+	 * </ul>
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.
+	 * This API will be deleted in a future release. See bug 370248 for details.
+	 */
+	@Deprecated
+	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
+		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
+	}
 
 	/**
 	 * Returns a URL that is the local equivalent of the
@@ -497,6 +559,36 @@ public final class Platform {
 		InternalPlatform.getDefault().endSplash();
 	}
 
+	/**
+	 * Removes the authorization information for the specified protection
+	 * space and given authorization scheme. The protection space is defined
+	 * by the given server URL and realm.
+	 *
+	 * @param serverUrl the URL identifying the server to remove the
+	 *		authorization information for. For example,
+	 *		"http://www.example.com/".
+	 * @param realm the subsection of the given server to remove the
+	 *		authorization information for. For example,
+	 *		"realm1@example.com" or "" for no realm.
+	 * @param authScheme the scheme for which the authorization information
+	 *		to remove applies. For example, "Basic" or "" for no
+	 *		authorization scheme.
+	 * @exception CoreException if there are problems removing the
+	 *		authorization information. Reasons include:
+	 * <ul>
+	 * <li>The keyring could not be saved.</li>
+	 * </ul>
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.
+	 * Consider using <code>ISecurePreferences#clear()</code> as a replacement of this method.
+	 * This API will be deleted in a future release. See bug 370248 for details.
+	 */
+	@Deprecated
+	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
+		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
+	}
 
 	/**
 	 * Returns the adapter manager used for extending
@@ -507,6 +599,34 @@ public final class Platform {
 	 */
 	public static IAdapterManager getAdapterManager() {
 		return InternalPlatform.getDefault().getAdapterManager();
+	}
+
+	/**
+	 * Returns the authorization information for the specified protection
+	 * space and given authorization scheme. The protection space is defined
+	 * by the given server URL and realm. Returns <code>null</code> if no
+	 * such information exists.
+	 *
+	 * @param serverUrl the URL identifying the server for the authorization
+	 *		information. For example, "http://www.example.com/".
+	 * @param realm the subsection of the given server to which the
+	 *		authorization information applies.  For example,
+	 *		"realm1@example.com" or "" for no realm.
+	 * @param authScheme the scheme for which the authorization information
+	 *		applies. For example, "Basic" or "" for no authorization scheme
+	 * @return the authorization information for the specified protection
+	 *		space and given authorization scheme, or <code>null</code> if no
+	 *		such information exists
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.
+	 * Consider using <code>ISecurePreferences#get(String, String)</code> as a replacement of this method.
+	 * This API will be deleted in a future release. See bug 370248 for details.
+	 */
+	@Deprecated
+	public static Map<String,String> getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	/**
@@ -632,6 +752,25 @@ public final class Platform {
 	@Deprecated
 	public static IPath getPluginStateLocation(Plugin plugin) {
 		return plugin.getStateLocation();
+	}
+
+	/**
+	 * Returns the protection space (realm) for the specified resource, or
+	 * <code>null</code> if the realm is unknown.
+	 *
+	 * @param resourceUrl the URL of the resource whose protection space is
+	 *		returned. For example, "http://www.example.com/folder/".
+	 * @return the protection space (realm) for the specified resource, or
+	 *		<code>null</code> if the realm is unknown
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.
+	 * This API will be deleted in a future release. See bug 370248 for details.
+	 */
+	@Deprecated
+	public static String getProtectionSpace(URL resourceUrl) {
+		return AuthorizationHandler.getProtectionSpace(resourceUrl);
 	}
 
 	/**
