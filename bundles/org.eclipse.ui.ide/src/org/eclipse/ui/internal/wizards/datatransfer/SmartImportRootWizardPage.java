@@ -11,6 +11,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com>
  *     Rüdiger Herrmann <ruediger.herrmann@gmx.de>
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500836
+ *     Lucas Bullen (Red Hat Inc.) - Bug 526490
  ******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -188,7 +189,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		@Override
 		public Color getForeground(Object o) {
-			if (isExistingProject((File) o)) {
+			if (isExistingProject((File) o) || isExistingProjectName((File) o)) {
 				return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
 			}
 			return null;
@@ -209,6 +210,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 			File file = (File) o;
 			if (isExistingProject(file)) {
 				return DataTransferMessages.SmartImportProposals_alreadyImportedAsProject_title;
+			} else if (isExistingProjectName(file)) {
+				return DataTransferMessages.SmartImportProposals_anotherProjectWithSameNameExists_title;
 			}
 			List<ProjectConfigurator> configurators = SmartImportRootWizardPage.this.potentialProjects.get(file);
 			if (configurators.isEmpty()) {
@@ -224,7 +227,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		@Override
 		public Color getForeground(Object o) {
-			if (isExistingProject((File) o)) {
+			if (isExistingProject((File) o) || isExistingProjectName((File) o)) {
 				return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
 			}
 			return null;
@@ -580,7 +583,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 		tree.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (isExistingProject((File) event.getElement())) {
+				if (isExistingProject((File) event.getElement())
+						|| isExistingProjectName((File) event.getElement())) {
 					tree.setChecked(event.getElement(), false);
 					return;
 				}
@@ -622,7 +626,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				for (TreeItem item : tree.getTree().getItems()) {
 					File dir = (File) item.getData();
-					if (isExistingProject(dir)) {
+					if (isExistingProject(dir) || isExistingProjectName(dir)) {
 						tree.setChecked(dir, false);
 					} else {
 						tree.setChecked(dir, true);
@@ -699,6 +703,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 		return false;
 	}
 
+	protected boolean isExistingProjectName(File element) {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(element.getName()).exists();
+	}
+
 	protected void validatePage() {
 		// reset error message
 		setErrorMessage(null);
@@ -722,7 +730,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-		return sourceIsValid() && getWizard().getImportJob() != null && getWizard().getImportJob() != null
+		return sourceIsValid() && getWizard().getImportJob() != null
 				&& (getWizard().getImportJob().getDirectoriesToImport() == null
 						|| !getWizard().getImportJob().getDirectoriesToImport().isEmpty());
 	}
@@ -780,7 +788,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 			if (potentialProjects.size() == 1 && potentialProjects.values().iterator().next().isEmpty()) {
 				getWizard().getImportJob().setDirectoriesToImport(null);
 				getWizard().getImportJob().setExcludedDirectories(null);
-				selectionSummary.setText(NLS.bind(DataTransferMessages.SmartImportProposals_selectionSummary, 1, 1));
+
+				selectionSummary.setText(NLS.bind(DataTransferMessages.SmartImportProposals_selectionSummary,
+						directoriesToImport.size(), 1));
 			} else {
 				Set<File> excludedDirectories = new HashSet(((Map<File, ?>) this.tree.getInput()).keySet());
 				for (Object item : this.directoriesToImport) {
@@ -917,7 +927,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 		tree.setInput(potentialProjects);
 		this.directoriesToImport = new HashSet<>();
 		for (File dir : potentialProjects.keySet()) {
-			if (!isExistingProject(dir)) {
+			if (!(isExistingProject(dir) || isExistingProjectName(dir))) {
 				directoriesToImport.add(dir);
 			}
 		}

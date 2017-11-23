@@ -7,6 +7,7 @@
  *
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
+ * - Lucas Bullen (Red Hat Inc.)
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
@@ -171,6 +174,58 @@ public class SmartImportTests extends UITestCase {
 		assertTrue(implProjectNames.contains("impl"));
 		assertTrue(implProjectNames.contains("module2_impl"));
 		assertTrue(implProjectNames.contains("module3_impl"));
+	}
+
+	@Test
+	public void testImportProjectWithExistingName()
+			throws IOException, OperationCanceledException, InterruptedException {
+		URL url = FileLocator
+				.toFileURL(getClass()
+						.getResource("/data/org.eclipse.datatransferArchives/sameNameProject1/sameNameProject"));
+		File file = new File(url.getFile());
+		runSmartImport(file);
+
+		// Check expected project is there
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		assertEquals(1, projects.length);
+
+		url = FileLocator
+				.toFileURL(getClass()
+						.getResource("/data/org.eclipse.datatransferArchives/sameNameProject2/sameNameProject"));
+		file = new File(url.getFile());
+
+		SmartImportWizard wizard = new SmartImportWizard();
+		wizard.setInitialImportSource(file);
+		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		dialog.setBlockOnOpen(false);
+		dialog.open();
+		processEvents();
+		processEventsUntil(new Condition() {
+			@Override
+			public boolean compute() {
+				return !dialog.getErrorMessage().isEmpty();
+			}
+		}, -1);
+		SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
+		CheckboxTreeViewer treeViewer = getTreeViewer((Composite) page.getControl());
+		assertNotNull(treeViewer);
+		assertEquals(1, treeViewer.getTree().getItemCount());
+		assertEquals(0, treeViewer.getCheckedElements().length);
+		assertEquals("Project with same name already imported", treeViewer.getTree().getItems()[0].getText(1));
+	}
+
+	private CheckboxTreeViewer getTreeViewer(Composite parent) {
+		for (Control control : parent.getChildren()) {
+			if (control instanceof FilteredTree) {
+				return (CheckboxTreeViewer) ((FilteredTree) control).getViewer();
+			} else if (control instanceof Composite) {
+				CheckboxTreeViewer res = getTreeViewer((Composite) control);
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Test
