@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [525882] Delete nested projects
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.resource;
 
@@ -163,8 +164,11 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 					projectHierarchy.addAll(nestedProjects);
 					Button deleteNestedProjectsCheckbox = new Button(supportArea, SWT.CHECK);
 					deleteNestedProjectsCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-					deleteNestedProjectsCheckbox.setText(NLS.bind(RefactoringUIMessages.DeleteResourcesWizard_label_alsoDeleteNestedProjects, nestedProjects.size()));
-					deleteNestedProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
+					deleteNestedProjectsCheckbox.setText(
+							nestedProjects.size() == 1 ?
+									RefactoringUIMessages.DeleteResourcesWizard_label_alsoDeleteOneNestedProject :
+									NLS.bind(RefactoringUIMessages.DeleteResourcesWizard_label_alsoDeleteNestedProjects, nestedProjects.size()));
+					SelectionAdapter deleteNestedProjectsCheckboxListener = new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent e) {
 							final boolean deleteNestedProjects = deleteNestedProjectsCheckbox.getSelection();
@@ -181,7 +185,25 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 								RefactoringUIPlugin.log(ex);
 							}
 						}
+					};
+					deleteNestedProjectsCheckbox.addSelectionListener(deleteNestedProjectsCheckboxListener);
+
+					fDeleteContentsButton.addSelectionListener(new SelectionAdapter() {
+						private boolean previousNestedProjectSelection;
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							if (fDeleteContentsButton.getSelection()) {
+								previousNestedProjectSelection = deleteNestedProjectsCheckbox.getSelection();
+								deleteNestedProjectsCheckbox.setSelection(true);
+							} else {
+								deleteNestedProjectsCheckbox.setSelection(previousNestedProjectSelection);
+							}
+							deleteNestedProjectsCheckbox.setEnabled(!fDeleteContentsButton.getSelection());
+							super.widgetSelected(e);
+						}
 					});
+					fDeleteContentsButton.addSelectionListener(deleteNestedProjectsCheckboxListener);
 				}
 
 				fProjectLocationsLabel= new Label(supportArea, SWT.NONE);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [525882] Delete nested projects
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
@@ -69,6 +70,8 @@ public final class RefactoringUIMessages extends NLS {
 	public static String DeleteResourcesWizard_label_single_project;
 
 	public static String DeleteResourcesWizard_label_alsoDeleteNestedProjects;
+
+	public static String DeleteResourcesWizard_label_alsoDeleteOneNestedProject;
 
 	public static String DeleteResourcesWizard_page_title;
 
