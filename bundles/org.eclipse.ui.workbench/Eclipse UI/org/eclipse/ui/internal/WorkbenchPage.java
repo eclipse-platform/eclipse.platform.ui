@@ -87,6 +87,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
@@ -3969,29 +3970,36 @@ public class WorkbenchPage implements IWorkbenchPage {
 		visiblePerspective.setLabel(perspective.getLabel());
 		visiblePerspective.setTooltip(perspective.getLabel());
 		visiblePerspective.setElementId(perspective.getId());
-		MUIElement clone = modelService.cloneElement(visiblePerspective, application);
-		MWindow window = WorkbenchWindow.class.cast(getActivePart().getSite().getWorkbenchWindow()).getModel();
-		ModelServiceImpl.class.cast(modelService).getNullRefPlaceHolders(clone, window);
-		List<MPlaceholder> elementsToHide = modelService.findElements(clone, null, MPlaceholder.class, null);
+
+		MPerspective copy = (MPerspective) EcoreUtil.copy((EObject) visiblePerspective);
+
+		List<MPlaceholder> elementsToHide = modelService.findElements(copy, null, MPlaceholder.class, null);
 		for (MPlaceholder elementToHide : elementsToHide) {
-			if (elementToHide.getRef().getTags().contains(IPresentationEngine.NO_RESTORE)) {
+			if (elementToHide.isToBeRendered()
+					&& elementToHide.getRef().getTags().contains(IPresentationEngine.NO_RESTORE)) {
 				elementToHide.setToBeRendered(false);
-				MElementContainer<MUIElement> phParent = elementToHide.getParent();
-				if (phParent.getSelectedElement() == elementToHide) {
-					phParent.setSelectedElement(null);
-				}
-				int vc = modelService.countRenderableChildren(phParent);
-				if (vc == 0) {
-					if (!modelService.isLastEditorStack(phParent))
-						phParent.setToBeRendered(false);
-				}
+				updateSelectionAndParentVisibility(elementToHide);
 			}
 		}
+		// remove placeholder refs and save as snippet
+		modelService.cloneElement(copy, application);
 		if (perspective instanceof PerspectiveDescriptor) {
 			((PerspectiveDescriptor) perspective).setHasCustomDefinition(true);
 		}
 
 		UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SAVED, visiblePerspective);
+	}
+
+	private void updateSelectionAndParentVisibility(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent.getSelectedElement() == element) {
+			parent.setSelectedElement(null);
+		}
+		int renderableChildren = modelService.countRenderableChildren(parent);
+		if (renderableChildren == 0 && !modelService.isLastEditorStack(parent)) {
+			parent.setToBeRendered(false);
+			updateSelectionAndParentVisibility(parent);
+		}
 	}
 
 	@Override
