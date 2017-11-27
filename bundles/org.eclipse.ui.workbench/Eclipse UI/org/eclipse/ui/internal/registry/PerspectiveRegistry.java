@@ -324,6 +324,11 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	private String getOriginalId(MPerspective p) {
 		String id = p.getElementId();
 		String label = p.getLabel();
+		if (label == null) {
+			label = ""; //$NON-NLS-1$
+			logger.warn(String.format("Perspective %s has no label. Contributor is %s.", p.getElementId(), //$NON-NLS-1$
+					p.getContributorURI()));
+		}
 		int index = id.lastIndexOf('.');
 		// Custom perspectives store the user defined names in their labels
 		String trimE4 = label.trim();
