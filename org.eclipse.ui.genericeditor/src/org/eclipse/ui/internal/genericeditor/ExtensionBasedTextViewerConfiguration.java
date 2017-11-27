@@ -9,6 +9,7 @@
  *   Sopot Cela, Mickael Istria (Red Hat Inc.) - initial implementation
  *   Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support
  *                               - Bug 521382 default highlight reconciler
+ *   Simon Scholz <simon.scholz@vogella.com> - Bug 527830
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -16,9 +17,11 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -213,4 +216,10 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return super.getAutoEditStrategies(sourceViewer, contentType);
 	}
 
+	@Override
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map<String, IAdaptable> targets= super.getHyperlinkDetectorTargets(sourceViewer);
+		targets.put("org.eclipse.ui.genericeditor.GenericEditor", editor); //$NON-NLS-1$
+		return targets;
+	}
 }

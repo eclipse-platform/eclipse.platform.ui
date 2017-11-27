@@ -11,6 +11,7 @@
 <!--     Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation -->
 <!--     Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support -->
 <!--                                 - Bug 521382 default highlighter       -->
+<!--     Simon Scholz <simon.scholz@vogella.com> - Bug 527830               -->
 <!-- ====================================================================== -->
 <plugin>
    <extension-point id="reconcilers" name="%ExtPoint.reconciliers" schema="schema/reconcilers.exsd"/>
@@ -152,5 +153,15 @@
                refid="org.eclipse.e4.ui.css.theme.e4_dark">
          </themeid>
       </stylesheet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+      <target
+            id="org.eclipse.ui.genericeditor.GenericEditor"
+            name="%ExtPoint.hyperlinkDetectorTarget">
+         <context
+               type="org.eclipse.ui.texteditor.ITextEditor">
+         </context>
+      </target>
    </extension>
 </plugin>
