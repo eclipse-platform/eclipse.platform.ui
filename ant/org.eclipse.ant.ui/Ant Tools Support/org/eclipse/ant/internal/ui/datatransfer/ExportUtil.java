@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 Richard Hoefter and others.
+ * Copyright (c) 2004, 2017 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -466,6 +466,9 @@ public class ExportUtil {
 		Source source = new DOMSource(doc);
 		Result result = new StreamResult(writer);
 		TransformerFactory factory = TransformerFactory.newInstance();
+		// https://ant.apache.org/manual/Tasks/style.html
+		// Need this feature to set true for Java 9 to enable extension Functions in the presence of Security manager
+		factory.setFeature("http://www.oracle.com/xml/jaxp/properties/enableExtensionFunctions", Boolean.TRUE); //$NON-NLS-1$
 		boolean indentFallback = false;
 		try {
 			// indent using TransformerImpl
