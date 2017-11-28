@@ -59,7 +59,7 @@ public class FilterSelectionAction extends ResourceNavigatorAction {
                 FILTER_SELECTION_MESSAGE);
 
         dialog.setTitle(FILTER_TITLE_MESSAGE);
-        dialog.setInitialSelections(contentProvider.getInitialSelections());
+        dialog.setInitialSelections((Object[]) contentProvider.getInitialSelections());
         dialog.open();
         if (dialog.getReturnCode() == Window.OK) {
             Object[] results = dialog.getResult();
