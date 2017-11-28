@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -317,7 +317,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			}
 			LaunchConfigurationMigrationSelectionDialog listd = new LaunchConfigurationMigrationSelectionDialog(getShell(),new AdaptableList(pub));
 			listd.setTitle(DebugPreferencesMessages.LaunchingPreferencePage_28);
-			listd.setInitialSelections(configurations);
+			listd.setInitialSelections((Object[]) configurations);
 			if(listd.open() == IDialogConstants.OK_ID) {
 				fMonitor = new ProgressMonitorPart(fMigrateNow.getParent(), new GridLayout());
 				Object[] objs = listd.getResult();
