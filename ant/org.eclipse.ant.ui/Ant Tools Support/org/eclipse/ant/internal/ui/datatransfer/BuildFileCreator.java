@@ -58,6 +58,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -344,7 +345,7 @@ public class BuildFileCreator {
 	 */
 	public void createClasspaths(String pathId, IJavaProject currentProject, EclipseClasspath classpath) throws JavaModelException {
 		if (currentProject == null) {
-			AntUIPlugin.log("project is not loaded in workspace: " + pathId, null); //$NON-NLS-1$ 
+			AntUIPlugin.log("project is not loaded in workspace: " + pathId, null); //$NON-NLS-1$
 			return;
 		}
 		// <path id="hello.classpath">
@@ -426,7 +427,7 @@ public class BuildFileCreator {
 					IPath home = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
 					if (home != null && home.isPrefixOf(entries[i].getPath())) {
 						variable2valueMap.put("ECLIPSE_HOME", home.toString()); //$NON-NLS-1$
-						jarFile = "${ECLIPSE_HOME}" + jarFile.substring(home.toString().length()); //$NON-NLS-1$ 
+						jarFile = "${ECLIPSE_HOME}" + jarFile.substring(home.toString().length()); //$NON-NLS-1$
 					} else if (!new File(jarFile).exists() && jarFile.startsWith('/' + projectName)
 							&& new File(projectRoot, jarFile.substring(('/' + projectName).length())).exists()) {
 						// workaround that additional jars are stored with
@@ -747,7 +748,7 @@ public class BuildFileCreator {
 				javacElement.setAttribute("destdir", classDir); //$NON-NLS-1$
 				javacElement.setAttribute("debug", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				javacElement.setAttribute("debuglevel", "${debuglevel}"); //$NON-NLS-1$ //$NON-NLS-2$
-				javacElement.setAttribute("source", "${source}"); //$NON-NLS-1$ //$NON-NLS-2$                
+				javacElement.setAttribute("source", "${source}"); //$NON-NLS-1$ //$NON-NLS-2$
 				javacElement.setAttribute("target", "${target}"); //$NON-NLS-1$ //$NON-NLS-2$
 
 				// Bug 313386: <javac> tag with several source directories
@@ -770,8 +771,8 @@ public class BuildFileCreator {
 				classpathRefElement.setAttribute("refid", projectName + ".classpath"); //$NON-NLS-1$ //$NON-NLS-2$
 				javacElement.appendChild(classpathRefElement);
 				element.appendChild(javacElement);
-
-				addCompilerBootClasspath(srcDirs, javacElement);
+				if (!JavaRuntime.isModularProject(project))
+					addCompilerBootClasspath(srcDirs, javacElement);
 			}
 		}
 		root.appendChild(element);
@@ -799,7 +800,7 @@ public class BuildFileCreator {
 		// </target>
 		Element element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "build-refprojects"); //$NON-NLS-1$
-		element.setAttribute(IAntCoreConstants.DESCRIPTION, "Build all projects which " + //$NON-NLS-1$ 
+		element.setAttribute(IAntCoreConstants.DESCRIPTION, "Build all projects which " + //$NON-NLS-1$
 				"reference this project. Useful to propagate changes."); //$NON-NLS-1$
 		for (Iterator<IJavaProject> iter = refProjects.iterator(); iter.hasNext();) {
 			IJavaProject p = iter.next();
@@ -840,7 +841,7 @@ public class BuildFileCreator {
 		IPath value = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
 		if (value != null) {
 			variable2valueMap.put("ECLIPSE_HOME", ExportUtil.getRelativePath( //$NON-NLS-1$
-			value.toString(), projectRoot));
+					value.toString(), projectRoot));
 		}
 		// <target name="init-eclipse-compiler" description="copy Eclipse compiler jars to ant lib directory">
 		// <property name="ECLIPSE_HOME" value="C:/Programme/eclipse-3.1" />
@@ -854,7 +855,7 @@ public class BuildFileCreator {
 		// </target>
 		Element element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "init-eclipse-compiler"); //$NON-NLS-1$
-		element.setAttribute(IAntCoreConstants.DESCRIPTION, "copy Eclipse compiler jars to ant lib directory"); //$NON-NLS-1$ 
+		element.setAttribute(IAntCoreConstants.DESCRIPTION, "copy Eclipse compiler jars to ant lib directory"); //$NON-NLS-1$
 		Element copyElement = doc.createElement("copy"); //$NON-NLS-1$
 		copyElement.setAttribute("todir", "${ant.library.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
 		Element filesetElement = doc.createElement("fileset"); //$NON-NLS-1$
@@ -882,7 +883,7 @@ public class BuildFileCreator {
 		// </target>
 		Element element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "build-eclipse-compiler"); //$NON-NLS-1$
-		element.setAttribute(IAntCoreConstants.DESCRIPTION, "compile project with Eclipse compiler"); //$NON-NLS-1$ 
+		element.setAttribute(IAntCoreConstants.DESCRIPTION, "compile project with Eclipse compiler"); //$NON-NLS-1$
 		Element propertyElement = doc.createElement("property"); //$NON-NLS-1$
 		propertyElement.setAttribute(IAntCoreConstants.NAME, "build.compiler"); //$NON-NLS-1$
 		propertyElement.setAttribute(IAntCoreConstants.VALUE, "org.eclipse.jdt.core.JDTCompilerAdapter"); //$NON-NLS-1$
@@ -907,7 +908,7 @@ public class BuildFileCreator {
 		for (Iterator<String> iter = srcDirs.iterator(); iter.hasNext();) {
 			String entry = iter.next();
 			if (EclipseClasspath.isUserSystemLibraryReference(entry)) {
-				Element pathElement = doc.createElement("path"); //$NON-NLS-1$                        
+				Element pathElement = doc.createElement("path"); //$NON-NLS-1$
 				pathElement.setAttribute("refid", ExportUtil.removePrefixAndSuffix(entry, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				bootclasspathElement.appendChild(pathElement);
 				bootclasspathUsed = true;
@@ -1192,11 +1193,16 @@ public class BuildFileCreator {
 		// <bootclasspath>
 		// <path refid="run.hello.bootclasspath"/>
 		// </bootclasspath>
+		if (JavaRuntime.isModularConfiguration(conf)) {
+			// there is no bootclasspath entry from Java 9 onwards
+			return;
+		}
 		EclipseClasspath bootClasspath = new EclipseClasspath(project, conf, true);
 		if (bootClasspath.rawClassPathEntries.size() == 1 && EclipseClasspath.isJreReference(bootClasspath.rawClassPathEntries.get(0))) {
 			// the default boot classpath contains exactly one element (the JRE)
 			return;
 		}
+
 		String pathId = "run." + conf.getName() + ".bootclasspath"; //$NON-NLS-1$ //$NON-NLS-2$
 		createClasspaths(pathId, project, bootClasspath);
 		Element bootclasspath = doc.createElement("bootclasspath"); //$NON-NLS-1$
