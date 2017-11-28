@@ -222,18 +222,19 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	@Override
 	protected void presentInformation() {
-		if (fTextViewer == null)
+		if (fTextViewer == null) {
 			return;
+		}
 
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
 			Display display= textWidget.getDisplay();
-			if (display == null)
+			if (display == null) {
 				return;
+			}
 
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
+			display.asyncExec(() -> {
+				if (!textWidget.isDisposed()) {
 					doPresentInformation();
 				}
 			});
