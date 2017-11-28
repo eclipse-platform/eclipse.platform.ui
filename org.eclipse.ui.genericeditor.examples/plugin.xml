@@ -11,6 +11,7 @@
 <!--     Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation -->
 <!--     Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support -->
 <!--    							 - Bug 521382 default highlighter		-->
+<!--    Simon Scholz <simon.scholz@vogella.com> - Bug 527834                -->
 <!-- ====================================================================== -->
 <plugin>
    <extension
@@ -83,5 +84,15 @@
             class="org.eclipse.ui.genericeditor.examples.dotproject.HighlightReconciler"
             contentType="org.eclipse.ui.genericeditor.examples.dotproject">
       </highlightReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+      <hyperlinkDetector
+            activate="true"
+            class="org.eclipse.ui.genericeditor.examples.dotproject.hyperlink.ProjectHyperlinkDetector"
+            id="org.eclipse.ui.genericeditor.examples.hyperlinkDetector"
+            name="Project Settings Hyperlink Detector"
+            targetId="org.eclipse.ui.genericeditor.GenericEditor">
+      </hyperlinkDetector>
    </extension>
 </plugin>
