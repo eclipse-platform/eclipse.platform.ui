@@ -14,3 +14,4 @@ Require-Bundle:
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.core.expressions.tests

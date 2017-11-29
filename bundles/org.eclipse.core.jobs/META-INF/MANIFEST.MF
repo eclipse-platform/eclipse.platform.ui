@@ -16,3 +16,4 @@ Import-Package: org.eclipse.osgi.service.debug,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.packageadmin,
  org.osgi.util.tracker
+Automatic-Module-Name: org.eclipse.core.jobs

@@ -20,3 +20,4 @@ Require-Bundle: javax.inject;bundle-version="1.0.0";resolution:=optional;visibil
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 DynamicImport-Package: org.eclipse.core.internal.runtime.auth
+Automatic-Module-Name: org.eclipse.core.runtime

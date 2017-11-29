@@ -21,3 +21,4 @@ Import-Package: javax.xml.parsers,
  org.xml.sax.ext,
  org.xml.sax.helpers
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.core.contenttype

@@ -20,3 +20,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Plugin-Class: org.eclipse.core.tests.runtime.RuntimeTestsPlugin
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.core.tests.runtime
