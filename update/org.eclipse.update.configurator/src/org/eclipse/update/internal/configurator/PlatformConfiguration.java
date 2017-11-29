@@ -14,7 +14,6 @@ package org.eclipse.update.internal.configurator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,7 +27,6 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -66,7 +64,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private Configuration config;
 	private URL configLocation;
-	private HashMap<URL, SiteEntry> externalLinkSites; // used to restore prior link site state
 	private long changeStamp;
 	private long featuresChangeStamp;
 	private boolean featuresChangeStampIsValid;
@@ -77,45 +74,26 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private Locker lock = null;
 	private static int defaultPolicy = DEFAULT_POLICY_TYPE;
 
-	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
 	private static final String PLATFORM_XML = "platform.xml"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = ConfigurationActivator.NAME_SPACE + "/" + PLATFORM_XML; //$NON-NLS-1$
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$ //$NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
-	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {};
 
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
-	private static final String LINK_PATH = "path"; //$NON-NLS-1$
-	private static final String LINK_READ = "r"; //$NON-NLS-1$
-	private static final String LINK_READ_WRITE = "rw"; //$NON-NLS-1$
 	private static URL installURL;
 
 	private PlatformConfiguration(Location platformConfigLocation) throws CoreException, IOException {
 
-		this.externalLinkSites = new HashMap<>();
 		this.config = null;
 
 		// initialize configuration
 		initializeCurrent(platformConfigLocation);
 		if (config != null)
 			setDefaultPolicy();
-
-		// Detect external links. These are "soft link" to additional sites. The link
-		// files are usually provided by external installation programs. They are located
-		// relative to this configuration URL.
-		// Note: don't do it for self hosting or if update reconciler is disabled
-		if (ConfigurationActivator.isReconciling()) {
-			if (!isTransient())
-				configureExternalLinks();
-
-			// Validate sites in the configuration. Causes any sites that do not exist to
-			// be removed from the configuration
-			validateSites();
-		}
 
 		// compute differences between configuration and actual content of the sites
 		// (base sites and link sites)
@@ -139,7 +117,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	PlatformConfiguration(URL url) throws Exception {
-		this.externalLinkSites = new HashMap<>();
 		URL installLocation = Utils.getInstallURL();
 		// Retrieve install location with respect to given url if possible
 		try {
@@ -153,7 +130,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	public PlatformConfiguration(URL url, URL installLocation) throws Exception {
-		this.externalLinkSites = new HashMap<>();
 		initialize(url, installLocation);
 	}
 
@@ -823,138 +799,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		pluginsChangeStamp = result;
 		pluginsChangeStampIsValid = true;
 		return pluginsChangeStamp;
-	}
-
-	private void configureExternalLinks() {
-		URL linkURL = getInstallURL();
-		if (!supportsDetection(linkURL, config.getInstallURL()))
-			return;
-
-		try {
-			linkURL = new URL(linkURL, LINKS + "/"); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			// skip bad links ...
-			Utils.debug("Unable to obtain link URL"); //$NON-NLS-1$
-			return;
-		}
-
-		File linkDir = new File(linkURL.getFile());
-		File[] links = linkDir.listFiles();
-		if (links == null || links.length == 0) {
-			Utils.debug("No links detected in " + linkURL.toExternalForm()); //$NON-NLS-1$
-			return;
-		}
-
-		for (int i = 0; i < links.length; i++) {
-			if (links[i].isDirectory())
-				continue;
-			Utils.debug("Link file " + links[i].getAbsolutePath()); //$NON-NLS-1$
-			Properties props = new Properties();
-			FileInputStream is = null;
-			try {
-				is = new FileInputStream(links[i]);
-				props.load(is);
-				configureExternalLinkSite(links[i], props);
-			} catch (IOException e) {
-				// skip bad links ...
-				Utils.debug("   unable to load link file " + e); //$NON-NLS-1$
-				continue;
-			} finally {
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException e) {
-						// ignore ...
-					}
-				}
-			}
-		}
-	}
-
-	private void configureExternalLinkSite(File linkFile, Properties props) {
-		String path = props.getProperty(LINK_PATH);
-		if (path == null) {
-			Utils.debug("   no path definition"); //$NON-NLS-1$
-			return;
-		}
-
-		String link;
-		boolean updateable = true;
-		URL siteURL;
-
-		// parse out link information
-		if (path.startsWith(LINK_READ + " ")) { //$NON-NLS-1$
-			updateable = false;
-			link = path.substring(2).trim();
-		} else if (path.startsWith(LINK_READ_WRITE + " ")) { //$NON-NLS-1$
-			link = path.substring(3).trim();
-		} else {
-			link = path.trim();
-		}
-
-		// 	make sure we have a valid link specification
-		try {
-			File siteFile = new File(link);
-			siteFile = new File(siteFile, ECLIPSE);
-			siteURL = siteFile.toURL();
-			if (findConfiguredSite(siteURL, true) != null)
-				// linked site is already known
-				return;
-		} catch (MalformedURLException e) {
-			// ignore bad links ...
-			Utils.debug("  bad URL " + e); //$NON-NLS-1$
-			return;
-		}
-
-		// process the link
-		SiteEntry linkSite = externalLinkSites.get(siteURL);
-		if (linkSite == null) {
-			// this is a link to a new target so create site for it
-			ISitePolicy linkSitePolicy = createSitePolicy(getDefaultPolicy(), DEFAULT_POLICY_LIST);
-			linkSite = (SiteEntry) createSiteEntry(siteURL, linkSitePolicy);
-		}
-		// update site entry if needed
-		linkSite.setUpdateable(updateable);
-		linkSite.setLinkFileName(linkFile.getAbsolutePath());
-
-		// configure the new site
-		// NOTE: duplicates are not replaced (first one in wins)
-		configureSite(linkSite);
-		// there are changes in the config
-		config.setDirty(true);
-		Utils.debug("   " + (updateable ? "R/W -> " : "R/O -> ") + siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	private void validateSites() {
-
-		// check to see if all sites are valid. Remove any sites that do not exist.
-		SiteEntry[] list = config.getSites();
-		for (int i = 0; i < list.length; i++) {
-			URL siteURL = list[i].getResolvedURL();
-			if (!supportsDetection(siteURL, config.getInstallURL()))
-				continue;
-
-			File siteRoot = new File(siteURL.getFile().replace('/', File.separatorChar));
-			if (!siteRoot.exists()) {
-				unconfigureSite(list[i]);
-				Utils.debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			// If multiple paths are defined in the same link file
-			// or if the path changes, the old site will still be kept.
-			// A better algorithm could be implemented by keeping track
-			// of the previous content of the link file.
-			// TODO do the above
-			String linkName = list[i].getLinkFileName();
-			if (linkName != null) {
-				File linkFile = new File(linkName);
-				if (!linkFile.exists()) {
-					unconfigureSite(list[i]);
-					config.setDirty(true);
-					Utils.debug("Site " + siteURL + " is no longer linked ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-		}
 	}
 
 	private void linkInitializedState(Configuration sharedConfig, Location sharedConfigLocation, Location newConfigLocation) {
