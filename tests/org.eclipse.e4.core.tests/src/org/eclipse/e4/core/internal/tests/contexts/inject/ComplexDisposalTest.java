@@ -59,7 +59,7 @@ public class ComplexDisposalTest {
 		parentContext.set(MyTest.class.getName(), new TestFunction());
 		IEclipseContext context = parentContext.createChild();
 
-		MyTest test = (MyTest) context.get(MyTest.class.getName());
+		MyTest test = context.get(MyTest.class);
 
 		assertEquals(0, test.getCount());
 		context.dispose();
