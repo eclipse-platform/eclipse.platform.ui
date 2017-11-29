@@ -95,14 +95,14 @@ public class AnnotationsInjectionTest {
 		}
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
-		context.set(TestData.class.getName(), methodValue);
+		context.set(TestData.class, methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		assertEquals(1, object.setMethodCalled);
 		assertEquals(1, object.postConstructCalled);
 
 		TestData methodValue2 = new TestData();
-		context.set(TestData.class.getName(), methodValue2);
+		context.set(TestData.class, methodValue2);
 		assertEquals(2, object.setMethodCalled);
 		assertEquals(1, object.postConstructCalled);
 		assertEquals(methodValue2, object.value);
@@ -121,11 +121,11 @@ public class AnnotationsInjectionTest {
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Integer.class.getName(), testInt);
-		context.set(String.class.getName(), testString);
-		context.set(Double.class.getName(), testDouble);
-		context.set(Float.class.getName(), testFloat);
-		context.set(Character.class.getName(), testChar);
+		context.set(Integer.class, testInt);
+		context.set(String.class, testString);
+		context.set(Double.class, testDouble);
+		context.set(Float.class, testFloat);
+		context.set(Character.class, testChar);
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
@@ -201,7 +201,7 @@ public class AnnotationsInjectionTest {
 	public void testOptionalInjection() {
 		Integer testInt = Integer.valueOf(123);
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Integer.class.getName(), testInt);
+		context.set(Integer.class, testInt);
 
 		OptionalAnnotations userObject = new OptionalAnnotations();
 		ContextInjectionFactory.inject(userObject, context);
@@ -217,9 +217,9 @@ public class AnnotationsInjectionTest {
 		String testString = new String("abc");
 		Double testDouble = Double.valueOf(1.23);
 		Float testFloat = Float.valueOf(12.3f);
-		context.set(String.class.getName(), testString);
-		context.set(Double.class.getName(), testDouble);
-		context.set(Float.class.getName(), testFloat);
+		context.set(String.class, testString);
+		context.set(Double.class, testDouble);
+		context.set(Float.class, testFloat);
 
 		assertEquals(1, userObject.methodOptionalCalled);
 		assertEquals(2, userObject.methodRequiredCalled);
@@ -252,7 +252,7 @@ public class AnnotationsInjectionTest {
 	    assertEquals(1, testObject.called);
 
 	    String string = "sample";
-	    context.set(String.class.getName(), string);
+		context.set(String.class, string);
 	    result = ContextInjectionFactory.invoke(testObject, Execute.class, context, notAnObject);
 	    assertEquals(string, result);
 	    assertEquals(2, testObject.called);
@@ -264,9 +264,9 @@ public class AnnotationsInjectionTest {
 	@Test
 	public void testInheritedSpecialMethods() {
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Integer.class.getName(), Integer.valueOf(123));
-		context.set(String.class.getName(), new String("abc"));
-		context.set(Float.class.getName(), Float.valueOf(12.3f));
+		context.set(Integer.class, Integer.valueOf(123));
+		context.set(String.class, new String("abc"));
+		context.set(Float.class, Float.valueOf(12.3f));
 
 		ObjectSubClass userObject = new ObjectSubClass();
 		ContextInjectionFactory.inject(userObject, context);
@@ -276,7 +276,7 @@ public class AnnotationsInjectionTest {
 		assertEquals(0, userObject.subPreDestroyCount);
 		assertEquals(0, userObject.overriddenPreDestroyCount);
 
-		context.set(Float.class.getName(), Float.valueOf(45.6f));
+		context.set(Float.class, Float.valueOf(45.6f));
 		assertEquals(1, userObject.superPostConstructCount);
 		assertEquals(1, userObject.subPostConstructCount);
 		assertEquals(0, userObject.superPreDestroyCount);
@@ -348,7 +348,7 @@ public class AnnotationsInjectionTest {
 		}
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
-		context.set(TestData.class.getName(), methodValue);
+		context.set(TestData.class, methodValue);
 
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
