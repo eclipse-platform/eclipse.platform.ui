@@ -18,8 +18,6 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.SafeRunnable;
@@ -42,7 +40,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -943,29 +940,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			// add our selection listener
 			ISelectionProvider provider = pageSite.getSelectionProvider();
-			if (provider == null) {
-				/* BEGIN workaround for bug 319846 BEGIN */
-				WorkbenchPage page = (WorkbenchPage) getSite().getPage();
-				MPart part = page.findPart(this);
-				if (part != null) {
-					part.getContext().get(ESelectionService.class).setSelection(StructuredSelection.EMPTY);
-				}
-				/* END workaround for bug 319846 END */
-			} else {
+			if (provider != null) {
+				forwardSelection(new SelectionChangedEvent(provider, provider.getSelection()));
+
 				provider.addSelectionChangedListener(selectionChangedListener);
 				if (provider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) provider).addPostSelectionChangedListener(postSelectionListener);
 				} else {
 					provider.addSelectionChangedListener(postSelectionListener);
 				}
-
-				/* BEGIN workaround for bug 319846 BEGIN */
-				WorkbenchPage page = (WorkbenchPage) getSite().getPage();
-				MPart part = page.findPart(this);
-				if (part != null) {
-					part.getContext().get(ESelectionService.class).setSelection(provider.getSelection());
-				}
-				/* END workaround for bug 319846 END */
 			}
 			// Update action bars.
 			getViewSite().getActionBars().updateActionBars();
@@ -990,7 +973,13 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			} else {
 				provider.removeSelectionChangedListener(postSelectionListener);
 			}
+			forwardSelection(new SelectionChangedEvent(provider, StructuredSelection.EMPTY));
 		}
+	}
+
+	private void forwardSelection(SelectionChangedEvent event) {
+		getSelectionProvider().selectionChanged(event);
+		getSelectionProvider().postSelectionChanged(event);
 	}
 
 	/**
