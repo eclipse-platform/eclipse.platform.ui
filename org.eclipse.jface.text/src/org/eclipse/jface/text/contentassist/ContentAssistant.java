@@ -2013,7 +2013,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				@Override
 				public void run() throws Exception {
 					processors.forEach(p -> {
-						res.addAll(Arrays.asList(p.computeCompletionProposals(viewer, offset)));
+						ICompletionProposal[] proposals= p.computeCompletionProposals(viewer, offset);
+						if (proposals != null) {
+							res.addAll(Arrays.asList(proposals));
+						}
 						fLastErrorMessage= p.getErrorMessage();
 					});
 				}

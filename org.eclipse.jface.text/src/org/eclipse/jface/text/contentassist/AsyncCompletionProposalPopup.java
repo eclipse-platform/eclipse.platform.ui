@@ -269,9 +269,13 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		}
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
 		for (IContentAssistProcessor processor : processors) {
-			futures.add(CompletableFuture.supplyAsync(() ->
-				Arrays.asList(processor.computeCompletionProposals(fViewer, invocationOffset))
-			));
+			futures.add(CompletableFuture.supplyAsync(() -> {
+				ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+				if (proposals == null) {
+					return Collections.emptyList();
+				}
+				return Arrays.asList(proposals);
+			}));
 		}
 		return futures;
 	}

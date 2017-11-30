@@ -46,7 +46,10 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		List<ICompletionProposal> res = new ArrayList<>();
 		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
-			res.addAll(Arrays.asList(processor.computeCompletionProposals(viewer, offset)));
+			ICompletionProposal[] proposals = processor.computeCompletionProposals(viewer, offset);
+			if (proposals != null) {
+				res.addAll(Arrays.asList(proposals));
+			}
 		}
 		return res.toArray(new ICompletionProposal[res.size()]);
 	}
