@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.ui.forms;bundle-version="[3.3.0,4.0.0)";visibility:=
  org.eclipse.e4.ui.css.swt
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.ui.views.properties.tabbed

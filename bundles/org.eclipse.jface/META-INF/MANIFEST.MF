@@ -42,3 +42,4 @@ Import-Package: javax.xml.parsers,
  org.osgi.framework,
  org.w3c.dom,
  org.xml.sax
+Automatic-Module-Name: org.eclipse.jface

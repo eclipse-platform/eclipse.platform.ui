@@ -28,3 +28,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.e4.ui.progress
 Service-Component: OSGI-INF/progress.xml
+Automatic-Module-Name: org.eclipse.e4.ui.progress

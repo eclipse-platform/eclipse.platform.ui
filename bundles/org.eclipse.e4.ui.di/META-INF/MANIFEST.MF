@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.eclipse.e4.ui.di
-Bundle-Version: 1.2.100.qualifier
+Bundle-Version: 1.2.200.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",
@@ -20,3 +20,4 @@ Export-Package: org.eclipse.e4.ui.di,
 Service-Component: OSGI-INF/org.eclipse.e4.ui.internal.di.UIEventObjectSupplier.xml
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
+Automatic-Module-Name: org.eclipse.e4.ui.di

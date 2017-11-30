@@ -68,4 +68,5 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.7.0,4.0.0)";resolu
  org.eclipse.osgi.services;bundle-version="3.5.0"
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.ui.ide
 

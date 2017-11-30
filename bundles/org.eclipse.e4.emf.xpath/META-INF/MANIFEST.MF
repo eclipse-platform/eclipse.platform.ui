@@ -10,3 +10,4 @@ Export-Package: org.eclipse.e4.emf.internal.xpath;x-internal:=true,
  org.eclipse.e4.emf.internal.xpath.helper;x-internal:=true,
  org.eclipse.e4.emf.xpath
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: org.eclipse.e4.emf.xpath

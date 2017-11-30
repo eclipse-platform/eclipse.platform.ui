@@ -31,3 +31,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eclipse.e4.ui.internal.css.swt.CSSActivator
 Bundle-ActivationPolicy: lazy
 Import-Package: org.w3c.dom.css
+Automatic-Module-Name: org.eclipse.e4.ui.css.swt

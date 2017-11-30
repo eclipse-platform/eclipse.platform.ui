@@ -49,3 +49,4 @@ Require-Capability: osgi.extender;
  osgi.service;
   filter:="(objectClass=org.osgi.service.event.EventAdmin)";
   effective:="active"
+Automatic-Module-Name: org.eclipse.e4.ui.workbench

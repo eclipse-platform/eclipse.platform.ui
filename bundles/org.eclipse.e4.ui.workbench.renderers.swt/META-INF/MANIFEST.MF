@@ -34,3 +34,4 @@ Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
  org.osgi.service.event;version="1.3.0",
  org.w3c.dom.css
+Automatic-Module-Name: org.eclipse.e4.ui.workbench.renderers.swt

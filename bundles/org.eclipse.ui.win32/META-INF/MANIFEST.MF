@@ -10,3 +10,4 @@ Bundle-Localization: fragment-win32
 Export-Package: org.eclipse.ui.internal.editorsupport.win32;x-internal:=true
 Eclipse-PlatformFilter: (osgi.ws=win32)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.ui.win32
