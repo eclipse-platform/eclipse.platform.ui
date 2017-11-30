@@ -20,7 +20,7 @@ import org.eclipse.jface.text.source.Annotation;
 /**
  * Abstract class for inlined annotation.
  *
- * @since 3.13.0
+ * @since 3.13
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public abstract class AbstractInlinedAnnotation extends Annotation {

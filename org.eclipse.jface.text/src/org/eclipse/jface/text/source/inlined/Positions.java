@@ -17,7 +17,7 @@ import org.eclipse.jface.text.Position;
 /**
  * Utilities class to retrieve position.
  *
- * @since 3.13.0
+ * @since 3.13
  */
 public class Positions {
 
