@@ -19,3 +19,4 @@ Import-Package: javax.annotation,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di.annotations
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Automatic-Module-Name: org.eclipse.e4.ui.examples.job

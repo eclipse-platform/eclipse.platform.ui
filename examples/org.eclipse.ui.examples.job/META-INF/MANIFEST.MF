@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Automatic-Module-Name: org.eclipse.ui.examples.job

@@ -11,3 +11,4 @@ Bundle-Vendor: %contributions.Activator.providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.ui.examples.contributions
