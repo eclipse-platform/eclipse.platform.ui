@@ -50,7 +50,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * <li>line content annotation with {@link LineContentAnnotation}.</li>
  * </ul>
  *
- * @since 3.13.0
+ * @since 3.13
  */
 public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 

@@ -21,7 +21,7 @@ import org.eclipse.jface.text.Position;
  * Inlined annotation which is drawn in the line content and which takes some place with a given
  * width.
  *
- * @since 3.13.0
+ * @since 3.13
  */
 public class LineContentAnnotation extends AbstractInlinedAnnotation {
 

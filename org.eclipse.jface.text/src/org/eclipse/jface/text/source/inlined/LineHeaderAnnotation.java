@@ -17,7 +17,7 @@ import org.eclipse.jface.text.Position;
 /**
  * Inlined annotation which is drawn before a line and which takes some place with a given height.
  *
- * @since 3.13.0
+ * @since 3.13
  */
 public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 
