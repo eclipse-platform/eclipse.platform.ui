@@ -65,6 +65,7 @@
     <module>org.eclipse.ui.editors</module>
     <module>org.eclipse.search</module>
     <module>org.eclipse.ui.examples.javaeditor</module>
+    <module>org.eclipse.jface.text.examples</module>
     <!-- Generic editor -->
     <module>org.eclipse.ui.genericeditor</module>
     <module>org.eclipse.ui.genericeditor.tests</module>
