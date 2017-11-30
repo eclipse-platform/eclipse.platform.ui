@@ -23,3 +23,4 @@ Export-Package: org.eclipse.jface.databinding.conformance;uses:="org.eclipse.cor
    org.eclipse.core.databinding.observable.value,
    junit.framework,
    org.eclipse.core.databinding.observable.set"
+Automatic-Module-Name: org.eclipse.jface.tests.databinding.conformance

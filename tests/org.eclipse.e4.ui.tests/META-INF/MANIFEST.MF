@@ -40,4 +40,5 @@ Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0"
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.e4.ui.tests
 

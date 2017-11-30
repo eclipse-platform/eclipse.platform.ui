@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.e4.emf.xpath.test

@@ -18,3 +18,4 @@ Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.ui.tests.navigator
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.ui.tests.navigator

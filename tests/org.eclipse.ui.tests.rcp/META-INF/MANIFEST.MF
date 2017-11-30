@@ -16,3 +16,4 @@ Export-Package: org.eclipse.ui.tests.rcp,
  org.eclipse.ui.tests.rcp.util
 Bundle-Localization: plugin
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.ui.tests.rcp

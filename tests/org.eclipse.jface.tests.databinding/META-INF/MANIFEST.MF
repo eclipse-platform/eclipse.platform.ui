@@ -19,3 +19,4 @@ Import-Package: com.ibm.icu.math,
  com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.jface.tests.databinding

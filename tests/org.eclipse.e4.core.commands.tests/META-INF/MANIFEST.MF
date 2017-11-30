@@ -17,4 +17,5 @@ Import-Package: javax.inject;version="1.0.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.e4.core.commands.tests.TestActivator
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.e4.core.commands.tests
 
