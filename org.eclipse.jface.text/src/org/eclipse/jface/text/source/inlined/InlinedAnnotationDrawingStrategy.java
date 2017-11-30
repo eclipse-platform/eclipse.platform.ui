@@ -24,7 +24,7 @@ import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 /**
  * {@link IDrawingStrategy} implementation to render {@link AbstractInlinedAnnotation}.
  *
- * @since 3.13.0
+ * @since 3.13
  */
 class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
