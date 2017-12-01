@@ -2673,5 +2673,17 @@
          </description>
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               id="org.eclipse.ui.navigator.ProjectExplorer"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.debug.ui.DebugView">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
