@@ -65,7 +65,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 *
 	 * @param rules the sequence of rules controlling this scanner
 	 */
-	public void setRules(IRule[] rules) {
+	public void setRules(IRule... rules) {
 		if (rules != null) {
 			fRules= new IRule[rules.length];
 			System.arraycopy(rules, 0, fRules, 0, rules.length);
