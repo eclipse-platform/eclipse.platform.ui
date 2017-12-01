@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.core.variables;bundle-version="[3.1.0,4.0.0)",
 Bundle-ActivationPolicy: lazy;exclude:="org.eclipse.ant.internal.core.contentDescriber"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
+Automatic-Module-Name: org.eclipse.ant.core

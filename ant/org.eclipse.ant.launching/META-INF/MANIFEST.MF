@@ -28,3 +28,4 @@ Export-Package: org.eclipse.ant.internal.launching;x-friends:="org.eclipse.ant.u
  org.eclipse.ant.internal.launching.runtime.logger;x-friends:="org.eclipse.ant.ui",
  org.eclipse.ant.launching
 Import-Package: com.ibm.icu.text
+Automatic-Module-Name: org.eclipse.ant.launching
