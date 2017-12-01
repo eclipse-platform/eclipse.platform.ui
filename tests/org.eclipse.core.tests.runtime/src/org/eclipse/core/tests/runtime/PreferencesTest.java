@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Preferences;
  * @deprecated This class tests intentionally tests deprecated functionality, so tag
  * added to hide deprecation reference warnings.
  */
+@Deprecated
 public class PreferencesTest extends RuntimeTest {
 
 	class Tracer implements Preferences.IPropertyChangeListener {
@@ -108,7 +109,7 @@ public class PreferencesTest extends RuntimeTest {
 
 		// check that a random property in a newly created store
 		// appearchs to have default-default values of whatever type asked for
-		assertTrue("1.0", ps.isDefault(k1) == true);
+		assertTrue("1.0", ps.isDefault(k1));
 		assertTrue("1.1", ps.getBoolean(k1) == Preferences.BOOLEAN_DEFAULT_DEFAULT);
 		assertTrue("1.2", ps.getInt(k1) == Preferences.INT_DEFAULT_DEFAULT);
 		assertTrue("1.3", ps.getLong(k1) == Preferences.LONG_DEFAULT_DEFAULT);
@@ -126,12 +127,12 @@ public class PreferencesTest extends RuntimeTest {
 		// test set/getString
 		// give it a value
 		ps.setValue(k1, v1);
-		assertTrue("2.0", ps.isDefault(k1) == false);
+		assertFalse("2.0", ps.isDefault(k1));
 		assertTrue("2.1", ps.getString(k1).equals(v1));
 		assertTrue("2.2", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
 		// change the value
 		ps.setValue(k1, v2);
-		assertTrue("2.3", ps.isDefault(k1) == false);
+		assertFalse("2.3", ps.isDefault(k1));
 		assertTrue("2.4", ps.getString(k1).equals(v2));
 		assertTrue("2.5", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
 		// change to same value as default
@@ -142,33 +143,33 @@ public class PreferencesTest extends RuntimeTest {
 		// reset to default
 		ps.setValue(k1, v2);
 		ps.setToDefault(k1);
-		assertTrue("2.9", ps.isDefault(k1) == true);
+		assertTrue("2.9", ps.isDefault(k1));
 		assertTrue("2.10", ps.getString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
 		assertTrue("2.11", ps.getDefaultString(k1).equals(Preferences.STRING_DEFAULT_DEFAULT));
 		// change default
 		ps.setDefault(k1, v1);
-		assertTrue("2.12", ps.isDefault(k1) == true);
+		assertTrue("2.12", ps.isDefault(k1));
 		assertTrue("2.13", ps.getString(k1).equals(v1));
 		assertTrue("2.14", ps.getDefaultString(k1).equals(v1));
 		// set the value
 		ps.setValue(k1, v2);
-		assertTrue("2.15", ps.isDefault(k1) == false);
+		assertFalse("2.15", ps.isDefault(k1));
 		assertTrue("2.16", ps.getString(k1).equals(v2));
 		assertTrue("2.17", ps.getDefaultString(k1).equals(v1));
 		// change to same value as default
 		ps.setValue(k1, ps.getDefaultString(k1));
-		assertTrue("2.18", ps.isDefault(k1) == true);
+		assertTrue("2.18", ps.isDefault(k1));
 		assertTrue("2.19", ps.getString(k1).equals(ps.getDefaultString(k1)));
 		assertTrue("2.20", ps.getDefaultString(k1).equals(v1));
 		// reset to default
 		ps.setValue(k1, v2);
 		ps.setToDefault(k1);
-		assertTrue("2.21", ps.isDefault(k1) == true);
+		assertTrue("2.21", ps.isDefault(k1));
 		assertTrue("2.22", ps.getString(k1).equals(v1));
 		assertTrue("2.23", ps.getDefaultString(k1).equals(v1));
 		// change default
 		ps.setDefault(k1, v3);
-		assertTrue("2.24", ps.isDefault(k1) == true);
+		assertTrue("2.24", ps.isDefault(k1));
 		assertTrue("2.25", ps.getString(k1).equals(v3));
 		assertTrue("2.26", ps.getDefaultString(k1).equals(v3));
 
