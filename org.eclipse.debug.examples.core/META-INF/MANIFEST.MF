@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.debug.examples.core;singleton:=true
-Bundle-Version: 1.4.100.qualifier
+Bundle-Version: 1.4.200.qualifier
 Bundle-Activator: org.eclipse.debug.examples.core.pda.DebugCorePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -22,3 +22,4 @@ Export-Package: org.eclipse.debug.examples.ant.tasks;x-friends:="org.eclipse.deb
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: org.eclipse.debug.examples.core

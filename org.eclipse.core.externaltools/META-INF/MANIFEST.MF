@@ -16,3 +16,4 @@ Export-Package: org.eclipse.core.externaltools.internal;x-friends:="org.eclipse.
  org.eclipse.core.externaltools.internal.launchConfigurations;x-friends:="org.eclipse.ant.launching,org.eclipse.ui.externaltools",
  org.eclipse.core.externaltools.internal.model;x-friends:="org.eclipse.ant.launching,org.eclipse.ui.externaltools,org.eclipse.ant.ui",
  org.eclipse.core.externaltools.internal.registry;x-friends:="org.eclipse.ui.externaltools"
+Automatic-Module-Name: org.eclipse.core.externaltools

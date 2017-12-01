@@ -95,3 +95,4 @@ Bundle-ClassPath: .
 Import-Package: com.ibm.icu.text,
  org.eclipse.ui.forms.widgets
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.debug.ui

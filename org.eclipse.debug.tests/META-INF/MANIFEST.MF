@@ -30,3 +30,4 @@ Export-Package: org.eclipse.debug.tests,
  org.eclipse.debug.tests.view.memory,
  org.eclipse.debug.tests.viewer.model
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.debug.tests
