@@ -110,7 +110,7 @@ public class ProgressIndicator extends Composite {
             determinateProgressBar.setSelection(0);
         }
         layout.topControl = null;
-        layout();
+		requestLayout();
     }
 
     /**
