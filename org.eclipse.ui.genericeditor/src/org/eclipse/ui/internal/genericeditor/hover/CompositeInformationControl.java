@@ -7,6 +7,7 @@
  *
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
+ * - Lucas Bullen (Red Hat Inc.) - [Bug 527071] Empty string as content breaks hover
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor.hover;
 
@@ -70,8 +71,11 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 			if (informationControl != null) {
 				if (informationControl instanceof IInformationControlExtension2) {
 					((IInformationControlExtension2)informationControl).setInput(entry.getValue());
-				} else {
-					informationControl.setInformation(entry.getValue().toString());
+					continue;
+				}
+				String information = entry.getValue().toString();
+				if(!information.isEmpty()){
+					informationControl.setInformation(information);
 				}
 			}
 		}
@@ -107,14 +111,14 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 			}
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		controls.values().forEach(IInformationControl::dispose);
 		controls.clear();
 		super.dispose();
 	}
-	
+
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (controls.isEmpty()) {

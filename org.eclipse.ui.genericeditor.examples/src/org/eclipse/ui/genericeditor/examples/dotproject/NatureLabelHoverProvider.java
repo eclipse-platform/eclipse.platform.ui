@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2017 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Mickael Istria, Sopot Cela (Red Hat Inc.)
+ *     Lucas Bullen (Red Hat Inc.) - [Bug 527071] Hover breaks with missing nature
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.examples.dotproject;
 
@@ -39,7 +40,7 @@ public class NatureLabelHoverProvider implements ITextHover {
             if (natureDescriptors[i].getNatureId().equals(selection))
                 return natureDescriptors[i].getLabel();
         }
-        return "";
+        return null;
     }
 
     @Override
