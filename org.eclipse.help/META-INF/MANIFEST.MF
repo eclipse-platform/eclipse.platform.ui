@@ -69,3 +69,4 @@ Import-Package: com.ibm.icu.text;version="3.8.0",
  org.xml.sax.helpers
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.help

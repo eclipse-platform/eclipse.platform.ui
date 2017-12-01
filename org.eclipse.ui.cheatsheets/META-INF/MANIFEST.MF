@@ -34,3 +34,4 @@ Import-Package: com.ibm.icu.text,
  org.xml.sax
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.ui.cheatsheets

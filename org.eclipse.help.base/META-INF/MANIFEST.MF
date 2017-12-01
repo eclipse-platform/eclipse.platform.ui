@@ -51,3 +51,4 @@ Import-Package: com.ibm.icu.text,
  org.eclipse.equinox.http.jetty;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.help.base

@@ -22,3 +22,4 @@ Export-Package: org.eclipse.ua.tests.doc,
  org.eclipse.ua.tests.doc.internal.dialogs;x-internal:=true,
  org.eclipse.ua.tests.doc.internal.linkchecker;x-internal:=true
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.ua.tests.doc

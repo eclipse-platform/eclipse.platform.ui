@@ -66,3 +66,4 @@ Export-Package: org.eclipse.ua.tests,
  org.eclipse.ua.tests.util,
  org.eclipse.ua.tests.browser
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.ua.tests
