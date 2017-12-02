@@ -14,7 +14,6 @@ package org.eclipse.ui.part;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.SafeRunner;
@@ -121,18 +120,18 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * Map from parts to part records (key type: <code>IWorkbenchPart</code>;
 	 * value type: <code>PartRec</code>).
 	 */
-	private Map mapPartToRec = new HashMap();
+	private final Map<IWorkbenchPart, PageRec> mapPartToRec = new HashMap<>();
 
 	/**
 	 * Map from pages to view sites Note that view sites were not added to page
 	 * recs to avoid breaking binary compatibility with previous builds
 	 */
-	private Map mapPageToSite = new HashMap();
+	private final Map<IPage, IPageSite> mapPageToSite = new HashMap<>();
 
 	/**
 	 * Map from pages to the number of pageRecs actively associated with a page.
 	 */
-	private Map mapPageToNumRecs = new HashMap();
+	private final Map<IPage, Integer> mapPageToNumRecs = new HashMap<>();
 
 	/**
 	 * The page rec which provided the current page or <code>null</code>
@@ -143,7 +142,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * If the part is hidden (usually an editor) then store it so we can
 	 * continue to track it when it becomes visible.
 	 */
-	private IWorkbenchPart hiddenPart = null;
+	private IWorkbenchPart hiddenPart;
 
 	/**
 	 * The action bar property listener.
@@ -218,8 +217,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		 * @param listener
 		 *            listen
 		 */
-		public void addSelectionChangedListener(
-				ISelectionChangedListener listener) {
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			addListenerObject(listener);
 		}
 
@@ -228,8 +226,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		 * @param listener
 		 *            listen
 		 */
-		public void removeSelectionChangedListener(
-				ISelectionChangedListener listener) {
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			removeListenerObject(listener);
 		}
 
@@ -264,8 +261,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		private SelectionManager fPostSelectionListeners = new SelectionManager();
 
 		@Override
-		public void addSelectionChangedListener(
-				ISelectionChangedListener listener) {
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			fSelectionListener.addSelectionChangedListener(listener);
 		}
 
@@ -290,8 +286,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		}
 
 		@Override
-		public void removeSelectionChangedListener(
-				ISelectionChangedListener listener) {
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			fSelectionListener.removeSelectionChangedListener(listener);
 		}
 
@@ -337,14 +332,12 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		}
 
 		@Override
-		public void addPostSelectionChangedListener(
-				ISelectionChangedListener listener) {
+		public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
 			fPostSelectionListeners.addSelectionChangedListener(listener);
 		}
 
 		@Override
-		public void removePostSelectionChangedListener(
-				ISelectionChangedListener listener) {
+		public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
 			fPostSelectionListeners.removeSelectionChangedListener(listener);
 		}
 	}
@@ -416,9 +409,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			count = Integer.valueOf(0);
 		} else {
-			site = (IPageSite) mapPageToSite.get(rec.page);
+			site = mapPageToSite.get(rec.page);
 			rec.subActionBars = (SubActionBars) site.getActionBars();
-			count = ((Integer) mapPageToNumRecs.get(rec.page));
+			count = mapPageToNumRecs.get(rec.page);
 		}
 
 		mapPageToNumRecs.put(rec.page, Integer.valueOf(count.intValue() + 1));
@@ -487,12 +480,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			removePage(defaultPageRec, false);
 			defaultPageRec = null;
 		}
-		Map clone = (Map) ((HashMap) mapPartToRec).clone();
-		Iterator itr = clone.values().iterator();
-		while (itr.hasNext()) {
-			PageRec rec = (PageRec) itr.next();
-			removePage(rec, true);
-		}
+		@SuppressWarnings("unchecked")
+		Map<IWorkbenchPart, PageRec> clone = (Map<IWorkbenchPart, PageRec>) ((HashMap<IWorkbenchPart, PageRec>) mapPartToRec).clone();
+		clone.values().forEach(rec -> removePage(rec, true));
 
 		// Run super.
 		super.dispose();
@@ -670,7 +660,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 *         found
 	 */
 	protected PageRec getPageRec(IWorkbenchPart part) {
-		return (PageRec) mapPartToRec.get(part);
+		return mapPartToRec.get(part);
 	}
 
 	/**
@@ -682,9 +672,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 *         found
 	 */
 	protected PageRec getPageRec(IPage page) {
-		Iterator itr = mapPartToRec.values().iterator();
+		Iterator<PageRec> itr = mapPartToRec.values().iterator();
 		while (itr.hasNext()) {
-			PageRec rec = (PageRec) itr.next();
+			PageRec rec = itr.next();
 			if (rec.page == page) {
 				return rec;
 			}
@@ -802,16 +792,10 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		bars.clearGlobalActionHandlers();
 
 		// Set new actions.
-		Map newActionHandlers = activeRec.subActionBars
-				.getGlobalActionHandlers();
+		Map<?, ?> newActionHandlers = activeRec.subActionBars.getGlobalActionHandlers();
 		if (newActionHandlers != null) {
-			Set keys = newActionHandlers.entrySet();
-			Iterator iter = keys.iterator();
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				bars.setGlobalActionHandler((String) entry.getKey(),
-						(IAction) entry.getValue());
-			}
+			newActionHandlers.entrySet()
+					.forEach(e -> bars.setGlobalActionHandler((String) e.getKey(), (IAction) e.getValue()));
 		}
 	}
 
@@ -827,7 +811,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	private void removePage(PageRec rec, boolean doDestroy) {
 		mapPartToRec.remove(rec.part);
 
-		int newCount = ((Integer) mapPageToNumRecs.get(rec.page)).intValue() - 1;
+		int newCount = mapPageToNumRecs.get(rec.page).intValue() - 1;
 
 		if (newCount == 0) {
 			Object site = mapPageToSite.remove(rec.page);
@@ -881,8 +865,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	private void pageSelectionChanged(SelectionChangedEvent event) {
 		// forward this change from a page to our site's selection provider
-		SelectionProvider provider = (SelectionProvider) getSite()
-				.getSelectionProvider();
+		SelectionProvider provider = (SelectionProvider) getSite().getSelectionProvider();
 		if (provider != null) {
 			provider.selectionChanged(event);
 		}
@@ -895,8 +878,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	private void postSelectionChanged(SelectionChangedEvent event) {
 		// forward this change from a page to our site's selection provider
-		SelectionProvider provider = (SelectionProvider) getSite()
-				.getSelectionProvider();
+		SelectionProvider provider = (SelectionProvider) getSite().getSelectionProvider();
 		if (provider != null) {
 			provider.postSelectionChanged(event);
 		}
@@ -930,8 +912,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			return;
 		}
 		// If the page is the same, just set activeRec to pageRec
-		if (activeRec != null && pageRec != null
-				&& activeRec.page == pageRec.page) {
+		if (activeRec != null && pageRec != null && activeRec.page == pageRec.page) {
 			activeRec = pageRec;
 			return;
 		}
@@ -948,11 +929,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			// remove our selection listener
 			ISelectionProvider provider = pageSite.getSelectionProvider();
 			if (provider != null) {
-				provider
-						.removeSelectionChangedListener(selectionChangedListener);
+				provider.removeSelectionChangedListener(selectionChangedListener);
 				if (provider instanceof IPostSelectionProvider) {
-					((IPostSelectionProvider) provider)
-							.removePostSelectionChangedListener(postSelectionListener);
+					((IPostSelectionProvider) provider).removePostSelectionChangedListener(postSelectionListener);
 				} else {
 					provider.removeSelectionChangedListener(postSelectionListener);
 				}
@@ -981,15 +960,13 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				WorkbenchPage page = (WorkbenchPage) getSite().getPage();
 				MPart part = page.findPart(this);
 				if (part != null) {
-					part.getContext().get(ESelectionService.class)
-							.setSelection(StructuredSelection.EMPTY);
+					part.getContext().get(ESelectionService.class).setSelection(StructuredSelection.EMPTY);
 				}
 				/* END workaround for bug 319846 END */
 			} else {
 				provider.addSelectionChangedListener(selectionChangedListener);
 				if (provider instanceof IPostSelectionProvider) {
-					((IPostSelectionProvider) provider)
-							.addPostSelectionChangedListener(postSelectionListener);
+					((IPostSelectionProvider) provider).addPostSelectionChangedListener(postSelectionListener);
 				} else {
 					provider.addSelectionChangedListener(postSelectionListener);
 				}
@@ -998,8 +975,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				WorkbenchPage page = (WorkbenchPage) getSite().getPage();
 				MPart part = page.findPart(this);
 				if (part != null) {
-					part.getContext().get(ESelectionService.class)
-							.setSelection(provider.getSelection());
+					part.getContext().get(ESelectionService.class).setSelection(provider.getSelection());
 				}
 				/* END workaround for bug 319846 END */
 			}
@@ -1074,15 +1050,14 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		}
 		// if we've minimized the editor stack, that's no reason to
 		// drop our content
-		if (getSite().getPage().getPartState(
-				getSite().getPage().getReference(part)) == IWorkbenchPage.STATE_MINIMIZED) {
+		IWorkbenchPage page = getSite().getPage();
+		if (page.getPartState(page.getReference(part)) == IWorkbenchPage.STATE_MINIMIZED) {
 			return;
 		}
 		// if we're switching from a part source in our own stack,
 		// we also don't want to clear our content.
 		if (part instanceof IViewPart) {
-			final IViewPart[] viewStack = getSite().getPage()
-					.getViewStack(this);
+			final IViewPart[] viewStack = page.getViewStack(this);
 			if (containsPart(viewStack, part)) {
 				return;
 			}
