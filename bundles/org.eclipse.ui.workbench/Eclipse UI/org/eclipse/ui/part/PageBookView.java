@@ -923,19 +923,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			activeRec.subActionBars.deactivate();
 
-			// deactivate the nested services
-			pageSite.deactivate();
-
-			// remove our selection listener
-			ISelectionProvider provider = pageSite.getSelectionProvider();
-			if (provider != null) {
-				provider.removeSelectionChangedListener(selectionChangedListener);
-				if (provider instanceof IPostSelectionProvider) {
-					((IPostSelectionProvider) provider).removePostSelectionChangedListener(postSelectionListener);
-				} else {
-					provider.removeSelectionChangedListener(postSelectionListener);
-				}
-			}
+			deactivate(pageSite);
 		}
 
 		// Show new page.
@@ -981,6 +969,49 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			}
 			// Update action bars.
 			getViewSite().getActionBars().updateActionBars();
+		}
+	}
+
+	private void deactivate(PageSite pageSite) {
+		if (pageSite == null) {
+			reportNullPageSiteOnDeactivate(activeRec);
+			return;
+		}
+
+		// deactivate the nested services
+		pageSite.deactivate();
+
+		// remove our selection listener
+		ISelectionProvider provider = pageSite.getSelectionProvider();
+		if (provider != null) {
+			provider.removeSelectionChangedListener(selectionChangedListener);
+			if (provider instanceof IPostSelectionProvider) {
+				((IPostSelectionProvider) provider).removePostSelectionChangedListener(postSelectionListener);
+			} else {
+				provider.removeSelectionChangedListener(postSelectionListener);
+			}
+		}
+	}
+
+	/**
+	 * Extra diagnostic report for bug 453151
+	 *
+	 * @param pr
+	 *            the record for which we don't know the pageSite anymore
+	 */
+	private void reportNullPageSiteOnDeactivate(PageRec pr) {
+		IPage page = pr.page;
+		if (page == null) {
+			WorkbenchPlugin.log(new IllegalStateException("Bug 453151: page is null in PageBookView.deactivate")); //$NON-NLS-1$
+		} else {
+			boolean hasKey = mapPageToSite.keySet().contains(page);
+			Integer count = mapPageToNumRecs.get(page);
+			Control control = page.getControl();
+			boolean disposed = control != null && control.isDisposed();
+			String s = "Bug 453151: pageSite is null for page: " //$NON-NLS-1$
+					+ page.getClass().getName() + ", page count: " + count //$NON-NLS-1$
+					+ ", key exists: " + hasKey + ", disposed: " + disposed; //$NON-NLS-1$ //$NON-NLS-2$
+			WorkbenchPlugin.log(new IllegalStateException(s));
 		}
 	}
 
