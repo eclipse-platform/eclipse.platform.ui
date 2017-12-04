@@ -593,32 +593,32 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 							@Override
 					public void accept(ISearchEngineResult[] searchResults) {
 						results.add(ed, searchResults);
-						if (ed.getEngine() instanceof LocalHelp)
+						if (ed.getEngine() instanceof LocalHelp && !container.isDisposed())
 						{
-							container.getDisplay().asyncExec(new Thread(){
+							container.getDisplay().asyncExec(new Thread() {
 
-										@Override
+								@Override
 								public void run(){
 									if (alternateQuerySection!=null)
 									{
 										alternateQuerySection.dispose();
 										alternateQuerySection = null;
 									}
-											List<String> alts = ((LocalHelp) ed.getEngine()).getAlternates();
+									List<String> alts = ((LocalHelp) ed.getEngine()).getAlternates();
 									if (!alts.isEmpty())
 									{
 										createAlternateQueriesSection(toolkit);
 										for (int b=0;b<alts.size();b++)
 										{
-													Hyperlink link = toolkit.createHyperlink(
-															alternateQueryComposite, alts.get(b), SWT.NONE);
+											Hyperlink link = toolkit.createHyperlink(
+													alternateQueryComposite, alts.get(b), SWT.NONE);
 											link.addHyperlinkListener(new HyperlinkAdapter(){
-
-														@Override
+												@Override
 												public void linkActivated(HyperlinkEvent e) {
-
-													searchWordCombo.setText(((Hyperlink)e.getSource()).getText());
-													doSearch(((Hyperlink)e.getSource()).getText());
+													if (!searchWordCombo.getControl().isDisposed()) {
+														searchWordCombo.setText(((Hyperlink)e.getSource()).getText());
+														doSearch(((Hyperlink)e.getSource()).getText());
+													}
 												}
 											});
 										}
