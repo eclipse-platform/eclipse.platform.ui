@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ltk.core.refactoring.participants.DeleteRefactoring;
-import org.eclipse.ltk.internal.core.refactoring.Resources;
+import org.eclipse.ltk.core.refactoring.resource.Resources;
 import org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesProcessor;
 import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;

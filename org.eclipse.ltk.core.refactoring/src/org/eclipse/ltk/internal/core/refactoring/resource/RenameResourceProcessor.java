@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,10 @@ import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
+import org.eclipse.ltk.core.refactoring.resource.Resources;
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-import org.eclipse.ltk.internal.core.refactoring.Resources;
 
 /**
  * A rename processor for {@link IResource}. The processor will rename the resource and
