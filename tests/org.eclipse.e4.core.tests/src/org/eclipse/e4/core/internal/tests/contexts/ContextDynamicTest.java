@@ -51,7 +51,7 @@ public class ContextDynamicTest {
 	@Test
 	public synchronized void testAddRemove() {
 		Integer testInt = Integer.valueOf(123);
-		String testString = new String("abc");
+		String testString = "abc";
 		Double testDouble = Double.valueOf(1.23);
 		Float testFloat = Float.valueOf(12.3f);
 		Character testChar = Character.valueOf('v');
@@ -114,7 +114,7 @@ public class ContextDynamicTest {
 	@Test
 	public synchronized void testParentAddRemove() {
 		Integer testInt = Integer.valueOf(123);
-		String testString = new String("abc");
+		String testString = "abc";
 		Double testDouble = Double.valueOf(1.23);
 		Float testFloat = Float.valueOf(12.3f);
 		Character testChar = Character.valueOf('v');

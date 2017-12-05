@@ -21,7 +21,7 @@ public class OptionalAnnotations {
 	public Float f = null;
 
 	public Double d;
-	public String s = new String("ouch");
+	public String s = "ouch";
 	public Integer i;
 
 	public int methodOptionalCalled = 0;

@@ -111,7 +111,7 @@ public class QualifiedNameTest extends RuntimeTest {
 		assertTrue("1.1", qN2.equals(qN1));
 		assertEquals("1.2", qN1.hashCode(), qN2.hashCode());
 
-		assertTrue("2.0", !qN1.equals(new String("org.eclipse.runtime.myClass")));
+		assertTrue("2.0", !qN1.equals("org.eclipse.runtime.myClass"));
 
 		QualifiedName qN3 = new QualifiedName(null, "myClass");
 		assertTrue("3.0", !qN1.equals(qN3));
