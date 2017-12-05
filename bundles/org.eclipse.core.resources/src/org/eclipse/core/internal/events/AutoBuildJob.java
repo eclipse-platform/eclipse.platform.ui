@@ -11,13 +11,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Bundle;
 
@@ -130,31 +130,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Policy.opWork + 1);
-		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
-		try {
-			workspace.prepareOperation(rule, subMonitor.split(1));
-			workspace.beginOperation(true);
-			final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
-			workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
-			IStatus result = Status.OK_STATUS;
-			try {
-				if (shouldBuild())
-					result = workspace.getBuildManager().build(workspace.getBuildOrder(), ICoreConstants.EMPTY_BUILD_CONFIG_ARRAY, trigger, subMonitor.split(Policy.opWork));
-			} finally {
-				//always send POST_BUILD if there has been a PRE_BUILD
-				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
-			}
-			if (!result.isOK()) {
-				throw new ResourceException(result);
-			}
-			buildNeeded = false;
-		} finally {
-			//building may close the tree, but we are still inside an
-			// operation so open it
-			if (workspace.getElementTree().isImmutable()) {
-				workspace.newWorkingTree();
-			}
-			workspace.endOperation(rule, false);
+		if (shouldBuild()) {
+			workspace.build(IncrementalProjectBuilder.AUTO_BUILD, subMonitor.split(Policy.opWork));
 		}
 	}
 
