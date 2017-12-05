@@ -941,7 +941,11 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			// add our selection listener
 			ISelectionProvider provider = pageSite.getSelectionProvider();
 			if (provider != null) {
-				forwardSelection(new SelectionChangedEvent(provider, provider.getSelection()));
+				ISelection selection = provider.getSelection();
+				if (selection == null) {
+					selection = StructuredSelection.EMPTY;
+				}
+				forwardSelection(new SelectionChangedEvent(provider, selection));
 
 				provider.addSelectionChangedListener(selectionChangedListener);
 				if (provider instanceof IPostSelectionProvider) {
