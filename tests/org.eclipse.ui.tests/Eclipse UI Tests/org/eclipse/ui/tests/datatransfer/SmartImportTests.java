@@ -111,12 +111,7 @@ public class SmartImportTests extends UITestCase {
 		processEvents();
 		final Button okButton = getFinishButton(dialog.buttonBar);
 		assertNotNull(okButton);
-		processEventsUntil(new Condition() {
-			@Override
-			public boolean compute() {
-				return okButton.isEnabled();
-			}
-		}, -1);
+		processEventsUntil(() -> okButton.isEnabled(), -1);
 		wizard.performFinish();
 		waitForJobs(100, 1000); // give the job framework time to schedule the
 								// job
@@ -200,12 +195,7 @@ public class SmartImportTests extends UITestCase {
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		processEvents();
-		processEventsUntil(new Condition() {
-			@Override
-			public boolean compute() {
-				return !dialog.getErrorMessage().isEmpty();
-			}
-		}, -1);
+		processEventsUntil(() -> !dialog.getErrorMessage().isEmpty(), -1);
 		SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
 		CheckboxTreeViewer treeViewer = getTreeViewer((Composite) page.getControl());
 		assertNotNull(treeViewer);
@@ -262,12 +252,7 @@ public class SmartImportTests extends UITestCase {
 		ProgressMonitorPart wizardProgressMonitor = page.getWizardProgressMonitor();
 		assertNotNull("Wizard should have a progress monitor", wizardProgressMonitor);
 		ToolItem stopButton = getStopButton(wizardProgressMonitor);
-		processEventsUntil(new Condition() {
-			@Override
-			public boolean compute() {
-				return stopButton.isEnabled();
-			}
-		}, 10000);
+		processEventsUntil(() -> stopButton.isEnabled(), 10000);
 		assertTrue("Wizard should show progress monitor", wizardProgressMonitor.isVisible());
 		assertTrue("Stop button should be enabled", stopButton.isEnabled());
 		Event clickButtonEvent = new Event();
@@ -277,12 +262,7 @@ public class SmartImportTests extends UITestCase {
 		clickButtonEvent.doit = true;
 		clickButtonEvent.stateMask = SWT.BUTTON1;
 		stopButton.notifyListeners(SWT.Selection, clickButtonEvent);
-		processEventsUntil(new Condition() {
-			@Override
-			public boolean compute() {
-				return !wizardProgressMonitor.isVisible();
-			}
-		}, 10000);
+		processEventsUntil(() -> !wizardProgressMonitor.isVisible(), 10000);
 		assertFalse("Progress monitor should be hidden within 10 seconds", wizardProgressMonitor.isVisible());
 	}
 
@@ -305,7 +285,8 @@ public class SmartImportTests extends UITestCase {
 		IWorkingSet workingSet = workingSetManager.createWorkingSet("testWorkingSet", new IAdaptable[0]);
 		workingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
 		workingSetManager.addWorkingSet(workingSet);
-		File directoryToImport = Files.createTempDirectory(getClass().getSimpleName()).toFile();
+		File directoryToImport = Files
+				.createTempDirectory(getClass().getSimpleName() + "_" + System.currentTimeMillis()).toFile();
 		try {
 			SmartImportWizard wizard = new SmartImportWizard();
 			wizard.setInitialImportSource(directoryToImport);
@@ -332,7 +313,8 @@ public class SmartImportTests extends UITestCase {
 		workingSetManager.addWorkingSet(workingSet2);
 		WorkbenchPlugin.getDefault().getDialogSettings().put("workingset_selection_history",
 				new String[] { workingSet.getName(), workingSet2.getName() });
-		File directoryToImport = Files.createTempDirectory(getClass().getSimpleName()).toFile();
+		File directoryToImport = Files
+				.createTempDirectory(getClass().getSimpleName() + "_" + System.currentTimeMillis()).toFile();
 		try {
 			SmartImportWizard wizard = new SmartImportWizard();
 			wizard.setInitialImportSource(directoryToImport);
@@ -341,6 +323,9 @@ public class SmartImportTests extends UITestCase {
 			dialog.setBlockOnOpen(false);
 			dialog.open();
 			processEvents();
+			final Button okButton = getFinishButton(dialog.buttonBar);
+			assertNotNull(okButton);
+			processEventsUntil(() -> okButton.isEnabled(), -1);
 			SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
 			Combo combo = getComboWithSelection(workingSet.getName(), (Composite) page.getControl());
 			combo.select(1);
@@ -352,6 +337,7 @@ public class SmartImportTests extends UITestCase {
 			e.index = 1;
 			combo.notifyListeners(SWT.Selection, e);
 			processEvents();
+			processEventsUntil(() -> okButton.isEnabled(), -1);
 			wizard.performFinish();
 			waitForJobs(100, 1000); // give the job framework time to schedule
 									// the
