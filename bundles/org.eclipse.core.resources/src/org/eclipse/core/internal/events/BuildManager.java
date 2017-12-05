@@ -16,6 +16,7 @@
 package org.eclipse.core.internal.events;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
@@ -102,11 +103,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	//the job for performing background autobuild
 	final AutoBuildJob autoBuildJob;
-	private boolean building = false;
 	private final Set<IProject> builtProjects = new HashSet<>();
 
 	//the following four fields only apply for the lifetime of a single builder invocation.
-	protected InternalBuilder currentBuilder;
+	protected final Set<InternalBuilder> currentBuilders;
 	private DeltaDataTree currentDelta;
 	private ElementTree currentLastBuiltTree;
 	private ElementTree currentTree;
@@ -134,14 +134,16 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	public BuildManager(Workspace workspace, ILock workspaceLock) {
 		this.workspace = workspace;
+		this.currentBuilders = Collections.synchronizedSet(new HashSet<>());
 		this.autoBuildJob = new AutoBuildJob(workspace);
 		this.lock = workspaceLock;
 		InternalBuilder.buildManager = this;
 	}
 
 	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map<String, String> args, MultiStatus status, IProgressMonitor monitor) {
+		InternalBuilder currentBuilder = builder; // downcast to make package methods visible
 		try {
-			currentBuilder = builder;
+			currentBuilders.add(currentBuilder);
 			//clear any old requests to forget built state
 			currentBuilder.clearLastBuiltStateRequests();
 			// Figure out want kind of build is needed
@@ -183,15 +185,17 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				rule = builder.getRule(trigger, args);
 				String name = currentBuilder.getLabel();
 				String message;
-				if (name != null)
+				if (name != null) {
 					message = NLS.bind(Messages.events_invoking_2, name, builder.getProject().getFullPath());
-				else
+				} else {
 					message = NLS.bind(Messages.events_invoking_1, builder.getProject().getFullPath());
+				}
 				monitor.subTask(message);
 				hookStartBuild(builder, trigger);
 				// Make the current tree immutable before releasing the WS lock
-				if (rule != null && currentTree != null)
+				if (rule != null && currentTree != null) {
 					workspace.newWorkingTree();
+				}
 				//release workspace lock while calling builders
 				depth = getWorkManager().beginUnprotected();
 				// Acquire the rule required for running this builder
@@ -203,21 +207,24 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 						currentTree = workspace.getElementTree();
 				}
 				//do the build
-				SafeRunner.run(getSafeRunnable(trigger, args, status, monitor));
+				SafeRunner.run(getSafeRunnable(currentBuilder, trigger, args, status, monitor));
 			} finally {
 				// Re-acquire the WS lock, then release the scheduling rule
-				if (depth >= 0)
+				if (depth >= 0) {
 					getWorkManager().endUnprotected(depth);
-				if (rule != null)
+				}
+				if (rule != null) {
 					Job.getJobManager().endRule(rule);
+				}
 				// Be sure to clean up after ourselves.
 				if (clean || currentBuilder.wasForgetStateRequested()) {
 					currentBuilder.setLastBuiltTree(null);
 				} else if (currentBuilder.wasRememberStateRequested()) {
 					// If remember last build state, and FULL_BUILD
 					// last tree must be set to => null for next build
-					if (trigger == IncrementalProjectBuilder.FULL_BUILD)
+					if (trigger == IncrementalProjectBuilder.FULL_BUILD) {
 						currentBuilder.setLastBuiltTree(null);
+					}
 					// else don't modify the last built tree
 				} else {
 					// remember the current state as the last built state.
@@ -228,7 +235,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				hookEndBuild(builder);
 			}
 		} finally {
-			currentBuilder = null;
+			currentBuilders.remove(currentBuilder);
 			currentTree = null;
 			currentLastBuiltTree = null;
 			currentDelta = null;
@@ -255,8 +262,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * @return A status indicating if the build succeeded or failed
 	 */
 	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, IBuildContext context, IProgressMonitor monitor) {
-		if (!canRun(trigger))
-			return Status.OK_STATUS;
 		try {
 			hookStartBuild(new IBuildConfiguration[] {buildConfiguration}, trigger);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
@@ -317,8 +322,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		try {
 			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
 			monitor.beginTask(message, 1);
-			if (!canRun(trigger))
-				return Status.OK_STATUS;
 			try {
 				hookStartBuild(new IBuildConfiguration[] {buildConfiguration}, trigger);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
@@ -344,9 +347,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Loop the workspace build until no more builders request a rebuild.
 	 */
 	private void basicBuildLoop(IBuildConfiguration[] configs, IBuildConfiguration[] requestedConfigs, int trigger, MultiStatus status, IProgressMonitor monitor) {
-		int projectWork = configs.length;
-		if (projectWork > 0)
-			projectWork = TOTAL_BUILD_WORK / projectWork;
+		int projectWork = configs.length > 0 ? TOTAL_BUILD_WORK / configs.length : 0;
 		int maxIterations = workspace.getDescription().getMaxBuildIterations();
 		if (maxIterations <= 0)
 			maxIterations = 1;
@@ -375,8 +376,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.events_building_0, TOTAL_BUILD_WORK);
-			if (!canRun(trigger))
-				return Status.OK_STATUS;
 			try {
 				hookStartBuild(configs, trigger);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);
@@ -403,10 +402,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return basicBuild(buildConfiguration, trigger, context, monitor);
 		}
 		return basicBuild(buildConfiguration, trigger, builderName, args, monitor);
-	}
-
-	private boolean canRun(int trigger) {
-		return !building;
 	}
 
 	/**
@@ -489,13 +484,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	private String debugBuilder() {
-		return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName(); //$NON-NLS-1$
+		return currentBuilders == null ? "<no builder>" : currentBuilders.getClass().getName(); //$NON-NLS-1$
 	}
 
 	private String debugProject() {
-		if (currentBuilder == null)
+		if (currentBuilders == null)
 			return "<no project>"; //$NON-NLS-1$
-		return currentBuilder.getProject().getFullPath().toString();
+		return "[" + currentBuilders.stream().map(builder -> builder.getProject().getFullPath().toString()).collect(Collectors.joining(",")) + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -668,10 +663,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					Policy.debug("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return null;
 			}
+			Set<InternalBuilder> interestedBuilders = getInterestedBuilders(project);
 			//check if this builder has indicated it cares about this project
-			if (!isInterestingProject(project)) {
+			if (interestedBuilders.isEmpty()) {
 				if (Policy.DEBUG_BUILD_FAILURE)
-					Policy.debug("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Policy.debug("Build: project not interesting for current builders " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return null;
 			}
 			//check if this project has changed
@@ -706,8 +702,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	/**
 	 * Returns the safe runnable instance for invoking a builder
+	 * @param currentBuilder
 	 */
-	private ISafeRunnable getSafeRunnable(final int trigger, final Map<String, String> args, final MultiStatus status, final IProgressMonitor monitor) {
+	private ISafeRunnable getSafeRunnable(final InternalBuilder currentBuilder, final int trigger, final Map<String, String> args, final MultiStatus status, final IProgressMonitor monitor) {
 		return new ISafeRunnable() {
 			@Override
 			public void handleException(Throwable e) {
@@ -804,7 +801,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * build API method.
 	 */
 	private void hookEndBuild(int trigger) {
-		building = false;
 		builtProjects.clear();
 		deltaCache.flush();
 		deltaTreeCache.flush();
@@ -836,7 +832,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * start running.
 	 */
 	private void hookStartBuild(IBuildConfiguration[] configs, int trigger) {
-		building = true;
 		if (Policy.DEBUG_BUILD_STACK)
 			Policy.debug(new RuntimeException("Starting build: " + debugTrigger(trigger))); //$NON-NLS-1$
 		if (Policy.DEBUG_BUILD_INVOKING) {
@@ -935,7 +930,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Returns true if the current builder is interested in changes
 	 * to the given project, and false otherwise.
 	 */
-	private boolean isInterestingProject(IProject project) {
+	private boolean isInterestingProject(InternalBuilder currentBuilder, IProject project) {
 		if (project.equals(currentBuilder.getProject()))
 			return true;
 		IProject[] interestingProjects = currentBuilder.getInterestingProjects();
@@ -945,6 +940,16 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		}
 		return false;
+	}
+
+	private Set<InternalBuilder> getInterestedBuilders(final IProject project) {
+		final Set<InternalBuilder> res = new HashSet<>();
+		for (final InternalBuilder builder : this.currentBuilders) {
+			if (isInterestingProject(builder, project)) {
+				res.add(builder);
+			}
+		}
+		return res;
 	}
 
 	/**
@@ -966,8 +971,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			case IncrementalProjectBuilder.FULL_BUILD :
 				return true;
 			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
-				if (currentBuilder.callOnEmptyDelta())
-					return true;
+				for (InternalBuilder currentBuilder : this.currentBuilders) {
+					if (currentBuilder.callOnEmptyDelta()) {
+						return true;
+					}
+				}
 				//fall through and check if there is a delta
 		}
 

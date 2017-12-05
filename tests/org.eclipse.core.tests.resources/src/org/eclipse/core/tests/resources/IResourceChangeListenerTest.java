@@ -250,9 +250,9 @@ public class IResourceChangeListenerTest extends ResourceTest {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
+		getWorkspace().removeResourceChangeListener(verifier);
 		super.tearDown();
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
-		getWorkspace().removeResourceChangeListener(verifier);
 	}
 
 	/*

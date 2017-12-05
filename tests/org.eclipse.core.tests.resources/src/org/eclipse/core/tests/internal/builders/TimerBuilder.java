@@ -1,0 +1,103 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Red Hat Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Red Hat Inc. - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tests.internal.builders;
+
+import java.util.Map;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+/**
+ *
+ */
+public class TimerBuilder extends IncrementalProjectBuilder {
+	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.timerbuilder";
+	public static final String DURATION_ARG = "duration";
+	public static final String RULE_TYPE_ARG = "ruleType";
+
+	private static int totalBuilds = 0;
+	private static int currentBuilds = 0;
+	private static int maxSimultaneousBuilds = 0;
+
+	public static enum RuleType {
+		NO_CONFLICT, CURRENT_PROJECT, WORKSPACE_ROOT
+	}
+
+	private final ISchedulingRule noConflictRule = new ISchedulingRule() {
+			@Override
+			public boolean isConflicting(ISchedulingRule rule) {
+				return this == rule;
+			}
+
+			@Override
+			public boolean contains(ISchedulingRule rule) {
+				return this == rule;
+			}
+		};
+
+	@Override
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+		synchronized (TimerBuilder.class) {
+			totalBuilds++;
+			currentBuilds++;
+			maxSimultaneousBuilds = Math.max(currentBuilds, maxSimultaneousBuilds);
+		}
+		int duration = 0;
+		try {
+			duration = Integer.parseInt(args.get(DURATION_ARG));
+			Thread.sleep(duration);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		synchronized (TimerBuilder.class) {
+			currentBuilds--;
+		}
+		return new IProject[] {getProject()};
+	}
+
+	@Override
+	public ISchedulingRule getRule(int trigger, Map<String, String> args) {
+		if (args != null) {
+			RuleType ruleType = RuleType.valueOf(args.get(RULE_TYPE_ARG));
+			switch (ruleType) {
+				case NO_CONFLICT :
+					return noConflictRule;
+				case CURRENT_PROJECT :
+					return getProject();
+				case WORKSPACE_ROOT :
+					return getProject().getWorkspace().getRoot();
+			}
+		}
+		return noConflictRule;
+	}
+
+	public static int getTotalBuilds() {
+		synchronized (TimerBuilder.class) {
+			return totalBuilds;
+		}
+	}
+
+	public static int getMaxSimultaneousBuilds() {
+		synchronized (TimerBuilder.class) {
+			return maxSimultaneousBuilds;
+		}
+	}
+
+	public static void resetCount() {
+		synchronized (TimerBuilder.class) {
+			totalBuilds = 0;
+			currentBuilds = 0;
+			maxSimultaneousBuilds = 0;
+		}
+	}
+}

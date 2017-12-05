@@ -617,4 +617,16 @@
             value="${ECLIPSE_HOME}/plugins">
 		</variableResolver>
 	</extension>
+ <extension
+       id="timerbuilder"
+       name="Timer Builder"
+       point="org.eclipse.core.resources.builders">
+    <builder
+          callOnEmptyDelta="false"
+          supportsConfigurations="false">
+       <run
+             class="org.eclipse.core.tests.internal.builders.TimerBuilder">
+       </run>
+    </builder>
+ </extension>
 </plugin>
