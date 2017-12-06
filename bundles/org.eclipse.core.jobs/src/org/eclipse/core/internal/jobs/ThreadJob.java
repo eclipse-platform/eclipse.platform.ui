@@ -159,15 +159,17 @@ class ThreadJob extends Job {
 	}
 
 	/**
-	 * A reentrant method which will run this <code>ThreadJob</code> immediately if there
-	 * are no existing jobs with conflicting rules, or block until the rule can be acquired. If this
-	 * job must block, the <code>LockListener</code> is given a chance to override.
-	 * If override is not granted, then this method will block until the rule is available. If
-	 * <code>LockListener#canBlock</code> returns <tt>true</tt>, then the <code>monitor</code>
+	 * A reentrant method which will run given <code>ThreadJob</code> immediately if there
+	 * are no existing jobs with conflicting rules, or block until the rule can be acquired.
+	 * <p>
+	 * <li>If given job must block, the <code>LockListener</code> is given a chance to override.
+	 * <li>If override is not granted, then this method will block until the rule is available.
+	 * <li>If <code>LockListener#canBlock</code> returns <tt>true</tt>, then the <code>monitor</code>
 	 * <i>will not</i> be periodically checked for cancellation. It will only be rechecked if this
-	 * thread is interrupted. If <code>LockListener#canBlock</code> returns <tt>false</tt> The
+	 * thread is interrupted.
+	 * <li>If <code>LockListener#canBlock</code> returns <tt>false</tt> the
 	 * <code>monitor</code> <i>will</i> be checked periodically for cancellation.
-	 *
+	 * <p>
 	 * When a UI is present, it is recommended that the <code>LockListener</code>
 	 * should not allow the UI thread to block without checking the <code>monitor</code>. This
 	 * ensures that the UI remains responsive.
@@ -176,9 +178,10 @@ class ThreadJob extends Job {
 	 * @see LockListener#canBlock()
 	 * @see JobManager#transferRule(ISchedulingRule, Thread)
 
-	 * @return <tt>this</tt>, or the <code>ThreadJob</code> instance that was
+	 * @return given job, or the <code>ThreadJob</code> instance that was
 	 * unblocked (due to transferRule) in the case of reentrant invocations of this method.
 	 *
+	 * @param threadJob - job to run or to wait until the rule can be acquired
 	 * @param monitor - The <code>IProgressMonitor</code> used to report blocking status and
 	 * cancellation.
 	 *
@@ -196,7 +199,7 @@ class ThreadJob extends Job {
 			// just return if lock listener decided to grant immediate access
 			if (manager.getLockManager().aboutToWait(blocker))
 				return threadJob;
-			result = waitForRun(threadJob, monitor, blockingJob, blocker);
+			result = waitForRun(threadJob, monitor, blockingJob);
 		} finally {
 			// We need to check for interruption unconditionally in order to
 			// ensure we clear the thread's interrupted state. However, we only
@@ -216,8 +219,27 @@ class ThreadJob extends Job {
 		return result;
 	}
 
-	private static ThreadJob waitForRun(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob,
-			Thread blocker) {
+	/**
+	 * Waits until given {@code ThreadJob} "runs" (acquires the rule conflicting
+	 * with given {@code blockingJob} or is canceled. While the given
+	 * {@code ThreadJob} waits to acquire the rule, it is put to the
+	 * {@link JobManager#waitingThreadJobs} queue.
+	 *
+	 * @param threadJob
+	 *            job which should wait until the rule blocked by the
+	 *            {@code blockingJob} can be acquired
+	 * @param monitor
+	 *            the {@code IProgressMonitor} used to report blocking status and
+	 *            cancellation.
+	 * @param blockingJob
+	 *            running or blocked job whose scheduling rule blocks (conflicts
+	 *            with) the scheduling rule of the given waiting job, or
+	 *            {@code null}
+	 * @return given job, or the <code>ThreadJob</code> instance that was unblocked
+	 *         (due to transferRule) in the case of reentrant invocations of this
+	 *         method.
+	 */
+	private static ThreadJob waitForRun(final ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob) {
 		// Ask lock manager if it safe to block this thread
 		final boolean canBlock = manager.getLockManager().canBlock();
 		ThreadJob result = threadJob;
@@ -259,11 +281,12 @@ class ThreadJob extends Job {
 					waiting = false;
 					return threadJob;
 				}
-				blocker = blockingJob == null ? null : blockingJob.getThread();
+				Thread blocker = blockingJob.getThread();
 				// the rule could have been transferred to this thread while we were waiting
 				if (blocker == currentThread && blockingJob instanceof ThreadJob) {
 					// now we are just the nested acquire case
 					result = (ThreadJob) blockingJob;
+					// push expects a compatible rule, otherwise an exception will be thrown
 					result.push(threadJob.getRule());
 					result.isBlocked = threadJob.isBlocked;
 					// Condition #3.
