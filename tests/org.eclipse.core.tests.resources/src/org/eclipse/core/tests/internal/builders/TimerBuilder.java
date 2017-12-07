@@ -11,8 +11,7 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.Map;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -30,20 +29,33 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 	private static int maxSimultaneousBuilds = 0;
 
 	public static enum RuleType {
-		NO_CONFLICT, CURRENT_PROJECT, WORKSPACE_ROOT
+		NO_CONFLICT, CURRENT_PROJECT, WORKSPACE_ROOT, NO_CONFLICT_RELAXED, CURRENT_PROJECT_RELAXED;
 	}
 
-	private final ISchedulingRule noConflictRule = new ISchedulingRule() {
-			@Override
-			public boolean isConflicting(ISchedulingRule rule) {
-				return this == rule;
-			}
+	final ISchedulingRule noConflictRule = new ISchedulingRule() {
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return this == rule;
+		}
 
-			@Override
-			public boolean contains(ISchedulingRule rule) {
-				return this == rule;
-			}
-		};
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return this == rule;
+		}
+	};
+
+	final ISchedulingRule relaxedProjetRule = new ISchedulingRule() {
+
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return this == rule;
+		}
+
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return this == rule || ResourcesPlugin.getWorkspace().getRoot().contains(rule);
+		}
+	};
 
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
@@ -76,6 +88,8 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 					return getProject();
 				case WORKSPACE_ROOT :
 					return getProject().getWorkspace().getRoot();
+				case CURRENT_PROJECT_RELAXED :
+					return relaxedProjetRule;
 			}
 		}
 		return noConflictRule;

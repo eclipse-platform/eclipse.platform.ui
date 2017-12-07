@@ -26,6 +26,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 
 public class Project extends Container implements IProject {
@@ -545,31 +546,35 @@ public class Project extends Container implements IProject {
 			@Override
 			public void run(IProgressMonitor innerMonitor) throws CoreException {
 				innerMonitor = Policy.monitorFor(innerMonitor);
-				final ISchedulingRule rule = workspace.getRoot();
+				final ISchedulingRule projectBuildRule = workspace.getBuildManager().getRule(config, trigger, builderName, args);
+				final boolean relaxed = Job.getJobManager().currentRule() == null && projectBuildRule != null && projectBuildRule.contains(workspace.getRoot());
+
+				// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
+				// to either contain the WR or be null. Therefore, if not null, ensure it contains the WR rule...
+				final ISchedulingRule notificationsRule = relaxed ? null : workspace.getRuleFactory().buildRule();
 				try {
 					innerMonitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 					try {
-						workspace.prepareOperation(rule, innerMonitor);
+						workspace.prepareOperation(notificationsRule, innerMonitor);
 						if (!shouldBuild())
 							return;
 						workspace.beginOperation(true);
 						workspace.aboutToBuild(Project.this, trigger);
 					} finally {
-						workspace.endOperation(rule, false);
+						workspace.endOperation(notificationsRule, false);
 					}
-					final ISchedulingRule buildRule = workspace.getBuildManager().getRule(config, trigger, builderName, args);
 					try {
 						IStatus result;
-						workspace.prepareOperation(buildRule, innerMonitor);
+						workspace.prepareOperation(projectBuildRule, innerMonitor);
 						//don't open the tree eagerly because it will be wasted if no build occurs
 						workspace.beginOperation(false);
 						result = workspace.getBuildManager().build(config, trigger, builderName, args, Policy.subMonitorFor(innerMonitor, Policy.opWork));
 						if (!result.isOK())
 							throw new ResourceException(result);
 					} finally {
-						workspace.endOperation(buildRule, false);
+						workspace.endOperation(projectBuildRule, false);
 						try {
-							workspace.prepareOperation(rule, innerMonitor);
+							workspace.prepareOperation(notificationsRule, innerMonitor);
 							//don't open the tree eagerly because it will be wasted if no change occurs
 							workspace.beginOperation(false);
 							workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
@@ -577,7 +582,7 @@ public class Project extends Container implements IProject {
 							if (workspace.getElementTree().isImmutable())
 								workspace.newWorkingTree();
 						} finally {
-							workspace.endOperation(rule, false);
+							workspace.endOperation(notificationsRule, false);
 						}
 					}
 				} finally {

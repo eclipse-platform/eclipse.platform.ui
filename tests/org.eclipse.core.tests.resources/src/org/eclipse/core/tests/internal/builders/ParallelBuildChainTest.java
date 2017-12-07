@@ -88,8 +88,8 @@ public class ParallelBuildChainTest extends AbstractBuilderTest {
 
 	@Test
 	public void testIndividualProjectBuildsInParallelNoConflict() throws CoreException, OperationCanceledException, InterruptedException {
-		int projectsCount = getWorkspace().getRoot().getProjects().length;
-		JobGroup group = new JobGroup("Build Group", 5, projectsCount);
+		long duration = System.currentTimeMillis();
+		JobGroup group = new JobGroup("Build Group", 5, getWorkspace().getRoot().getProjects().length);
 		for (IProject project : getWorkspace().getRoot().getProjects()) {
 			Job job = new Job("Building " + project) {
 				@Override
@@ -106,13 +106,37 @@ public class ParallelBuildChainTest extends AbstractBuilderTest {
 			job.schedule();
 		}
 		Assert.assertTrue("Timeout, most likely a deadlock", group.join(5000, getMonitor()));
+		duration = System.currentTimeMillis() - duration;
 		assertEquals(getWorkspace().getRoot().getProjects().length, TimerBuilder.getTotalBuilds());
+		assertTrue(TimerBuilder.getMaxSimultaneousBuilds() >= 3);
+		assertTrue(duration < 3000);
 	}
 
 	@Test
 	public void testIndividualProjectBuildsInParallelProjectScheduling() throws CoreException, OperationCanceledException, InterruptedException {
-		setTimerBuilderSchedulingRuleForAllProjects(RuleType.CURRENT_PROJECT, getMonitor());
-		testIndividualProjectBuildsInParallelNoConflict();
+		setTimerBuilderSchedulingRuleForAllProjects(RuleType.CURRENT_PROJECT_RELAXED, getMonitor());
+		long duration = System.currentTimeMillis();
+		JobGroup group = new JobGroup("Build Group", 5, getWorkspace().getRoot().getProjects().length);
+		for (IProject project : getWorkspace().getRoot().getProjects()) {
+			Job job = new Job("Building " + project) {
+				@Override
+				public IStatus run(IProgressMonitor monitor) {
+					try {
+						project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+						return Status.OK_STATUS;
+					} catch (CoreException e) {
+						return new Status(IStatus.ERROR, "org.eclipse.core.tests.resources", e.getMessage(), e);
+					}
+				}
+			};
+			job.setJobGroup(group);
+			job.schedule();
+		}
+		Assert.assertTrue("Timeout, most likely a deadlock", group.join(5000, getMonitor()));
+		duration = System.currentTimeMillis() - duration;
+		assertEquals(getWorkspace().getRoot().getProjects().length, TimerBuilder.getTotalBuilds());
+		assertTrue(TimerBuilder.getMaxSimultaneousBuilds() >= 3);
+		assertTrue(duration < 3000);
 	}
 
 }

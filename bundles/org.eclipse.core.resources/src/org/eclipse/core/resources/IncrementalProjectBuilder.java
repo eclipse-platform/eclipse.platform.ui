@@ -410,9 +410,10 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <strong>Notes:</strong>
 	 * <ul>
 	 * <li>
-	 * If the builder rule is non-<code>null</code> it must be "contained" in the workspace root rule.
-	 * I.e. {@link ISchedulingRule#contains(ISchedulingRule)} must return
-	 * <code>true</code> when invoked on the workspace root with the builder rule.
+	 * The rule may be <i>relaxed</i> and in some cases let the builder be scheduled in
+	 * parallel of any other operation using a rule based on {@link IResource}). To
+	 * implement such <i>relaxed</i> rule for the builder, simply make the rule return
+	 * <code>true</code> for <code>rule.contains(workspaceRoot)</code>
 	 * </li>
 	 * <li>
 	 * The rule returned here may have no effect if the build is invoked within the
@@ -424,6 +425,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * The delta returned by {@link #getDelta(IProject)} for any project
 	 * outside the scope of the builder's rule may not contain changes that occurred
 	 * concurrently with the build.
+	 * </li>
 	 * </ul>
 	 * </p>
 	 * <p>
