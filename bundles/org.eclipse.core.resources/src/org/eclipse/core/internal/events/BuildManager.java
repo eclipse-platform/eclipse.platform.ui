@@ -1122,7 +1122,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Returns the scheduling rule that is required for building the project.
 	 */
-	public ISchedulingRule getRule(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> args) {
+	public ISchedulingRule getRule(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> buildArgs) {
 		IProject project = buildConfiguration.getProject();
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 		if (builderName == null) {
@@ -1134,10 +1134,16 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				BuildContext context = new BuildContext(buildConfiguration);
 				for (int i = 0; i < commands.length; i++) {
 					BuildCommand command = (BuildCommand) commands[i];
+					Map<String, String> allArgs = command.getArguments(true);
+					if (allArgs == null) {
+						allArgs = buildArgs;
+					} else if (buildArgs != null) {
+						allArgs.putAll(buildArgs);
+					}
 					try {
 						IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status, context);
 						if (builder != null) {
-							ISchedulingRule builderRule = builder.getRule(trigger, args);
+							ISchedulingRule builderRule = builder.getRule(trigger, allArgs);
 							if (builderRule != null)
 								rules.add(builderRule);
 							else
@@ -1156,11 +1162,18 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		} else {
 			// Returns the derived resources for the specified builderName
-			ICommand command = getCommand(project, builderName, args);
+			ICommand command = getCommand(project, builderName, buildArgs);
+			Map<String, String> allArgs = new HashMap<>();
+			if (command.getArguments() != null) {
+				allArgs.putAll(command.getArguments());
+			}
+			if (buildArgs != null) {
+				allArgs.putAll(buildArgs);
+			}
 			try {
 				IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, -1, status);
 				if (builder != null)
-					return builder.getRule(trigger, args);
+					return builder.getRule(trigger, allArgs);
 
 			} catch (CoreException e) {
 				status.add(e.getStatus());

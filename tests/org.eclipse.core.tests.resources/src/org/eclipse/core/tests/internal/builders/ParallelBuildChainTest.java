@@ -77,10 +77,11 @@ public class ParallelBuildChainTest extends AbstractBuilderTest {
 			Map<String, String> args = command.getArguments();
 			if (args == null) {
 				args = Collections.singletonMap(TimerBuilder.RULE_TYPE_ARG, type.toString());
-				command.setArguments(args);
 			} else {
 				args.put(TimerBuilder.RULE_TYPE_ARG, type.toString());
 			}
+			command.setArguments(args);
+			projectDescription.setBuildSpec(new ICommand[] {command});
 			project.setDescription(projectDescription, getMonitor());
 		}
 	}
@@ -113,4 +114,5 @@ public class ParallelBuildChainTest extends AbstractBuilderTest {
 		setTimerBuilderSchedulingRuleForAllProjects(RuleType.CURRENT_PROJECT, getMonitor());
 		testIndividualProjectBuildsInParallelNoConflict();
 	}
+
 }
