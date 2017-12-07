@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
@@ -438,8 +439,10 @@ public abstract class AbstractUIPlugin extends Plugin {
 		try {
 			url = FileLocator.resolve(url);
 		} catch (IOException e) {
-			getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
-					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
+			if (WorkbenchPlugin.DEBUG) {
+				getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
+						"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
+			}
 			return false;
 		}
 
