@@ -369,6 +369,7 @@ public class PropertySheet extends PageBookView
 		if (part.equals(currentPart)) {
 			if (isPinned())
 				pinPropertySheetAction.setChecked(false);
+			currentSelection = null;
 			currentPart = null;
 		}
 		super.partClosed(part);
