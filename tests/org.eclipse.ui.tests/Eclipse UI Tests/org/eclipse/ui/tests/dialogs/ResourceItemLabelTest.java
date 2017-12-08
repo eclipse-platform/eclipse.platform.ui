@@ -70,6 +70,9 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] full = { new Position(0, 8) };
 		compareStyleRanges(full, getStyleRanges("test.txt", "test.txt"));
+
+		Position[] withDigits = { new Position(0, 3) };
+		compareStyleRanges(withDigits, getStyleRanges("t3s", "t3st.txt"));
 	}
 
 	/**
@@ -86,6 +89,12 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] withSubstrings = { new Position(0, 2), new Position(4, 2) };
 		compareStyleRanges(withSubstrings, getStyleRanges("ThTe", "ThisTest.txt"));
+
+		Position[] withDigits = { new Position(0, 2), new Position(4, 2) };
+		compareStyleRanges(withDigits, getStyleRanges("Th3T", "This3Test.txt"));
+
+		Position[] skippingDigit = { new Position(0, 2), new Position(5, 1) };
+		compareStyleRanges(skippingDigit, getStyleRanges("ThT", "This3Test.txt"));
 	}
 
 	/**
@@ -102,6 +111,9 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] both = { new Position(0, 1), new Position(2, 1), new Position(6, 2) };
 		compareStyleRanges(both, getStyleRanges("t?s*xt", "test.txt"));
+
+		Position[] withDigits = { new Position(0, 1), new Position(2, 2), new Position(7, 3) };
+		compareStyleRanges(withDigits, getStyleRanges("t?s3*x3t", "tes3t.tx3t"));
 	}
 
 	/**
@@ -115,6 +127,28 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] withSubstring = { new Position(0, 1), new Position(8, 3) };
 		compareStyleRanges(withSubstring, getStyleRanges("M.MF", "MANIFEST.MF"));
+
+		Position[] withCamelCase = { new Position(4, 3), new Position(8, 1) };
+		compareStyleRanges(withCamelCase, getStyleRanges(".TxT", "test.TxxT"));
+
+		Position[] withPattern = { new Position(4, 2), new Position(8, 1) };
+		compareStyleRanges(withPattern, getStyleRanges(".t*t", "test.txxt"));
+
+		Position[] withDigits = { new Position(4, 2), new Position(8, 1) };
+		compareStyleRanges(withDigits, getStyleRanges(".3*3", "test.3xx3"));
+	}
+
+	/**
+	 * Tests for Bug 528301: Camel Case match with precursing letter matches
+	 *
+	 * @throws Exception
+	 */
+	public void testBug528301() throws Exception {
+		Position[] withSameLettersBeforeCamel = { new Position(0, 1), new Position(3, 1), new Position(5, 1) };
+		compareStyleRanges(withSameLettersBeforeCamel, getStyleRanges("ABC", "AbcBzCz.txt"));
+
+		Position[] withDigits = { new Position(0, 1), new Position(4, 1), new Position(6, 1), new Position(8, 1) };
+		compareStyleRanges(withDigits, getStyleRanges("AB5C", "Ab5cBz5zCz.txt"));
 	}
 
 	private void compareStyleRanges(Position[] expected, StyleRange[] actual) {

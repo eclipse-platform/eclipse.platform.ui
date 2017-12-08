@@ -44,6 +44,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -635,67 +636,98 @@ public class FilteredResourcesSelectionDialog extends
 				return new StyledString(super.getText(element));
 			}
 
-			IResource res = (IResource) element;
-			StyledString str = new StyledString(res.getName().trim());
+			IResource resource = (IResource) element;
 			String searchFieldString = ((Text) getPatternControl()).getText();
+			String resourceName = resource.getName();
 			Styler boldStyler = new Styler() {
 				@Override
 				public void applyStyles(TextStyle textStyle) {
 					textStyle.font = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
 				}
 			};
-
-			int potentialIndex = str.getString().toLowerCase().indexOf(searchFieldString.toLowerCase());
-			final String wildcard = "*"; //$NON-NLS-1$
-			if (potentialIndex != -1) {
-				str.setStyle(potentialIndex, searchFieldString.length(), boldStyler);
-			} else if (searchFieldString.indexOf('?') != -1 || searchFieldString.indexOf('*') != -1) {
-				str = markRegions(str, String.join(wildcard, searchFieldString.split("(?=[\\.])")), boldStyler); //$NON-NLS-1$
-			} else {
-				String matchingString = String.join(wildcard, searchFieldString.split("(?=[A-Z\\.])")) + wildcard; //$NON-NLS-1$
-				str = markRegions(str, matchingString, boldStyler);
+			StyledString str = styleResourceExtensionMatch(resource, searchFieldString, boldStyler);
+			if (str.getStyleRanges().length != 0 && searchFieldString.lastIndexOf('.') != -1) {
+				resourceName = resourceName.substring(0, resourceName.lastIndexOf('.' + resource.getFileExtension()));
+				searchFieldString = searchFieldString.substring(0, searchFieldString.lastIndexOf('.'));
 			}
-
-			// extra info for duplicates
-			if (isDuplicateElement(element)) {
-				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
-				str.append(res.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
-			}
-
+			getMatchPositions(resourceName, searchFieldString).stream()
+					.forEach(position -> str.setStyle(position.offset, position.length, boldStyler));
 			return str;
 		}
 
-		private StyledString markRegions(StyledString styledString, String matchingString, Styler styler) {
-			String text = styledString.getString().toLowerCase();
-			matchingString = matchingString.toLowerCase();
-			StyledString updatedText = styledString;
+		private StyledString styleResourceExtensionMatch(IResource resource, String matchingString, Styler styler) {
+			StyledString str = new StyledString(resource.getName().trim());
+			String resourceExtension = resource.getFileExtension();
+			int lastDotIndex = matchingString.lastIndexOf('.');
+			if (lastDotIndex == -1 || resourceExtension == null) {
+				return str;
+			}
+			resourceExtension = '.' + resourceExtension;
+			int resourceExtensionIndex = resource.getName().lastIndexOf(resourceExtension);
+			String matchingExtension = matchingString.substring(lastDotIndex, matchingString.length());
+			for (Position markPosition : getMatchPositions(resourceExtension, matchingExtension)) {
+				str.setStyle(resourceExtensionIndex + markPosition.offset, markPosition.length, styler);
+			}
+			return str;
+		}
+
+		private List<Position> getMatchPositions(String string, String matching) {
+			final String originalMatching = matching;
+			List<Position> positions = new ArrayList<>();
+			if (matching.indexOf('?') == -1 && matching.indexOf('*') == -1) {
+				matching = String.join("*", matching.split("(?=[A-Z0-9])")) + "*"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			} else {
+				matching = matching.toLowerCase();
+				string = string.toLowerCase();
+			}
+
 			int startingIndex = 0;
 			int currentIndex = 0;
-			String[] regions = matchingString.replaceAll("\\.", "\\\\.").split("(\\?)|\\*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String[] regions = matching.replaceAll("\\.", "\\\\.").split("(\\?)|\\*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			int usedRegions = 0;
 			boolean restart = false;
 
 			do {
 				for (String region : regions) {
 					if (region == null || region.isEmpty()) {
+						usedRegions++;
 						continue;
-					} else if (region.equals("?")) { //$NON-NLS-1$
-						currentIndex++;
-					} else {
-						int startlocation = indexOf(Pattern.compile(region), text.substring(currentIndex));
-						int length = region.replace("\\", "").length(); //$NON-NLS-1$ //$NON-NLS-2$
-						if (startlocation == -1) {
-							currentIndex = ++startingIndex;
-							updatedText = styledString;
-							restart = true;
-							break;
-						}
-						updatedText.setStyle(startlocation + currentIndex, length, styler);
-						currentIndex += startlocation + length;
 					}
+					if (region.equals("?")) { //$NON-NLS-1$
+						currentIndex++;
+						usedRegions++;
+						continue;
+					}
+					int startlocation = indexOf(Pattern.compile(region), string.substring(currentIndex));
+					if (startlocation == -1) {
+						currentIndex = ++startingIndex;
+						positions = new ArrayList<>();
+						restart = true;
+						break;
+					}
+					int regionIndex = 0;
+					currentIndex += startlocation;
+					for (char regionChar : region.toCharArray()) {
+						if (regionChar == '\\') {
+							continue;
+						}
+						regionIndex++;
+						if (regionChar == '.' && regionIndex != 1) {
+							positions.add(new Position(currentIndex, regionIndex - 1));
+							currentIndex += regionIndex;
+							regionIndex = 0;
+						}
+					}
+					positions.add(new Position(currentIndex, regionIndex));
+					currentIndex += regionIndex;
+					usedRegions++;
 				}
-			} while (restart && currentIndex < text.length());
-
-			return updatedText;
+			} while (restart && currentIndex < string.length());
+			if (usedRegions != regions.length && string.toLowerCase().startsWith(originalMatching.toLowerCase())) {
+				positions = new ArrayList<>();
+				positions.add(new Position(0, originalMatching.length()));
+			}
+			return positions;
 		}
 
 		private int indexOf(Pattern pattern, String s) {
