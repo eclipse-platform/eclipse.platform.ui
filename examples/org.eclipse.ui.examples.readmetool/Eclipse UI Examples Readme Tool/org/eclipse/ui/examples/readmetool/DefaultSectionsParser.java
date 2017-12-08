@@ -13,8 +13,8 @@ package org.eclipse.ui.examples.readmetool;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -79,7 +79,7 @@ public class DefaultSectionsParser implements IReadmeFileParser {
     @Override
 	public MarkElement[] parse(IFile file) {
         Hashtable<String, MarkElement> markTable = new Hashtable<>(40);
-        Vector<MarkElement> topLevel = new Vector<>();
+        ArrayList<MarkElement> topLevel = new ArrayList<>();
         String s = getText(file);
         int start = 0;
         int end = -1;
@@ -128,7 +128,7 @@ public class DefaultSectionsParser implements IReadmeFileParser {
             lastme.setNumberOfLines(lineno - lastlineno - 1);
         }
         MarkElement[] results = new MarkElement[topLevel.size()];
-        topLevel.copyInto(results);
+        results = topLevel.toArray(results);
         return results;
     }
 

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -153,9 +153,9 @@ public class UserElement extends OrganizationElement {
     }
 
     //
-    static private Vector<PropertyDescriptor> descriptors;
+    static private ArrayList<PropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector<>();
+        descriptors = new ArrayList<>();
         PropertyDescriptor propertyDescriptor;
 
         ///
@@ -163,33 +163,33 @@ public class UserElement extends OrganizationElement {
                 P_PHONENUMBER);
         propertyDescriptor.setCategory(P_CONTACTINFO);
         propertyDescriptor.setHelpContextIds(PHONE_NUMBER_CONTEXT);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         ///
         propertyDescriptor = new PropertyDescriptor(P_ID_ADDRESS, P_ADDRESS);
         propertyDescriptor.setCategory(P_CONTACTINFO);
         propertyDescriptor.setHelpContextIds(ADDRESS_CONTEXT);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         ///
         propertyDescriptor = new TextPropertyDescriptor(P_ID_EMAIL, P_EMAIL);
         propertyDescriptor.setCategory(P_CONTACTINFO);
         propertyDescriptor.setHelpContextIds(EMAIL_CONTEXT);
         propertyDescriptor.setValidator(new EmailAddressValidator());
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         ///
         propertyDescriptor = new TextPropertyDescriptor(P_ID_FULLNAME,
                 P_FULLNAME);
         propertyDescriptor.setCategory(P_PERSONELINFO);
         propertyDescriptor.setHelpContextIds(FULL_NAME_CONTEXT);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         ///
         propertyDescriptor = new PropertyDescriptor(P_ID_BDAY, P_BDAY);
         propertyDescriptor.setCategory(P_PERSONELINFO);
         propertyDescriptor.setHelpContextIds(BIRTHDAY_CONTEXT);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         ///
         propertyDescriptor = new ComboBoxPropertyDescriptor(P_ID_COOP, P_COOP,
@@ -197,7 +197,7 @@ public class UserElement extends OrganizationElement {
         propertyDescriptor.setCategory(P_PERSONELINFO);
         propertyDescriptor.setHelpContextIds(COOP_CONTEXT);
         propertyDescriptor.setLabelProvider(new BooleanLabelProvider());
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         ///
         propertyDescriptor = new TextPropertyDescriptor(P_ID_SALARY, P_SALARY);
@@ -225,26 +225,26 @@ public class UserElement extends OrganizationElement {
             }
         });
         propertyDescriptor.setCategory(P_PERSONELINFO);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         /// HairColor
         propertyDescriptor = new ColorPropertyDescriptor(P_ID_HAIRCOLOR,
                 P_HAIRCOLOR);
         propertyDescriptor.setCategory(P_PERSONALINFO);
         propertyDescriptor.setHelpContextIds(HAIR_COLOR__CONTEXT);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         /// EyeColor
         propertyDescriptor = new ColorPropertyDescriptor(P_ID_EYECOLOR,
                 P_EYECOLOR);
         propertyDescriptor.setCategory(P_PERSONALINFO);
         propertyDescriptor.setHelpContextIds(EYE_COLOR_CONTEXT);
-        descriptors.addElement(propertyDescriptor);
+        descriptors.add(propertyDescriptor);
 
         //gets descriptors from parent, warning name-space collision may occur
-        Vector<PropertyDescriptor> parentDescriptors = OrganizationElement.getDescriptors();
+        ArrayList<PropertyDescriptor> parentDescriptors = OrganizationElement.getDescriptors();
         for (int i = 0; i < parentDescriptors.size(); i++) {
-            descriptors.addElement(parentDescriptors.elementAt(i));
+            descriptors.add(parentDescriptors.get(i));
         }
     }
 
@@ -297,7 +297,7 @@ public class UserElement extends OrganizationElement {
     /**
      * Returns the descriptors
      */
-    static Vector<PropertyDescriptor> getDescriptors() {
+    static  ArrayList<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 

@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -36,12 +34,12 @@ public abstract class OrganizationElement implements IAdaptable,
     private ImageDescriptor imageDescriptor;
 
     //
-    private static Vector<PropertyDescriptor> descriptors;
+    private static ArrayList<PropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector<>();
+        descriptors = new ArrayList<>();
         PropertyDescriptor name = new TextPropertyDescriptor(
                 IBasicPropertyConstants.P_TEXT, MessageUtil.getString("name")); //$NON-NLS-1$
-        descriptors.addElement(name);
+        descriptors.add(name);
     }
 
     /**
@@ -78,7 +76,7 @@ public abstract class OrganizationElement implements IAdaptable,
     /**
      * Returns the descriptors
      */
-    static Vector<PropertyDescriptor> getDescriptors() {
+    static ArrayList<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import java.util.Vector;
+
+import java.util.ArrayList;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -45,13 +46,13 @@ public class EmailAddress implements IPropertySource {
     public static final String P_DOMAIN = MessageUtil.getString("domain"); //$NON-NLS-1$
 
     //Property-Descriptors
-    private static Vector<PropertyDescriptor> descriptors;
+    private static ArrayList<PropertyDescriptor> descriptors;
 
     static {
-        descriptors = new Vector<>(2, 2);
+        descriptors = new ArrayList<>();
         //non-editable child properties --> provide no editors
-        descriptors.addElement(new PropertyDescriptor(P_ID_USERID, P_USERID));
-        descriptors.addElement(new PropertyDescriptor(P_ID_DOMAIN, P_DOMAIN));
+        descriptors.add(new PropertyDescriptor(P_ID_USERID, P_USERID));
+        descriptors.add(new PropertyDescriptor(P_ID_DOMAIN, P_DOMAIN));
     }
 
     /**
@@ -76,7 +77,7 @@ public class EmailAddress implements IPropertySource {
     /**
      * Returns the descriptors
      */
-    private static Vector<PropertyDescriptor> getDescriptors() {
+    private static ArrayList<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 

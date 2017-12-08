@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -53,16 +53,16 @@ public class StreetAddress implements IPropertySource {
 
     public static final String P_STREET = MessageUtil.getString("street"); //$NON-NLS-1$
 
-    private static Vector<TextPropertyDescriptor> descriptors;
+    private static ArrayList<TextPropertyDescriptor> descriptors;
 
     static {
-        descriptors = new Vector<>();
-        descriptors.addElement(new TextPropertyDescriptor(P_ID_BUILD_NO,
+        descriptors = new ArrayList<>();
+        descriptors.add(new TextPropertyDescriptor(P_ID_BUILD_NO,
                 P_BUILD_NO));
         descriptors
-                .addElement(new TextPropertyDescriptor(P_ID_APTBOX, P_APTBOX));
+                .add(new TextPropertyDescriptor(P_ID_APTBOX, P_APTBOX));
         descriptors
-                .addElement(new TextPropertyDescriptor(P_ID_STREET, P_STREET));
+                .add(new TextPropertyDescriptor(P_ID_STREET, P_STREET));
     }
 
     /**
@@ -117,7 +117,7 @@ public class StreetAddress implements IPropertySource {
     /**
      * Returns the descriptors
      */
-    private static Vector<TextPropertyDescriptor> getDescriptors() {
+    private static ArrayList<TextPropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 

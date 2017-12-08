@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.examples.propertysheet;
 
-import java.util.Vector;
+
+import java.util.ArrayList;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -51,14 +52,14 @@ public class Name implements IPropertySource {
 
     public static final String P_DESCRIPTORS = "properties"; //$NON-NLS-1$
 
-    static private Vector<TextPropertyDescriptor> descriptors;
+    static private ArrayList<TextPropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector<>();
-        descriptors.addElement(new TextPropertyDescriptor(P_ID_FIRSTNAME,
+        descriptors = new ArrayList<>();
+        descriptors.add(new TextPropertyDescriptor(P_ID_FIRSTNAME,
                 P_FIRSTNAME));
-        descriptors.addElement(new TextPropertyDescriptor(P_ID_LASTNAME,
+        descriptors.add(new TextPropertyDescriptor(P_ID_LASTNAME,
                 P_LASTNAME));
-        descriptors.addElement(new TextPropertyDescriptor(P_ID_MIDDLENAME,
+        descriptors.add(new TextPropertyDescriptor(P_ID_MIDDLENAME,
                 P_MIDDLENAME));
     }
 
@@ -82,7 +83,7 @@ public class Name implements IPropertySource {
     /**
      * Returns the descriptors
      */
-    private static Vector<TextPropertyDescriptor> getDescriptors() {
+    private static ArrayList<TextPropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 

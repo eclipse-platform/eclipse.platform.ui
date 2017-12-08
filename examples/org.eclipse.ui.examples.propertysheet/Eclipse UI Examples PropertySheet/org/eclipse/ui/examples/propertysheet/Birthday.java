@@ -12,9 +12,9 @@ package org.eclipse.ui.examples.propertysheet;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Vector;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
@@ -76,9 +76,9 @@ public class Birthday implements IPropertySource {
     }
 
     //
-    private static Vector<PropertyDescriptor> descriptors;
+    private static ArrayList<PropertyDescriptor> descriptors;
     static {
-        descriptors = new Vector<>();
+        descriptors = new ArrayList<>();
 
         ///
         String[] dayValues = new String[] {
@@ -86,7 +86,7 @@ public class Birthday implements IPropertySource {
         ComboBoxPropertyDescriptor days = new ComboBoxPropertyDescriptor(
                 P_ID_DAY, P_DAY, dayValues);
         days.setLabelProvider(new DayLabelProvider());
-        descriptors.addElement(days);
+        descriptors.add(days);
 
         ///
         String[] monthValues = new String[] {
@@ -94,10 +94,10 @@ public class Birthday implements IPropertySource {
         ComboBoxPropertyDescriptor months = new ComboBoxPropertyDescriptor(
                 P_ID_MONTH, P_MONTH, monthValues);
         months.setLabelProvider(new MonthLabelProvider());
-        descriptors.addElement(months);
+        descriptors.add(months);
 
         ///
-        descriptors.addElement(new TextPropertyDescriptor(P_ID_YEAR, P_YEAR));
+        descriptors.add(new TextPropertyDescriptor(P_ID_YEAR, P_YEAR));
     }
 
     /**
@@ -129,7 +129,7 @@ public class Birthday implements IPropertySource {
     /**
      * Standard Accessor
      */
-    private static Vector<PropertyDescriptor> getDescriptors() {
+    private static ArrayList<PropertyDescriptor> getDescriptors() {
         return descriptors;
     }
 

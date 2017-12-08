@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.propertysheet;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.RGB;
 
@@ -24,12 +24,12 @@ public class GroupElement extends OrganizationElement {
 
     public static String P_CONTENTS = "contents"; //$NON-NLS-1$
 
-    private Vector<OrganizationElement> subGroups;
+    private ArrayList<OrganizationElement> subGroups;
 
-    private Vector<OrganizationElement> users;
+    private ArrayList<OrganizationElement> users;
 
     // must be synchronized to contain both the references of subGroups and users
-    private Vector<OrganizationElement> contents;
+    private ArrayList<OrganizationElement> contents;
 
     /**
      * Constructor.
@@ -115,9 +115,9 @@ public class GroupElement extends OrganizationElement {
     /**
      * Returns the content
      */
-    private Vector<OrganizationElement> getContents() {
+    private ArrayList<OrganizationElement> getContents() {
         if (contents == null)
-            contents = new Vector<>();
+            contents = new ArrayList<>();
         return contents;
     }
 
@@ -136,18 +136,18 @@ public class GroupElement extends OrganizationElement {
     /**
      * Returns the subgroups
      */
-    private Vector<OrganizationElement> getSubGroups() {
+    private ArrayList<OrganizationElement> getSubGroups() {
         if (subGroups == null)
-            subGroups = new Vector<>();
+            subGroups = new ArrayList<>();
         return subGroups;
     }
 
     /**
      * Returns the users
      */
-    private Vector<OrganizationElement> getUsers() {
+    private ArrayList<OrganizationElement> getUsers() {
         if (users == null)
-            users = new Vector<>();
+            users = new ArrayList<>();
         return users;
     }
 

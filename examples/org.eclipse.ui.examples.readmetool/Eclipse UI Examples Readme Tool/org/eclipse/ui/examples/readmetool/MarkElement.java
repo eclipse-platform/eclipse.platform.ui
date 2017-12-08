@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.readmetool;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
@@ -40,7 +40,7 @@ public class MarkElement implements IWorkbenchAdapter, IAdaptable {
 
     private int length;
 
-    private Vector<MarkElement> children;
+    private ArrayList<MarkElement> children;
 
     /**
      * Creates a new MarkElement and stores parent element and
@@ -66,7 +66,7 @@ public class MarkElement implements IWorkbenchAdapter, IAdaptable {
      */
     private void addChild(MarkElement child) {
         if (children == null) {
-            children = new Vector<>();
+            children = new ArrayList<>();
         }
         children.add(child);
     }
