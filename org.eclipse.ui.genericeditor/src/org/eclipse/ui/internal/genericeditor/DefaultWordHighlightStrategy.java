@@ -57,8 +57,9 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 	private ISourceViewer sourceViewer;
 	private IDocument document;
 
-	private static final String WORD_REGEXP = "[a-zA-Z]+"; //$NON-NLS-1$
-	private static final Pattern WORD_PATTERN = Pattern.compile(WORD_REGEXP);
+	private static final String WORD_REGEXP = "\\w+"; //$NON-NLS-1$
+	private static final Pattern WORD_PATTERN = Pattern.compile(WORD_REGEXP, Pattern.UNICODE_CHARACTER_CLASS);
+	private static final Pattern CURRENT_WORD_START_PATTERN = Pattern.compile(WORD_REGEXP + "$", Pattern.UNICODE_CHARACTER_CLASS); //$NON-NLS-1$
 
 	private Annotation[] fOccurrenceAnnotations = null;
 
@@ -71,13 +72,11 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 		String text = document.get();
 		offset = ((ITextViewerExtension5)sourceViewer).widgetOffset2ModelOffset(offset);
 
-		int wordStartOffset = findStartingOffset(text, offset);
-		int wordEndOffset = findEndingOffset(text, offset);
-		if(wordEndOffset <= wordStartOffset || wordEndOffset == -1 || wordStartOffset == -1) {
+		String word = findCurrentWord(text, offset);
+		if(word == null) {
 			removeOccurrenceAnnotations();
 			return;
 		}
-		String word = text.substring(wordStartOffset, wordEndOffset);
 
 		Matcher m = WORD_PATTERN.matcher(text);
 		Map<Annotation, Position> annotationMap = new HashMap<>();
@@ -109,23 +108,25 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 		}
 	}
 
-	private static int findStartingOffset(String text, int offset) {
-		final Pattern NON_ALPHANUMERIC_LAST_PATTERN = Pattern.compile("[^\\w](?!.*[^\\w])"); //$NON-NLS-1$
+	private static String findCurrentWord(String text, int offset) {
+		String wordStart = null;
+		String wordEnd = null;
+		
 		String substring = text.substring(0, offset);
-		Matcher m = NON_ALPHANUMERIC_LAST_PATTERN.matcher(substring);
-		if(m.find()) {
-			return m.end();
+		Matcher m = CURRENT_WORD_START_PATTERN.matcher(substring);
+		if (m.find()) {
+			wordStart=m.group();
 		}
-		return -1;
-	}
-
-	private static int findEndingOffset(String text, int offset) {
-		String substring = text.substring(offset);
-		String[] split = substring.split("[^a-zA-Z0-9]+");//$NON-NLS-1$
-		if(split.length == 0) {
-			return -1;
+		substring = text.substring(offset);
+		m = WORD_PATTERN.matcher(substring);
+		if (m.lookingAt()) {
+			wordEnd = m.group();
 		}
-		return offset + split[0].length();
+		if (wordStart != null && wordEnd != null)
+			return wordStart + wordEnd;
+		if (wordStart != null)
+			return wordStart;
+		return wordEnd;
 	}
 
 	public void install(ITextViewer viewer) {

@@ -55,8 +55,13 @@ public class AbstratGenericEditorTest {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
 		project.create(null);
 		project.open(null);
-		createAndOpenFile("foo.txt", "bar 'bar'");
+		project.setDefaultCharset("UTF-8", null);
+		createAndOpenFile();
 	 }
+
+	protected void createAndOpenFile() throws Exception {
+		createAndOpenFile("foo.txt", "bar 'bar'");
+	}
 	
 	/**
 	 * Creates a new file in the project, opens it, and associate that file with the test state
@@ -67,7 +72,8 @@ public class AbstratGenericEditorTest {
 	 */
 	protected void createAndOpenFile(String name, String contents) throws Exception {
 		this.file = project.getFile(name);
-		this.file.create(new ByteArrayInputStream(contents.getBytes()), true, null);
+		this.file.create(new ByteArrayInputStream(contents.getBytes("UTF-8")), true, null);
+		this.file.setCharset("UTF-8", null);
 		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(this.file), "org.eclipse.ui.genericeditor.GenericEditor");
 	}
@@ -82,6 +88,7 @@ public class AbstratGenericEditorTest {
 			editor.close(false);
 			editor = null;
 		}
+		while(Display.getDefault().readAndDispatch()) {}
 		if (file != null) {
 			file.delete(true, new NullProgressMonitor());
 			file = null;

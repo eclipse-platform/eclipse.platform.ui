@@ -17,6 +17,8 @@ import org.junit.Test;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -36,6 +38,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 public class ReconcilerTest extends AbstratGenericEditorTest {
 
 	protected ExtensionBasedTextEditor secondEditor;
+	protected IFile secondFile;
+	protected IProject secondProject;
 
 	@Test
 	public void testReconciler() throws Exception {
@@ -44,10 +48,10 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testMultipleEditors() throws Exception {
-		IProject secondProject = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
+		secondProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
 		secondProject.create(null);
 		secondProject.open(null);
-		IFile secondFile = secondProject.getFile("foo.txt");
+		secondFile= secondProject.getFile("foo.txt");
 		secondFile.create(new ByteArrayInputStream("bar 'bar'".getBytes()), true, null);
 		secondEditor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
@@ -56,7 +60,7 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 	
 	@Test
 	public void testMultipleReconcilers() throws Exception {
-		IFile secondFile = project.getFile("bar.txt");
+		secondFile = project.getFile("bar.txt");
 		secondFile.create(new ByteArrayInputStream("".getBytes()), true, null);
 		secondEditor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
@@ -82,4 +86,23 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 		Assert.assertTrue("file was not affected by reconciler", doc.get().contains(expectedText));
 	}
 
+	@Override
+	public void tearDown() throws Exception {
+		if (secondEditor != null)
+		{
+			secondEditor.close(false);
+			secondEditor = null;
+			while(Display.getDefault().readAndDispatch()) {}
+		}
+		if (secondFile != null)
+		{
+			secondFile.delete(true, new NullProgressMonitor());
+			secondFile = null;
+		}
+		super.tearDown();
+		if (secondProject != null)
+		{
+			secondProject.delete(true, new NullProgressMonitor());
+		}
+	}
 }

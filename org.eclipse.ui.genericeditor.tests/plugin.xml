@@ -140,7 +140,7 @@
 			point="org.eclipse.ui.genericeditor.highlightReconcilers">
 		<highlightReconciler
 			class="org.eclipse.ui.genericeditor.tests.contributions.HighlightReconciler"
-			contentType="org.eclipse.ui.genericeditor.tests.content-type">
+			contentType="org.eclipse.ui.genericeditor.tests.content-type-bar">
 		</highlightReconciler>
  </extension>
 </plugin>
