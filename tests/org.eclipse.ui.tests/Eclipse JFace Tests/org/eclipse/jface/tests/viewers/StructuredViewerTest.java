@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class StructuredViewerTest extends ViewerTestCase {
@@ -64,7 +64,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         }
     }
 
-    public static class TestLabelSorter extends ViewerSorter {
+    public static class TestLabelComparator extends ViewerComparator {
         @Override
 		public int compare(Viewer v, Object e1, Object e2) {
             // put greater labels first
@@ -367,7 +367,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testInsertSiblingWithSorter() {
-        fViewer.setSorter(new TestLabelSorter());
+        fViewer.setComparator(new TestLabelComparator());
         TestElement newElement = new TestElement(fModel, fRootElement);
         newElement.setLabel("name-9999");
         fRootElement.addChild(newElement, new TestModelChange(
@@ -440,7 +440,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testRenameWithSorter() {
-        fViewer.setSorter(new TestLabelSorter());
+        fViewer.setComparator(new TestLabelComparator());
         TestElement first = fRootElement.getFirstChild();
         first.setLabel("name-9999");
         String newElementLabel = first.toString();
@@ -481,11 +481,11 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         String lastLabel = last.toString();
         assertEquals("unsorted", firstLabel, getItemText(0));
         assertEquals("unsorted", lastLabel, getItemText(size - 1));
-        fViewer.setSorter(new TestLabelSorter());
+		fViewer.setComparator(new TestLabelComparator());
         assertEquals("reverse sorted", firstLabel, getItemText(size - 1));
         assertEquals("reverse sorted", lastLabel, getItemText(0));
 
-        fViewer.setSorter(null);
+		fViewer.setComparator(null);
         assertEquals("unsorted", firstLabel, getItemText(0));
         assertEquals("unsorted", lastLabel, getItemText(size - 1));
     }

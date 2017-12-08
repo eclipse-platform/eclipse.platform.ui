@@ -234,7 +234,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		// Call update to make sure the viewer is in a correct state
 		// At least on MacOSX I get failures without this call
 		((TableViewer) fViewer).getControl().update();
-		fViewer.setSorter(new TestLabelSorter());
+		fViewer.setComparator(new TestLabelComparator());
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-9999");
 		String newElementLabel = first.toString();
@@ -252,12 +252,12 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 		((TableViewer) fViewer).getControl().update();
 		assertEquals("unsorted", firstLabel, getItemText(0));
-		fViewer.setSorter(new TestLabelSorter());
+		fViewer.setComparator(new TestLabelComparator());
 
 		((TableViewer) fViewer).getControl().update();
 		assertEquals("reverse sorted", lastLabel, getItemText(0));
 
-		fViewer.setSorter(null);
+		fViewer.setComparator(null);
 		((TableViewer) fViewer).getControl().update();
 		assertEquals("unsorted", firstLabel, getItemText(0));
 	}
