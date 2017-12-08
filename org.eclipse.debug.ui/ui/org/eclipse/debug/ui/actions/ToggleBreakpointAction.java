@@ -148,7 +148,8 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
-		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.ToggleBreakpointAction_1, ActionMessages.ToggleBreakpointAction_2, e); //
+		DebugUIPlugin.log(e);
+		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.ToggleBreakpointAction_1, ActionMessages.ToggleBreakpointAction_2, e);
 	}
 
 	/**
