@@ -172,9 +172,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 		return super.getMessage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	/**
 	 * @since 3.13
 	 */
 	@Override

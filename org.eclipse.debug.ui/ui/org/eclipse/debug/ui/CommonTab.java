@@ -1103,9 +1103,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	/**
 	 * @since 3.13
 	 */
 	@Override

@@ -605,9 +605,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// do nothing when deactivated
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
+	/**
 	 * @since 3.13
 	 */
 	@Override
