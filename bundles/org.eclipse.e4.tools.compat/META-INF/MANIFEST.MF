@@ -19,3 +19,4 @@ Export-Package: org.eclipse.e4.tools.compat.internal;version="0.12.0.qualifier";
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
 Import-Package: javax.inject;version="1.0.0"
+Automatic-Module-Name: org.eclipse.e4.tools.compat

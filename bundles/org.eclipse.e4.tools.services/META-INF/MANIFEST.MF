@@ -17,3 +17,4 @@ Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0"
 Bundle-Activator: org.eclipse.e4.tools.services.ToolsServicesActivator
+Automatic-Module-Name: org.eclipse.e4.tools.services

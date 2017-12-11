@@ -38,3 +38,4 @@ Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.e4.tools.emf.editor3x;version="0.12.0.qualifier";x-internal:=true,
  org.eclipse.e4.tools.emf.editor3x.emf;version="0.12.0.qualifier";x-internal:=true,
  org.eclipse.e4.tools.emf.editor3x.extension;version="0.12.0.qualifier";x-internal:=true
+Automatic-Module-Name: org.eclipse.e4.tools.emf.editor3x
