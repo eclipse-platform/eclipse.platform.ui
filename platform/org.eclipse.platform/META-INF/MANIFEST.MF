@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui.intro;bundle-version="[3.2.0,4.0.0)",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.platform.internal;x-internal:=true
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.platform

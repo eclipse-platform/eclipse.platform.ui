@@ -19,3 +19,4 @@ Import-Package: javax.xml.parsers,
  org.xml.sax.helpers
 Service-Component: OSGI-INF/bundleGroup.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.update.configurator
