@@ -8,3 +8,4 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.jface;bundle-version="3.14.0"
+Automatic-Module-Name: org.eclipse.jface.text.examples

@@ -20,3 +20,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: 
  com.ibm.icu.text,
  com.ibm.icu.util
+Automatic-Module-Name: org.eclipse.text

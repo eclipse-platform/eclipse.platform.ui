@@ -18,3 +18,4 @@ Require-Bundle:
  org.eclipse.core.filesystem;bundle-version="[1.2.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.ibm.icu.text
+Automatic-Module-Name: org.eclipse.core.filebuffers

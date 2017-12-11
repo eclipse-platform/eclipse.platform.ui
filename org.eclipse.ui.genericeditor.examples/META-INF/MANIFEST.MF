@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui.genericeditor;bundle-version="1.0.0",
  org.eclipse.e4.core.commands;bundle-version="0.12.100",
  org.eclipse.ui.ide
 Export-Package: org.eclipse.ui.genericeditor.examples.dotproject
+Automatic-Module-Name: org.eclipse.ui.genericeditor.examples
