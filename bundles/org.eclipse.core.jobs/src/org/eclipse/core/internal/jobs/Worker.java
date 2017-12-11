@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Winkler - Bug 223492: Set current job name as thread name
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -20,16 +21,18 @@ import org.eclipse.osgi.util.NLS;
  * the worker pool gives it a null job, the worker dies.
  */
 public class Worker extends Thread {
-	//worker number used for debugging purposes only
+	// worker number used for debugging purposes only
 	private static int nextWorkerNumber = 0;
 	private volatile InternalJob currentJob;
 	private final WorkerPool pool;
+	private final String generalName;
 
 	public Worker(WorkerPool pool) {
 		super("Worker-" + nextWorkerNumber++); //$NON-NLS-1$
+		this.generalName = getName();
 		this.pool = pool;
-		//set the context loader to avoid leaking the current context loader
-		//for the thread that spawns this worker (bug 98376)
+		// set the context loader to avoid leaking the current context loader
+		// for the thread that spawns this worker (bug 98376)
 		setContextClassLoader(pool.defaultContextLoader);
 	}
 
@@ -53,13 +56,14 @@ public class Worker extends Thread {
 				IStatus result = Status.OK_STATUS;
 				IProgressMonitor monitor = currentJob.getProgressMonitor();
 				try {
+					setName(getJobName());
 					result = currentJob.run(monitor);
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {
 					result = handleException(currentJob, e);
 				} catch (ThreadDeath e) {
-					//must not consume thread death
+					// must not consume thread death
 					result = handleException(currentJob, e);
 					throw e;
 				} catch (Error e) {
@@ -68,16 +72,17 @@ public class Worker extends Thread {
 					if (result != Job.ASYNC_FINISH && monitor != null) {
 						monitor.done();
 					}
-					//clear interrupted state for this thread
+					// clear interrupted state for this thread
 					Thread.interrupted();
-					//result must not be null
+					// result must not be null
 					if (result == null) {
 						String message = NLS.bind(JobMessages.jobs_returnNoStatus, currentJob.getClass().getName());
 						result = handleException(currentJob, new NullPointerException(message));
 					}
 					pool.endJob(currentJob, result);
 					currentJob = null;
-					//reset thread priority in case job changed it
+					setName(generalName);
+					// reset thread priority in case job changed it
 					setPriority(Thread.NORM_PRIORITY);
 				}
 			}
@@ -87,5 +92,13 @@ public class Worker extends Thread {
 			currentJob = null;
 			pool.endWorker(this);
 		}
+	}
+
+	private String getJobName() {
+		String name = currentJob.getName();
+		if (name == null || name.trim().isEmpty()) {
+			name = "<unnamed job: " + currentJob.getClass().getName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return generalName + ": " + name; //$NON-NLS-1$
 	}
 }
