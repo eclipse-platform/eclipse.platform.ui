@@ -329,7 +329,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 						try {
 							final String installLocation = pluginModelBase.getInstallLocation();
 							if (installLocation.endsWith(".jar")) { //$NON-NLS-1$
-								url = new URL("file://" + installLocation); //$NON-NLS-1$
+								url = new URL("file:///" + installLocation); //$NON-NLS-1$
 								final ZipInputStream zis = new ZipInputStream(url.openStream());
 								while (true) {
 									final ZipEntry entry = zis.getNextEntry();
