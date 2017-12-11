@@ -74,7 +74,7 @@ public class DefaultContentAssistProcessor implements IContentAssistProcessor {
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
-	private int findStartingPoint(String text, int offset) {
+	private static int findStartingPoint(String text, int offset) {
 		String substring = text.substring(0, offset);
 		Matcher m = NON_ALPHANUMERIC_LAST_PATTERN.matcher(substring);
 		m.find();
