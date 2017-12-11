@@ -9,3 +9,4 @@ Export-Package: org.eclipse.core.internal.dtree;x-friends:="org.eclipse.core.too
  org.eclipse.core.internal.properties;x-friends:="org.eclipse.core.tools.resources",
  org.eclipse.core.internal.resources;x-friends:="org.eclipse.core.tools.resources"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.core.resources.spysupport

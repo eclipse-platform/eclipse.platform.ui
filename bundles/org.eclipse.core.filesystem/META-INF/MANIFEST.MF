@@ -16,3 +16,4 @@ Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.core.internal.filesystem.Activator
+Automatic-Module-Name: org.eclipse.core.filesystem

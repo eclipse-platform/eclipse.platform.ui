@@ -41,3 +41,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.core.tests.internal.resources.TestActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.core.tests.resources
