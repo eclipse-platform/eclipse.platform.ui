@@ -166,7 +166,7 @@ public class ThemeEngine implements IThemeEngine {
 
 						//check for modified files
 						if (modifiedFiles != null) {
-							int slash = originalCSSFile.lastIndexOf("/");
+							int slash = originalCSSFile.lastIndexOf('/');
 							if (slash != -1) {
 								originalCSSFile = originalCSSFile.substring(slash + 1);
 								for (File modifiedFile : modifiedFiles) {

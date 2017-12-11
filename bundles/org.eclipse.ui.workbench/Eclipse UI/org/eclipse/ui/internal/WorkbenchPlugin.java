@@ -848,7 +848,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (bidiParams != null) {
 			String[] bidiProps = bidiParams.split(";"); //$NON-NLS-1$
 			for (String bidiProp : bidiProps) {
-				int eqPos = bidiProp.indexOf("="); //$NON-NLS-1$
+				int eqPos = bidiProp.indexOf('=');
 				if ((eqPos > 0) && (eqPos < bidiProp.length() - 1)) {
 					String nameProp = bidiProp.substring(0, eqPos);
 					String valProp = bidiProp.substring(eqPos + 1);

@@ -82,8 +82,8 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 		if (browsers2 == null || executable == null)
 			return null;
 
-		int ind1 = executable.lastIndexOf("/"); //$NON-NLS-1$
-		int ind2 = executable.lastIndexOf("\\"); //$NON-NLS-1$
+		int ind1 = executable.lastIndexOf('/');
+		int ind2 = executable.lastIndexOf('\\');
 		if (ind2 > ind1)
 			ind1 = ind2;
 		executable = executable.substring(ind1 + 1);

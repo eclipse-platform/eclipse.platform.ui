@@ -4355,7 +4355,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			throws PartInitException {
 
 		if (secondaryID != null) {
-			if (secondaryID.length() == 0 || secondaryID.indexOf(":") != -1) { //$NON-NLS-1$
+			if (secondaryID.length() == 0 || secondaryID.indexOf(':') != -1) {
 				throw new IllegalArgumentException(
 						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
 			}

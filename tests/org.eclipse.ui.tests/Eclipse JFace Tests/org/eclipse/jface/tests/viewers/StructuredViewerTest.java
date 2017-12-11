@@ -32,7 +32,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         @Override
 		public boolean select(Viewer viewer, Object parent, Object element) {
             String label = ((TestElement) element).getLabel();
-            int count = label.indexOf("-");
+			int count = label.indexOf('-');
             if (count < 0) {
 				return false;
 			}
@@ -50,7 +50,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         @Override
 		public boolean select(Viewer viewer, Object parent, Object element) {
             String label = ((TestElement) element).getLabel();
-            int count = label.indexOf("-");
+			int count = label.indexOf('-');
             if (count < 0) {
 				return false;
 			}

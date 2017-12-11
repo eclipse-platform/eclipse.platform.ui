@@ -290,8 +290,7 @@ public class VerifyDialog extends TitleAreaDialog {
         IDialogTestPass test = _dialogTests[TEST_TYPE];
         StringBuilder text = new StringBuilder();
         String label = test.label();
-        label = label.substring(0, label.indexOf("&"))
-                + label.substring(label.indexOf("&") + 1);
+		label = label.substring(0, label.indexOf('&')) + label.substring(label.indexOf('&') + 1);
         text.append(label).append(" failed on the ").append(Util.getWS())
                 .append(" platform:\n");
 

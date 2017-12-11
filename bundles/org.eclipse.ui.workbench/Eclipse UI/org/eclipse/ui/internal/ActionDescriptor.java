@@ -182,7 +182,7 @@ public class ActionDescriptor implements IPluginContribution {
 		}
         if (helpContextId != null) {
             String fullID = helpContextId;
-            if (helpContextId.indexOf(".") == -1) { //$NON-NLS-1$
+            if (helpContextId.indexOf('.') == -1) {
 				// For backward compatibility we auto qualify the id if it is not
                 // qualified)
                 fullID = actionElement.getNamespace()

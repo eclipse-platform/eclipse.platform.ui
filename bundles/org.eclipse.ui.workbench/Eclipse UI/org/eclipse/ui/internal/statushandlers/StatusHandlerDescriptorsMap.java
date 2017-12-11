@@ -57,7 +57,7 @@ class StatusHandlerDescriptorsMap {
 
 			((List) map.get(ASTERISK)).add(handlerDescriptor);
 		} else {
-			int delimIndex = prefix.indexOf("."); //$NON-NLS-1$
+			int delimIndex = prefix.indexOf('.');
 
 			String pre = null;
 			String post = null;
@@ -104,7 +104,7 @@ class StatusHandlerDescriptorsMap {
 			return getAsteriskList(map);
 		}
 
-		int delimIndex = pluginId.indexOf("."); //$NON-NLS-1$
+		int delimIndex = pluginId.indexOf('.');
 
 		String pre = null;
 		String post = null;

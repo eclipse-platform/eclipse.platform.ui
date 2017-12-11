@@ -119,7 +119,7 @@ public class CSSSerializer {
 						selectorName.append("[");
 						selectorName.append(attributeFilter);
 						selectorName.append("=");
-						if (value.indexOf(".") != -1) {
+						if (value.indexOf('.') != -1) {
 							value = "'" + value + "'";
 						}
 						selectorName.append(value);

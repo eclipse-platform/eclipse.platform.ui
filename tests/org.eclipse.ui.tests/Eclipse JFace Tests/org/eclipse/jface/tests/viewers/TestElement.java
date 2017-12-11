@@ -104,7 +104,7 @@ public class TestElement implements Cloneable {
     }
 
     private int childId() {
-        String id = fId.substring(fId.lastIndexOf("-") + 1);
+		String id = fId.substring(fId.lastIndexOf('-') + 1);
         return Integer.parseInt(id);
     }
 

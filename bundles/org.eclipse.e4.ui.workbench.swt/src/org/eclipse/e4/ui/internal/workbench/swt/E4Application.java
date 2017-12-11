@@ -461,7 +461,7 @@ public class E4Application implements IApplication {
 				if (args.length > i + 1) {
 					name = args[i + 1];
 				}
-				if (name != null && name.indexOf("-") == -1) { //$NON-NLS-1$
+				if (name != null && name.indexOf('-') == -1) {
 					return name;
 				}
 				return Platform.getLocation().toOSString();

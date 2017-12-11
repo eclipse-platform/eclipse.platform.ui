@@ -23,7 +23,7 @@ public class ClassUtils {
 	 */
 	public static String getSimpleName(Class<?> c) {
 		String name = c.getName();
-		int index = name.lastIndexOf(".");
+		int index = name.lastIndexOf('.');
 		if (index > 0) {
 			name = name.substring(index + 1, name.length());
 		}
@@ -43,7 +43,7 @@ public class ClassUtils {
 	 */
 	public static String getPackageName(Class<?> c) {
 		String name = c.getName();
-		int index = name.lastIndexOf(".");
+		int index = name.lastIndexOf('.');
 		if (index > 0) {
 			return name.substring(0, index);
 		}

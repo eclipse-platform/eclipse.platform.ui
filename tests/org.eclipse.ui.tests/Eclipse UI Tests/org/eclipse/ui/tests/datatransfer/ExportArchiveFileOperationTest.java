@@ -443,14 +443,14 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		Iterator<String> archiveEntries = entries.iterator();
     	while (archiveEntries.hasNext()){
     		String entryName = archiveEntries.next();
-			int idx = entryName.lastIndexOf("/");
+			int idx = entryName.lastIndexOf('/');
 			String folderPath = entryName.substring(0, idx);
 			String fileName = entryName.substring(idx+1, entryName.length());
 			// we get empty strings for folder entries, don't add them as a file name
 			if (fileName.length() != 0) {
 				files.add(fileName);
 			}
-			int idx2 = folderPath.lastIndexOf("/");
+			int idx2 = folderPath.lastIndexOf('/');
 			if (idx2 != -1){
     			String folderName = folderPath.substring(idx2 + 1, folderPath.length());
     			folderNames.add(folderName);

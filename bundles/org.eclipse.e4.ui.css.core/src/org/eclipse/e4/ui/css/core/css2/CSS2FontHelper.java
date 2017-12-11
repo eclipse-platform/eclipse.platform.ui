@@ -31,7 +31,7 @@ public class CSS2FontHelper {
 	public static String getFontFamily(String family) {
 		if (family == null)
 			return null;
-		if (family.indexOf(" ") != -1 || family.startsWith("@"))
+		if (family.indexOf(' ') != -1 || family.startsWith("@"))
 			family = "\"" + family + "\"";
 		return family;
 	}
