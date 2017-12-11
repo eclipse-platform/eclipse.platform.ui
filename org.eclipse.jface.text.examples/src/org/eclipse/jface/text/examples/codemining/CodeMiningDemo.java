@@ -10,7 +10,6 @@
  */
 package org.eclipse.jface.text.examples.codemining;
 
-import org.eclipse.jface.internal.text.codemining.CodeMiningManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -24,9 +23,8 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.ISourceViewer;
-//import org.eclipse.jface.text.source.ISourceViewerExtension5;
+import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -52,21 +50,16 @@ public class CodeMiningDemo {
 						+ "class A\n" + "new A\n" + "new A\n\n" + "class 5\n" + "new 5\n" + "new 5\n" + "new 5"),
 				new AnnotationModel());
 		// Add AnnotationPainter (required by CodeMining)
-		AnnotationPainter painter = createAnnotationPainter(sourceViewer);
-		// Install Inlined annotation support
-		InlinedAnnotationSupport support = new InlinedAnnotationSupport();
-		support.install(sourceViewer, painter);
-
-		// Create manager
-		CodeMiningManager manager = new CodeMiningManager(sourceViewer, support, new ICodeMiningProvider[] {
+		addAnnotationPainter(sourceViewer);
+		// Initialize codemining providers
+		((ISourceViewerExtension5) sourceViewer).setCodeMiningProviders(new ICodeMiningProvider[] {
 				new ClassReferenceCodeMiningProvider(), new ClassImplementationsCodeMiningProvider() });
-
 		// Execute codemining in a reconciler
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 
 			@Override
 			public void setDocument(IDocument document) {
-				manager.run();
+				((ISourceViewerExtension5) sourceViewer).updateCodeMinings();
 			}
 
 			@Override
@@ -76,7 +69,7 @@ public class CodeMiningDemo {
 
 			@Override
 			public void reconcile(IRegion partition) {
-				manager.run();
+				((ISourceViewerExtension5) sourceViewer).updateCodeMinings();
 			}
 		}, false);
 		reconciler.install(sourceViewer);
@@ -86,11 +79,10 @@ public class CodeMiningDemo {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		manager.uninstall();
 		display.dispose();
 	}
 
-	private static AnnotationPainter createAnnotationPainter(ISourceViewer viewer) {
+	private static void addAnnotationPainter(ISourceViewer viewer) {
 		IAnnotationAccess annotationAccess = new IAnnotationAccess() {
 			@Override
 			public Object getType(Annotation annotation) {
@@ -110,7 +102,6 @@ public class CodeMiningDemo {
 		};
 		AnnotationPainter painter = new AnnotationPainter(viewer, annotationAccess);
 		((ITextViewerExtension2) viewer).addPainter(painter);
-		return painter;
 	}
 
 }

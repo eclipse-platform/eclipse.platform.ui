@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Add CodeMining support in SourceViewer - Bug 527515
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -29,6 +30,7 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.TextViewerUndoManager;
+import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
@@ -416,5 +418,18 @@ public class SourceViewerConfiguration {
 	 */
 	public int getHyperlinkStateMask(ISourceViewer sourceViewer) {
 		return SWT.MOD1;
+	}
+
+	/**
+	 * Returns the code mining providers which be used to draw code minings in the given source
+	 * viewer. This implementation always returns <code>null</code>.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return an array with code mining providers or <code>null</code> if no code mining support
+	 *         should be installed
+	 * @since 3.13
+	 */
+	public ICodeMiningProvider[] getCodeMiningProviders(ISourceViewer sourceViewer) {
+		return null;
 	}
 }

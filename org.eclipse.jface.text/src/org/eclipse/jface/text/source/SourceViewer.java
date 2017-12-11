@@ -10,6 +10,7 @@
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *     Tom Hofmann (Perspectix AG) - bug 297572
  *     Sergey Prigogin (Google) - bug 441448
+ *     Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Add CodeMining support in SourceViewer - Bug 527515
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.StickyHoverManager;
+import org.eclipse.jface.internal.text.codemining.CodeMiningManager;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -38,6 +40,7 @@ import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IBlockTextSelection;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
+import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -49,6 +52,7 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension4;
@@ -64,6 +68,7 @@ import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
 import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
 
 /**
  * SWT based implementation of
@@ -82,7 +87,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
-public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4 {
+public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4, ISourceViewerExtension5 {
 
 
 	/**
@@ -348,6 +353,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * The overview ruler.
+	 *
 	 * @since 2.1
 	 */
 	private IOverviewRuler fOverviewRuler;
@@ -356,7 +362,30 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @since 2.1
 	 */
 	private boolean fIsOverviewRulerVisible;
-
+	/**
+	 * The inlined annotation support used by code mining manager.
+	 *
+	 * @since 3.13
+	 */
+	private InlinedAnnotationSupport fInlinedAnnotationSupport;
+	/**
+	 * The text viewer's code mining providers.
+	 *
+	 * @since 3.13
+	 */
+	private ICodeMiningProvider[] fCodeMiningProviders;
+	/**
+	 * The text viewer's annotation painter to draw code mining annotations.
+	 *
+	 * @since 3.13
+	 */
+	private AnnotationPainter fAnnotationPainter;
+	/**
+	 * The text viewer's code mining manager.
+	 *
+	 * @since 3.13
+	 */
+	private CodeMiningManager fCodeMiningManager;
 
 	/**
 	 * Constructs a new source viewer. The vertical ruler is initially visible.
@@ -524,6 +553,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			if (prefixes != null && prefixes.length > 0)
 				setDefaultPrefixes(prefixes, t);
 		}
+		setCodeMiningProviders(configuration.getCodeMiningProviders(this));
 
 		activatePlugins();
 	}
@@ -731,6 +761,15 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 
 		setHyperlinkDetectors(null, SWT.NONE);
+
+		if (fCodeMiningManager != null) {
+			fCodeMiningManager.uninstall();
+			fCodeMiningManager= null;
+		}
+		setCodeMiningProviders(null);
+		if (fInlinedAnnotationSupport != null) {
+			fInlinedAnnotationSupport.uninstall();
+		}
 	}
 
 	@Override
@@ -1222,5 +1261,58 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
     		return null;
     	return fVerticalRulerHoveringController.getCurrentAnnotationHover();
     }
+
+    @Override
+	public void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders) {
+		if (fCodeMiningProviders != null) {
+			for (ICodeMiningProvider contentMiningProvider : fCodeMiningProviders) {
+				contentMiningProvider.dispose();
+			}
+		}
+		boolean enable= codeMiningProviders != null && codeMiningProviders.length > 0;
+		fCodeMiningProviders= codeMiningProviders;
+		if (enable) {
+			if (fCodeMiningManager != null) {
+				fCodeMiningManager.setCodeMiningProviders(fCodeMiningProviders);
+			}
+			ensureCodeMiningManagerInstalled();
+		} else {
+			if (fCodeMiningManager != null)
+				fCodeMiningManager.uninstall();
+			fCodeMiningManager= null;
+		}
+	}
+
+	/**
+	 * Ensures that the code mining manager has been
+	 * installed if a content mining provider is available.
+	 *
+	 * @since 3.13
+	 */
+	private void ensureCodeMiningManagerInstalled() {
+		if (fCodeMiningProviders != null && fCodeMiningProviders.length > 0 && fAnnotationPainter != null) {
+			if (fInlinedAnnotationSupport == null) {
+				fInlinedAnnotationSupport= new InlinedAnnotationSupport();
+				fInlinedAnnotationSupport.install(this, fAnnotationPainter);
+			}
+			fCodeMiningManager= new CodeMiningManager(this, fInlinedAnnotationSupport, fCodeMiningProviders);
+		}
+	}
+
+	@Override
+	public void updateCodeMinings() {
+		if (fCodeMiningManager != null) {
+			fCodeMiningManager.run();
+		}
+	}
+
+	@Override
+	public void addPainter(IPainter painter) {
+		if (painter instanceof AnnotationPainter) {
+			fAnnotationPainter= (AnnotationPainter) painter;
+			ensureCodeMiningManagerInstalled();
+		}
+		super.addPainter(painter);
+	}
 
 }

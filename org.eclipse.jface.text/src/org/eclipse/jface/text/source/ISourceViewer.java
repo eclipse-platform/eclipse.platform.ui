@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Add CodeMining support in SourceViewer - Bug 527515
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -46,6 +47,8 @@ import org.eclipse.jface.text.ITextViewer;
  * to the quick assist invocation context as well as the current annotation hover.</li>
  * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension4} since version 3.4
  * introducing API to access a minimal set of content assistant APIs.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension5} since version 3.13
+ * introducing API to access minimal set of code mining APIs.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
