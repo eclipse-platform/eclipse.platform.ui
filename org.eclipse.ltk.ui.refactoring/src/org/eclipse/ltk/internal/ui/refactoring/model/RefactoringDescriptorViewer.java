@@ -77,7 +77,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 	 * @return the input text
 	 */
 	protected String getInputText(final RefactoringDescriptorProxy proxy) {
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 
 		// XXX: should use style sheet and set dialog font.
 
@@ -114,7 +114,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 		String text= getInputText(fDescriptor);
 		if (text != null && text.length() > 0) {
 			if ((fBrowser.getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0) {
-				final StringBuffer buffer= new StringBuffer(text);
+				final StringBuilder buffer= new StringBuilder(text);
 				HTMLPrinter.insertStyles(buffer, new String[] { "direction:rtl", "overflow:hidden"}); //$NON-NLS-1$ //$NON-NLS-2$
 				text= buffer.toString();
 			}
