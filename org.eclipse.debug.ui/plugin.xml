@@ -450,7 +450,9 @@
          </action>
          <action
                class="org.eclipse.debug.internal.ui.actions.RunAsAction"
+               disabledIcon="$nl$/icons/full/dtool16/run_exc.png"
                helpContextId="run_with_configuration_action_context"
+               icon="$nl$/icons/full/etool16/run_exc.png"
                id="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction"
                label="%RunWithConfigurationAction.label"
                menubarPath="org.eclipse.ui.run/runGroup"
@@ -506,12 +508,14 @@
                menubarPath="org.eclipse.ui.run/debugGroup">
          </action>
          <action
-               label="%DebugWithConfigurationAction.label"
-               style="pulldown"
-               helpContextId="debug_with_configuration_action_context"
                class="org.eclipse.debug.internal.ui.actions.DebugAsAction"
+               disabledIcon="$nl$/icons/full/dtool16/debug_exc.png"
+               helpContextId="debug_with_configuration_action_context"
+               icon="$nl$/icons/full/etool16/debug_exc.png"
+               id="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction"
+               label="%DebugWithConfigurationAction.label"
                menubarPath="org.eclipse.ui.run/debugGroup"
-               id="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction">
+               style="pulldown">
          </action>
          <action
                label="%DebugHistoryMenuAction.label"
@@ -1162,6 +1166,7 @@
          <action
                class="org.eclipse.debug.internal.ui.actions.DebugContextualLaunchAction"
                enablesFor="+"
+               icon="$nl$/icons/full/etool16/debug_exc.png"
                id="org.eclipse.debug.ui.contextualLaunch.debug.submenu"
                label="%DebugContextMenu.label"
                menubarPath="additions"
@@ -1207,6 +1212,7 @@
          <action
                class="org.eclipse.debug.internal.ui.actions.RunContextualLaunchAction"
                enablesFor="+"
+               icon="$nl$/icons/full/etool16/run_exc.png"
                id="org.eclipse.debug.ui.contextualLaunch.run.submenu"
                label="%RunContextMenu.label"
                menubarPath="additions"
