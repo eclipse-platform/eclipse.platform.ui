@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.concurrency;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -74,7 +73,7 @@ public class TransferRuleTest extends UITestCase {
 		@Override
 		public void threadChange(Thread thread) {
 			try {
-				Platform.getJobManager().transferRule(rule, thread);
+				Job.getJobManager().transferRule(rule, thread);
 			} catch (Throwable t) {
 				//remember any error so we can fail the test
 				error = t;
@@ -91,7 +90,7 @@ public class TransferRuleTest extends UITestCase {
 		TestRunnable runnable = new TestRunnable(rule);
 		try {
 			//first get the rule in the test thread
-			Platform.getJobManager().beginRule(rule, null);
+			Job.getJobManager().beginRule(rule, null);
 			//now execute the runnable using ModalContext - the rule should transfer correctly
 			new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, runnable);
 		} catch (InvocationTargetException e) {
@@ -102,7 +101,7 @@ public class TransferRuleTest extends UITestCase {
 			fail("1.1");
 		} finally {
 			//must release the rule when finished
-			Platform.getJobManager().endRule(rule);
+			Job.getJobManager().endRule(rule);
 		}
 		//check the runnable for errors
 		if (runnable.error != null) {

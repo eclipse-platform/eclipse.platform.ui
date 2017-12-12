@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IViewPart;
@@ -167,7 +166,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 				.getDecoratorManager();
 		manager.setEnabled(FontDecorator.ID, true);
 
-		Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
+		Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 
 		dispatchDuringUpdates((DecoratorTestPart) view);
 		fontCheck(view);
