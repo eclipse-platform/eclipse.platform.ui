@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -521,6 +522,19 @@ public class ProtoypeTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#postApply()
+	 */
+	@Override
+	public void postApply() {
+		super.postApply();
+		ILaunchConfigurationDialog launchConfigurationDialog = getLaunchConfigurationDialog();
+		if (launchConfigurationDialog instanceof LaunchConfigurationsDialog) {
+			((LaunchConfigurationsDialog) launchConfigurationDialog).refreshLaunchConfigurationView();
+		}
 	}
 
 	/*

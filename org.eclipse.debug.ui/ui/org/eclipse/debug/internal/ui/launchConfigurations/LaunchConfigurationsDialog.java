@@ -1059,6 +1059,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 				int ret = showUnsavedChangesDialog();
 	 				if(ret == IDialogConstants.YES_ID) {
 	 					fTabViewer.handleApplyPressed();
+						ILaunchConfigurationTab[] tabs = getTabs();
+						if (tabs != null) {
+							for (ILaunchConfigurationTab tab : tabs) {
+								tab.postApply();
+							}
+						}
 	 					fTabViewer.setInput(newInput);
 	 				}
 					else if(ret == IDialogConstants.NO_ID) {
@@ -1370,7 +1376,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 *
 	 * @since 3.13
 	 */
-	protected void refreshLaunchConfigurationView() {
+	public void refreshLaunchConfigurationView() {
 		fLaunchConfigurationView.getTreeViewer().refresh();
 	}
 
