@@ -110,29 +110,29 @@ public interface IJobManager {
 	public void cancel(Object family);
 
 	/**
-	 * Returns a progress monitor that can be used to provide
-	 * aggregated progress feedback on a set of running jobs. A user
-	 * interface will typically group all jobs in a progress group together,
-	 * providing progress feedback for individual jobs as well as aggregated
-	 * progress for the entire group.  Jobs in the group may be run sequentially,
-	 * in parallel, or some combination of the two.
+	 * Returns a progress monitor that can be used to provide aggregated progress
+	 * feedback on a set of running jobs. A user interface will typically group all
+	 * jobs in a progress group together, providing progress feedback for individual
+	 * jobs as well as aggregated progress for the entire group. Jobs in the group
+	 * may be run sequentially, in parallel, or some combination of the two.
 	 * <p>
-	 * Recommended usage (this snippet runs two jobs in sequence in a
-	 * single progress group):
+	 * Recommended usage (this snippet runs two jobs in sequence in a single
+	 * progress group):
+	 * 
 	 * <pre>
-	 *    Job parseJob, compileJob;
-	 *    IProgressMonitor pm = Platform.getJobManager().createProgressGroup();
-	 *    try {
-	 *       pm.beginTask("Building", 10);
-	 *       parseJob.setProgressGroup(pm, 5);
-	 *       parseJob.schedule();
-	 *       compileJob.setProgressGroup(pm, 5);
-	 *       compileJob.schedule();
-	 *       parseJob.join();
-	 *       compileJob.join();
-	 *    } finally {
-	 *       pm.done();
-	 *    }
+	 * Job parseJob, compileJob;
+	 * IProgressMonitor pm = Job.getJobManager().createProgressGroup();
+	 * try {
+	 * 	pm.beginTask("Building", 10);
+	 * 	parseJob.setProgressGroup(pm, 5);
+	 * 	parseJob.schedule();
+	 * 	compileJob.setProgressGroup(pm, 5);
+	 * 	compileJob.schedule();
+	 * 	parseJob.join();
+	 * 	compileJob.join();
+	 * } finally {
+	 * 	pm.done();
+	 * }
 	 * </pre>
 	 *
 	 * @see Job#setProgressGroup(IProgressMonitor, int)
