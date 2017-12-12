@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Obeo - initial API and implementation
+ *     IBM Corporation - Bug fixes
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -473,9 +474,12 @@ public class ProtoypeTab extends AbstractLaunchConfigurationTab {
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				TreeColumn[] columns = fAttributesTreeViewer.getTree().getColumns();
-				for (TreeColumn treeColumn : columns) {
-					treeColumn.pack();
+				Tree tree = fAttributesTreeViewer.getTree();
+				if (tree != null && !tree.isDisposed()) {
+					TreeColumn[] columns = tree.getColumns();
+					for (TreeColumn treeColumn : columns) {
+						treeColumn.pack();
+					}
 				}
 			}
 		});
