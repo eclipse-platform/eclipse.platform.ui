@@ -151,7 +151,7 @@ public class BindingToModelProcessor {
 	private MBindingTable createTable(MApplication application, String contextId) {
 		MBindingTable table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
 		table.setBindingContext(getBindingContext(application, contextId));
-		table.setElementId(contextId);
+		table.setElementId(contextId + ".bindingtable"); //$NON-NLS-1$
 		application.getBindingTables().add(table);
 		tables.put(table.getBindingContext().getElementId(), table);
 		return table;

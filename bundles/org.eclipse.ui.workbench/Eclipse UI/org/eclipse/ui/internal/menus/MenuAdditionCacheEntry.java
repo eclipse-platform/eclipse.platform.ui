@@ -246,7 +246,7 @@ public class MenuAdditionCacheEntry {
 	 */
 	private MMenuElement createMenuCommandAddition(IConfigurationElement commandAddition) {
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
-		item.setElementId(MenuHelper.getId(commandAddition));
+		item.setElementId(MenuHelper.getId(commandAddition) + ".menuitem"); //$NON-NLS-1$
 		String commandId = MenuHelper.getCommandId(commandAddition);
 		MCommand commandById = ContributionsAnalyzer.getCommandById(application, commandId);
 		if (commandById == null) {
@@ -484,7 +484,7 @@ public class MenuAdditionCacheEntry {
 
 	private MToolBarElement createToolBarCommandAddition(final IConfigurationElement commandAddition) {
 		MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
-		item.setElementId(MenuHelper.getId(commandAddition));
+		item.setElementId(MenuHelper.getId(commandAddition) + ".menuitem"); //$NON-NLS-1$
 		String commandId = MenuHelper.getCommandId(commandAddition);
 		MCommand commandById = ContributionsAnalyzer.getCommandById(application, commandId);
 		if (commandById == null) {

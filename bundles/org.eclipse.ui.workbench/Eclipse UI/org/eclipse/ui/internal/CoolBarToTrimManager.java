@@ -673,7 +673,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				container.getChildren().add(toolItem);
 			} else {
 				MToolItem toolItem = OpaqueElementUtil.createOpaqueToolItem();
-				toolItem.setElementId(item.getId());
+				toolItem.setElementId(item.getId() + ".toolitem"); //$NON-NLS-1$
 				OpaqueElementUtil.setOpaqueItem(toolItem, item);
 				if (item instanceof AbstractGroupMarker) {
 					toolItem.setVisible(item.isVisible());
