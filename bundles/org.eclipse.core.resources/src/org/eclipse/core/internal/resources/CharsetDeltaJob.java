@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
@@ -48,7 +50,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	private ThreadLocal<Boolean> disabled = new ThreadLocal<>();
 
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
-	private Queue<ICharsetListenerFilter> work = new Queue<>();
+	private Queue<ICharsetListenerFilter> work = new LinkedList<>();
 
 	Workspace workspace;
 
@@ -156,7 +158,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 
 	private ICharsetListenerFilter removeFromQueue() {
 		synchronized (work) {
-			return work.remove();
+			return work.poll();
 		}
 	}
 
