@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.refresh.RefreshJob;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Queue;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -60,7 +59,7 @@ public class UnifiedTree {
 	/** tree's actual level */
 	protected int level;
 	/** our queue */
-	protected Queue<UnifiedTreeNode> queue;
+	protected LinkedList<UnifiedTreeNode> queue;
 
 	/** path prefixes for checking symbolic link cycles */
 	protected PrefixPool pathPrefixHistory, rootPathHistory;
@@ -325,11 +324,15 @@ public class UnifiedTree {
 		/* create an enumeration with node's children */
 		List<UnifiedTreeNode> result = new ArrayList<>(10);
 		while (true) {
-			UnifiedTreeNode child = queue.elementAt(index);
+			UnifiedTreeNode child = queue.get(index);
 			if (isChildrenMarker(child))
 				break;
 			result.add(child);
-			index = queue.increment(index);
+			if (index == queue.size() - 1) {
+				index = 0;
+			} else {
+				index++;
+			}
 		}
 		return result.iterator();
 	}
@@ -367,9 +370,9 @@ public class UnifiedTree {
 	protected void initializeQueue() {
 		//initialize the queue
 		if (queue == null)
-			queue = new Queue<>(100, false);
+			queue = new LinkedList<>();
 		else
-			queue.reset();
+			queue.clear();
 		//initialize the free nodes list
 		if (freeNodes == null)
 			freeNodes = new ArrayList<>(100);
@@ -553,7 +556,7 @@ public class UnifiedTree {
 		if (first == null)
 			return;
 		while (true) {
-			if (first.equals(queue.removeTail()))
+			if (first.equals(queue.pollLast()))
 				break;
 		}
 		node.setFirstChild(null);
