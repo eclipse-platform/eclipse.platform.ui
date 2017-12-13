@@ -86,11 +86,24 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.genericeditor.GenericEditor">
+            locationURI="toolbar:org.eclipse.ui.edit.text.actionSet.presentation?after=additions">
+         <separator
+               name="Presentation"
+               visible="false">
+         </separator>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.edit.text.actionSet.presentation?before=Presentation">
          <command
                commandId="org.eclipse.ui.genericeditor.togglehighlight"
                label="%command.toggle.highlight.label"
                style="toggle">
+            <visibleWhen>
+               <reference
+                     definitionId="org.eclipse.ui.genericeditor.GenericEditor.active">
+               </reference>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -172,5 +185,17 @@
                id="org.eclipse.ui.genericeditor.GenericEditor">
          </part>
       </actionSetPartAssociation>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.ui.genericeditor.GenericEditor.active">
+         <with
+               variable="activeEditorId">
+            <equals
+                  value="org.eclipse.ui.genericeditor.GenericEditor">
+            </equals>
+         </with>
+      </definition>
    </extension>
 </plugin>
