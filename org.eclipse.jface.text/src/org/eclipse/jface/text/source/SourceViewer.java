@@ -769,6 +769,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		setCodeMiningProviders(null);
 		if (fInlinedAnnotationSupport != null) {
 			fInlinedAnnotationSupport.uninstall();
+			fInlinedAnnotationSupport= null;
 		}
 	}
 

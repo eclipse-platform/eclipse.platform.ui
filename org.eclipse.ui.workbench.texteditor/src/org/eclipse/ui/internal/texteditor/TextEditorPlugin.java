@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Provide extension point for CodeMining - Bug 528419
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
 
+import org.eclipse.ui.internal.texteditor.codemining.CodeMiningProviderRegistry;
 import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffExtensionsRegistry;
 import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -61,6 +63,13 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 * @since 3.1
 	 */
 	private SpellingEngineRegistry fSpellingEngineRegistry;
+
+	/**
+	 * The codemining provider registry
+	 *
+	 * @since 3.10
+	 */
+	private CodeMiningProviderRegistry fCodeMiningProviderRegistry;
 
 	/**
 	 * Creates a plug-in instance.
@@ -150,6 +159,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		super.start(context);
 		fQuickDiffExtensionRegistry= new QuickDiffExtensionsRegistry();
 		fSpellingEngineRegistry= new SpellingEngineRegistry();
+		fCodeMiningProviderRegistry = new CodeMiningProviderRegistry();
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, PLUGIN_ID);
 	}
 
@@ -158,6 +168,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		fQuickDiffExtensionRegistry= null;
 		fSpellingEngineRegistry= null;
+		fCodeMiningProviderRegistry = null;
 		super.stop(context);
 	}
 
@@ -167,6 +178,9 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 			fQuickDiffExtensionRegistry.reloadExtensions();
 		if (fSpellingEngineRegistry != null && event.getExtensionDeltas(PLUGIN_ID, SpellingEngineRegistry.SPELLING_ENGINE_EXTENSION_POINT).length > 0)
 			fSpellingEngineRegistry.reloadExtensions();
+		if (fCodeMiningProviderRegistry != null && event.getExtensionDeltas(PLUGIN_ID,
+				CodeMiningProviderRegistry.CODEMINING_PROVIDERS_EXTENSION_POINT).length > 0)
+			fCodeMiningProviderRegistry.reloadExtensions();
 	}
 
 	/**
@@ -187,5 +201,16 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 */
 	public SpellingEngineRegistry getSpellingEngineRegistry() {
 		return fSpellingEngineRegistry;
+	}
+
+	/**
+	 * Returns this plug-ins codemining provider registry.
+	 *
+	 * @return the codemining provider registry or <code>null</code> if this plug-in
+	 *         has been shutdown
+	 * @since 3.10
+	 */
+	public CodeMiningProviderRegistry getCodeMiningProviderRegistry() {
+		return fCodeMiningProviderRegistry;
 	}
 }

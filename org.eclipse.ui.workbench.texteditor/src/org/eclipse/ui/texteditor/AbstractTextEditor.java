@@ -17,6 +17,7 @@
  *     Holger Voormann - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *     Florian Weßling <flo@cdhq.de> - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *     Andrey Loskutov <loskutov@gmx.de> - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
+ *     Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Provide extension point for CodeMining - Bug 528419
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -150,6 +151,7 @@ import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationProvider;
@@ -165,6 +167,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.ISourceViewerExtension4;
+import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
@@ -4026,6 +4029,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			EnrichMode mode= store != null ? convertEnrichModePreference(store.getInt(PREFERENCE_HOVER_ENRICH_MODE)) : EnrichMode.AFTER_DELAY;
 			((ITextViewerExtension8)fSourceViewer).setHoverEnrichMode(mode);
 		}
+
+		if (fSourceViewer instanceof ISourceViewerExtension5)
+			installCodeMinigProviders();
+	}
+
+	/**
+	 * Install codemining providers.
+	 * @since 3.10
+	 */
+	private void installCodeMinigProviders() {
+		ICodeMiningProvider[] providers = TextEditorPlugin.getDefault().getCodeMiningProviderRegistry()
+				.getProviders(this.getSourceViewer(), this);
+		((ISourceViewerExtension5) fSourceViewer).setCodeMiningProviders(providers);
 	}
 
 	/**
